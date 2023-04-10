@@ -1,0 +1,1045 @@
+{
+    "alshamel": "Alshamel",
+    "login": {
+        "loginIn": "Login In",
+        "Rememberme": "Remember me",
+        "Password": "Password",
+        "Emailaddress": "Email address",
+        "Enteryouremailaddressandpasswordtoaccessadminpanel": "Enter your email address and password to access admin panel.",
+        "Enteryouremail": "Enter your email",
+        "Enteryourpassword": "Enter your password",
+        "success": "Logged in successfully.",
+        "danger": "Email Or Password is wrong!",
+        "Loading": "Loading"
+    },
+    "country": {
+        "addcountry": "Add New Country",
+        "editcountry": "Edit Country",
+        "country": "Country",
+        "countriesTable": "Countries Table"
+    },
+    "city": {
+        "addcity": "New Add City",
+        "editcity": "Edit City",
+        "city": "City",
+        "citiesTable": "Cities Table"
+    },
+    "governorate": {
+        "addgovernorate": "New Add Governorate",
+        "editgovernorate": "Edit Governorate",
+        "governorate": "Governorate",
+        "governoratesTable": "Governorates Table"
+    },
+    "currency": {
+        "addcurrency": "New Add Currency",
+        "editcurrency": "Edit Currency",
+        "currency": "Currency",
+        "currenciesTable": "Currencies Table"
+    },
+    "employee": {
+        "addemployee": "New Add Employees",
+        "editemployee": "Edit Employee",
+        "employee": "Employees",
+        "employeesTable": "Employees Table"
+    },
+    "financialYear": {
+        "addfinancialYear": "New Add Financial Year",
+        "editfinancialYear": "Edit Financial Year",
+        "financialYearsTable": "Financial Year Table",
+        "financialYear": "Financial Year"
+    },
+    "avenue": {
+        "addavenue": "New Add Avenue",
+        "editavenue": "Edit Avenue",
+        "avenuesTable": "Avenues Table",
+        "avenue": "Avenues"
+    },
+    "rolesType": {
+        "add": "Add New Type",
+        "edit": "Edit Type",
+        "Table": "Roles Type Table",
+        "rolesType": "Roles Type"
+    },
+    "roles": {
+        "add": "Add New Role",
+        "edit": "Edit Role",
+        "Table": "Roles Table",
+        "roles": "Roles"
+    },
+    "units": {
+        "add": "Add New unit",
+        "edit": "Edit unit",
+        "Table": "units Table",
+        "units": "units"
+    },
+    "colors": {
+        "add": "Add New color",
+        "edit": "Edit color",
+        "Table": "Colors Table",
+        "colors": "Colors"
+    },
+    "salesmen-types": {
+        "add": "Add New Sales Men Type",
+        "edit": "Edit Sales Men Type",
+        "Table": "Sales Men Types Table",
+        "salesmen-types": "Sales Men Types"
+    },
+    "externalSalesmen": {
+        "addexternalSalesmen": "New Add External Salesman",
+        "editexternalSalesmen": "Edit External Salesman",
+        "externalSalesmensTable": "External Salesmen Table",
+        "externalSalesmen": "External Salesmen"
+    },
+    "branch": {
+        "addbranch": "New Add Branch",
+        "editbranch": "Edit Branch",
+        "branchesTable": "Branches Table",
+        "branch": "Branches"
+    },
+    "store": {
+        "addstore": "New Add Store",
+        "editstore": "Edit Store",
+        "storesTable": "Stores Table",
+        "store": "Stores"
+    },
+    "serial": {
+        "addserial": "Add New Serial",
+        "editserial": "Edit Serial",
+        "serialsTable": "Serials Table",
+        "serial": "Serials"
+    },
+    "salesmen": {
+        "add": "Add New Sales Men",
+        "edit": "Edit Sales Men",
+        "Table": "Sales Men Table",
+        "salesmen": "Sales Men"
+    },
+    "internalSalesmen": {
+        "add": "Add New Internal Sales Men",
+        "edit": "Edit Internal Sales Men",
+        "Table": "Internal Sales Men Table",
+        "salesmen": "Internal Sales Men"
+    },
+    "DocumentField": {
+        "AddDocumentField": " Add Document Field",
+        "EditDocumentField": "Edit Document Field",
+        "DocumentField": "Document Field",
+        "DocumentFieldsTable": "Document Fields Table"
+    },
+    "ArchiveClosedReference": {
+        "AddArchiveClosedReference": "Add Archive Closed Reference",
+        "EditArchiveClosedReference": "Edit Archive Closed Reference",
+        "ArchiveClosedReferencesTable": "Archive Closed Reference Table",
+        "ArcDocField": "Archive Doc Field",
+        "FieldValue": "Field Value"
+    },
+    "ArchDepartment": {
+        "AddArchDepartment": " Add Arch Department",
+        "EditArchDepartment": "Edit Arch Department",
+        "ArchDepartment": "Arch Department",
+        "ArchDepartmentTable": "Arch Department Table"
+    },
+    "ArchDocument": {
+        "AddArchDocument": " Add Arch Document",
+        "EditArchDocument": "Edit Arch Document",
+        "ArchDocument": "Arch Document",
+        "ArchDocumentTable": "Arch Document Table",
+        "DocStatus": "Doc Status",
+        "URLReference": "URL Reference",
+        "DocDescription": "Doc Description",
+        "GenArchDocType": "Gen Arch Doc Type"
+    },
+    "GenArchDocType": {
+        "AddGenArchDocType": " Add Document",
+        "EditGenArchDocType": "Edit Document",
+        "GenArchDocType": "Document",
+        "GenArchDocTypeTable": "Document Table"
+    },
+    "ArchDocTypeField": {
+        "AddArchDocTypeField": " Add Arch Doc Type Field",
+        "EditArchDocTypeField": "Edit Arch Doc Type Field",
+        "ArchDocTypeField": "Arch Doc Type Field",
+        "ArchDocTypeFieldTable": "Arch Doc Type Field Table"
+    },
+    "ArchDocumentDtl": {
+        "AddArchDocumentDtl": " Add Arch Document Dtl",
+        "EditArchDocumentDtl": "Edit Arch Document Dtl",
+        "ArchDocumentDtl": "Arch Document Dtl",
+        "ArchDocumentDtlTable": "Arch Document Dtl Table"
+    },
+    "ArchDocStatus": {
+        "AddArchDocStatus": " Add Arch Doc Status",
+        "EditArchDocStatus": "Edit Arch Doc Status",
+        "ArchDocStatus": "Arch Doc Status",
+        "ArchDocStatusTable": "Arch Doc Status Table"
+    },
+    "navbar": {
+        "search": {
+            "text": "Search..."
+        },
+        "dropdown": {
+            "createnew": {
+                "text": "Create New",
+                "list": {
+                    "projects": "New Projects",
+                    "users": "Create Users",
+                    "revenue": "Revenue Report",
+                    "settings": "Settings",
+                    "help": "Help & Support"
+                }
+            },
+            "megamenu": {
+                "text": "Mega Menu",
+                "uicontent": {
+                    "title": "UI Components",
+                    "list": {
+                        "widgets": "Widgets",
+                        "nestable": "Nestable List",
+                        "rangeslider": "Range Sliders",
+                        "masonry": "Masonry Items",
+                        "sweetalert": "Sweet Alerts",
+                        "treeview": "Treeview Page",
+                        "tour": "Tour Page"
+                    }
+                },
+                "application": {
+                    "title": "Applications",
+                    "list": {
+                        "ecommerce": "eCommerce Pages",
+                        "crm": "CRM Pages",
+                        "email": "Email",
+                        "calendar": "Calendar",
+                        "contacts": "Team Contacts",
+                        "tasks": "Task Board",
+                        "template": "Email Templates"
+                    }
+                },
+                "extrapages": {
+                    "title": "Extra Pages",
+                    "list": {
+                        "leftsidebaruser": "Left Sidebar with User",
+                        "collapsed": "Menu Collapsed",
+                        "leftsidebar": "Small Left Sidebar",
+                        "header": "New Header Style",
+                        "search": "Search Result",
+                        "gallery": "Gallery Pages",
+                        "maintenance": "Maintenance & Coming Soon"
+                    }
+                },
+                "discount": "Special Discount Sale!",
+                "subtext": "Save up to 70% off.",
+                "buttontext": "Download Now"
+            },
+            "site": {
+                "list": {
+                    "github": "GitHub",
+                    "bitbucket": "Bitbucket",
+                    "dribbble": "Dribbble",
+                    "dropbox": "Dropbox",
+                    "g-suite": "G Suite",
+                    "slack": "Slack"
+                }
+            },
+            "notification": {
+                "badge": "5",
+                "text": "Notifications",
+                "subtext": "Clear All",
+                "1": {
+                    "title": "Doug Dukes commented on Admin Dashboard",
+                    "text": "1 min ago"
+                },
+                "2": {
+                    "title": "Mario Drummond",
+                    "text": "Hi, How are you? What about our next meeting"
+                },
+                "3": {
+                    "title": "Karen Robinson",
+                    "text": "Wow ! this admin looks good and awesome design"
+                },
+                "4": {
+                    "title": "New user registered.",
+                    "text": "5 hours ago"
+                },
+                "5": {
+                    "title": "Caleb Flakelar commented on Admin",
+                    "text": "4 days ago"
+                },
+                "6": {
+                    "title": "Carlos Crouch liked",
+                    "text": "13 days ago"
+                },
+                "button": "View all"
+            },
+            "name": {
+                "text": "Nik Patel",
+                "list": {
+                    "greet": "Welcome !",
+                    "account": "My Account",
+                    "mywallet": "My Wallet",
+                    "settings": "Settings",
+                    "lockscreen": "Lock screen",
+                    "logout": "Logout"
+                }
+            }
+        }
+    },
+    "menuitems": {
+        "navigation": {
+            "text": "Navigation"
+        },
+        "employee": {
+            "text": "Employee"
+        },
+        "currency": {
+            "text": "Currencies"
+        },
+        "Banks": {
+            "text": "Banks"
+        },
+        "financialYear": {
+            "text": "Financial Year"
+        },
+        "role": {
+            "text": "Roles"
+        },
+        "units": {
+            "text": "Units"
+        },
+        "colors": {
+            "text": "Colors"
+        },
+        "salesMen": {
+            "text": "Sales Men"
+        },
+        "branch": {
+            "text": "Branches"
+        },
+        "store": {
+            "text": "Store"
+        },
+        "serial": {
+            "text": "Serial"
+        },
+        "area": {
+            "text": "Area"
+        },
+        "company": {
+            "text": "Company"
+        },
+        "DocumentField": {
+            "text": "Document Fields"
+        },
+        "ArchiveClosedReference": {
+            "text": "Archieve Closed References"
+        },
+        "ArchDepartment": {
+            "text": "Department"
+        },
+        "ArchDocument": {
+            "text": "Archive Document"
+        },
+        "GenArchDocType": {
+            "text": "Documents"
+        },
+        "ArchDocTypeField": {
+            "text": "Document Type Field"
+        },
+        "ArchDocumentDtl": {
+            "text": "Arch Document Dtl"
+        },
+        "ArchDocumentStatus": {
+            "text": "Status"
+        },
+        "dashboard": {
+            "text": "Dashboards",
+            "badge": "3",
+            "list": {
+                "sales": "Sales",
+                "rolesType": "Roles Type",
+                "roles": "Roles",
+                "salesMenType": "Sales Men Type",
+                "externalSalesmen": "External Sales Men",
+                "internalSalesmen": "Internal Sales Men",
+                "roleWorkflow": "Role Workflow",
+                "roleWorkflowButton": "Role Workflow Button",
+                "RoleHotfieldScreen": "Role Hotfield Screen",
+                "country": "Country",
+                "city": "Cities",
+                "governorate": "Governorate",
+                "avenue": "Avenue",
+                "salesMen": "Sales Men",
+                "crm": "CRM",
+                "analytics": "Analytics"
+            }
+        },
+        "apps": {
+            "text": "Apps"
+        },
+        "chat": {
+            "text": "Chat"
+        },
+        "ecommerce": {
+            "text": "Ecommerce",
+            "badge": "New",
+            "list": {
+                "products": "Products List",
+                "productsgrid": "Products Grid",
+                "productdetail": "Product Detail",
+                "createproduct": "Create Product",
+                "customers": "Customers",
+                "orders": "Orders",
+                "orderdetail": "Order Detail",
+                "sellers": "Sellers",
+                "cart": "Shopping Cart",
+                "checkout": "Checkout"
+            }
+        },
+        "calendar": {
+            "text": "Calendar"
+        },
+        "email": {
+            "text": "Email",
+            "list": {
+                "inbox": "Inbox",
+                "reademail": "Read Email",
+                "template": "Email Templates"
+            }
+        },
+        "companies": {
+            "text": "Companies"
+        },
+        "tasks": {
+            "text": "Tasks",
+            "list": {
+                "list": "List",
+                "detail": "Details",
+                "kanban": "Kanban Board"
+            }
+        },
+        "ticket": {
+            "text": "Tickets"
+        },
+        "contacts": {
+            "text": "Contacts",
+            "list": {
+                "members": "Members List",
+                "profile": "Profile"
+            }
+        },
+        "filemanager": {
+            "text": "File Manager"
+        },
+        "custom": {
+            "text": "Custom"
+        },
+        "auth": {
+            "text": "Auth Pages",
+            "list": {
+                "login": "Login",
+                "login-2": "Login 2",
+                "register": "Register",
+                "register-2": "Register 2",
+                "signin-signup": "Signin - Signup",
+                "signin-signup-2": "Signin - Signup 2",
+                "recoverpwd": "Recover Password",
+                "recoverpwd-2": "Recover Password 2",
+                "lock-screen": "Lock Screen",
+                "lock-screen-2": "Lock Screen 2",
+                "logout": "Logout",
+                "logout-2": "Logout 2",
+                "confirm-mail": "Confirm Mail",
+                "confirm-mail-2": "Confirm Mail 2"
+            }
+        },
+        "extrapages": {
+            "text": "Extra Pages",
+            "list": {
+                "starter": "Starter",
+                "timeline": "Timeline",
+                "sitemap": "Sitemap",
+                "invoice": "Invoice",
+                "faqs": "FAQs",
+                "search-results": "Search Results",
+                "pricing": "Pricing",
+                "maintenance": "Maintenance",
+                "comingsoon": "Coming Soon",
+                "lightbox": "Lightbox",
+                "error404": "Error 404",
+                "error404-alt": "Error 404-alt",
+                "error500": "Error 500"
+            }
+        },
+        "components": {
+            "text": "Components"
+        },
+        "ui": {
+            "text": "Base UI",
+            "list": {
+                "avatars": "Avatars",
+                "buttons": "Buttons",
+                "cards": "Cards",
+                "carousel": "Carousel",
+                "dropdowns": "Dropdowns",
+                "video": "Embed Video",
+                "general": "General UI",
+                "grid": "Grid",
+                "images": "Images",
+                "listgroup": "List Group",
+                "modals": "Modals",
+                "notifications": "Notifications",
+                "portlet": "Portlets",
+                "progress": "Progress",
+                "ribbons": "Ribbons",
+                "spinners": "Spinners",
+                "tabs": "Tabs & Accordions",
+                "tooltip": "Tooltips & Popovers",
+                "typography": "Typography"
+            }
+        },
+        "extendedui": {
+            "text": "Extended UI",
+            "badge": "Hot",
+            "list": {
+                "rangeslider": "Range Slider",
+                "sweetalert": "Sweet Alert",
+                "tour": "Tour Page",
+                "scrollspy": "Scrollspy"
+            }
+        },
+        "widgets": {
+            "text": "Widgets"
+        },
+        "icons": {
+            "text": "Icons",
+            "list": {
+                "feather": "Feather",
+                "remix": "Remix",
+                "boxicons": "Boxicons",
+                "materialdesign": "Material Design",
+                "fontawesome": "Font Awesome 5",
+                "weather": "Weather"
+            }
+        },
+        "forms": {
+            "text": "Forms",
+            "list": {
+                "elements": "General Elements",
+                "advanced": "Advanced",
+                "validation": "Validation",
+                "wizard": "Wizard",
+                "mask": "Mask",
+                "editor": "Quill Editor",
+                "fileupload": "File Uploads"
+            }
+        },
+        "tables": {
+            "text": "Tables",
+            "list": {
+                "basic": "Basic Tables",
+                "advanced": "Advanced Table"
+            }
+        },
+        "charts": {
+            "text": "Charts",
+            "list": {
+                "apex": "Apex",
+                "chartjs": "Chartjs",
+                "c3": "C3",
+                "chartist": "Chartist",
+                "knob": "Knob"
+            }
+        },
+        "maps": {
+            "text": "Maps",
+            "list": {
+                "googlemap": "Google Maps"
+            }
+        },
+        "pages": {
+            "text": "Pages"
+        },
+        "authstyle": {
+            "text": "Auth style 1"
+        },
+        "authstyle2": {
+            "text": "Auth style 2"
+        },
+        "errors": {
+            "text": "Errors"
+        },
+        "utility": {
+            "text": "Utility"
+        },
+        "multilevel": {
+            "text": "Multi Level",
+            "list": {
+                "level1": {
+                    "1": "Level 1.1",
+                    "2": "Level 1.2",
+                    "level2": {
+                        "1": "Level 2.1",
+                        "2": "Level 2.2"
+                    }
+                }
+            }
+        }
+    },
+    "general": {
+        "accepted":"Accepted",
+        "declined":"Declined",
+        "financial_status":"Financial status",
+        "financialStatusesTable":"Financial status table",
+        "inpending":"Inpending",
+        "pending":"Pending",
+        "pendingMembers":"Pending members",
+        "pendingMembersTable":"Pending members table",
+        "sponsor":"Sponsors",
+        "sponsorTable":"Sponsors Table",
+        "member":"Members",
+        "membersTable":"Members table",
+        "completed":"Completed",
+        "club":"Club",
+        "loading":"Progress",
+        "Upload":"Upload",
+        "Download":"Download",
+        "DatabaseBackup":"Database backup",
+        "code_number":"Code",
+        "invoice_details":"Invoice details",
+        "quantity":"Quantity",
+        "itemsTable":"Items table",
+        "Service":"Service",
+        "Item":"Item",
+        "Product":"Product",
+        "Items":"Items",
+        "Total_Amount":"Total Amount",
+        "Thank_you":"Thank you for your business",
+        "Extra_note":"Extra note such as company or payment information...",
+        "invoiceTable":"Invoices table",
+        "amount":"Amount",
+        "reservationLessThanUnitVal":"Reservation amount should be less than unit amount",
+        "startShoudBeforeEndDate":"Start date should before end date",
+        "NO_FILES_FOUND":"Your search - {value} - did not match any documents.",
+        "serial": "Serial",
+        "supplier": "Supplier",
+        "item_quantity": "Item quantity",
+        "reserved_quantity": "Reserved quantity",
+        "ordered_quantity": "Ordered quantity",
+        "available": "Available",
+        "noeffect": "Noeffect",
+        "increase": "Increase",
+        "decrease": "Decrease",
+        "cash": "Cash",
+        "effects": "Effects","issue vourcher": "Issue vourcher",
+        "credit note": "Credit note",
+        "debit note": "Debit note",
+        "reciept vourcher": "Reciept vourcher",
+        "openinig balance": "Openinig balance",
+        "backup": "Backup",
+        "tools": "Tools",
+        "Admin report": "Admin report",
+        "Finance report": "Finance report",
+        "reports": "Reports",
+        "transaction": "transaction",
+        "master_file": "Master file",
+        "lookup": "Lookup table",
+        "ScreenSubContactGroupTable": "Screen subcontact groups table",
+        "ScreenSubcontactGroup": "Screen subcontact group",
+        "documentPlansTable": "Document plans table",
+        "DocumentPlan": "Document plan",
+        "document": "Document",
+        "customTable": "Custom table",
+        "Uploads": "Uploads",
+        "FileUploads": "File uploads",
+        "from": "From",
+        "to": "to",
+        "fields": "Fields",
+        "workspace": "Workspace",
+        "Admin": "Admin",
+        "Employee": "Employee",
+        "loginAs": "Login as",
+        "ExceedMaxUserNumber": "You have exceeded the max users number",
+        "userRole": "Users roles",
+        "RoleUserTable": "User roles table",
+        "ModuleExpired": "Module has been expired",
+        "SHOW_FILE": "Show file",
+        "field": "Field",
+        "department": "Department",
+        "send_email": "Send email",
+        "send_user": "Send user",
+        "print": "Print",
+        "UploadMany": "Upload many files",
+        "View": "View",
+        "ChangeStatus": "Change status",
+        "ExistBefore": "Exist Before",
+        "Clicktoupload": "Click to upload",
+        "archivingTable": "Archiving table",
+        "archiving": "Archiving",
+        "arch_doc_type_field": "Archiving document type field",
+        "arch_doc_type_field_table": "Archiving document type fields table",
+        "arch_document": "Archiving document",
+        "arch_document_table": "Archiving document table",
+        "payemntPlanInstallment": "Payment plan installment",
+        "paymentPlanInstallmentsTable": "Payment plan installments table",
+        "subcontactgroup": "Subcontact group",
+        "SubcontactgroupsTable": "Subcontact groups table",
+        "building_wallet": "Building wallets",
+        "Building": "Building",
+        "Unit": "Unit",
+        "buildingWalletTable": "Building wallet table",
+        "contract": "Contracts",
+        "contractTable": "Contracts table",
+        "contractunit": "Contract unit",
+        "ContractUnitTable": "Contract units table",
+        "unitstatus": "Unit status",
+        "unitStatusTable": "Unit status table",
+        "text_ar": "Text (arabic)",
+        "text_en": "Text (english)",
+        "CompanyNotHaveTranslation": "Company doesn't have translation for this key",
+        "reset": "Reset",
+        "cancel": "Cancel",
+        "search_source_text": "Search source text...",
+        "translate_to": "Translation to",
+        "lang": "english",
+        "update_changes": "Update changes",
+        "dictionary": "Dictionary",
+        "source_text": "Source text",
+        "translation": "Translation",
+        "elshamel": "Alshamel",
+        "CantDeleteRelation": "You cannot delete an element that has a relationship with another element",
+        "cantSelectChildToBeParent": "Cant select this item because it's one of current item's children",
+        "cantSelectSelfParent": "Item couldn't be parent to itself",
+        "ScreenPropertiesTable": "Screen and properties table",
+        "Required": "Required",
+        "TreePropertiesTable": "Tree properties table",
+        "Screen": "Screen",
+        "Property": "Property",
+        "TreeProperty": "Tree properties",
+        "ScreenProperties": "Screen with properties",
+        "workflowHotfieldTable": "Workflow with hotfields table",
+        "Workflow": "Workflow",
+        "Hotfield": "Hotfield",
+        "Workflowhotfields": "Workflow with hotfields",
+        "notMatch": "is not match with password",
+        "notValidEmail": "Invalid email",
+        "password": "Password",
+        "password_confirmation": "Password confirmation",
+        "BanksTable": "Banks Table",
+        "UsersTable": "Users table",
+        "AddUser": "Add User",
+        "EditUser": "Edit User",
+        "AddBank": "Add bank",
+        "EditBank": "Edit bank",
+        "SwiftCode": "Swift code",
+        "Apply": "Apply",
+        "Users": "users",
+        "Perfix": "Perfix",
+        "Suffix": "Suffix",
+        "StartNo": "Start number",
+        "RestartPeriod": "Restart period",
+        "Branch": "Branch",
+        "Store": "Store",
+        "Default": "Default",
+        "Nondefault": "Nondefault",
+        "fieldIsRequired": "This field is required",
+        "PleaseEnterValidEmail": "Please enter valid email.",
+        "notDataFound": "Not Data Found",
+        "Create": "Create",
+        "Action": "Action",
+        "Status": "Status",
+        "Date": "Date",
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "Name": "Name (arabic)",
+        "Name_en": "Name (english)",
+        "Areyousure": "Are you sure ?",
+        "Youwontbeabletoreverthis": "You won't be able to revert this!",
+        "Yesdeleteit": "Yes, delete it!",
+        "Nocancel": "No, cancel!",
+        "Error": "Error",
+        "Deleted": "Deleted!",
+        "Thereisanerrorinthesystem": "There is an error in the system !",
+        "Yourrowhasbeendeleted": "Your row has been deleted.",
+        "Previous": "Previous",
+        "Next": "Next",
+        "Looksgood": "Looks good !",
+        "Itmustbeatleast": "It must be at least",
+        "letters": "characters long",
+        "Itmustbeatmost": "It must be at most",
+        "Choose": "Choose",
+        "Save": "Save",
+        "Add": "Add",
+        "Edit": "Edit",
+        "Cancel": "Discard",
+        "IdParent": "Parent",
+        "Addedsuccessfully": "Added successfully",
+        "Editsuccessfully": "Edit successfully",
+        "ModulesTable": "Modules Table",
+        "samaAs": "Passwords must be identical",
+        "repeatPassword": "Repeat Password",
+        "mobile_no": "Mobile Number",
+        "Search": "Search",
+        "Show": "Show ",
+        "entries": "entries",
+        "fieldIsInteger": "This field is Integer",
+        "Itmustbeyourlink": "It must be your link",
+        "taxnumber": "Tax Number",
+        "Valueaddedregistrationnumber": "Value Added Registration Number",
+        "CommercialRecord": "Commercial Record",
+        "companysystempath": "Company System Path",
+        "website": "Website Link",
+        "address": "Address",
+        "Dropfileshereorclicktoupload": "Drop files here or click to upload.",
+        "fieldIsImage": "This field should be the picture",
+        "ItmustbeyourImage": "It must be (jpeg,png,gif,jpg)",
+        "alphaArabic": "This field must be in Arabic.",
+        "alphaEnglish": "This field must be in English.",
+        "filter": "Filter",
+        "group": "Group",
+        "setting": "Setting",
+        "commands": "Commands",
+        "delete": "Delete",
+        "edit": "Edit",
+        "searchSetting": "Search Setting",
+        "long_name": "Long Name(arabic)",
+        "long_name_e": "Long Name(english)",
+        "short_code": "Short Code",
+        "codeAr": "Code(arabic)",
+        "code_e": "Code(english)",
+        "fraction": "Fraction(arabic)",
+        "fraction_e": "Fraction(english)",
+        "fraction_no": "Fraction Number",
+        "phone_key": "Phone key",
+        "national": "National Id",
+        "is_default": "Default",
+        "phone": "Phone",
+        "email": "Email",
+        "code": "Code",
+        "country": "Country",
+        "governorate": "Governorate",
+        "city": "City",
+        "startDate": "Start Date",
+        "imagEUpload": "Image Upload",
+        "endDate": "End Date",
+        "isEmployee": "Is Employee ?",
+        "Yes": "Yes",
+        "No": "No",
+        "branch": "Branch",
+        "store": "Store",
+        "symbol_e": "Symbol (english)",
+        "symbol": "Symbol (arabic)",
+        "salesManType": "Sale Man Type",
+        "employee": "Employee",
+        "DataEntry": "Data Entry",
+        "ImageUploads": "Image Uploads",
+        "AddNewRecord": "Add New Record",
+        "Thisfilehasalreadybeenuploaded": "This file has already been uploaded\n  To change the file, press Replace",
+        "Replace": "Replace",
+        "workflow": "Workflow",
+        "roleWorkflow": "Role Workflow",
+        "addroleWorkflow": "New Add Workflow",
+        "editroleWorkflow": "Edit Workflow",
+        "roleWorkflowsTable": "Role Workflows Table",
+        "workflowButton": "Workflow",
+        "roleWorkflowButton": "Role Workflow Button",
+        "addroleWorkflowButton": "New Add Workflow Button",
+        "editroleWorkflowButton": "Edit Workflow Button",
+        "roleWorkflowButtonsTable": "Role Workflow Buttons Table",
+        "button": "Button",
+        "roleWorkflowHotfield": "Role Screen Hotfield",
+        "addroleWorkflowHotfield": "New Add Role Screen Hotfield",
+        "editroleWorkflowHotfield": "Edit Role Screen Hotfield",
+        "roleWorkflowHotfieldsTable": "Role Screen Hotfields Table",
+        "screen": "Screen",
+        "hotfield": "Hotfield",
+        "paymentTypes": "Payment Types",
+        "payment-types-Table": "Payment Types Table",
+        "AddPaymentType": "Add Payment Type",
+        "EditPaymentType": "Edit Payment Type",
+        "bankAccounts": "Bank Accounts",
+        "bankAccountsTable": "Bank Accounts Table",
+        "bank_id": "Bank",
+        "account_number": "Account Number",
+        "emp_id": "emp id",
+        "rp_code": "rp code",
+        "Properties": "property",
+        "addBankAccount": "Add Bank Account",
+        "editBankAccount": "Edit Bank Account",
+        "Bank": "Bank",
+        "branches": "Branches",
+        "users": "Users",
+        "employees": "Employees",
+        "salesmen": "Salesmen",
+        "realEstate": "RealEstate",
+        "owner": "Owners",
+        "building": "Buildings",
+        "customer": "Customers",
+        "description": "Description(arabic)",
+        "description_e": "Description(english)",
+        "land_area": "Land Area (m)",
+        "building_area": "Building Area (m)",
+        "construction_year": "Construction Year",
+        "module": "Module",
+        "lng": "longitude",
+        "lat": "Latitude",
+        "avenue": "Avenue",
+        "buildsTable": "Buildings Table",
+        "addbuild": "Add Building",
+        "editbuild": "Edit Building",
+        "ownersTable": "Owners Table",
+        "addowner": "Add Owner",
+        "editowner": "Edit Owner",
+        "nationality": "Nationality",
+        "contact_person": "Contact Person",
+        "contact_phones": "Contact Phones",
+        "whatsapp": "Whatsapp",
+        "bankAccount": "Bank Account",
+        "customersTable": "Customers Table",
+        "addcustomer": "Add Customer",
+        "editcustomer": "Edit Customer",
+        "passport": "Passport Number",
+        "DocumentFieldNumeric": "Numeric",
+        "DocumentFieldDate": "Date",
+        "DocumentFieldDdlb": "Drop list",
+        "DocumentFieldString": "String",
+        "DocumentFieldLookup": "lookup(Table)",
+        "isReference": "Is Reference?",
+        "isReferenceYes": "Yes",
+        "isReferenceNo": "No",
+        "Archive": "No",
+        "ArchiveClosedReferenceDocField": "Archive Document Field",
+        "ArchiveClosedReferenceFieldValue": "Field Value",
+        "ArchDepartmentParentID": "Arch Department",
+        "ArchDocumentDocDesc": "Doc Description",
+        "ArchDocumentDocStatus": "Doc Status",
+        "ArchDocumentArchDocType": "Arch Doc Type",
+        "ArchDocumentDocURLreference": "URL Reference",
+        "isValid": "Is Valid",
+        "parentId": "Parent",
+        "genArchDocType": "Gen Arch Doc Type",
+        "archDocTypeField": "Arch Doc Field",
+        "fieldOrder": "Field Order",
+        "isRequired": "Is Required",
+        "fieldCharacter": "Field Character",
+        "numericValidation": "This field should contains positive value.",
+        "fieldValue": "Field Value",
+        "archive": "Archive",
+        "walletsTable": "Wallets Tables",
+        "wallet": "Wallets",
+        "walletOwner": "Wallet Owner",
+        "walletOwnerTable": "wallet Owners Table",
+        "reservation": "Reservation",
+        "reservationTable": "Reservation Table",
+        "paymentPlan": "Payment Plan",
+        "realEstateUnitTable": "RealEstate Units Table",
+        "recievablePayable": "Receivable Payable",
+        "installmentStatus": "installment Status",
+        "installmentStatusTable": "installment Status Table",
+        "installmentCustomerOpeningBalanceTable": "Customer Opening Balance Table",
+        "installmentPaymentType": "Installment Payment Type",
+        "installmentPaymentTypeTable": "Installment Payment Type Table",
+        "MainContactGroups": "Main Contact Groups",
+        "MainContactGroupsTable": "Main Contact Groups Table",
+        "InstallmentPaymentPlanDetail": "Installment Payment Plan Detail",
+        "InstallmentPaymentPlanDetailTable": "Installment Payment Plan Detail Table",
+        "predefinedDate": "Predefined Date",
+        "UndefinedDate": "Undefined Date",
+        "installmentPaymentPlan": "Installment Payment Plan",
+        "installmentPaymentPlanTable": "Installment Payment Plan Table",
+        "DocumentStatus": "Document Status",
+        "DocumentDepartment": "Document Department",
+        "DocumentDepartmentTable": "Document Department Table",
+        "DocumentType": "Document",
+        "DocumentTable": "Document Table",
+        "send": "Send",
+        "AddedToFavoritesSuccessfully": "Added to favorites successfully",
+        "DeletedFromFavoritesSuccessfully": "Deleted from favorites successfully",
+        "favorite": "Favorite",
+        "currentNode": "Current node",
+        "Showfavorite": "Show Favorite",
+        "DocumentName": "Document name",
+        "thisFieldIsUniq": "this Field Is Unique",
+        "true": "true",
+        "false": "false",
+        "is_key": "key",
+        "conditionsTable": "installment Condition Table",
+        "installmentCondition": "installment Condition",
+        "Table": "Table",
+        "is_required": "Is required",
+        "is_visible": "Is visible",
+        "Column": "Column",
+        "tableName": "Table Name",
+        "rows": "Rows",
+        "documentTable": "Document Table",
+        "document": "Document",
+        "Break": "Break",
+        "countOpeningBalance": "count Opening Balance",
+        "total_local_debit": "total Local Debit",
+        "total_local_credit": "total Local Credit",
+        "net": "Net",
+        "location": "Location",
+        "debit": "Debit",
+        "credit": "Credit",
+        "totalAmount": "Total Amount",
+        "totalDivision": "Total Division",
+        "Residual": "Residual",
+        "Invoice": "Invoice",
+        "rebates": "Rebates",
+        "total":"Total",
+        "InvoiceTable": "Invoices table",
+        "Total": "Total",
+        "details": "Details",
+        "status": "Status",
+        "ShowBreak": "Show Break",
+        "repeat": "Repeat",
+        "departments": "Departments",
+        "DepartmentTable": "Departments Table",
+        "sellMethodsTable": "Sell Methods Table",
+        "sellMethods": "Sell Methods",
+        "boardRent": "Board Rent",
+        "sellMethod": "Sell Method",
+        "panel": "Panel",
+        "package": "Packages",
+        "quotation": "Quotations",
+        "order": "Orders",
+        "tasks": "Tasks",
+        "systemSetup": "System Setup",
+        "sector": "Sector",
+        "sectorsTable": "Sectors Table",
+        "street": "Street",
+        "streetsTable": "Streets Table",
+        "customerBranch": "customer Branch",
+        "statusesTable": "Statuses Table",
+        "statuses": "Statuses",
+        "packagesTable": "Packages Table",
+        "packages": "packages",
+        "unitStatus": "Unit Status",
+        "titleFile": "Title File",
+        "frequencyPeriod": "Frequency Period",
+        "isFixedDay": "Fixe Day?",
+        "day": "Day",
+        "change": "Change",
+        "ChangeCompletedSuccessfully": "Change Completed Successfully",
+        "tasksTable": "Tasks Table",
+        "lookupsTable": "lookups Table",
+        "categoriesTable": "Categories Table",
+        "category": "Categories",
+        "panelsTable": "Panels Table",
+        "ReceiptVoucherTable": "Receipt Voucher Table",
+        "createNewReceiptVoucher": "Add New Receipt Voucher",
+        "paymentMethod": "Payment Method",
+        "invoiceSerial": "Invoice Serial",
+        "type": "Type",
+        "openingBalance": "Opening Balance",
+        "invoice": "Invoice",
+        "transactions": "Transactions",
+        "CustomerDebts": "Customer Debts",
+        "TheDifference": "The Difference",
+        "editReceiptVoucher": "Edit Receipt Voucher",
+        "serial_number": "Serial Number",
+        "settings": "Settings",
+        "SettingTable": "Setting Table",
+        "ordersTable": "Orders Table",
+        "membership_renewal": "membership renewal",
+        "membership_renewalTable": "Membership Renewal table"
+    }
+}
