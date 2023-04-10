@@ -2228,6 +2228,7 @@ class ClubTranslationSeeder extends Seeder
                 "screen" => "club"
             ],
         ]);
+
         //membership_renewal
         Translation::insert([
             [
