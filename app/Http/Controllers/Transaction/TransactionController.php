@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Transaction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\TransactionRequest;
 use App\Http\Resources\Transaction\TransactionResource;
+use App\Repositories\Translation\TranslationInterface;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionController extends Controller
 {
-    public function __construct(private \App\Repositories\Translation\TranslationInterface$modelInterface)
+    public function __construct(private TranslationInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -25,15 +25,11 @@ class TransactionController extends Controller
         return responseJson(200, 'success', new TransactionResource($model));
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', TransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
-
-
-
 
     public function create(TransactionRequest $request)
     {
@@ -41,15 +37,13 @@ class TransactionController extends Controller
         return responseJson(200, 'success');
     }
 
-
-
     public function update(TransactionRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
-            return responseJson( 404 , __('message.data not found'));
+            return responseJson(404, __('message.data not found'));
         }
-        $this->modelInterface->update($request->validated(),$id);
+        $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
         return responseJson(200, 'success', new TransactionResource($model));
 
@@ -63,7 +57,6 @@ class TransactionController extends Controller
         $logs = $this->modelInterface->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
-
 
     public function delete($id)
     {

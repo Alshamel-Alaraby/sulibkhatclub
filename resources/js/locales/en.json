@@ -1040,6 +1040,10 @@
         "SettingTable": "Setting Table",
         "ordersTable": "Orders Table",
         "membership_renewal": "membership renewal",
-        "membership_renewalTable": "Membership Renewal table"
+        "membership_renewalTable": "Membership Renewal table",
+        "subscriptionTable": "Subscription Table",
+        "subscription": "Subscription",
+        "multiSubscription": "Multi Subscription",
+        "changeSpenser" : "Change Spenser"
     }
 }

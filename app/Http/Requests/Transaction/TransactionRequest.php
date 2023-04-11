@@ -27,9 +27,13 @@ class TransactionRequest extends FormRequest
             'transactions' => 'required|array',
             'transactions.*.date' => 'required|date',
             'transactions.*.amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'transactions.*.module_type' =>"nullable|string",
+            'transactions.*.module_type' => "nullable|string",
             'transactions.*.invoice_id' => "nullable|exists:rlst_invoices,id",
             'transactions.*.break_id' => "nullable|exists:rp_break_downs,id",
+            'transactions.*.cm_member_id' => "nullable|exists:cm_members,id",
+            'transactions.*.date_from' => 'nullable|date',
+            'transactions.*.date_to' => 'nullable|date',
+
         ];
     }
 }

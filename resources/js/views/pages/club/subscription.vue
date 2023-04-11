@@ -1,0 +1,1289 @@
+<script>
+import Layout from "../../layouts/main";
+import PageHeader from "../../../components/Page-header";
+import adminApi from "../../../api/adminAxios";
+import Switches from "vue-switches";
+import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import Swal from "sweetalert2";
+import ErrorMessage from "../../../components/widgets/errorMessage";
+import loader from "../../../components/loader";
+import {dynamicSortString, dynamicSortNumber} from "../../../helper/tableSort";
+import Multiselect from "vue-multiselect";
+import {formatDateOnly} from "../../../helper/startDate";
+import translation from "../../../helper/translation-mixin";
+import DatePicker from "vue2-datepicker";
+
+/**
+ * Advanced Table component
+ */
+export default {
+    page: {
+        title: "Subscription",
+        meta: [{name: "description", content: "Subscription"}],
+    },
+    mixins: [translation],
+    components: {
+        Layout,
+        PageHeader,
+        Switches,
+        ErrorMessage,
+        loader,
+        Multiselect,
+        DatePicker,
+    },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            if (vm.$store.state.auth.work_flow_trees.includes('club') || vm.$store.state.auth.user.type == 'super_admin') {
+                return true;
+            } else {
+                return vm.$router.push({name: "home"});
+            }
+        });
+
+    },
+    data() {
+        return {
+            per_page: 50,
+            search: "",
+            debounce: {},
+            transactionsPagination: {},
+            transactions: [],
+            enabled3: true,
+            is_disabled: false,
+            isLoader: false,
+            create: {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                module_type:"club",
+                date:new Date().toISOString().slice(0, 10),
+            },
+            company_id: null,
+            edit: {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                module_type:"club",
+                date:new Date().toISOString().slice(0, 10),
+            },
+            setting: {
+                cm_member_id: true,
+                date_from: true,
+                date_to: true,
+                amount: true,
+            },
+            members: [],
+            Tooltip: "",
+            mouseEnter: null,
+            errors: {},
+            isCheckAll: false,
+            checkAll: [],
+            current_page: 1,
+            filterSetting: [
+                "cm_member_id",
+                "date_from",
+                "date_to",
+                "amount",
+            ],
+            printLoading: true,
+            printObj: {
+                id: "printData",
+            }
+        };
+    },
+    validations: {
+        create: {
+            cm_member_id: {required},
+            date_from: {required},
+            date_to: {required},
+            amount: {required},
+        },
+        edit: {
+            cm_member_id: {required},
+            date_from: {required},
+            date_to: {required},
+            amount: {required},
+        },
+    },
+    watch: {
+        /**
+         * watch per_page
+         */
+        per_page(after, befour) {
+            this.getData();
+        },
+        /**
+         * watch search
+         */
+        search(after, befour) {
+            clearTimeout(this.debounce);
+            this.debounce = setTimeout(() => {
+                this.getData();
+            }, 400);
+        },
+        /**
+         * watch check All table
+         */
+        isCheckAll(after, befour) {
+            if (after) {
+                this.transactions.forEach((el) => {
+                    if (!this.checkAll.includes(el.id)) {
+                        this.checkAll.push(el.id);
+                    }
+                });
+            } else {
+                this.checkAll = [];
+            }
+        },
+    },
+    mounted() {
+        this.company_id = this.$store.getters["auth/company_id"];
+
+        this.getData();
+    },
+    methods: {
+        resetForm() {
+            this.create = {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                module_type:"club",
+                date:new Date().toISOString().slice(0, 10),
+            };
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+            this.is_disabled = false;
+        },
+        /**
+         *  start get Data countrie && pagination
+         */
+        getData(page = 1) {
+            this.isLoader = true;
+            let filter = "";
+            for (let i = 0; i < this.filterSetting.length; ++i) {
+                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            }
+            adminApi
+                .get(
+                    `/transactions?module_type=club&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                )
+                .then((res) => {
+                    let l = res.data;
+                    this.transactions = l.data;
+                    this.transactionsPagination = l.pagination;
+                    this.current_page = l.pagination.current_page;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getDataCurrentPage(page = 1) {
+            if (
+                this.current_page <= this.transactionsPagination.last_page &&
+                this.current_page != this.transactionsPagination.current_page &&
+                this.current_page
+            ) {
+                this.isLoader = true;
+                let filter = "";
+                for (let i = 0; i < this.filterSetting.length; ++i) {
+                    filter += `columns[${i}]=${this.filterSetting[i]}&`;
+                }
+                adminApi
+                    .get(
+                        `/transactions?module_type=club&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    )
+                    .then((res) => {
+                        let l = res.data;
+                        this.transactions = l.data;
+                        this.transactionsPagination = l.pagination;
+                        this.current_page = l.pagination.current_page;
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
+        /**
+         *  end get Data countrie && pagination
+         */
+        /**
+         *  start delete countrie
+         */
+        deleteBranch(id, index) {
+            if (Array.isArray(id)) {
+                Swal.fire({
+                    title: `${this.$t("general.Areyousure")}`,
+                    text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
+                    cancelButtonText: `${this.$t("general.Nocancel")}`,
+                    confirmButtonClass: "btn btn-success mt-2",
+                    cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                    buttonsStyling: false,
+                }).then((result) => {
+                    if (result.value) {
+                        this.isLoader = true;
+                        adminApi
+                            .post(`/transactions/bulk-delete`, {ids: id})
+                            .then((res) => {
+                                this.checkAll = [];
+                                this.getData();
+                                Swal.fire({
+                                    icon: "success",
+                                    title: `${this.$t("general.Deleted")}`,
+                                    text: `${this.$t("general.Yourrowhasbeendeleted")}`,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            })
+                            .catch((err) => {
+                                if (err.response.status == 400) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: `${this.$t("general.Error")}`,
+                                        text: `${this.$t("general.CantDeleteRelation")}`,
+                                    });
+                                    this.getData();
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: `${this.$t("general.Error")}`,
+                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                    });
+                                }
+                            })
+                            .finally(() => {
+                                this.isLoader = false;
+                            });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: `${this.$t("general.Areyousure")}`,
+                    text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
+                    cancelButtonText: `${this.$t("general.Nocancel")}`,
+                    confirmButtonClass: "btn btn-success mt-2",
+                    cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                    buttonsStyling: false,
+                }).then((result) => {
+                    if (result.value) {
+                        this.isLoader = true;
+
+                        adminApi
+                            .delete(`/transactions/${id}`)
+                            .then((res) => {
+                                this.checkAll = [];
+                                this.getData();
+                                Swal.fire({
+                                    icon: "success",
+                                    title: `${this.$t("general.Deleted")}`,
+                                    text: `${this.$t("general.Yourrowhasbeendeleted")}`,
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            })
+
+                            .catch((err) => {
+                                if (err.response.status == 400) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: `${this.$t("general.Error")}`,
+                                        text: `${this.$t("general.CantDeleteRelation")}`,
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: `${this.$t("general.Error")}`,
+                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                    });
+                                }
+                            })
+                            .finally(() => {
+                                this.isLoader = false;
+                            });
+                    }
+                });
+            }
+        },
+        /**
+         *  end delete countrie
+         */
+        /**
+         *  reset Modal (create)
+         */
+        resetModalHidden() {
+            this.create = {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                date:new Date().toISOString().slice(0, 10),
+                module_type:"club"
+            };
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+            this.errors = {};
+            this.members = [];
+        },
+        /**
+         *  hidden Modal (create)
+         */
+        async resetModal() {
+            await this.getType();
+            this.create = {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                date:new Date().toISOString().slice(0, 10),
+                module_type:"club"
+            };
+
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+            this.is_disabled = false;
+            this.errors = {};
+        },
+        /**
+         *  create countrie
+         */
+        AddSubmit() {
+            this.$v.create.$touch();
+            if (this.$v.create.$invalid) {
+                return;
+            } else {
+                this.isLoader = true;
+                this.errors = {};
+                this.is_disabled = false;
+                let transactions = [this.create]
+                adminApi
+                    .post(`/transactions`, {transactions, company_id: this.company_id})
+                    .then((res) => {
+                        this.getData();
+                        this.is_disabled = true;
+                        setTimeout(() => {
+                            Swal.fire({
+                                icon: "success",
+                                text: `${this.$t("general.Addedsuccessfully")}`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }, 500);
+                    })
+                    .catch((err) => {
+                        if (err.response.data) {
+                            this.errors = err.response.data.errors;
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: `${this.$t("general.Error")}`,
+                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
+        /**
+         *  edit countrie
+         */
+        editSubmit(id) {
+            this.$v.edit.$touch();
+            if (this.$v.edit.$invalid) {
+                return;
+            } else {
+                this.isLoader = true;
+                this.errors = {};
+                let transactions = [this.edit]
+                adminApi
+                    .put(`/transactions/${id}`, {transactions})
+                    .then((res) => {
+                        this.$bvModal.hide(`modal-edit-${id}`);
+                        this.getData();
+                        setTimeout(() => {
+                            Swal.fire({
+                                icon: "success",
+                                text: `${this.$t("general.Editsuccessfully")}`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }, 500);
+                    })
+                    .catch((err) => {
+                        if (err.response.data) {
+                            this.errors = err.response.data.errors;
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: `${this.$t("general.Error")}`,
+                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
+        /**
+         *   show Modal (edit)
+         */
+        async resetModalEdit(id) {
+            await this.getType();
+            let setting = this.transactions.find((e) => id == e.id);
+            this.edit.cm_member_id = setting.member.id;
+            this.edit.date_from = setting.date_from;
+            this.edit.date_to = setting.date_to;
+            this.edit.amount = setting.amount;
+            this.edit.module_type = "club";
+            this.edit.date = new Date().toISOString().slice(0, 10);
+            this.errors = {};
+        },
+        /**
+         *  hidden Modal (edit)
+         */
+        resetModalHiddenEdit(id) {
+            this.errors = {};
+            this.edit = {
+                cm_member_id: null,
+                date_from: "",
+                date_to: "",
+                amount: "",
+                date:new Date().toISOString().slice(0, 10),
+                module_type:"club"
+            };
+            this.members = [];
+        },
+        /*
+         *  start  dynamicSortString
+         */
+        sortString(value) {
+            return dynamicSortString(value);
+        },
+        sortNumber(value) {
+            return dynamicSortNumber(value);
+        },
+        /**
+         *  start  ckeckRow
+         */
+        checkRow(id) {
+            if (!this.checkAll.includes(id)) {
+                this.checkAll.push(id);
+            } else {
+                let index = this.checkAll.indexOf(id);
+                this.checkAll.splice(index, 1);
+            }
+        },
+        /**
+         *  end  ckeckRow
+         */
+
+        async getType() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/club-members/members`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.members = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+
+        formatDate(value) {
+            return formatDateOnly(value);
+        },
+        log(id) {
+            if (this.mouseEnter != id) {
+                this.Tooltip = "";
+                this.mouseEnter = id;
+                adminApi
+                    .get(`/transactions/logs/${id}`)
+                    .then((res) => {
+                        let l = res.data.data;
+                        l.forEach((e) => {
+                            this.Tooltip += `Created By: ${e.causer_type}; Event: ${
+                                e.event
+                            }; Description: ${e.description} ;Created At: ${this.formatDate(
+                                e.created_at
+                            )} \n`;
+                        });
+                        $(`#tooltip-${id}`).tooltip();
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    });
+            }
+        },
+
+        /**
+         *   Export Excel
+         */
+        ExportExcel(type, fn, dl) {
+            this.enabled3 = false;
+            setTimeout(() => {
+                let elt = this.$refs.exportable_table;
+                let wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
+                if (dl) {
+                    XLSX.write(wb, {bookType: type, bookSST: true, type: 'base64'});
+                } else {
+                    XLSX.writeFile(wb, fn || (('transactions' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
+                }
+                this.enabled3 = true;
+            }, 100);
+        },
+    },
+};
+</script>
+
+<template>
+    <Layout>
+        <PageHeader/>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- start search -->
+                        <div class="row justify-content-between align-items-center mb-2">
+                            <h4 class="header-title">{{ $t("general.subscriptionTable") }}</h4>
+                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
+                                <div class="d-inline-block" style="width: 22.2%">
+                                    <!-- Basic dropdown -->
+                                    <b-dropdown
+                                        variant="primary"
+                                        :text="$t('general.searchSetting')"
+                                        ref="dropdown"
+                                        class="btn-block setting-search"
+                                    >
+                                        <b-form-checkbox v-model="filterSetting" value="cm_member_id"
+                                                         class="mb-1"
+                                        >{{ getCompanyKey("member") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="date_from"
+                                                         value="allowed_subscription_date" class="mb-1"
+                                        >{{ getCompanyKey("date_from") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="date_to"
+                                                         value="allowed_subscription_date" class="mb-1"
+                                        >{{ getCompanyKey("date_to") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="amount"
+                                                         value="allowed_subscription_date" class="mb-1"
+                                        >{{ getCompanyKey("subscription_amount") }}
+                                        </b-form-checkbox>
+                                        <!-- Basic dropdown -->
+                                    </b-dropdown>
+                                </div>
+
+                                <div class="d-inline-block position-relative" style="width: 77%">
+                                      <span :class="[ 'search-custom position-absolute', $i18n.locale == 'ar' ? 'search-custom-ar' : '', ]">
+                                        <i class="fe-search"></i>
+                                      </span>
+                                    <input
+                                        class="form-control"
+                                        style="display: block; width: 93%; padding-top: 3px"
+                                        type="text"
+                                        v-model.trim="search"
+                                        :placeholder="`${$t('general.Search')}...`"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end search -->
+
+                        <div class="row justify-content-between align-items-center mb-2 px-1">
+                            <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
+                                <!-- start create and printer -->
+                                <b-button
+                                    v-b-modal.create
+                                    variant="primary"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                >
+                                    {{ $t("general.Create") }}
+                                    <i class="fas fa-plus"></i>
+                                </b-button>
+                                <div class="d-inline-flex">
+                                    <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                                        <i class="fas fa-file-download"></i>
+                                    </button>
+                                    <button v-print="'#printData'" class="custom-btn-dowonload">
+                                        <i class="fe-printer"></i>
+                                    </button>
+                                    <button
+                                        class="custom-btn-dowonload"
+                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
+                                        v-if="checkAll.length == 1"
+                                    >
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </button>
+                                    <!-- start mult delete  -->
+                                    <button
+                                        class="custom-btn-dowonload"
+                                        v-if="checkAll.length > 1"
+                                        @click.prevent="deleteBranch(checkAll)"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <!-- end mult delete  -->
+                                    <!--  start one delete  -->
+                                    <button
+                                        class="custom-btn-dowonload"
+                                        v-if="checkAll.length == 1"
+                                        @click.prevent="deleteBranch(checkAll[0])"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    <!--  end one delete  -->
+                                </div>
+                                <!-- end create and printer -->
+                            </div>
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                            >
+                                <div class="d-fex">
+                                    <!-- start filter and setting -->
+                                    <div class="d-inline-block">
+                                        <b-button class="mx-1 custom-btn-background">
+                                            {{ $t("general.filter") }}
+                                            <i class="fas fa-filter"></i>
+                                        </b-button>
+                                        <b-button class="mx-1 custom-btn-background">
+                                            {{ $t("general.group") }}
+                                            <i class="fe-menu"></i>
+                                        </b-button>
+                                        <!-- Basic dropdown -->
+                                        <b-dropdown
+                                            variant="primary"
+                                            :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                                            ref="dropdown"
+                                            class="dropdown-custom-ali"
+                                        >
+                                            <b-form-checkbox v-model="setting.cm_member_id"
+                                                             class="mb-1"
+                                            >{{ getCompanyKey("member") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.amount"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("subscription_amount") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date_from"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("date_from") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date_to"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("date_to") }}
+                                            </b-form-checkbox>
+                                            <div class="d-flex justify-content-end">
+                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
+                                                        $t("general.Apply")
+                                                    }}</a>
+                                            </div>
+                                        </b-dropdown>
+                                        <!-- Basic dropdown -->
+                                    </div>
+                                    <!-- start Pagination -->
+                                    <div class="d-inline-flex align-items-center pagination-custom">
+                                        <div class="d-inline-block" style="font-size: 13px">
+                                            {{ transactionsPagination.from }}-{{ transactionsPagination.to }} /
+                                            {{ transactionsPagination.total }}
+                                        </div>
+                                        <div class="d-inline-block">
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                          'pointer-events':
+                            transactionsPagination.current_page == 1 ? 'none' : '',
+                        }"
+                                                @click.prevent="getData(transactionsPagination.current_page - 1)"
+                                            >
+                                                <span>&lt;</span>
+                                            </a>
+                                            <input
+                                                type="text"
+                                                @keyup.enter="getDataCurrentPage()"
+                                                v-model="current_page"
+                                                class="pagination-current-page"
+                                            />
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                          'pointer-events':
+                            transactionsPagination.last_page == transactionsPagination.current_page
+                              ? 'none'
+                              : '',
+                        }"
+                                                @click.prevent="getData(transactionsPagination.current_page + 1)"
+                                            >
+                                                <span>&gt;</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!-- end Pagination -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--  create   -->
+                        <b-modal
+                            id="create"
+                            :title="getCompanyKey('subscription_create_form')"
+                            title-class="font-18"
+                            body-class="p-4 "
+                            size="lg"
+                            :hide-footer="true"
+                            @show="resetModal"
+                            @hidden="resetModalHidden"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <b-button
+                                        variant="success"
+                                        :disabled="!is_disabled"
+                                        @click.prevent="resetForm"
+                                        type="button"
+                                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                                    >
+                                        {{ $t("general.AddNewRecord") }}
+                                    </b-button>
+                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+                                    <template v-if="!is_disabled">
+                                        <b-button
+                                            variant="success"
+                                            type="submit"
+                                            class="mx-1"
+                                            v-if="!isLoader"
+                                            @click.prevent="AddSubmit"
+                                        >
+                                            {{ $t("general.Add") }}
+                                        </b-button>
+
+                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                        </b-button>
+                                    </template>
+                                    <b-button
+                                        variant="danger"
+                                        type="button"
+                                        @click.prevent="$bvModal.hide('create')"
+                                    >
+                                        {{ $t("general.Cancel") }}
+                                    </b-button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                v-model="create.cm_member_id"
+                                                :options="members.map((type) => type.id)"
+                                                :custom-label="
+                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
+                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
+                                                "
+                                            >
+                                            </multiselect>
+                                            <div
+                                                v-if="$v.create.cm_member_id.$error || errors.cm_member_id"
+                                                class="text-danger"
+                                            >
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                            <template v-if="errors.cm_member_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.cm_member_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label  class="control-label">
+                                                {{ getCompanyKey("subscription_amount") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                class="form-control"
+                                                v-model="$v.create.amount.$model"
+                                                :class="{
+                                                  'is-invalid': $v.create.amount.$error || errors.amount,
+                                                  'is-valid':
+                                                    !$v.create.amount.$invalid && !errors.amount,
+                                                }"
+                                            />
+                                            <template v-if="errors.amount">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.amount"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label v-if="index == 0" class="control-label">
+                                                {{ getCompanyKey('date_from') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date_from.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_from.$error ||
+                                                        errors.date_from,
+                                                    'is-valid':
+                                                        !$v.create.date_from
+                                                            .$invalid &&
+                                                        !errors.date_from,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_from">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label v-if="index == 0" class="control-label">
+                                                {{ getCompanyKey('date_to') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date_to.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_to.$error ||
+                                                        errors.date_to,
+                                                    'is-valid':
+                                                        !$v.create.date_to
+                                                            .$invalid &&
+                                                        !errors.date_to,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_to">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /create   -->
+
+                        <!-- start .table-responsive-->
+                        <div class="table-responsive mb-3 custom-table-theme position-relative">
+                            <!--       start loader       -->
+                            <loader size="large" v-if="isLoader"/>
+                            <!--       end loader       -->
+
+                            <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table"
+                                   id="printData">
+                                <thead>
+                                <tr>
+                                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
+                                        <div class="form-check custom-control">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                v-model="isCheckAll"
+                                                style="width: 17px; height: 17px"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.cm_member_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="
+                                                      transactions.sort(
+                                                        sortString(($i18n.locale = 'ar' ? 'name' : 'name_e'))
+                                                      )
+                                                    "
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="
+                                                      transactions.sort(
+                                                        sortString(($i18n.locale = 'ar' ? '-name' : '-name_e'))
+                                                      )
+                                                    "
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.amount">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("subscription_amount") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('amount'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-amount'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.date_from">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("date_from") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('date_from'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-date_from'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.date_to">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("date_to") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('date_to'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-date_to'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="enabled3" class="do-not-print">
+                                        {{ $t("general.Action") }}
+                                    </th>
+                                    <th v-if="enabled3" class="do-not-print"><i class="fas fa-ellipsis-v"></i></th>
+                                </tr>
+                                </thead>
+                                <tbody v-if="transactions.length > 0">
+                                <tr
+                                    @click.capture="checkRow(data.id)"
+                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                    v-for="(data, index) in transactions"
+                                    :key="data.id"
+                                    class="body-tr-custom"
+                                >
+                                    <td v-if="enabled3" class="do-not-print">
+                                        <div class="form-check custom-control" style="min-height: 1.9em">
+                                            <input
+                                                style="width: 17px; height: 17px"
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                :value="data.id"
+                                                v-model="checkAll"
+                                            />
+                                        </div>
+                                    </td>
+                                    <td v-if="setting.cm_member_id">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{
+                                                data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
+                                            }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.amount">
+                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                    </td>
+                                    <td v-if="setting.date_from">
+                                        <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
+                                    </td>
+                                    <td v-if="setting.date_to">
+                                        <h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5>
+                                    </td>
+                                    <td v-if="enabled3" class="do-not-print">
+                                        <div class="btn-group">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm dropdown-toggle dropdown-coustom"
+                                                data-toggle="dropdown"
+                                                aria-expanded="false"
+                                            >
+                                                {{ $t("general.commands") }}
+                                                <i class="fas fa-angle-down"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-custom">
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="#"
+                                                    @click="$bvModal.show(`modal-edit-${data.id}`)"
+                                                >
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center text-black"
+                                                    >
+                                                        <span>{{ $t("general.edit") }}</span>
+                                                        <i class="mdi mdi-square-edit-outline text-info"></i>
+                                                    </div>
+                                                </a>
+                                                <a
+                                                    class="dropdown-item text-black"
+                                                    href="#"
+                                                    @click.prevent="deleteBranch(data.id)"
+                                                >
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center text-black"
+                                                    >
+                                                        <span>{{ $t("general.delete") }}</span>
+                                                        <i class="fas fa-times text-danger"></i>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!--  edit   -->
+                                        <b-modal
+                                            :id="`modal-edit-${data.id}`"
+                                            :title="getCompanyKey('subscription_edit_form')"
+                                            title-class="font-18"
+                                            body-class="p-4"
+                                            size="lg"
+                                            :ref="`edit-${data.id}`"
+                                            :hide-footer="true"
+                                            @show="resetModalEdit(data.id)"
+                                            @hidden="resetModalHiddenEdit(data.id)"
+                                        >
+                                            <form>
+                                                <div class="mb-3 d-flex justify-content-end">
+                                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+                                                    <b-button
+                                                        variant="success"
+                                                        @click.prevent="editSubmit(data.id)"
+                                                        type="button"
+                                                        class="mx-1 font-weight-bold px-3"
+                                                        v-if="!isLoader"
+                                                    >
+                                                        {{ $t("general.Edit") }}
+                                                    </b-button>
+
+                                                    <b-button variant="success" class="mx-1" disabled v-else>
+                                                        <b-spinner small></b-spinner>
+                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                    </b-button>
+
+                                                    <b-button
+                                                        variant="danger"
+                                                        class="font-weight-bold"
+                                                        type="button"
+                                                        @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
+                                                    >
+                                                        {{ $t("general.Cancel") }}
+                                                    </b-button>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("member") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <multiselect
+                                                                v-model="edit.cm_member_id"
+                                                                :options="members.map((type) => type.id)"
+                                                                :custom-label="
+                                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
+                                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
+                                                                "
+                                                            >
+                                                            </multiselect>
+                                                            <div
+                                                                v-if="$v.edit.cm_member_id.$error || errors.cm_member_id"
+                                                                class="text-danger"
+                                                            >
+                                                                {{ $t("general.fieldIsRequired") }}
+                                                            </div>
+                                                            <template v-if="errors.cm_member_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.cm_member_id"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label  class="control-label">
+                                                                {{ getCompanyKey("subscription_amount") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                step="any"
+                                                                class="form-control"
+                                                                v-model="$v.edit.amount.$model"
+                                                                :class="{
+                                                                  'is-invalid': $v.edit.amount.$error || errors.amount,
+                                                                  'is-valid':
+                                                                    !$v.edit.amount.$invalid && !errors.amount,
+                                                                }"
+                                                            />
+                                                            <template v-if="errors.amount">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.amount"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label v-if="index == 0" class="control-label">
+                                                                {{ getCompanyKey('date_from') }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <date-picker
+                                                                type="date"
+                                                                v-model="$v.edit.date_from.$model"
+                                                                format="YYYY-MM-DD"
+                                                                valueType="format"
+                                                                :confirm="false"
+                                                                :class="{ 'is-invalid':
+                                                                        $v.edit.date_from.$error ||
+                                                                        errors.date_from,
+                                                                    'is-valid':
+                                                                        !$v.edit.date_from
+                                                                            .$invalid &&
+                                                                        !errors.date_from,
+                                                                }"
+                                                            ></date-picker>
+                                                            <template v-if="errors.date_from">
+                                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                                                              :key="index">
+                                                                    {{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label v-if="index == 0" class="control-label">
+                                                                {{ getCompanyKey('date_to') }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <date-picker
+                                                                type="date"
+                                                                v-model="$v.edit.date_to.$model"
+                                                                format="YYYY-MM-DD"
+                                                                valueType="format"
+                                                                :confirm="false"
+                                                                :class="{ 'is-invalid':
+                                                                        $v.edit.date_to.$error ||
+                                                                        errors.date_to,
+                                                                    'is-valid':
+                                                                        !$v.edit.date_to
+                                                                            .$invalid &&
+                                                                        !errors.date_to,
+                                                                }"
+                                                            ></date-picker>
+                                                            <template v-if="errors.date_to">
+                                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                                                              :key="index">
+                                                                    {{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </b-modal>
+                                        <!--  /edit   -->
+                                    </td>
+                                    <td v-if="enabled3" class="do-not-print">
+                                        <button
+                                            @mousemove="log(data.id)"
+                                            @mouseover="log(data.id)"
+                                            type="button"
+                                            class="btn"
+                                            :id="`tooltip-${data.id}`"
+                                            :data-placement="$i18n.locale == 'en' ? 'left' : 'right'"
+                                            :title="Tooltip"
+                                        >
+                                            <i class="fe-info" style="font-size: 22px"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody v-else>
+                                <tr>
+                                    <th class="text-center" colspan="11">
+                                        {{ $t("general.notDataFound") }}
+                                    </th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- end .table-responsive-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Layout>
+</template>

@@ -1018,6 +1018,10 @@
         "SettingTable": "جدول الاعدادات",
         "ordersTable": "جدول الطلبات",
         "membership_renewal": "تجديد العضويه",
-        "membership_renewalTable": "جدول تجديد العضويه"
+        "membership_renewalTable": "جدول تجديد العضويه",
+        "subscriptionTable": "جدول الاشتراكات",
+        "subscription": "الاشتراكات",
+        "multiSubscription": "اشتراكات متعددة",
+        "changeSpenser": "تغيير الراعى"
     }
 }

@@ -8949,5 +8949,63 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ]
         ]);
+        //club subscription
+        Translation::insert([
+            [
+                "key" => "subscription_create_form",
+                "default_en" => "Add new subscription",
+                "default_ar" => "اضف اشتراك جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "subscription_edit_form",
+                "default_en" => "Edit subscription form",
+                "default_ar" => "تعديل الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member",
+                "default_en" => "Member",
+                "default_ar" => "العضو",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "date_from",
+                "default_en" => "From Date",
+                "default_ar" => "تاريخ بداية الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "date_to",
+                "default_en" => "To Date",
+                "default_ar" => "تاريخ نهاية الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "subscription_amount",
+                "default_en" => "Subscription Amount",
+                "default_ar" => "قيمة الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+
+        ]);
     }
 }

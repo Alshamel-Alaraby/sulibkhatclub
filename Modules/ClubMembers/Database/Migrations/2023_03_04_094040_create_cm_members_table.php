@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,6 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('cm_members');
         Schema::create('cm_members', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
@@ -32,11 +33,9 @@ return new class extends Migration
             $table->string('membership_request_number');
             $table->string('job');
             $table->string('degree');
-
             $table->string('acceptance')->default(0);
             $table->date('acceptance_date');
             $table->string('acceptance_number');
-
             $table->date('session_date');
             $table->string('session_number');
             $table->string('sponsor')->default(0);
@@ -57,6 +56,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cm_pending_members');
+        Schema::dropIfExists('cm_members');
     }
 };

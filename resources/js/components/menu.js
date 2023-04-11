@@ -207,35 +207,116 @@ export const menuItems = [
         isMenuCollapsed: false,
         subItems: [
             {
-                id: 12223,
-                name: 'club-sponsor',
-                label: 'general.sponsor',
-                link: '/dashboard/club/sponsor'
+                id: 100211,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.lookup',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 12223,
+                        name: 'club-sponsor',
+                        label: 'general.sponsor',
+                        link: '/dashboard/club/sponsor'
+                    },
+
+                    {
+                        id: 122155,
+                        name: 'club-setting',
+                        label: 'general.settings',
+                        link: '/dashboard/club/settings'
+                    },
+                    {
+                        id: 13033,
+                        name: 'club-pending-member',
+                        label: 'general.pendingMembers',
+                        link: '/dashboard/club/pending-member'
+                    },
+                    {
+                        id: 130303,
+                        name: 'club-financial-status',
+                        label: 'general.financial_status',
+                        link: '/dashboard/club/financial-status'
+                    },
+                ]
+            },
+
+            {
+                id: 134211,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.master_file',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 12214,
+                        name: 'club-member',
+                        label: 'general.member',
+                        link: '/dashboard/club/member'
+                    }
+                ]
             },
             {
-                id: 12214,
-                name: 'club-member',
-                label: 'general.member',
-                link: '/dashboard/club/member'
+                id: 134211,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.transaction',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 130366,
+                        name: 'club-subscription',
+                        label: 'general.subscription',
+                        link: '/dashboard/club/subscription'
+                    },
+                    {
+                        id: 13035656,
+                        name: 'club-subscription',
+                        label: 'general.multiSubscription',
+                        link: '/#'
+                    },
+                    {
+                        id: 13036996,
+                        name: 'club-subscription',
+                        label: 'general.changeSpenser',
+                        link: '/#'
+                    },
+                ]
             },
             {
-                id: 122155,
-                name: 'club-setting',
-                label: 'general.settings',
-                link: '/dashboard/club/settings'
+                id: 333201,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.reports',
+                isMenuCollapsed: false,
+                subItems: [
+
+
+                ]
             },
             {
-                id: 13033,
-                name: 'club-pending-member',
-                label: 'general.pendingMembers',
-                link: '/dashboard/club/pending-member'
+                id: 1021111,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.tools',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 100222,
+                        label: 'general.customTable',
+                        icon: 'fas fa-tasks',
+                        name: 'custom table',
+                        link: '/dashboard/custom-table'
+                    },
+                    {
+                        id: 2011311,
+                        name: 'real estate',
+                        label: 'general.backup',
+                        link: '/'
+                    },
+                ]
             },
-            {
-                id: 13033,
-                name: 'club-financial-status',
-                label: 'general.financial_status',
-                link: '/dashboard/club/financial-status'
-            },
+
         ]
     },
     {

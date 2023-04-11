@@ -10,21 +10,27 @@ use Modules\RecievablePayable\Entities\RpBreakDown;
 
 class Transaction extends Model
 {
-    use HasFactory, LogTrait ,SoftDeletes;
+    use HasFactory, LogTrait, SoftDeletes;
 
-    protected $table="general_transactions";
+    protected $table = "general_transactions";
 
     protected $guarded = ['id'];
 
     public function invoice()
     {
-        return $this->belongsTo(\Modules\RealEstate\Entities\RlstInvoice::class,'invoice_id');
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstInvoice::class, 'invoice_id');
 
     }
 
     public function breakDown()
     {
-        return $this->belongsTo(RpBreakDown::class,'break_id');
+        return $this->belongsTo(RpBreakDown::class, 'break_id');
+
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
 
     }
 
@@ -37,6 +43,5 @@ class Transaction extends Model
             ->useLogName('Transaction')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 
 }

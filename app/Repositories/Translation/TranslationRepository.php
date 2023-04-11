@@ -1,17 +1,14 @@
 <?php
 
-
 namespace App\Repositories\Translation;
 
-use App\Http\Resources\Document\DocumentResource;
-use App\Models\GeneralCustomTable;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Resources\Json\JsonResource;
+
 class TranslationRepository implements TranslationInterface
 {
 
-    public function __construct(private \App\Models\Transaction$model)
+    public function __construct(private Transaction $model)
     {
         $this->model = $model;
     }
@@ -19,8 +16,12 @@ class TranslationRepository implements TranslationInterface
     public function all($request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-        if ($request->invoice_id){
-            $models->where('invoice_id',$request->invoice_id);
+        if ($request->invoice_id) {
+            $models->where('invoice_id', $request->invoice_id);
+        }
+        if ($request->module_type == "club")
+        {
+            $models->where('module_type', "club");
         }
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -36,8 +37,8 @@ class TranslationRepository implements TranslationInterface
         return $data;
     }
 
-
-    public function create($request){
+    public function create($request)
+    {
         DB::transaction(function () use ($request) {
             foreach ($request['transactions'] as $transaction):
                 $this->model->create($transaction);
@@ -45,8 +46,8 @@ class TranslationRepository implements TranslationInterface
         });
     }
 
-
-    public function update($request,$id){
+    public function update($request, $id)
+    {
         $data = $this->model->find($id);
         $data->update($request);
         return $data;
@@ -57,7 +58,8 @@ class TranslationRepository implements TranslationInterface
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $model = $this->model->find($id);
         $model->delete();
     }

@@ -52,4 +52,13 @@ export default [
         component: () => import('../../views/pages/club/financial-status'),
 
     },
+    {
+        path: '/dashboard/club/subscription',
+        name: 'club-subscription',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/subscription'),
+
+    },
 ];
