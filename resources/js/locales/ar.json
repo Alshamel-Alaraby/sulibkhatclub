@@ -589,6 +589,7 @@
         }
     },
     "general": {
+        "BothSponsorsAreSame":"لايمكن ادخال قيم متساوية",
         "declined":"مرفوض",
         "accepted":"مقبول",
         "financial_status":"الحالة المالية",
@@ -1022,6 +1023,10 @@
         "subscriptionTable": "جدول الاشتراكات",
         "subscription": "الاشتراكات",
         "multiSubscription": "اشتراكات متعددة",
-        "changeSpenser": "تغيير الراعى"
+        "changeSpenser": "تغيير الراعى",
+        "subscribe": "اشتراك",
+        "renew": "تجديد",
+        "multiSubscriptionTable": "جدول الاشتراكات المتعددة",
+        "month": "شهر"
     }
 }

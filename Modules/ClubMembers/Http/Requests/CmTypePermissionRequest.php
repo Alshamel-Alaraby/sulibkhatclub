@@ -25,10 +25,10 @@ class CmTypePermissionRequest extends FormRequest
     {
         return [
             'cm_members_type_id' => 'required|exists:cm_members_types,id',
-            'cm_permissions_id' => 'required|exists:cm_members_permissions,id',
+            'cm_permissions_id' => 'required',
             'cm_financial_status_id' => 'required|exists:cm_financial_status,id',
             'membership_period' => 'required|numeric',
-            'allowed_subscription_date' => 'required|numeric',
+            'allowed_subscription_date' => 'required',
         ];
     }
 

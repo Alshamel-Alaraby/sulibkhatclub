@@ -4,13 +4,10 @@ namespace Modules\ClubMembers\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
-use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalInterface;
-
-use Modules\ClubMembers\Transformers\CmMembershipRenewalResource;
 use Modules\ClubMembers\Http\Requests\CmMembershipRenewalRequest;
 use Modules\ClubMembers\Http\Requests\EditCmMembershipRenewalRequest;
-
+use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalInterface;
+use Modules\ClubMembers\Transformers\CmMembershipRenewalResource;
 
 class CmMembershipRenewalController extends Controller
 {
@@ -20,14 +17,14 @@ class CmMembershipRenewalController extends Controller
         $this->modelInterface = $modelInterface;
     }
 
-
     public function all(Request $request)
     {
+
+
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', CmMembershipRenewalResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
-
 
     public function find($id)
     {
@@ -39,14 +36,12 @@ class CmMembershipRenewalController extends Controller
         return responseJson(200, 'success', new CmMembershipRenewalResource($model));
     }
 
-
     public function create(CmMembershipRenewalRequest $request)
     {
         $this->modelInterface->create($request->validated());
 
         return responseJson(200, 'success');
     }
-
 
     public function update(EditCmMembershipRenewalRequest $request, $id)
     {
@@ -59,7 +54,6 @@ class CmMembershipRenewalController extends Controller
 
         return responseJson(200, 'success', new CmMembershipRenewalResource($model));
     }
-
 
     public function delete($id)
     {
@@ -74,7 +68,6 @@ class CmMembershipRenewalController extends Controller
         return responseJson(200, 'success');
     }
 
-
     public function logs($id)
     {
         $model = $this->modelInterface->find($id);
@@ -85,15 +78,13 @@ class CmMembershipRenewalController extends Controller
         return responseJson(200, 'success', $logs);
     }
 
-
     public function bulkDelete(Request $request)
     {
-        foreach ($request->ids as $id){
+        foreach ($request->ids as $id) {
             $this->modelInterface->delete($id);
         };
 
         return responseJson(200, __('Done'));
     }
-
 
 }

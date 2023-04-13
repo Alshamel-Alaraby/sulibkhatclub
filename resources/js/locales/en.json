@@ -1044,6 +1044,11 @@
         "subscriptionTable": "Subscription Table",
         "subscription": "Subscription",
         "multiSubscription": "Multi Subscription",
-        "changeSpenser" : "Change Spenser"
+        "changeSpenser" : "Change Spenser",
+        "subscribe": "Subscribe",
+        "renew": "Renew",
+        "BothSponsorsAreSame":"Both sponsors are same",
+        "multiSubscriptionTable": "Multi Subscription Table",
+        "month": "Month"
     }
 }

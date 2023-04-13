@@ -14,8 +14,8 @@ class CmMemberSetting extends Model
     use HasFactory, LogTrait, SoftDeletes;
 
     protected $guarded = [];
-
     protected $table = 'cm_members_settings';
+
 
     public function memberType()
     {

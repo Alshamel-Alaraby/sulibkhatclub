@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Serials;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Serial\CreateSerialRequest;
-use App\Http\Requests\Serial\EditSerialRequest;
+use App\Http\Requests\Serial\SerialRequest;
 use App\Http\Resources\Serials\SerialResource;
 use App\Models\Serial;
 use App\Repositories\Serial\SerialRepositoryInterface;
@@ -49,7 +48,7 @@ class SerialController extends Controller
      * @param Request $request
      * @return \response
      */
-    public function store(CreateSerialRequest $request)
+    public function store(SerialRequest $request)
     {
 
         // if (!DB::table('companies')->find($request->company_id)) {
@@ -95,7 +94,7 @@ class SerialController extends Controller
      * @param int $id
      * @return \response
      */
-    public function update(EditSerialRequest $request, $id)
+    public function update(SerialRequest $request, $id)
     {
         $data = [];
         if ($request->company_id) {
@@ -158,7 +157,7 @@ class SerialController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        if ($model->hasChildren()){
+        if ($model->hasChildren()) {
             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
         }
         $this->repository->delete($id);
@@ -191,11 +190,11 @@ class SerialController extends Controller
     {
 
         $serial = Serial::where('branch_id', $request->branch_id)
-        ->where(function ($q) use ($request) {
-            $q->when($request->company_id, function ($q) use ($request) {
-                $q->where('company_id', $request->company_id);
-            });
-        })->latest()->first();
+            ->where(function ($q) use ($request) {
+                $q->when($request->company_id, function ($q) use ($request) {
+                    $q->where('company_id', $request->company_id);
+                });
+            })->latest()->first();
 
         if ($serial) {
 

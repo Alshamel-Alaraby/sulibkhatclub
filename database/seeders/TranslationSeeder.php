@@ -8812,7 +8812,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "membership_period",
                 "default_en" => "Membership Period",
-                "default_ar" => "مدة الاشتراك تجاوزة",
+                "default_ar" => "مدة الاشتراك تجاوزة (سنه)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8821,7 +8821,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "financial_status",
                 "default_en" => "Financial Status",
-                "default_ar" => "حالة العضوية",
+                "default_ar" => "حالة السداد",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8830,7 +8830,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "allowed_subscription_date",
                 "default_en" => "Allowed Subscription Date",
-                "default_ar" => "فترة السداد لا تتجاوز",
+                "default_ar" => "فترة السداد لا تتجاوز تاريخ",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8991,6 +8991,15 @@ class TranslationSeeder extends Seeder
                 "key" => "date_to",
                 "default_en" => "To Date",
                 "default_ar" => "تاريخ نهاية الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "subscription_type",
+                "default_en" => "Type",
+                "default_ar" => "نوع الدفع",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,

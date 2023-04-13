@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class StatusController extends Controller
 {
-    public function __construct(private \App\Repositories\Status\StatusInterface$modelInterface)
+    public function __construct(private \App\Repositories\Status\StatusInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

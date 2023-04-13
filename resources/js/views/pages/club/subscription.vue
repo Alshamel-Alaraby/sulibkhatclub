@@ -12,6 +12,7 @@ import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/translation-mixin";
 import DatePicker from "vue2-datepicker";
+import Branch from "../../../components/create/branch";
 
 /**
  * Advanced Table component
@@ -23,6 +24,7 @@ export default {
     },
     mixins: [translation],
     components: {
+        Branch,
         Layout,
         PageHeader,
         Switches,
@@ -48,30 +50,41 @@ export default {
             debounce: {},
             transactionsPagination: {},
             transactions: [],
+            branches: [],
+            renewal: [],
             enabled3: true,
             is_disabled: false,
             isLoader: false,
             create: {
+                branch_id: null,
                 cm_member_id: null,
+                document_id: 8,
                 date_from: "",
                 date_to: "",
+                type: "",
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
             },
             company_id: null,
             edit: {
+                branch_id: null,
                 cm_member_id: null,
+                document_id: 8,
                 date_from: "",
                 date_to: "",
+                type: "",
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
             },
             setting: {
+                branch_id: true,
+                serial_number: true,
                 cm_member_id: true,
                 date_from: true,
                 date_to: true,
+                type: true,
                 amount: true,
             },
             members: [],
@@ -95,15 +108,19 @@ export default {
     },
     validations: {
         create: {
+            branch_id: {required},
             cm_member_id: {required},
             date_from: {required},
             date_to: {required},
             amount: {required},
+            type: {required},
         },
         edit: {
+            branch_id: {required},
             cm_member_id: {required},
             date_from: {required},
             date_to: {required},
+            type: {required},
             amount: {required},
         },
     },
@@ -144,10 +161,25 @@ export default {
         this.getData();
     },
     methods: {
+        showBranchModal() {
+            if (this.create.branch_id == 0) {
+                this.$bvModal.show("create_branch");
+                this.create.branch_id = null;
+            }
+        },
+        showBranchModalEdit() {
+            if (this.edit.branch_id == 0) {
+                this.$bvModal.show("create_branch");
+                this.edit.branch_id = null;
+            }
+        },
         resetForm() {
             this.create = {
+                branch_id: null,
                 cm_member_id: null,
                 date_from: "",
+                type: "",
+                document_id: 8,
                 date_to: "",
                 amount: "",
                 module_type:"club",
@@ -159,7 +191,7 @@ export default {
             this.is_disabled = false;
         },
         /**
-         *  start get Data countrie && pagination
+         *  start get Data && pagination
          */
         getData(page = 1) {
             this.isLoader = true;
@@ -169,7 +201,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/transactions?module_type=club&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `/transactions?module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -201,7 +233,7 @@ export default {
                 }
                 adminApi
                     .get(
-                        `/transactions?module_type=club&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `/transactions?module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -221,11 +253,29 @@ export default {
                     });
             }
         },
+        async getBranches() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/branches`)
+                .then((res) => {
+                    this.isLoader = false;
+                    let l = res.data.data;
+                    l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
+                    this.branches = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
         /**
-         *  end get Data countrie && pagination
+         *  end get Data && pagination
          */
         /**
-         *  start delete countrie
+         *  start delete
          */
         deleteBranch(id, index) {
             if (Array.isArray(id)) {
@@ -328,15 +378,18 @@ export default {
             }
         },
         /**
-         *  end delete countrie
+         *  end delete
          */
         /**
          *  reset Modal (create)
          */
         resetModalHidden() {
             this.create = {
+                branch_id: null,
                 cm_member_id: null,
                 date_from: "",
+                type: "",
+                document_id: 8,
                 date_to: "",
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -353,9 +406,13 @@ export default {
          */
         async resetModal() {
             await this.getType();
+            await this.getBranches();
             this.create = {
+                branch_id: null,
                 cm_member_id: null,
                 date_from: "",
+                type: "",
+                document_id: 8,
                 date_to: "",
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -420,9 +477,8 @@ export default {
             } else {
                 this.isLoader = true;
                 this.errors = {};
-                let transactions = [this.edit]
                 adminApi
-                    .put(`/transactions/${id}`, {transactions})
+                    .put(`/transactions/${id}`, this.edit)
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -456,9 +512,13 @@ export default {
          */
         async resetModalEdit(id) {
             await this.getType();
+            await this.getBranches();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
+            this.edit.branch_id = setting.branch.id;
             this.edit.date_from = setting.date_from;
+            this.edit.type = setting.type;
+            this.edit.document_id = setting.document_id;
             this.edit.date_to = setting.date_to;
             this.edit.amount = setting.amount;
             this.edit.module_type = "club";
@@ -471,8 +531,11 @@ export default {
         resetModalHiddenEdit(id) {
             this.errors = {};
             this.edit = {
+                branch_id: null,
                 cm_member_id: null,
                 date_from: "",
+                type: "",
+                document_id: 8,
                 date_to: "",
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -554,6 +617,48 @@ export default {
             }
         },
 
+        async renewalDataCreate ()
+        {
+            if(this.create.date_from && this.create.date_to)
+            {
+                await adminApi
+                    .get(`/club-members/memberships-renewals?from=${this.create.date_from}&to=${this.create.date_to}`)
+                    .then((res) => {
+                        let l = res.data.data;
+                        this.renewal = l;
+                        if (this.create.type)
+                        {
+                            this.renewalAmount();
+                        }
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+
+        },
+        renewalAmount()
+        {
+            console.log(123)
+            if (this.renewal.length > 0)
+            {
+                if (this.create.type == "subscribe")
+                {
+                    this.create.amount = this.renewal[0].membership_cost;
+                }else {
+                    this.create.amount = this.renewal[0].renewal_cost;
+                }
+            }
+
+        },
+
         /**
          *   Export Excel
          */
@@ -577,6 +682,7 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
+        <Branch :id="'create_branch'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBranches"/>
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -608,6 +714,10 @@ export default {
                                         <b-form-checkbox v-model="amount"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("subscription_amount") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="type"
+                                                         value="allowed_subscription_date" class="mb-1"
+                                        >{{ getCompanyKey("subscription_type") }}
                                         </b-form-checkbox>
                                         <!-- Basic dropdown -->
                                     </b-dropdown>
@@ -696,6 +806,9 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
+                                            <b-form-checkbox v-model="setting.serial_number" class="mb-1">
+                                                {{ $t("general.serial_number") }}
+                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.cm_member_id"
                                                              class="mb-1"
                                             >{{ getCompanyKey("member") }}
@@ -703,6 +816,10 @@ export default {
                                             <b-form-checkbox v-model="setting.amount"
                                                              class="mb-1">
                                                 {{ getCompanyKey("subscription_amount") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.type"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("subscription_type") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.date_from"
                                                              class="mb-1">
@@ -810,6 +927,31 @@ export default {
                                     </b-button>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>{{ getCompanyKey("branch") }}</label>
+                                            <multiselect @input="showBranchModal" v-model="create.branch_id"
+                                                         :options="branches.map((type) => type.id)" :custom-label="
+                                                    (opt) =>
+                                                        $i18n.locale == 'ar'
+                                                            ? branches.find((x) => x.id == opt).name
+                                                            : branches.find((x) => x.id == opt).name_e
+                                                " :class="{
+                                                        'is-invalid':
+                                                            $v.create.branch_id.$error || errors.branch_id,
+                                                    }">
+                                            </multiselect>
+                                            <div v-if="!$v.create.branch_id.required" class="invalid-feedback">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+
+                                            <template v-if="errors.branch_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.branch_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
@@ -834,6 +976,92 @@ export default {
                                             <template v-if="errors.cm_member_id">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.cm_member_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey('date_from') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                @input="renewalDataCreate"
+                                                v-model="$v.create.date_from.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_from.$error ||
+                                                        errors.date_from,
+                                                    'is-valid':
+                                                        !$v.create.date_from
+                                                            .$invalid &&
+                                                        !errors.date_from,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_from">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey('date_to') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date_to.$model"
+                                                @input="renewalDataCreate"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_to.$error ||
+                                                        errors.date_to,
+                                                    'is-valid':
+                                                        !$v.create.date_to
+                                                            .$invalid &&
+                                                        !errors.date_to,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_to">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label  class="control-label">
+                                                {{ getCompanyKey("subscription_type") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <select  class="form-control" @change="renewalAmount" v-model="create.type" :class="{
+                                                  'is-invalid': $v.create.type.$error || errors.amount,
+                                                  'is-valid':
+                                                    !$v.create.type.$invalid && !errors.amount,
+                                                }">
+                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
+                                                <option value="renew">{{$t('general.renew')}}</option>
+                                            </select>
+
+                                            <template v-if="errors.type">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.type"
                                                     :key="index"
                                                 >{{ errorMessage }}
                                                 </ErrorMessage>
@@ -866,64 +1094,6 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label v-if="index == 0" class="control-label">
-                                                {{ getCompanyKey('date_from') }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                type="date"
-                                                v-model="$v.create.date_from.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.date_from.$error ||
-                                                        errors.date_from,
-                                                    'is-valid':
-                                                        !$v.create.date_from
-                                                            .$invalid &&
-                                                        !errors.date_from,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.date_from">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label v-if="index == 0" class="control-label">
-                                                {{ getCompanyKey('date_to') }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                type="date"
-                                                v-model="$v.create.date_to.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.date_to.$error ||
-                                                        errors.date_to,
-                                                    'is-valid':
-                                                        !$v.create.date_to
-                                                            .$invalid &&
-                                                        !errors.date_to,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.date_to">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
                                 </div>
                             </form>
                         </b-modal>
@@ -947,6 +1117,25 @@ export default {
                                                 v-model="isCheckAll"
                                                 style="width: 17px; height: 17px"
                                             />
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.serial_number">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.serial_number") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="
+                                                        transactions.sort(
+                                                            sortString(
+                                                                $i18n.locale == 'ar' ? 'serial_number' : 'serial_number'
+                                                            )
+                                                        )
+                                                    "></i>
+                                                <i class="fas fa-arrow-down" @click="
+                                                        transactions.sort(
+                                                            sortString($i18n.locale == 'ar' ? '-serial_number' : '-serial_number')
+                                                        )
+                                                    "></i>
+                                            </div>
                                         </div>
                                     </th>
                                     <th v-if="setting.cm_member_id">
@@ -983,6 +1172,21 @@ export default {
                                                 <i
                                                     class="fas fa-arrow-down"
                                                     @click="transactions.sort(sortString('-amount'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.type">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("subscription_type") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('type'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-type'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -1042,6 +1246,11 @@ export default {
                                             />
                                         </div>
                                     </td>
+                                    <td v-if="setting.serial_number">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.prefix }}
+                                        </h5>
+                                    </td>
                                     <td v-if="setting.cm_member_id">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
@@ -1051,6 +1260,9 @@ export default {
                                     </td>
                                     <td v-if="setting.amount">
                                         <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                    </td>
+                                    <td v-if="setting.type">
+                                        <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
                                     </td>
                                     <td v-if="setting.date_from">
                                         <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
@@ -1138,6 +1350,33 @@ export default {
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("branch") }}</label>
+                                                            <multiselect @input="showBranchModalEdit"
+                                                                         v-model="edit.branch_id"
+                                                                         :options="branches.map((type) => type.id)"
+                                                                         :custom-label="
+                                                                        (opt) =>$i18n.locale == 'ar'
+                                                                                ? branches.find((x) => x.id == opt).name
+                                                                                : branches.find((x) => x.id == opt).name_e"
+                                                                         :class="{
+                                                                            'is-invalid':$v.edit.branch_id.$error || errors.branch_id,
+                                                                        }">
+                                                            </multiselect>
+                                                            <div v-if="!$v.edit.branch_id.required"
+                                                                 class="invalid-feedback">
+                                                                {{ $t("general.fieldIsRequired") }}
+                                                            </div>
+
+                                                            <template v-if="errors.branch_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.branch_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
                                                         <div class="form-group position-relative">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("member") }}
@@ -1167,35 +1406,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
+
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label  class="control-label">
-                                                                {{ getCompanyKey("subscription_amount") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                step="any"
-                                                                class="form-control"
-                                                                v-model="$v.edit.amount.$model"
-                                                                :class="{
-                                                                  'is-invalid': $v.edit.amount.$error || errors.amount,
-                                                                  'is-valid':
-                                                                    !$v.edit.amount.$invalid && !errors.amount,
-                                                                }"
-                                                            />
-                                                            <template v-if="errors.amount">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.amount"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label v-if="index == 0" class="control-label">
+                                                            <label class="control-label">
                                                                 {{ getCompanyKey('date_from') }}
                                                                 <span class="text-danger">*</span>
                                                             </label>
@@ -1224,7 +1438,7 @@ export default {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label v-if="index == 0" class="control-label">
+                                                            <label class="control-label">
                                                                 {{ getCompanyKey('date_to') }}
                                                                 <span class="text-danger">*</span>
                                                             </label>
@@ -1247,6 +1461,57 @@ export default {
                                                                 <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
                                                                               :key="index">
                                                                     {{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label  class="control-label">
+                                                                {{ getCompanyKey("subscription_type") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <select  class="form-control"  v-model="$v.edit.type.$model" :class="{
+                                                                  'is-invalid': $v.edit.type.$error || errors.amount,
+                                                                  'is-valid':
+                                                                    !$v.edit.type.$invalid && !errors.amount,
+                                                                }">
+                                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
+                                                                <option value="renew">{{$t('general.renew')}}</option>
+                                                            </select>
+
+                                                            <template v-if="errors.type">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.type"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label  class="control-label">
+                                                                {{ getCompanyKey("subscription_amount") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                step="any"
+                                                                class="form-control"
+                                                                v-model="$v.edit.amount.$model"
+                                                                :class="{
+                                                                  'is-invalid': $v.edit.amount.$error || errors.amount,
+                                                                  'is-valid':
+                                                                    !$v.edit.amount.$invalid && !errors.amount,
+                                                                }"
+                                                            />
+                                                            <template v-if="errors.amount">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.amount"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
                                                                 </ErrorMessage>
                                                             </template>
                                                         </div>

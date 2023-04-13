@@ -18,8 +18,18 @@ return new class extends Migration
             $table->date('date');
             $table->double('amount');
             $table->string('module_type')->nullable();
+            $table->unsignedInteger('serial_id')->nullable();
             $table->unsignedInteger('invoice_id')->nullable();
             $table->unsignedInteger('break_id')->nullable();
+            $table->unsignedInteger('sponsor_id')->nullable();
+            $table->unsignedInteger("branch_id")->nullable();
+            $table->unsignedInteger("document_id")->nullable();
+            $table->unsignedInteger("cm_member_id")->nullable();
+            $table->string('serial_number')->nullable();
+            $table->date('date_from')->nullable();
+            $table->date('date_to')->nullable();
+            $table->string('prefix')->nullable();
+            $table->string('type')->comment('subscribe,renew');
             $table->softDeletes();
             $table->timestamps();
         });

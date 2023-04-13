@@ -30,10 +30,15 @@ class TransactionRequest extends FormRequest
             'transactions.*.module_type' => "nullable|string",
             'transactions.*.invoice_id' => "nullable|exists:rlst_invoices,id",
             'transactions.*.break_id' => "nullable|exists:rp_break_downs,id",
+            'transactions.*.sponsor_id' => "nullable|exists:cm_sponsers,id",
+            'transactions.*.branch_id' => "nullable|exists:general_branches,id",
+            'transactions.*.document_id' => "nullable|exists:general_documents,id",
             'transactions.*.cm_member_id' => "nullable|exists:cm_members,id",
-            'transactions.*.date_from' => 'nullable|date',
-            'transactions.*.date_to' => 'nullable|date',
-
+            'transactions.*.serial_number' => "nullable|string",
+            'transactions.*.date_from' => 'nullable|date|before_or_equal:transactions.*.date_to',
+            'transactions.*.date_to' => 'nullable|date|after:transactions.*.date_from',
+            'transactions.*.prefix' => "nullable|string",
+            'transactions.*.type' => "required|string|in:subscribe,renew",
         ];
     }
 }

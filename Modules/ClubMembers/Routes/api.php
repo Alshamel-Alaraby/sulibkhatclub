@@ -34,13 +34,26 @@ Route::prefix('club-members')->group(function () {
     // members routes
     Route::group(['prefix' => 'members'], function () {
 
+        Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
+
+        Route::get('/Acceptance', 'CmMemberController@allAcceptance')->name('cm-members.allAcceptance');
+
         Route::get('/', 'CmMemberController@all')->name('cm-members.all');
         Route::get('/logs/{id}', 'CmMemberController@logs')->name('cm-members.logs');
         Route::get('/{id}', 'CmMemberController@find')->name('cm-members.find');
+
+
         Route::post('/', 'CmMemberController@create')->name('cm-members.create');
         Route::put('/{id}', 'CmMemberController@update')->name('cm-members.update');
         Route::post("/bulk-delete", "CmMemberController@bulkDelete");
         Route::delete('/{id}', 'CmMemberController@delete')->name('cm-members.delete');
+
+        Route::put('/accept-member/{id}', 'CmMemberController@acceptMember')->name('cm-members.acceptMember');
+        Route::put('/decline-member/{id}', 'CmMemberController@declineMember')->name('cm-members.declineMember');
+
+        Route::put('/sponsor/{sponsor_id}', 'CmMemberController@updateSponsor')->name('cm-members.updateSponsor');
+
+
     });
 
     // financial status routes

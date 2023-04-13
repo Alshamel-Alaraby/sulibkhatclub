@@ -609,7 +609,6 @@ export default {
                 acceptance_number: "",
                 first_name: "",
                 second_name: "",
-                acceptance_date: this.formatDate(new Date()),
                 third_name: "",
                 last_name: "",
                 family_name: "",

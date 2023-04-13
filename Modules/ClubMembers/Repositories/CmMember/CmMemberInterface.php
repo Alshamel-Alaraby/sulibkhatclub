@@ -17,4 +17,14 @@ interface CmMemberInterface
 
     public function delete($id);
 
+    public function allAcceptancePending($request);
+
+    public function updateAcceptance($request, $id);
+
+    public function updateDecline($request, $id);
+
+    public function updateSponsor($request, $sponsor_id);
+
+
+    public function allAcceptance($request);
 }

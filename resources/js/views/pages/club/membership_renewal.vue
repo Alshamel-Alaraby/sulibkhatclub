@@ -475,8 +475,8 @@ export default {
         AddSubmit() {
 
             this.create.memberships_renewals.forEach((el,index) => {
-                this.create.memberships_renewals[index].from = `${el.fromDay}-${el.fromMonth}`;
-                this.create.memberships_renewals[index].to = `${el.toDay}-${el.toMonth}`;
+                this.create.memberships_renewals[index].from = `${el.fromMonth}-${el.fromDay}`;
+                this.create.memberships_renewals[index].to = `${el.toMonth}-${el.toDay}`;
             });
 
             this.$v.create.$touch();
@@ -520,8 +520,8 @@ export default {
          *  edit module
          */
         editSubmit(id) {
-            this.edit.from = `${this.edit.fromDay}-${this.edit.fromMonth}`;
-            this.edit.to = `${this.edit.toDay}-${this.edit.toMonth}`;
+            this.edit.from = `${this.edit.fromMonth}-${this.edit.fromDay}`;
+            this.edit.to = `${this.edit.toMonth}-${this.edit.toDay}`;
 
             this.$v.edit.$touch();
 
@@ -565,10 +565,10 @@ export default {
          */
          resetModalEdit(id) {
             let module = this.membershipRenewals.find((e) => id == e.id);
-            this.edit.fromDay = module.from.slice(0,2);
-            this.edit.fromMonth = module.from.slice(3);
-            this.edit.toDay = module.to.slice(0,2);
-            this.edit.toMonth = module.to.slice(3);
+            this.edit.fromDay = module.from.slice(3) ;
+            this.edit.fromMonth = module.from.slice(0,2);
+            this.edit.toDay = module.to.slice(3);
+            this.edit.toMonth = module.to.slice(0,2);
             this.edit.membership_availability =  module.membership_availability;
             this.edit.membership_cost = module.membership_cost;
             this.edit.renewal_availability = module.renewal_availability;
@@ -682,12 +682,12 @@ export default {
                                 </div>
 
                                 <div class="d-inline-block position-relative" style="width: 77%">
-                  <span :class="[
-                    'search-custom position-absolute',
-                    $i18n.locale == 'ar' ? 'search-custom-ar' : '',
-                  ]">
-                    <i class="fe-search"></i>
-                  </span>
+                                  <span :class="[
+                                    'search-custom position-absolute',
+                                    $i18n.locale == 'ar' ? 'search-custom-ar' : '',
+                                  ]">
+                                    <i class="fe-search"></i>
+                                  </span>
                                     <input class="form-control" style="display: block; width: 93%; padding-top: 3px" type="text"
                                            v-model.trim="search" :placeholder="`${$t('general.Search')}...`" />
                                 </div>
@@ -1091,10 +1091,10 @@ export default {
                                         </div>
                                     </td>
                                     <td v-if="setting.from">
-                                        {{ data.from }}
+                                        {{ data.from.slice(3)+'-'+data.from.slice(0,2) }}
                                     </td>
                                     <td v-if="setting.to">
-                                        {{ data.to }}
+                                        {{ data.to.slice(3)+'-'+data.to.slice(0,2) }}
                                     </td>
                                     <td v-if="setting.membership_availability">
                                         <span :class="[

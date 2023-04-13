@@ -36,6 +36,7 @@ class StatusRequest extends FormRequest
             "color"      => "nullable|string",
             "icon"       => "nullable|string",
             "company_id" => "nullable",
+            "module_type"       => "nullable|string",
         ];
     }
 }

@@ -31,7 +31,7 @@ class DatabaseBackupController extends Controller
 
     public function create(Request $request)
     {
-        \Illuminate\Support\Facades\Artisan::call("backup:run --only-db --disable-notifications");
+        \Illuminate\Support\Facades\Artisan::call("backup:run --disable-notifications");
         // get path files name in path /home/mostafa/www/admin-partners/public/uploads/Laravel
         $files = \Illuminate\Support\Facades\File::files(public_path('uploads/Laravel'));
         foreach ($files as $file) {

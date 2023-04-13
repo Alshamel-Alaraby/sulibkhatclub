@@ -13,7 +13,7 @@ class Document extends Model
 
     protected $table = 'general_documents';
 
-    protected $guarded = [''];
+    protected $guarded = ['id'];
     protected $casts = ["attributes" => "json", "contusion" => "\App\Enums\BooleanStatus"];
 
     public function payment_plan_installments()
@@ -21,7 +21,7 @@ class Document extends Model
         return $this->hasMany(RpPaymentPlanInstallment::class, 'doc_type_id');
     }
 
-    public function orders()
+    public function orders ()
     {
         return $this->hasMany(\Modules\BoardsRent\Entities\Order::class, 'doc_type_id');
     }

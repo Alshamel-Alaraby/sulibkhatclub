@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\TransactionRequest;
-use App\Http\Resources\Transaction\TransactionResource;
 use App\Repositories\Translation\TranslationInterface;
-use Illuminate\Http\Request;
+use App\Http\Resources\Transaction\TransactionResource;
+use App\Http\Requests\Transaction\UpdateTransactionRequest;
 
 class TransactionController extends Controller
 {
@@ -37,13 +38,13 @@ class TransactionController extends Controller
         return responseJson(200, 'success');
     }
 
-    public function update(TransactionRequest $request, $id)
+    public function update(UpdateTransactionRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        $this->modelInterface->update($request->validated(), $id);
+        $this->modelInterface->update($request->all(), $id);
         $model->refresh();
         return responseJson(200, 'success', new TransactionResource($model));
 

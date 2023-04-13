@@ -64,6 +64,7 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmPendingMemberInterface::class, CmPendingMemberRepository::class);
         $this->app->bind(CmMemberPermissionInterface::class, CmMemberPermissionRepository::class);
         $this->app->bind(CmMembershipRenewalInterface::class, CmMembershipRenewalRepository::class);
+
     }
 
     /**

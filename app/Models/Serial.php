@@ -22,6 +22,8 @@ class Serial extends Model
         'document_id',
         'is_default',
         "branch_id",
+        "name",
+        "name_e"
     ];
     protected $casts = [
         'is_default' => 'App\Enums\IsDefault',

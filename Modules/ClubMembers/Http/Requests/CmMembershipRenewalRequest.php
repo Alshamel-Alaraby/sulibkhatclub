@@ -18,31 +18,27 @@ class CmMembershipRenewalRequest extends FormRequest
     }
 
 /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+ * Get the validation rules that apply to the request.
+ *
+ * @return array
+ */
     public function rules()
     {
 
-         // required|date_format:m-d|unique:customers,email_address
+        // required|date_format:m-d|unique:customers,email_address
 
         return [
             'memberships_renewals' => 'required|array',
-            'memberships_renewals.*.from'      => 'required|date_format:d-m|unique:cm_memberships_renewals,from' ,
-            'memberships_renewals.*.to'      => 'required|date_format:d-m|after:from|unique:cm_memberships_renewals,to' ,
+            'memberships_renewals.*.from' => 'required|date_format:m-d|unique:cm_memberships_renewals,from',
+            'memberships_renewals.*.to' => 'required|date_format:m-d|after:from|unique:cm_memberships_renewals,to',
+            'memberships_renewals.*.membership_availability' => 'required|in:0,1',
+            'memberships_renewals.*.membership_cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
 
-            'memberships_renewals.*.membership_availability'    => 'required|in:0,1' ,
-            'memberships_renewals.*.membership_cost'      => 'required|regex:/^\d+(\.\d{1,2})?$/' ,
-
-            'memberships_renewals.*.renewal_availability'    => 'required|in:0,1' ,
-            'memberships_renewals.*.renewal_cost'      => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'memberships_renewals.*.renewal_availability' => 'required|in:0,1',
+            'memberships_renewals.*.renewal_cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
 
         ];
 
     }
 
-
-
 }
-

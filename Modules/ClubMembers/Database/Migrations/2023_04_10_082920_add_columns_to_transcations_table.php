@@ -16,9 +16,9 @@ return new class extends Migration
 
         // add columns to general_transactions
         Schema::table('general_transactions', function (Blueprint $table) {
-            $table->unsignedInteger('cm_member_id')->nullable();
-            $table->date("date_from")->nullable();
-            $table->date("date_to")->nullable();
+//            $table->unsignedInteger('cm_member_id')->nullable();
+//            $table->date("date_from")->nullable();
+//            $table->date("date_to")->nullable();
         });
     }
 

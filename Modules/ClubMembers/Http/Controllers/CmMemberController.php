@@ -4,10 +4,12 @@ namespace Modules\ClubMembers\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Http\Requests\CmMemberAcceptRequest;
+use Modules\ClubMembers\Http\Requests\CmMemberDeclineRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
 use Modules\ClubMembers\Transformers\CmMemberResource;
-
 
 class CmMemberController extends Controller
 {
@@ -15,6 +17,7 @@ class CmMemberController extends Controller
     public function __construct(private CmMemberInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
+
     }
 
     public function all(Request $request)
@@ -34,6 +37,13 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', new CmMemberResource($model));
     }
 
+    public function allAcceptancePending(Request $request)
+    {
+        $models = $this->modelInterface->allAcceptancePending($request);
+
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
     public function create(CmMemberRequest $request)
     {
         $model = $this->modelInterface->create($request);
@@ -51,6 +61,28 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', new CmMemberResource($model));
     }
 
+    public function acceptMember(CmMemberAcceptRequest $request, $id)
+    {
+        $model = $this->modelInterface->find($id);
+
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        $model = $this->modelInterface->updateAcceptance($request, $id);
+
+        return responseJson(200, 'success', new CmMemberResource($model));
+    }
+
+    public function declineMember(CmMemberDeclineRequest $request, $id)
+    {
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        $model = $this->modelInterface->updateDecline($request, $id);
+
+        return responseJson(200, 'success', new CmMemberResource($model));
+    }
 
     public function delete($id)
     {
@@ -93,4 +125,43 @@ class CmMemberController extends Controller
         return responseJson(200, __('Done'));
     }
 
+    public function updateSponsor(Request $request, $sponsor_id)
+    {
+
+        $model = CmMember::where("sponsor_id", $sponsor_id)->get();
+
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        $model = $this->modelInterface->updateSponsor($request, $sponsor_id);
+
+        return responseJson(200, 'success', CmMemberResource::collection($model));
+
+    }
+
+    public function allAcceptance(Request $request)
+    {
+        $models = $this->modelInterface->allAcceptance($request);
+
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
+    // public function bulkUpdate(Request $request)
+    // {
+    //     $updatedIds = [];
+    //     foreach ($request->ids as $id) {
+    //         $model = $this->modelInterface->find($id);
+    //         if ($model->acceptance == 0) {
+    //             $model->acceptance = 1;
+    //             $model->save();
+    //             $updatedIds[] = $id;
+    //         }
+    //     }
+
+    //     if (count($updatedIds) > 0) {
+    //         return responseJson(200, __('Updated successfully'), ['updatedIds' => $updatedIds]);
+    //     }
+
+    //     return responseJson(400, __('No items were updated'));
+    // }
 }

@@ -20,5 +20,6 @@ class ClubMembersDatabaseSeeder extends Seeder
         $this->call(CmMembersTypesDatabaseSeederTableSeeder::class);
         $this->call(CmFinancialStatusDatabaseSeederTableSeeder::class);
         $this->call(CmMembersPermissionsDatabaseSeederTableSeeder::class);
+        $this->call(CmSponsorDatabaseSeederTableSeeder::class);
     }
 }

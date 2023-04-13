@@ -219,7 +219,6 @@ export const menuItems = [
                         label: 'general.sponsor',
                         link: '/dashboard/club/sponsor'
                     },
-
                     {
                         id: 122155,
                         name: 'club-setting',
@@ -253,6 +252,12 @@ export const menuItems = [
                         name: 'club-member',
                         label: 'general.member',
                         link: '/dashboard/club/member'
+                    },
+                    {
+                        id: 12214,
+                        name: 'club-membership-renewal',
+                        label: 'general.membership_renewal',
+                        link: '/dashboard/club/membership-renewal'
                     }
                 ]
             },
@@ -271,15 +276,15 @@ export const menuItems = [
                     },
                     {
                         id: 13035656,
-                        name: 'club-subscription',
+                        name: 'club-multi-subscription',
                         label: 'general.multiSubscription',
-                        link: '/#'
+                        link: '/dashboard/club/multiSubscription'
                     },
                     {
                         id: 13036996,
-                        name: 'club-subscription',
+                        name: 'club-change-spenser',
                         label: 'general.changeSpenser',
-                        link: '/#'
+                        link: '/dashboard/club/change-spenser'
                     },
                 ]
             },
@@ -726,7 +731,7 @@ export const menuItems = [
                 name: 'receivable payable',
                 label: 'general.transaction',
                 isMenuCollapsed: false,
-                subItems:[
+                subItems: [
                     {
                         id: 2241,
                         label: 'general.openinig balance',

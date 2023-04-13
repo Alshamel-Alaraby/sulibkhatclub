@@ -14,7 +14,33 @@ class CmMembershipRenewalRepository implements CmMembershipRenewalInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->where(function ($q) use ($request) {
+            if ($request->from && !$request->to) {
+                $from = $request->from;
+                $from = explode('-', $from);
+                $from = $from[1] . '-' . $from[2];
+                $q->where('from', $from);
+            }
+            if ($request->to && !$request->from) {
+                $to = $request->to;
+                $to = explode('-', $to);
+                $to = $to[1] . '-' . $to[2];
+                $q->where('to', $to);
+            }
+
+            if ($request->from && $request->to) {
+                $from = $request->from;
+                $from = explode('-', $from);
+                $from = $from[1] . '-' . $from[2];
+
+                $to = $request->to;
+                $to = explode('-', $to);
+                $to = $to[1] . '-' . $to[2];
+
+                $q->where('from', $from);
+                $q->where('to', $to);
+            }
+        })->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -28,7 +54,6 @@ class CmMembershipRenewalRepository implements CmMembershipRenewalInterface
         return $this->model->find($id);
     }
 
-
     public function create($request)
     {
         //return $request->memberships_renewals;
@@ -38,9 +63,9 @@ class CmMembershipRenewalRepository implements CmMembershipRenewalInterface
         //}
 
         // creation in database happens here !!
-         DB::transaction(function () use ($request) {
-            foreach ($request['memberships_renewals'] as $membership_renewal){
-                 $this->model->create($membership_renewal);
+        DB::transaction(function () use ($request) {
+            foreach ($request['memberships_renewals'] as $membership_renewal) {
+                $this->model->create($membership_renewal);
             }
 
         });
@@ -52,9 +77,6 @@ class CmMembershipRenewalRepository implements CmMembershipRenewalInterface
             $this->model->where("id", $id)->update($request);
         });
 
-        $model = $this->model->find($id);
-
-        return $model;
     }
 
     public function logs($id)

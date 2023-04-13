@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class CmTypePermission extends Model
 {
@@ -20,9 +21,8 @@ class CmTypePermission extends Model
         'membership_period',
         'allowed_subscription_date',
     ];
+
     protected $table = 'cm_type_permissions';
-
-
 
     public function type()
     {
@@ -43,6 +43,13 @@ class CmTypePermission extends Model
 
 
 
+    public function memberTypes()
+    {
+        return $this->belongsToMany(CmMemberType::class, 'cm_members_types_permissions', 'member_permission_id', 'member_type_id');
+    }
+
+
+
     public function hasChildren()
     {
         return false;
@@ -57,5 +64,14 @@ class CmTypePermission extends Model
             ->logAll()
             ->useLogName('Type Permission')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+    }
+
+
+    protected function CmPermissionsId(): Attribute
+    {
+        return Attribute::make(
+            set:fn($value) => json_encode($value),
+            get:fn($value) => json_decode($value)
+        );
     }
 }
