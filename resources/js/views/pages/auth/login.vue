@@ -1,7 +1,7 @@
 <script>
 import Auth from "../../layouts/auth";
 
-import {required, email} from "vuelidate/lib/validators";
+import { required, email } from "vuelidate/lib/validators";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
 
@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 export default {
     page: {
         title: "Login",
-        meta: [{name: "description", content: "login"}],
+        meta: [{ name: "description", content: "login" }],
     },
     data() {
         return {
@@ -51,8 +51,8 @@ export default {
             } else {
                 this.submitted = true;
                 this.isError = false;
-                const {email, password} = this;
-                if (this.login_as == "admin"){
+                const { email, password } = this;
+                if (this.login_as == "admin") {
                     axios
                         .post(`${process.env.MIX_APP_URL_OUTSIDE}api/partners/login`, {
                             email,
@@ -67,11 +67,11 @@ export default {
                             this.isSuccess = true;
 
                             if (l.partner.companies.length > 1 && l.partner.companies) {
-                                this.$router.push({name: "company"});
+                                this.$router.push({ name: "company" });
                             } else if (l.partner.companies.length == 1) {
                                 this.$store.commit("auth/editCompanyId", l.partner.companies[0].id);
                                 await this.companyId(l.partner.companies[0].id);
-                                this.$router.push({name: "home"});
+                                this.$router.push({ name: "home" });
                             } else {
                                 this.submitted = false;
                             }
@@ -82,7 +82,7 @@ export default {
                         .finally(() => {
                             this.submitted = false;
                         });
-                }else {
+                } else {
                     adminApi.post(`/users/login`, {
                         email,
                         password,
@@ -94,7 +94,7 @@ export default {
                             this.$store.commit("auth/editType", "user");
                             this.isSuccess = true;
                             await this.workflowUser(l.user.roles);
-                            this.$router.push({name: "home"});
+                            this.$router.push({ name: "home" });
                         })
                         .catch((err) => {
                             this.isError = true;
@@ -134,26 +134,27 @@ export default {
                         }
                     });
                     this.$store.commit('auth/editWorkFlowTrees', ['dictionary', "home", 'company', ...name]);
-                    if(l.document_company_module.length > 0){
+                    if (l.document_company_module.length > 0) {
                         let documents = [];
                         l.document_company_module.forEach(e => {
-                            if(e.document_types.length > 0){
+                            if (e.document_types.length > 0) {
                                 e.document_types.forEach(w => {
                                     documents.push({
                                         name: w.name,
                                         name_e: w.name_e,
                                         is_admin: w.is_admin,
                                         is_default: 0,
-                                        company_id: id
+                                        company_id: id,
+                                        document_relateds: w.document_relateds.map(el => el.id)
                                     });
                                 });
                             }
                         });
-                        if(documents.length > 0){
+                        if (documents.length > 0) {
                             documents.forEach(e => e.is_admin = 1);
                             adminApi
-                                .post(`/document/from_admin`,{documents})
-                                .then((res) => {})
+                                .post(`/document/from_admin`, { documents })
+                                .then((res) => { })
                                 .catch((err) => {
                                     Swal.fire({
                                         icon: "error",
@@ -197,14 +198,14 @@ export default {
                         <div class="text-center w-75 m-auto">
                             <div class="auth-logo">
                                 <router-link to="/" class="logo logo-dark text-center">
-                  <span class="logo-lg">
-                    <img src="/images/shamel-logo-006.png" alt height="20"/>
-                  </span>
+                                    <span class="logo-lg">
+                                        <img src="/images/shamel-logo-006.png" alt height="20" />
+                                    </span>
                                 </router-link>
                                 <router-link to="/" class="logo logo-light text-center">
-                  <span class="logo-lg">
-                    <img src="/images/shamel-logo-006.png" alt height="20"/>
-                  </span>
+                                    <span class="logo-lg">
+                                        <img src="/images/shamel-logo-006.png" alt height="20" />
+                                    </span>
                                 </router-link>
                             </div>
                             <p class="text-muted mb-4 mt-3">
@@ -213,70 +214,41 @@ export default {
                         </div>
 
                         <form action="#" @submit.prevent="tryToLogIn">
-                            <b-alert
-                                variant="success"
-                                class="mt-3 text-center"
-                                v-if="isSuccess"
-                                :show="5"
-                                dismissible
-                            >{{ $t("login.success") }}
-                            </b-alert
-                            >
+                            <b-alert variant="success" class="mt-3 text-center" v-if="isSuccess" :show="5" dismissible>{{
+                                $t("login.success") }}
+                            </b-alert>
 
-                            <b-alert
-                                variant="danger"
-                                class="mt-3 text-center"
-                                v-if="isError"
-                                :show="5"
-                                dismissible
-                            >{{ $t("login.danger") }}
-                            </b-alert
-                            >
+                            <b-alert variant="danger" class="mt-3 text-center" v-if="isError" :show="5" dismissible>{{
+                                $t("login.danger") }}
+                            </b-alert>
                             <div class="form-group mb-3">
                                 <label for="emailaddress">{{ $t("login.Emailaddress") }}</label>
-                                <input
-                                    class="form-control"
-                                    v-model="email"
-                                    type="email"
-                                    id="emailaddress"
-                                    :placeholder="$t('login.Enteryouremail')"
-                                    :class="{ 'is-invalid': $v.email.$error }"
-                                />
+                                <input class="form-control" v-model="email" type="email" id="emailaddress"
+                                    :placeholder="$t('login.Enteryouremail')" :class="{ 'is-invalid': $v.email.$error }" />
                                 <div v-if="$v.email.$error" class="invalid-feedback">
-                  <span v-if="!$v.email.required">{{
-                          $t("general.fieldIsRequired")
-                      }}</span>
+                                    <span v-if="!$v.email.required">{{
+                                        $t("general.fieldIsRequired")
+                                    }}</span>
                                     <span v-if="!$v.email.email">{{
-                                            $t("general.PleaseEnterValidEmail")
-                                        }}</span>
+                                        $t("general.PleaseEnterValidEmail")
+                                    }}</span>
                                 </div>
                             </div>
 
                             <div class="form-group mb-3">
                                 <label for="password">{{ $t("login.Password") }}</label>
                                 <div class="input-group input-group-merge">
-                                    <input
-                                        v-model="password"
-                                        :type="type"
-                                        id="password"
-                                        class="form-control"
+                                    <input v-model="password" :type="type" id="password" class="form-control"
                                         :placeholder="$t('login.Enteryourpassword')"
-                                        :class="{ 'is-invalid': $v.password.$error }"
-                                    />
+                                        :class="{ 'is-invalid': $v.password.$error }" />
 
-                                    <div
-                                        class="input-group-append"
-                                        data-password="false"
-                                        @click="
-                      type == 'password' && password
-                        ? (type = 'text')
-                        : (type = 'password')
-                    "
-                                    >
+                                    <div class="input-group-append" data-password="false" @click="
+                                        type == 'password' && password
+                                            ? (type = 'text')
+                                            : (type = 'password')
+                                    ">
                                         <div :class="['input-group-text', type == 'text' ? 'show' : '']">
-                      <span
-                          :class="['password-eye', type == 'text' ? 'show' : '']"
-                      ></span>
+                                            <span :class="['password-eye', type == 'text' ? 'show' : '']"></span>
                                         </div>
                                     </div>
 
@@ -289,28 +261,24 @@ export default {
                                 <label>
                                     {{ $t("general.loginAs") }}
                                 </label>
-                                <select
-                                    class="custom-select mr-sm-2"
-                                    data-create="4"
-                                    v-model="login_as"
-                                >
+                                <select class="custom-select mr-sm-2" data-create="4" v-model="login_as">
                                     <option value="admin">{{ $t("general.Admin") }}</option>
                                     <option value="employee">{{ $t("general.Employee") }}</option>
                                 </select>
                             </div>
                             <!-- <div class="form-group mb-3">
-                              <div class="custom-control custom-checkbox">
-                                <input
-                                  type="checkbox"
-                                  class="custom-control-input"
-                                  id="checkbox-signin"
-                                  checked
-                                />
-                                <label class="custom-control-label" for="checkbox-signin">{{
-                                  $t("login.Rememberme")
-                                }}</label>
-                              </div>
-                            </div> -->
+                                              <div class="custom-control custom-checkbox">
+                                                <input
+                                                  type="checkbox"
+                                                  class="custom-control-input"
+                                                  id="checkbox-signin"
+                                                  checked
+                                                />
+                                                <label class="custom-control-label" for="checkbox-signin">{{
+                                                  $t("login.Rememberme")
+                                                }}</label>
+                                              </div>
+                                            </div> -->
 
                             <div class="form-group mb-0 text-center">
                                 <button class="btn btn-primary btn-block" type="submit" v-if="!submitted">
@@ -348,7 +316,7 @@ export default {
     color: #fff;
 }
 
-.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+.custom-checkbox .custom-control-input:checked~.custom-control-label::after {
     background-color: #3bafda;
 }
 

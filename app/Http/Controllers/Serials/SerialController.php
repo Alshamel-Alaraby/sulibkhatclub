@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Serials;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Serial\SerialRequest;
+use App\Http\Requests\SerialRequest;
 use App\Http\Resources\Serials\SerialResource;
 use App\Models\Serial;
 use App\Repositories\Serial\SerialRepositoryInterface;
@@ -26,18 +26,6 @@ class SerialController extends Controller
     public function index(Request $request)
     {
 
-        // if(count($_GET) > 0){
-        //     cacheForget('serials');
-        // }
-        // $serials = cacheGet('serials');
-        // if ($request->search || $request->is_active) {
-        //     cacheForget('serials');
-        //     $serials = $this->repository->getAll($request);
-        // }
-        // if (!$serials) {
-        //     $serials = $this->repository->getAll($request);
-        //     cachePut('serials', $serials);
-        // }
         $serials = $this->repository->getAll($request);
 
         return responseJson(200, 'success', ($this->resource)::collection($serials['data']), $serials['paginate'] ? getPaginates($serials['data']) : null);
@@ -51,15 +39,6 @@ class SerialController extends Controller
     public function store(SerialRequest $request)
     {
 
-        // if (!DB::table('companies')->find($request->company_id)) {
-        //     return responseJson(404, __('company does\'t exist'));
-        // }
-        // if (!DB::table('branches')->find($request->branch_id)) {
-        //     return responseJson(404, __('branch does\'t exist'));
-        // }
-        // if (!DB::table('stores')->find($request->store_id)) {
-        //     return responseJson(404, __('store does\'t exist'));
-        // }
         $this->repository->create($request->validated());
         return responseJson(200, __('done'));
 
@@ -171,20 +150,6 @@ class SerialController extends Controller
         }
         return responseJson(200, __('Done'));
     }
-
-    // public function getSerialByBranch($branch_id, $company_id = null)
-    // {
-    //     $serial = Serial::where('branch_id', $branch_id)->latest()->first();
-
-    //     // $serial = Serial::where([['branch_id', $branch_id],['company_id',$company_id]])->latest()->first();
-
-    //     if ($serial) {
-
-    //         return responseJson(200, __('Done'), new $this->resource($serial), 200);
-    //     }
-
-    //     return responseJson(404, __('not found'));
-    // }
 
     public function getSerialByBranchId(Request $request)
     {

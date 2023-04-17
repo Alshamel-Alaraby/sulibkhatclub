@@ -589,6 +589,10 @@
         }
     },
     "general": {
+        "id":"الاي دي",
+        "path":"المسار",
+        "created_at":"تاريخ الاضافة",
+        "linkedWithDocs":"الوثائق المرتبطة",
         "BothSponsorsAreSame":"لايمكن ادخال قيم متساوية",
         "declined":"مرفوض",
         "accepted":"مقبول",
@@ -752,6 +756,7 @@
         "Date": "التاريخ",
         "Active": "نشط",
         "Inactive": "غير نشط",
+        "name": "الاسم",
         "Name": "الاسم(عربي)",
         "Name_en": "الاسم(انجليزي)",
         "Areyousure": "هل انت متاكد ؟",
@@ -1020,6 +1025,9 @@
         "ordersTable": "جدول الطلبات",
         "membership_renewal": "تجديد العضويه",
         "membership_renewalTable": "جدول تجديد العضويه",
+        "male": "رجل",
+        "female": "انثي",
+        "memberRequest": "طلبات الاعضاء",
         "subscriptionTable": "جدول الاشتراكات",
         "subscription": "الاشتراكات",
         "multiSubscription": "اشتراكات متعددة",
@@ -1027,6 +1035,12 @@
         "subscribe": "اشتراك",
         "renew": "تجديد",
         "multiSubscriptionTable": "جدول الاشتراكات المتعددة",
-        "month": "شهر"
+        "month": "شهر",
+        "memberAccept": "الاعضاء المقبولين",
+        "memberAcceptTable": "جدول الاعضاء المقبولين",
+        "accept-reject-member": "قبول او رفض الاعضاء",
+        "membersRequestTable": "جدول طلبات الاعضاء",
+        "Approve": "موافق",
+        "non-Approve":  "مرفوض"
     }
 }

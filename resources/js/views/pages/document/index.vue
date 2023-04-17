@@ -56,6 +56,9 @@ export default {
             document_id: null,
             branches: [],
             serials: [],
+            create_linked_with_docs: [],
+            edit_linked_with_docs: [],
+            docsList: [],
             create: {
                 name: "",
                 name_e: "",
@@ -215,6 +218,47 @@ export default {
         this.getData();
     },
     methods: {
+        addDocs($action) {
+            this.isLoader = true;
+            let linked_with_docs = $action == "create" ? this.create_linked_with_docs : this.edit_linked_with_docs;
+            let data = $action == "create" ? this.create : this.edit;
+            adminApi
+                .put(`/document/${this.document_id}`, {
+                    document_relateds: linked_with_docs,
+                })
+                .then((res) => {
+                    this.isLoader = false;
+                    this.getData();
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.Addedsuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+
+                }).catch((err) => {
+                })
+        },
+        async docType() {
+            await adminApi
+                .get(
+                    `/document`
+                )
+                .then((res) => {
+                    let l = res.data;
+                    this.docsList = l.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+        },
+
         addBranchForm(method) {
             let form = null;
             if (method == "create") {
@@ -545,6 +589,7 @@ export default {
          */
         resetModalHidden() {
             this.create = { name: "", name_e: "", is_default: 0 };
+            this.create_linked_with_docs = [];
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -570,6 +615,7 @@ export default {
          */
         resetModal() {
             this.create = { name: "", name_e: "", is_default: 0 };
+            this.create_linked_with_docs = [];
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -589,6 +635,7 @@ export default {
             this.document_id = null;
             this.getBranches();
             this.getSerials();
+            this.docType();
             this.errors = {};
         },
         /**
@@ -715,7 +762,9 @@ export default {
          *   show Modal (edit)
          */
         async resetModalEdit(id) {
+            await this.docType();
             let module = this.documents.find((e) => id == e.id);
+
             this.$bvModal.show(`modal-edit-${id}`)
             this.edit.name = module.name;
             this.edit.name_e = module.name_e;
@@ -734,12 +783,14 @@ export default {
             this.document_id = module.id;
             this.branchFormEdit.branche_id = module.branche_id;
             this.branchFormEdit.serial_id = module.serial_id;
+            this.edit_linked_with_docs = module.document_Relateds.map(doc => { return doc.id });
             this.errors = {};
         },
         /**
          *  hidden Modal (edit)
          */
         resetModalHiddenEdit(id) {
+            this.edit_linked_with_docs = [];
             this.errors = {};
             this.edit = {
                 name: "",
@@ -883,9 +934,9 @@ export default {
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
                                 <!-- <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
-                                                    {{ $t("general.Create") }}
-                                                    <i class="fas fa-plus"></i>
-                                                </b-button> -->
+                                                                                {{ $t("general.Create") }}
+                                                                                <i class="fas fa-plus"></i>
+                                                                            </b-button> -->
                                 <div class="d-inline-flex">
                                     <button class="custom-btn-dowonload" @click="ExportExcel('xlsx')">
                                         <i class="fas fa-file-download"></i>
@@ -1258,6 +1309,42 @@ export default {
                                             </div>
                                         </div>
                                     </b-tab>
+                                    <b-tab :disabled="!document_id" :title="$t('general.linkedWithDocs')">
+                                        <div class="d-flex justify-content-end">
+                                            <b-button variant="success" v-if="!isLoader" type="submit" class="mx-1"
+                                                @click.prevent="addDocs('create')">
+                                                {{ $t("general.Add") }}
+                                            </b-button>
+                                            <b-button variant="success" class="mx-1" disabled v-else>
+                                                <b-spinner small></b-spinner>
+                                                <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                            </b-button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ $t("general.linkedWithDocs") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <multiselect :multiple="true" v-model="create_linked_with_docs"
+                                                        :options="docsList.map((type) => type.id)" :custom-label="
+                                                            (opt) =>
+                                                                $i18n.locale == 'ar'
+                                                                    ? docsList.find((x) => x.id == opt).name
+                                                                    : docsList.find((x) => x.id == opt).name_e
+                                                        ">
+                                                    </multiselect>
+                                                    <template v-if="errors.document_types">
+                                                        <ErrorMessage v-for="(errorMessage, index) in errors.document_types"
+                                                            :key="index">{{
+                                                                errorMessage
+                                                            }}</ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </b-tab>
                                 </b-tabs>
 
                             </form>
@@ -1362,13 +1449,13 @@ export default {
                                                         </div>
                                                     </a>
                                                     <!-- <a class="dropdown-item text-black" href="#"
-                                                                        @click.prevent="deleteModule(data.id)">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center text-black">
-                                                                            <span>{{ $t("general.delete") }}</span>
-                                                                            <i class="fas fa-times text-danger"></i>
-                                                                        </div>
-                                                                    </a> -->
+                                                                                                    @click.prevent="deleteModule(data.id)">
+                                                                                                    <div
+                                                                                                        class="d-flex justify-content-between align-items-center text-black">
+                                                                                                        <span>{{ $t("general.delete") }}</span>
+                                                                                                        <i class="fas fa-times text-danger"></i>
+                                                                                                    </div>
+                                                                                                </a> -->
                                                 </div>
                                             </div>
 
@@ -1378,7 +1465,8 @@ export default {
                                                 body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
                                                 @hidden="resetModalHiddenEdit(data.id)" size="lg">
                                                 <form>
-                                                    <div v-if="$store.state.auth.user.type == 'super_admin'" class="mb-3 d-flex justify-content-end">
+                                                    <div v-if="$store.state.auth.user.type == 'super_admin'"
+                                                        class="mb-3 d-flex justify-content-end">
                                                         <!-- Emulate built in modal footer ok and cancel button actions -->
                                                         <b-button variant="success" type="submit" class="mx-1"
                                                             v-if="!isLoader" @click.prevent="editSubmit(data.id)">
@@ -1512,7 +1600,8 @@ export default {
 
                                                         </b-tab>
                                                         <b-tab :title="$t('general.effects')">
-                                                            <div v-if="$store.state.auth.user.type == 'super_admin'" class="d-flex justify-content-end">
+                                                            <div v-if="$store.state.auth.user.type == 'super_admin'"
+                                                                class="d-flex justify-content-end">
                                                                 <b-button variant="success" v-if="!isLoader" type="submit"
                                                                     class="mx-1" @click.prevent="addEffects('update')">
                                                                     {{ $t("general.Add") }}
@@ -1704,6 +1793,46 @@ export default {
                                                                             class="invalid-feedback">
                                                                             {{ $t("general.fieldIsRequired") }}
                                                                         </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </b-tab>
+                                                        <b-tab :title="$t('general.linkedWithDocs')">
+                                                            <div class="d-flex justify-content-end">
+                                                                <b-button variant="success" v-if="!isLoader" type="submit"
+                                                                    class="mx-1" @click.prevent="addDocs('edit')">
+                                                                    {{ $t("general.Add") }}
+                                                                </b-button>
+                                                                <b-button variant="success" class="mx-1" disabled v-else>
+                                                                    <b-spinner small></b-spinner>
+                                                                    <span class="sr-only">{{ $t("login.Loading")
+                                                                    }}...</span>
+                                                                </b-button>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ $t("general.linkedWithDocs") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect :multiple="true"
+                                                                            v-model="edit_linked_with_docs"
+                                                                            :options="docsList.map((type) => type.id)"
+                                                                            :custom-label="
+                                                                                (opt) =>
+                                                                                    $i18n.locale == 'ar'
+                                                                                        ? docsList.find((x) => x.id == opt).name
+                                                                                        : docsList.find((x) => x.id == opt).name_e
+                                                                            ">
+                                                                        </multiselect>
+                                                                        <template v-if="errors.document_types">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.document_types"
+                                                                                :key="index">{{
+                                                                                    errorMessage
+                                                                                }}</ErrorMessage>
+                                                                        </template>
                                                                     </div>
                                                                 </div>
                                                             </div>

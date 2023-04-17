@@ -225,12 +225,12 @@ export const menuItems = [
                         label: 'general.settings',
                         link: '/dashboard/club/settings'
                     },
-                    {
-                        id: 13033,
-                        name: 'club-pending-member',
-                        label: 'general.pendingMembers',
-                        link: '/dashboard/club/pending-member'
-                    },
+                    // {
+                    //     id: 13033,
+                    //     name: 'club-pending-member',
+                    //     label: 'general.pendingMembers',
+                    //     link: '/dashboard/club/pending-member'
+                    // },
                     {
                         id: 130303,
                         name: 'club-financial-status',
@@ -239,7 +239,6 @@ export const menuItems = [
                     },
                 ]
             },
-
             {
                 id: 134211,
                 icon: "fas fa-hotel",
@@ -248,10 +247,28 @@ export const menuItems = [
                 isMenuCollapsed: false,
                 subItems: [
                     {
+                        id: 12221,
+                        name: 'club-member-apply',
+                        label: 'general.memberRequest',
+                        link: '/dashboard/club/member-apply'
+                    },
+                    {
                         id: 12214,
                         name: 'club-member',
                         label: 'general.member',
                         link: '/dashboard/club/member'
+                    },
+                    {
+                        id: 12210,
+                        name: 'club-member-Request',
+                        label: 'general.accept-reject-member',
+                        link: '/dashboard/club/members-requests'
+                    },
+                    {
+                        id: 12222,
+                        name: 'club-member-accept',
+                        label: 'general.memberAccept',
+                        link: '/dashboard/club/member-accept'
                     },
                     {
                         id: 12214,
@@ -286,17 +303,6 @@ export const menuItems = [
                         label: 'general.changeSpenser',
                         link: '/dashboard/club/change-spenser'
                     },
-                ]
-            },
-            {
-                id: 333201,
-                icon: "fas fa-hotel",
-                name: 'real estate',
-                label: 'general.reports',
-                isMenuCollapsed: false,
-                subItems: [
-
-
                 ]
             },
             {

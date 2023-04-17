@@ -5,9 +5,11 @@ namespace Modules\ClubMembers\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Http\Requests\CmAcceptMembersRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberAcceptRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberDeclineRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberRequest;
+use Modules\ClubMembers\Http\Requests\CmUpdateAcceptedMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
 use Modules\ClubMembers\Transformers\CmMemberResource;
 
@@ -146,22 +148,23 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    // public function bulkUpdate(Request $request)
-    // {
-    //     $updatedIds = [];
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->modelInterface->find($id);
-    //         if ($model->acceptance == 0) {
-    //             $model->acceptance = 1;
-    //             $model->save();
-    //             $updatedIds[] = $id;
-    //         }
-    //     }
+    public function acceptMembers(CmAcceptMembersRequest $request)
+    {
+        $this->modelInterface->acceptMembers($request->validated());
 
-    //     if (count($updatedIds) > 0) {
-    //         return responseJson(200, __('Updated successfully'), ['updatedIds' => $updatedIds]);
-    //     }
+        return responseJson(200, 'updated successfully');
 
-    //     return responseJson(400, __('No items were updated'));
-    // }
+    }
+
+
+    public function updateAcceptedMembers(CmUpdateAcceptedMemberRequest $request, $id)
+    {
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        $model = $this->modelInterface->update($request->validated(), $id);
+
+        return responseJson(200, 'Updated Successfully', new CmMemberResource($model));
+    }
 }

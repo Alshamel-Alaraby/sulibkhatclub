@@ -25,13 +25,13 @@ class StatusRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => ["nullable",Rule::unique('general_statuses')->where(function($querry){
+            "name" => ["nullable", Rule::unique('general_statuses')->where(function ($querry) {
                 $querry
-                    ->where("company_id",request()->company_id);
+                    ->where("company_id", request()->company_id);
             })],
-            "name_e" => ["nullable",Rule::unique('general_statuses')->where(function($querry){
+            "name_e" => ["nullable", Rule::unique('general_statuses')->where(function ($querry) {
                 $querry
-                    ->where("company_id",request()->company_id);
+                    ->where("company_id", request()->company_id);
             })],
             "color"      => "nullable|string",
             "icon"       => "nullable|string",

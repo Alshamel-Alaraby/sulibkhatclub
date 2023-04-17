@@ -24,23 +24,17 @@ class StatusController extends Controller
         return responseJson(200, 'success', new StatusResource($model));
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', StatusResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-
-
-
     public function create(StatusRequest $request)
     {
         $model = $this->modelInterface->create($request->validated());
         return responseJson(200, 'success');
     }
-
-
 
     public function update(StatusRequest $request, $id)
     {

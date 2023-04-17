@@ -96,17 +96,6 @@ class CmMemberRepository implements CmMemberInterface
         $model = $this->model->find($id);
         return $model;
     }
-/*
-public function updateSponsor($request, $sponsor_id)
-{
-DB::transaction(function () use ($sponsor_id, $request) {
-$this->model->where("sponsor_id", $sponsor_id)->update($request->all());
-});
-
-$models = $this->model->where("sponsor_id", $sponsor_id)->get();
-return $models;
-}
- */
 
     public function updateSponsor($request, $sponsor_id)
     {
@@ -129,8 +118,6 @@ return $models;
         $model->delete();
     }
 
-
-
     public function allAcceptance($request)
     {
 
@@ -145,5 +132,29 @@ return $models;
         }
 
     }
+
+    public function acceptMembers($request)
+    {
+        DB::transaction(function () use ($request) {
+
+            foreach ($request['accept-members'] as $accept_member) {
+                $max_membership_number = $this->model->max('membership_number');
+                $max = $max_membership_number + 1;
+
+                $member = $this->model->where('id', $accept_member['id'])->first();
+                if ($member) {
+
+                    $member->update(array_merge($accept_member,
+                        [
+                            'acceptance' => 1,
+                            'membership_number' => $max,
+                        ]));
+                }
+            }
+        });
+    }
+
+
+   
 
 }

@@ -25,6 +25,9 @@ interface CmMemberInterface
 
     public function updateSponsor($request, $sponsor_id);
 
-
     public function allAcceptance($request);
+
+    public function acceptMembers($request);
+
+   
 }

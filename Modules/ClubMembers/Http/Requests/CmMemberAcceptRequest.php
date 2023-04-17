@@ -24,8 +24,8 @@ class CmMemberAcceptRequest extends FormRequest
     {
         return [
             'acceptance' => 'nullable',
-            'acceptance_date'=>'required|date',
-            'acceptance_number'=>'nullable|string|max:255',
+            'session_date'=>'required|date',
+            'session_number'=>'nullable|string|max:255',
             'membership_date' =>'required|date',
             'membership_number' =>  'nullable|string|max:255',
 

@@ -20,7 +20,9 @@ class SerialResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'company_id' => $this->company_id,
+            'name' => $this->name,
+            'name_e' => $this->start_no,
+            'company_id' => $this->name_e,
             'start_no' => $this->start_no,
             "document" => new DocumentResource($this->document),
             "branch" => new BranchResource($this->branch),
@@ -28,7 +30,6 @@ class SerialResource extends JsonResource
             'suffix' => $this->suffix,
             'restart_period' => $this->restart_period,
             'is_default' => $this->is_default,
-            "branch" => $this->branch,
             "store" => $this->store,
             "has_child" => $this->has_child,
         ];

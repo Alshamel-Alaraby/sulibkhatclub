@@ -3,9 +3,7 @@
 namespace Modules\BoardsRent\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Task;
 use Modules\BoardsRent\Http\Requests\TaskRequest;
@@ -45,7 +43,6 @@ class TaskController extends Controller
     {
         $model = $this->model->create($request->validated());
         $model->refresh();
-
         return responseJson(200, 'created', new TaskResource($model));
 
     }

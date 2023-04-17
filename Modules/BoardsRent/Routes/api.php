@@ -101,7 +101,16 @@ Route::prefix('boards-rent')->group(function () {
         Route::get('/{id}', 'TaskController@find')->name('boards-rent.tasks.find');
         Route::delete('/{id}', 'TaskController@delete')->name('boards-rent.tasks.delete');
     });
-
+    // order-task
+    Route::group(['prefix' => 'order-task'], function () {
+        Route::get('/', 'OrderTaskController@all')->name('boards-rent.order-task.all');
+        Route::post('/', 'OrderTaskController@create')->name('boards-rent.order-task.create');
+        Route::put('/{id}', 'OrderTaskController@update')->name('boards-rent.order-task.update');
+        Route::delete("/bulk-delete", "OrderTaskController@bulkDelete");
+        Route::get('/logs/{id}', 'OrderTaskController@logs')->name('boards-rent.order-task.logs');
+        Route::get('/{id}', 'OrderTaskController@find')->name('boards-rent.order-task.find');
+        Route::delete('/{id}', 'OrderTaskController@delete')->name('boards-rent.order-task.delete');
+    });
     //LookUp
     Route::group(['prefix' => 'look_ups'], function () {
         Route::get('root-nodes', 'LookUpController@getRootNodes');

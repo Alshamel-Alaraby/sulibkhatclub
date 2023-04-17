@@ -5,18 +5,9 @@
         <div class="mt-3 row justify-content-center align-items-center">
           <div class="col-md-4" v-for="company in companies">
             <div class="text-center company-item" @click="companyId(company.id)">
-              <img
-                v-if="company.media"
-                class="img-thumbnail"
-                :src="company.media[0].webp"
-                @error="src = '/images/img-1.png'"
-              />
-              <img
-                v-else
-                class="img-thumbnail"
-                src="/images/img-1.png"
-                @error="src = '/images/img-1.png'"
-              />
+              <img v-if="company.media" class="img-thumbnail" :src="company.media[0].webp"
+                @error="src = '/images/img-1.png'" />
+              <img v-else class="img-thumbnail" src="/images/img-1.png" @error="src = '/images/img-1.png'" />
               <h4 class="mt-3">
                 {{ $i18n.locale == "ar" ? company.name : company.name_e }}
               </h4>
@@ -82,35 +73,37 @@ export default {
             "company",
             ...name,
           ]);
-            if(l.document_company_module.length > 0){
-                let documents = [];
-                l.document_company_module.forEach(e => {
-                    if(e.document_types.length > 0){
-                        e.document_types.forEach(w => {
-                            documents.push({
-                                name: w.name,
-                                name_e: w.name_e,
-                                is_admin: w.is_admin,
-                                is_default: 0,
-                                company_id: id
-                            });
-                        });
-                    }
+          if (l.document_company_module.length > 0) {
+            let documents = [];
+            l.document_company_module.forEach(e => {
+              if (e.document_types.length > 0) {
+                e.document_types.forEach(w => {
+                  documents.push({
+                    id: w.id,
+                    name: w.name,
+                    name_e: w.name_e,
+                    is_admin: w.is_admin,
+                    is_default: 0,
+                    company_id: id,
+                    document_relateds: w.document_relateds.map(el => el.id)
+                  });
                 });
-                if(documents.length > 0){
-                    documents.forEach(e => e.is_admin = 1);
-                    adminApi
-                        .post(`/document/from_admin`,{documents})
-                        .then((res) => {})
-                        .catch((err) => {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        })
-                }
+              }
+            });
+            if (documents.length > 0) {
+              documents.forEach(e => e.is_admin = 1);
+              adminApi
+                .post(`/document/from_admin`, { documents })
+                .then((res) => { })
+                .catch((err) => {
+                  Swal.fire({
+                    icon: "error",
+                    title: `${this.$t("general.Error")}`,
+                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+                })
             }
+          }
           this.$store.commit("auth/allWorkFlow", l.work_flow_trees);
           return this.$router.push({ name: "home" });
         })
@@ -137,18 +130,21 @@ export default {
 .company-content {
   height: 100%;
 }
+
 img {
   max-height: 150px;
   max-width: 250px;
 }
+
 .company-item {
   cursor: pointer;
   background: #fff;
   padding: 40px 20px;
   border-radius: 14px;
-    height: 260px;
-    margin: 7px 0;
+  height: 260px;
+  margin: 7px 0;
 }
+
 .container {
   max-width: 1100px !important;
 }

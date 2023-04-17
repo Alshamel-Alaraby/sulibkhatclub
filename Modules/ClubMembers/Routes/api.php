@@ -54,6 +54,10 @@ Route::prefix('club-members')->group(function () {
         Route::put('/sponsor/{sponsor_id}', 'CmMemberController@updateSponsor')->name('cm-members.updateSponsor');
 
 
+
+        Route::post('/bulk-update', "CmMemberController@acceptMembers");
+        Route::put('/update-accepted-members/{id}', 'CmMemberController@updateAcceptedMembers')->name('cm-members.updateAcceptedMembers');
+
     });
 
     // financial status routes

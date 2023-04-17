@@ -19,13 +19,28 @@ export default [
         component: () => import('../../views/pages/club/member'),
     },
     {
+        path: '/dashboard/club/member-accept',
+        name: 'club-member-accept',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/member-accept'),
+    },
+    {
+        path: '/dashboard/club/member-apply',
+        name: 'club-member-apply',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/member-apply'),
+    },
+    {
         path: '/dashboard/club/settings',
         name: 'club-setting',
         meta: {
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/settings'),
-
     },
     {
         path: '/dashboard/club/membership-renewal',
@@ -53,13 +68,20 @@ export default [
 
     },
     {
+        path: '/dashboard/club/members-requests',
+        name: 'club-member',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/club/member-request'),
+    },
+    {
         path: '/dashboard/club/subscription',
         name: 'club-subscription',
         meta: {
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/subscription'),
-
     },
     {
         path: '/dashboard/club/multiSubscription',
@@ -68,7 +90,6 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/multi_subscription'),
-
     },
     {
         path: '/dashboard/club/change-spenser',
@@ -77,6 +98,5 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/change-sponsor'),
-
     },
 ];

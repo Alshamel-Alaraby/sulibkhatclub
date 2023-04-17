@@ -14,6 +14,7 @@ import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
 import translation from "../../../helper/translation-mixin";
 import Branch from "../../../components/create/branch";
+import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 /**
  * Advanced Table component
@@ -50,6 +51,8 @@ export default {
             Tooltip: "",
             mouseEnter: "",
             create: {
+                name: '',
+                name_e: '',
                 start_no: null,
                 perfix: "",
                 suffix: "",
@@ -59,6 +62,8 @@ export default {
                 document_id: null
             },
             edit: {
+                name: '',
+                name_e: '',
                 start_no: null,
                 perfix: "",
                 suffix: "",
@@ -68,6 +73,8 @@ export default {
                 is_default: 1,
             },
             setting: {
+                name: true,
+                name_e: true,
                 start_no: true,
                 perfix: true,
                 suffix: true,
@@ -82,7 +89,9 @@ export default {
             checkAll: [],
             stores: [],
             current_page: 1,
-            filterSetting: ["perfix", "suffix", "start_no",
+            filterSetting: [
+                'name','name_e',
+                "perfix", "suffix", "start_no",
                 this.$i18n.locale  == 'ar'?'document.name':'document.name_e',
                 this.$i18n.locale  == 'ar'?'branch.name':'branch.name_e',
             ],
@@ -94,6 +103,12 @@ export default {
     },
     validations: {
         create: {
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }) , minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
             start_no: { required: requiredIf(function (model) {
                     return this.isRequired("start_no");
                 }), maxLength: maxLength(20) },
@@ -119,6 +134,12 @@ export default {
                 }) },
         },
         edit: {
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }) , minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
             start_no: { required: requiredIf(function (model) {
                     return this.isRequired("start_no");
                 }), maxLength: maxLength(20) },
@@ -190,6 +211,14 @@ export default {
         this.getData();
     },
     methods: {
+        arabicValueName(txt){
+            this.create.name = arabicValue(txt);
+            this.edit.name = arabicValue(txt);
+        },
+        englishValueName(txt){
+            this.create.name_e = englishValue(txt);
+            this.edit.name_e = englishValue(txt);
+        },
         getCustomTableFields() {
             adminApi
                 .get(`/customTable/table-columns/general_serials`)
@@ -250,6 +279,8 @@ export default {
         },
         resetForm() {
             this.create = {
+                name: '',
+                name_e: '',
                 start_no: null,
                 perfix: "",
                 suffix: "",
@@ -397,7 +428,9 @@ export default {
                 restart_period: "",
                 is_default: 1,
                 branch_id: null,
-                document_id: null
+                document_id: null,
+                name: '',
+                name_e: '',
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -410,6 +443,8 @@ export default {
          */
         resetModal() {
             this.create = {
+                name: '',
+                name_e: '',
                 start_no: null,
                 perfix: "",
                 suffix: "",
@@ -436,6 +471,13 @@ export default {
             if (this.$v.create.$invalid) {
                 return;
             } else {
+
+                if (!this.create.name) {
+                    this.create.name = this.create.name_e;
+                }
+                if (!this.create.name_e) {
+                    this.create.name_e = this.create.name;
+                }
 
                 this.isLoader = true;
                 this.errors = {};
@@ -475,6 +517,13 @@ export default {
          *  edit countrie
          */
         editSubmit(id) {
+            if (!this.edit.name) {
+                this.edit.name = this.edit.name_e;
+            }
+            if (!this.edit.name_e) {
+                this.edit.name_e = this.edit.name;
+            }
+
             this.$v.edit.$touch();
 
             if (this.$v.edit.$invalid) {
@@ -528,6 +577,8 @@ export default {
             this.edit.branch_id = serial.branch ?serial.branch.id: null;
             this.edit.is_default = parseInt(serial.is_default) ;
             this.errors = {};
+            this.edit.name = serial.name;
+            this.edit.name_e = serial.name_e;
         },
         /**
          *  hidden Modal (edit)
@@ -535,6 +586,8 @@ export default {
         resetModalHiddenEdit(id) {
             this.errors = {};
             this.edit = {
+                name: '',
+                name_e: '',
                 start_no: null,
                 perfix: "",
                 suffix: "",
@@ -675,6 +728,12 @@ export default {
                                         ref="dropdown"
                                         class="btn-block setting-search"
                                     >
+                                        <b-form-checkbox v-if="isVisible('name')"  v-model="filterSetting" value="name" class="mb-1">
+                                            {{ $t('general.Name') }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('name_e')"  v-model="filterSetting" value="name_e" class="mb-1">
+                                            {{ $t('general.Name_e') }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox
                                             v-if="isVisible('perfix')"
                                             v-model="filterSetting"
@@ -796,6 +855,12 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
+                                            <b-form-checkbox v-if="isVisible('name')"  v-model="setting.name" class="mb-1"
+                                            >{{ $t('general.name') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('name_e')"  v-model="setting.name_e" class="mb-1">
+                                                {{ $t('general.name_e') }}
+                                            </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('start_no')" v-model="setting.start_no" class="mb-1"
                                             >{{ $t("general.StartNo") }}
                                             </b-form-checkbox>
@@ -976,6 +1041,85 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-6" v-if="isVisible('name')">
+                                        <div class="form-group">
+                                            <label for="field-8" class="control-label">
+                                                {{ $t('general.Name') }}
+                                                <span v-if="isRequired('name')"  class="text-danger">*</span>
+                                            </label>
+                                            <div dir="rtl">
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    data-create="1"
+                                                    @keyup="arabicValueName(create.name)"
+                                                    v-model="$v.create.name.$model"
+                                                    :class="{
+                                                        'is-invalid': $v.create.name.$error || errors.name,
+                                                        'is-valid': !$v.create.name.$invalid && !errors.name,
+                                                      }"
+                                                    id="field-8"
+                                                />
+                                            </div>
+                                            <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                                                {{ $t("general.Itmustbeatleast") }}
+                                                {{ $v.create.name.$params.minLength.min }}
+                                                {{ $t("general.letters") }}
+                                            </div>
+                                            <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                                                {{ $t("general.Itmustbeatmost") }}
+                                                {{ $v.create.name.$params.maxLength.max }}
+                                                {{ $t("general.letters") }}
+                                            </div>
+                                            <template v-if="errors.name">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.name"
+                                                    :key="index"
+                                                >
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" v-if="isVisible('name_e')">
+                                        <div class="form-group">
+                                            <label for="field-9" class="control-label">
+                                                {{ $t('general.Name_en') }}
+                                                <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                                            </label>
+                                            <div dir="ltr">
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    data-create="2"
+                                                    @keyup="englishValueName(create.name_e)"
+                                                    v-model="$v.create.name_e.$model"
+                                                    :class="{
+                                                    'is-invalid': $v.create.name_e.$error || errors.name_e,
+                                                    'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                                                  }"
+                                                    id="field-9"
+                                                />
+                                            </div>
+                                            <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                                                {{ $t("general.Itmustbeatleast") }}
+                                                {{ $v.create.name_e.$params.minLength.min }}
+                                                {{ $t("general.letters") }}
+                                            </div>
+                                            <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                                                {{ $t("general.Itmustbeatmost") }}
+                                                {{ $v.create.name_e.$params.maxLength.max }}
+                                                {{ $t("general.letters") }}
+                                            </div>
+                                            <template v-if="errors.name_e">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.name_e"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6" v-if="isVisible('start_no')">
                                         <div class="form-group">
                                             <label for="field-15" class="control-label">
@@ -1051,9 +1195,9 @@ export default {
                                                 data-create="3"
                                                 v-model="$v.create.perfix.$model"
                                                 :class="{
-                          'is-invalid': $v.create.perfix.$error || errors.perfix,
-                          'is-valid': !$v.create.perfix.$invalid && !errors.perfix,
-                        }"
+                                                  'is-invalid': $v.create.perfix.$error || errors.perfix,
+                                                  'is-valid': !$v.create.perfix.$invalid && !errors.perfix,
+                                                }"
                                                 id="field-2"
                                             />
                                             <div v-if="!$v.create.perfix.maxLength" class="invalid-feedback">
@@ -1176,6 +1320,36 @@ export default {
                                             />
                                         </div>
                                     </th>
+                                    <th v-if="setting.name">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.Name') }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="serials.sort(sortString('name'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="serials.sort(sortString('-name'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.name_e">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.Name_en') }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="serials.sort(sortString('name_e'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="serials.sort(sortString('-name_e'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.start_no && isVisible('start_no')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.StartNo") }}</span>
@@ -1275,6 +1449,12 @@ export default {
                                                 v-model="checkAll"
                                             />
                                         </div>
+                                    </td>
+                                    <td v-if="setting.name && isVisible('name')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
+                                    </td>
+                                    <td v-if="setting.name_e && isVisible('name_e')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                                     </td>
                                     <td v-if="setting.start_no && isVisible('start_no')">
                                         <h5 class="m-0 font-weight-normal">{{ data.start_no }}</h5>
@@ -1450,6 +1630,96 @@ export default {
                                                                     :key="index"
                                                                 >{{ errorMessage }}</ErrorMessage
                                                                 >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" v-if="isVisible('name')">
+                                                        <div class="form-group">
+                                                            <label for="field-u-1" class="control-label">
+                                                                {{ $t('general.Name') }}
+                                                                <span v-if="isRequired('name')" class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="rtl">
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    v-model="$v.edit.name.$model"
+                                                                    @keyup="arabicValueName(edit.name)"
+                                                                    :class="{
+                                      'is-invalid': $v.edit.name.$error || errors.name,
+                                      'is-valid': !$v.edit.name.$invalid && !errors.name,
+                                    }"
+                                                                    id="field-u-1"
+                                                                />
+                                                            </div>
+                                                            <div
+                                                                v-if="!$v.edit.name.minLength"
+                                                                class="invalid-feedback"
+                                                            >
+                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                {{ $v.edit.name.$params.minLength.min }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <div
+                                                                v-if="!$v.edit.name.maxLength"
+                                                                class="invalid-feedback"
+                                                            >
+                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                {{ $v.edit.name.$params.maxLength.max }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <template v-if="errors.name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.name"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" v-if="isVisible('name_e')">
+                                                        <div class="form-group">
+                                                            <label for="field-u-2" class="control-label">
+                                                                {{ $t('general.Name_en') }}
+                                                                <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="ltr">
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    @keyup="englishValueName(edit.name_e)"
+                                                                    v-model="$v.edit.name_e.$model"
+                                                                    :class="{
+                                      'is-invalid':
+                                        $v.edit.name_e.$error || errors.name_e,
+                                      'is-valid':
+                                        !$v.edit.name_e.$invalid && !errors.name_e,
+                                    }"
+                                                                    id="field-u-2"
+                                                                />
+                                                            </div>
+                                                            <div
+                                                                v-if="!$v.edit.name_e.minLength"
+                                                                class="invalid-feedback"
+                                                            >
+                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                {{ $v.edit.name_e.$params.minLength.min }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <div
+                                                                v-if="!$v.edit.name_e.maxLength"
+                                                                class="invalid-feedback"
+                                                            >
+                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                {{ $v.edit.name_e.$params.maxLength.max }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <template v-if="errors.name_e">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.name_e"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
                                                             </template>
                                                         </div>
                                                     </div>

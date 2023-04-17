@@ -7386,6 +7386,16 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "statuses_module_type",
+                "default_en" => "Module type",
+                "default_ar" => "نوع الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+
+            ],
+            [
                 "key" => "statuses_name_ar",
                 "default_en" => "status name (arabic)",
                 "default_ar" => "اسم الحاله (عربي)",
@@ -8245,6 +8255,43 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "member_request_create_form",
+                "default_en" => "Add new member request",
+                "default_ar" => "اضف  طلب لعضو جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_request_create_accept",
+                "default_en" => "Acceptance of members",
+                "default_ar" => "قبول الاعضاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_request_create_reject",
+                "default_en" => "Reject member",
+                "default_ar" => "رفض عضو",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_request_edit_form",
+                "default_en" => "Edit member request",
+                "default_ar" => "تعديل الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+
+            ],
+            [
                 "key" => "member_first_name",
                 "default_en" => "First name",
                 "default_ar" => "الاسم الاول",
@@ -8409,9 +8456,27 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
-                "key" => "member_membership_request_number",
-                "default_en" => "Membership request number",
-                "default_ar" => "رقم طلب العضوية",
+                "key" => "apply_membership_date",
+                "default_en" => "date of request",
+                "default_ar" => "تاريخ الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_membership_number",
+                "default_en" => "Membership number",
+                "default_ar" => "رقم العضوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "apply_membership_number",
+                "default_en" => "number of request",
+                "default_ar" => "رقم الطلب ",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8490,9 +8555,27 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
+                "key" => "from-sponsor",
+                "default_en" => "Sponsor name (from)",
+                "default_ar" => "اسم الراعي (من)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "to-sponsor",
+                "default_en" => "Sponsor name (to)",
+                "default_ar" => "اسم الراعي (الي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
                 "key" => "member_is_sponsor",
-                "default_en" => "Sponsor",
-                "default_ar" => "راعي",
+                "default_en" => "Is Sponsor",
+                "default_ar" => " هل  راعي",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8786,6 +8869,15 @@ class TranslationSeeder extends Seeder
                 "key" => "settings_edit_form",
                 "default_en" => "Edit setting form",
                 "default_ar" => "تعديل الاعدادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_gender",
+                "default_en" => "gender",
+                "default_ar" => "النوع",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,

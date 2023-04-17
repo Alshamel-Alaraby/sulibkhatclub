@@ -32,9 +32,6 @@ export default {
         Multiselect,
         Sponsor
     },
-    mounted() {
-
-    },
     data() {
         return {
             sponsors: [],
@@ -154,7 +151,7 @@ export default {
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="my-1 mr-2">
-                                                {{ getCompanyKey("sponsor") }}
+                                                {{ getCompanyKey("from-sponsor") }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <multiselect @input="showSponsorModalOld" v-model="create.old_sponsor_id"
@@ -170,7 +167,7 @@ export default {
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="my-1 mr-2">
-                                                {{ getCompanyKey("sponsor") }}
+                                                {{ getCompanyKey("to-sponsor") }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <multiselect @input="showSponsorModal" v-model="create.sponsor_id"

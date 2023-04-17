@@ -72,39 +72,8 @@ export default {
             birth_date: new Date(),
             financialStatuses: [],
             memberTypes: [],
-
-            create: {
-                first_name: "",
-                second_name: "",
-                third_name: "",
-                last_name: "",
-                family_name: "",
-                status_id: null,
-                birth_date: this.formatDate(new Date()),
-                national_id: "",
-                nationality_number: "",
-                acceptance_number: "",
-                home_phone: "",
-                work_phone: "",
-                home_address: "",
-                work_address: "",
-                membership_date: this.formatDate(new Date()),
-                membership_number: "",
-                membership_request_number: "",
-                job: "",
-                degree: "",
-                acceptance: "0",
-                session_date: this.formatDate(new Date()),
-                acceptance_date: this.formatDate(new Date()),
-                session_number: "",
-                sponsor: "active",
-                sponsor_id: null,
-                member_type: "",
-                member_type_id: null,
-                financial_status_id: null,
-            },
             edit: {
-                acceptance_number: "",
+                gender: 1,
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -140,6 +109,7 @@ export default {
             branches: [],
             current_page: 1,
             setting: {
+                gender: true,
                 first_name: true,
                 second_name: true,
                 third_name: true,
@@ -153,14 +123,9 @@ export default {
                 work_phone: true,
                 home_address: true,
                 work_address: true,
-                membership_date: true,
-                membership_number: true,
                 membership_request_number: true,
                 job: true,
                 degree: true,
-                acceptance: true,
-                session_date: true,
-                session_number: true,
                 sponsor: true,
                 sponsor_id: true,
             },
@@ -179,14 +144,9 @@ export default {
                 "work_phone",
                 "home_address",
                 "work_address",
-                "membership_date",
-                "membership_number",
                 "membership_request_number",
                 "job",
                 "degree",
-                "acceptance",
-                "session_date",
-                "session_number",
                 "sponsor",
                 "sponsor_id",
             ],
@@ -197,73 +157,31 @@ export default {
         };
     },
     validations: {
-        create: {
-            first_name: { required },
-            second_name: { required },
-            third_name: { required },
-            last_name: { required },
-            family_name: { required },
-            status_id: { required },
-            birth_date: { required },
-            national_id: { required },
-            nationality_number: { required },
-            home_phone: { required },
-            work_phone: { required },
-            home_address: { required },
-            work_address: { required },
-            membership_date: { required },
-            membership_number: {},
-            membership_request_number: { required },
-            job: { required },
-            degree: { required },
-            acceptance: { required },
-            acceptance_number: { required },
-            session_date: { required },
-            session_number: { required },
-            sponsor: { required },
-            sponsor_id: {
-                requiredIf: function () {
-                    if (this.sponsor) {
-                        return this.create.sponsor_id
-                    }
-                    return true;
-                }
-            },
-            member_type: {},
-            member_type_id: { required },
-            financial_status_id: { required },
-        },
         edit: {
-            acceptance_number: { required },
             first_name: { required },
             second_name: { required },
+            gender: { required },
             third_name: { required },
             last_name: { required },
             family_name: { required },
             status_id: { required },
             birth_date: { required },
+            membership_number: { required },
             national_id: { required },
             nationality_number: { required },
             home_phone: { required },
             work_phone: { required },
             home_address: { required },
             work_address: { required },
-            membership_date: { required },
-            membership_number: {},
             membership_request_number: { required },
             job: { required },
             degree: { required },
-            acceptance: { required },
-            session_date: { required },
-            session_number: { required },
             sponsor: { required },
+            acceptance: { required },
+            session_number: { required },
+            session_date: { required },
             sponsor_id: {
-                requiredIf: function () {
-                    if (this.sponsor) {
-                        return this.edit.sponsor_id
-                    }
-                    return true;
-                }
+                required
             },
             member_type: {},
             member_type_id: { required },
@@ -600,13 +518,9 @@ export default {
          *  reset Modal (create)
          */
         resetModalHidden() {
-            this.session_date = new Date();
-            this.acceptance_date = new Date();
-            this.membership_date = new Date();
             this.birth_date = new Date();
-
             this.create = {
-                acceptance_number: "",
+                gender: 1,
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -620,21 +534,12 @@ export default {
                 work_phone: "",
                 home_address: "",
                 work_address: "",
-                membership_date: this.formatDate(new Date()),
-                membership_number: "",
                 membership_request_number: "",
                 job: "",
                 degree: "",
-                acceptance: "0",
-                session_date: this.formatDate(new Date()),
-                acceptance_date: this.formatDate(new Date()),
-                session_number: "",
                 sponsor: "active",
                 sponsor_id: null,
-                member_type: "",
-                member_type_id: null,
-                financial_status_id: null,
-            }
+            };
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -645,12 +550,9 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            this.session_date = new Date();
-            this.acceptance_date = new Date();
-            this.membership_date = new Date();
             this.birth_date = new Date();
             this.create = {
-                acceptance_number: "",
+                gender: 1,
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -664,20 +566,11 @@ export default {
                 work_phone: "",
                 home_address: "",
                 work_address: "",
-                acceptance_date: this.formatDate(new Date()),
-                membership_date: this.formatDate(new Date()),
-                membership_number: "",
                 membership_request_number: "",
                 job: "",
                 degree: "",
-                acceptance: "0",
-                session_date: this.formatDate(new Date()),
-                session_number: "",
                 sponsor: "active",
                 sponsor_id: null,
-                member_type: "",
-                member_type_id: null,
-                financial_status_id: null,
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -692,12 +585,9 @@ export default {
          *  create countrie
          */
         async resetForm() {
-            this.session_date = new Date();
-            this.acceptance_date = new Date();
-            this.membership_date = new Date();
             this.birth_date = new Date();
             this.create = {
-                acceptance_number: "",
+                gender: 1,
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -711,15 +601,9 @@ export default {
                 work_phone: "",
                 home_address: "",
                 work_address: "",
-                membership_date: this.formatDate(new Date()),
-                membership_number: "",
                 membership_request_number: "",
                 job: "",
                 degree: "",
-                acceptance: "0",
-                session_date: this.formatDate(new Date()),
-                acceptance_date: this.formatDate(new Date()),
-                session_number: "",
                 sponsor: "active",
                 sponsor_id: null,
             };
@@ -818,19 +702,15 @@ export default {
             await this.getFinancialStatus();
             await this.getMemberTypes();
             this.birth_date = new Date(member.birth_date);
-            this.membership_date = new Date(member.membership_date);
-            this.session_date = new Date(member.session_date);
-            this.acceptance_date = new Date(member.acceptance_date);
             this.edit.first_name = member.first_name;
-            this.edit.acceptance_number = member.acceptance_number;
             this.edit.second_name = member.second_name;
             this.edit.member_type_id = member.member_type_id;
-            this.edit.financial_status_id = member.financial_status_id;
+            this.edit.financial_status_id = member.financial_status_id ?? null;
             this.edit.member_type = member.member_type;
             this.edit.third_name = member.third_name;
             this.edit.last_name = member.last_name;
             this.edit.family_name = member.family_name;
-            this.edit.status_id = member.status_id;
+            this.edit.status_id = member.status_id ?? null;
             this.edit.birth_date = member.birth_date;
             this.edit.national_id = member.national_id;
             this.edit.nationality_number = member.nationality_number;
@@ -838,30 +718,23 @@ export default {
             this.edit.work_phone = member.work_phone;
             this.edit.home_address = member.home_address;
             this.edit.work_address = member.work_address;
-            this.edit.membership_date = member.membership_date;
-            this.edit.membership_number = member.membership_number;
             this.edit.membership_request_number = member.membership_request_number;
             this.edit.job = member.job;
             this.edit.degree = member.degree;
-            this.edit.acceptance = member.acceptance;
-            this.edit.session_date = member.session_date;
-            this.edit.acceptance_date = member.acceptance_date;
-            this.edit.session_number = member.session_number;
             this.edit.sponsor = member.sponsor;
-            this.edit.sponsor_id = member.sponsor_id;
+            this.edit.sponsor_id = member.sponsor_id ?? null;
+            this.edit.gender = member.gender;
             this.errors = {};
         },
         /**
          *  hidden Modal (edit)
          */
         resetModalHiddenEdit(id) {
-            this.session_date = new Date();
-            this.acceptance_date = new Date();
-            this.membership_date = new Date();
             this.birth_date = new Date();
 
             this.errors = {};
             this.edit = {
+                gender: 1,
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -872,19 +745,12 @@ export default {
                 national_id: "",
                 nationality_number: "",
                 home_phone: "",
-                acceptance_number: "",
                 work_phone: "",
                 home_address: "",
                 work_address: "",
-                membership_date: this.formatDate(new Date()),
-                membership_number: "",
                 membership_request_number: "",
                 job: "",
                 degree: "",
-                acceptance: "0",
-                session_date: this.formatDate(new Date()),
-                acceptance_date: this.formatDate(new Date()),
-                session_number: "",
                 sponsor: "active",
                 sponsor_id: null,
                 member_type: "",
@@ -1037,12 +903,10 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-
         arabicValue(txt) {
             this.create.name = arabicValue(txt);
             this.edit.name = arabicValue(txt);
         },
-
         englishValue(txt) {
             this.create.name_e = englishValue(txt);
             this.edit.name_e = englishValue(txt);
@@ -1054,9 +918,6 @@ export default {
 <template>
     <Layout>
         <PageHeader />
-        <Status :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getStatus" />
-        <Sponsor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getSponsors" />
-        <FinancialStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getFinancialStatus" />
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -1070,40 +931,48 @@ export default {
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                         class="btn-block setting-search">
                                         <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">{{
-                                            getCompanyKey("member_first_name") }}</b-form-checkbox>
+                                            getCompanyKey("member_first_name") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">{{
-                                            getCompanyKey("member_second_name") }}</b-form-checkbox>
+                                            getCompanyKey("member_second_name") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">{{
-                                            getCompanyKey("member_third_name") }}</b-form-checkbox>
+                                            getCompanyKey("member_third_name") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1">{{
-                                            getCompanyKey("member_last_name") }}</b-form-checkbox>
+                                            getCompanyKey("member_last_name") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">{{
-                                            getCompanyKey("member_family_name") }}</b-form-checkbox>
+                                            getCompanyKey("member_family_name") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">{{
-                                            getCompanyKey("status") }}</b-form-checkbox>
+                                            getCompanyKey("status") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">{{
-                                            getCompanyKey("member_national_id") }}</b-form-checkbox>
+                                            getCompanyKey("member_national_id") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="nationality_number" class="mb-1">{{
-                                            getCompanyKey("member_nationality_number") }}</b-form-checkbox>
+                                            getCompanyKey("member_nationality_number") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">{{
-                                            getCompanyKey("member_home_phone") }}</b-form-checkbox>
+                                            getCompanyKey("member_home_phone") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">{{
-                                            getCompanyKey("member_work_phone") }}</b-form-checkbox>
+                                            getCompanyKey("member_work_phone") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">{{
-                                            getCompanyKey("member_home_address") }}</b-form-checkbox>
+                                            getCompanyKey("member_home_address") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">{{
-                                            getCompanyKey("member_work_address") }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">{{
-                                            getCompanyKey("member_membership_number") }}</b-form-checkbox>
+                                            getCompanyKey("member_work_address") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="membership_request_number"
-                                            class="mb-1">{{
-                                                getCompanyKey("member_membership_request_number") }}</b-form-checkbox>
+                                            class="mb-1">{{getCompanyKey("member_membership_request_number") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="job" class="mb-1">{{
                                             getCompanyKey("member_job") }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="degree" class="mb-1">{{
                                             getCompanyKey("member_degree") }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="session_number" class="mb-1">{{
-                                            getCompanyKey("member_session_number") }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="sponsor_id" class="mb-1">{{
                                             getCompanyKey("sponsor") }}</b-form-checkbox>
 
@@ -1127,11 +996,6 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <!-- start create and printer -->
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
-                                    {{ $t("general.Create") }}
-                                    <i class="fas fa-plus"></i>
-                                </b-button>
                                 <div class="d-inline-flex">
                                     <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
                                         <i class="fas fa-file-download"></i>
@@ -1139,22 +1003,6 @@ export default {
                                     <button v-print="'#printData'" class="custom-btn-dowonload">
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1">
-                                        <i class="mdi mdi-square-edit-outline"></i>
-                                    </button>
-                                    <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
-                                        @click.prevent="deleteBranch(checkAll)">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    <!-- end mult delete  -->
-                                    <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
-                                        @click.prevent="deleteBranch(checkAll[0])">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                    <!--  end one delete  -->
                                 </div>
                                 <!-- end create and printer -->
                             </div>
@@ -1216,12 +1064,6 @@ export default {
                                             <b-form-checkbox v-model="setting.work_address" class="mb-1">{{
                                                 getCompanyKey("member_work_address") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{
-                                                getCompanyKey("member_membership_date") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{
-                                                getCompanyKey("member_membership_number") }}
-                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.membership_request_number" class="mb-1">{{
                                                 getCompanyKey("member_membership_request_number") }}
                                             </b-form-checkbox>
@@ -1230,15 +1072,6 @@ export default {
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.degree" class="mb-1">{{
                                                 getCompanyKey("member_degree") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.acceptance" class="mb-1">{{
-                                                getCompanyKey("member_acceptance") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.session_date" class="mb-1">{{
-                                                getCompanyKey("member_session_date") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.session_number" class="mb-1">{{
-                                                getCompanyKey("member_session_number") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.sponsor" class="mb-1">{{
                                                 getCompanyKey("member_is_sponsor") }}
@@ -1283,526 +1116,6 @@ export default {
                                 </div>
                             </div>
                         </div>
-
-                        <!--  create   -->
-                        <b-modal id="create" :title="getCompanyKey('member_create_form')" title-class="font-18"
-                            dialog-class="modal-full-width" body-class="p-4 " :hide-footer="true" @show="resetModal"
-                            @hidden="resetModalHidden">
-                            <form>
-                                <div class="mb-3 d-flex justify-content-end">
-                                    <b-button variant="success" :disabled="!is_disabled" @click.prevent="resetForm"
-                                        type="button" :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
-                                        {{ $t("general.AddNewRecord") }}
-                                    </b-button>
-                                    <template v-if="!is_disabled">
-                                        <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader"
-                                            @click.prevent="AddSubmit">
-                                            {{ $t("general.Add") }}
-                                        </b-button>
-                                        <b-button variant="success" class="mx-1" disabled v-else>
-                                            <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                        </b-button>
-
-                                    </template>
-                                    <b-button @click.prevent="$bvModal.hide(`create`)" variant="danger" type="button">
-                                        {{ $t("general.Cancel") }}
-                                    </b-button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_first_name") }}</label>
-                                            <input v-model="$v.create.first_name.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.first_name.$error || errors.first_name,
-                                                    'is-valid': !$v.create.first_name.$invalid && !errors.first_name,
-                                                }" />
-                                            <template v-if="errors.first_name">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.first_name"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_second_name") }}</label>
-                                            <input v-model="$v.create.second_name.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.second_name.$error || errors.second_name,
-                                                    'is-valid': !$v.create.second_name.$invalid && !errors.second_name,
-                                                }" />
-                                            <template v-if="errors.second_name">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.second_name"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_third_name") }}</label>
-                                            <input v-model="$v.create.third_name.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.third_name.$error || errors.third_name,
-                                                    'is-valid': !$v.create.third_name.$invalid && !errors.third_name,
-                                                }" />
-                                            <template v-if="errors.third_name">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.third_name"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_last_name") }}</label>
-                                            <input v-model="$v.create.last_name.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.last_name.$error || errors.last_name,
-                                                    'is-valid': !$v.create.last_name.$invalid && !errors.last_name,
-                                                }" />
-                                            <template v-if="errors.last_name">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.third_name"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_family_name") }}</label>
-                                            <input v-model="$v.create.family_name.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.family_name.$error || errors.family_name,
-                                                    'is-valid': !$v.create.family_name.$invalid && !errors.family_name,
-                                                }" />
-                                            <template v-if="errors.family_name">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.family_name"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("status") }}
-
-                                            </label>
-                                            <multiselect @input="showStatusModal" v-model="create.status_id"
-                                                :options="statuses.map((type) => type.id)" :custom-label="(opt) => $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name
-                                                    : statuses.find((x) => x.id == opt).name_e">
-                                            </multiselect>
-                                            <div v-if="$v.create.status_id.$error || errors.status_id" class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.status_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.status_id"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_type") }}</label>
-                                            <input v-model="$v.create.member_type.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.member_type.$error || errors.member_type,
-                                                    'is-valid': !$v.create.member_type.$invalid && !errors.member_type,
-                                                }" />
-                                            <template v-if="errors.member_type">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.member_type"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_type_id") }}
-
-                                            </label>
-                                            <multiselect v-model="create.member_type_id"
-                                                :options="memberTypes.map((type) => type.id)" :custom-label="(opt) => $i18n.locale == 'ar' ? memberTypes.find((x) => x.id == opt).name
-                                                    : memberTypes.find((x) => x.id == opt).name_e">
-                                            </multiselect>
-                                            <div v-if="$v.create.member_type_id.$error || errors.member_type_id"
-                                                class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.member_type_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.member_type_id"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("financial_status") }}
-
-                                            </label>
-                                            <multiselect @input="showFinancialStatusModal" v-model="create.financial_status_id"
-                                                :options="financialStatuses.map((type) => type.id)" :custom-label="(opt) => $i18n.locale == 'ar' ? financialStatuses.find((x) => x.id == opt).name
-                                                    : financialStatuses.find((x) => x.id == opt).name_e">
-                                            </multiselect>
-                                            <div v-if="$v.create.financial_status_id.$error || errors.financial_status_id"
-                                                class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.financial_status_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.financial_status_id"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 position-relative">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_birth_date") }}
-
-                                            </label>
-                                            <date-picker type="date" v-model="birth_date" defaultValue
-                                                @change="v_dateCreate($event, 'birth_date')" confirm></date-picker>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">
-                                                    {{
-                                                        errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_national_id") }}</label>
-                                            <input v-model="$v.create.national_id.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.national_id.$error || errors.national_id,
-                                                    'is-valid': !$v.create.national_id.$invalid && !errors.national_id,
-                                                }" />
-                                            <template v-if="errors.national_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.national_id"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_nationality_number") }}</label>
-                                            <input v-model="$v.create.nationality_number.$model" class="form-control"
-                                                type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.create.nationality_number.$error || errors.nationality_number,
-                                                    'is-valid': !$v.create.nationality_number.$invalid && !errors.nationality_number,
-                                                }" />
-                                            <template v-if="errors.nationality_number">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.nationality_number"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_home_phone") }}</label>
-                                            <input v-model="$v.create.home_phone.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.home_phone.$error || errors.home_phone,
-                                                    'is-valid': !$v.create.home_phone.$invalid && !errors.home_phone,
-                                                }" />
-                                            <template v-if="errors.home_phone">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.home_phone"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_work_phone") }}</label>
-                                            <input v-model="$v.create.work_phone.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.work_phone.$error || errors.work_phone,
-                                                    'is-valid': !$v.create.work_phone.$invalid && !errors.work_phone,
-                                                }" />
-                                            <template v-if="errors.work_phone">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.work_phone"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_home_address") }}</label>
-                                            <input v-model="$v.create.home_address.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.home_address.$error || errors.home_address,
-                                                    'is-valid': !$v.create.home_address.$invalid && !errors.home_address,
-                                                }" />
-                                            <template v-if="errors.home_address">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.home_address"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_work_address") }}</label>
-                                            <input v-model="$v.create.work_address.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.work_address.$error || errors.work_address,
-                                                    'is-valid': !$v.create.work_address.$invalid && !errors.work_address,
-                                                }" />
-                                            <template v-if="errors.work_address">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.work_address"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 position-relative">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_membership_date") }}
-
-                                            </label>
-                                            <date-picker type="date" v-model="membership_date" defaultValue
-                                                @change="v_dateCreate($event, 'membership_date')" confirm></date-picker>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">{{
-                                                    errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_membership_number") }}</label>
-                                            <input v-model="$v.create.membership_number.$model" class="form-control"
-                                                type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.create.membership_number.$error || errors.membership_number,
-                                                    'is-valid': !$v.create.membership_number.$invalid && !errors.membership_number,
-                                                }" />
-                                            <template v-if="errors.membership_number">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.membership_number"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_membership_request_number") }}</label>
-                                            <input v-model="$v.create.membership_request_number.$model" class="form-control"
-                                                type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.create.membership_request_number.$error || errors.membership_request_number,
-                                                    'is-valid': !$v.create.membership_request_number.$invalid && !errors.membership_number_request,
-                                                }" />
-                                            <template v-if="errors.membership_number_request">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.membership_number_request"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_job") }}</label>
-                                            <input v-model="$v.create.job.$model" class="form-control" type="text" :class="{
-                                                'is-invalid':
-                                                    $v.create.job.$error || errors.job,
-                                                'is-valid': !$v.create.job.$invalid && !errors.job,
-                                            }" />
-                                            <template v-if="errors.job">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.job" :key="index">{{
-                                                    errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_degree") }}</label>
-                                            <input v-model="$v.create.degree.$model" class="form-control" type="text"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.degree.$error || errors.degree,
-                                                    'is-valid': !$v.create.degree.$invalid && !errors.degree,
-                                                }" />
-                                            <template v-if="errors.degree">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.degree" :key="index">{{
-                                                    errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="mr-2">
-                                                {{ getCompanyKey("member_acceptance") }}
-
-                                            </label>
-                                            <b-form-group :class="{
-                                                'is-invalid': $v.create.acceptance.$error || errors.acceptance,
-                                                'is-valid': !$v.create.acceptance.$invalid && !errors.acceptance,
-                                            }">
-                                                <b-form-radio class="d-inline-block"
-                                                    v-model="$v.create.acceptance.$model" name="create_acceptance"
-                                                    value="0">{{ $t("general.pending") }}
-                                                </b-form-radio>
-                                                <b-form-radio class="d-inline-block m-1"
-                                                    v-model="$v.create.acceptance.$model" name="create_acceptance"
-                                                    value="1">{{ $t("general.accepted") }}
-                                                </b-form-radio>
-                                                <b-form-radio class="d-inline-block m-1"
-                                                    v-model="$v.create.acceptance.$model" name="create_acceptance"
-                                                    value="2">{{ $t("general.declined") }}
-                                                </b-form-radio>
-                                            </b-form-group>
-                                            <template v-if="errors.acceptance">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.acceptance"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_acceptance_number") }}</label>
-                                            <input v-model="$v.create.acceptance_number.$model" class="form-control"
-                                                type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.create.acceptance_number.$error || errors.acceptance_number,
-                                                    'is-valid': !$v.create.acceptance_number.$invalid && !errors.acceptance_number,
-                                                }" />
-                                            <template v-if="errors.acceptance_number">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.acceptance_number"
-                                                    :key="index">{{
-                                                        errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 position-relative">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_acceptance_date") }}
-
-                                            </label>
-                                            <date-picker type="date" v-model="acceptance_date" defaultValue
-                                                @change="v_dateCreate($event, 'acceptance_date')" confirm></date-picker>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">{{
-                                                    errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 position-relative">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_session_date") }}
-
-                                            </label>
-                                            <date-picker type="date" v-model="session_date" defaultValue
-                                                @change="v_dateCreate($event, 'session_date')" confirm></date-picker>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">{{
-                                                    errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_session_number") }}</label>
-                                            <input v-model="$v.create.session_number.$model" class="form-control"
-                                                type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.create.session_number.$error || errors.session_number,
-                                                    'is-valid': !$v.create.session_number.$invalid && !errors.session_number,
-                                                }" />
-                                            <template v-if="errors.session_number">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.session_number"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="mr-2">
-                                                {{ getCompanyKey("member_is_sponsor") }}
-
-                                            </label>
-                                            <b-form-group :class="{
-                                                'is-invalid': $v.create.sponsor.$error || errors.sponsor,
-                                                'is-valid': !$v.create.sponsor.$invalid && !errors.sponsor,
-                                            }">
-                                                <b-form-radio class="d-inline-block" v-model="$v.create.sponsor.$model"
-                                                    name="create_sponsor" value="active">{{ $t("general.Yes")
-                                                    }}</b-form-radio>
-                                                <b-form-radio class="d-inline-block m-1" v-model="$v.create.sponsor.$model"
-                                                    name="create_sponsor" value="inactive">{{ $t("general.No")
-                                                    }}</b-form-radio>
-                                            </b-form-group>
-                                            <template v-if="errors.sponsor">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor" :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3" v-if="create.sponsor == 'active'">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("sponsor") }}
-
-                                            </label>
-                                            <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
-                                                :options="sponsors.map((type) => type.id)"
-                                                :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                            </multiselect>
-                                            <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
-                                                class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.sponsor_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
-                                                    :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </b-modal>
-                        <!--  /create   -->
 
                         <!-- start .table-responsive-->
                         <div class="table-responsive mb-3 custom-table-theme position-relative">
@@ -2050,17 +1363,6 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.sponsor">
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ getCompanyKey("member_is_sponsor") }}</span>
-                                                <div class="arrow-sort">
-                                                    <i class="fas fa-arrow-up"
-                                                        @click="members.sort(sortString('sponsor'))"></i>
-                                                    <i class="fas fa-arrow-down"
-                                                        @click="members.sort(sortString('-sponsor'))"></i>
-                                                </div>
-                                            </div>
-                                        </th>
                                         <th v-if="setting.sponsor_id">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("sponsor") }}</span>
@@ -2071,10 +1373,6 @@ export default {
                                                         @click="members.sort(sortString('-name'))"></i>
                                                 </div>
                                             </div>
-                                        </th>
-
-                                        <th v-if="enabled3" class="do-not-print">
-                                            {{ $t("general.Action") }}
                                         </th>
                                         <th v-if="enabled3" class="do-not-print"><i class="fas fa-ellipsis-v"></i></th>
                                     </tr>
@@ -2105,10 +1403,13 @@ export default {
                                             {{ data.family_name }}
                                         </td>
                                         <td v-if="setting.status_id">
-                                            {{ $i18n.locale == 'ar' ? data.status.name : data.status.name_e }}
+                                            {{ data.status? $i18n.locale == 'ar' ? data.status.name : data.status.name_e : '' }}
                                         </td>
                                         <td v-if="setting.birth_date">
                                             {{ data.birth_date }}
+                                        </td>
+                                        <td v-if="setting.gender">
+                                            {{ data.gender == 1? $t('general.male') : $t('general.female')  }}
                                         </td>
                                         <td v-if="setting.national_id">
                                             {{ data.national_id }}
@@ -2162,621 +1463,533 @@ export default {
                                         <td v-if="setting.session_number">
                                             {{ data.session_number }}
                                         </td>
-                                        <td v-if="setting.sponsor">
-                                            <span :class="[
-                                                data.sponsor == 'active' ? 'text-success' : 'text-danger',
-                                                'badge',
-                                            ]">
-                                                {{
-                                                    data.sponsor == "active"
-                                                    ? `${$t("general.Yes")}`
-                                                    : `${$t("general.No")}`
-                                                }}
-                                            </span>
-                                        </td>
                                         <td v-if="setting.sponsor_id">
                                             {{ data.sponsors ? ($i18n.locale == 'ar' ? data.sponsors.name :
                                                 data.sponsors.name_e) : "-" }}
                                         </td>
-                                        <td v-if="enabled3" class="do-not-print">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-sm dropdown-toggle dropdown-coustom"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    {{ $t("general.commands") }}
-                                                    <i class="fas fa-angle-down"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-custom">
-                                                    <a class="dropdown-item" href="#"
-                                                        @click="$bvModal.show(`modal-edit-${data.id}`)">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center text-black">
-                                                            <span>{{ $t("general.edit") }}</span>
-                                                            <i class="mdi mdi-square-edit-outline text-info"></i>
-                                                        </div>
-                                                    </a>
-                                                    <a class="dropdown-item text-black" href="#"
-                                                        @click.prevent="deleteBranch(data.id)">
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center text-black">
-                                                            <span>{{ $t("general.delete") }}</span>
-                                                            <i class="fas fa-times text-danger"></i>
-                                                        </div>
-                                                    </a>
+                                        <b-modal dialog-class="modal-full-width" :id="`modal-edit-${data.id}`"
+                                                 :title="getCompanyKey('member_edit_form')" title-class="font-18"
+                                                 body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
+                                                 @show="resetModalEdit(data.id)" @hidden="resetModalHiddenEdit(data.id)">
+                                            <form>
+                                                <div class="mb-3 d-flex justify-content-end">
+                                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+                                                    <b-button variant="danger" type="button"
+                                                              @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)">
+                                                        {{ $t("general.Cancel") }}
+                                                    </b-button>
                                                 </div>
-                                            </div>
-
-                                            <!--  edit   -->
-                                            <b-modal dialog-class="modal-full-width" :id="`modal-edit-${data.id}`"
-                                                :title="getCompanyKey('member_edit_form')" title-class="font-18"
-                                                body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
-                                                @show="resetModalEdit(data.id)" @hidden="resetModalHiddenEdit(data.id)">
-                                                <form>
-                                                    <div class="mb-3 d-flex justify-content-end">
-                                                        <!-- Emulate built in modal footer ok and cancel button actions -->
-                                                        <b-button variant="success" type="submit" class="mx-1"
-                                                            v-if="!isLoader" @click.prevent="editSubmit(data.id)">
-                                                            {{ $t("general.Edit") }}
-                                                        </b-button>
-
-                                                        <b-button variant="success" class="mx-1" disabled v-else>
-                                                            <b-spinner small></b-spinner>
-                                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                                        </b-button>
-
-                                                        <b-button variant="danger" type="button"
-                                                            @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)">
-                                                            {{ $t("general.Cancel") }}
-                                                        </b-button>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_first_name") }}</label>
-                                                                <input v-model="$v.edit.first_name.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_first_name") }}</label>
+                                                            <input v-model="$v.edit.first_name.$model"
+                                                                   disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.first_name.$error || errors.first_name,
                                                                         'is-valid': !$v.edit.first_name.$invalid && !errors.first_name,
                                                                     }" />
-                                                                <template v-if="errors.first_name">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.first_name"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.first_name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.first_name"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_second_name") }}</label>
-                                                                <input v-model="$v.edit.second_name.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_second_name") }}</label>
+                                                            <input v-model="$v.edit.second_name.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.second_name.$error || errors.second_name,
                                                                         'is-valid': !$v.edit.second_name.$invalid && !errors.second_name,
                                                                     }" />
-                                                                <template v-if="errors.second_name">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.second_name"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.second_name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.second_name"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_third_name") }}</label>
-                                                                <input v-model="$v.edit.third_name.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_third_name") }}</label>
+                                                            <input v-model="$v.edit.third_name.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.third_name.$error || errors.third_name,
                                                                         'is-valid': !$v.edit.third_name.$invalid && !errors.third_name,
                                                                     }" />
-                                                                <template v-if="errors.third_name">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.third_name"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.third_name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.third_name"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_last_name") }}</label>
-                                                                <input v-model="$v.edit.last_name.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_last_name") }}</label>
+                                                            <input v-model="$v.edit.last_name.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.last_name.$error || errors.last_name,
                                                                         'is-valid': !$v.edit.last_name.$invalid && !errors.last_name,
                                                                     }" />
-                                                                <template v-if="errors.last_name">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.last_name"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.last_name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.last_name"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_family_name") }}</label>
-                                                                <input v-model="$v.edit.family_name.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_family_name") }}</label>
+                                                            <input v-model="$v.edit.family_name.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.family_name.$error || errors.family_name,
                                                                         'is-valid': !$v.edit.family_name.$invalid && !errors.family_name,
                                                                     }" />
-                                                                <template v-if="errors.family_name">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.family_name"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.family_name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.family_name"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group position-relative">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("status") }}
+                                                    </div>
+                                                </div>
+                                                <hr  style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("status") }}
 
-                                                                </label>
-                                                                <multiselect @input="showStatusModalEdit"
-                                                                    v-model="edit.status_id"
-                                                                    :options="statuses.map((type) => type.id)"
-                                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e">
-                                                                </multiselect>
-                                                                <div v-if="$v.edit.status_id.$error || errors.status_id"
-                                                                    class="text-danger">
-                                                                    {{ $t("general.fieldIsRequired") }}
-                                                                </div>
-                                                                <template v-if="errors.status_id">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.status_id"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
+                                                            </label>
+                                                            <multiselect
+                                                                disabled
+                                                                v-model="edit.status_id"
+                                                                :options="statuses.map((type) => type.id)"
+                                                                :custom-label="(opt) => $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e">
+                                                            </multiselect>
+                                                            <div v-if="$v.edit.status_id.$error || errors.status_id"
+                                                                 class="text-danger">
+                                                                {{ $t("general.fieldIsRequired") }}
                                                             </div>
+                                                            <template v-if="errors.status_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.status_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_type") }}</label>
-                                                                <input v-model="$v.edit.member_type.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_type") }}</label>
+                                                            <input v-model="$v.edit.member_type.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.member_type.$error || errors.member_type,
                                                                         'is-valid': !$v.edit.member_type.$invalid && !errors.member_type,
                                                                     }" />
-                                                                <template v-if="errors.member_type">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.member_type"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.member_type">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.member_type"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group position-relative">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("member_type_id") }}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("member_type_id") }}
 
-                                                                </label>
-                                                                <multiselect v-model="edit.member_type_id"
-                                                                    :options="memberTypes.map((type) => type.id)"
-                                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? memberTypes.find((x) => x.id == opt).name
+                                                            </label>
+                                                            <multiselect disabled v-model="edit.member_type_id"
+                                                                         :options="memberTypes.map((type) => type.id)"
+                                                                         :custom-label="(opt) => $i18n.locale == 'ar' ? memberTypes.find((x) => x.id == opt).name
                                                                         : memberTypes.find((x) => x.id == opt).name_e">
-                                                                </multiselect>
-                                                                <div v-if="$v.edit.member_type_id.$error || errors.member_type_id"
-                                                                    class="text-danger">
-                                                                    {{ $t("general.fieldIsRequired") }}
-                                                                </div>
-                                                                <template v-if="errors.member_type_id">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.member_type_id"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
+                                                            </multiselect>
+                                                            <div v-if="$v.edit.member_type_id.$error || errors.member_type_id"
+                                                                 class="text-danger">
+                                                                {{ $t("general.fieldIsRequired") }}
                                                             </div>
+                                                            <template v-if="errors.member_type_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.member_type_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group position-relative">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("financial_status") }}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("financial_status") }}
 
-                                                                </label>
-                                                                <multiselect @input="showFinancialStatusModalEdit" v-model="edit.financial_status_id"
-                                                                    :options="financialStatuses.map((type) => type.id)"
-                                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? financialStatuses.find((x) => x.id == opt).name
+                                                            </label>
+                                                            <multiselect disabled v-model="edit.financial_status_id"
+                                                                         :options="financialStatuses.map((type) => type.id)"
+                                                                         :custom-label="(opt) => $i18n.locale == 'ar' ? financialStatuses.find((x) => x.id == opt).name
                                                                         : financialStatuses.find((x) => x.id == opt).name_e">
-                                                                </multiselect>
-                                                                <div v-if="$v.edit.financial_status_id.$error || errors.financial_status_id"
-                                                                    class="text-danger">
-                                                                    {{ $t("general.fieldIsRequired") }}
-                                                                </div>
-                                                                <template v-if="errors.financial_status_id">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.financial_status_id"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
+                                                            </multiselect>
+                                                            <div v-if="$v.edit.financial_status_id.$error || errors.financial_status_id"
+                                                                 class="text-danger">
+                                                                {{ $t("general.fieldIsRequired") }}
                                                             </div>
+                                                            <template v-if="errors.financial_status_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.financial_status_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3 position-relative">
-                                                            <div class="form-group">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("member_birth_date") }}
+                                                    </div>
+                                                    <div class="col-md-3 position-relative">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("member_birth_date") }}
 
-                                                                </label>
-                                                                <date-picker type="date" v-model="birth_date" defaultValue
-                                                                    @change="v_dateEdit($event, 'birth_date')"
-                                                                    confirm></date-picker>
-                                                                <template v-if="errors.date">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.date"
-                                                                        :key="index">
-                                                                        {{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            </label>
+                                                            <date-picker disabled type="date" v-model="birth_date" defaultValue
+                                                                         @change="v_dateEdit($event, 'birth_date')"
+                                                                         confirm></date-picker>
+                                                            <template v-if="errors.date">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.date"
+                                                                    :key="index">
+                                                                    {{
+                                                                        errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_national_id") }}</label>
-                                                                <input v-model="$v.edit.national_id.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label class="mr-2">
+                                                                {{ getCompanyKey("member_gender") }}
+
+                                                            </label>
+                                                            <b-form-group :class="{
+                                                                        'is-invalid': $v.edit.gender.$error || errors.gender,
+                                                                        'is-valid': !$v.edit.gender.$invalid && !errors.gender,
+                                                                    }">
+                                                                <b-form-radio class="d-inline-block" disabled
+                                                                              v-model="$v.edit.gender.$model" name="create_gender"
+                                                                              value="1">{{ $t("general.male") }}
+                                                                </b-form-radio>
+                                                                <b-form-radio class="d-inline-block m-1" disabled
+                                                                              v-model="$v.edit.gender.$model" name="create_gender"
+                                                                              value="0">{{ $t("general.female") }}
+                                                                </b-form-radio>
+                                                            </b-form-group>
+                                                            <template v-if="errors.gender">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.gender"
+                                                                              :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_national_id") }}</label>
+                                                            <input v-model="$v.edit.national_id.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.national_id.$error || errors.national_id,
                                                                         'is-valid': !$v.edit.national_id.$invalid && !errors.national_id,
                                                                     }" />
-                                                                <template v-if="errors.national_id">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.national_id"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.national_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.national_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_nationality_number")
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_nationality_number")
                                                                 }}</label>
-                                                                <input v-model="$v.edit.nationality_number.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                            <input v-model="$v.edit.nationality_number.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.nationality_number.$error || errors.nationality_number,
                                                                         'is-valid': !$v.edit.nationality_number.$invalid && !errors.nationality_number,
                                                                     }" />
-                                                                <template v-if="errors.nationality_number">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.nationality_number"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.nationality_number">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.nationality_number"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_home_phone") }}</label>
-                                                                <input v-model="$v.edit.home_phone.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_home_phone") }}</label>
+                                                            <input v-model="$v.edit.home_phone.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.home_phone.$error || errors.home_phone,
-                                                                        'is-valid': !$v.create.home_phone.$invalid && !errors.home_phone,
+                                                                        'is-valid': !$v.edit.home_phone.$invalid && !errors.home_phone,
                                                                     }" />
-                                                                <template v-if="errors.home_phone">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.home_phone"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.home_phone">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.home_phone"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_work_phone") }}</label>
-                                                                <input v-model="$v.edit.work_phone.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_work_phone") }}</label>
+                                                            <input v-model="$v.edit.work_phone.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.work_phone.$error || errors.work_phone,
                                                                         'is-valid': !$v.edit.work_phone.$invalid && !errors.work_phone,
                                                                     }" />
-                                                                <template v-if="errors.work_phone">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.work_phone"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.work_phone">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.work_phone"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_home_address") }}</label>
-                                                                <input v-model="$v.edit.home_address.$model"
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_home_address") }}</label>
+                                                            <input v-model="$v.edit.home_address.$model" disabled
                                                                     class="form-control" type="text" :class="{
-                                                                        'is-invalid':
-                                                                            $v.edit.home_address.$error || errors.home_address,
-                                                                        'is-valid': !$v.edit.home_address.$invalid && !errors.home_address,
-                                                                    }" />
-                                                                <template v-if="errors.home_address">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.home_address"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            'is-invalid':
+                                                            $v.edit.home_address.$error || errors.home_address,
+                                                            'is-valid': !$v.edit.home_address.$invalid && !errors.home_address,
+                                                            }" />
+                                                            <template v-if="errors.home_address">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.home_address"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_work_address") }}</label>
-                                                                <input v-model="$v.edit.work_address.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_work_address") }}</label>
+                                                            <input v-model="$v.edit.work_address.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.work_address.$error || errors.work_address,
                                                                         'is-valid': !$v.edit.work_address.$invalid && !errors.work_address,
                                                                     }" />
-                                                                <template v-if="errors.work_address">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.work_address"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.work_address">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.work_address"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3 position-relative">
-                                                            <div class="form-group">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("member_membership_date") }}
+                                                    </div>
+                                                    <div class="col-md-3 position-relative">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("member_membership_date") }}
 
-                                                                </label>
-                                                                <date-picker type="date" v-model="membership_date"
-                                                                    defaultValue
-                                                                    @change="v_dateEdit($event, 'membership_date')"
-                                                                    confirm></date-picker>
-                                                                <template v-if="errors.date">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.date"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            </label>
+                                                            <date-picker type="date" v-model="membership_date" disabled
+                                                                         defaultValue
+                                                                         @change="v_dateEdit($event, 'membership_date')"
+                                                                         confirm></date-picker>
+                                                            <template v-if="errors.date">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.date"
+                                                                    :key="index">{{
+                                                                        errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_membership_number")
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_membership_number")
                                                                 }}</label>
-                                                                <input v-model="$v.edit.membership_number.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                            <input v-model="$v.edit.membership_number.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.membership_number.$error || errors.membership_number,
                                                                         'is-valid': !$v.edit.membership_number.$invalid && !errors.membership_number,
                                                                     }" />
-                                                                <template v-if="errors.membership_number">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.membership_number"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.membership_number">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.membership_number"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_membership_request_number")
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_membership_request_number")
                                                                 }}</label>
-                                                                <input v-model="$v.edit.membership_request_number.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                            <input v-model="$v.edit.membership_request_number.$model" disabled
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.membership_request_number.$error || errors.membership_request_number,
                                                                         'is-valid': !$v.edit.membership_request_number.$invalid && !errors.membership_number_request,
                                                                     }" />
-                                                                <template v-if="errors.membership_number_request">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.membership_number_request"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.membership_number_request">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.membership_number_request"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_job") }}</label>
-                                                                <input v-model="$v.edit.job.$model" class="form-control"
-                                                                    type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_job") }}</label>
+                                                            <input v-model="$v.edit.job.$model" class="form-control" disabled
+                                                                   type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.job.$error || errors.job,
                                                                         'is-valid': !$v.edit.job.$invalid && !errors.job,
                                                                     }" />
-                                                                <template v-if="errors.job">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.job"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.job">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.job"
+                                                                    :key="index">{{
+                                                                        errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_degree") }}</label>
-                                                                <input v-model="$v.edit.degree.$model" class="form-control"
-                                                                    type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_degree") }}</label>
+                                                            <input v-model="$v.edit.degree.$model" class="form-control" disabled
+                                                                   type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.degree.$error || errors.degree,
                                                                         'is-valid': !$v.edit.degree.$invalid && !errors.degree,
                                                                     }" />
-                                                                <template v-if="errors.degree">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.degree"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.degree">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.degree"
+                                                                    :key="index">{{
+                                                                        errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label class="mr-2">
-                                                                    {{ getCompanyKey("member_acceptance") }}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label class="mr-2">
+                                                                {{ getCompanyKey("member_acceptance") }}
 
-                                                                </label>
-                                                                <b-form-group :class="{
+                                                            </label>
+                                                            <b-form-group :class="{
                                                                     'is-invalid': $v.edit.acceptance.$error || errors.acceptance,
                                                                     'is-valid': !$v.edit.acceptance.$invalid && !errors.acceptance,
                                                                 }">
-                                                                    <b-form-radio class="d-inline-block"
-                                                                        v-model="$v.edit.acceptance.$model"
-                                                                        name="edit_acceptance" value="0">{{
-                                                                            $t("general.pending")
-                                                                        }}</b-form-radio>
-                                                                    <b-form-radio class="d-inline-block m-1"
-                                                                        v-model="$v.edit.acceptance.$model"
-                                                                        name="edit_acceptance" value="1">{{
-                                                                            $t("general.accepted") }}</b-form-radio>
-                                                                    <b-form-radio class="d-inline-block m-1"
-                                                                        v-model="$v.edit.acceptance.$model"
-                                                                        name="edit_acceptance" value="2">{{
-                                                                            $t("general.declined") }}</b-form-radio>
+                                                                <b-form-radio class="d-inline-block"
+                                                                              v-model="$v.edit.acceptance.$model" disabled
+                                                                              name="edit_acceptance" value="0">{{
+                                                                        $t("general.pending")
+                                                                    }}</b-form-radio>
+                                                                <b-form-radio class="d-inline-block m-1"
+                                                                              v-model="$v.edit.acceptance.$model" disabled
+                                                                              name="edit_acceptance" value="1">{{
+                                                                        $t("general.accepted") }}</b-form-radio>
+                                                                <b-form-radio class="d-inline-block m-1"
+                                                                              v-model="$v.edit.acceptance.$model" disabled
+                                                                              name="edit_acceptance" value="2">{{
+                                                                        $t("general.declined") }}</b-form-radio>
 
-                                                                </b-form-group>
-                                                                <template v-if="errors.acceptance">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.acceptance"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            </b-form-group>
+                                                            <template v-if="errors.acceptance">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.acceptance"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_acceptance_number")
-                                                                }}</label>
-                                                                <input v-model="$v.edit.acceptance_number.$model"
-                                                                    class="form-control" type="text" :class="{
-                                                                        'is-invalid':
-                                                                            $v.edit.acceptance_number.$error || errors.acceptance_number,
-                                                                        'is-valid': !$v.edit.acceptance_number.$invalid && !errors.acceptance_number,
-                                                                    }" />
-                                                                <template v-if="errors.acceptance_number">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.acceptance_number"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3 position-relative">
-                                                            <div class="form-group">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("member_acceptance_date") }}
+                                                    </div>
+                                                    <div class="col-md-3 position-relative">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("member_session_date") }}
 
-                                                                </label>
-                                                                <date-picker type="date" v-model="acceptance_date"
-                                                                    defaultValue
-                                                                    @change="v_dateEdit($event, 'acceptance_date')"
-                                                                    confirm></date-picker>
-                                                                <template v-if="errors.date">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.date"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            </label>
+                                                            <date-picker disabled type="date" v-model="session_date" defaultValue
+                                                                         @change="v_dateEdit($event, 'session_date')"
+                                                                         confirm></date-picker>
+                                                            <template v-if="errors.date">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.date"
+                                                                    :key="index">{{
+                                                                        errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
-                                                        <div class="col-md-3 position-relative">
-                                                            <div class="form-group">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("member_session_date") }}
-
-                                                                </label>
-                                                                <date-picker type="date" v-model="session_date" defaultValue
-                                                                    @change="v_dateEdit($event, 'session_date')"
-                                                                    confirm></date-picker>
-                                                                <template v-if="errors.date">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.date"
-                                                                        :key="index">{{
-                                                                            errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_session_number") }}</label>
-                                                                <input v-model="$v.edit.session_number.$model"
-                                                                    class="form-control" type="text" :class="{
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("member_session_number") }}</label>
+                                                            <input disabled v-model="$v.edit.session_number.$model"
+                                                                   class="form-control" type="text" :class="{
                                                                         'is-invalid':
                                                                             $v.edit.session_number.$error || errors.session_number,
                                                                         'is-valid': !$v.edit.session_number.$invalid && !errors.session_number,
                                                                     }" />
-                                                                <template v-if="errors.session_number">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.session_number"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label class="mr-2">
-                                                                    {{ getCompanyKey("member_is_sponsor") }}
-
-                                                                </label>
-                                                                <b-form-group :class="{
-                                                                    'is-invalid': $v.edit.sponsor.$error || errors.sponsor,
-                                                                    'is-valid': !$v.edit.sponsor.$invalid && !errors.sponsor,
-                                                                }">
-                                                                    <b-form-radio class="d-inline-block"
-                                                                        v-model="$v.edit.sponsor.$model" name="edit_sponsor"
-                                                                        value="active">{{
-                                                                            $t("general.Yes")
-                                                                        }}</b-form-radio>
-                                                                    <b-form-radio class="d-inline-block m-1"
-                                                                        v-model="$v.edit.sponsor.$model" name="edit_sponsor"
-                                                                        value="inactive">{{
-                                                                            $t("general.No")
-                                                                        }}</b-form-radio>
-                                                                </b-form-group>
-                                                                <template v-if="errors.sponsor">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.sponsor"
-                                                                        :key="index">
-                                                                        {{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3" v-if="edit.sponsor == 'active'">
-                                                            <div class="form-group position-relative">
-                                                                <label class="control-label">
-                                                                    {{ getCompanyKey("sponsor") }}
-
-                                                                </label>
-                                                                <multiselect @input="showSponsorModalEdit"
-                                                                    v-model="edit.sponsor_id"
-                                                                    :options="sponsors.map((type) => type.id)"
-                                                                    :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                                                </multiselect>
-                                                                <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"
-                                                                    class="text-danger">
-                                                                    {{ $t("general.fieldIsRequired") }}
-                                                                </div>
-                                                                <template v-if="errors.sponsor_id">
-                                                                    <ErrorMessage
-                                                                        v-for="(errorMessage, index) in errors.sponsor_id"
-                                                                        :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                            <template v-if="errors.session_number">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.session_number"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </b-modal>
-                                            <!--  /edit   -->
-                                        </td>
+                                                    <div class="col-md-3" >
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("sponsor") }}
+
+                                                            </label>
+                                                            <multiselect disabled
+                                                                         v-model="edit.sponsor_id"
+                                                                         :options="sponsors.map((type) => type.id)"
+                                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
+                                                            </multiselect>
+                                                            <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"
+                                                                 class="text-danger">
+                                                                {{ $t("general.fieldIsRequired") }}
+                                                            </div>
+                                                            <template v-if="errors.sponsor_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.sponsor_id"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </b-modal>
+                                        <!--  /edit   -->
                                         <td v-if="enabled3" class="do-not-print">
                                             <button @mouseover="log(data.id)" @mousemove="log(data.id)" type="button"
                                                 class="btn" data-toggle="tooltip"
@@ -2788,7 +2001,7 @@ export default {
                                 </tbody>
                                 <tbody v-else>
                                     <tr>
-                                        <th class="text-center" colspan="11">
+                                        <th class="text-center" colspan="30">
                                             {{ $t("general.notDataFound") }}
                                         </th>
                                     </tr>

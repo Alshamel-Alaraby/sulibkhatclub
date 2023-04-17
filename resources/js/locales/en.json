@@ -585,6 +585,10 @@
         }
     },
     "general": {
+        "id":"id",
+        "path":"Path",
+        "created_at":"Created at",
+        "linkedWithDocs":"Linked with docs",
         "accepted":"Accepted",
         "declined":"Declined",
         "financial_status":"Financial status",
@@ -749,6 +753,7 @@
         "Date": "Date",
         "Active": "Active",
         "Inactive": "Inactive",
+        "name": "Name",
         "Name": "Name (arabic)",
         "Name_en": "Name (english)",
         "Areyousure": "Are you sure ?",
@@ -1041,6 +1046,9 @@
         "ordersTable": "Orders Table",
         "membership_renewal": "membership renewal",
         "membership_renewalTable": "Membership Renewal table",
+        "male": "Male",
+        "female": "Female",
+        "memberRequest": "Members Requests",
         "subscriptionTable": "Subscription Table",
         "subscription": "Subscription",
         "multiSubscription": "Multi Subscription",
@@ -1049,6 +1057,13 @@
         "renew": "Renew",
         "BothSponsorsAreSame":"Both sponsors are same",
         "multiSubscriptionTable": "Multi Subscription Table",
-        "month": "Month"
+        "month": "Month",
+        "memberAccept": "Accepted Members",
+        "memberAcceptTable": "Accepted Members Table",
+        "accept-reject-member": "Accept or reject members",
+        "accept-reject-member-table": "Accept or reject members Table",
+        "membersRequestTable": "Members Request Table",
+        "Approve": "Approve",
+        "non-Approve":  "Not Approve"
     }
 }
