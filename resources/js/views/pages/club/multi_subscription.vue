@@ -55,16 +55,18 @@ export default {
             branches: [],
             renewal: [],
             sponsors: [],
+            serials: [],
             enabled3: true,
             is_disabled: false,
             isLoader: false,
             create: {
                 sponsor_id: null,
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: "",
-                date_to: "",
+                date_from: new Date().toISOString().slice(0, 10),
+                date_to: new Date().toISOString().slice(0, 10),
                 type: "",
                 amount: "",
                 module_type:"club",
@@ -77,8 +79,8 @@ export default {
                 branch_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: "",
-                date_to: "",
+                date_from: new Date().toISOString().slice(0, 10),
+                date_to: new Date().toISOString().slice(0, 10),
                 type: "",
                 amount: "",
                 module_type:"club",
@@ -118,6 +120,7 @@ export default {
         create: {
             sponsor_id: {required},
             branch_id: {required},
+            serial_id: {required},
             cm_member_id: {},
             date_from: {required},
             date_to: {required},
@@ -126,6 +129,7 @@ export default {
             transactions: {
                 $each: {
                     branch_id: {required},
+                    serial_id: {required},
                     cm_member_id: {required},
                     date_from: {required},
                     date_to: {required},
@@ -181,10 +185,12 @@ export default {
         this.getData();
     },
     methods: {
-        showBranchModal() {
+        async showBranchModal() {
             if (this.create.branch_id == 0) {
                 this.$bvModal.show("create_branch");
                 this.create.branch_id = null;
+            }else{
+                await this.getSerials();
             }
         },
         showBranchModalEdit() {
@@ -210,11 +216,12 @@ export default {
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -324,6 +331,23 @@ export default {
                 })
                 .finally(() => {
                     this.isLoader = false;
+                });
+        },
+        async getSerials() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/serials?branch_id=${this.create.branch_id}`)
+                .then((res) => {
+                    this.isLoader = false;
+                    let l = res.data.data;
+                    this.serials = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
                 });
         },
         /**
@@ -442,12 +466,13 @@ export default {
             this.total = 0;
             this.create = {
                 branch_id: null,
+                serial_id: null,
                 sponsor_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
@@ -466,15 +491,17 @@ export default {
             await this.getType();
             await this.getBranches();
             await this.getSponsors();
+            await this.getSerials();
             this.total = 0;
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
@@ -598,10 +625,10 @@ export default {
                 branch_id: null,
                 sponsor_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -744,6 +771,7 @@ export default {
         addNewField() {
 
             let data = this.create;
+            let serial = this.serials.find((el)=> el.id ==data.serial_id);
             let member = this.members.find((el)=> el.id ==data.cm_member_id);
             let member_name = member.first_name+' '+ member.second_name+' '+ member.third_name +' '+ member.last_name;
             let member_transactions = this.create.transactions.find((el)=> el.cm_member_id ==data.cm_member_id);
@@ -752,6 +780,8 @@ export default {
                 this.create.transactions.push({
                     sponsor_id: data.sponsor_id,
                     branch_id: data.branch_id,
+                    serial_name: serial.name,
+                    serial_id: data.serial_id,
                     cm_member_id: data.cm_member_id,
                     document_id: 8,
                     date_from: data.date_from,
@@ -1241,7 +1271,32 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 pt-3">
+                                    <div class="col-md-2 ">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.serial_number") }}</label>
+                                            <multiselect @input="showBranchModal" v-model="create.serial_id"
+                                                         :options="serials.map((type) => type.id)" :custom-label="
+                                                    (opt) =>
+                                                        $i18n.locale == 'ar'
+                                                            ? serials.find((x) => x.id == opt).name
+                                                            : serials.find((x) => x.id == opt).name_e
+                                                " :class="{
+                                                        'is-invalid':
+                                                            $v.create.serial_id.$error || errors.serial_id,
+                                                    }">
+                                            </multiselect>
+                                            <div v-if="!$v.create.serial_id.required" class="invalid-feedback">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+
+                                            <template v-if="errors.serial_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.serial_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 pt-3">
                                         <b-button variant="success"
                                                   @click.prevent="addNewField"
                                                   type="button" :class="['font-weight-bold px-2']"
@@ -1267,6 +1322,7 @@ export default {
                                                     <thead>
                                                     <tr>
                                                         <th>{{ getCompanyKey("member_membership_number") }}</th>
+                                                        <th>{{ $t("general.serial_number") }}</th>
                                                         <th>{{ getCompanyKey("member") }}</th>
                                                         <th>{{ getCompanyKey("subscription_amount") }}</th>
                                                         <th>{{ getCompanyKey("subscription_type") }}</th>
@@ -1282,6 +1338,9 @@ export default {
                                                     >
                                                         <td>
                                                             <h5 class="m-0 font-weight-normal">{{ data.membership_number }}</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="m-0 font-weight-normal">{{ data.serial_name }}</h5>
                                                         </td>
                                                         <td>
                                                             <h5 class="m-0 font-weight-normal">{{ data.member_name }}</h5>

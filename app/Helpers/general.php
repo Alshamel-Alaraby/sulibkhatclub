@@ -42,7 +42,7 @@ function generalSerial($model, $type = "")
 
         } else {
 
-            $last_serial_number = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial->id])->latest()->skip(1)->first();
+            $last_serial_number = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial->id])->latest('id')->skip(1)->first();
 
             $new_serial_number = (int)$last_serial_number->serial_number + 1;
 
@@ -67,4 +67,33 @@ function generalSerialUpdate($model)
     }
     return $data;
 
+}
+
+
+
+function generalSerialWithIdCreate($model, $serial_id)
+{
+    $data = [];
+    $serial = Serial::find($serial_id);
+    $count = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial->id])->get()->count();
+
+    if ($count == 1) {
+
+        $start_number = (int)$serial->start_no;
+        $data['prefix'] = $serial->perfix . '-' . $model->document_id . '-' . $start_number;
+        $data['serial_number'] = $start_number;
+
+    } else {
+
+        $last_serial_number = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial_id])->latest('id')->skip(1)->first();
+
+        $last_ser_num =$last_serial_number->serial_number;
+
+        $new_serial_number = (int)$last_ser_num + 1;
+
+        $data['prefix'] = $serial->perfix . '-' . $model->document_id . '-' . $new_serial_number;
+        $data['serial_number'] = $new_serial_number;
+
+    }
+    return $data;
 }

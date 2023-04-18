@@ -61,8 +61,6 @@ class CmMemberRepository implements CmMemberInterface
         return $model;
     }
 
-//     membership_number
-// applying_number
 
     public function updateAcceptance($request, $id)
     {
@@ -155,6 +153,6 @@ class CmMemberRepository implements CmMemberInterface
     }
 
 
-   
+
 
 }

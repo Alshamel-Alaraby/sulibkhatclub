@@ -23,6 +23,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('national_id')->nullable();
             $table->string('nationality_number')->nullable();
+            $table->string('phone_code')->nullable();
             $table->string('home_phone')->nullable();
             $table->string('work_phone')->nullable();
             $table->string('home_address')->nullable();

@@ -18,12 +18,12 @@ class SerialRepository implements SerialRepositoryInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        if($request->branch_id){
-            $models->where('branch_id',$request->branch_id);
+        if ($request->branch_id) {
+            $models->where('branch_id', $request->branch_id);
         }
 
-        if($request->company_id){
-            $models->where('company_id',$request->company_id);
+        if ($request->company_id) {
+            $models->where('company_id', $request->company_id);
         }
 
         if ($request->per_page) {
@@ -35,13 +35,14 @@ class SerialRepository implements SerialRepositoryInterface
 
     public function create(array $data)
     {
-        DB::transaction(function () use ($data) {
-            $model = $this->model->create($data);
+        return DB::transaction(function () use ($data) {
+            return $model = $this->model->create($data);
             if (request()->is_default == 1) {
                 $this->model->where('id', '!=', $model->id)->update(['is_default' => 0]);
             }
-            cacheForget("serials");
+
         });
+
     }
 
     public function find($id)
@@ -49,15 +50,18 @@ class SerialRepository implements SerialRepositoryInterface
         return $this->model->find($id);
     }
 
-    public function update($data, $id)
+    public function update($request, $id)
     {
-        DB::transaction(function () use ($id, $data) {
-            $this->model->where("id", $id)->update($data);
+        DB::transaction(function () use ($id, $request) {
+            $this->model->where("id", $id)->update($request->validated());
             if (request()->is_default == 1) {
                 $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
             }
-            $this->forget($id);
+            // $this->forget($id);
         });
+
+        $model = $this->model->find($id);
+        return $model;
     }
 
     public function setting($request)

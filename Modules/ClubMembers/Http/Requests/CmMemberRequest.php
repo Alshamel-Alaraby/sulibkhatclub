@@ -32,6 +32,7 @@ class CmMemberRequest extends FormRequest
             'birth_date' => 'nullable|date',
             'national_id' =>'nullable|string|max:20',
             'nationality_number' => 'nullable|string|max:255',
+            'phone_code' => 'nullable|string|max:255',
             'home_phone' => 'nullable|string|max:255',
             'work_phone' => 'nullable|string|max:255',
             'home_address' => 'nullable|string|max:255',

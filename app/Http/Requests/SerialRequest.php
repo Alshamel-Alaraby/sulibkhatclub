@@ -25,12 +25,12 @@ class SerialRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_id' => ['nullable'],
-            'restart_period' => ['nullable'],
-            'is_default' => ['nullable'],
-            'start_no' => ['nullable'],
-            'perfix' => ['nullable'],
-            'suffix' => ['nullable'],
+            'company_id' => 'nullable',
+            'restart_period' => 'nullable',
+            'is_default' => 'nullable',
+            'start_no' => 'nullable',
+            'perfix' => 'nullable',
+            'suffix' => 'nullable',
             'document_id' => "nullable|exists:general_documents,id",
             'branch_id' => "nullable|exists:general_branches,id",
             "name" => "nullable|max:151|string",

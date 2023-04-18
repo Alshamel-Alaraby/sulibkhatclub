@@ -50,6 +50,7 @@ export default {
             debounce: {},
             transactionsPagination: {},
             transactions: [],
+            serials: [],
             branches: [],
             renewal: [],
             enabled3: true,
@@ -57,10 +58,11 @@ export default {
             isLoader: false,
             create: {
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: "",
-                date_to: "",
+                date_from: new Date().toISOString().slice(0, 10),
+                date_to: new Date().toISOString().slice(0, 10),
                 type: "",
                 amount: "",
                 module_type:"club",
@@ -71,8 +73,8 @@ export default {
                 branch_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: "",
-                date_to: "",
+                date_from: new Date().toISOString().slice(0, 10),
+                date_to: new Date().toISOString().slice(0, 10),
                 type: "",
                 amount: "",
                 module_type:"club",
@@ -109,6 +111,7 @@ export default {
     validations: {
         create: {
             branch_id: {required},
+            serial_id: {required},
             cm_member_id: {required},
             date_from: {required},
             date_to: {required},
@@ -161,10 +164,12 @@ export default {
         this.getData();
     },
     methods: {
-        showBranchModal() {
+        async showBranchModal() {
             if (this.create.branch_id == 0) {
                 this.$bvModal.show("create_branch");
                 this.create.branch_id = null;
+            }else{
+                await this.getSerials();
             }
         },
         showBranchModalEdit() {
@@ -176,11 +181,12 @@ export default {
         resetForm() {
             this.create = {
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -262,6 +268,23 @@ export default {
                     let l = res.data.data;
                     l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
                     this.branches = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
+        async getSerials() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/serials?branch_id=${this.create.branch_id}`)
+                .then((res) => {
+                    this.isLoader = false;
+                    let l = res.data.data;
+                    this.serials = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -386,11 +409,12 @@ export default {
         resetModalHidden() {
             this.create = {
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -407,13 +431,15 @@ export default {
         async resetModal() {
             await this.getType();
             await this.getBranches();
+            await this.getSerials();
             this.create = {
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -513,6 +539,7 @@ export default {
         async resetModalEdit(id) {
             await this.getType();
             await this.getBranches();
+            await this.getSerials();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
@@ -533,10 +560,10 @@ export default {
             this.edit = {
                 branch_id: null,
                 cm_member_id: null,
-                date_from: "",
+                date_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: "",
+                date_to: new Date().toISOString().slice(0, 10),
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -947,6 +974,31 @@ export default {
 
                                             <template v-if="errors.branch_id">
                                                 <ErrorMessage v-for="(errorMessage, index) in errors.branch_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.serial_number") }}</label>
+                                            <multiselect @input="showBranchModal" v-model="create.serial_id"
+                                                         :options="serials.map((type) => type.id)" :custom-label="
+                                                    (opt) =>
+                                                        $i18n.locale == 'ar'
+                                                            ? serials.find((x) => x.id == opt).name
+                                                            : serials.find((x) => x.id == opt).name_e
+                                                " :class="{
+                                                        'is-invalid':
+                                                            $v.create.serial_id.$error || errors.serial_id,
+                                                    }">
+                                            </multiselect>
+                                            <div v-if="!$v.create.serial_id.required" class="invalid-feedback">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+
+                                            <template v-if="errors.serial_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.serial_id"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>

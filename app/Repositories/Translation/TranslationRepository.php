@@ -50,13 +50,18 @@ class TranslationRepository implements TranslationInterface
     {
         DB::transaction(function () use ($request) {
             foreach ($request['transactions'] as $transaction):
-                if ($transaction['module_type'] == 'club')
+                if ($transaction['module_type'] == 'club' && !$transaction['serial_id'])
                 {
                     $serial = Serial::where([['branch_id',$transaction['branch_id']],['document_id',$transaction['document_id']]])->first();
                     $transaction['serial_id'] = $serial ? $serial->id:null;
                 }
                 $model= $this->model->create($transaction);
-                $serials = generalSerial($model);
+                if ($transaction['serial_id'])
+                {
+                    $serials = generalSerialWithIdCreate($model,$transaction['serial_id']);
+                }else{
+                    $serials = generalSerial($model);
+                }
                 $model->update([
                     "serial_number" => $serials['serial_number'],
                     "prefix" => $serials['prefix'],

@@ -585,6 +585,7 @@
         }
     },
     "general": {
+        "video":"Video",
         "id":"id",
         "path":"Path",
         "created_at":"Created at",
@@ -1063,7 +1064,7 @@
         "accept-reject-member": "Accept or reject members",
         "accept-reject-member-table": "Accept or reject members Table",
         "membersRequestTable": "Members Request Table",
-        "Approve": "Approve",
+        "Approve": "Mult Approve",
         "non-Approve":  "Not Approve"
     }
 }

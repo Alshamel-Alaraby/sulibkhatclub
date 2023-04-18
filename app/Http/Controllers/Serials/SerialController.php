@@ -39,9 +39,19 @@ class SerialController extends Controller
     public function store(SerialRequest $request)
     {
 
-        $this->repository->create($request->validated());
-        return responseJson(200, __('done'));
+        $model = $this->repository->create($request->validated());
+        return responseJson(200, __('done'), new SerialResource($model));
 
+    }
+
+    public function find($id)
+    {
+
+        $model = $this->repository->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        return responseJson(200, 'success', new SerialResource($model));
     }
 
     /**
@@ -75,43 +85,53 @@ class SerialController extends Controller
      */
     public function update(SerialRequest $request, $id)
     {
-        $data = [];
-        if ($request->company_id) {
-            if (!DB::table('companies')->find($request->company_id)) {
-                return responseJson(422, __('company does\'t exist'));
-            }
-            $data['company_id'] = $request->company_id;
-        }
-        if ($request->branch_id) {
-            if (!DB::table('general_branches')->find($request->branch_id)) {
-                return responseJson(422, __('branch does\'t exist'));
-            }
-            $data['branch_id'] = $request->branch_id;
-        }
-        if ($request->store_id) {
-            if (!DB::table('general_stores')->find($request->store_id)) {
-                return responseJson(422, __('branch does\'t exist'));
-            }
-            $data['store_id'] = $request->store_id;
-        }
-        if ($request->start_no) {
-            $data['start_no'] = $request->start_no;
-        }
-        if ($request->perfix) {
-            $data['perfix'] = $request->perfix;
-        }
-        if ($request->suffix) {
-            $data['suffix'] = $request->suffix;
-        }
-        if ($request->restart_period) {
-            $data['restart_period'] = $request->restart_period;
-        }
-        if ($request->is_default) {
-            $data['is_default'] = $request->is_default;
-        }
 
-        $this->repository->update($data, $id);
-        return responseJson(200, __('updated'));
+        $model = $this->repository->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        $model = $this->repository->update($request, $id);
+
+        return responseJson(200, 'success', new SerialResource($model));
+
+
+        // $data = [];
+        // if ($request->company_id) {
+        //     if (!DB::table('companies')->find($request->company_id)) {
+        //         return responseJson(422, __('company does\'t exist'));
+        //     }
+        //     $data['company_id'] = $request->company_id;
+        // }
+        // if ($request->branch_id) {
+        //     if (!DB::table('general_branches')->find($request->branch_id)) {
+        //         return responseJson(422, __('branch does\'t exist'));
+        //     }
+        //     $data['branch_id'] = $request->branch_id;
+        // }
+        // if ($request->store_id) {
+        //     if (!DB::table('general_stores')->find($request->store_id)) {
+        //         return responseJson(422, __('branch does\'t exist'));
+        //     }
+        //     $data['store_id'] = $request->store_id;
+        // }
+        // if ($request->start_no) {
+        //     $data['start_no'] = $request->start_no;
+        // }
+        // if ($request->perfix) {
+        //     $data['perfix'] = $request->perfix;
+        // }
+        // if ($request->suffix) {
+        //     $data['suffix'] = $request->suffix;
+        // }
+        // if ($request->restart_period) {
+        //     $data['restart_period'] = $request->restart_period;
+        // }
+        // if ($request->is_default) {
+        //     $data['is_default'] = $request->is_default;
+        // }
+
+        // $this->repository->update($data, $id);
+        // return responseJson(200, __('updated'), new SerialResource($data));
 
     }
     public function logs($id)

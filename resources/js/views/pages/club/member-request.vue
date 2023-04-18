@@ -83,7 +83,7 @@ export default {
                 "last_name",
                 "family_name",
             ],
-            reject: {note: '',},
+            reject: {notes: '',},
             printLoading: true,
             printObj: {
                 id: "printData",
@@ -103,7 +103,7 @@ export default {
              }
          },
         reject: {
-            acceptance: {required},
+            notes: {required},
         }
      },
     watch: {
@@ -258,7 +258,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .post(`/club-members/members/decline-member/${this.checkAll[0]}`, {note: this.reject.note})
+                    .put(`/club-members/members/decline-member/${this.checkAll[0]}`, {notes: this.reject.note})
                     .then((res) => {
                         this.$bvModal.hide(`modal_rejected`);
                         this.getData();
@@ -318,7 +318,7 @@ export default {
         },
         resetModalReject(){
             this.reject = {
-                note: ''
+                notes: ''
             }
         },
         /**
@@ -469,12 +469,12 @@ export default {
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
-                                <b-button v-b-modal.modal_accept variant="primary" class="btn-sm mx-1 font-weight-bold"
+                                <b-button v-b-modal.modal_accept variant="primary" class="btn-sm mx-1 font-11  font-weight-bold"
                                           v-if="checkAll.length > 0"
                                 >
                                     {{ $t("general.Approve") }}
                                 </b-button>
-                                <b-button v-b-modal.modal_rejected variant="danger" class="btn-sm mx-1 font-weight-bold"
+                                <b-button v-b-modal.modal_rejected variant="danger" class="btn-sm mx-1 font-11 font-weight-bold"
                                           v-if="checkAll.length == 1"
                                 >
                                     {{ $t("general.non-Approve") }}
@@ -671,14 +671,14 @@ export default {
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("boardRent_panel_note") }}</label>
-                                            <input v-model="$v.reject.note.$model" class="form-control"
+                                            <input v-model="$v.reject.notes.$model" class="form-control"
                                                    type="text" :class="{
                                                     'is-invalid':
-                                                        $v.reject.note.$error || errors.note,
-                                                    'is-valid': !$v.reject.note.$invalid && !errors.note,
+                                                        $v.reject.notes.$error || errors.notes,
+                                                    'is-valid': !$v.reject.notes.$invalid && !errors.notes,
                                                 }" />
-                                            <template v-if="errors.note">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.note"
+                                            <template v-if="errors.notes">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.notes"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>

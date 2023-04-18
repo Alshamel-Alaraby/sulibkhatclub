@@ -2,6 +2,7 @@
 
 namespace Modules\RealEstate\Transformers;
 
+use App\Http\Resources\FileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RlstBuildingResource extends JsonResource
@@ -38,6 +39,7 @@ class RlstBuildingResource extends JsonResource
             "video_link" => $this->video_link,
              "created_at" => $this->created_at,
              "updated_at" => $this->updated_at,
+             "media" =>  isset($this->files) ? FileResource::collection($this->files) : null,
         ];
     }
 }

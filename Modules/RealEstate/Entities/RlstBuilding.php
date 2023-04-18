@@ -6,16 +6,17 @@ use App\Models\Avenue;
 use App\Models\City;
 use App\Models\Country;
 use App\Traits\LogTrait;
+use App\Traits\MediaTrait;
 use App\Traits\VideoLink;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
 
-class RlstBuilding extends Model
+class RlstBuilding extends Model implements HasMedia
 {
-    use HasFactory, LogTrait, VideoLink;
+    use HasFactory, LogTrait, MediaTrait, VideoLink;
 
     protected $guarded = ['id'];
-
 
     // attributes
     public function setPropertiesAttribute($value)
@@ -63,5 +64,4 @@ class RlstBuilding extends Model
         return $this->belongsTo(Avenue::class);
     }
 
-   
 }

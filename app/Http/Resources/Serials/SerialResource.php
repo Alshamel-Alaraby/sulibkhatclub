@@ -17,21 +17,21 @@ class SerialResource extends JsonResource
     public function toArray($request)
     {
 
-
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'name_e' => $this->start_no,
-            'company_id' => $this->name_e,
+            'name_e' => $this->name_e,
+            'company_id' => $this->company_id,
             'start_no' => $this->start_no,
-            "document" => new DocumentResource($this->document),
-            "branch" => new BranchResource($this->branch),
+            'document_id' => $this->document_id,
             'perfix' => $this->perfix,
             'suffix' => $this->suffix,
             'restart_period' => $this->restart_period,
             'is_default' => $this->is_default,
             "store" => $this->store,
             "has_child" => $this->has_child,
+            "document" => new DocumentResource($this->document),
+            "branch" => new BranchResource($this->branch),
         ];
     }
 }

@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Modules\RealEstate\Entities\RlstBuilding;
 use Modules\RealEstate\Http\Requests\RlstBuildingRequest;
 use Modules\RealEstate\Transformers\RlstBuildingResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class RlstBuildingController extends Controller
 {
 
-    public function __construct(private RlstBuilding $model)
+    public function __construct(private RlstBuilding $model,private Media $media)
     {
         $this->model = $model;
     }
@@ -50,7 +51,14 @@ class RlstBuildingController extends Controller
                     'link' => $request->video_link,
                 ]);
             }
-
+            if ($request->media) {
+                foreach ($request->media as $media) {
+                    $this->media::where('id', $media)->update([
+                        'model_id' => $model->id,
+                        'model_type' => get_class($this->model),
+                    ]);
+                }
+            }
             return responseJson(200, 'created', new RlstBuildingResource($model));
 
         });
@@ -68,10 +76,42 @@ class RlstBuildingController extends Controller
             $model->update($request->validated());
             $model->refresh();
             if ($request->video_link) {
-                $model->video()->updateOrCreate([
+                $model->video()->delete();
+                $model->video()->create([
                     'link' => $request->video_link,
                 ]);
             }
+            if ($request->media && !$request->old_media) { // if there is new media and no old media
+                $model->clearMediaCollection('media');
+                foreach ($request->media as $media) {
+                    uploadImage($media, [
+                        'model_id' => $model->id,
+                        'model_type' => get_class($this->model),
+                    ]);
+                }
+            }
+
+            if ($request->old_media && !$request->media) { // if there is old media and no new media
+                $model->media->whereNotIn('id', $request->old_media)->each(function (Media $media) {
+                    $media->delete();
+                });
+            }
+
+            if ($request->old_media && $request->media) { // if there is old media and new media
+                $model->media->whereNotIn('id', $request->old_media)->each(function (Media $media) {
+                    $media->delete();
+                });
+                foreach ($request->media as $image) {
+                    uploadImage($image, [
+                        'model_id' => $model->id,
+                        'model_type' => get_class($this->model),
+                    ]);
+                }
+            }
+            if (!$request->old_media && !$request->media) { // if this is no old media and new media
+                $model->clearMediaCollection('media');
+            }
+            $model->refresh();
             return responseJson(200, 'updated', new RlstBuildingResource($model));
         });
 

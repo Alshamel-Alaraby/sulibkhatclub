@@ -88,7 +88,7 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
-                document_id: null,
+                document_id: 10,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,

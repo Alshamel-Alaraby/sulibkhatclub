@@ -64,6 +64,7 @@ export default {
                 first_name: "",
                 second_name: "",
                 third_name: "",
+                phone_code: '',
                 last_name: "",
                 family_name: "",
                 birth_date: this.formatDate(new Date()),
@@ -83,6 +84,7 @@ export default {
                 applying_number: '',
                 first_name: "",
                 second_name: "",
+                phone_code: '',
                 third_name: "",
                 last_name: "",
                 family_name: "",
@@ -138,6 +140,7 @@ export default {
                 "job",
                 "degree",
             ],
+            codeCountry: '',
             printLoading: true,
             printObj: {
                 id: "printData",
@@ -218,6 +221,7 @@ export default {
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
+        this.$store.dispatch('locationIp/getIp');
     },
     methods: {
         v_dateCreate(e, name) {
@@ -445,6 +449,7 @@ export default {
                 applying_date: this.formatDate(new Date()),
                 applying_number: '',
                 first_name: "",
+                phone_code: '',
                 second_name: "",
                 third_name: "",
                 last_name: "",
@@ -473,10 +478,12 @@ export default {
         resetModal() {
             this.birth_date = new Date();
             this.applying_date = new Date();
+            this.codeCountry =  this.$store.getters["locationIp/countryCode"];
             this.create = {
                 applying_date: this.formatDate(new Date()),
                 applying_number: '',
                 first_name: "",
+                phone_code: '',
                 second_name: "",
                 third_name: "",
                 last_name: "",
@@ -504,9 +511,11 @@ export default {
          resetForm() {
             this.birth_date = new Date();
             this.applying_date = new Date();
+            this.codeCountry =  this.$store.getters["locationIp/countryCode"];
             this.create = {
                 applying_date: this.formatDate(new Date()),
                 applying_number: '',
+                phone_code: '',
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -533,6 +542,7 @@ export default {
 
         AddSubmit() {
             this.$v.create.$touch();
+            this.create.phone_code = this.codeCountry;
 
             if (this.$v.create.$invalid) {
                 return;
@@ -540,7 +550,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .post(`/club-members/members`, this.create)
+                    .post(`/club-members/members`, this.create )
                     .then((res) => {
                         this.is_disabled = true;
                         this.getData();
@@ -619,6 +629,7 @@ export default {
             this.edit.applying_number = member.applying_number;
             this.edit.first_name = member.first_name;
             this.edit.second_name = member.second_name;
+            this.edit.phone_code = member.phone_code;
             this.edit.third_name = member.third_name;
             this.edit.last_name = member.last_name;
             this.edit.family_name = member.family_name;
@@ -645,6 +656,7 @@ export default {
             this.edit = {
                 applying_date: this.formatDate(new Date()),
                 applying_number: '',
+                phone_code: '',
                 first_name: "",
                 second_name: "",
                 third_name: "",
@@ -710,7 +722,12 @@ export default {
         englishValue(txt) {
             this.create.name_e = englishValue(txt);
             this.edit.name_e = englishValue(txt);
-        }
+        },
+        updatePhoneEdit(e) {
+            this.codeCountry = e.countryCode;
+            this.edit.phone_code = e.countryCode;
+            this.create.phone_code = e.countryCode;
+        },
     },
 };
 </script>
@@ -966,7 +983,7 @@ export default {
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("apply_membership_number") }}</label>
                                             <input v-model="$v.create.applying_number.$model" class="form-control"
-                                                   type="text" :class="{
+                                                   type="number" :class="{
                                                     'is-invalid':
                                                         $v.create.applying_number.$error || errors.applying_number,
                                                     'is-valid': !$v.create.applying_number.$invalid && !errors.applying_number,
@@ -1144,30 +1161,16 @@ export default {
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("member_home_phone") }}</label>
-                                            <input v-model="$v.create.home_phone.$model" class="form-control" type="number"
-                                                   :class="{
-                                                    'is-invalid':
-                                                        $v.create.home_phone.$error || errors.home_phone,
-                                                    'is-valid': !$v.create.home_phone.$invalid && !errors.home_phone,
-                                                }" />
+                                            <VuePhoneNumberInput
+                                                v-model="$v.create.home_phone.$model"
+                                                :default-country-code="codeCountry"
+                                                valid-color="#28a745"
+                                                error-color="#dc3545"
+                                                :preferred-countries="['FR', 'EG', 'DE']"
+                                                @update="updatePhoneEdit"
+                                            />
                                             <template v-if="errors.home_phone">
                                                 <ErrorMessage v-for="(errorMessage, index) in errors.home_phone"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ getCompanyKey("member_work_phone") }}</label>
-                                            <input v-model="$v.create.work_phone.$model" class="form-control" type="number"
-                                                   :class="{
-                                                    'is-invalid':
-                                                        $v.create.work_phone.$error || errors.work_phone,
-                                                    'is-valid': !$v.create.work_phone.$invalid && !errors.work_phone,
-                                                }" />
-                                            <template v-if="errors.work_phone">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.work_phone"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
@@ -1184,6 +1187,24 @@ export default {
                                                 }" />
                                             <template v-if="errors.home_address">
                                                 <ErrorMessage v-for="(errorMessage, index) in errors.home_address"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>{{ getCompanyKey("member_work_phone") }}</label>
+                                            <VuePhoneNumberInput
+                                                v-model="$v.create.work_phone.$model"
+                                                :default-country-code="codeCountry"
+                                                valid-color="#28a745"
+                                                error-color="#dc3545"
+                                                :preferred-countries="['FR', 'EG', 'DE']"
+                                                @update="updatePhoneEdit"
+                                            />
+                                            <template v-if="errors.work_phone">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.work_phone"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
@@ -1574,11 +1595,11 @@ export default {
                                                             <div class="form-group">
                                                                 <label>{{ getCompanyKey("apply_membership_number") }}</label>
                                                                 <input v-model="$v.edit.applying_number.$model" class="form-control"
-                                                                       type="text" :class="{
-                                                    'is-invalid':
-                                                        $v.edit.applying_number.$error || errors.applying_number,
-                                                    'is-valid': !$v.edit.applying_number.$invalid && !errors.applying_number,
-                                                }" />
+                                                                       type="number" :class="{
+                                                                                'is-invalid':
+                                                                                    $v.edit.applying_number.$error || errors.applying_number,
+                                                                                'is-valid': !$v.edit.applying_number.$invalid && !errors.applying_number,
+                                                                            }" />
                                                                 <template v-if="errors.applying_number">
                                                                     <ErrorMessage v-for="(errorMessage, index) in errors.applying_number"
                                                                                   :key="index">{{ errorMessage }}
@@ -1594,10 +1615,10 @@ export default {
                                                                 <label>{{ getCompanyKey("member_first_name") }}</label>
                                                                 <input v-model="$v.edit.first_name.$model" class="form-control" type="text"
                                                                        :class="{
-                                                    'is-invalid':
-                                                        $v.edit.first_name.$error || errors.first_name,
-                                                    'is-valid': !$v.edit.first_name.$invalid && !errors.first_name,
-                                                }" />
+                                                                            'is-invalid':
+                                                                                $v.edit.first_name.$error || errors.first_name,
+                                                                            'is-valid': !$v.edit.first_name.$invalid && !errors.first_name,
+                                                                        }" />
                                                                 <template v-if="errors.first_name">
                                                                     <ErrorMessage v-for="(errorMessage, index) in errors.first_name"
                                                                                   :key="index">{{ errorMessage }}
@@ -1752,30 +1773,16 @@ export default {
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label>{{ getCompanyKey("member_home_phone") }}</label>
-                                                                <input v-model="$v.edit.home_phone.$model" class="form-control" type="number"
-                                                                       :class="{
-                                                    'is-invalid':
-                                                        $v.edit.home_phone.$error || errors.home_phone,
-                                                    'is-valid': !$v.edit.home_phone.$invalid && !errors.home_phone,
-                                                }" />
+                                                                <VuePhoneNumberInput
+                                                                    v-model="$v.edit.home_phone.$model"
+                                                                    :default-country-code="edit.phone_code"
+                                                                    valid-color="#28a745"
+                                                                    error-color="#dc3545"
+                                                                    @update="updatePhoneEdit"
+                                                                    :preferred-countries="['FR', 'EG', 'DE']"
+                                                                />
                                                                 <template v-if="errors.home_phone">
                                                                     <ErrorMessage v-for="(errorMessage, index) in errors.home_phone"
-                                                                                  :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>{{ getCompanyKey("member_work_phone") }}</label>
-                                                                <input v-model="$v.edit.work_phone.$model" class="form-control" type="number"
-                                                                       :class="{
-                                                    'is-invalid':
-                                                        $v.edit.work_phone.$error || errors.work_phone,
-                                                    'is-valid': !$v.edit.work_phone.$invalid && !errors.work_phone,
-                                                }" />
-                                                                <template v-if="errors.work_phone">
-                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.work_phone"
                                                                                   :key="index">{{ errorMessage }}
                                                                     </ErrorMessage>
                                                                 </template>
@@ -1792,6 +1799,24 @@ export default {
                                                 }" />
                                                                 <template v-if="errors.home_address">
                                                                     <ErrorMessage v-for="(errorMessage, index) in errors.home_address"
+                                                                                  :key="index">{{ errorMessage }}
+                                                                    </ErrorMessage>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>{{ getCompanyKey("member_work_phone") }}</label>
+                                                                <VuePhoneNumberInput
+                                                                    v-model="$v.edit.work_phone.$model"
+                                                                    :default-country-code="edit.phone_code"
+                                                                    valid-color="#28a745"
+                                                                    error-color="#dc3545"
+                                                                    @update="updatePhoneEdit"
+                                                                    :preferred-countries="['FR', 'EG', 'DE']"
+                                                                />
+                                                                <template v-if="errors.work_phone">
+                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.work_phone"
                                                                                   :key="index">{{ errorMessage }}
                                                                     </ErrorMessage>
                                                                 </template>
