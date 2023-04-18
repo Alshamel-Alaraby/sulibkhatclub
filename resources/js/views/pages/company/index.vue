@@ -85,7 +85,7 @@ export default {
                     is_admin: w.is_admin,
                     is_default: 0,
                     company_id: id,
-                    document_relateds: w.document_relateds.map(el => el.id)
+                    // document_relateds: w.document_relateds.map(el => el.id)
                   });
                 });
               }
@@ -108,6 +108,7 @@ export default {
           return this.$router.push({ name: "home" });
         })
         .catch((err) => {
+            console.log(err)
           Swal.fire({
             icon: "error",
             title: `${this.$t("general.Error")}`,

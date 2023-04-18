@@ -301,7 +301,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .post(`/club-members/membersupdate-accepted-members/${this.create.id}`, this.create)
+                    .put(`/club-members/members/update-accepted-members/${this.create.id}`, this.create)
                     .then((res) => {
                         this.getData();
                         setTimeout(() => {
@@ -825,7 +825,7 @@ export default {
                                         <form>
                                             <div class="mb-3 d-flex justify-content-end">
                                                 <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader"
-                                                          @click.prevent="editSubmit(data.id)">
+                                                          @click.prevent="AddSubmit()">
                                                     {{ $t("general.Edit") }}
                                                 </b-button>
 

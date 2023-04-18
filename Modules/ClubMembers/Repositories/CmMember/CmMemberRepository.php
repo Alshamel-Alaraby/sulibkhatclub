@@ -47,14 +47,14 @@ class CmMemberRepository implements CmMemberInterface
     public function create($request)
     {
         return DB::transaction(function () use ($request) {
-            return $this->model->create($request->all());
+            return $this->model->create($request);
         });
     }
 
     public function update($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
-            $this->model->where("id", $id)->update($request->all());
+            $this->model->where("id", $id)->update($request);
         });
 
         $model = $this->model->find($id);

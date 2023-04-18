@@ -667,6 +667,55 @@ class ClubTranslationSeeder extends Seeder
         //club subscription
         Translation::insert([
             [
+                "key" => "branch",
+                "default_en" => "Branch name",
+                "default_ar" => "اسم الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club",
+            ],
+            [
+                "key" => "statuses_name_ar",
+                "default_en" => "status name (arabic)",
+                "default_ar" => "اسم الحاله (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+
+            ],
+            [
+                "key" => "statuses_name_en",
+                "default_en" => "status name (english)",
+                "default_ar" => "اسم الحاله (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+
+            ],
+            [
+                "key" => "statuses_icon",
+                "default_en" => "icon",
+                "default_ar" => "أيقونة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+
+            ],
+            [
+                "key" => "statuses_color",
+                "default_en" => "color",
+                "default_ar" => "اللون",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+
+            ],
+            [
                 "key" => "subscription_create_form",
                 "default_en" => "Add new subscription",
                 "default_ar" => "اضف اشتراك جديد",
