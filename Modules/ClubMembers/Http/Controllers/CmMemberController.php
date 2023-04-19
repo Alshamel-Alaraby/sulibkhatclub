@@ -48,7 +48,7 @@ class CmMemberController extends Controller
 
     public function create(CmMemberRequest $request)
     {
-        $model = $this->modelInterface->create($request);
+        $model = $this->modelInterface->create($request->validated());
         return responseJson(200, 'success', new CmMemberResource($model));
     }
 
@@ -58,7 +58,7 @@ class CmMemberController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        $model = $this->modelInterface->update($request, $id);
+        $model = $this->modelInterface->update($request->validated(), $id);
 
         return responseJson(200, 'success', new CmMemberResource($model));
     }
