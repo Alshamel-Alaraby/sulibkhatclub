@@ -75,6 +75,7 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', new CmMemberResource($model));
     }
 
+
     public function declineMember(CmMemberDeclineRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);

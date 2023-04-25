@@ -53,6 +53,10 @@ class DocumentIRepository implements DocumentInterface
                 ['is_admin',1]
             ])->delete();
             foreach ($request['documents'] as $document):
+                $nullIsAdmin = $this->model->find($document['id']);
+                if ($nullIsAdmin){
+                    $nullIsAdmin->delete();
+                }
                  $model = $this->model->create(array_merge($document,['is_admin'=>1]));
                  $model->documentRelateds()->sync($document['document_relateds']);
             endforeach;

@@ -2,7 +2,6 @@
 
 namespace Modules\ClubMembers\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\ClubMembers\Http\Requests\CmPendingMemberRequest;
@@ -17,14 +16,12 @@ class CmPendingMemberController extends Controller
         $this->modelInterface = $modelInterface;
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', CmPendingMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
-
 
     public function find($id)
     {
@@ -33,16 +30,14 @@ class CmPendingMemberController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        return responseJson(200, 'success', new CmPendingMemberInterfaceResource($model));
+        return responseJson(200, 'success', new CmPendingMemberResource($model));
     }
-
 
     public function create(CmPendingMemberRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success', new CmPendingMemberResource($model));
     }
-
 
     public function update(CmPendingMemberRequest $request, $id)
     {
@@ -84,6 +79,5 @@ class CmPendingMemberController extends Controller
 
         return responseJson(200, __('Done'));
     }
-
 
 }

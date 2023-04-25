@@ -8014,8 +8014,17 @@ class TranslationSeeder extends Seeder
                 "screen" => "units"
             ],
         ]);
-        //boardRealestate order
+        //board order
         Translation::insert([
+            [
+                "key" => "order_serial",
+                "default_en" => "Serial",
+                "default_ar" => "Serial",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
             [
                 "key" => "boardRent_order_create_form",
                 "default_en" => "Add new Order",
@@ -8035,6 +8044,26 @@ class TranslationSeeder extends Seeder
                 "screen" => "units"
 
             ],
+            [
+                "key" => "boardRent_quotation_create_form",
+                "default_en" => "Add new Quotation",
+                "default_ar" => "اضف اقتباس جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+            ],
+            [
+                "key" => "boardRent_quotation_edit_form",
+                "default_en" => "Edit Quotation form",
+                "default_ar" => "تعديل الاقتباس ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+
+            ],
+
             [
                 "key" => "boardRent_order_date",
                 "default_en" => "Date",

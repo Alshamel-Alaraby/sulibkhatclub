@@ -21,6 +21,7 @@ class BranchResource extends JsonResource
             'name_e'=>$this->name_e,
             'is_active'=>$this->is_active,
             'parent_id'=>$this->parent_id,
+            "parent" => $this->parent,
             "children" => BranchResource::collection($this->children),
         ];
     }

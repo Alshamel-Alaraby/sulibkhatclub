@@ -20,6 +20,7 @@ import translation from "../../../helper/translation-mixin";
 import senderHoverHelper from "../../../helper/senderHoverHelper";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import Multiselect from "vue-multiselect";
 
 /**
  * Advanced Table component
@@ -35,6 +36,7 @@ export default {
     PageHeader,
     Switches,
     ErrorMessage,
+      Multiselect,
     loader,
   },
   data() {
@@ -45,6 +47,7 @@ export default {
       enabled3: true,
       branchesPagination: {},
       branches: [],
+      parent: [],
       isLoader: false,
       Tooltip: "",
       mouseEnter: "",
@@ -53,11 +56,13 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       },
       edit: {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       },
       company_id: null,
       errors: {},
@@ -68,6 +73,7 @@ export default {
         name: true,
         name_e: true,
         is_active: true,
+          parent_id: true,
       },
       is_disabled: false,
       filterSetting: ["name", "name_e"],
@@ -186,7 +192,28 @@ export default {
     });
   },
   methods: {
-    formatDate(value) {
+      async getBranch() {
+          this.isLoader = true;
+
+          await adminApi
+              .get(`/branches?company_id=${this.company_id}`)
+              .then((res) => {
+                  let l = res.data.data;
+                  this.parent = l;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+
+      formatDate(value) {
       return formatDateOnly(value);
     },
     log(id) {
@@ -426,6 +453,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -437,10 +465,12 @@ export default {
      *  hidden Modal (create)
      */
     resetModal() {
+        if (this.isVisible('parent_id'))  this.getBranch();
       this.create = {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -455,6 +485,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -480,6 +511,7 @@ export default {
           name: this.create.name,
           name_e: this.create.name_e,
           is_active: this.create.is_active,
+            parent_id: this.create.parent_id,
           company_id: this.company_id,
         };
         adminApi
@@ -533,6 +565,7 @@ export default {
           name: this.edit.name,
           name_e: this.edit.name_e,
           is_active: this.edit.is_active,
+            parent_id: this.edit.parent_id,
           company_id: this.company_id,
         };
         adminApi
@@ -569,10 +602,12 @@ export default {
      *   show Modal (edit)
      */
     resetModalEdit(id) {
+        if (this.isVisible('parent_id'))  this.getBranch();
       let branch = this.branches.find((e) => id == e.id);
       this.edit.name = branch.name;
       this.edit.name_e = branch.name_e;
       this.edit.is_active = branch.is_active;
+      this.edit.parent_id = branch.parent_id;
       this.errors = {};
     },
     /**
@@ -584,6 +619,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+        parent_id: null,
       };
     },
     /*
@@ -783,6 +819,13 @@ export default {
                         {{ getCompanyKey("branch_name_en") }}
                       </b-form-checkbox>
                       <b-form-checkbox
+                        v-if="isVisible('parent_id')"
+                        v-model="setting.parent_id"
+                        class="mb-1"
+                      >
+                        {{ $t("general.parentId") }}
+                      </b-form-checkbox>
+                        <b-form-checkbox
                         v-if="isVisible('is_active')"
                         v-model="setting.is_active"
                         class="mb-1"
@@ -966,6 +1009,25 @@ export default {
                       </template>
                     </div>
                   </div>
+                    <div class="col-md-12 position-relative" v-if="isVisible('parent_id')">
+                        <div class="form-group">
+                            <label>
+                                {{ $t("general.parentId") }}
+                            </label>
+                            <multiselect  v-model="create.parent_id"
+                                  :options="parent.map((type) => type.id)"
+                                  :custom-label="(opt) => $i18n.locale == 'ar' ? parent.find((x) => x.id == opt).name : parent.find((x) => x.id == opt).name_e"
+                                  :class="{ 'is-invalid': errors.parent_id,}"
+                            >
+                            </multiselect>
+
+                            <template v-if="errors.parent_id">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.parent_id"
+                                              :key="index">{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
                   <div v-if="isVisible('is_active')" class="col-md-12">
                     <div class="form-group">
                       <label class="mr-2">
@@ -1059,7 +1121,12 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.is_active && isVisible('is_active')">
+                    <th v-if="setting.parent_id && isVisible('parent_id')">
+                      <div class="d-flex justify-content-center">
+                        <span>{{ $t("general.parentId") }}</span>
+                      </div>
+                    </th>
+                      <th v-if="setting.is_active && isVisible('is_active')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("branch_status") }}</span>
                       </div>
@@ -1097,7 +1164,12 @@ export default {
                     <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
-                    <td v-if="setting.is_active && isVisible('is_active')">
+                    <td v-if="setting.parent_id && isVisible('parent_id')">
+                        <h5 class="m-0 font-weight-normal">
+                            {{data.parent ? $i18n.locale == "ar" ? data.parent.name : data.parent.name_e : ' - '}}
+                        </h5>
+                    </td>
+                      <td v-if="setting.is_active && isVisible('is_active')">
                       {{ data.is_active }}
                     </td>
                     <td v-if="enabled3" class="do-not-print">
@@ -1267,11 +1339,30 @@ export default {
                                 </template>
                               </div>
                             </div>
+                              <div class="col-md-12 position-relative" v-if="isVisible('parent_id')">
+                                  <div class="form-group">
+                                      <label>
+                                          {{ $t("general.parentId") }}
+                                      </label>
+                                      <multiselect  v-model="edit.parent_id"
+                                                    :options="parent.map((type) => type.id)"
+                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? parent.find((x) => x.id == opt).name : parent.find((x) => x.id == opt).name_e"
+                                                    :class="{ 'is-invalid': errors.parent_id,}"
+                                      >
+                                      </multiselect>
+
+                                      <template v-if="errors.parent_id">
+                                          <ErrorMessage v-for="(errorMessage, index) in errors.parent_id"
+                                                        :key="index">{{ errorMessage }}
+                                          </ErrorMessage>
+                                      </template>
+                                  </div>
+                              </div>
                             <div v-if="isVisible('is_active')" class="col-md-12">
                               <div class="form-group">
                                 <label class="mr-2">
                                   {{ getCompanyKey("branch_status") }}
-                                  <span v-if="is_active('name_e')" class="text-danger">*</span>
+                                  <span v-if="isRequired('is_active')" class="text-danger">*</span>
                                 </label>
                                 <b-form-group
                                   :class="{

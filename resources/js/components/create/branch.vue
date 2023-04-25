@@ -124,6 +124,25 @@
                         </template>
                     </div>
                 </div>
+                <div class="col-md-12 position-relative" v-if="isVisible('parent_id')">
+                    <div class="form-group">
+                        <label>
+                            {{ $t("general.parentId") }}
+                        </label>
+                        <multiselect  v-model="create.parent_id"
+                                      :options="parent.map((type) => type.id)"
+                                      :custom-label="(opt) => $i18n.locale == 'ar' ? parent.find((x) => x.id == opt).name : parent.find((x) => x.id == opt).name_e"
+                                      :class="{ 'is-invalid': errors.parent_id,}"
+                        >
+                        </multiselect>
+
+                        <template v-if="errors.parent_id">
+                            <ErrorMessage v-for="(errorMessage, index) in errors.parent_id"
+                                          :key="index">{{ errorMessage }}
+                            </ErrorMessage>
+                        </template>
+                    </div>
+                </div>
                 <div v-if="isVisible('is_active')" class="col-md-12">
                     <div class="form-group">
                         <label class="mr-2">
@@ -172,10 +191,24 @@ import adminApi from "../../api/adminAxios";
 import Swal from "sweetalert2";
 import transMixinComp from "../../helper/translation-comp-mixin";
 import {arabicValue, englishValue} from "../../helper/langTransform";
+import Layout from "../../views/layouts/main";
+import PageHeader from "../Page-header";
+import Switches from "vue-switches";
+import ErrorMessage from "../widgets/errorMessage";
+import Multiselect from "vue-multiselect";
+import loader from "../loader";
 
 export default {
   name: "branch",
   mixins: [transMixinComp],
+    components: {
+        Layout,
+        PageHeader,
+        Switches,
+        ErrorMessage,
+        Multiselect,
+        loader,
+    },
   props: {
         id: {
             default: "branch-create",
@@ -213,6 +246,7 @@ export default {
   data() {
     return {
         fields: [],
+        parent: [],
       errors: {},
       is_disabled: false,
       isLoader: false,
@@ -220,6 +254,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       },
     };
   },
@@ -247,6 +282,26 @@ export default {
       },
   },
   methods: {
+      async getBranch() {
+          this.isLoader = true;
+
+          await adminApi
+              .get(`/branches?company_id=${this.company_id}`)
+              .then((res) => {
+                  let l = res.data.data;
+                  this.parent = l;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
       getCustomTableFields() {
           adminApi
               .get(`/customTable/table-columns/general_branches`)
@@ -284,6 +339,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -295,10 +351,12 @@ export default {
      *  hidden Modal (create)
      */
     resetModal() {
+        if (this.isVisible('parent_id'))  this.getBranch();
       this.create = {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -313,6 +371,7 @@ export default {
         name: "",
         name_e: "",
         is_active: "active",
+          parent_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -338,6 +397,7 @@ export default {
           name: this.create.name,
           name_e: this.create.name_e,
           is_active: this.create.is_active,
+            parent_id: this.create.parent_id,
           company_id: this.$store.getters["auth/company_id"],
         };
         adminApi

@@ -97,6 +97,7 @@ export default {
                 degree: true,
                 sponsor: true,
                 sponsor_id: true,
+                membership_number: true
             },
             is_disabled: false,
             filterSetting: [
@@ -538,16 +539,6 @@ export default {
                                         <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">{{
                                                 getCompanyKey("member_work_address") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="membership_request_number"
-                                                         class="mb-1">{{getCompanyKey("member_membership_request_number") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="job" class="mb-1">{{
-                                                getCompanyKey("member_job") }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="degree" class="mb-1">{{
-                                                getCompanyKey("member_degree") }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="sponsor_id" class="mb-1">{{
-                                                getCompanyKey("sponsor") }}</b-form-checkbox>
-
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
@@ -617,44 +608,14 @@ export default {
                                             <b-form-checkbox v-model="setting.family_name" class="mb-1">{{
                                                     getCompanyKey("member_family_name") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.status_id" class="mb-1">{{
-                                                    getCompanyKey("status") }}
-                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{
                                                     getCompanyKey("member_birth_date") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">{{
-                                                    getCompanyKey("member_national_id") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.nationality_number" class="mb-1">{{
-                                                    getCompanyKey("member_nationality_number") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{
-                                                    getCompanyKey("member_home_phone") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{
-                                                    getCompanyKey("member_work_phone") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">{{
-                                                    getCompanyKey("member_home_address") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_address" class="mb-1">{{
-                                                    getCompanyKey("member_work_address") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_request_number" class="mb-1">{{
-                                                    getCompanyKey("member_membership_request_number") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.job" class="mb-1">{{
-                                                    getCompanyKey("member_job") }}
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{
+                                                    getCompanyKey("member_membership_number") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.degree" class="mb-1">{{
                                                     getCompanyKey("member_degree") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.sponsor" class="mb-1">{{
-                                                    getCompanyKey("member_is_sponsor") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.sponsor_id" class="mb-1">{{
-                                                    getCompanyKey("sponsor") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
@@ -776,6 +737,11 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.membership_number">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                        </div>
+                                    </th>
                                     <th v-if="enabled3" class="do-not-print"><i class="fas fa-ellipsis-v"></i></th>
                                 </tr>
                                 </thead>
@@ -809,6 +775,9 @@ export default {
                                     </td>
                                     <td v-if="setting.birth_date">
                                         {{ data.birth_date }}
+                                    </td>
+                                    <td v-if="setting.membership_number">
+                                        {{ data.membership_number }}
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <button @mouseover="log(data.id)" @mousemove="log(data.id)" type="button"

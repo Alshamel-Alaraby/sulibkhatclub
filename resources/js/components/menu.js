@@ -768,8 +768,8 @@ export const menuItems = [
                         id: 13334,
                         label: 'general.credit note',
                         icon: 'fas fa-hot-tub',
-                        name: 'receivable payable',
-                        link: '/'
+                        name: 'credit note',
+                        link: '/dashboard/receivablePayable/creditNote'
                     },
                     {
                         id: 13334,

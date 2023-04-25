@@ -28,7 +28,8 @@ class BranchRequest extends FormRequest
             "name" => "nullable|unique:general_branches,name,". ($this->method() == 'PUT' ?  $this->branch : ''),
             "name_e" => "nullable|unique:general_branches,name_e,". ($this->method() == 'PUT' ?  $this->branch : ''),
             "country_id" => "nullable|exists:general_countries,id",
-            "is_active"=>"nullable"
+            "is_active"=>"nullable",
+            "parent_id"=>"nullable",
         ];
     }
 

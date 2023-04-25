@@ -18,6 +18,9 @@ class OrderDetailsResource extends JsonResource
     {
         $data = [
             'id' => $this->id,
+            "category_id" => $this->category_id,
+            'governorate_id' =>  $this->governorate_id,
+            'package_id' => $this->package_id,
             "category" => $this->category ? new CategoryResource($this->category) : null,
             'governorate' => $this->governorate ? new GovernorateResource($this->governorate) : null,
             'package' => $this->package ? new PackageResource($this->package) : null,

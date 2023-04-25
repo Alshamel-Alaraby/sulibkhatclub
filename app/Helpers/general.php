@@ -29,6 +29,7 @@ function generalSerial($model, $type = "")
 {
     $data = [];
     if ($model->branch) {
+
         $serial = Serial::where(["branch_id"=> $model->branch->id,"document_id"=> $model->document_id])->first();
 
 

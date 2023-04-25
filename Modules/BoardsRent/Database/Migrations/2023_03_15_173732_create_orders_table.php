@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('boards_rent_orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('branch_id');
-            $table->unsignedInteger('serial_id');
+            $table->foreignId('serial_id')->nullable();
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('salesman_id');
@@ -28,8 +28,9 @@ return new class extends Migration
             $table->double('paid')->nullable();
             $table->double('due')->nullable();
             $table->double('total')->nullable();
-            $table->string('is_stripe');
+            $table->boolean('is_stripe')->default(0);
             $table->string("serial_number")->nullable();
+            $table->string("prefix")->nullable();
             $table->timestamps();
         });
     }

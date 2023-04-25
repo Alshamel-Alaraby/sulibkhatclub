@@ -2,8 +2,8 @@
 
 namespace Modules\ClubMembers\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
 
 class ClubMembersDatabaseSeeder extends Seeder
 {
@@ -16,10 +16,11 @@ class ClubMembersDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
-        $this->call(CmMembersTypesDatabaseSeederTableSeeder::class);
-        $this->call(CmFinancialStatusDatabaseSeederTableSeeder::class);
-        $this->call(CmMembersPermissionsDatabaseSeederTableSeeder::class);
-        $this->call(CmSponsorDatabaseSeederTableSeeder::class);
+        $this->call([
+            CmMembersTypesDatabaseSeederTableSeeder::class,
+            CmFinancialStatusDatabaseSeederTableSeeder::class,
+            CmMembersPermissionsDatabaseSeederTableSeeder::class,
+            CmSponsorDatabaseSeederTableSeeder::class,
+        ]);
     }
 }

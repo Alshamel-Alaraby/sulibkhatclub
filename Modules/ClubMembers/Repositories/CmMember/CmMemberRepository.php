@@ -16,7 +16,9 @@ class CmMemberRepository implements CmMemberInterface
     public function all($request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-
+        if ($request->financial_status_id){
+            $models->where('financial_status_id',$request->financial_status_id);
+        }
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -59,8 +61,8 @@ class CmMemberRepository implements CmMemberInterface
 
         $model = $this->model->find($id);
         return $model;
+        //
     }
-
 
     public function updateAcceptance($request, $id)
     {
@@ -73,7 +75,6 @@ class CmMemberRepository implements CmMemberInterface
             $new_applying_number = $increment_applying_number + 1;
 
             $this->model->where("id", $id)->update(array_merge($request->all(),
-
                 [
                     'acceptance' => 1,
                     'membership_number' => $new_member_number,
@@ -151,8 +152,5 @@ class CmMemberRepository implements CmMemberInterface
             }
         });
     }
-
-
-
 
 }

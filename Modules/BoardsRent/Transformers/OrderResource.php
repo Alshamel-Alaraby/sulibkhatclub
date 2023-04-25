@@ -31,6 +31,7 @@ class OrderResource extends JsonResource
             'total' => $this->total,
             'is_stripe' => $this->is_stripe,
             "serial_number" => $this->serial_number,
+            "prefix" => $this->prefix,
             "is_quotation" => $this->is_quotation,
             'order_details' => OrderDetailsResource::collection($this->details),
             'branch' => new BranchResource($this->branch),

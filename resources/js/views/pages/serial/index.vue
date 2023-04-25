@@ -988,14 +988,14 @@ export default {
                                             </label>
                                             <multiselect @input="showBranchModal" v-model="create.branch_id"
                                                          :options="branches.map((type) => type.id)" :custom-label="
-                                        (opt) =>
-                                            $i18n.locale == 'ar'
-                                                ? branches.find((x) => x.id == opt).name
-                                                : branches.find((x) => x.id == opt).name_e
-                                    " :class="{
-                                        'is-invalid':
-                                            $v.create.branch_id.$error || errors.branch_id,
-                                    }">
+                                                    (opt) =>
+                                                        $i18n.locale == 'ar'
+                                                            ? branches.find((x) => x.id == opt).name
+                                                            : branches.find((x) => x.id == opt).name_e
+                                                " :class="{
+                                                    'is-invalid':
+                                                        $v.create.branch_id.$error || errors.branch_id,
+                                                }">
                                             </multiselect>
                                             <div v-if="!$v.create.branch_id.required" class="invalid-feedback">
                                                 {{ $t("general.fieldIsRequired") }}
@@ -1479,18 +1479,18 @@ export default {
                                         </h5>
                                     </td>
                                     <td v-if="setting.is_default && isVisible('is_default')">
-                      <span
-                          :class="[
-                          parseInt(data.is_default) == 1 ? 'text-success' : 'text-danger',
-                          'badge',
-                        ]"
-                      >
-                        {{
-                              parseInt(data.is_default)  == 1
-                                  ? `${$t("general.Yes")}`
-                                  : `${$t("general.No")}`
-                          }}
-                      </span>
+                                      <span
+                                          :class="[
+                                          parseInt(data.is_default) == 1 ? 'text-success' : 'text-danger',
+                                          'badge',
+                                        ]"
+                                      >
+                                        {{
+                                              parseInt(data.is_default)  == 1
+                                                  ? `${$t("general.Yes")}`
+                                                  : `${$t("general.No")}`
+                                          }}
+                                      </span>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">

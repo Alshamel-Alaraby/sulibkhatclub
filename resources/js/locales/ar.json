@@ -638,8 +638,8 @@
         "decrease": "نقصان",
         "cash": "كاش",
         "issue vourcher": "موضوع الفاتورة",
-        "credit note": "ملحوظة الائتمان",
-        "debit note": "ملحوظة الخصم",
+        "credit note": "اشعار دائن",
+        "debit note": "اشعار مدين",
         "reciept vourcher": "ايصال الفاتورة",
         "openinig balance": "الرصيد الافتتاحي",
         "backup": "الاحتياط",
@@ -1041,6 +1041,9 @@
         "accept-reject-member": "قبول او رفض الاعضاء",
         "membersRequestTable": "جدول طلبات الاعضاء",
         "Approve": " موافق",
-        "non-Approve":  "مرفوض"
+        "non-Approve":  "مرفوض",
+        "quotationsTable": "جدول الاقتباسات",
+        "CreditNoteTable": "جدول اشعار دائن",
+        "createNewCreditNote": "اضافة اشعار دائن جديد"
     }
 }

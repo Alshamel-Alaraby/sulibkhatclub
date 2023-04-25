@@ -58,7 +58,7 @@ class RpBreakDownController extends Controller
         }
         if ($request->customer_id){
             $models->where('customer_id',$request->customer_id)
-            ->where('invoice_id',null)->orderBy('instalment_date', 'DESC');
+            ->where('invoice_id',null)->where('parent_id',null)->orderBy('instalment_date', 'DESC');
         }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

@@ -30,10 +30,7 @@ trait LogTrait
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($q) use ($request) {
-            if ($request->search) {
-                //$q->where('name', 'like', '%' . $request->search . '%');
-                // $q->orWhere('name_e', 'like', '%' . $request->search . '%');
-            }
+
             if ($request->has('date')) {
                 $q->whereDate('date', $request->date);
             }

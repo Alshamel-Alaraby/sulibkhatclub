@@ -18,7 +18,7 @@ class CmMemberType extends Model
 
     public function memberPermissions()
     {
-        return $this->belongsToMany(CmMemberPermission::class, 'cm_members_types_permissions', 'member_type_id', 'member_permission_id');
+        return $this->belongsToMany(CmMemberPermission::class, 'cm_type_permissions', 'cm_members_type_id', 'cm_permissions_id');
     }
 
 

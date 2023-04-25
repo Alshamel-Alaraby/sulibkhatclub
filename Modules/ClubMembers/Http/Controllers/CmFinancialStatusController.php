@@ -50,7 +50,6 @@ class CmFinancialStatusController extends Controller
         return responseJson(200, 'success', new CmFinancialStatusResource($model));
     }
 
-
     public function delete($id)
     {
         $model = $this->modelInterface->find($id);

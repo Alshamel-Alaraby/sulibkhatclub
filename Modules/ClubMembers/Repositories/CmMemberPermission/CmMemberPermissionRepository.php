@@ -4,8 +4,6 @@ namespace Modules\ClubMembers\Repositories\CmMemberPermission;
 
 use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmMemberPermission;
-use Modules\ClubMembers\Entities\CmSponser;
-use Modules\RealEstate\Entities\RlstCategoriesItem;
 
 class CmMemberPermissionRepository implements CmMemberPermissionInterface
 {
@@ -30,7 +28,6 @@ class CmMemberPermissionRepository implements CmMemberPermissionInterface
     {
         return $this->model->find($id);
     }
-
 
     public function create($request)
     {

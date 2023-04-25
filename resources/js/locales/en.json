@@ -1065,6 +1065,9 @@
         "accept-reject-member-table": "Accept or reject members Table",
         "membersRequestTable": "Members Request Table",
         "Approve": "Mult Approve",
-        "non-Approve":  "Not Approve"
+        "non-Approve":  "Not Approve",
+        "quotationsTable": "Quotations Table",
+        "CreditNoteTable": "Credit Note Table",
+        "createNewCreditNote": "Add New Credit Note"
     }
 }

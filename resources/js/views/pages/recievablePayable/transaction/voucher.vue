@@ -76,7 +76,8 @@ export default {
                 salesman_id: null,
                 payment_method_id: null,
                 customer_id: null,
-                document_id:5
+                document_id:5,
+                module_type:"voucher"
             },
             edit: {
                 branch_id: null,
@@ -85,7 +86,8 @@ export default {
                 payment_method_id: null,
                 customer_id: null,
                 serial_number: null,
-                document_id:5
+                document_id:5,
+                module_type:"voucher"
             },
             setting: {
                 date: true,
@@ -229,7 +231,7 @@ export default {
             }
             adminApi
                 .get(
-                    `real-estate/invoices?voucher=true&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `real-estate/invoices?voucher=true&module_type=voucher&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -273,7 +275,7 @@ export default {
 
                 adminApi
                     .get(
-                        `real-estate/invoices?voucher=true&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `real-estate/invoices?voucher=true&module_type=voucher&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -415,6 +417,7 @@ export default {
                 payment_method_id: null,
                 customer_id: null,
                 document_id: 5,
+                module_type:"voucher"
             };
             this.invoice_id = null;
 
@@ -705,6 +708,7 @@ export default {
             this.edit.branch_id = invoice.branch.id;
             this.edit.document_id = invoice.document_id;
             this.edit.serial_number  = invoice.serial_number;
+            this.edit.module_type = invoice.module_type;
             await this.getBreakCustomer(this.edit.customer_id);
             await this.getTransactions(id);
             this.amount= this.totalTransferAmount ;
@@ -731,6 +735,7 @@ export default {
                 document_id: 5,
                 customer_id: null,
                 serial_number: null,
+                module_type:"voucher"
             };
             this.invoice_id = null;
         },

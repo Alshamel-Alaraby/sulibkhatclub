@@ -140,6 +140,7 @@ export default {
                             if (e.document_types.length > 0) {
                                 e.document_types.forEach(w => {
                                     documents.push({
+                                        id: w.id,
                                         name: w.name,
                                         name_e: w.name_e,
                                         is_admin: w.is_admin,

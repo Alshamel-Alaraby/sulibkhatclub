@@ -37,7 +37,6 @@ class CmMembersPermissionsDatabaseSeederTableSeeder extends Seeder
 
             ],
 
-
         ];
 
         foreach ($attributes as $attribute) {

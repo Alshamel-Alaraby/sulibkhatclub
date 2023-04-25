@@ -73,6 +73,9 @@ class BranchController extends Controller
         if ($request->is_active) {
             $data['is_active'] = $request->is_active;
         }
+        if ($request->parent_id) {
+            $data['parent_id'] = $request->parent_id;
+        }
 
         $this->repository->update($data, $id);
         return responseJson(200, __('updated'));

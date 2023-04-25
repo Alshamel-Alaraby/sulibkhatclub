@@ -3,6 +3,7 @@
 namespace Modules\BoardsRent\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use App\Models\Serial;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,9 @@ class OrderController extends Controller
     public function all(AllRequest $request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if($request->is_quotation){
+            $models->where('is_quotation',$request->is_quotation);
+        }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -43,17 +47,21 @@ class OrderController extends Controller
     {
         // return $this->model;
         $model =  DB::transaction(function () use ($request) {
-            $model = $this->model->create($request->validated());
+            $data = $request->validated();
+            $serial = Serial::where([['branch_id',$request->branch_id],['document_id',$request->document_id]])->first();
+            $data['serial_id'] = $serial ? $serial->id:null;
+            $model = $this->model->create($data);
             $model->refresh();
             foreach ($request->details as $detail) {
                 $model->details()->create($detail);
             }
+            $serials = generalSerial($model);
+            $model->update([
+                "serial_number" => $serials['serial_number'],
+                "prefix" => $serials['prefix'],
+            ]);
             return $model;
         });
-
-        $model->update([
-            "serial_number" => generalSerial($model, "Order"),
-        ]);
 
         return responseJson(200, 'created', new OrderResource($model));
     }
@@ -67,6 +75,11 @@ class OrderController extends Controller
             }
 
             $model->update($request->validated());
+            $serials = generalSerialUpdate($model);
+            $model->update([
+                "serial_number" => $serials['serial_number'],
+                "prefix" => $serials['prefix'],
+            ]);
             $model->refresh();
             foreach ($request->details as $detail) {
                 $model->details()->create($detail);

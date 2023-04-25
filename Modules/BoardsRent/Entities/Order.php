@@ -32,10 +32,10 @@ class Order extends Model implements HasMedia
         "is_quotation",
     ];
 
-    protected $casts = [
-        'is_stripe' => \App\Enums\BooleanStatus::class,
-        "is_quotation" => \App\Enums\BooleanStatus::class,
-    ];
+//    protected $casts = [
+//        'is_stripe' => \App\Enums\BooleanStatus::class,
+//        "is_quotation" => \App\Enums\BooleanStatus::class,
+//    ];
 
     protected $table = 'boards_rent_orders';
 

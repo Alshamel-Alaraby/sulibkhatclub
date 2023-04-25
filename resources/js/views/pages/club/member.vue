@@ -1497,8 +1497,7 @@ export default {
                                                     </div>
                                                     <div class="col-md-3">
                                                         <div class="form-group">
-                                                            <label>{{ getCompanyKey("member_membership_number")
-                                                                }}</label>
+                                                            <label>{{ getCompanyKey("member_membership_number") }}</label>
                                                             <input v-model="$v.edit.membership_number.$model" disabled
                                                                    class="form-control" type="text"  />
                                                             <template v-if="errors.membership_number">

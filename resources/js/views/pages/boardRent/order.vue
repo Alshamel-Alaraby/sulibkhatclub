@@ -15,7 +15,6 @@ import adminApi from "../../../api/adminAxios";
 import Status from "../../../components/create/status.vue";
 import Swal from "sweetalert2";
 import {dynamicSortString} from "../../../helper/tableSort";
-import Document from "../../../components/create/document";
 import Category from "../../../components/create/category";
 import SellMethod from "../../../components/create/boardRent/sell-methods";
 import Package from "../../../components/create/boardRent/package";
@@ -25,8 +24,8 @@ import TabGovernorate from "../../../components/tabGovernorate";
  */
 export default {
     page: {
-        title: "Order",
-        meta: [{ name: "description", content: "Order" }],
+        title: "Quotation",
+        meta: [{ name: "description", content: "Quotation" }],
     },
     mixins: [translation],
     beforeRouteEnter(to, from, next) {
@@ -59,7 +58,6 @@ export default {
         Multiselect,
         customerGeneral,
         Status,
-        Document,
         SellMethod,
         Category,
         Package,
@@ -76,7 +74,6 @@ export default {
             customers: [],
             salesmen: [],
             statuses: [],
-            documents: [],
             sellMethods: [],
             categories: [],
             countries: [],
@@ -88,12 +85,13 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
-                document_id: 10,
+                document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,
                 total: 0,
                 is_stripe: 0,
+                is_quotation: 0,
                 details: [{
                     category_id: null,
                     governorate_id: null,
@@ -105,15 +103,17 @@ export default {
                 }]
             },
             edit: {
-                date: this.formatDate(new Date()),
-                start_date: this.formatDate(new Date()),
-                end_date: this.formatDate(new Date()),
-                installment_payment_plans_id: null,
-                salesman_id: null,
-                old_media: [],
-                customer_id: null,
-                details: [],
                 branch_id: null,
+                status_id: null,
+                sell_method_id: null,
+                document_id: 9,
+                date: this.formatDate(new Date()),
+                salesman_id: null,
+                customer_id: null,
+                total: 0,
+                is_stripe: 0,
+                is_quotation: 0,
+                details: [],
                 serial_number: ''
             },
             setting: {
@@ -182,7 +182,6 @@ export default {
             }
         },
         edit: {
-            media: {},
             date: { required },
             customer_id: { required },
             branch_id: { required },
@@ -196,22 +195,23 @@ export default {
                 required,
                 $each: {
                     category_id: { required: requiredIf(function (model) {
-                            return this.create.is_stripe == 0;
+                            return this.edit.is_stripe == 0;
                         }) },
                     governorate_id: { required: requiredIf(function (model) {
-                            return this.create.is_stripe == 0;
+                            return this.edit.is_stripe == 0;
                         }) },
                     package_id: { required: requiredIf(function (model) {
-                            return this.create.is_stripe == 1;
+                            return this.edit.is_stripe == 1;
                         }) },
                     quantity: { required: requiredIf(function (model) {
-                            return this.create.is_stripe == 0;
+                            return this.edit.is_stripe == 0;
                         }), minValue: minValue(0) },
                     from: { required },
                     to: { required },
                     price: { required, minValue: minValue(0)}
                 }
-            }
+            },
+            serial_number: {required}
         },
     },
     watch: {
@@ -266,7 +266,33 @@ export default {
                     if(this.packages.length == 0) this.getPackage();
                 }
                 this.multDate = [{to: new Date(),from: new Date()}];
-                this.total = 0;
+                this.create.total = 0;
+            },
+            deep: true
+        },
+        'edit.is_stripe': {
+            handler: function (after, before) {
+                // Changes detected. Do work...
+                if(this.edit.is_stripe == 0){
+                    this.edit.details = [{
+                        category_id: null,
+                        governorate_id: null,
+                        quantity: 0,
+                        price: 0,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
+                    }];
+                }else {
+                    this.edit.details = [{
+                        package_id: null,
+                        price: 0,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
+                    }];
+                    if(this.packages.length == 0) this.getPackage();
+                }
+                this.multDate = [{to: new Date(),from: new Date()}];
+                this.edit.total = 0;
             },
             deep: true
         }
@@ -344,10 +370,10 @@ export default {
             let sum = 0;
             if(this.create.is_stripe == 0){
                 this.create.details.forEach(e =>  sum += e.price * e.quantity );
-                this.total = sum;
+                this.create.total = sum;
             }else {
                 this.create.details.forEach(e =>  sum += e.price );
-                this.total = sum;
+                this.create.total = sum;
             }
         },
         changeValueEdit(){
@@ -356,8 +382,8 @@ export default {
                 this.edit.details.forEach(e =>  sum += e.price * e.quantity );
                 this.total = sum;
             }else {
-                this.edit.details.forEach(e =>  sum += e.price );
-                this.total = sum;
+                this.edit.edit.details.forEach(e =>  sum += e.price );
+                this.edit.total = sum;
             }
         },
         addNewField(){
@@ -445,7 +471,7 @@ export default {
                             res.data.data.forEach((e) => new_media.push(e.id));
 
                             adminApi
-                                .put(`real-estate/reservations/${this.reservation_id}`, { old_media, media: new_media })
+                                .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
                                 .then((res) => {
                                     this.images = res.data.data.media ?? [];
                                     if (this.images && this.images.length > 0) {
@@ -502,7 +528,7 @@ export default {
                                     res.data.data.forEach((e) => new_media.push(e.id));
 
                                     adminApi
-                                        .put(`real-estate/reservations/${this.reservation_id}`, { old_media, media: new_media })
+                                        .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
                                         .then((res) => {
                                             this.images = res.data.data.media ?? [];
                                             if (this.images && this.images.length > 0) {
@@ -547,7 +573,7 @@ export default {
                 }
             });
             adminApi
-                .put(`real-estate/reservations/${this.reservation_id}`, { old_media })
+                .put(`boards-rent/orders/${this.reservation_id}`, { old_media })
                 .then((res) => {
                     this.reservations[index] = res.data.data;
                     this.images = res.data.data.media ?? [];
@@ -621,18 +647,6 @@ export default {
                 this.edit.status_id = null;
             }
         },
-        showDocumentModal() {
-            if (this.create.document_id == 0) {
-                this.$bvModal.show("create-document");
-                this.create.document_id = null;
-            }
-        },
-        showDocumentModalEdit() {
-            if (this.edit.document_id == 0) {
-                this.$bvModal.show("create-document");
-                this.edit.document_id = null;
-            }
-        },
         showSellMethodModal() {
             if (this.create.sell_method_id == 0) {
                 this.$bvModal.show("create-sell-method");
@@ -692,7 +706,6 @@ export default {
             }
         },
 
-
         /**
          *  get Data reservations
          */
@@ -721,7 +734,7 @@ export default {
             }
             adminApi
                 .get(
-                    `real-estate/reservations?page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `boards-rent/orders?page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&is_quotation=0`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -771,7 +784,7 @@ export default {
 
                 adminApi
                     .get(
-                        `real-estate/reservations?page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `boards-rent/orders?page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&is_quotation=0`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -810,7 +823,7 @@ export default {
                     if (result.value) {
                         this.isLoader = true;
                         adminApi
-                            .post(`real-estate/reservations/bulk-delete`, { ids: id })
+                            .post(`boards-rent/orders/bulk-delete`, { ids: id })
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -859,7 +872,7 @@ export default {
                         this.isLoader = true;
 
                         adminApi
-                            .delete(`real-estate/reservations/${id}`)
+                            .delete(`boards-rent/orders/${id}`)
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -902,12 +915,13 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
-                document_id: null,
+                document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,
                 total: 0,
                 is_stripe: 0,
+                is_quotation: 0,
                 details: [{
                     category_id: null,
                     governorate_id: null,
@@ -917,6 +931,7 @@ export default {
                     to: this.formatDate(new Date()),
                 }]
             };
+            this.is_disabled = false;
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -927,17 +942,16 @@ export default {
          */
         async resetModal() {
             this.date = new Date();
-            this.start_date = new Date();
-            this.end_date = new Date();
             this.multDate = [{to: new Date(),from: new Date()}];
             this.create = {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
-                document_id: null,
+                document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,
+                is_quotation: 0,
                 total: 0,
                 is_stripe: 0,
                 details: [{
@@ -955,7 +969,6 @@ export default {
             await this.getCustomers();
             await this.getBranches();
             await this.getSalesmen();
-            await this.getDocument();
             await this.getStatus();
             await this.getSellmethod();
             await this.getCategory();
@@ -977,12 +990,13 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
-                document_id: null,
+                document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,
                 total: 0,
                 is_stripe: 0,
+                is_quotation: 0,
                 details: [{
                     category_id: null,
                     governorate_id: null,
@@ -1011,12 +1025,10 @@ export default {
                 this.errors = {};
                 this.is_disabled = false;
                 adminApi
-                    .post(`real-estate/reservations`, {
+                    .post(`boards-rent/orders`, {
                         ...this.create
                     })
                     .then((res) => {
-                        this.reservation_id = res.data.data.id;
-                        this.showBreakCreate();
                         this.getData();
                         this.is_disabled = true;
                         setTimeout(() => {
@@ -1056,7 +1068,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`real-estate/reservations/${id}`, {
+                    .put(`boards-rent/orders/${id}`, {
                         ...this.edit
                     })
                     .then((res) => {
@@ -1111,7 +1123,7 @@ export default {
         async getBranches() {
             this.isLoader = true;
             await adminApi
-                .get(`/branches`)
+                .get(`/branches?document_id=9`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -1167,26 +1179,6 @@ export default {
                     this.isLoader = false;
                 });
         },
-        async getDocument() {
-            this.isLoader = true;
-            await adminApi
-                .get(`/document?company_id=${this.company_id}`)
-                .then((res) => {
-                    let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف مستند", name_e: "Add Document" });
-                    this.documents = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
         async getSellmethod() {
             this.isLoader = true;
             await adminApi
@@ -1210,7 +1202,7 @@ export default {
         async getCategory() {
             this.isLoader = true;
 
-            adminApi
+            await adminApi
                 .get(
                     `/categories`
                 )
@@ -1233,7 +1225,7 @@ export default {
         async getPackage() {
             this.isLoader = true;
 
-            adminApi
+            await adminApi
                 .get(
                     `/boards-rent/packages`
                 )
@@ -1256,7 +1248,7 @@ export default {
         async getGovernorate() {
             this.isLoader = true;
 
-            adminApi
+            await adminApi
                 .get(
                     `/governorates`
                 )
@@ -1281,41 +1273,47 @@ export default {
          */
         async resetModalEdit(id) {
             let reservation = this.reservations.find((e) => id == e.id);
-            this.vaildUnitReservationEdit = [];
             this.date = new Date(reservation.date);
-            this.start_date = new Date(reservation.start_date);
-            this.end_date = new Date(reservation.end_date);
             this.edit.serial_number = reservation.serial_number;
             this.edit.date = reservation.date;
-            this.edit.start_date = reservation.start_date;
-            this.edit.end_date = reservation.end_date;
-            await this.getCustomers();
-            this.edit.customer_id = reservation.customer.id;
-            // await this.getPaymentPlans();
-            await this.getSalesmen();
-            this.edit.salesman_id = reservation.salesman.id;
             await this.getBranches();
             this.edit.branch_id = reservation.branch.id;
-            this.images = reservation.media ?? [];;
-            reservation.details.forEach(  (e,index) => {
-                this.vaildUnitReservationEdit.push({vaildNumber: true});
-                this.edit.details.push({
-                    unit_value: e.unit_value,
-                    reservation_value: e.reservation_value,
-                    building_id: e.building_id,
-                    unit_id: e.unit_id,
-                    installment_payment_plans_id: e.installment_payment_plans_id,
-                    id: e.id
-                });
-                this.total += e.unit_value;
-            });
-            this.reservation_id = reservation.id;
-            if (this.images && this.images.length > 0) {
-                this.showPhoto = this.images[this.images.length - 1].webp;
-            } else {
-                this.showPhoto = "./images/img-1.png";
+            await this.getSalesmen();
+            this.edit.salesman_id = reservation.salesman.id;
+            await this.getSellmethod();
+            this.edit.sell_method_id = reservation.sell_method.id;
+            await this.getStatus();
+            this.edit.status_id = reservation.customer.id;
+            await this.getCustomers();
+            this.edit.customer_id = reservation.status.id;
+            this.edit.is_stripe = reservation.is_stripe;
+            if(reservation.is_stripe == 1){
+                await this.getPackage();
             }
-            this.errors = {};
+            else {
+                await this.getGovernorate();
+                await this.getCategory();
+            }
+            reservation.order_details.forEach(  (e,index) => {
+                this.multDateEdit.push({to: new Date(e.to),from: new Date(e.from)});
+                if(reservation.is_stripe == 0){
+                    this.edit.details.push({
+                        category_id: e.category_id,
+                        governorate_id: e.governorate_id,
+                        quantity: e.quantity,
+                        price: e.price,
+                        from: this.formatDate(e.from),
+                        to: this.formatDate(e.to),
+                    });
+                }else {
+                    this.edit.details.push({
+                        package_id: e.package_id,
+                        price: e.price,
+                        from: this.formatDate(e.from),
+                        to: this.formatDate(e.to),
+                    });
+                }
+            });
         },
         /**
          *  hidden Modal (edit)
@@ -1323,22 +1321,20 @@ export default {
         resetModalHiddenEdit(id) {
             this.errors = {};
             this.edit = {
+                branch_id: null,
+                status_id: null,
+                sell_method_id: null,
+                document_id: 9,
                 date: this.formatDate(new Date()),
-                start_date: this.formatDate(new Date()),
-                end_date: this.formatDate(new Date()),
-                plan_installments_id: null,
                 salesman_id: null,
-                old_media: [],
                 customer_id: null,
+                total: 0,
+                is_stripe: 0,
+                is_quotation: 0,
                 details: [],
-                serial_number: '',
-                branch_id: null
+                serial_number: ''
             };
-            this.reservation_id = null;
-            this.images = [];
-            this.total = 0;
         },
-
         /**
          *  start  dynamicSortString
          */
@@ -1361,7 +1357,7 @@ export default {
                 this.Tooltip = "";
                 this.mouseEnter = id;
                 adminApi
-                    .get(`real-estate/reservations/logs/${id}`)
+                    .get(`boards-rent/orders/logs/${id}`)
                     .then((res) => {
                         let l = res.data.data;
                         l.forEach((e) => {
@@ -1405,7 +1401,6 @@ export default {
         <customerGeneral :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCustomers" />
         <Branch :id="'create_branch'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBranches" />
         <Status :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getStatus" />
-        <Document :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getDocument" />
         <SellMethod :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getSellmethod" />
         <Category :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCategory" />
         <Package :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"  @created="getPackage" />
@@ -1625,9 +1620,9 @@ export default {
                                                                     ? salesmen.find((x) => x.id == opt).name
                                                                     : salesmen.find((x) => x.id == opt).name_e
                                                         " :class="{
-    'is-invalid':
-        $v.create.salesman_id.$error || errors.salesman_id,
-}">
+                                                            'is-invalid':
+                                                                $v.create.salesman_id.$error || errors.salesman_id,
+                                                        }">
                                             </multiselect>
                                             <div v-if="!$v.create.salesman_id.required" class="invalid-feedback">
                                                 {{ $t("general.fieldIsRequired") }}
@@ -1663,37 +1658,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3" >
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ $t("general.document") }}
-                                                <span  class="text-danger">*</span>
-                                            </label>
-                                            <multiselect
-                                                v-model="create.document_id"
-                                                @select="showDocumentModal"
-                                                :options="documents.map((type) => type.id)"
-                                                :custom-label="
-                                                  (opt) =>
-                                                    $i18n.locale == 'ar'
-                                                      ? documents.find((x) => x.id == opt).name
-                                                      : documents.find((x) => x.id == opt).name_e
-                                                "
-                                            >
-                                            </multiselect>
-                                            <div v-if="$v.create.document_id.$error || errors.document_id" class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.document_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.document_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3" >
+                                    <div class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("boardRent_unitStatus_status") }}
@@ -1819,15 +1784,15 @@ export default {
                                                                     <div class="col-2">
                                                                         <multiselect
                                                                             :id="`create-${index}-1`"
-                                                                             @input="showeCategoryModal(index)"
-                                                                             v-model="$v.create.details.$each[index].category_id.$model"
+                                                                            @input="showeCategoryModal(index)"
+                                                                            v-model="$v.create.details.$each[index].category_id.$model"
                                                                             :options="categories.map((type) => type.id)"
                                                                             :custom-label="(opt) => $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name: categories.find((x) => x.id == opt).name_e"
                                                                             :class="{
                                                                                 'is-invalid':
                                                                                     $v.create.details.$each[index].category_id.$error || errors.category_id,
                                                                             }">
-                                                                        >
+                                                                            >
                                                                         </multiselect>
                                                                         <div v-if="!$v.create.details.$each[index].category_id.required"
                                                                              class="invalid-feedback">
@@ -1872,8 +1837,8 @@ export default {
                                                                         <div class="form-group">
                                                                             <date-picker
                                                                                 type="date" v-model="multDate[index].from" defaultValue
-                                                                                 @change="v_startCreate($event,index)"
-                                                                                 confirm
+                                                                                @change="v_startCreate($event,index)"
+                                                                                confirm
                                                                                 :class="{
                                                                                         'is-invalid':
                                                                                             $v.create.details.$each[index].from.$error || errors.from,
@@ -1886,7 +1851,7 @@ export default {
                                                                             <template v-if="errors.from">
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from"
                                                                                               :key="index">{{
-                                                                                    errorMessage }}
+                                                                                        errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -1908,7 +1873,7 @@ export default {
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to"
                                                                                               :key="index">
                                                                                     {{
-                                                                                    errorMessage }}
+                                                                                        errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -2109,7 +2074,7 @@ export default {
                                                                         <div class="col-5">
                                                                                     <span
                                                                                         class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
+                                                                                        {{ !create.total ? '0.00' : create.total }}
                                                                                     </span>
                                                                         </div>
                                                                     </div>
@@ -2281,7 +2246,7 @@ export default {
                                         }}
                                     </td>
                                     <td v-if="setting.serial_id">
-                                        {{ data.serial_number }}
+                                        {{ data.prefix }}
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">
@@ -2337,6 +2302,26 @@ export default {
                                                 </div>
 
                                                 <div class="row">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label>{{ getCompanyKey("order_serial") }}</label>
+                                                            <input
+                                                                v-model="$v.edit.serial_number.$model"
+                                                                class="form-control"
+                                                                type="text"
+                                                                :class="{
+                                                                'is-invalid':
+                                                                    $v.edit.serial_number.$error || errors.serial_number,
+                                                                'is-valid': !$v.edit.serial_number.$invalid && !errors.serial_number,
+                                                            }" />
+                                                            <template v-if="errors.serial_number">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.serial_number"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>{{ getCompanyKey("branch") }}</label>
@@ -2423,36 +2408,6 @@ export default {
                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.sell_method_id"
                                                                               :key="index">{{ errorMessage }}
                                                                 </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3" >
-                                                        <div class="form-group position-relative">
-                                                            <label class="control-label">
-                                                                {{ $t("general.document") }}
-                                                                <span  class="text-danger">*</span>
-                                                            </label>
-                                                            <multiselect
-                                                                v-model="edit.document_id"
-                                                                @select="showDocumentModalEdit"
-                                                                :options="documents.map((type) => type.id)"
-                                                                :custom-label="
-                                                  (opt) =>
-                                                    $i18n.locale == 'ar'
-                                                      ? documents.find((x) => x.id == opt).name
-                                                      : documents.find((x) => x.id == opt).name_e
-                                                "
-                                                            >
-                                                            </multiselect>
-                                                            <div v-if="$v.edit.document_id.$error || errors.document_id" class="text-danger">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.document_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.document_id"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
                                                             </template>
                                                         </div>
                                                     </div>
@@ -2565,13 +2520,12 @@ export default {
                                                                             <div
                                                                                 class="row text-600 text-white bgc-default-tp1 py-25">
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_category") }}</div>
-                                                                                <div class="col-2">{{ getCompanyKey("boardRent_order_country") }}</div>
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_governorate") }}</div>
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_from") }}</div>
                                                                                 <div class="col-2">{{
                                                                                         getCompanyKey("boardRent_order_to") }}
                                                                                 </div>
-                                                                                <div class="col-1"> {{ getCompanyKey("boardRent_order_price")
+                                                                                <div class="col-2"> {{ getCompanyKey("boardRent_order_price")
                                                                                     }}</div>
                                                                                 <div class="col-1"> {{
                                                                                         getCompanyKey("boardRent_order_quantity") }}</div>
@@ -2584,15 +2538,14 @@ export default {
                                                                                     <div class="col-2">
                                                                                         <multiselect
                                                                                             :id="`edit-${index}-1`"
-                                                                                            @input="showeCategoryModalEdit(index)"
+                                                                                            @input="showCategoryModalEdit(index)"
                                                                                             v-model="$v.edit.details.$each[index].category_id.$model"
                                                                                             :options="categories.map((type) => type.id)"
                                                                                             :custom-label="(opt) => $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name: categories.find((x) => x.id == opt).name_e"
                                                                                             :class="{
-                                                                                'is-invalid':
-                                                                                    $v.edit.details.$each[index].category_id.$error || errors.category_id,
-                                                                            }">
-                                                                                            >
+                                                                                                'is-invalid':
+                                                                                                    $v.edit.details.$each[index].category_id.$error || errors.category_id,
+                                                                                            }">
                                                                                         </multiselect>
                                                                                         <div v-if="!$v.edit.details.$each[index].category_id.required"
                                                                                              class="invalid-feedback">
@@ -2678,7 +2631,7 @@ export default {
                                                                                             </template>
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div class="col-1">
+                                                                                    <div class="col-2">
                                                                                         <input
                                                                                             @keyup.enter="moveEnter('edit', index, 4)"
                                                                                             :id="`edit-${index}-4`"
@@ -2739,7 +2692,7 @@ export default {
                                                                                         <div class="col-5">
                                                                                     <span
                                                                                         class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
+                                                                                        {{ !edit.total ? '0.00' : edit.total }}
                                                                                     </span>
                                                                                         </div>
                                                                                     </div>

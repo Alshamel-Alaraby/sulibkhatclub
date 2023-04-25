@@ -25,6 +25,7 @@ class RlstInvoiceRequest extends FormRequest
             "serial_number" => "sometimes|unique:rlst_invoices,serial_number," . $this->id,
 
             "payment_plan_id" => "nullable|numeric",
+            "module_type" => "nullable",
             "document_id" => "nullable|exists:general_documents,id",
             "building_id" => "nullable|exists:rlst_buildings,id",
             "unit_id" => "nullable|exists:rlst_units,id",

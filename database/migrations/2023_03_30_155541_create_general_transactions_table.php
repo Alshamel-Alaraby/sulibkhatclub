@@ -29,7 +29,7 @@ return new class extends Migration
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();
             $table->string('prefix')->nullable();
-            $table->string('type')->comment('subscribe,renew');
+            $table->string('type')->nullable()->comment('subscribe,renew');
             $table->softDeletes();
             $table->timestamps();
         });

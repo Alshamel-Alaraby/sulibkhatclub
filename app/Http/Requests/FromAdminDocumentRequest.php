@@ -33,6 +33,7 @@ class FromAdminDocumentRequest extends FormRequest
             'documents.*.company_id'  => 'nullable|integer',
             'documents.*.attributes'  => 'nullable',
             'company_id'  => 'nullable|integer',
+            'document_relateds.*' => "nullable|integer",
         ];
     }
 }

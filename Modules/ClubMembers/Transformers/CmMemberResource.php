@@ -46,7 +46,7 @@ class CmMemberResource extends JsonResource
             "status_id" => $this->status_id,
             'member_type' => $this->member_type,
             'notes' => $this->notes,
-            'gender' => $this->gender ,
+            'gender' => $this->gender,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'sponsors' => $this->sponsors,

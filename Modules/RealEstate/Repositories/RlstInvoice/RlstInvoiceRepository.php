@@ -39,6 +39,10 @@ class RlstInvoiceRepository implements RlstInvoiceInterface
             $models->whereHas('transactions');
         }
 
+        if ($request->module_type){
+            $models->where('module_type',$request->module_type);
+        }
+
         if ($request->invoice){
             $models->doesnthave('transactions');
         }

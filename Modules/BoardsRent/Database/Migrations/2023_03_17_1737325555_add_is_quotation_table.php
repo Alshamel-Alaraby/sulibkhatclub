@@ -14,7 +14,7 @@ return new class extends Migration
     {
         // add is_quotation
         Schema::table('boards_rent_orders', function ($table) {
-           //$table->string('is_quotation')->default('false');
+           $table->boolean('is_quotation')->default(0);
         });
 
     }

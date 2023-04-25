@@ -2407,7 +2407,7 @@ export default {
         async getBranches() {
             this.isLoader = true;
             await adminApi
-                .get(`/branches`)
+                .get(`/branches?document_id=2`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;

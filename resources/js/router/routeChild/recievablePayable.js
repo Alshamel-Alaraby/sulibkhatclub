@@ -117,4 +117,12 @@ export default [
         },
         component: () => import('../../views/pages/recievablePayable/transaction/voucher'),
     },
+    {
+        path: '/dashboard/receivablePayable/creditNote',
+        name: 'credit note',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/transaction/creditNote'),
+    },
 ];

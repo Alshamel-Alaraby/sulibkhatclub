@@ -22,7 +22,7 @@ class CmSponserController extends Controller
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', CmSponserResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
-    }//
+    }
 
     public function getRootNodes()
     {
