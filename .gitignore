@@ -19,5 +19,9 @@ yarn-error.log
 /.vscode
 composer.lock
 storage
+
 bootstrap/cache
+/app/Console/Commands/MakeInterfaceCommand.php
+/stubs
+/app/Interfaces
 

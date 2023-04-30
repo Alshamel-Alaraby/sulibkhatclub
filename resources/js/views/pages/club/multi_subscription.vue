@@ -67,7 +67,8 @@ export default {
                 document_id: 8,
                 date_from: new Date().toISOString().slice(0, 10),
                 date_to: new Date().toISOString().slice(0, 10),
-                type: "",
+                number_of_years:1,
+                type: "renew",
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -81,7 +82,8 @@ export default {
                 document_id: 8,
                 date_from: new Date().toISOString().slice(0, 10),
                 date_to: new Date().toISOString().slice(0, 10),
-                type: "",
+                number_of_years:1,
+                type: "renew",
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -93,6 +95,7 @@ export default {
                 cm_member_id: true,
                 date_from: true,
                 date_to: true,
+                number_of_years:true,
                 type: true,
                 amount: true,
             },
@@ -124,6 +127,7 @@ export default {
             cm_member_id: {},
             date_from: {required},
             date_to: {required},
+            number_of_years: {required},
             amount: {required},
             type: {required},
             transactions: {
@@ -133,6 +137,7 @@ export default {
                     cm_member_id: {required},
                     date_from: {required},
                     date_to: {required},
+                    number_of_years: {required},
                     amount: {required},
                     type: {required},
                 },
@@ -144,6 +149,7 @@ export default {
             cm_member_id: {required},
             date_from: {required},
             date_to: {required},
+            number_of_years: {required},
             type: {required},
             amount: {required},
         },
@@ -219,9 +225,10 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 date_from: new Date().toISOString().slice(0, 10),
-                type: "",
+                type: "renew",
                 document_id: 8,
                 date_to: new Date().toISOString().slice(0, 10),
+                number_of_years:1,
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -336,7 +343,7 @@ export default {
         async getSerials() {
             this.isLoader = true;
             await adminApi
-                .get(`/serials?branch_id=${this.create.branch_id}`)
+                .get(`/serials?branch_id=${this.create.branch_id}&document_id=8`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -470,9 +477,10 @@ export default {
                 sponsor_id: null,
                 cm_member_id: null,
                 date_from: new Date().toISOString().slice(0, 10),
-                type: "",
+                type: "renew",
                 document_id: 8,
                 date_to: new Date().toISOString().slice(0, 10),
+                number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
@@ -499,9 +507,10 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 date_from: new Date().toISOString().slice(0, 10),
-                type: "",
+                type: "renew",
                 document_id: 8,
                 date_to: new Date().toISOString().slice(0, 10),
+                number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
@@ -611,6 +620,7 @@ export default {
             this.edit.type = setting.type;
             this.edit.document_id = setting.document_id;
             this.edit.date_to = setting.date_to;
+            this.edit.number_of_years = setting.number_of_years;
             this.edit.amount = setting.amount;
             this.edit.module_type = "club";
             this.edit.date = new Date().toISOString().slice(0, 10);
@@ -626,9 +636,10 @@ export default {
                 sponsor_id: null,
                 cm_member_id: null,
                 date_from: new Date().toISOString().slice(0, 10),
-                type: "",
+                type: "renew",
                 document_id: 8,
                 date_to: new Date().toISOString().slice(0, 10),
+                number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -713,42 +724,68 @@ export default {
         {
             if(this.create.date_from && this.create.date_to)
             {
-                await adminApi
-                    .get(`/club-members/memberships-renewals?from=${this.create.date_from}&to=${this.create.date_to}`)
-                    .then((res) => {
-                        let l = res.data.data;
-                        this.renewal = l;
-                        if (this.create.type)
-                        {
-                            this.renewalAmount();
-                        }
-                    })
-                    .catch((err) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                        });
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
+                this.dateDifference();
+                await this.getRenewal();
             }
-
         },
+
+        dateDifference()
+        {
+            let date_from = new Date(this.create.date_from).getFullYear();
+            let date_to = new Date(this.create.date_to).getFullYear();
+            if (date_from < date_to)
+            {
+                let number_of_years = date_to - date_from;
+                this.create.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
+            }
+        },
+
+        async getRenewal()
+        {
+            await adminApi
+                .get(`/club-members/memberships-renewals?from=${this.create.date_from}&to=${this.create.date_to}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.renewal = l;
+                    if (this.create.type)
+                    {
+                        this.renewalAmount();
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+
         renewalAmount()
         {
-            console.log(123)
             if (this.renewal.length > 0)
             {
                 if (this.create.type == "subscribe")
                 {
-                    this.create.amount = this.renewal[0].membership_cost;
+                    this.create.amount = this.renewal[0].membership_cost * this.create.number_of_years;
                 }else {
-                    this.create.amount = this.renewal[0].renewal_cost;
+                    this.create.amount = this.renewal[0].renewal_cost * this.create.number_of_years;
                 }
             }
+        },
 
+        dateDifferenceEdit()
+        {
+            let date_from = new Date(this.edit.date_from).getFullYear();
+            let date_to = new Date(this.edit.date_to).getFullYear();
+            if (date_from < date_to)
+            {
+                let number_of_years = date_to - date_from;
+                this.edit.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
+            }
         },
 
         /**
@@ -762,7 +799,7 @@ export default {
                 if (dl) {
                     XLSX.write(wb, {bookType: type, bookSST: true, type: 'base64'});
                 } else {
-                    XLSX.writeFile(wb, fn || (('transactions' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
+                    XLSX.writeFile(wb, fn || (('Multi-Subscription' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
                 }
                 this.enabled3 = true;
             }, 100);
@@ -786,6 +823,7 @@ export default {
                     document_id: 8,
                     date_from: data.date_from,
                     date_to: data.date_to,
+                    number_of_years: data.number_of_years,
                     type: data.type,
                     amount: data.amount,
                     member_name: member_name,
@@ -963,6 +1001,10 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("date_to") }}
                                             </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.number_of_years"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("number_of_years") }}
+                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.sponsor_id" class="mb-1">{{
                                                     getCompanyKey("sponsor") }}
                                             </b-form-checkbox>
@@ -984,9 +1026,9 @@ export default {
                                             <a
                                                 href="javascript:void(0)"
                                                 :style="{
-                          'pointer-events':
-                            transactionsPagination.current_page == 1 ? 'none' : '',
-                        }"
+                                                  'pointer-events':
+                                                    transactionsPagination.current_page == 1 ? 'none' : '',
+                                                }"
                                                 @click.prevent="getData(transactionsPagination.current_page - 1)"
                                             >
                                                 <span>&lt;</span>
@@ -1000,11 +1042,11 @@ export default {
                                             <a
                                                 href="javascript:void(0)"
                                                 :style="{
-                          'pointer-events':
-                            transactionsPagination.last_page == transactionsPagination.current_page
-                              ? 'none'
-                              : '',
-                        }"
+                                                  'pointer-events':
+                                                    transactionsPagination.last_page == transactionsPagination.current_page
+                                                      ? 'none'
+                                                      : '',
+                                                }"
                                                 @click.prevent="getData(transactionsPagination.current_page + 1)"
                                             >
                                                 <span>&gt;</span>
@@ -1110,26 +1152,31 @@ export default {
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("sponsor") }}
-
-                                            </label>
-                                            <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
-                                                         :options="sponsors.map((type) => type.id)"
-                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.serial_number") }}</label>
+                                            <multiselect @input="showBranchModal" v-model="create.serial_id"
+                                                         :options="serials.map((type) => type.id)" :custom-label="
+                                                    (opt) =>
+                                                        $i18n.locale == 'ar'
+                                                            ? serials.find((x) => x.id == opt).name
+                                                            : serials.find((x) => x.id == opt).name_e
+                                                " :class="{
+                                                        'is-invalid':
+                                                            $v.create.serial_id.$error || errors.serial_id,
+                                                    }">
                                             </multiselect>
-                                            <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
-                                                 class="text-danger">
+                                            <div v-if="!$v.create.serial_id.required" class="invalid-feedback">
                                                 {{ $t("general.fieldIsRequired") }}
                                             </div>
-                                            <template v-if="errors.sponsor_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
+
+                                            <template v-if="errors.serial_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.serial_id"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
+
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">
@@ -1190,7 +1237,27 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("sponsor") }}
 
+                                            </label>
+                                            <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
+                                                         :options="sponsors.map((type) => type.id)"
+                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
+                                            </multiselect>
+                                            <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
+                                                 class="text-danger">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                            <template v-if="errors.sponsor_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
@@ -1227,7 +1294,7 @@ export default {
                                                 {{ getCompanyKey("subscription_type") }}
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select  class="form-control" @change="renewalAmount" v-model="create.type" :class="{
+                                            <select  disabled class="form-control" @change="renewalAmount" v-model="create.type" :class="{
                                                   'is-invalid': $v.create.type.$error || errors.amount,
                                                   'is-valid':
                                                     !$v.create.type.$invalid && !errors.amount,
@@ -1271,31 +1338,34 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 ">
+                                    <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>{{ $t("general.serial_number") }}</label>
-                                            <multiselect @input="showBranchModal" v-model="create.serial_id"
-                                                         :options="serials.map((type) => type.id)" :custom-label="
-                                                    (opt) =>
-                                                        $i18n.locale == 'ar'
-                                                            ? serials.find((x) => x.id == opt).name
-                                                            : serials.find((x) => x.id == opt).name_e
-                                                " :class="{
-                                                        'is-invalid':
-                                                            $v.create.serial_id.$error || errors.serial_id,
-                                                    }">
-                                            </multiselect>
-                                            <div v-if="!$v.create.serial_id.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-
-                                            <template v-if="errors.serial_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.serial_id"
-                                                              :key="index">{{ errorMessage }}
+                                            <label  class="control-label">
+                                                {{ getCompanyKey("number_of_years") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                disabled
+                                                type="number"
+                                                step="any"
+                                                class="form-control"
+                                                v-model="$v.create.number_of_years.$model"
+                                                :class="{
+                                                  'is-invalid': $v.create.number_of_years.$error || errors.number_of_years,
+                                                  'is-valid':
+                                                    !$v.create.number_of_years.$invalid && !errors.number_of_years,
+                                                }"
+                                            />
+                                            <template v-if="errors.number_of_years">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.number_of_years"
+                                                    :key="index"
+                                                >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
+
                                     <div class="col-md-1 pt-3">
                                         <b-button variant="success"
                                                   @click.prevent="addNewField"
@@ -1328,6 +1398,7 @@ export default {
                                                         <th>{{ getCompanyKey("subscription_type") }}</th>
                                                         <th>{{ getCompanyKey("date_from") }}</th>
                                                         <th>{{ getCompanyKey("date_to") }}</th>
+                                                        <th>{{ getCompanyKey("number_of_years") }}</th>
                                                         <th>{{ $t("general.Action") }}</th>
                                                     </tr>
                                                     </thead>
@@ -1353,6 +1424,7 @@ export default {
                                                             <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
                                                         </td>
                                                         <td><h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5></td>
+                                                        <td><h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5></td>
                                                         <td>
                                                             <button  type="button"
                                                                      @click.prevent="removeNewField(index)"
@@ -1362,18 +1434,10 @@ export default {
                                                             </button>
                                                         </td>
                                                     </tr>
-<!--                                                    <tr v-if="create.transactions.length > 0" class="total-amount">-->
-<!--                                                        <td></td>-->
-<!--                                                        <td></td>-->
-<!--                                                        <td></td>-->
-<!--                                                        <td>{{$t('general.totalAmount')}}</td>-->
-<!--                                                        <td v-html="total" class="amount-red"></td>-->
-<!--                                                        <td></td>-->
-<!--                                                    </tr>-->
                                                     </tbody>
                                                     <tbody v-else>
                                                     <tr>
-                                                        <th class="text-center" colspan="7">
+                                                        <th class="text-center" colspan="9">
                                                             {{ $t("general.notDataFound") }}
                                                         </th>
                                                     </tr>
@@ -1509,6 +1573,21 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.number_of_years">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("number_of_years") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('number_of_years'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-number_of_years'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.sponsor_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("sponsor") }}</span>
@@ -1569,6 +1648,9 @@ export default {
                                     </td>
                                     <td v-if="setting.date_to">
                                         <h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5>
+                                    </td>
+                                    <td v-if="setting.number_of_years">
+                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
                                     </td>
                                     <td v-if="setting.sponsor_id">
                                         <h5 class="m-0 font-weight-normal">
@@ -1685,30 +1767,6 @@ export default {
                                                     <div class="col-md-6">
                                                         <div class="form-group position-relative">
                                                             <label class="control-label">
-                                                                {{ getCompanyKey("sponsor") }}
-
-                                                            </label>
-                                                            <multiselect @input="showSponsorModalEdit"
-                                                                         v-model="edit.sponsor_id"
-                                                                         :options="sponsors.map((type) => type.id)"
-                                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                                            </multiselect>
-                                                            <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"
-                                                                 class="text-danger">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.sponsor_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.sponsor_id"
-                                                                    :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="form-group position-relative">
-                                                            <label class="control-label">
                                                                 {{ getCompanyKey("member") }}
                                                                 <span class="text-danger">*</span>
                                                             </label>
@@ -1738,31 +1796,6 @@ export default {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label  class="control-label">
-                                                                {{ getCompanyKey("subscription_type") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <select  class="form-control"  v-model="$v.edit.type.$model" :class="{
-                                                                  'is-invalid': $v.edit.type.$error || errors.amount,
-                                                                  'is-valid':
-                                                                    !$v.edit.type.$invalid && !errors.amount,
-                                                                }">
-                                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
-                                                                <option value="renew">{{$t('general.renew')}}</option>
-                                                            </select>
-
-                                                            <template v-if="errors.type">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.type"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey('date_from') }}
                                                                 <span class="text-danger">*</span>
@@ -1770,6 +1803,7 @@ export default {
                                                             <date-picker
                                                                 type="date"
                                                                 v-model="$v.edit.date_from.$model"
+                                                                @input="dateDifferenceEdit"
                                                                 format="YYYY-MM-DD"
                                                                 valueType="format"
                                                                 :confirm="false"
@@ -1799,6 +1833,7 @@ export default {
                                                             <date-picker
                                                                 type="date"
                                                                 v-model="$v.edit.date_to.$model"
+                                                                @input="dateDifferenceEdit"
                                                                 format="YYYY-MM-DD"
                                                                 valueType="format"
                                                                 :confirm="false"
@@ -1819,8 +1854,30 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label  class="control-label">
+                                                                {{ getCompanyKey("subscription_type") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <select disabled class="form-control"  v-model="$v.edit.type.$model" :class="{
+                                                                  'is-invalid': $v.edit.type.$error || errors.amount,
+                                                                  'is-valid':
+                                                                    !$v.edit.type.$invalid && !errors.amount,
+                                                                }">
+                                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
+                                                                <option value="renew">{{$t('general.renew')}}</option>
+                                                            </select>
 
-
+                                                            <template v-if="errors.type">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.type"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label  class="control-label">
@@ -1843,6 +1900,56 @@ export default {
                                                                     v-for="(errorMessage, index) in errors.amount"
                                                                     :key="index"
                                                                 >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label  class="control-label">
+                                                                {{ getCompanyKey("number_of_years") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <input
+                                                                disabled
+                                                                type="number"
+                                                                step="any"
+                                                                class="form-control"
+                                                                v-model="$v.edit.number_of_years.$model"
+                                                                :class="{
+                                                                  'is-invalid': $v.edit.number_of_years.$error || errors.number_of_years,
+                                                                  'is-valid':
+                                                                    !$v.edit.number_of_years.$invalid && !errors.number_of_years,
+                                                                }"
+                                                            />
+                                                            <template v-if="errors.number_of_years">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.number_of_years"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("sponsor") }}
+
+                                                            </label>
+                                                            <multiselect @input="showSponsorModalEdit"
+                                                                         v-model="edit.sponsor_id"
+                                                                         :options="sponsors.map((type) => type.id)"
+                                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
+                                                            </multiselect>
+                                                            <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"
+                                                                 class="text-danger">
+                                                                {{ $t("general.fieldIsRequired") }}
+                                                            </div>
+                                                            <template v-if="errors.sponsor_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.sponsor_id"
+                                                                    :key="index">{{ errorMessage }}
                                                                 </ErrorMessage>
                                                             </template>
                                                         </div>

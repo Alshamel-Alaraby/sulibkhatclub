@@ -12,6 +12,8 @@ use Modules\ClubMembers\Http\Requests\CmMemberRequest;
 use Modules\ClubMembers\Http\Requests\CmUpdateAcceptedMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
 use Modules\ClubMembers\Transformers\CmMemberResource;
+use Illuminate\Support\Facades\DB;
+
 
 class CmMemberController extends Controller
 {
@@ -168,4 +170,15 @@ class CmMemberController extends Controller
 
         return responseJson(200, 'Updated Successfully', new CmMemberResource($model));
     }
+
+
+    public function TestTransfer()
+    {
+        DB::unprepared(file_get_contents(public_path("members.sql")));
+
+        
+
+        ;
+    }
+
 }

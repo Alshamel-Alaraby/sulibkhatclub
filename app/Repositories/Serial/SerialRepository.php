@@ -22,6 +22,10 @@ class SerialRepository implements SerialRepositoryInterface
             $models->where('branch_id', $request->branch_id);
         }
 
+        if ($request->document_id) {
+            $models->where('document_id', $request->document_id);
+        }
+
         if ($request->company_id) {
             $models->where('company_id', $request->company_id);
         }

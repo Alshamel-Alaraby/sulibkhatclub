@@ -34,11 +34,11 @@ Route::group(['prefix' => 'document-field'], function () {
         Route::get("tables", 'getTables');
         Route::get("columns/{table}", 'getColumns');
         Route::get("column-data/{table}/{column}", 'getColumnData');
-        Route::get('/', 'all')->name('document.index');
+        Route::get('/', 'all')->name('archive.document.index');
         Route::get('/{id}', 'find');
-        Route::post('/', 'create')->name('document.create');
-        Route::put('/{id}', 'update')->name('document.update');
-        Route::delete('/{id}', 'delete')->name('document.destroy');
+        Route::post('/', 'create')->name('archive.document.create');
+        Route::put('/{id}', 'update')->name('archive.document.update');
+        Route::delete('/{id}', 'delete')->name('archive.document.destroy');
         Route::get('logs/{id}', 'logs');
         Route::post('bulk-delete', 'bulkDelete');
     });

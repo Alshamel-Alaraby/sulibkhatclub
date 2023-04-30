@@ -382,6 +382,8 @@ export default {
             this.membership_date = member.membership_date ? new Date(member.membership_date) : '';
             this.applying_date = member.applying_date ? new Date(member.applying_date) : '';
             this.edit.applying_number = member.applying_number;
+            this.edit.membership_number = member.membership_number;
+            this.edit.session_number = member.session_number;
             this.edit.first_name = member.first_name;
             this.edit.phone_code = member.phone_code;
             this.edit.second_name = member.second_name;
@@ -1299,8 +1301,6 @@ export default {
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>{{ getCompanyKey("member_home_phone") }}</label>
-                                                            <input v-model="$v.edit.home_phone.$model" disabled
-                                                                   class="form-control" type="text" />
                                                             <VuePhoneNumberInput
                                                                 v-model="$v.edit.home_phone.$model"
                                                                 disabled

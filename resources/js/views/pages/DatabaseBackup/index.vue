@@ -15,7 +15,10 @@ import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
-import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
+import {
+  dynamicSortString,
+  dynamicSortNumber,
+} from "../../../helper/tableSort";
 import translation from "../../../helper/translation-mixin";
 import senderHoverHelper from "../../../helper/senderHoverHelper";
 import { formatDateOnly } from "../../../helper/startDate";
@@ -68,8 +71,7 @@ export default {
       },
     };
   },
-  validations: {
-  },
+  validations: {},
   watch: {
     /**
      * watch per_page
@@ -124,11 +126,13 @@ export default {
         let self = this;
         const config = {
           onUploadProgress: function (progressEvent) {
-            const percentCompleted = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+            const percentCompleted = Math.round(
+              (progressEvent.loaded / progressEvent.total) * 100
+            );
             self.progress = percentCompleted;
             bar.innerHTML = `${percentCompleted}%`;
             bar.style.width = `${percentCompleted}%`;
-          }
+          },
         };
         adminApi
           .post(`/backups`, {}, config)
@@ -145,8 +149,7 @@ export default {
           .finally(() => {
             this.isLoader = false;
           });
-
-      }, 500)
+      }, 500);
     },
 
     formatDate(value) {
@@ -215,7 +218,6 @@ export default {
       }
     },
 
-
     sortString(value) {
       return dynamicSortString(value);
     },
@@ -265,14 +267,32 @@ export default {
 <template>
   <Layout>
     <PageHeader />
-    <b-modal id="progress" :title="$t('general.DatabaseBackup')" title-class="font-18" body-class="p-4 "
-      :hide-footer="true" @show="createBackup">
-      <h4 v-if="progress == 100" class="header-title text-center mb-2">{{ $t("general.completed") }}</h4>
-      <h4 v-else class="header-title text-center mb-2">{{ $t("general.loading") }}...</h4>
-      <div style="background-color: #fff;" class="progress">
-        <div id="progress-bar" class="progress-bar" role="progressbar"
-          style="width:0%;background-color: #3bafda;transition:width .5s;" aria-valuenow="25" aria-valuemin="0"
-          aria-valuemax="100">0%</div>
+    <b-modal
+      id="progress"
+      :title="$t('general.DatabaseBackup')"
+      title-class="font-18"
+      body-class="p-4 "
+      :hide-footer="true"
+      @show="createBackup"
+    >
+      <h4 v-if="progress == 100" class="header-title text-center mb-2">
+        {{ $t("general.completed") }}
+      </h4>
+      <h4 v-else class="header-title text-center mb-2">
+        {{ $t("general.loading") }}...
+      </h4>
+      <div style="background-color: #fff" class="progress">
+        <div
+          id="progress-bar"
+          class="progress-bar"
+          role="progressbar"
+          style="width: 0%; background-color: #3bafda; transition: width 0.5s"
+          aria-valuenow="25"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          0%
+        </div>
       </div>
     </b-modal>
 
@@ -286,68 +306,115 @@ export default {
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->
-                  <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
-                    class="btn-block setting-search">
-                    <b-form-checkbox v-model="filterSetting" value="id" class="mb-1">
+                  <b-dropdown
+                    variant="primary"
+                    :text="$t('general.searchSetting')"
+                    ref="dropdown"
+                    class="btn-block setting-search"
+                  >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      value="id"
+                      class="mb-1"
+                    >
                       {{ $t("general.id") }}
                     </b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="path" class="mb-1">
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      value="path"
+                      class="mb-1"
+                    >
                       {{ $t("general.path") }}
                     </b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="created_at" class="mb-1">
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      value="created_at"
+                      class="mb-1"
+                    >
                       {{ $t("general.created_at") }}
                     </b-form-checkbox>
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
 
-                <div class="d-inline-block position-relative" style="width: 77%">
-                  <span :class="[
-                    'search-custom position-absolute',
-                    $i18n.locale == 'ar' ? 'search-custom-ar' : '',
-                  ]">
+                <div
+                  class="d-inline-block position-relative"
+                  style="width: 77%"
+                >
+                  <span
+                    :class="[
+                      'search-custom position-absolute',
+                      $i18n.locale == 'ar' ? 'search-custom-ar' : '',
+                    ]"
+                  >
                     <i class="fe-search"></i>
                   </span>
-                  <input class="form-control" style="display: block; width: 93%; padding-top: 3px" type="text"
-                    v-model.trim="search" :placeholder="`${$t('general.Search')}...`" />
+                  <input
+                    class="form-control"
+                    style="display: block; width: 93%; padding-top: 3px"
+                    type="text"
+                    v-model.trim="search"
+                    :placeholder="`${$t('general.Search')}...`"
+                  />
                 </div>
               </div>
             </div>
             <!-- end search -->
 
-            <div class="row justify-content-between align-items-center mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mb-2 px-1"
+            >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
-                <b-button v-b-modal.progress variant="primary" class="btn-sm mx-1 font-weight-bold">
+                <b-button
+                  v-b-modal.progress
+                  variant="primary"
+                  class="btn-sm mx-1 font-weight-bold"
+                >
                   {{ $t("general.Create") }}
                   <i class="fas fa-plus"></i>
                 </b-button>
                 <div class="d-inline-flex">
-                  <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                  <button
+                    @click="ExportExcel('xlsx')"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fas fa-file-download"></i>
                   </button>
                   <button v-print="'#printData'" class="custom-btn-dowonload">
                     <i class="fe-printer"></i>
                   </button>
-                  <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1">
+                  <button
+                    class="custom-btn-dowonload"
+                    @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
+                    v-if="checkAll.length == 1"
+                  >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length > 1" @click.prevent="deleteBranch(checkAll)">
+                  <button
+                    class="custom-btn-dowonload"
+                    v-if="checkAll.length > 1"
+                    @click.prevent="deleteBranch(checkAll)"
+                  >
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!-- end mult delete  -->
                   <!--  start one delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
-                    @click.prevent="deleteBranch(checkAll[0])">
+                  <button
+                    class="custom-btn-dowonload"
+                    v-if="checkAll.length == 1"
+                    @click.prevent="deleteBranch(checkAll[0])"
+                  >
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!--  end one delete  -->
                 </div>
                 <!-- end create and printer -->
               </div>
-              <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end">
+              <div
+                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+              >
                 <div class="d-fex">
                   <!-- start filter and setting -->
                   <div class="d-inline-block">
@@ -360,19 +427,32 @@ export default {
                       <i class="fe-menu"></i>
                     </b-button>
                     <!-- Basic dropdown -->
-                    <b-dropdown variant="primary" :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
-                      ref="dropdown" class="dropdown-custom-ali">
+                    <b-dropdown
+                      variant="primary"
+                      :html="`${$t(
+                        'general.setting'
+                      )} <i class='fe-settings'></i>`"
+                      ref="dropdown"
+                      class="dropdown-custom-ali"
+                    >
                       <b-form-checkbox v-model="setting.id" class="mb-1">
                         {{ $t("general.id") }}
                       </b-form-checkbox>
                       <b-form-checkbox v-model="setting.path" class="mb-1">
                         {{ $t("general.path") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.created_at" class="mb-1">
+                      <b-form-checkbox
+                        v-model="setting.created_at"
+                        class="mb-1"
+                      >
                         {{ $t("general.created_at") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
-                        <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
+                        <a
+                          href="javascript:void(0)"
+                          class="btn btn-primary btn-sm"
+                          >Apply</a
+                        >
                       </div>
                     </b-dropdown>
                     <!-- Basic dropdown -->
@@ -380,27 +460,45 @@ export default {
                   <!-- end filter and setting -->
 
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 13px">
                       {{ itemsPagination.from }}-{{ itemsPagination.to }} /
                       {{ itemsPagination.total }}
                     </div>
                     <div class="d-inline-block">
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          itemsPagination.current_page == 1 ? 'none' : '',
-                      }" @click.prevent="getData(itemsPagination.current_page - 1)">
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            itemsPagination.current_page == 1 ? 'none' : '',
+                        }"
+                        @click.prevent="
+                          getData(itemsPagination.current_page - 1)
+                        "
+                      >
                         <span>&lt;</span>
                       </a>
-                      <input type="text" @keyup.enter="getDataCurrentPage()" v-model="current_page"
-                        class="pagination-current-page" />
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          itemsPagination.last_page ==
+                      <input
+                        type="text"
+                        @keyup.enter="getDataCurrentPage()"
+                        v-model="current_page"
+                        class="pagination-current-page"
+                      />
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            itemsPagination.last_page ==
                             itemsPagination.current_page
-                            ? 'none'
-                            : '',
-                      }" @click.prevent="getData(itemsPagination.current_page + 1)">
+                              ? 'none'
+                              : '',
+                        }"
+                        @click.prevent="
+                          getData(itemsPagination.current_page + 1)
+                        "
+                      >
                         <span>&gt;</span>
                       </a>
                     </div>
@@ -411,25 +509,46 @@ export default {
             </div>
 
             <!-- start .table-responsive-->
-            <div class="table-responsive mb-3 custom-table-theme position-relative">
+            <div
+              class="table-responsive mb-3 custom-table-theme position-relative"
+            >
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
-              <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table" id="printData">
+              <table
+                class="table table-borderless table-hover table-centered m-0"
+                ref="exportable_table"
+                id="printData"
+              >
                 <thead>
                   <tr>
-                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
+                    <th
+                      v-if="enabled3"
+                      class="do-not-print"
+                      scope="col"
+                      style="width: 0"
+                    >
                       <div class="form-check custom-control">
-                        <input class="form-check-input" type="checkbox" v-model="isCheckAll"
-                          style="width: 17px; height: 17px" />
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          v-model="isCheckAll"
+                          style="width: 17px; height: 17px"
+                        />
                       </div>
                     </th>
                     <th v-if="setting.id">
                       <div class="d-flex justify-content-center">
                         <span>{{ $t("general.id") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="items.sort(sortString('id'))"></i>
-                          <i class="fas fa-arrow-down" @click="items.sort(sortString('-id'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="items.sort(sortString('id'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="items.sort(sortString('-id'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
@@ -437,8 +556,14 @@ export default {
                       <div class="d-flex justify-content-center">
                         <span>{{ $t("general.path") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="items.sort(sortString('path'))"></i>
-                          <i class="fas fa-arrow-down" @click="items.sort(sortString('-path'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="items.sort(sortString('path'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="items.sort(sortString('-path'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
@@ -446,20 +571,42 @@ export default {
                       <div class="d-flex justify-content-center">
                         <span>{{ $t("general.created_at") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="items.sort(sortString('created_at'))"></i>
-                          <i class="fas fa-arrow-down" @click="items.sort(sortString('-created_at'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="items.sort(sortString('created_at'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="items.sort(sortString('-created_at'))"
+                          ></i>
                         </div>
                       </div>
+                    </th>
+                    <th v-if="enabled3" class="do-not-print">
+                      {{ $t("general.Action") }}
                     </th>
                   </tr>
                 </thead>
                 <tbody v-if="items.length > 0">
-                  <tr @click.capture="checkRow(data.id)" @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
-                    v-for="(data, index) in items" :key="data.id" class="body-tr-custom">
+                  <tr
+                    @click.capture="checkRow(data.id)"
+                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    v-for="(data, index) in items"
+                    :key="data.id"
+                    class="body-tr-custom"
+                  >
                     <td v-if="enabled3" class="do-not-print">
-                      <div class="form-check custom-control" style="min-height: 1.9em">
-                        <input style="width: 17px; height: 17px" class="form-check-input" type="checkbox" :value="data.id"
-                          v-model="checkAll" />
+                      <div
+                        class="form-check custom-control"
+                        style="min-height: 1.9em"
+                      >
+                        <input
+                          style="width: 17px; height: 17px"
+                          class="form-check-input"
+                          type="checkbox"
+                          :value="data.id"
+                          v-model="checkAll"
+                        />
                       </div>
                     </td>
                     <td v-if="setting.id">
@@ -470,6 +617,33 @@ export default {
                     </td>
                     <td v-if="setting.created_at">
                       {{ data.created_at }}
+                    </td>
+                    <td v-if="enabled3" class="do-not-print">
+                      <div class="btn-group">
+                        <button
+                          type="button"
+                          class="btn btn-sm dropdown-toggle dropdown-coustom"
+                          data-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          {{ $t("general.commands") }}
+                          <i class="fas fa-angle-down"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-custom">
+                          <a
+                            target="_blank"
+                            class="dropdown-item text-black"
+                            :href="data.path"
+                          >
+                            <div
+                              class="d-flex justify-content-between align-items-center text-black"
+                            >
+                              <span>{{ $t("general.Download") }}</span>
+                              <i class="mx-2 fas fa-download text-success"></i>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

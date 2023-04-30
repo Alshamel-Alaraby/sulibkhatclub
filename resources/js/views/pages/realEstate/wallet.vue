@@ -12,7 +12,7 @@ import { formatDateOnly } from "../../../helper/startDate";
 import translation from "../../../helper/translation-mixin";
 import Multiselect from "vue-multiselect";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-import owner from "../../../components/create/realEstate/owner";
+import Owner from "../../../components/create/realEstate/owner";
 import Building from "../../../components/create/building";
 /**
  * Advanced Table component
@@ -48,7 +48,7 @@ export default {
         Switches,
         ErrorMessage,
         loader,
-        owner,
+        Owner,
         Building,
         Multiselect
     },
@@ -269,6 +269,7 @@ export default {
         },
         showOwnerModal(index) {
             if (this.createOwner.wallet_owners[index].owner_id == 0) {
+                console.log(this.createOwner.wallet_owners[index].owner_id);
                 this.$bvModal.show("owner-create");
                 this.createOwner.wallet_owners[index].owner_id = null;
             }
@@ -276,6 +277,7 @@ export default {
         showOwnerEditModal(index) {
             if (this.editOwner.wallet_owners[index].owner_id == 0) {
                 this.$bvModal.show("owner-create");
+                console.log(this.editOwner.wallet_owners[index].owner_id);
                 this.editOwner.wallet_owners[index].owner_id = null;
             }
         },
@@ -904,7 +906,7 @@ export default {
 
 <template>
     <Layout>
-        <owner :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getOwner" />
+        <Owner :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getOwner" />
         <Building :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBuildings" />
         <PageHeader />
         <div class="row">

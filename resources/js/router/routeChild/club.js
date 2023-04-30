@@ -11,6 +11,22 @@ export default [
         component: () => import('../../views/pages/club/sponsor'),
     },
     {
+        path: '/dashboard/club/payer-member-report',
+        name: 'payer-member-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/payer-member-report'),
+    },
+    {
+        path: '/dashboard/club/permission-member-report',
+        name: 'permission-member-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/permission-member-report'),
+    },
+    {
         path: '/dashboard/club/member',
         name: 'club-member',
         meta: {

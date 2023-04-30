@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\RoleWorkflowButton;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RoleWorkflowButton\StoreRoleWorkflowButtonRequest;
+use App\Http\Requests\RoleWorkflowButton\RoleWorkflowButtonRequest;
 use App\Http\Requests\RoleWorkflowButton\UpdateRoleWorkflowButtonRequest;
 use App\Http\Resources\RoleWorkflowButton\RoleWorkflowButtonResource;
 use App\Http\Resources\ScreenSetting\ScreenSettingResource;
@@ -62,14 +62,14 @@ class RoleWorkflowButtonController extends Controller
 
     }
 
-    public function create(StoreRoleWorkflowButtonRequest $request)
+    public function create(RoleWorkflowButtonRequest $request)
     {
 
         return responseJson(200, __('Done'), $this->repository->create($request->validated()));
 
     }
 
-    public function update(UpdateRoleWorkflowButtonRequest $request, $id)
+    public function update(RoleWorkflowButtonRequest $request, $id)
     {
 
         $model = $this->repository->find($id);

@@ -28,7 +28,10 @@ class TestCommand extends Command
     public function handle()
     {
 
-        return Command::SUCCESS;
+        // call job queue
+        // \App\Jobs\TransDB::dispatch();
+
+        // return Command::SUCCESS;
 
     }
 }

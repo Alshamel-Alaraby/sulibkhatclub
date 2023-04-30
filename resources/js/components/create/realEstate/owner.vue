@@ -295,7 +295,7 @@ import Country from "../../../components/country";
 import City from "../../../components/city";
 import bankAccount from "../../../components/create/bankAccount";
 import Multiselect from "vue-multiselect";
-import translation from "../../../helper/translation-mixin";
+import transMixinComp from "../../../helper/translation-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import axios from "axios";
 // require styles
@@ -307,7 +307,15 @@ import 'quill/dist/quill.bubble.css'
  */
 
 export default {
-    mixins: [translation],
+    mixins: [transMixinComp],
+        props: {
+        companyKeys: {
+            default: []
+        },
+        defaultsKeys: {
+            default: []
+        },
+    },
     components: {
         Switches,
         ErrorMessage,
@@ -326,6 +334,7 @@ export default {
             bank_accounts: [],
             nationalities: [],
             isLoader: false,
+            codeCountry:"",
             create: {
                 name: '',
                 name_e: '',
@@ -374,9 +383,10 @@ export default {
         },
     },
     computed: {
-        codeCountry() {
-            return geoplugin_countryCode();
-        }
+    
+    },
+    mounted(){
+        this.$store.dispatch('locationIp/getIp');
     },
     methods: {
         arabicValue(txt) {
@@ -414,6 +424,8 @@ export default {
         async resetModal() {
             await this.getCategory();
             await this.getBankAcount();
+            this.codeCountry = this.$store.getters["locationIp/countryCode"];
+            
             this.create = {
                 name: '',
                 name_e: '',
@@ -440,6 +452,7 @@ export default {
         async resetForm() {
             await this.getCategory();
             await this.getBankAcount();
+            this.codeCountry = this.$store.getters["locationIp/countryCode"];
             this.isVaildPhone = false;
             this.create = {
                 name: '',

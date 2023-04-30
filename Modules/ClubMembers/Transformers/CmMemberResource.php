@@ -25,7 +25,7 @@ class CmMemberResource extends JsonResource
             'family_name' => $this->family_name,
             'birth_date' => $this->birth_date,
             'national_id' => $this->national_id,
-            'nationality_number' => $this->nationality_number,
+            'nationality_class' => $this->nationality_class,
             'phone_code' => $this->phone_code,
             'home_phone' => $this->home_phone,
             'work_phone' => $this->work_phone,

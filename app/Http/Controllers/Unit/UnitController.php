@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Unit;
 
-use App\Http\Requests\Unit\StoreUnitRequest;
+use App\Http\Requests\Unit\UnitRequest;
 use App\Http\Requests\Unit\UpdateUnitRequest;
 use App\Http\Resources\Unit\UnitResource;
 use Illuminate\Http\Request;
@@ -51,13 +51,13 @@ class UnitController extends Controller
         return responseJson(200, 'success', UnitResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreUnitRequest $request)
+    public function create(UnitRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateUnitRequest $request, $id)
+    public function update(UnitRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

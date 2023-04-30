@@ -1068,7 +1068,7 @@ export default {
                               <div class="col-md-5">
                                 <div class="form-group">
                                   <label>{{ getCompanyKey("owner") }}</label>
-                                  <multiselect @input="showOwnerModal(index)"
+                                  <multiselect @input="showOwnerEditModal(index)"
                                     v-model="$v.edit.wallet_owners.$each[index].owner_id.$model"
                                     :options="owners.map((type) => type.id)" :custom-label="
                                       (opt) =>

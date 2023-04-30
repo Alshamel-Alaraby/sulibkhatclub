@@ -589,6 +589,9 @@
         }
     },
     "general": {
+        "PermissionMemberReport":"تقارير صلاحيات الاعضاء",
+        "financialStatus":"الحالة المالية",
+        "PayerMemberReport":"تقارير الاعضاء المسددين",
         "id":"الاي دي",
         "path":"المسار",
         "created_at":"تاريخ الاضافة",
@@ -1044,6 +1047,11 @@
         "non-Approve":  "مرفوض",
         "quotationsTable": "جدول الاقتباسات",
         "CreditNoteTable": "جدول اشعار دائن",
-        "createNewCreditNote": "اضافة اشعار دائن جديد"
+        "createNewCreditNote": "اضافة اشعار دائن جديد",
+        "editCreditNote": "تعديل اشعار دائن",
+        "debitNoteTable": "جدول اشعار مدين",
+        "debitNewCreditNote": "اضافة اشعار مدين جديد",
+        "editDebitNote": "تعديل اشعار مدين",
+        "debitNote": "اشعار مدين"
     }
 }

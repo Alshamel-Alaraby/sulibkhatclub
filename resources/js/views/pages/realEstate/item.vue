@@ -5,6 +5,7 @@ import ErrorMessage from "../../../components/widgets/errorMessage";
 import adminApi from "../../../api/adminAxios";
 import translation from "../../../helper/translation-mixin";
 import ItemCategory from "../../../components/create/realEstate/itemCategory.vue"
+import Unit from "../../../components/create/unit.vue"
 import {
     required,
     minLength,
@@ -35,6 +36,7 @@ export default {
     },
     mixins: [translation],
     components: {
+        Unit,
         ItemCategory,
         Layout,
         PageHeader,
@@ -178,6 +180,19 @@ export default {
         // });
     },
     methods: {
+        showUnitModal() {
+            if (this.create.unit_id == 0) {
+                this.$bvModal.show("create-unit");
+                this.create.unit_id = null;
+            }
+        },
+        showUnitModalEdit() {
+            if (this.edit.unit_id == 0) {
+                this.$bvModal.show("create-unit");
+                this.edit.unit_id = null;
+            }
+        },
+
         addCategoryToItem(id) {
             if (id == 0) {
                 this.$bvModal.show("category-create");
@@ -657,8 +672,9 @@ export default {
             await adminApi
                 .get(`/units`)
                 .then((res) => {
-                    let l = res.data;
-                    this.units = l.data;
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف وحدة", name_e: "Add unit" });
+                    this.units = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -906,6 +922,7 @@ export default {
 <template>
     <Layout>
         <PageHeader />
+        <Unit :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getUnits" />
         <ItemCategory :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCategories" @deleted="getCategories" />
         <div class="row">
             <div class="col-12">
@@ -1155,7 +1172,7 @@ export default {
                                                             {{ getCompanyKey("item_unit") }}
                                                             <span class="text-danger">*</span>
                                                         </label>
-                                                        <multiselect v-model="create.unit_id"
+                                                        <multiselect @input="showUnitModal" v-model="create.unit_id"
                                                             :options="units.map((type) => type.id)" :custom-label="
                                                                 (opt) =>
                                                                     $i18n.locale
@@ -1298,7 +1315,7 @@ export default {
                                                     <label class="my-1 mr-2">{{
                                                         $t("general.category")
                                                     }}</label>
-                                                    <multiselect v-model="category_item_id" @select="addCategoryToItem"
+                                                    <multiselect  v-model="category_item_id" @select="addCategoryToItem"
                                                         :options="categories.map((type) => type.id)" :custom-label="
                                                             (opt) =>
                                                                 $i18n.locale=='ar'
@@ -1645,7 +1662,7 @@ export default {
                                                                             {{ getCompanyKey("item_unit") }}
                                                                             <span class="text-danger">*</span>
                                                                         </label>
-                                                                        <multiselect v-model="edit.unit_id"
+                                                                        <multiselect @input="showUnitModalEdit" v-model="edit.unit_id"
                                                                             :options="units.map((type) => type.id)"
                                                                             :custom-label="
                                                                                 (opt) =>

@@ -11,6 +11,3 @@
 |
 */
 
-Route::prefix('boardsrent')->group(function() {
-    Route::get('/', 'BoardsRentController@index');
-});

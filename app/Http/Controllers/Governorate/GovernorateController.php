@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Governorate;
 
 use App\Http\Requests\AllRequest;
-use App\Http\Requests\Governorate\StoreGovernorateRequest;
+use App\Http\Requests\Governorate\GovernorateRequest;
 use App\Http\Requests\Governorate\UpdateGovernorateRequest;
 use App\Http\Resources\Governorate\GovernorateResource;
 use App\Models\Governorate;
@@ -52,14 +52,14 @@ class GovernorateController extends Controller
         return responseJson(200, 'success', GovernorateResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreGovernorateRequest $request)
+    public function create(GovernorateRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return $model;
         // return responseJson(200, 'success');
     }
 
-    public function update(UpdateGovernorateRequest $request, $id)
+    public function update(GovernorateRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

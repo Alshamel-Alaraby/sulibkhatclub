@@ -30,6 +30,7 @@ return new class extends Migration
             $table->date('date_to')->nullable();
             $table->string('prefix')->nullable();
             $table->string('type')->nullable()->comment('subscribe,renew');
+            $table->integer('number_of_years')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

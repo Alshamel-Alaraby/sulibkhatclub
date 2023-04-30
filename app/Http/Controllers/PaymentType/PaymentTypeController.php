@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\PaymentType;
 
-use App\Http\Requests\PaymentType\StorePaymentTypeRequest;
+use App\Http\Requests\PaymentType\PaymentTypeRequest;
 use App\Http\Requests\PaymentType\UpdatePaymentTypeRequest;
 use App\Http\Resources\PaymentType\PaymentTypeResource;
 use Illuminate\Http\Request;
@@ -51,13 +51,13 @@ class PaymentTypeController extends Controller
         return responseJson(200, 'success', PaymentTypeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StorePaymentTypeRequest $request)
+    public function create(PaymentTypeRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdatePaymentTypeRequest $request, $id)
+    public function update(PaymentTypeRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

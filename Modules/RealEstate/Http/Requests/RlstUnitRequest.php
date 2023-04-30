@@ -42,6 +42,7 @@ class RlstUnitRequest extends FormRequest
             'module' => "required|string",
             "media" => "nullable|array",
             "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
+            "video_link" =>"nullable|url|active_url|https" ,
             // 'attachments' => "required|array",
 
         ];

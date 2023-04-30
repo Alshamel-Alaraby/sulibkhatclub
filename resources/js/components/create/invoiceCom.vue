@@ -393,7 +393,6 @@
                                                             <div class="row mt-3">
                                                                 <div
                                                                     class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                    {{ $t("general.Extra_note") }}
                                                                 </div>
 
                                                                 <div
@@ -415,8 +414,7 @@
                                                             </div>
                                                             <hr />
                                                             <div>
-                                                                <span class="text-secondary-d1 text-105">{{
-                                                                        $t("general.Thank_you") }}</span>
+                                                                <span class="text-secondary-d1 text-105"></span>
                                                                 <b-button
                                                                     v-if="!invoice_id && create.customer_id && getTotal(create.invoice_details) > 0"
                                                                     variant="primary"
@@ -994,7 +992,6 @@
                                                                             <div class="row mt-3">
                                                                                 <div
                                                                                     class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                                    {{ $t("general.Extra_note") }}
                                                                                 </div>
 
                                                                                 <div
@@ -1019,8 +1016,7 @@
                                                                             <hr />
                                                                             <div>
                                                                                     <span
-                                                                                        class="text-secondary-d1 text-105">{{
-                                                                                            $t("general.Thank_you") }}</span>
+                                                                                        class="text-secondary-d1 text-105"></span>
                                                                                 <b-button
                                                                                     v-if="edit.customer_id && getTotal(edit.invoice_details) > 0"
                                                                                     variant="primary"

@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Salesman;
 
-use App\Http\Requests\Salesman\StoreSalesmanRequest;
-use App\Http\Requests\Salesman\UpdateSalesmanRequest;
+use App\Http\Requests\Salesman\SalesmanRequest;
 use App\Http\Resources\Salesman\SalesmanResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -49,13 +48,13 @@ class SalesmanController extends Controller
         return responseJson(200, 'success', SalesmanResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreSalesmanRequest $request)
+    public function create(SalesmanRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateSalesmanRequest $request, $id)
+    public function update(SalesmanRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

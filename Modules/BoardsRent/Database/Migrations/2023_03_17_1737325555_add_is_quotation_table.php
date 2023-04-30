@@ -30,5 +30,6 @@ return new class extends Migration
         Schema::table('boards_rent_orders', function ($table) {
             $table->dropColumn('is_quotation');
         });
+
     }
 };

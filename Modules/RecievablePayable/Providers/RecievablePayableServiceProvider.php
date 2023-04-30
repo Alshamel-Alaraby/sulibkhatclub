@@ -4,6 +4,8 @@ namespace Modules\RecievablePayable\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\RecievablePayable\Repositories\RpDebitNoteInterface;
+use Modules\RecievablePayable\Repositories\RpDebitNoteRepository;
 use Modules\RecievablePayable\Repositories\RpDocumentPlanRepository;
 use Modules\RecievablePayable\Repositories\RpDocumentPlanRepositoryInterface;
 use Modules\RecievablePayable\Repositories\RpInstallmentCondationRepository;
@@ -59,6 +61,9 @@ class RecievablePayableServiceProvider extends ServiceProvider
         $this->app->bind (RpDocumentPlanRepositoryInterface::class,RpDocumentPlanRepository::class);
         $this->app->bind (RpInstallmentCondationRepositoryInterface::class,RpInstallmentCondationRepository::class);
         $this->app->bind (RpOpeningBalanceInterface::class,RpOpeningBalanceRepository::class);
+        $this->app->bind (RpDebitNoteInterface::class,RpDebitNoteRepository::class);
+
+
     }
 
     /**

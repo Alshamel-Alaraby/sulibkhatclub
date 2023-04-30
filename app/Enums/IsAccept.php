@@ -6,5 +6,6 @@ enum IsAccept: string
 {
     case Accept = 'accept';
     case NonAccept = 'nonAccept';
+    //
 }
 

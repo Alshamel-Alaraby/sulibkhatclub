@@ -28,6 +28,8 @@ class OpeningBalanceResource extends JsonResource
               "net"=>$this->total_local_debit - $this->total_local_credit,
               "total_local_credit"=>$this->total_local_credit,
               "total_local_debit"=>$this->total_local_debit,
+              "type_document"=>$this->type_document,
+
           ];
     }
 }

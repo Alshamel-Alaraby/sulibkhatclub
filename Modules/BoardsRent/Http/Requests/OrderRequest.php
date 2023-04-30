@@ -40,6 +40,7 @@ class OrderRequest extends FormRequest
             'is_stripe' => "required|in:1,0",
             "serial_number" => "sometimes|unique:boards_rent_orders,serial_number," . $this->id,
             "details" => "required|array",
+            "quotation_number" => "nullable|string",
             "details.*.category_id" => "required_if:is_stripe,==,0|exists:general_categories,id",
             "details.*.governorate_id" => "required_if:is_stripe,==,0|exists:general_governorates,id",
             "details.*.package_id" => "required_if:is_stripe,==,1|exists:boards_rent_packages,id",
@@ -47,6 +48,9 @@ class OrderRequest extends FormRequest
             "details.*.from" => "required|date|before:details.*.to",
             "details.*.to" => "required|date|after:details.*.from",
             "details.*.price" => "required|numeric",
+            "details.*.status" => "nullable|in:true,false",
+            "details.*.panels" => "required|array",
+            "details.*.panels.*" => "exists:boards_rent_panels,id",
             "deleted_details.*" => "nullable|exists:boards_rent_order_details,id",
         ];
     }

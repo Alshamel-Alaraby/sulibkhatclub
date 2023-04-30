@@ -3146,6 +3146,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               _this6.membership_date = member.membership_date ? new Date(member.membership_date) : '';
               _this6.applying_date = member.applying_date ? new Date(member.applying_date) : '';
               _this6.edit.applying_number = member.applying_number;
+              _this6.edit.membership_number = member.membership_number;
+              _this6.edit.session_number = member.session_number;
               _this6.edit.first_name = member.first_name;
               _this6.edit.phone_code = member.phone_code;
               _this6.edit.second_name = member.second_name;
@@ -3169,7 +3171,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               _this6.edit.sponsor_id = (_member$sponsor_id = member.sponsor_id) !== null && _member$sponsor_id !== void 0 ? _member$sponsor_id : null;
               _this6.edit.gender = member.gender;
               _this6.errors = {};
-            case 37:
+            case 39:
             case "end":
               return _context.stop();
           }
@@ -8896,28 +8898,7 @@ var render = function render() {
       staticClass: "col-md-3"
     }, [_c("div", {
       staticClass: "form-group"
-    }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")))]), _vm._v(" "), _c("input", {
-      directives: [{
-        name: "model",
-        rawName: "v-model",
-        value: _vm.$v.edit.home_phone.$model,
-        expression: "$v.edit.home_phone.$model"
-      }],
-      staticClass: "form-control",
-      attrs: {
-        disabled: "",
-        type: "text"
-      },
-      domProps: {
-        value: _vm.$v.edit.home_phone.$model
-      },
-      on: {
-        input: function input($event) {
-          if ($event.target.composing) return;
-          _vm.$set(_vm.$v.edit.home_phone, "$model", $event.target.value);
-        }
-      }
-    }), _vm._v(" "), _c("VuePhoneNumberInput", {
+    }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")))]), _vm._v(" "), _c("VuePhoneNumberInput", {
       attrs: {
         disabled: "",
         "default-country-code": _vm.edit.phone_code,
@@ -12187,7 +12168,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\r\n        display: none;\n}\n.arrow-sort {\r\n        display: none;\n}\n.text-success {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n.text-danger {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n}\n.custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before{\r\n    background-color: #2494be;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n}\n.custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before{\n    background-color: #2494be;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -24583,13 +24564,13 @@ module.exports = function (IS_INCLUDES) {
 /***/ }),
 
 /***/ "c649":
-/***/ (function(module, __webpack_exports__, __nested_webpack_require_42729__) {
+/***/ (function(module, __nested_webpack_exports__, __nested_webpack_require_42729__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __nested_webpack_require_42729__.d(__webpack_exports__, "c", function() { return insertNodeAt; });
-/* harmony export (binding) */ __nested_webpack_require_42729__.d(__webpack_exports__, "a", function() { return camelize; });
-/* harmony export (binding) */ __nested_webpack_require_42729__.d(__webpack_exports__, "b", function() { return console; });
-/* harmony export (binding) */ __nested_webpack_require_42729__.d(__webpack_exports__, "d", function() { return removeNode; });
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __nested_webpack_require_42729__.d(__nested_webpack_exports__, "c", function() { return insertNodeAt; });
+/* harmony export (binding) */ __nested_webpack_require_42729__.d(__nested_webpack_exports__, "a", function() { return camelize; });
+/* harmony export (binding) */ __nested_webpack_require_42729__.d(__nested_webpack_exports__, "b", function() { return console; });
+/* harmony export (binding) */ __nested_webpack_require_42729__.d(__nested_webpack_exports__, "d", function() { return removeNode; });
 /* harmony import */ var core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_0__ = __nested_webpack_require_42729__("a481");
 /* harmony import */ var core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nested_webpack_require_42729__.n(core_js_modules_es6_regexp_replace__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -24917,11 +24898,11 @@ module.exports = document && document.documentElement;
 /***/ }),
 
 /***/ "fb15":
-/***/ (function(module, __webpack_exports__, __nested_webpack_require_51548__) {
+/***/ (function(module, __nested_webpack_exports__, __nested_webpack_require_51548__) {
 
 "use strict";
 // ESM COMPAT FLAG
-__nested_webpack_require_51548__.r(__webpack_exports__);
+__nested_webpack_require_51548__.r(__nested_webpack_exports__);
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
 // This file is imported into lib/wc client bundles.
@@ -25581,7 +25562,7 @@ if (typeof window !== "undefined" && "Vue" in window) {
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 
 
-/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (vuedraggable);
+/* harmony default export */ var entry_lib = __nested_webpack_exports__["default"] = (vuedraggable);
 
 
 

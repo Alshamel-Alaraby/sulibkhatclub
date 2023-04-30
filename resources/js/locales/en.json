@@ -585,6 +585,9 @@
         }
     },
     "general": {
+        "PermissionMemberReport":"Permission member report",
+        "financialStatus":"Financial status",
+        "PayerMemberReport":"Payer member report",
         "video":"Video",
         "id":"id",
         "path":"Path",
@@ -1068,6 +1071,11 @@
         "non-Approve":  "Not Approve",
         "quotationsTable": "Quotations Table",
         "CreditNoteTable": "Credit Note Table",
-        "createNewCreditNote": "Add New Credit Note"
+        "createNewCreditNote": "Add New Credit Note",
+        "editCreditNote": "edit Credit Note",
+        "debitNoteTable": "Debit Note Table",
+        "debitNewCreditNote": "Add New Debit Note",
+        "editDebitNote": "edit Debit Note",
+        "debitNote": "Debit Note"
     }
 }

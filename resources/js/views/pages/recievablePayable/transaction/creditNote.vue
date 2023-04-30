@@ -42,7 +42,7 @@ export default {
                 });
                 return vm.$router.push({name: "home"});
             }
-            if (vm.$store.state.auth.work_flow_trees.includes('installment opening balance') || vm.$store.state.auth.work_flow_trees.includes('receivable payable') || vm.$store.state.auth.user.type == 'super_admin') {
+            if (vm.$store.state.auth.work_flow_trees.includes('installment credit note') || vm.$store.state.auth.work_flow_trees.includes('receivable payable') || vm.$store.state.auth.user.type == 'super_admin') {
                 return true;
             } else {
                 return vm.$router.push({name: "home"});
@@ -790,7 +790,7 @@ export default {
                 if (dl) {
                     XLSX.write(wb, {bookType: type, bookSST: true, type: 'base64'});
                 } else {
-                    XLSX.writeFile(wb, fn || (('Reservation' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
+                    XLSX.writeFile(wb, fn || (('CreditNote' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
                 }
                 this.enabled3 = true;
             }, 100);
@@ -878,7 +878,7 @@ export default {
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title">{{ $t("general.CreditNoteTable") }}</h4>
+                            <h4 class="header-title">{{ getCompanyKey('credit_note_table') }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                                 <div class="d-inline-block" style="width: 22.2%">
                                     <!-- Basic dropdown -->
@@ -1013,7 +1013,7 @@ export default {
 
                         <!--  create   -->
                         <b-modal dialog-class="modal-full-width" id="create"
-                                 :title="$t('general.createNewCreditNote')"
+                                 :title="getCompanyKey('credit_note_create_form')"
                                  title-class="font-18" body-class="p-4 " :hide-footer="true" @show="resetModal"
                                  @hidden="resetModalHidden">
                             <form>
@@ -1507,7 +1507,7 @@ export default {
 
                                         <!--  edit   -->
                                         <b-modal dialog-class="modal-full-width" :id="`modal-edit-${data.id}`"
-                                                 :title="$t('general.editReceiptVoucher')" title-class="font-18"
+                                                 :title="getCompanyKey('credit_note_edit_form')" title-class="font-18"
                                                  body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
                                                  @show="resetModalEdit(data.id)"
                                                  @hidden="resetModalHiddenEdit(data.id)">

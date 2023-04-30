@@ -19,7 +19,7 @@ class CreateGeneralBranchesTable extends Migration
             $table->unsignedInteger('company_id')->nullable();
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
-            $table->string('is_active')->default('inactive');
+            $table->string('is_active')->default('active');
             $table->unsignedInteger('parent_id')->nullable();
             $table->softDeletes();
             $table->timestamps();

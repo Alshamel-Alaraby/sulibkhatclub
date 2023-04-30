@@ -11,6 +11,4 @@
 |
 */
 
-Route::prefix('clubmembers')->group(function() {
-    Route::get('/', 'ClubMembersController@index');
-});
+

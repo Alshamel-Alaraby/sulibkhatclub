@@ -31,7 +31,7 @@ export default {
     beforeRouteEnter(to, from, next) {
         next((vm) => {
 
-            if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
+            if (vm.$store.state.auth.work_flow_trees.includes("board rent-e")) {
                 Swal.fire({
                     icon: "error",
                     title: `${vm.$t("general.Error")}`,
@@ -40,7 +40,7 @@ export default {
                 return vm.$router.push({ name: "home" });
             }
 
-            if (vm.$store.state.auth.work_flow_trees.includes('reservation') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
+            if (vm.$store.state.auth.work_flow_trees.includes('reservation') || vm.$store.state.auth.work_flow_trees.includes('board rent') || vm.$store.state.auth.user.type == 'super_admin') {
                 return true;
             } else {
                 return vm.$router.push({ name: "home" });
@@ -380,7 +380,7 @@ export default {
             let sum = 0;
             if(this.edit.is_stripe == 0){
                 this.edit.details.forEach(e =>  sum += e.price * e.quantity );
-                this.total = sum;
+                this.edit.total = sum;
             }else {
                 this.edit.edit.details.forEach(e =>  sum += e.price );
                 this.edit.total = sum;
@@ -439,157 +439,6 @@ export default {
                 this.edit.details.splice(index,1);
                 this.multDateEdit.splice(index,1);
             }
-        },
-        changePhoto() {
-            document.getElementById("uploadImageCreate").click();
-        },
-        changePhotoEdit() {
-            document.getElementById("uploadImageEdit").click();
-        },
-        onImageChanged(e) {
-            const file = e.target.files[0];
-            this.addImage(file);
-        },
-        addImage(file) {
-            this.media = file; //upload
-            if (file) {
-                this.idDelete = null;
-                let is_media = this.images.find(
-                    (e) => e.name == file.name.slice(0, file.name.indexOf("."))
-                );
-                this.idDelete = is_media ? is_media.id : null;
-                if (!this.idDelete) {
-                    this.isLoader = true;
-                    let formDate = new FormData();
-                    formDate.append("media[0]", this.media);
-                    adminApi
-                        .post(`/media`, formDate)
-                        .then((res) => {
-                            let old_media = [];
-                            this.images.forEach((e) => old_media.push(e.id));
-                            let new_media = [];
-                            res.data.data.forEach((e) => new_media.push(e.id));
-
-                            adminApi
-                                .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
-                                .then((res) => {
-                                    this.images = res.data.data.media ?? [];
-                                    if (this.images && this.images.length > 0) {
-                                        this.showPhoto = this.images[this.images.length - 1].webp;
-                                    } else {
-                                        this.showPhoto = "./images/img-1.png";
-                                    }
-                                    this.getData();
-                                })
-                                .catch((err) => {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                    });
-                                });
-                        })
-                        .catch((err) => {
-                            if (err.response.data) {
-                                this.errors = err.response.data.errors;
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: `${this.$t("general.Error")}`,
-                                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                });
-                            }
-                        })
-                        .finally(() => {
-                            this.isLoader = false;
-                        });
-                } else {
-                    Swal.fire({
-                        title: `${this.$t("general.Thisfilehasalreadybeenuploaded")}`,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: `${this.$t("general.Replace")}`,
-                        cancelButtonText: `${this.$t("general.Nocancel")}`,
-                        confirmButtonClass: "btn btn-success mt-2",
-                        cancelButtonClass: "btn btn-danger ml-2 mt-2",
-                        buttonsStyling: false,
-                    }).then((result) => {
-                        if (result.value) {
-                            this.isLoader = true;
-                            let formDate = new FormData();
-                            formDate.append("media[0]", this.media);
-                            adminApi
-                                .post(`/media`, formDate)
-                                .then((res) => {
-                                    let old_media = [];
-                                    this.images.forEach((e) => old_media.push(e.id));
-                                    old_media.splice(old_media.indexOf(this.idDelete), 1);
-                                    let new_media = [];
-                                    res.data.data.forEach((e) => new_media.push(e.id));
-
-                                    adminApi
-                                        .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
-                                        .then((res) => {
-                                            this.images = res.data.data.media ?? [];
-                                            if (this.images && this.images.length > 0) {
-                                                this.showPhoto = this.images[this.images.length - 1].webp;
-                                            } else {
-                                                this.showPhoto = "./images/img-1.png";
-                                            }
-                                            this.getData();
-                                        })
-                                        .catch((err) => {
-                                            Swal.fire({
-                                                icon: "error",
-                                                title: `${this.$t("general.Error")}`,
-                                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                            });
-                                        });
-                                })
-                                .catch((err) => {
-                                    if (err.response.data) {
-                                        this.errors = err.response.data.errors;
-                                    } else {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: `${this.$t("general.Error")}`,
-                                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                        });
-                                    }
-                                })
-                                .finally(() => {
-                                    this.isLoader = false;
-                                });
-                        }
-                    });
-                }
-            }
-        },
-        deleteImageCreate(id, index) {
-            let old_media = [];
-            this.images.forEach((e) => {
-                if (e.id != id) {
-                    old_media.push(e.id);
-                }
-            });
-            adminApi
-                .put(`boards-rent/orders/${this.reservation_id}`, { old_media })
-                .then((res) => {
-                    this.reservations[index] = res.data.data;
-                    this.images = res.data.data.media ?? [];
-                    if (this.images && this.images.length > 0) {
-                        this.showPhoto = this.images[this.images.length - 1].webp;
-                    } else {
-                        this.showPhoto = "./images/img-1.png";
-                    }
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
         },
         showSaleManModal() {
             if (this.create.salesman_id == 0) {
@@ -1072,7 +921,6 @@ export default {
                         ...this.edit
                     })
                     .then((res) => {
-                        this.showBreakEdit();
                         this.getData();
                         setTimeout(() => {
                             Swal.fire({
@@ -1313,6 +1161,7 @@ export default {
                         to: this.formatDate(e.to),
                     });
                 }
+                this.edit.total += e.price;
             });
         },
         /**
@@ -1490,10 +1339,10 @@ export default {
                                                 :html="`${$t('general.setting')} <i class='fe-settings'></i>`" ref="dropdown"
                                                 class="dropdown-custom-ali">
                                         <b-form-checkbox v-model="setting.date" class="mb-1">{{
-                                                getCompanyKey("reservation_date") }}
+                                            getCompanyKey("reservation_date") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{
-                                                getCompanyKey("customer") }}
+                                            getCompanyKey("customer") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="setting.salesman_id" class="mb-1">
                                             {{ getCompanyKey("sale_man") }}
@@ -1507,7 +1356,7 @@ export default {
 
                                         <div class="d-flex justify-content-end">
                                             <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
-                                                    $t("general.Apply")
+                                                $t("general.Apply")
                                                 }}</a>
                                         </div>
                                     </b-dropdown>
@@ -1605,7 +1454,7 @@ export default {
                                             <template v-if="errors.date">
                                                 <ErrorMessage v-for="(errorMessage, index) in errors.date"
                                                               :key="index">{{
-                                                        errorMessage }}
+                                                    errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
@@ -1718,7 +1567,7 @@ export default {
                                             />
                                             <template v-if="errors.phone">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.phone" :key="index">{{
-                                                        errorMessage
+                                                    errorMessage
                                                     }}
                                                 </ErrorMessage>
                                             </template>
@@ -1769,12 +1618,12 @@ export default {
                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_governorate") }}</div>
                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_from") }}</div>
                                                                 <div class="col-2">{{
-                                                                        getCompanyKey("boardRent_order_to") }}
+                                                                    getCompanyKey("boardRent_order_to") }}
                                                                 </div>
                                                                 <div class="col-2"> {{ getCompanyKey("boardRent_order_price")
                                                                     }}</div>
                                                                 <div class="col-1"> {{
-                                                                        getCompanyKey("boardRent_order_quantity") }}</div>
+                                                                    getCompanyKey("boardRent_order_quantity") }}</div>
                                                                 <div class="col-1">{{ $t("general.Action") }}</div>
                                                             </div>
                                                             <div v-for="(item, index) in create.details"
@@ -1851,7 +1700,7 @@ export default {
                                                                             <template v-if="errors.from">
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from"
                                                                                               :key="index">{{
-                                                                                        errorMessage }}
+                                                                                    errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -1873,7 +1722,7 @@ export default {
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to"
                                                                                               :key="index">
                                                                                     {{
-                                                                                        errorMessage }}
+                                                                                    errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -1905,7 +1754,6 @@ export default {
                                                                             type="number" :class="{
                                                                                         'is-invalid':
                                                                                             $v.create.details.$each[index].quantity.$error || errors.quantity,
-                                                                                        'is-valid': !$v.create.details.$each[index].quantity.$invalid && !errors.quantity,
                                                                                     }" />
                                                                         <div v-if="!$v.create.details.$each[index].quantity.required"
                                                                              class="invalid-feedback">
@@ -1953,7 +1801,7 @@ export default {
                                                                 </span>
                                                                 <a @click.prevent="addNewField" href=""
                                                                    class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">{{
-                                                                        $t("general.Add") }}</a>
+                                                                    $t("general.Add") }}</a>
                                                             </div>
                                                         </div>
 
@@ -1965,7 +1813,7 @@ export default {
                                                                 </div>
                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_from") }}</div>
                                                                 <div class="col-2">{{
-                                                                        getCompanyKey("boardRent_order_to") }}
+                                                                    getCompanyKey("boardRent_order_to") }}
                                                                 </div>
                                                                 <div class="col-2"> {{ getCompanyKey("boardRent_order_price")
                                                                     }}</div>
@@ -2011,7 +1859,7 @@ export default {
                                                                             <template v-if="errors.from">
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from"
                                                                                               :key="index">{{
-                                                                                        errorMessage }}
+                                                                                    errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -2024,7 +1872,7 @@ export default {
                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to"
                                                                                               :key="index">
                                                                                     {{
-                                                                                        errorMessage }}
+                                                                                    errorMessage }}
                                                                                 </ErrorMessage>
                                                                             </template>
                                                                         </div>
@@ -2088,7 +1936,7 @@ export default {
                                                                 </span>
                                                                 <a @click.prevent="addNewField" href=""
                                                                    class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">{{
-                                                                        $t("general.Add") }}</a>
+                                                                    $t("general.Add") }}</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2120,7 +1968,7 @@ export default {
                                     </th>
                                     <th v-if="setting.date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("reservation_date") }}</span>
+                                            <span>{{ getCompanyKey("boardRent_order_date") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
                                                         reservations.sort(
@@ -2190,19 +2038,7 @@ export default {
                                     </th>
                                     <th v-if="setting.serial_id">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("reservation_serial") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        reservations.sort(
-                                                            sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        reservations.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
-                                                        )
-                                                    "></i>
-                                            </div>
+                                            <span>{{ getCompanyKey("order_serial") }}</span>
                                         </div>
                                     </th>
                                     <th v-if="enabled3" class="do-not-print">
@@ -2229,20 +2065,20 @@ export default {
                                     <td v-if="setting.customer_id">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
-                                                $i18n.locale == "ar" ? data.customer.name : data.customer.name_e
+                                            $i18n.locale == "ar" ? data.customer.name : data.customer.name_e
                                             }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.salesman_id">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
-                                                $i18n.locale == "ar" ? data.salesman.name : data.salesman.name_e
+                                            $i18n.locale == "ar" ? data.salesman.name : data.salesman.name_e
                                             }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.branch_id">
                                         {{
-                                            data.branch? $i18n.locale == "ar" ? data.branch.name : data.branch.name_e : ''
+                                        data.branch? $i18n.locale == "ar" ? data.branch.name : data.branch.name_e : ''
                                         }}
                                     </td>
                                     <td v-if="setting.serial_id">
@@ -2304,26 +2140,6 @@ export default {
                                                 <div class="row">
                                                     <div class="col-md-3">
                                                         <div class="form-group">
-                                                            <label>{{ getCompanyKey("order_serial") }}</label>
-                                                            <input
-                                                                v-model="$v.edit.serial_number.$model"
-                                                                class="form-control"
-                                                                type="text"
-                                                                :class="{
-                                                                'is-invalid':
-                                                                    $v.edit.serial_number.$error || errors.serial_number,
-                                                                'is-valid': !$v.edit.serial_number.$invalid && !errors.serial_number,
-                                                            }" />
-                                                            <template v-if="errors.serial_number">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.serial_number"
-                                                                    :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
                                                             <label>{{ getCompanyKey("branch") }}</label>
                                                             <multiselect @input="showBranchModalEdit" v-model="edit.branch_id"
                                                                          :options="branches.map((type) => type.id)" :custom-label="
@@ -2349,6 +2165,26 @@ export default {
                                                     </div>
                                                     <div class="col-md-3">
                                                         <div class="form-group">
+                                                            <label>{{ getCompanyKey("order_serial") }}</label>
+                                                            <input
+                                                                v-model="$v.edit.serial_number.$model"
+                                                                class="form-control"
+                                                                type="text"
+                                                                :class="{
+                                                                'is-invalid':
+                                                                    $v.edit.serial_number.$error || errors.serial_number,
+                                                                'is-valid': !$v.edit.serial_number.$invalid && !errors.serial_number,
+                                                            }" />
+                                                            <template v-if="errors.serial_number">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.serial_number"
+                                                                    :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("boardRent_order_date") }}
                                                                 <span class="text-danger">*</span>
@@ -2358,7 +2194,7 @@ export default {
                                                             <template v-if="errors.date">
                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.date"
                                                                               :key="index">{{
-                                                                        errorMessage }}
+                                                                    errorMessage }}
                                                                 </ErrorMessage>
                                                             </template>
                                                         </div>
@@ -2471,7 +2307,7 @@ export default {
                                                             />
                                                             <template v-if="errors.phone">
                                                                 <ErrorMessage v-for="(errorMessage,index) in errors.phone" :key="index">{{
-                                                                        errorMessage
+                                                                    errorMessage
                                                                     }}
                                                                 </ErrorMessage>
                                                             </template>
@@ -2523,12 +2359,12 @@ export default {
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_governorate") }}</div>
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_from") }}</div>
                                                                                 <div class="col-2">{{
-                                                                                        getCompanyKey("boardRent_order_to") }}
+                                                                                    getCompanyKey("boardRent_order_to") }}
                                                                                 </div>
                                                                                 <div class="col-2"> {{ getCompanyKey("boardRent_order_price")
                                                                                     }}</div>
                                                                                 <div class="col-1"> {{
-                                                                                        getCompanyKey("boardRent_order_quantity") }}</div>
+                                                                                    getCompanyKey("boardRent_order_quantity") }}</div>
                                                                                 <!--                                                                <div class="col-1">{{ $t("general.Action") }}</div>-->
                                                                             </div>
                                                                             <div v-for="(item, index) in edit.details"
@@ -2604,7 +2440,7 @@ export default {
                                                                                             <template v-if="errors.from">
                                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from"
                                                                                                               :key="index">{{
-                                                                                                        errorMessage }}
+                                                                                                    errorMessage }}
                                                                                                 </ErrorMessage>
                                                                                             </template>
                                                                                         </div>
@@ -2626,7 +2462,7 @@ export default {
                                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to"
                                                                                                               :key="index">
                                                                                                     {{
-                                                                                                        errorMessage }}
+                                                                                                    errorMessage }}
                                                                                                 </ErrorMessage>
                                                                                             </template>
                                                                                         </div>
@@ -2656,10 +2492,9 @@ export default {
                                                                                             @input="changeValueEdit"
                                                                                             class="form-control"
                                                                                             type="number" :class="{
-                                                                                        'is-invalid':
-                                                                                            $v.edit.details.$each[index].quantity.$error || errors.quantity,
-                                                                                        'is-valid': !$v.edit.details.$each[index].quantity.$invalid && !errors.quantity,
-                                                                                    }" />
+                                                                                            'is-invalid':
+                                                                                                $v.edit.details.$each[index].quantity.$error || errors.quantity,
+                                                                                        }" />
                                                                                         <div v-if="!$v.edit.details.$each[index].quantity.required"
                                                                                              class="invalid-feedback">
                                                                                             {{ $t("general.fieldIsRequired") }}
@@ -2706,7 +2541,7 @@ export default {
                                                                 </span>
                                                                                 <a @click.prevent="addNewField" href=""
                                                                                    class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">{{
-                                                                                        $t("general.Add") }}</a>
+                                                                                    $t("general.Add") }}</a>
                                                                             </div>
                                                                         </div>
 
@@ -2718,7 +2553,7 @@ export default {
                                                                                 </div>
                                                                                 <div class="col-2">{{ getCompanyKey("boardRent_order_from") }}</div>
                                                                                 <div class="col-2">{{
-                                                                                        getCompanyKey("boardRent_order_to") }}
+                                                                                    getCompanyKey("boardRent_order_to") }}
                                                                                 </div>
                                                                                 <div class="col-2"> {{ getCompanyKey("boardRent_order_price")
                                                                                     }}</div>
@@ -2764,7 +2599,7 @@ export default {
                                                                                             <template v-if="errors.from">
                                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from"
                                                                                                               :key="index">{{
-                                                                                                        errorMessage }}
+                                                                                                    errorMessage }}
                                                                                                 </ErrorMessage>
                                                                                             </template>
                                                                                         </div>
@@ -2777,7 +2612,7 @@ export default {
                                                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to"
                                                                                                               :key="index">
                                                                                                     {{
-                                                                                                        errorMessage }}
+                                                                                                    errorMessage }}
                                                                                                 </ErrorMessage>
                                                                                             </template>
                                                                                         </div>
@@ -2841,7 +2676,7 @@ export default {
                                                                 </span>
                                                                                 <a @click.prevent="addNewField" href=""
                                                                                    class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">{{
-                                                                                        $t("general.Add") }}</a>
+                                                                                    $t("general.Add") }}</a>
                                                                             </div>
                                                                         </div>
                                                                     </div>

@@ -273,7 +273,7 @@ export default {
     // },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
+            if (vm.$store.state.auth.work_flow_trees.includes("board rent-e")) {
                 Swal.fire({
                     icon: "error",
                     title: `${vm.$t("general.Error")}`,
@@ -282,7 +282,7 @@ export default {
                 return vm.$router.push({ name: "home" });
             }
 
-            if (vm.$store.state.auth.work_flow_trees.includes('realEstate unit status')  || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
+            if (vm.$store.state.auth.work_flow_trees.includes('realEstate unit status')  || vm.$store.state.auth.work_flow_trees.includes('board rent') || vm.$store.state.auth.user.type == 'super_admin') {
                 return true;
             } else {
                 return vm.$router.push({ name: "home" });

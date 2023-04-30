@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\TreeProperty;
 
 use App\Http\Requests\BulkCreatePropertyRequest;
-use App\Http\Requests\TreeProperty\CreateTreePropertyRequest;
+use App\Http\Requests\TreeProperty\TreePropertyRequest;
 use App\Http\Requests\TreeProperty\EditTreePropertyRequest;
 use App\Http\Resources\TreeProperty\TreePropertyResource;
 use App\Repositories\TreeProperty\TreePropertyRepositoryInterface;
@@ -53,13 +53,13 @@ class TreePropertyController extends Controller
         return responseJson(200, 'success', TreePropertyResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function store(CreateTreePropertyRequest $request)
+    public function store(TreePropertyRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(EditTreePropertyRequest $request, $id)
+    public function update(TreePropertyRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

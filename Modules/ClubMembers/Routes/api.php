@@ -34,14 +34,16 @@ Route::prefix('club-members')->group(function () {
     // members routes
     Route::group(['prefix' => 'members'], function () {
 
+        Route::get('/test-transfer', 'CmMemberController@TestTransfer');
+
         Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
 
+        
         Route::get('/Acceptance', 'CmMemberController@allAcceptance')->name('cm-members.allAcceptance');
 
         Route::get('/', 'CmMemberController@all')->name('cm-members.all');
         Route::get('/logs/{id}', 'CmMemberController@logs')->name('cm-members.logs');
         Route::get('/{id}', 'CmMemberController@find')->name('cm-members.find');
-
 
         Route::post('/', 'CmMemberController@create')->name('cm-members.create');
         Route::put('/{id}', 'CmMemberController@update')->name('cm-members.update');
@@ -53,8 +55,6 @@ Route::prefix('club-members')->group(function () {
 
         Route::put('/sponsor/{sponsor_id}', 'CmMemberController@updateSponsor')->name('cm-members.updateSponsor');
 
-
-
         Route::post('/bulk-update', "CmMemberController@acceptMembers");
         Route::put('/update-accepted-members/{id}', 'CmMemberController@updateAcceptedMembers')->name('cm-members.updateAcceptedMembers');
 
@@ -63,7 +63,7 @@ Route::prefix('club-members')->group(function () {
     // financial status routes
     Route::group(['prefix' => 'financial-status'], function () {
 
-        Route::get('/', 'CmFinancialStatusController@all')->name('cm-members.all');
+        Route::get('/', 'CmFinancialStatusController@all')->name('financial-status.all');
         Route::get('/logs/{id}', 'CmFinancialStatusController@logs')->name('cm-financial-status.logs');
         Route::get('/{id}', 'CmFinancialStatusController@find')->name('cm-financial-status.find');
         Route::post('/', 'CmFinancialStatusController@create')->name('cm-financial-status.create');
@@ -107,8 +107,6 @@ Route::prefix('club-members')->group(function () {
         Route::delete('/{id}', 'CmPendingMemberController@delete')->name('cm_pending_members.delete');
     });
 
-
-
     // memberships-renewals  routes
     Route::group(['prefix' => 'memberships-renewals'], function () {
 
@@ -120,8 +118,6 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmMembershipRenewalController@bulkDelete");
         Route::delete('/{id}', 'CmMembershipRenewalController@delete')->name('cm_memberships_renewals.delete');
     });
-
-
 
     // members-settings  routes
     Route::group(['prefix' => 'members-setting'], function () {
@@ -144,6 +140,5 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmTypePermissionController@bulkDelete");
         Route::delete('/{id}', 'CmTypePermissionController@delete')->name('type-permission.delete');
     });
-
 
 });

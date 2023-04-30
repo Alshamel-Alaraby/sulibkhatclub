@@ -34,7 +34,7 @@ class RpOpeningBalanceRepository implements RpOpeningBalanceInterface
     {
         $models = $this->model->where(function ($q) use ($request) {
             $this->model->scopeFilter($q , $request);
-        })->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        })->where('type_document',null)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->group){
             $models->groupBy('date')->selectRaw('sum(local_credit) as total_local_credit,sum(local_debit) as total_local_debit,date,COUNT(id) as count')->orderBy('date','desc');
@@ -87,7 +87,6 @@ class RpOpeningBalanceRepository implements RpOpeningBalanceInterface
         DB::transaction(function () use ($request) {
             $model = $this->setting->where('user_id', $request['user_id'])->where('screen_id', $request['screen_id'])->first();
             $request['data_json'] = json_encode($request['data_json']);
-
             if (!$model) {
                 $this->setting->create($request->all());
             } else {

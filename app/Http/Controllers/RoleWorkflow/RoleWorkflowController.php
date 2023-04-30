@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\RoleWorkflow;
 
-use App\Http\Requests\RoleWorkflow\CreateRoleWorkflowRequest;
+use App\Http\Requests\RoleWorkflow\RoleWorkflowRequest;
 use App\Http\Requests\RoleWorkflow\EditRoleWorkflowRequest;
 use App\Http\Resources\RoleWorkflow\RoleWorkflowResource;
 use App\Repositories\RoleWorkflow\RoleWorkflowRepository;
@@ -38,7 +38,7 @@ class RoleWorkflowController extends Controller
      * @param Request $request
      * @return \response
      */
-    public function store(CreateRoleWorkflowRequest $request)
+    public function store(RoleWorkflowRequest $request)
     {
 
         $this->repository->create($request->validated());
@@ -74,7 +74,7 @@ class RoleWorkflowController extends Controller
      * @param int $id
      * @return \response
      */
-    public function update(EditRoleWorkflowRequest $request, $id)
+    public function update(RoleWorkflowRequest $request, $id)
     {
         $data = [];
 

@@ -14,6 +14,17 @@ class CountrySeeder extends Seeder
      */
     public function run()
     {
+        Country::create([
+
+            "name" => "الكويت",
+            "name_e" => "Kuwait",
+            "phone_key" => "965",
+            "national_id_length" => "12",
+            "long_name" => "دولة الكويت",
+            "long_name_e" => "State of Kuwait",
+            "short_code" => "KW",
+
+        ]);
 
         for ($i = 0; $i < 50; $i++) {
             Country::create([

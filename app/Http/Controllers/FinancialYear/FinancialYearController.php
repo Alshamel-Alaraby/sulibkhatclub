@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\FinancialYear;
 
 use App\Http\Requests\AllRequest;
-use App\Http\Requests\FinancialYear\StoreFinancialYearRequest;
+use App\Http\Requests\FinancialYear\FinancialYearRequest;
 use App\Http\Requests\FinancialYear\UpdateFinancialYearRequest;
 use App\Http\Resources\FinancialYear\FinancialYearResource;
 use App\Repositories\FinancialYear\FinancialYearInterface;
@@ -51,13 +51,13 @@ class FinancialYearController extends Controller
         return responseJson(200, 'success', FinancialYearResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreFinancialYearRequest $request)
+    public function create(FinancialYearRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateFinancialYearRequest $request, $id)
+    public function update(FinancialYearRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

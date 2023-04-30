@@ -189,8 +189,8 @@ Route::prefix('real-estate')->group(function () {
 
     //CategoryItem
     Route::group(['prefix' => 'Category-item'], function () {
-        Route::get('/root-nodes', 'RlstCategoryItemController@getRootNodes')->name('modules.root-nodes');
-        Route::get('/child-nodes/{parentId}', 'RlstCategoryItemController@getChildNodes')->name('modules.child-nodes');
+        Route::get('/root-nodes', 'RlstCategoryItemController@getRootNodes')->name('real-estate.modules.root-nodes');
+        Route::get('/child-nodes/{parentId}', 'RlstCategoryItemController@getChildNodes')->name('real-esamodules.child-nodes');
         Route::get('/', 'RlstCategoryItemController@all')->name('rlst-Category-item.all');
         Route::put('/{id}', 'RlstCategoryItemController@update')->name('rlst-Category-item.update');
         Route::get('/logs/{id}', 'RlstCategoryItemController@logs')->name('rlst-Category-item.logs');

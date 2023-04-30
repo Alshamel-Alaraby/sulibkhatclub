@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Store;
 
-use App\Http\Requests\Store\StoreStoreRequest;
+use App\Http\Requests\Store\StoreRequest;
 use App\Http\Requests\Store\UpdateStoreRequest;
 use App\Http\Resources\Store\StoreResource;
 use Illuminate\Http\Request;
@@ -49,13 +49,13 @@ class StoreController extends Controller
         return responseJson(200, 'success', StoreResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreStoreRequest $request)
+    public function create(StoreRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateStoreRequest $request, $id)
+    public function update(StoreRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

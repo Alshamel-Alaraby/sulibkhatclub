@@ -2,7 +2,6 @@
 
 namespace Modules\BoardsRent\Entities;
 
-use App\Enums\BooleanStatus;
 use App\Traits\LogTrait;
 use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +29,7 @@ class Order extends Model implements HasMedia
         'is_stripe',
         "serial_number",
         "is_quotation",
+        "quotation_number",
     ];
 
 //    protected $casts = [

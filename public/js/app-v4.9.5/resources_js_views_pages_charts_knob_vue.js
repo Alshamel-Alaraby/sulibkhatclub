@@ -8642,11 +8642,11 @@ module.exports = function (originalArray) {
 /***/ }),
 
 /***/ "9be4":
-/***/ (function(module, __webpack_exports__, __nested_webpack_require_49083__) {
+/***/ (function(module, __nested_webpack_exports__, __nested_webpack_require_49083__) {
 
 "use strict";
 // ESM COMPAT FLAG
-__nested_webpack_require_49083__.r(__webpack_exports__);
+__nested_webpack_require_49083__.r(__nested_webpack_exports__);
 
 // CONCATENATED MODULE: /usr/local/lib/node_modules/@vue/cli-service-global/node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
 // This file is imported into lib/wc client bundles.
@@ -9117,7 +9117,7 @@ var component = normalizeComponent(
 // CONCATENATED MODULE: /usr/local/lib/node_modules/@vue/cli-service-global/node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 
 
-/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (KnobControl);
+/* harmony default export */ var entry_lib = __nested_webpack_exports__["default"] = (KnobControl);
 
 
 
@@ -9216,14 +9216,14 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 /***/ }),
 
 /***/ "a373":
-/***/ (function(module, __webpack_exports__, __nested_webpack_require_67792__) {
+/***/ (function(module, __nested_webpack_exports__, __nested_webpack_require_67792__) {
 
 "use strict";
 // ESM COMPAT FLAG
-__nested_webpack_require_67792__.r(__webpack_exports__);
+__nested_webpack_require_67792__.r(__nested_webpack_exports__);
 
 // EXPORTS
-__nested_webpack_require_67792__.d(__webpack_exports__, "default", function() { return /* binding */ addStylesClient; });
+__nested_webpack_require_67792__.d(__nested_webpack_exports__, "default", function() { return /* binding */ addStylesClient; });
 
 // CONCATENATED MODULE: /usr/local/lib/node_modules/@vue/cli-service-global/node_modules/vue-style-loader/lib/listToStyles.js
 /**

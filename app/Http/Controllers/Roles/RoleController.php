@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Roles;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Role\CreateRoleRequest;
+use App\Http\Requests\Role\RoleRequest;
 use App\Http\Requests\Role\EditRoleRequest;
 use App\Http\Resources\Roles\RoleResource;
 use App\Repositories\Role\RoleRepositoryInterface;
@@ -48,7 +48,7 @@ class RoleController extends Controller
      * @param Request $request
      * @return \response
      */
-    public function store(CreateRoleRequest $request)
+    public function store(RoleRequest $request)
     {
 
         if (!DB::table('general_role_types')->find($request->roletype_id)) {
@@ -88,7 +88,7 @@ class RoleController extends Controller
      * @param int $id
      * @return \response
      */
-    public function update(EditRoleRequest $request, $id)
+    public function update(RoleRequest $request, $id)
     {
         $data = [];
         if ($request->roletype_id) {

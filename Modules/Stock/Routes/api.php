@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Currency\CurrencyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Stock\Http\Controllers\AllTransactionController;
@@ -22,7 +21,7 @@ use Modules\Stock\Http\Controllers\StockSectorController;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::middleware('auth:api')->get('/stock', function (Request $request) {
     return $request->user();
@@ -76,11 +75,7 @@ Route::group(['prefix' => 'stock-sector'], function () {
     });
 });
 
-Route::group(['prefix' => 'currency'], function () {
-    Route::controller(CurrencyController::class)->group(function () {
-        Route::get('/', 'all')->name('currency.index');
-    });
-});
+Route::get("/currency", [\App\Http\Controllers\Currency\CurrencyController::class, "all"])->name('currency.index');
 
 Route::group(['prefix' => 'openning-balance'], function () {
     Route::controller(OpenningBalanceController::class)->group(function () {

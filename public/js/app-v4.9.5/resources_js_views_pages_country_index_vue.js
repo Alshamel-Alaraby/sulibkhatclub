@@ -2069,6 +2069,321 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 /*!****************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/tabStreet.vue?vue&type=script&lang=js& ***!
   \****************************************************************************************************************************************************************************************************/
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api/adminAxios */ "./resources/js/api/adminAxios.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue_switches__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-switches */ "./node_modules/vue-switches/src/switches.vue");
+/* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
+/* harmony import */ var _components_loader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/loader */ "./resources/js/components/loader.vue");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _helper_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../helper/translation-comp-mixin */ "./resources/js/helper/translation-comp-mixin.js");
+/* harmony import */ var _helper_tableSort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../helper/tableSort */ "./resources/js/helper/tableSort.js");
+/* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../helper/startDate */ "./resources/js/helper/startDate.js");
+/* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../helper/langTransform */ "./resources/js/helper/langTransform.js");
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "tabStreet",
+  components: {
+    Switches: vue_switches__WEBPACK_IMPORTED_MODULE_2__["default"],
+    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_5___default()),
+    ErrorMessage: _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_3__["default"],
+    loader: _components_loader__WEBPACK_IMPORTED_MODULE_4__["default"]
+  },
+  mixins: [_helper_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_6__["default"]],
+  data: function data() {
+    return {
+      fields: [],
+      isLoader: false,
+      create: {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      },
+      edit: {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      },
+      company_id: null,
+      errors: {},
+      isCheckAll: false,
+      checkAll: [],
+      is_disabled: false
+    };
+  },
+  validations: {
+    create: {
+      name: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("name");
+        }),
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.maxLength)(100)
+      },
+      name_e: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("name_e");
+        }),
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.maxLength)(100)
+      },
+      is_active: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("is_active");
+        })
+      }
+    },
+    edit: {
+      name: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("name");
+        }),
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.maxLength)(100)
+      },
+      name_e: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("name_e");
+        }),
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.maxLength)(100)
+      },
+      is_active: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_10__.requiredIf)(function (model) {
+          return this.isRequired("is_active");
+        })
+      }
+    }
+  },
+  mounted: function mounted() {
+    this.getCustomTableFields();
+    this.company_id = this.$store.getters["auth/company_id"];
+  },
+  watch: {
+    editStreet: function editStreet(after, befour) {
+      this.edit.name = after.name;
+      this.edit.name_e = after.name_e;
+      this.edit.is_active = after.is_active;
+    }
+  },
+  props: ["companyKeys", "defaultsKeys", "avenue_id", "editStreet"],
+  methods: {
+    getCustomTableFields: function getCustomTableFields() {
+      var _this = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/general_streets").then(function (res) {
+        _this.fields = res.data;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+          icon: "error",
+          title: "".concat(_this.$t("general.Error")),
+          text: "".concat(_this.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this.isLoader = false;
+      });
+    },
+    isVisible: function isVisible(fieldName) {
+      var res = this.fields.filter(function (field) {
+        return field.column_name == fieldName;
+      });
+      return res.length > 0 && res[0].is_visible == 1 ? true : false;
+    },
+    isRequired: function isRequired(fieldName) {
+      var res = this.fields.filter(function (field) {
+        return field.column_name == fieldName;
+      });
+      return res.length > 0 && res[0].is_required == 1 ? true : false;
+    },
+    arabicValue: function arabicValue(txt) {
+      this.create.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_9__.arabicValue)(txt);
+      this.edit.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_9__.arabicValue)(txt);
+    },
+    englishValue: function englishValue(txt) {
+      this.create.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_9__.englishValue)(txt);
+      this.edit.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_9__.englishValue)(txt);
+    },
+    resetModalHiddenEdit: function resetModalHiddenEdit() {
+      this.errors = {};
+      this.edit = {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      };
+      this.$bvModal.hide("tab-street-edit");
+    },
+    resetModalHidden: function resetModalHidden() {
+      var _this2 = this;
+      this.create = {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      };
+      this.$nextTick(function () {
+        _this2.$v.$reset();
+      });
+      this.is_disabled = false;
+      this.errors = {};
+      this.$bvModal.hide("tab-street-create");
+    },
+    /**
+     *  hidden Modal (create)
+     */
+    resetModal: function resetModal() {
+      var _this3 = this;
+      this.create = {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      };
+      this.$nextTick(function () {
+        _this3.$v.$reset();
+      });
+      this.errors = {};
+    },
+    /**
+     *  create countrie
+     */
+    resetForm: function resetForm() {
+      var _this4 = this;
+      this.create = {
+        name: "",
+        name_e: "",
+        is_active: "active"
+      };
+      this.$nextTick(function () {
+        _this4.$v.$reset();
+      });
+      this.is_disabled = false;
+      this.errors = {};
+    },
+    AddSubmit: function AddSubmit() {
+      var _this5 = this;
+      if (!this.create.name) {
+        this.create.name = this.create.name_e;
+      }
+      if (!this.create.name_e) {
+        this.create.name_e = this.create.name;
+      }
+      this.$v.create.$touch();
+      if (this.$v.create.$invalid) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        var data = {
+          name: this.create.name,
+          name_e: this.create.name_e,
+          avenue_id: this.avenue_id,
+          is_active: this.create.is_active,
+          company_id: this.company_id
+        };
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].post("/streets", data).then(function (res) {
+          _this5.is_disabled = true;
+          _this5.$emit("created");
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+              icon: "success",
+              text: "".concat(_this5.$t("general.Addedsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this5.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+              icon: "error",
+              title: "".concat(_this5.$t("general.Error")),
+              text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this5.isLoader = false;
+        });
+      }
+    },
+    /**
+     *  edit countrie
+     */
+    editSubmit: function editSubmit(id) {
+      var _this6 = this;
+      if (!this.edit.name) {
+        this.edit.name = this.edit.name_e;
+      }
+      if (!this.edit.name_e) {
+        this.edit.name_e = this.edit.name;
+      }
+      this.$v.edit.$touch();
+      if (this.$v.edit.$invalid) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        var data = {
+          name: this.edit.name,
+          name_e: this.edit.name_e,
+          avenue_id: this.avenue_id,
+          is_active: this.edit.is_active,
+          company_id: this.company_id
+        };
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].put("/streets/".concat(id), data).then(function (res) {
+          _this6.$bvModal.hide("tab-street-edit");
+          _this6.$emit("created");
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+              icon: "success",
+              text: "".concat(_this6.$t("general.Editsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this6.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+              icon: "error",
+              title: "".concat(_this6.$t("general.Error")),
+              text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this6.isLoader = false;
+        });
+      }
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/widgets/errorMessage.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/widgets/errorMessage.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************/
+=======
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -8125,6 +8440,553 @@ var render = function render() {
       value: "",
       selected: ""
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v(_vm._s(_vm.$t("general.Choose")) + "...")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "1"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Active")))]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "0"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])]), _vm._v(" "), _vm.errors.is_default ? _vm._l(_vm.errors.is_default, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('is_active') ? _c('div', {
+    staticClass: "col-md-6"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "mr-2"
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_status")) + "\n              "), _vm.isRequired('is_active') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('b-form-group', {
+    "class": {
+      'is-invalid': _vm.$v.create.is_active.$error || _vm.errors.is_active,
+      'is-valid': !_vm.$v.create.is_active.$invalid && !_vm.errors.is_active
+    }
+  }, [_c('b-form-radio', {
+    staticClass: "d-inline-block",
+    attrs: {
+      "name": "some-radios",
+      "value": "active"
+    },
+    model: {
+      value: _vm.$v.create.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.is_active, "$model", $$v);
+      },
+      expression: "$v.create.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Active")))]), _vm._v(" "), _c('b-form-radio', {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      "name": "some-radios",
+      "value": "inactive"
+    },
+    model: {
+      value: _vm.$v.create.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.is_active, "$model", $$v);
+      },
+      expression: "$v.create.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])], 1), _vm._v(" "), _vm.errors.is_active ? _vm._l(_vm.errors.is_active, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c('b-modal', {
+    ref: "edit-".concat(_vm.edit),
+    attrs: {
+      "id": "tab-governorate-edit",
+      "title": _vm.getCompanyKey('governorate_edit_form'),
+      "title-class": "font-18",
+      "size": "lg",
+      "body-class": "p-4",
+      "hide-footer": true
+    },
+    on: {
+      "hidden": function hidden($event) {
+        return _vm.resetModalHiddenEdit();
+      }
+    }
+  }, [_c('form', [_c('div', {
+    staticClass: "mb-3 d-flex justify-content-end"
+  }, [!_vm.isLoader ? _c('b-button', {
+    staticClass: "mx-1",
+    attrs: {
+      "variant": "success",
+      "type": "submit"
+    },
+    on: {
+      "click": function click($event) {
+        $event.preventDefault();
+        return _vm.editSubmit();
+      }
+    }
+  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Edit")) + "\n        ")]) : _c('b-button', {
+    staticClass: "mx-1",
+    attrs: {
+      "variant": "success",
+      "disabled": ""
+    }
+  }, [_c('b-spinner', {
+    attrs: {
+      "small": ""
+    }
+  }), _vm._v(" "), _c('span', {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1), _vm._v(" "), _c('b-button', {
+    attrs: {
+      "variant": "danger",
+      "type": "button"
+    },
+    on: {
+      "click": function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("tab-governorate-edit");
+      }
+    }
+  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_vm.isVisible('name') ? _c('div', {
+    staticClass: "col-md-6 direction",
+    attrs: {
+      "dir": "rtl"
+    }
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "control-label",
+    attrs: {
+      "for": "edit-1"
+    }
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_name_ar")) + "\n              "), _vm.isRequired('name') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.edit.name.$model,
+      expression: "$v.edit.name.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      'is-invalid': _vm.$v.edit.name.$error || _vm.errors.name,
+      'is-valid': !_vm.$v.edit.name.$invalid && !_vm.errors.name
+    },
+    attrs: {
+      "type": "text",
+      "data-edit": "1",
+      "id": "edit-1"
+    },
+    domProps: {
+      "value": _vm.$v.edit.name.$model
+    },
+    on: {
+      "keyup": function keyup($event) {
+        return _vm.arabicValue(_vm.edit.name);
+      },
+      "input": function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.edit.name, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), !_vm.$v.edit.name.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n              " + _vm._s(_vm.$v.edit.name.$params.minLength.min) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.name.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n              " + _vm._s(_vm.$v.edit.name.$params.maxLength.max) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('name_e') ? _c('div', {
+    staticClass: "col-md-6 direction-ltr",
+    attrs: {
+      "dir": "ltr"
+    }
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "control-label",
+    attrs: {
+      "for": "edit-2"
+    }
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_name_en")) + "\n              "), _vm.isRequired('name_e') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.edit.name_e.$model,
+      expression: "$v.edit.name_e.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      'is-invalid': _vm.$v.edit.name_e.$error || _vm.errors.name_e,
+      'is-valid': !_vm.$v.edit.name_e.$invalid && !_vm.errors.name_e
+    },
+    attrs: {
+      "type": "text",
+      "id": "edit-2"
+    },
+    domProps: {
+      "value": _vm.$v.edit.name_e.$model
+    },
+    on: {
+      "keyup": function keyup($event) {
+        return _vm.englishValue(_vm.edit.name_e);
+      },
+      "input": function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.edit.name_e, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), !_vm.$v.edit.name_e.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n              " + _vm._s(_vm.$v.edit.name_e.$params.minLength.min) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.name_e.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n              " + _vm._s(_vm.$v.edit.name_e.$params.maxLength.max) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('phone_key') ? _c('div', {
+    staticClass: "col-md-6"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "control-label",
+    attrs: {
+      "for": "edit-4"
+    }
+  }, [_vm._v("\n                      " + _vm._s(_vm.getCompanyKey("governorate_phone_key")) + "\n                      "), _vm.isRequired('phone_key') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.edit.phone_key.$model,
+      expression: "$v.edit.phone_key.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      'is-invalid': _vm.$v.edit.phone_key.$error || _vm.errors.phone_key,
+      'is-valid': !_vm.$v.edit.phone_key.$invalid && !_vm.errors.phone_key
+    },
+    attrs: {
+      "type": "number",
+      "id": "edit-4"
+    },
+    domProps: {
+      "value": _vm.$v.edit.phone_key.$model
+    },
+    on: {
+      "input": function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.edit.phone_key, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), !_vm.$v.edit.phone_key.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                      " + _vm._s(_vm.$v.edit.phone_key.$params.minLength.min) + "\n                      " + _vm._s(_vm.$t("general.letters")) + "\n                  ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.phone_key.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                      " + _vm._s(_vm.$v.edit.phone_key.$params.maxLength.max) + "\n                      " + _vm._s(_vm.$t("general.letters")) + "\n                  ")]) : _vm._e(), _vm._v(" "), _vm.errors.phone_key ? _vm._l(_vm.errors.phone_key, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                      ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('is_default') ? _c('div', {
+    staticClass: "col-md-6"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "mr-2",
+    attrs: {
+      "for": "edit-11"
+    }
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_default")) + "\n              "), _vm.isRequired('is_default') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('select', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.edit.is_default.$model,
+      expression: "$v.edit.is_default.$model"
+    }],
+    staticClass: "custom-select mr-sm-2",
+    "class": {
+      'is-invalid': _vm.$v.edit.is_default.$error || _vm.errors.is_default,
+      'is-valid': !_vm.$v.edit.is_default.$invalid && !_vm.errors.is_default
+    },
+    attrs: {
+      "id": "edit-11"
+    },
+    on: {
+      "change": function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.$v.edit.is_default, "$model", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      }
+    }
+  }, [_c('option', {
+    attrs: {
+      "value": "",
+      "selected": ""
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Choose")) + "...")]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "1"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Active")))]), _vm._v(" "), _c('option', {
+    attrs: {
+      "value": "0"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])]), _vm._v(" "), _vm.errors.is_default ? _vm._l(_vm.errors.is_default, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('is_active') ? _c('div', {
+    staticClass: "col-md-6"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "mr-2"
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_status")) + "\n              "), _vm.isRequired('is_active') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('b-form-group', {
+    "class": {
+      'is-invalid': _vm.$v.edit.is_active.$error || _vm.errors.is_active,
+      'is-valid': !_vm.$v.edit.is_active.$invalid && !_vm.errors.is_active
+    }
+  }, [_c('b-form-radio', {
+    staticClass: "d-inline-block",
+    attrs: {
+      "name": "some-radios",
+      "value": "active"
+    },
+    model: {
+      value: _vm.$v.edit.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.edit.is_active, "$model", $$v);
+      },
+      expression: "$v.edit.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Active")))]), _vm._v(" "), _c('b-form-radio', {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      "name": "some-radios",
+      "value": "inactive"
+    },
+    model: {
+      value: _vm.$v.edit.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.edit.is_active, "$model", $$v);
+      },
+      expression: "$v.edit.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])], 1), _vm._v(" "), _vm.errors.is_active ? _vm._l(_vm.errors.is_active, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+  }) : _vm._e()], 2)]) : _vm._e()])])])], 1);
+};
+var staticRenderFns = [];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/tabStreet.vue?vue&type=template&id=3227f63d&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/tabStreet.vue?vue&type=template&id=3227f63d&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c('div', [_c('b-modal', {
+    attrs: {
+      "id": "tab-street-create",
+      "title": _vm.getCompanyKey('street_create_form'),
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      "hide-footer": true
+    },
+    on: {
+      "show": _vm.resetModal,
+      "hidden": _vm.resetModalHidden
+    }
+  }, [_c('form', [_c('div', {
+    staticClass: "mb-3 d-flex justify-content-end"
+  }, [_c('b-button', {
+    "class": ['font-weight-bold px-2', _vm.is_disabled ? 'mx-2' : ''],
+    attrs: {
+      "variant": "success",
+      "disabled": !_vm.is_disabled,
+      "type": "button"
+    },
+    on: {
+      "click": function click($event) {
+        $event.preventDefault();
+        return _vm.resetForm.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\r\n                ")]), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c('b-button', {
+    staticClass: "mx-1",
+    attrs: {
+      "variant": "success",
+      "type": "submit"
+    },
+    on: {
+      "click": function click($event) {
+        $event.preventDefault();
+        return _vm.AddSubmit.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\r\n                        " + _vm._s(_vm.$t("general.Add")) + "\r\n                    ")]) : _c('b-button', {
+    staticClass: "mx-1",
+    attrs: {
+      "variant": "success",
+      "disabled": ""
+    }
+  }, [_c('b-spinner', {
+    attrs: {
+      "small": ""
+    }
+  }), _vm._v(" "), _c('span', {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c('b-button', {
+    attrs: {
+      "variant": "danger",
+      "type": "button"
+    },
+    on: {
+      "click": function click($event) {
+        $event.preventDefault();
+        return _vm.resetModalHidden.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\r\n                ")])], 2), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_vm.isVisible('name') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "control-label",
+    attrs: {
+      "for": "field-1"
+    }
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_name_ar")) + "\r\n                            "), _vm.isRequired('name') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    attrs: {
+      "dir": "rtl"
+    }
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.name.$model,
+      expression: "$v.create.name.$model"
+    }],
+    staticClass: "form-control arabicInput",
+    "class": {
+      'is-invalid': _vm.$v.create.name.$error || _vm.errors.name,
+      'is-valid': !_vm.$v.create.name.$invalid && !_vm.errors.name
+    },
+    attrs: {
+      "type": "text",
+      "data-create": "1",
+      "id": "field-1"
+    },
+    domProps: {
+      "value": _vm.$v.create.name.$model
+    },
+    on: {
+      "keyup": function keyup($event) {
+        return _vm.arabicValue(_vm.create.name);
+      },
+      "input": function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.name, "$model", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), !_vm.$v.create.name.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\r\n                            ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('name_e') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    staticClass: "control-label",
+    attrs: {
+      "for": "field-2"
+    }
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_name_en")) + "\r\n                            "), _vm.isRequired('name_e') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    attrs: {
+      "dir": "ltr"
+    }
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.name_e.$model,
+      expression: "$v.create.name_e.$model"
+    }],
+    staticClass: "form-control englishInput",
+    "class": {
+      'is-invalid': _vm.$v.create.name_e.$error || _vm.errors.name_e,
+      'is-valid': !_vm.$v.create.name_e.$invalid && !_vm.errors.name_e
+    },
+    attrs: {
+      "type": "text",
+      "data-create": "2",
+      "id": "field-2"
+    },
+    domProps: {
+      "value": _vm.$v.create.name_e.$model
+    },
+    on: {
+      "keyup": function keyup($event) {
+        return _vm.englishValue(_vm.create.name_e);
+      },
+      "input": function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.name_e, "$model", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), !_vm.$v.create.name_e.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\r\n                            ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('is_active') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+=======
   }, [_vm._v(_vm._s(_vm.$t("general.Choose")) + "...")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "1"
@@ -8140,10 +9002,15 @@ var render = function render() {
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_active") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_status")) + "\r\n                            "), _vm.isRequired('is_active') ? _c('span', {
+=======
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_status")) + "\n              "), _vm.isRequired("is_active") ? _c("span", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -8179,6 +9046,14 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])], 1), _vm._v(" "), _vm.errors.is_active ? _vm._l(_vm.errors.is_active, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+    }, [_vm._v(_vm._s(errorMessage) + "\r\n                            ")]);
+  }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c('b-modal', {
+    attrs: {
+      "id": "tab-street-edit",
+      "title": _vm.getCompanyKey('street_edit_form'),
+      "title-class": "font-18",
+=======
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c("b-modal", {
     ref: "edit-".concat(_vm.edit),
@@ -8187,13 +9062,18 @@ var render = function render() {
       title: _vm.getCompanyKey("governorate_edit_form"),
       "title-class": "font-18",
       size: "lg",
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
       "body-class": "p-4",
       "hide-footer": true
     },
     on: {
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+      "hidden": _vm.resetModalHiddenEdit
+=======
       hidden: function hidden($event) {
         return _vm.resetModalHiddenEdit();
       }
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     }
   }, [_c("form", [_c("div", {
     staticClass: "mb-3 d-flex justify-content-end"
@@ -8206,10 +9086,14 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.preventDefault();
-        return _vm.editSubmit();
+        return _vm.editSubmit(_vm.editStreet.id);
       }
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.Edit")) + "\r\n                ")]) : _c('b-button', {
+=======
   }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Edit")) + "\n        ")]) : _c("b-button", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -8229,9 +9113,16 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.preventDefault();
-        return _vm.$bvModal.hide("tab-governorate-edit");
+        return _vm.resetModalHiddenEdit.apply(null, arguments);
       }
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\r\n                ")])], 1), _vm._v(" "), _c('div', {
+    staticClass: "row"
+  }, [_vm.isVisible('name') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+=======
   }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_vm.isVisible("name") ? _c("div", {
@@ -8240,22 +9131,33 @@ var render = function render() {
       dir: "rtl"
     }
   }, [_c("div", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label",
     attrs: {
       "for": "edit-1"
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_name_ar")) + "\r\n                            "), _vm.isRequired('name') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    attrs: {
+      "dir": "rtl"
+    }
+  }, [_c('input', {
+=======
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_name_ar")) + "\n              "), _vm.isRequired("name") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     directives: [{
       name: "model",
       rawName: "v-model",
       value: _vm.$v.edit.name.$model,
       expression: "$v.edit.name.$model"
     }],
-    staticClass: "form-control",
+    staticClass: "form-control arabicInput",
     "class": {
       "is-invalid": _vm.$v.edit.name.$error || _vm.errors.name,
       "is-valid": !_vm.$v.edit.name.$invalid && !_vm.errors.name
@@ -8277,6 +9179,19 @@ var render = function render() {
         _vm.$set(_vm.$v.edit.name, "$model", $event.target.value);
       }
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  })]), _vm._v(" "), !_vm.$v.edit.name.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.edit.name.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.name.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.edit.name.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('name_e') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+=======
   }), _vm._v(" "), !_vm.$v.edit.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
   }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n              " + _vm._s(_vm.$v.edit.name.$params.minLength.min) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.name.maxLength ? _c("div", {
@@ -8291,12 +9206,23 @@ var render = function render() {
       dir: "ltr"
     }
   }, [_c("div", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label",
     attrs: {
       "for": "edit-2"
     }
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_name_en")) + "\r\n                            "), _vm.isRequired('name_e') ? _c('span', {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c('div', {
+    attrs: {
+      "dir": "ltr"
+    }
+  }, [_c('input', {
+    staticClass: "form-control englishInput",
+=======
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_name_en")) + "\n              "), _vm.isRequired("name_e") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
@@ -8307,20 +9233,43 @@ var render = function render() {
       expression: "$v.edit.name_e.$model"
     }],
     staticClass: "form-control",
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     "class": {
       "is-invalid": _vm.$v.edit.name_e.$error || _vm.errors.name_e,
       "is-valid": !_vm.$v.edit.name_e.$invalid && !_vm.errors.name_e
     },
     attrs: {
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+      "type": "text",
+      "data-edit": "2",
+      "id": "edit-2"
+    },
+=======
       type: "text",
       id: "edit-2"
     },
     domProps: {
       value: _vm.$v.edit.name_e.$model
     },
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     on: {
       keyup: function keyup($event) {
         return _vm.englishValue(_vm.edit.name_e);
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+      }
+    }
+  })]), _vm._v(" "), !_vm.$v.edit.name_e.minLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.edit.name_e.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.edit.name_e.maxLength ? _c('div', {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.edit.name_e.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+    return _c('ErrorMessage', {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible('is_active') ? _c('div', {
+    staticClass: "col-md-12"
+  }, [_c('div', {
+=======
       },
       input: function input($event) {
         if ($event.target.composing) return;
@@ -8436,10 +9385,15 @@ var render = function render() {
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_active") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
+<<<<<<< HEAD:public/js/app-undefined/resources_js_views_pages_country_index_vue.js
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("street_status")) + "\r\n                            "), _vm.isRequired('is_active') ? _c('span', {
+=======
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("governorate_status")) + "\n              "), _vm.isRequired("is_active") ? _c("span", {
+>>>>>>> 91d0bcdd10a1adfd72b8a9f31b3c90ee01882230:public/js/app-v4.9.5/resources_js_views_pages_country_index_vue.js
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -8475,7 +9429,7 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])], 1), _vm._v(" "), _vm.errors.is_active ? _vm._l(_vm.errors.is_active, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
+    }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]) : _vm._e()])])])], 1);
 };
 var staticRenderFns = [];

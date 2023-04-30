@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\ScreenTreeProperty;
 
-use App\Http\Requests\ScreenTreeProperty\CreateScreenTreePropertyRequest;
+use App\Http\Requests\ScreenTreeProperty\ScreenTreePropertyRequest;
 use App\Http\Requests\ScreenTreeProperty\EditScreenTreePropertyRequest;
 use App\Http\Resources\ScreenTreeProperty\ScreenTreePropertyResource;
 use App\Repositories\ScreenTreeProperty\ScreenTreePropertyRepositoryInterface;
@@ -52,13 +52,13 @@ class ScreenTreePropertyController extends Controller
         return responseJson(200, 'success', ScreenTreePropertyResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function store(CreateScreenTreePropertyRequest $request)
+    public function store(ScreenTreePropertyRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(EditScreenTreePropertyRequest $request, $id)
+    public function update(ScreenTreePropertyRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

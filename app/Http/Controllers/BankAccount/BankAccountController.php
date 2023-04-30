@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\BankAccount;
 
-use App\Http\Requests\BankAccount\StoreBankAccountRequest;
+use App\Http\Requests\BankAccount\BankAccountRequest;
 use App\Http\Requests\BankAccount\UpdateBankAccountRequest;
 use App\Http\Resources\BankAccount\BankAccountResource;
 use Illuminate\Http\Request;
@@ -48,14 +48,14 @@ class BankAccountController extends Controller
         return responseJson(200, 'success', BankAccountResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreBankAccountRequest $request)
+    public function create(BankAccountRequest $request)
     {
         $model = $this->modelInterface->create($request);
         $model->refresh();
         return responseJson(200, 'success', new BankAccountResource($model));
     }
 
-    public function update(UpdateBankAccountRequest $request, $id)
+    public function update(BankAccountRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

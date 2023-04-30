@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('cm_members', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('second_name');
-            $table->string('third_name');
-            $table->string('last_name');
-            $table->string('family_name');
+            $table->string('first_name')->nullable();
+            $table->string('second_name')->nullable();
+            $table->string('third_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('family_name')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('national_id')->nullable();
-            $table->string('nationality_number')->nullable();
+            $table->string('nationality_class')->nullable(); // changed from nationality_number
             $table->string('phone_code')->nullable();
             $table->string('home_phone')->nullable();
             $table->string('work_phone')->nullable();
@@ -32,15 +32,15 @@ return new class extends Migration
             $table->integer('membership_number')->nullable()->default(0);
             $table->string('job')->nullable();
             $table->string('degree')->nullable();
-            $table->integer('acceptance')->default(0);
+            $table->integer('acceptance')->nullable();
             $table->date('session_date')->nullable();
             $table->string('session_number')->nullable();
             $table->date('applying_date')->nullable();
-            $table->integer('applying_number')->unique()->nullable()->default(0);
+            $table->integer('applying_number')->nullable()->default(0);
             $table->foreignId('sponsor_id')->default(1)->nullable();
             $table->foreignId('status_id')->nullable();
             $table->foreignId('member_type_id')->default(1)->nullable();
-            $table->foreignId('financial_status_id')->nullable();
+            $table->foreignId('financial_status_id')->default(2)->nullable();
             $table->string('member_type')->default('pending')->nullable();
             $table->string('notes')->nullable();
             $table->boolean('gender')->nullable();

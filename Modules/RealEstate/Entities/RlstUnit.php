@@ -4,6 +4,7 @@ namespace Modules\RealEstate\Entities;
 
 use App\Traits\LogTrait;
 use App\Traits\MediaTrait;
+use App\Traits\VideoLink;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,31 +12,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 
+
 class RlstUnit extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, LogTrait,MediaTrait;
+    use HasFactory, SoftDeletes, LogTrait,MediaTrait, VideoLink;
 
-    protected $fillable = [
-        "code",
-        'name',
-        "name_e",
-        'description',
-        'description_e',
-        'unit_ty',
-        'unit_status_id',
-        'unit_area',
-        'unit_net_area',
-        'building_id',
-        'rooms',
-        'path',
-        'view',
-        'floor',
-        'finishing',
-        'properties',
-        'module_id',
-
-
-    ];
+    protected $guarded = ['id'];
 
     // relations
 

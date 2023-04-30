@@ -31,8 +31,9 @@ class OrderController extends Controller
     public function all(AllRequest $request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-        if($request->is_quotation){
-            $models->where('is_quotation',$request->is_quotation);
+        if ($request->is_quotation) {
+            $models->where('is_quotation', $request->is_quotation);
+
         }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -45,15 +46,19 @@ class OrderController extends Controller
 
     public function create(OrderRequest $request)
     {
-        // return $this->model;
-        $model =  DB::transaction(function () use ($request) {
+        $model = DB::transaction(function () use ($request) {
             $data = $request->validated();
-            $serial = Serial::where([['branch_id',$request->branch_id],['document_id',$request->document_id]])->first();
-            $data['serial_id'] = $serial ? $serial->id:null;
+            $serial = Serial::where([['branch_id', $request->branch_id], ['document_id', $request->document_id]])->first();
+            $data['serial_id'] = $serial ? $serial->id : null;
             $model = $this->model->create($data);
             $model->refresh();
+
             foreach ($request->details as $detail) {
-                $model->details()->create($detail);
+                $model_details = $model->details()->create($detail);
+                if ($detail['panels']) {
+                    $model_details->panels()->sync($detail['panels']);
+                }
+
             }
             $serials = generalSerial($model);
             $model->update([
@@ -82,7 +87,10 @@ class OrderController extends Controller
             ]);
             $model->refresh();
             foreach ($request->details as $detail) {
-                $model->details()->create($detail);
+                $model_details = $model->details()->create($detail);
+                if ($detail['panels']) {
+                    $model_details->panels()->sync($detail['panels']);
+                }
             }
             if ($request->deleted_details) {
                 $model->details()->whereIn('id', $request->deleted_details)->delete();

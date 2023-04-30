@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\RoleType;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RoleType\CreateRoleTypeRequest;
+use App\Http\Requests\RoleType\RoleTypeRequest;
 use App\Http\Requests\RoleType\EditRoleTypeRequest;
 use App\Http\Resources\RoleTypes\RoleTypeResource;
 use App\Repositories\RoleType\RoleTypeRepositoryInterface;
@@ -43,7 +43,7 @@ class RoleTypeController extends Controller
      * @param Request $request
      * @return \response
      */
-    public function store(CreateRoleTypeRequest $request)
+    public function store(RoleTypeRequest $request)
     {
 
         $this->repository->create($request->validated());
@@ -80,7 +80,7 @@ class RoleTypeController extends Controller
      * @param int $id
      * @return \response
      */
-    public function update(EditRoleTypeRequest $request, $id)
+    public function update(RoleTypeRequest $request, $id)
     {
         $data = [];
 

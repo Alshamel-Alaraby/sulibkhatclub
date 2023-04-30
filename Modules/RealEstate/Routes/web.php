@@ -11,6 +11,3 @@
 |
 */
 
-Route::prefix('realestate')->group(function() {
-    Route::get('/', 'RealEstateController@index');
-});

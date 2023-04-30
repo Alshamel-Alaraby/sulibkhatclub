@@ -14,7 +14,7 @@ class CmFinancialStatusController extends Controller
     public function __construct(private CmFinancialStatusInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
-    }
+    }//
 
     public function all(Request $request)
     {

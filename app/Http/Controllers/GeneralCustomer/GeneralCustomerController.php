@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\GeneralCustomer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GeneralCustomer\CreateGeneralCustomerRequest;
+use App\Http\Requests\GeneralCustomer\GeneralCustomerRequest;
 use App\Http\Requests\GeneralCustomer\EditGeneralCustomerRequest;
 use App\Http\Resources\GeneralCustomer\GeneralCustomerResource;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepositoryInterface;
@@ -63,13 +63,13 @@ class GeneralCustomerController extends Controller
 
     }
 
-    public function store(CreateGeneralCustomerRequest $request)
+    public function store(GeneralCustomerRequest $request)
     {
         $model = $this->repository->create($request->validated());
         return responseJson(200, 'success', new GeneralCustomerResource($model));
     }
 
-    public function update(EditGeneralCustomerRequest $request, $id)
+    public function update(GeneralCustomerRequest $request, $id)
     {
 
         // $model = $this->repository->find($id);

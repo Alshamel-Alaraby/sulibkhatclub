@@ -14,16 +14,7 @@ use Illuminate\Support\Facades\Route;
  */
 Route::prefix('boards-rent')->group(function () {
 
-    // departments routes
-    Route::group(['prefix' => 'departments'], function () {
-        Route::get('/', 'DepartmentController@all')->name('boards-rent.departments.all');
-        Route::post('/', 'DepartmentController@create')->name('boards-rent.departments.create');
-        Route::put('/{id}', 'DepartmentController@update')->name('boards-rent.departments.update');
-        Route::delete("/bulk-delete", "DepartmentController@bulkDelete");
-        Route::get('/logs/{id}', 'DepartmentController@logs')->name('boards-rent.departments.logs');
-        Route::get('/{id}', 'DepartmentController@find')->name('boards-rent.departments.find');
-        Route::delete('/{id}', 'DepartmentController@delete')->name('boards-rent.departments.delete');
-    });
+
 
     // sell methods routes
     Route::group(['prefix' => 'sell-methods'], function () {

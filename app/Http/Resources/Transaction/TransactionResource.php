@@ -35,6 +35,7 @@ class TransactionResource extends JsonResource
             'type' => $this->type,
             'prefix' => $this->prefix,
             'serial_number' => $this->serial_number,
+            'number_of_years' =>$this->number_of_years
         ];
     }
 }

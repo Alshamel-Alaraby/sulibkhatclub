@@ -11,6 +11,3 @@
 |
 */
 
-Route::prefix('stock')->group(function() {
-    Route::get('/', 'StockController@index');
-});

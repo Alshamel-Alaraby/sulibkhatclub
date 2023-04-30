@@ -32,7 +32,7 @@ class RlstUnitController extends Controller
     {
         $models = $this->model->when($request->building_id,function($q) use($request){
             $q->where("building_id", $request->building_id);
-        })                
+        })
         ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -46,6 +46,13 @@ class RlstUnitController extends Controller
     public function create(RlstUnitRequest $request)
     {
         $model = $this->model->create($request->validated());
+        $model->refresh();
+
+        if ($request->video_link) {
+            $model->video()->create([
+                'link' => $request->video_link,
+            ]);
+        }
         if ($request->media) {
             foreach ($request->media as $media) {
                 $this->media::where('id', $media)->update([
@@ -54,7 +61,6 @@ class RlstUnitController extends Controller
                 ]);
             }
         }
-        $model->refresh();
         return responseJson(200, 'created', new RlstUnitResource($model));
 
     }
@@ -66,7 +72,15 @@ class RlstUnitController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
+
         $model->update($request->all());
+        $model->refresh();
+        if ($request->video_link) {
+            $model->video()->delete();
+            $model->video()->create([
+                'link' => $request->video_link,
+            ]);
+        }
         if ($request->media && !$request->old_media) { // if there is new media and no old media
             $model->clearMediaCollection('media');
             foreach ($request->media as $media) {
@@ -98,7 +112,7 @@ class RlstUnitController extends Controller
         if (!$request->old_media && !$request->media) { // if this is no old media and new media
             $model->clearMediaCollection('media');
         }
-        $model->refresh();
+
         return responseJson(200, 'updated', new RlstUnitResource($model));
     }
 

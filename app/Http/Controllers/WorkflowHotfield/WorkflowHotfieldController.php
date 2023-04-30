@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\WorkflowHotfield;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\WorkflowHotfield\StoreWorkflowHotfieldRequest;
+use App\Http\Requests\WorkflowHotfield\WorkflowHotfieldRequest;
 use App\Http\Requests\WorkflowHotfield\UpdateWorkflowHotfieldRequest;
 use App\Http\Resources\ScreenSetting\ScreenSettingResource;
 use App\Http\Resources\WorkflowHotfield\WorkflowHotfieldResource;
@@ -61,14 +61,14 @@ class WorkflowHotfieldController extends Controller
 
     }
 
-    public function create(StoreWorkflowHotfieldRequest $request)
+    public function create(WorkflowHotfieldRequest $request)
     {
 
         return responseJson(200, __('Done'), $this->repository->create($request->validated()));
 
     }
 
-    public function update(UpdateWorkflowHotfieldRequest $request, $id)
+    public function update(WorkflowHotfieldRequest $request, $id)
     {
 
         $model = $this->repository->find($id);

@@ -10,7 +10,7 @@ use Modules\BoardsRent\Http\Requests\StoreOrderTaskRequest;
 use Modules\BoardsRent\Http\Requests\UpdateOrderTaskRequest;
 use Modules\BoardsRent\Transformers\OrderTaskResource;
 
-class OrderOrderTaskController extends Controller
+class OrderTaskController extends Controller
 {
     public function __construct(private OrderTask $model)
     {

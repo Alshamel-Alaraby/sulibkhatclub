@@ -325,9 +325,36 @@ export const menuItems = [
                         label: 'general.backup',
                         link: '/'
                     },
+                    {
+                        id: 100004,
+                        name: 'real estate',
+                        label: 'general.DatabaseBackup',
+                        icon: 'far fa-list-alt',
+                        link: '/dashboard/database-backup'
+                    },
                 ]
             },
-
+            {
+                id: 300201,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.reports',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 300201,
+                        name: 'real estate',
+                        label: 'general.PayerMemberReport',
+                        link: '/dashboard/club/payer-member-report'
+                    },
+                    {
+                        id: 313301,
+                        name: 'real estate',
+                        label: 'general.PermissionMemberReport',
+                        link: '/dashboard/club/permission-member-report'
+                    },
+                ]
+            },
         ]
     },
     {
@@ -491,12 +518,12 @@ export const menuItems = [
         id: 1002168,
         label: "general.boardRent",
         icon: "fas fa-hotel",
-        name: 'real estate',
+        name: 'board rent',
         isMenuCollapsed: false,
         subItems: [
             {
                 id: 10211,
-                name: 'real estate',
+                name: 'board rent',
                 label: 'general.master_file',
                 isMenuCollapsed: false,
                 subItems: [
@@ -775,8 +802,8 @@ export const menuItems = [
                         id: 13334,
                         label: 'general.debit note',
                         icon: 'fas fa-hot-tub',
-                        name: 'receivable payable',
-                        link: '/'
+                        name: 'debit note',
+                        link: '/dashboard/receivablePayable/debitNote'
                     },
                     {
                         id: 13334,
@@ -849,7 +876,7 @@ export const menuItems = [
     {
         id: 100123,
         icon: 'fas fa-hot-tub',
-        name: 'color',
+        name: 'statuses',
         label: 'general.statuses',
         link: '/dashboard/statuses'
     },
@@ -901,13 +928,6 @@ export const menuItems = [
         label: 'menuitems.units.text',
         icon: 'far fa-list-alt',
         link: '/dashboard/units'
-    },
-    {
-        id: 100004,
-        name: 'units',
-        label: 'general.DatabaseBackup',
-        icon: 'far fa-list-alt',
-        link: '/dashboard/database-backup'
     },
     {
         id: 100006,

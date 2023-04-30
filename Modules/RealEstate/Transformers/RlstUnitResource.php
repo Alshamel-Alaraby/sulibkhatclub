@@ -39,6 +39,7 @@ class RlstUnitResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
+            "video_link" => $this->video_link,
         ];
     }
 }

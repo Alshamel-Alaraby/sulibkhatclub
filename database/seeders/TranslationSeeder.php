@@ -7446,7 +7446,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_sellMethod_edit_form",
@@ -7455,7 +7455,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7465,7 +7465,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7475,7 +7475,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
         ]);
@@ -7488,7 +7488,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_sector_edit_form",
@@ -7497,7 +7497,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "board rent"
 
             ],
             [
@@ -7507,7 +7507,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "board rent"
 
             ],
             [
@@ -7517,7 +7517,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "board rent"
 
             ]
         ]);
@@ -7530,7 +7530,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_package_edit_form",
@@ -7539,7 +7539,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7549,7 +7549,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7559,7 +7559,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7569,7 +7569,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7579,7 +7579,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
         ]);
@@ -7592,7 +7592,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_unitStatus_edit_form",
@@ -7601,7 +7601,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7611,7 +7611,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7621,7 +7621,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7631,7 +7631,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
         ]);
@@ -7644,7 +7644,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_task_edit_form",
@@ -7653,7 +7653,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7663,7 +7663,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7673,7 +7673,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7683,7 +7683,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7693,7 +7693,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7703,7 +7703,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
         ]);
@@ -7716,7 +7716,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_lookUp_edit_form",
@@ -7725,7 +7725,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_lookUp_name_ar",
@@ -7734,7 +7734,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7744,7 +7744,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_lookUp_type",
@@ -7753,7 +7753,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_lookUp_parent",
@@ -7762,7 +7762,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
         ]);
         // boardRealestate panels
@@ -7774,7 +7774,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_edit_form",
@@ -7783,7 +7783,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_name_ar",
@@ -7792,7 +7792,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7802,7 +7802,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_description",
@@ -7811,7 +7811,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7821,7 +7821,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_day",
@@ -7830,7 +7830,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -7840,7 +7840,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_month",
@@ -7849,7 +7849,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_quarter_year",
@@ -7858,7 +7858,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_half_year",
@@ -7867,7 +7867,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_year",
@@ -7876,7 +7876,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_code",
@@ -7885,7 +7885,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_new_code",
@@ -7894,7 +7894,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_face",
@@ -7903,7 +7903,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_note",
@@ -7912,7 +7912,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_size",
@@ -7921,7 +7921,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_unit_status",
@@ -7930,7 +7930,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_department",
@@ -7939,7 +7939,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_category",
@@ -7948,7 +7948,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_country",
@@ -7957,7 +7957,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_governorate",
@@ -7966,7 +7966,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_city",
@@ -7975,7 +7975,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_avenue",
@@ -7984,7 +7984,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_street",
@@ -7993,7 +7993,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_lat",
@@ -8002,7 +8002,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_panel_lng",
@@ -8011,7 +8011,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
         ]);
         //board order
@@ -8023,7 +8023,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "real estate"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_order_create_form",
@@ -8032,7 +8032,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_order_edit_form",
@@ -8041,7 +8041,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8051,7 +8051,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_quotation_edit_form",
@@ -8060,10 +8060,19 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
+            [
+                "key" => "boardRent_order_document_related",
+                "default_en" => "Document Related",
+                "default_ar" => "وثيقة ذات صلة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
 
+            ],
             [
                 "key" => "boardRent_order_date",
                 "default_en" => "Date",
@@ -8071,7 +8080,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8081,7 +8090,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8091,7 +8100,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8101,7 +8110,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8111,7 +8120,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8121,7 +8130,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
 
             ],
             [
@@ -8131,7 +8140,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_order_package",
@@ -8140,7 +8149,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_order_category",
@@ -8149,16 +8158,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
-            ],
-            [
-                "key" => "boardRent_order_country",
-                "default_en" => "Country",
-                "default_ar" => "الدوله",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
             [
                 "key" => "boardRent_order_governorate",
@@ -8167,7 +8167,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "board rent"
             ],
         ]);
         //   end  boardRealestate    //
@@ -9134,6 +9134,79 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "club"
+            ],
+            [
+                "key" => "number_of_years",
+                "default_en" => "Number Of Years",
+                "default_ar" => "عدد السنين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+
+        ]);
+
+        //credit note
+        Translation::insert([
+            [
+                "key" => "credit_note_table",
+                "default_en" => "Credit Note Table",
+                "default_ar" => "جدول اشعار دائن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "credit_note_create_form",
+                "default_en" => "Add New Credit Note",
+                "default_ar" => "اضافة اشعار دائن جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "credit_note_edit_form",
+                "default_en" => "edit Credit Note",
+                "default_ar" => "تعديل اشعار دائن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+
+        ]);
+
+        //debit note
+        Translation::insert([
+            [
+                "key" => "debit_note_table",
+                "default_en" => "Debit Note Table",
+                "default_ar" => "جدول اشعار مدين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "debit_note_create_form",
+                "default_en" => "Add New Debit Note",
+                "default_ar" => "اضافة اشعار مدين جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "debit_note_edit_form",
+                "default_en" => "edit Debit Note",
+                "default_ar" => "تعديل اشعار مدين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
             ],
 
         ]);

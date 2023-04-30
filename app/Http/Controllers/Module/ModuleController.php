@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Module;
 
 use App\Http\Requests\AllRequest;
-use App\Http\Requests\Module\StoreModuleRequest;
+use App\Http\Requests\Module\ModuleRequest;
 use App\Http\Requests\Module\UpdateModuleRequest;
 use App\Http\Resources\Module\ModuleResource;
 use Illuminate\Http\Request;
@@ -51,13 +51,13 @@ class ModuleController extends Controller
         return responseJson(200, 'success', ModuleResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreModuleRequest $request)
+    public function create(ModuleRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateModuleRequest $request, $id)
+    public function update(ModuleRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

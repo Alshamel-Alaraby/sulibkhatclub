@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\ExternalSalesmen;
 
-use App\Http\Requests\ExternalSalesmen\StoreExternalSalesmenRequest;
+use App\Http\Requests\ExternalSalesmen\ExternalSalesmenRequest;
 use App\Http\Requests\ExternalSalesmen\UpdateExternalSalesmenRequest;
 use App\Http\Resources\ExternalSalesmen\ExternalSalesmenResource;
 use Illuminate\Http\Request;
@@ -49,13 +49,13 @@ class ExternalSalesmenController extends Controller
         return responseJson(200, 'success', ExternalSalesmenResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreExternalSalesmenRequest $request)
+    public function create(ExternalSalesmenRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateExternalSalesmenRequest $request, $id)
+    public function update(ExternalSalesmenRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

@@ -26,6 +26,7 @@ class UpdateTransactionRequest extends FormRequest
         return [
             'date' => 'required|date',
             'amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'number_of_years' => 'required',
             'module_type' => "nullable|string",
             'invoice_id' => "nullable|exists:rlst_invoices,id",
             'break_id' => "nullable|exists:rp_break_downs,id",

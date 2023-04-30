@@ -16,6 +16,6 @@ class DatabaseBackup extends Model
 
     public function getFullPathAttribute()
     {
-        return asset('uploads/Laravel/' . $this->path);
+        return asset('uploads/' . env('APP_NAME') . '/' . $this->path);
     }
 }

@@ -29,8 +29,11 @@ use Illuminate\Support\Facades\Route;
 //     Artisan::call('backup:run');
 // });
 
+
+
 Route::controller(\App\Http\Controllers\MainController::class)->group(function () {
     Route::post("/media", "media");
+
     Route::post("/import", "import");
     Route::post("/media-name", "mediaName");
     Route::get("statices", "statices");
@@ -189,7 +192,7 @@ Route::group(['prefix' => 'document'], function () {
         Route::delete('/{id}', 'delete')->name('document.destroy');
         Route::post("bulk-delete", "bulkDelete");
 
-        Route::post('from_admin', 'createFromAdmin')->name('document.create_from_admin');
+        Route::post('from_admin', 'createFromAdmin')->name('document.create_from.admin');
     });
 });
 
@@ -203,7 +206,7 @@ Route::group(['prefix' => 'depertments'], function () {
         Route::delete('/{id}', 'delete')->name('depertments.destroy');
         Route::post("bulk-delete", "bulkDelete");
 
-        Route::post('from_admin', 'createFromAdmin')->name('document.create_from_admin');
+        Route::post('from_admin', 'createFromAdmin')->name('document.create.from.admin');
     });
 });
 
@@ -506,7 +509,6 @@ Route::group(['prefix' => 'serials'], function () {
 
 Route::get('serial/branch', [SerialController::class, 'getSerialByBranchId']);
 
-
 Route::resource('branches', BranchController::class)->except('create', 'edit');
 Route::resource('serials', SerialController::class)->except('create', 'edit');
 Route::resource('cities', CityController::class)->except('create', 'edit');
@@ -547,7 +549,7 @@ Route::post('translation-update', [\App\Http\Controllers\TranslationController::
 Route::post('translation-delete', [\App\Http\Controllers\TranslationController::class, 'delete']);
 //------------------------------------------------------
 
-Route::post('/ocr/upload', [\App\Http\Controllers\OcrController::class, 'upload']); //https://packagist.org/packages/thiagoalessio/tesseract_ocr //sudo port install tesseract-<langcode>
+Route::post('/ocr/upload', [\App\Http\Controllers\OCRController::class, 'upload']); //https://packagist.org/packages/thiagoalessio/tesseract_ocr //sudo port install tesseract-<langcode>
 
 Route::post("general_upload", function () {
     request()->file("file")->store("", "public_uploads");

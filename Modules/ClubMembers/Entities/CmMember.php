@@ -41,6 +41,7 @@ class CmMember extends Model
         return $this->belongsTo(CmFinancialStatus::class, 'financial_status_id');
     }
 
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

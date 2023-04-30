@@ -3,11 +3,8 @@
 namespace Modules\ClubMembers\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 use Modules\ClubMembers\Repositories\CmFinancialStatus\CmFinancialStatusInterface;
 use Modules\ClubMembers\Repositories\CmFinancialStatus\CmFinancialStatusRepository;
-use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
-use Modules\ClubMembers\Repositories\CmMember\CmMemberRepository;
 use Modules\ClubMembers\Repositories\CmMemberPermission\CmMemberPermissionInterface;
 use Modules\ClubMembers\Repositories\CmMemberPermission\CmMemberPermissionRepository;
 use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingInterface;
@@ -16,11 +13,12 @@ use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalInte
 use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalRepository;
 use Modules\ClubMembers\Repositories\CmMemberType\CmMemberTypeInterface;
 use Modules\ClubMembers\Repositories\CmMemberType\CmMemberTypeRepository;
-use Modules\ClubMembers\Repositories\CmSponser\CmSponserInterface;
-use Modules\ClubMembers\Repositories\CmSponser\CmSponserRepository;
+use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
+use Modules\ClubMembers\Repositories\CmMember\CmMemberRepository;
 use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberInterface;
 use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberRepository;
-
+use Modules\ClubMembers\Repositories\CmSponser\CmSponserInterface;
+use Modules\ClubMembers\Repositories\CmSponser\CmSponserRepository;
 
 class ClubMembersServiceProvider extends ServiceProvider
 {
@@ -45,6 +43,7 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+
     }
 
     /**
@@ -64,6 +63,11 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmPendingMemberInterface::class, CmPendingMemberRepository::class);
         $this->app->bind(CmMemberPermissionInterface::class, CmMemberPermissionRepository::class);
         $this->app->bind(CmMembershipRenewalInterface::class, CmMembershipRenewalRepository::class);
+        $this->app->bind(CmMemberSettingInterface::class, CmMemberSettingRepository::class);
+
+        $this->commands([
+            \Modules\ClubMembers\Console\TransDb::class
+        ]);
 
     }
 
@@ -94,7 +98,7 @@ class ClubMembersServiceProvider extends ServiceProvider
         $sourcePath = module_path($this->moduleName, 'Resources/views');
 
         $this->publishes([
-            $sourcePath => $viewPath
+            $sourcePath => $viewPath,
         ], ['views', $this->moduleNameLower . '-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);

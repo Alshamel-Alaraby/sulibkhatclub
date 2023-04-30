@@ -11,6 +11,3 @@
 |
 */
 
-Route::prefix('custody')->group(function() {
-    Route::get('/', 'CustodyController@index');
-});

@@ -26,6 +26,7 @@ class AllRequest extends FormRequest
         return [
             "parent_id" => "nullable|exists:general_modules,id",
             "is_active" => "nullable|in:active,inactive",
+            "is_quotation" => "nullable",
             "sort" => "nullable|integer",
             "page" => "nullable|integer",
             "per_page" => "nullable|integer",

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\DataType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -19,19 +18,20 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            // CountrySeeder::class,
-             TranslationSeeder::class,
-             DataTypeSeeder::class,
-//             UserSeeder::class,
-             GeneralCustomerSeeder::class,
-             NewCustomerSeeder::class,
+            CountrySeeder::class,
+            TranslationSeeder::class,
+            DataTypeSeeder::class,
+            // UserSeeder::class,
+            GeneralCustomerSeeder::class,
+            NewCustomerSeeder::class,
             CustomTableSeeder::class,
             RpInstallmentPaymentTypeSeeder::class,
             RpInstallmentStatusSeeder::class,
-            PaymentMethodSeeder::class
-            //  DataTypeSeeder::class,
-            //   UserSeeder::class
-        //    ArchiveFileSeeder::class
+            PaymentMethodSeeder::class,
+            // DataTypeSeeder::class,
+            // UserSeeder::class
+            // ArchiveFileSeeder::class
+
         ]);
         DB::unprepared(file_get_contents(public_path("country_lookup.sql")));
         // \App\Models\User::factory(10)->create();

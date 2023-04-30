@@ -3,10 +3,7 @@
 namespace Modules\ClubMembers\Repositories\CmMemberSetting;
 
 use Illuminate\Support\Facades\DB;
-use Modules\ClubMembers\Entities\CmMemberPermission;
 use Modules\ClubMembers\Entities\CmMemberSetting;
-use Modules\ClubMembers\Entities\CmSponser;
-use Modules\RealEstate\Entities\RlstCategoriesItem;
 
 class CmMemberSettingRepository implements CmMemberSettingInterface
 {
@@ -31,7 +28,6 @@ class CmMemberSettingRepository implements CmMemberSettingInterface
     {
         return $this->model->find($id);
     }
-
 
     public function create($request)
     {

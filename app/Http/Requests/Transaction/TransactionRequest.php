@@ -27,6 +27,7 @@ class TransactionRequest extends FormRequest
             'transactions' => 'required|array',
             'transactions.*.date' => 'required|date',
             'transactions.*.amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'transactions.*.number_of_years' => 'required',
             'transactions.*.module_type' => "nullable|string",
             'transactions.*.invoice_id' => "nullable|exists:rlst_invoices,id",
             'transactions.*.break_id' => "nullable|exists:rp_break_downs,id",

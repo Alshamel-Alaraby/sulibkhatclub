@@ -80,6 +80,10 @@ class Panel extends Model implements HasMedia
         return $this->belongsTo(\App\Models\Street::class, 'street_id');
     }
 
+    public function orderDetails()
+    {
+        return $this->belongsToMany(OrderDetails::class, 'boards_rent_order_detail_panel', 'panel_id', 'order_detail_id');
+    }
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

@@ -24,14 +24,14 @@ import TabGovernorate from "../../../components/tabGovernorate";
  */
 export default {
     page: {
-        title: "Quotation",
-        meta: [{ name: "description", content: "Quotation" }],
+        title: "Order",
+        meta: [{ name: "description", content: "Order" }],
     },
     mixins: [translation],
     beforeRouteEnter(to, from, next) {
         next((vm) => {
 
-            if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
+            if (vm.$store.state.auth.work_flow_trees.includes("board rent-e")) {
                 Swal.fire({
                     icon: "error",
                     title: `${vm.$t("general.Error")}`,
@@ -40,7 +40,7 @@ export default {
                 return vm.$router.push({ name: "home" });
             }
 
-            if (vm.$store.state.auth.work_flow_trees.includes('reservation') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
+            if (vm.$store.state.auth.work_flow_trees.includes('reservation') || vm.$store.state.auth.work_flow_trees.includes('board rent') || vm.$store.state.auth.user.type == 'super_admin') {
                 return true;
             } else {
                 return vm.$router.push({ name: "home" });
@@ -78,6 +78,7 @@ export default {
             categories: [],
             countries: [],
             packages: [],
+            documentRelated: [],
             governorates: [],
             enabled3: true,
             isLoader: false,
@@ -92,6 +93,7 @@ export default {
                 total: 0,
                 is_stripe: 0,
                 is_quotation: 0,
+                document_related_id: null,
                 details: [{
                     category_id: null,
                     governorate_id: null,
@@ -106,6 +108,7 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
+                document_related_id: null,
                 document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
@@ -156,6 +159,7 @@ export default {
             branch_id: { required },
             salesman_id: { required },
             status_id: { required },
+            document_related_id: { required},
             sell_method_id: { required },
             document_id: { required },
             total: { required },
@@ -440,157 +444,6 @@ export default {
                 this.multDateEdit.splice(index,1);
             }
         },
-        changePhoto() {
-            document.getElementById("uploadImageCreate").click();
-        },
-        changePhotoEdit() {
-            document.getElementById("uploadImageEdit").click();
-        },
-        onImageChanged(e) {
-            const file = e.target.files[0];
-            this.addImage(file);
-        },
-        addImage(file) {
-            this.media = file; //upload
-            if (file) {
-                this.idDelete = null;
-                let is_media = this.images.find(
-                    (e) => e.name == file.name.slice(0, file.name.indexOf("."))
-                );
-                this.idDelete = is_media ? is_media.id : null;
-                if (!this.idDelete) {
-                    this.isLoader = true;
-                    let formDate = new FormData();
-                    formDate.append("media[0]", this.media);
-                    adminApi
-                        .post(`/media`, formDate)
-                        .then((res) => {
-                            let old_media = [];
-                            this.images.forEach((e) => old_media.push(e.id));
-                            let new_media = [];
-                            res.data.data.forEach((e) => new_media.push(e.id));
-
-                            adminApi
-                                .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
-                                .then((res) => {
-                                    this.images = res.data.data.media ?? [];
-                                    if (this.images && this.images.length > 0) {
-                                        this.showPhoto = this.images[this.images.length - 1].webp;
-                                    } else {
-                                        this.showPhoto = "./images/img-1.png";
-                                    }
-                                    this.getData();
-                                })
-                                .catch((err) => {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                    });
-                                });
-                        })
-                        .catch((err) => {
-                            if (err.response.data) {
-                                this.errors = err.response.data.errors;
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: `${this.$t("general.Error")}`,
-                                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                });
-                            }
-                        })
-                        .finally(() => {
-                            this.isLoader = false;
-                        });
-                } else {
-                    Swal.fire({
-                        title: `${this.$t("general.Thisfilehasalreadybeenuploaded")}`,
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: `${this.$t("general.Replace")}`,
-                        cancelButtonText: `${this.$t("general.Nocancel")}`,
-                        confirmButtonClass: "btn btn-success mt-2",
-                        cancelButtonClass: "btn btn-danger ml-2 mt-2",
-                        buttonsStyling: false,
-                    }).then((result) => {
-                        if (result.value) {
-                            this.isLoader = true;
-                            let formDate = new FormData();
-                            formDate.append("media[0]", this.media);
-                            adminApi
-                                .post(`/media`, formDate)
-                                .then((res) => {
-                                    let old_media = [];
-                                    this.images.forEach((e) => old_media.push(e.id));
-                                    old_media.splice(old_media.indexOf(this.idDelete), 1);
-                                    let new_media = [];
-                                    res.data.data.forEach((e) => new_media.push(e.id));
-
-                                    adminApi
-                                        .put(`boards-rent/orders/${this.reservation_id}`, { old_media, media: new_media })
-                                        .then((res) => {
-                                            this.images = res.data.data.media ?? [];
-                                            if (this.images && this.images.length > 0) {
-                                                this.showPhoto = this.images[this.images.length - 1].webp;
-                                            } else {
-                                                this.showPhoto = "./images/img-1.png";
-                                            }
-                                            this.getData();
-                                        })
-                                        .catch((err) => {
-                                            Swal.fire({
-                                                icon: "error",
-                                                title: `${this.$t("general.Error")}`,
-                                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                            });
-                                        });
-                                })
-                                .catch((err) => {
-                                    if (err.response.data) {
-                                        this.errors = err.response.data.errors;
-                                    } else {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: `${this.$t("general.Error")}`,
-                                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                        });
-                                    }
-                                })
-                                .finally(() => {
-                                    this.isLoader = false;
-                                });
-                        }
-                    });
-                }
-            }
-        },
-        deleteImageCreate(id, index) {
-            let old_media = [];
-            this.images.forEach((e) => {
-                if (e.id != id) {
-                    old_media.push(e.id);
-                }
-            });
-            adminApi
-                .put(`boards-rent/orders/${this.reservation_id}`, { old_media })
-                .then((res) => {
-                    this.reservations[index] = res.data.data;
-                    this.images = res.data.data.media ?? [];
-                    if (this.images && this.images.length > 0) {
-                        this.showPhoto = this.images[this.images.length - 1].webp;
-                    } else {
-                        this.showPhoto = "./images/img-1.png";
-                    }
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
         showSaleManModal() {
             if (this.create.salesman_id == 0) {
                 this.$bvModal.show("saleman-create");
@@ -734,7 +587,7 @@ export default {
             }
             adminApi
                 .get(
-                    `boards-rent/orders?page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&is_quotation=0`
+                    `boards-rent/orders?is_quotation=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -784,7 +637,7 @@ export default {
 
                 adminApi
                     .get(
-                        `boards-rent/orders?page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&is_quotation=0`
+                        `boards-rent/orders?is_quotation=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -919,6 +772,7 @@ export default {
                 date: this.formatDate(new Date()),
                 salesman_id: null,
                 customer_id: null,
+                document_related_id: null,
                 total: 0,
                 is_stripe: 0,
                 is_quotation: 0,
@@ -947,6 +801,7 @@ export default {
                 branch_id: null,
                 status_id: null,
                 sell_method_id: null,
+                document_related_id: null,
                 document_id: 9,
                 date: this.formatDate(new Date()),
                 salesman_id: null,
@@ -989,6 +844,7 @@ export default {
             this.create =  {
                 branch_id: null,
                 status_id: null,
+                document_related_id: null,
                 sell_method_id: null,
                 document_id: 9,
                 date: this.formatDate(new Date()),
@@ -1313,6 +1169,7 @@ export default {
                         to: this.formatDate(e.to),
                     });
                 }
+                this.edit.total += e.price;
             });
         },
         /**
@@ -1658,6 +1515,35 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-3" >
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_order_document_related") }}
+                                                <span  class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                v-model="create.document_related_id"
+                                                :options="documentRelated.map((type) => type.id)"
+                                                :custom-label="
+                                                  (opt) =>
+                                                    $i18n.locale == 'ar'
+                                                      ? documentRelated.find((x) => x.id == opt).name
+                                                      : documentRelated.find((x) => x.id == opt).name_e
+                                                "
+                                            >
+                                            </multiselect>
+                                            <div v-if="$v.create.document_related_id.$error || errors.document_related_id" class="text-danger">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                            <template v-if="errors.document_related_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.document_related_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}</ErrorMessage
+                                                >
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
@@ -1905,7 +1791,6 @@ export default {
                                                                             type="number" :class="{
                                                                                         'is-invalid':
                                                                                             $v.create.details.$each[index].quantity.$error || errors.quantity,
-                                                                                        'is-valid': !$v.create.details.$each[index].quantity.$invalid && !errors.quantity,
                                                                                     }" />
                                                                         <div v-if="!$v.create.details.$each[index].quantity.required"
                                                                              class="invalid-feedback">
@@ -2120,21 +2005,7 @@ export default {
                                     </th>
                                     <th v-if="setting.date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("reservation_date") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        reservations.sort(
-                                                            sortString(
-                                                                $i18n.locale == 'ar' ? 'field_title' : 'field_title_e'
-                                                            )
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        reservations.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
-                                                        )
-                                                    "></i>
-                                            </div>
+                                            <span>{{ getCompanyKey("boardRent_order_date") }}</span>
                                         </div>
                                     </th>
                                     <th v-if="setting.customer_id">
@@ -2190,7 +2061,7 @@ export default {
                                     </th>
                                     <th v-if="setting.serial_id">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("reservation_serial") }}</span>
+                                            <span>{{ getCompanyKey("order_serial") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
                                                         reservations.sort(
@@ -2594,7 +2465,7 @@ export default {
                                                                                                 confirm
                                                                                                 :class="{
                                                                                         'is-invalid':
-                                                                                            $v.edit.details.$each[index].from.$error || errors.from,
+                                                                                     $v.edit.details.$each[index].from.$error || errors.from,
                                                                                     }"
                                                                                             ></date-picker>
                                                                                             <div v-if="!$v.edit.details.$each[index].from.required"
@@ -2658,7 +2529,6 @@ export default {
                                                                                             type="number" :class="{
                                                                                         'is-invalid':
                                                                                             $v.edit.details.$each[index].quantity.$error || errors.quantity,
-                                                                                        'is-valid': !$v.edit.details.$each[index].quantity.$invalid && !errors.quantity,
                                                                                     }" />
                                                                                         <div v-if="!$v.edit.details.$each[index].quantity.required"
                                                                                              class="invalid-feedback">

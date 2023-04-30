@@ -79,10 +79,10 @@ class TransactionController extends Controller
         foreach ($request->ids as $id) {
             $model = $this->modelInterface->find($id);
             $arr = [];
-            if ($model->hasChildren()) {
-                $arr[] = $id;
-                continue;
-            }
+//            if ($model->hasChildren()) {
+//                $arr[] = $id;
+//                continue;
+//            }
             $this->modelInterface->delete($id);
         }
         if (count($arr) > 0) {

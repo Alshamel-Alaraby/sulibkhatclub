@@ -10,7 +10,7 @@ use Spatie\Activitylog\LogOptions;
 
 class RoleWorkflowButton extends Model
 {
-    use HasFactory, SoftDeletes, LogTrait,ConnTrait   ;
+    use HasFactory, SoftDeletes, LogTrait ;
 
     protected $table = 'roles_workflows_buttons';
 

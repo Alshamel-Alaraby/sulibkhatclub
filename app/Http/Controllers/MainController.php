@@ -183,6 +183,4 @@ class MainController extends \Illuminate\Routing\Controller
         return responseJson(200, 'success');
     }
 
-   
-
 }

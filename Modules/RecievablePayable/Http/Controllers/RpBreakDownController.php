@@ -34,7 +34,7 @@ class RpBreakDownController extends Controller
         }
         if ($request->break_id && $request->break_type == "openingBalance"){
             $models->whereHas('openingBalance',function ($q) use ($request){
-                $q->where('id',$request->break_id);
+                $q->where('id',$request->break_id)->where('type_document',null);
             })->where('parent_id',null);
         }
         if ($request->break_id && $request->break_type == "invoice"){
@@ -53,12 +53,18 @@ class RpBreakDownController extends Controller
             })->where('parent_id',null);
         }
 
+        if ($request->break_id && $request->break_type == "debitNote"){
+            $models->whereHas('openingBalance',function ($q) use ($request){
+                $q->where('id',$request->break_id)->where('type_document','debitNote');
+            })->where('parent_id',null);
+        }
+
         if ($request->parent_id){
             $models->where('parent_id',$request->parent_id);
         }
         if ($request->customer_id){
-            $models->where('customer_id',$request->customer_id)
-            ->where('invoice_id',null)->where('parent_id',null)->orderBy('instalment_date', 'DESC');
+            $models->where('customer_id',$request->customer_id)->doesnthave('children')
+            ->where('invoice_id',null)->orderBy('instalment_date', 'DESC');
         }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

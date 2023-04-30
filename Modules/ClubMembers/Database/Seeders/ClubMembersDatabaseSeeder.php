@@ -4,6 +4,7 @@ namespace Modules\ClubMembers\Database\Seeders;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class ClubMembersDatabaseSeeder extends Seeder
 {
@@ -21,6 +22,10 @@ class ClubMembersDatabaseSeeder extends Seeder
             CmFinancialStatusDatabaseSeederTableSeeder::class,
             CmMembersPermissionsDatabaseSeederTableSeeder::class,
             CmSponsorDatabaseSeederTableSeeder::class,
+            CmStatusesTableSeeder::class,
+            CmSerialTableSeeder::class,
+            CmBranchTableSeeder::class
+
         ]);
     }
 }

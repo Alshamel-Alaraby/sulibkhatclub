@@ -18,9 +18,14 @@ class OrderDetails extends Model
         'from',
         'to',
         'price',
+        'status',
     ];
 
-    protected $table ='boards_rent_order_details';
+    protected $table = 'boards_rent_order_details';
+
+    protected $casts = [
+        'status' => \App\Enums\BooleanStatus::class,
+    ];
 
     public function order()
     {
@@ -40,6 +45,11 @@ class OrderDetails extends Model
     public function package()
     {
         return $this->belongsTo(\Modules\BoardsRent\Entities\Package::class);
+    }
+
+    public function panels()
+    {
+        return $this->belongsToMany(\Modules\BoardsRent\Entities\Panel::class, 'boards_rent_order_detail_panel', 'order_detail_id', 'panel_id');
     }
 
 }

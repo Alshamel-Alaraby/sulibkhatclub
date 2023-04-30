@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\RoleScreenHotfield;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RoleScreenHotfield\StoreRoleScreenHotfieldRequest;
+use App\Http\Requests\RoleScreenHotfield\RoleScreenHotfieldRequest;
 use App\Http\Requests\RoleScreenHotfield\UpdateRoleScreenHotfieldRequest;
 use App\Http\Resources\RoleScreenHotfield\RoleScreenHotfieldResource;
 use App\Http\Resources\ScreenSetting\ScreenSettingResource;
@@ -56,14 +56,14 @@ class RoleScreenHotfieldController extends Controller
 
     }
 
-    public function create(StoreRoleScreenHotfieldRequest $request)
+    public function create(RoleScreenHotfieldRequest $request)
     {
 
         return responseJson(200, __('Done'), $this->repository->create($request->validated()));
 
     }
 
-    public function update(UpdateRoleScreenHotfieldRequest $request, $id)
+    public function update(RoleScreenHotfieldRequest $request, $id)
     {
 
         $model = $this->repository->find($id);

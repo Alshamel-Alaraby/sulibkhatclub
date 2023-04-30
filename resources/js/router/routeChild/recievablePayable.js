@@ -125,4 +125,12 @@ export default [
         },
         component: () => import('../../views/pages/recievablePayable/transaction/creditNote'),
     },
+    {
+        path: '/dashboard/receivablePayable/debitNote',
+        name: 'debit note',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/transaction/debitNote'),
+    },
 ];

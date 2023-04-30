@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\SalesmenType;
 
-use App\Http\Requests\SalesmenType\StoreSalesmenTypeRequest;
+use App\Http\Requests\SalesmenType\SalesmenTypeRequest;
 use App\Http\Requests\SalesmenType\UpdateSalesmenTypeRequest;
 use App\Http\Resources\SalesmenType\SalesmenTypeResource;
 use Illuminate\Http\Request;
@@ -48,13 +48,13 @@ class SalesmenTypeController extends Controller
         return responseJson(200, 'success', SalesmenTypeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-    public function create(StoreSalesmenTypeRequest $request)
+    public function create(SalesmenTypeRequest $request)
     {
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
     }
 
-    public function update(UpdateSalesmenTypeRequest $request, $id)
+    public function update(SalesmenTypeRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {

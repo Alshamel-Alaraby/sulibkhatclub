@@ -40,7 +40,6 @@ class OrderResource extends JsonResource
             'customer' => new CustomerResource($this->customer),
             'salesman' => new SalesmanResource($this->salesman),
             'sell_method' => new SellMethodResource($this->sellMethod),
-            'document' => new DocumentResource($this->document),
         ];
     }
 }

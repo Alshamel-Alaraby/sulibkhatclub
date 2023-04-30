@@ -73,6 +73,7 @@ export default {
             bank_accounts: [],
             nationalities: [],
             isLoader: false,
+            codeCountry:"",
             create: {
                 name: '',
                 name_e: '',
@@ -215,11 +216,10 @@ export default {
     },
     mounted() {
         this.getData();
+        this.$store.dispatch('locationIp/getIp');
+
     },
     computed: {
-        codeCountry(){
-            return geoplugin_countryCode();
-        }
     },
     methods: {
         arabicValue(txt) {
@@ -426,6 +426,7 @@ export default {
         async resetModal(){
             await this.getCategory();
             await this.getBankAcount();
+            this.codeCountry = this.$store.getters["locationIp/countryCode"];
             this.create = {
                 name: '',
                 name_e: '',
@@ -469,6 +470,8 @@ export default {
                 city_id: null ,
                 whatsapp: ''
             };
+            this.codeCountry = this.$store.getters["locationIp/countryCode"];
+
             this.$nextTick(() => { this.$v.$reset() });
             this.errors = {};
             this.is_disabled = false;
