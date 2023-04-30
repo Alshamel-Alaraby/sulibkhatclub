@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Schema;
 use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmTransaction;
 
-class TransDb extends Command
+class MemberDb extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'trans:db';
+    protected $signature = 'member:db';
 
     /**
      * The console command description.
@@ -32,7 +32,7 @@ class TransDb extends Command
     public function handle()
     {
         $this->membersDB();
-        $this->transactionsDB();
+        // $this->transactionsDB();
 
     }
 

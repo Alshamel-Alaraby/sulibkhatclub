@@ -66,7 +66,8 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmMemberSettingInterface::class, CmMemberSettingRepository::class);
 
         $this->commands([
-            \Modules\ClubMembers\Console\TransDb::class
+            \Modules\ClubMembers\Console\TransactionDb::class,
+            \Modules\ClubMembers\Console\MemberDb::class
         ]);
 
     }
