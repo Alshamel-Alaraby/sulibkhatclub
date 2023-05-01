@@ -5,8 +5,6 @@ namespace Modules\ClubMembers\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Modules\ClubMembers\Entities\CmMember;
-use Modules\ClubMembers\Entities\CmTransaction;
 
 class MemberDb extends Command
 {
@@ -30,13 +28,6 @@ class MemberDb extends Command
      * @return int
      */
     public function handle()
-    {
-        $this->membersDB();
-        // $this->transactionsDB();
-
-    }
-
-    private function membersDB()
     {
 
         // get data from sql file
@@ -117,82 +108,7 @@ class MemberDb extends Command
         // drop table  Members
         Schema::dropIfExists('Members');
         $this->info('Members table seeded!');
+
     }
 
-    private function transactionsDB()
-    {
-        // load sql file
-        $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/transactions.sql'));
-
-        // migrate it to Database
-        DB::unprepared($sql);
-
-        // get all data from PaymentTransactions
-
-        $documentId = 8; // transactions document
-        $branchId = 1; // GENERAL
-        $serialId = 1; // OLD
-        $type = 'renew'; // with MemberNo => Renew, with NULL => Subscribe
-        $nYears = 1;
-
-        $paymentTransactions = DB::table('PaymentTransactions')->get();
-
-        foreach ($paymentTransactions as $paymentTransaction) {
-
-            $amount = $paymentTransaction->AMOUNT;
-
-            $docNo = $paymentTransaction->DocNo;
-
-            $docDate = $paymentTransaction->DocDate;
-
-            $memberId = $paymentTransaction->MEMBER_ID;
-
-            $yearsPay = $paymentTransaction->YersPay;
-
-            $membershipNumber = CmMember::where('id', $memberId)->value('membership_number');
-
-            $sponsorId = CmMember::where('id', $memberId)->value('sponsor_id');
-
-            if ($membershipNumber == 0) {$type = 'subscribe';} else {
-                $type = 'renew';
-            }
-
-            CmTransaction::create([
-
-                'document_id' => $documentId,
-
-                'branch_id' => $branchId,
-
-                'serial_id' => $serialId,
-
-                'amount' => $amount ?? 0,
-
-                'serial_number' => $docNo ?? 0,
-
-                'date' => $docDate ?? 1900 - 01 - 01,
-
-                'notes' => $paymentTransaction->DocDateTXT,
-
-                'cm_member_id' => $memberId,
-
-                'member_number' => $membershipNumber ?? 0,
-
-                'sponsor_id' => $sponsorId,
-
-                'type' => $type,
-
-                'year_from' => $yearsPay ?? 1973,
-
-                'year_to' => $yearsPay ?? 1973,
-
-                'number_of_years' => $nYears,
-
-            ]);
-
-        }
-
-        // drop table  PaymentTransactions
-        Schema::dropIfExists('PaymentTransactions');
-        $this->info('cm_transactions table is seeded!');
-    }
 }
