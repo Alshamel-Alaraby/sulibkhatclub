@@ -105,6 +105,7 @@ export default {
                 "year_to",
                 "number_of_years",
                 "amount",
+                "prefix",
             ],
             printLoading: true,
             printObj: {

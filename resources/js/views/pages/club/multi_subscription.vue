@@ -112,6 +112,7 @@ export default {
                 "year_from",
                 "year_to",
                 "amount",
+                "prefix",
             ],
             printLoading: true,
             printObj: {

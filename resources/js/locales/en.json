@@ -585,9 +585,9 @@
         }
     },
     "general": {
-        "PermissionMemberReport":"Permission member report",
+        "PermissionMemberReport":"Permission member",
         "financialStatus":"Financial status",
-        "PayerMemberReport":"Payer member report",
+        "PayerMemberReport":"Payer member",
         "video":"Video",
         "id":"id",
         "path":"Path",
@@ -1076,6 +1076,9 @@
         "debitNoteTable": "Debit Note Table",
         "debitNewCreditNote": "Add New Debit Note",
         "editDebitNote": "edit Debit Note",
-        "debitNote": "Debit Note"
+        "debitNote": "Debit Note",
+        "UncoverReports": "Uncover Reports",
+        "ElectionDisclosure": "Election Disclosure",
+        "PaymentsAndSubscriptions": "Payments And Subscriptions"
     }
 }

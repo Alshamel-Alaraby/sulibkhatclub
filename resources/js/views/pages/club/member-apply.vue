@@ -867,14 +867,14 @@ export default {
                                             <b-form-checkbox v-model="setting.last_name" class="mb-1">{{
                                                 getCompanyKey("member_last_name") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{
-                                                getCompanyKey("member_last_name") }}
-                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.family_name" class="mb-1">{{
                                                 getCompanyKey("member_family_name") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{
                                                 getCompanyKey("member_birth_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.gender" class="mb-1">{{
+                                                getCompanyKey("member_type") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.national_id" class="mb-1">{{
                                                 getCompanyKey("member_national_id") }}

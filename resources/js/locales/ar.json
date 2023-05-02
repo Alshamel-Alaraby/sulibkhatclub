@@ -589,9 +589,9 @@
         }
     },
     "general": {
-        "PermissionMemberReport":"تقارير صلاحيات الاعضاء",
+        "PermissionMemberReport":"صلاحيات الاعضاء",
         "financialStatus":"الحالة المالية",
-        "PayerMemberReport":"تقارير الاعضاء المسددين",
+        "PayerMemberReport":"الاعضاء المسددين",
         "id":"الاي دي",
         "path":"المسار",
         "created_at":"تاريخ الاضافة",
@@ -1052,6 +1052,13 @@
         "debitNoteTable": "جدول اشعار مدين",
         "debitNewCreditNote": "اضافة اشعار مدين جديد",
         "editDebitNote": "تعديل اشعار مدين",
-        "debitNote": "اشعار مدين"
+        "debitNote": "اشعار مدين",
+        "lookup": "الملفات المساعدة",
+        "statusesTable": "جدول الحالات",
+        "statuses": "الحالات",
+        "UncoverReports": " كشف التقارير",
+        "ElectionDisclosure": "كشف الانتخاب",
+        "PaymentsAndSubscriptions": "السداد والاشتراكات",
+        "accept-reject-member-table": "جدول قبول او رفض الاعضاء"
     }
 }
