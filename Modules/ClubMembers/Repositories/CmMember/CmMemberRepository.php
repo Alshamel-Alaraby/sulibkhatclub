@@ -3,14 +3,16 @@
 namespace Modules\ClubMembers\Repositories\CmMember;
 
 use Illuminate\Support\Facades\DB;
+use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
 
 class CmMemberRepository implements CmMemberInterface
 {
 
-    public function __construct(private CmMember $model)
+    public function __construct(private CmMember $model, private CmHistoryTransform $modelCmHistoryTransform)
     {
         $this->model = $model;
+        $this->modelCmHistoryTransform = $modelCmHistoryTransform;
 
     }
 
@@ -18,13 +20,18 @@ class CmMemberRepository implements CmMemberInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        if ($request->financial_status_id){
-            $models->where('financial_status_id',$request->financial_status_id);
+        if ($request->financial_status_id) {
+            $models->where('financial_status_id', $request->financial_status_id);
         }
-        
+        if ($request->national_id) {
+            $models->where('national_id', $request->national_id);
+        }
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } else {
+        } elseif ($request->limet){
+            return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
+        }else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
@@ -101,11 +108,21 @@ class CmMemberRepository implements CmMemberInterface
 
     public function updateSponsor($request, $sponsor_id)
     {
+        // return now()->format('d-m-Y H:i:s') ;
         DB::transaction(function () use ($sponsor_id, $request) {
-            $this->model->where("sponsor_id", $sponsor_id)->update($request->all());
+            $models = $this->model->where("sponsor_id", $sponsor_id)->get();
+            foreach ($models as $model) {
+                $this->modelCmHistoryTransform->create([
+                    'sponser_id_from' => $model->sponsor_id,
+                    'sponser_id_to' => $request->sponsor_id,
+                    'member_id' => $model->id,
+                    'date' => now(),
+                ]);
+                $model->update($request->all());
+            }
         });
 
-        $updatedModels = $this->model->where("sponsor_id", $request->sponsor_id)->get();
+        $updatedModels = $this->model->where("sponsor_id", $request->sponsor_id)->where('updated_at', now()->format('y-m-d H:i:s'))->get();
         return $updatedModels;
     }
 

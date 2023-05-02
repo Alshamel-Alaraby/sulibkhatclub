@@ -30,14 +30,16 @@ class MemberDb extends Command
     public function handle()
     {
 
+
         // get data from sql file
 
         $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.sql'));
 
+
         // run file
         DB::unprepared($sql);
 
-        $members = DB::table('Members')->get();
+        $members = DB::table('Members')->limit(1000);
 
         if (Schema::hasColumn('cm_members', 'applying_number')) {
             Schema::table('cm_members', function ($table) {

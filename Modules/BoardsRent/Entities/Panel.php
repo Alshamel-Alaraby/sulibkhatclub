@@ -84,6 +84,12 @@ class Panel extends Model implements HasMedia
     {
         return $this->belongsToMany(OrderDetails::class, 'boards_rent_order_detail_panel', 'panel_id', 'order_detail_id');
     }
+
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'boards_rent_package_panel', 'panel_id', 'package_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -103,5 +109,86 @@ class Panel extends Model implements HasMedia
             get:fn($value) => json_decode($value, true),
         );
 
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query->where(function ($q) use ($request) {
+
+            if($request->has("packages"))
+            {
+                $q->WhereDoesntHave("packages");
+            }
+
+            if ($request->has('date')) {
+                $q->whereDate('date', $request->date);
+            }
+
+
+            if($request->country_id)
+            {
+             $q->where('country_id', $request->country_id);
+            }
+
+            if($request->governorate_id)
+            {
+             $q->where('governorate_id', $request->governorate_id);
+            }
+
+            if($request->city_id)
+            {
+             $q->where('city_id', $request->city_id);
+            }
+
+            if($request->avenue_id)
+            {
+             $q->where('avenue_id', $request->avenue_id);
+            }
+
+            if($request->category_id)
+            {
+             $q->where('category_id', $request->category_id);
+            }
+
+
+            if($request->street_id)
+            {
+             $q->where('street_id', $request->street_id);
+            }
+
+            if($request->unit_status_id)
+            {
+             $q->where('unit_status_id', $request->unit_status_id);
+            }
+            if($request->face)
+            {
+             $q->where('face', $request->face);
+            }
+
+            if ($request->search && $request->columns) {
+                foreach ($request->columns as $column) {
+                    if (strpos($column, ".") > 0) {
+                        $column = explode(".", $column);
+                        $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
+                        // $q->orWhereHas($column[0], function ($q) use ($column, $request) {
+                        //     $q->where($column[1], 'like', '%' . $request->search . '%');
+                        // });
+                    } else {
+                        $q->orWhere($column, 'like', '%' . $request->search . '%');
+                    }
+                }
+            }
+
+            if (request()->header('company-id')) {
+                if (in_array('company_id', $this->fillable)) {
+                    $q->where('company_id', request()->header('company-id'));
+                }
+            }
+
+            if ($request->key && $request->value) {
+                $q->where($request->key, $request->value);
+            }
+
+        });
     }
 }

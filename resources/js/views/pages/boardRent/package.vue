@@ -3,7 +3,7 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import { required, minLength, maxLength, decimal, minValue } from "vuelidate/lib/validators";
+import { required, minLength, maxLength, decimal, minValue, requiredIf } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/loader";
@@ -11,7 +11,11 @@ import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort"
 import translation from "../../../helper/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-
+import Multiselect from "vue-multiselect";
+import Governate from "../../../components/governate";
+import City from "../../../components/city";
+import Avnue from "../../../components/create/avenue";
+import Street from "../../../components/create/street";
 /**
  * Advanced Table component
  */
@@ -27,6 +31,11 @@ export default {
         Switches,
         ErrorMessage,
         loader,
+        Multiselect,
+        Governate,
+        Avnue,
+        Street,
+        City
     },
     data() {
         return {
@@ -39,19 +48,28 @@ export default {
             isLoader: false,
             Tooltip: "",
             mouseEnter: "",
+            package_id: null,
+            location: [],
+            panels: [],
             create: {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             },
             edit: {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             },
+            faces: ['A','B','Multi','One-Face'],
             company_id: null,
+            governorates: [],
+            cities: [],
+            avenues: [],
+            streets: [],
+            pans: [],
             errors: {},
             isCheckAll: false,
             checkAll: [],
@@ -75,14 +93,23 @@ export default {
             name: { required, minLength: minLength(2), maxLength: maxLength(255) },
             name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
             code: { required, decimal , minValue: minValue(0.01)},
-            price: { required, decimal , minValue: minValue(0.01) }
+            price: { required, decimal , minValue: minValue(0.01) },
         },
         edit: {
             name: { required, minLength: minLength(2), maxLength: maxLength(255) },
             name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
             code: { required, decimal , minValue: minValue(0.01)},
-            price: { required, decimal , minValue: minValue(0.01) }
+            price: { required, decimal , minValue: minValue(0.01) },
         },
+        panels: {
+            required,
+            $each: {
+                    panel_id: {required: requiredIf(function(model){
+                            return this.package_id;
+                        })
+                    }
+            }
+        }
     },
     watch: {
         /**
@@ -119,26 +146,6 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
     },
-    // updated() {
-    //   $(function () {
-    //     $(".englishInput").keypress(function (event) {
-    //       var ew = event.which;
-    //       if (ew == 32) return true;
-    //       if (48 <= ew && ew <= 57) return true;
-    //       if (65 <= ew && ew <= 90) return true;
-    //       if (97 <= ew && ew <= 122) return true;
-    //       return false;
-    //     });
-    //     $(".arabicInput").keypress(function (event) {
-    //       var ew = event.which;
-    //       if (ew == 32) return true;
-    //       if (48 <= ew && ew <= 57) return false;
-    //       if (65 <= ew && ew <= 90) return false;
-    //       if (97 <= ew && ew <= 122) return false;
-    //       return true;
-    //     });
-    //   });
-    // },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             if (vm.$store.state.auth.work_flow_trees.includes("board rent-e")) {
@@ -158,6 +165,26 @@ export default {
         });
     },
     methods: {
+        addNewField() {
+            this.cities.push({cities: []});
+            this.avenues.push({avenues: []});
+            this.streets.push({streets: []});
+            this.pans.push({pans: []});
+            this.location.push({governorate_id: null,city_id: null, avenue_id: null, street_id: null,face: ''});
+            this.panels.push({
+                panel_id: null,
+            });
+        },
+        removeNewField(index) {
+            if (this.panels.length > 1) {
+                this.panels.splice(index, 1);
+                this.cities.splice(index, 1);
+                this.avenues.splice(index, 1);
+                this.streets.splice(index, 1);
+                this.location.splice(index, 1);
+                this.pans.splice(index, 1);
+            }
+        },
         arabicValue(txt) {
             this.create.name = arabicValue(txt);
             this.edit.name = arabicValue(txt);
@@ -377,8 +404,11 @@ export default {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.package_id = null;
+            this.cities = [];this.avenues = [];this.streets = [];
+            this.location =[]
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -388,17 +418,161 @@ export default {
         /**
          *  hidden Modal (create)
          */
-        resetModal() {
+        async resetModal() {
             this.create = {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.package_id = null;
+            await  this.getGovernorate();
+            this.cities = [{cities: []}];
+            this.avenues = [{avenues: []}];
+            this.streets = [{streets: []}];
+            this.pans = [{pans: []}];
+            this.location = [{governorate_id: null,city_id: null, avenue_id: null, street_id: null,face: ''}];
+            this.panels =  [{panel_id: null}];
             this.$nextTick(() => {
                 this.$v.$reset();
             });
             this.errors = {};
+        },
+        async getGovernorate() {
+
+            this.governorates = [];this.cities = [];this.avenues = [];this.streets = [];
+
+            await adminApi
+                .get(`/governorates?columns[0]=country_id&search=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف المحافظه", name_e: "Add Governorate" });
+                    this.governorates = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
+        async getCity(index) {
+            this.isLoader = true;
+            let governorate = this.location[index].governorate_id;
+            this.location[index].city_id = null;
+            this.location[index].avenue_id = null;
+            this.location[index].street_id = null;
+            this.cities[index].cities = [];this.avenues[index].avenues = [];this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/cities?columns[0]=governorate_id&search=${governorate}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف المدينه", name_e: "Add City" });
+                    this.cities[index].cities = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getAvnue(index) {
+            this.isLoader = true;
+            let city = this.location[index].city_id;
+            this.location[index].avenue_id = null;
+            this.location[index].street_id = null;
+            this.avenues[index].avenues = [];this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/avenues?columns[0]=city_id&search=${city}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف المنطقه", name_e: "Add Avenue" });
+                    this.avenues[index].avenues = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getStreet(index) {
+            this.isLoader = true;
+            let avenue = this.location[index].avenue_id;
+            this.location[index].street_id = null;
+            this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/streets?columns[0]=avenue_id&search=${avenue}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف الشارع", name_e: "Add Street" });
+                    this.streets[index].streets = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getPanel(index) {
+            this.isLoader = true;
+
+            await adminApi
+                .get(`/boards-rent/panels?packages=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.pens[index].pens = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getOnePanel(id,index) {
+            this.isLoader = true;
+
+            await adminApi
+                .get(
+                    `/boards-rent/panels/${id}`
+                )
+                .then((res) => {
+                    let l = res.data.data;
+                    this.pans[index].pans.push(l);
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  create countrie
@@ -408,8 +582,11 @@ export default {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.panels = [];
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
+            this.location= [];
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -435,6 +612,14 @@ export default {
                     .post(`/boards-rent/packages`, {...this.create,company_id: this.company_id})
                     .then((res) => {
                         this.is_disabled = true;
+                        this.package_id = res.data.data.id;
+                        this.cities = [{cities: []}];
+                        this.avenues = [{avenues: []}];
+                        this.streets = [{streets: []}];
+                        this.pans = [{pans: []}];
+                        this.location = [{governorate_id: null,city_id: null, avenue_id: null, street_id: null,face: ''}];
+                        this.panels =  [{panel_id: null}];
+                        this.edit = this.create;
                         this.getData();
                         setTimeout(() => {
                             Swal.fire({
@@ -472,14 +657,16 @@ export default {
                 this.edit.name_e = this.edit.name;
             }
             this.$v.edit.$touch();
-
-            if (this.$v.edit.$invalid) {
+            this.$v.panels.$touch();
+            if (this.$v.edit.$invalid && this.$v.panels.$invalid) {
                 return;
             } else {
                 this.isLoader = true;
                 this.errors = {};
+                let panels = [];
+                this.panels.forEach(e => panels.push(e.panel_id));
                 adminApi
-                    .put(`/boards-rent/packages/${id}`, this.edit)
+                    .put(`/boards-rent/packages/${this.package_id}`, {...this.edit,panels})
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -511,12 +698,25 @@ export default {
         /**
          *   show Modal (edit)
          */
-        resetModalEdit(id) {
+        async resetModalEdit(id) {
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];this.panels = [];
+            this.location = [];
             let packages = this.packages.find((e) => id == e.id);
+            this.package_id = packages.id;
             this.edit.name = packages.name;
             this.edit.name_e = packages.name_e;
             this.edit.code = packages.code;
             this.edit.price = packages.price;
+            packages.panels.forEach(async function(e,index) {
+                this.cities.push({cities: []});
+                this.avenues.push({avenues: []});
+                this.streets.push({streets: []});
+                this.pans.push({pans: []});
+                this.location.push({governorate_id: null,city_id: null, avenue_id: null, street_id: null,face: ''});
+                await this.getOnePanel(e.id,index);
+                this.panels.push({panel_id: e.id});
+            });
+            await  this.getGovernorate();
             this.errors = {};
         },
         /**
@@ -524,6 +724,9 @@ export default {
          */
         resetModalHiddenEdit(id) {
             this.errors = {};
+            this.package_id = null;
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];this.panels = [];
+            this.location = [];
             this.edit = {
                 name: "",
                 name_e: "",
@@ -566,7 +769,46 @@ export default {
                 }
                 this.enabled3 = true;
             }, 100);
-        }
+        },
+        async showGovernorateModal(index) {
+            if (this.governorate_id == 0) {
+                this.$bvModal.show("governorate-create");
+                this.governorate_id = null;
+            }else {
+                this.panals[index].panel_id = null;
+                await this.getCity();
+                await this.getPanel(index);
+            }
+        },
+        async showCityModal(index) {
+            if (this.city_id == 0) {
+                this.$bvModal.show("city-create");
+                this.city_id = null;
+            }else {
+                this.panals[index].panel_id = null;
+                await this.getAvnue();
+                await this.getPanel(index);
+            }
+        },
+        async showAvenueModal(index) {
+            if (this.avenue_id == 0) {
+                this.$bvModal.show("avenue-create");
+                this.avenue_id = null;
+            }else {
+                this.panals[index].panel_id = null;
+                await this.getStreet();
+                await this.getPanel(index);
+            }
+        },
+        async showStreetModal(index) {
+            if (this.street_id == 0) {
+                this.$bvModal.show("street-create");
+                this.street_id = null;
+            }else {
+                this.panals[index].panel_id = null;
+                await this.getPanel(index);
+            }
+        },
     },
 };
 </script>
@@ -574,6 +816,10 @@ export default {
 <template>
     <Layout>
         <PageHeader />
+        <Governate :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getGovernorate" />
+        <City :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCity" />
+        <Avnue :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getAvnue" />
+        <Street :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getStreet" />
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -768,6 +1014,7 @@ export default {
                             :hide-footer="true"
                             @show="resetModal"
                             @hidden="resetModalHidden"
+                            dialog-class="modal-full-width"
                         >
                             <form>
                                 <div class="mb-3 d-flex justify-content-end">
@@ -806,141 +1053,276 @@ export default {
                                         {{ $t("general.Cancel") }}
                                     </b-button>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="field-1" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_name_ar") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div dir="rtl">
-                                                <input
-                                                    @keyup="arabicValue(create.name)"
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="1"
-                                                    v-model="$v.create.name.$model"
-                                                    :class="{
-                            'is-invalid': $v.create.name.$error || errors.name,
-                            'is-valid': !$v.create.name.$invalid && !errors.name,
-                          }"
-                                                    id="field-1"
-                                                />
-                                            </div>
-                                            <div v-if="!$v.create.name.minLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatleast") }}
-                                                {{ $v.create.name.$params.minLength.min }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatmost") }}
-                                                {{ $v.create.name.$params.maxLength.max }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <template v-if="errors.name">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.name"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="field-2" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_name_en") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div dir="ltr">
-                                                <input
-                                                    @keyup="englishValue(create.name_e)"
-                                                    type="text"
-                                                    class="form-control englishInput"
-                                                    data-create="2"
-                                                    v-model="$v.create.name_e.$model"
-                                                    :class="{
-                            'is-invalid': $v.create.name_e.$error || errors.name_e,
-                            'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
-                          }"
-                                                    id="field-2"
-                                                />
-                                            </div>
-                                            <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatleast") }}
-                                                {{ $v.create.name_e.$params.minLength.min }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatmost") }}
-                                                {{ $v.create.name_e.$params.maxLength.max }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <template v-if="errors.name_e">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.name_e"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="field-3" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_code") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div >
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="$v.create.code.$model"
-                                                    :class="{
+                                <b-tabs nav-class="nav-tabs nav-bordered">
+                                    <b-tab :title="$t('general.DataEntry')" active>
+                                        <div class="row">
+                                            <div class="row col-7">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="field-1" class="control-label">
+                                                            {{ getCompanyKey("boardRent_package_name_ar") }}
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div dir="rtl">
+                                                            <input
+                                                                @keyup="arabicValue(create.name)"
+                                                                type="text"
+                                                                class="form-control"
+                                                                data-create="1"
+                                                                v-model="$v.create.name.$model"
+                                                                :class="{
+                                                        'is-invalid': $v.create.name.$error || errors.name,
+                                                        'is-valid': !$v.create.name.$invalid && !errors.name,
+                                                      }"
+                                                                id="field-1"
+                                                            />
+                                                        </div>
+                                                        <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                                                            {{ $t("general.Itmustbeatleast") }}
+                                                            {{ $v.create.name.$params.minLength.min }}
+                                                            {{ $t("general.letters") }}
+                                                        </div>
+                                                        <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                                                            {{ $t("general.Itmustbeatmost") }}
+                                                            {{ $v.create.name.$params.maxLength.max }}
+                                                            {{ $t("general.letters") }}
+                                                        </div>
+                                                        <template v-if="errors.name">
+                                                            <ErrorMessage
+                                                                v-for="(errorMessage, index) in errors.name"
+                                                                :key="index"
+                                                            >{{ errorMessage }}</ErrorMessage
+                                                            >
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="field-2" class="control-label">
+                                                            {{ getCompanyKey("boardRent_package_name_en") }}
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div dir="ltr">
+                                                            <input
+                                                                @keyup="englishValue(create.name_e)"
+                                                                type="text"
+                                                                class="form-control englishInput"
+                                                                data-create="2"
+                                                                v-model="$v.create.name_e.$model"
+                                                                :class="{
+                                                        'is-invalid': $v.create.name_e.$error || errors.name_e,
+                                                        'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                                                      }"
+                                                                id="field-2"
+                                                            />
+                                                        </div>
+                                                        <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                                                            {{ $t("general.Itmustbeatleast") }}
+                                                            {{ $v.create.name_e.$params.minLength.min }}
+                                                            {{ $t("general.letters") }}
+                                                        </div>
+                                                        <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                                                            {{ $t("general.Itmustbeatmost") }}
+                                                            {{ $v.create.name_e.$params.maxLength.max }}
+                                                            {{ $t("general.letters") }}
+                                                        </div>
+                                                        <template v-if="errors.name_e">
+                                                            <ErrorMessage
+                                                                v-for="(errorMessage, index) in errors.name_e"
+                                                                :key="index"
+                                                            >{{ errorMessage }}</ErrorMessage
+                                                            >
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="field-3" class="control-label">
+                                                            {{ getCompanyKey("boardRent_package_code") }}
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div >
+                                                            <input
+                                                                type="number"
+                                                                class="form-control"
+                                                                v-model="$v.create.code.$model"
+                                                                :class="{
                                                     'is-invalid': $v.create.code.$error || errors.code,
                                                     'is-valid': !$v.create.code.$invalid && !errors.code,
                                                   }"
-                                                    id="field-3"
-                                                />
-                                            </div>
-                                            <template v-if="errors.code">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.code"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="field-4" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_price") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div>
-                                                <input
-                                                    step=".01"
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="$v.create.price.$model"
-                                                    :class="{
+                                                                id="field-3"
+                                                            />
+                                                        </div>
+                                                        <template v-if="errors.code">
+                                                            <ErrorMessage
+                                                                v-for="(errorMessage, index) in errors.code"
+                                                                :key="index"
+                                                            >{{ errorMessage }}</ErrorMessage
+                                                            >
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="field-4" class="control-label">
+                                                            {{ getCompanyKey("boardRent_package_price") }}
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div>
+                                                            <input
+                                                                step=".01"
+                                                                type="number"
+                                                                class="form-control"
+                                                                v-model="$v.create.price.$model"
+                                                                :class="{
                                                     'is-invalid': $v.create.price.$error || errors.price,
                                                     'is-valid': !$v.create.price.$invalid && !errors.price,
                                                   }"
-                                                    id="field-4"
-                                                />
+                                                                id="field-4"
+                                                            />
+                                                        </div>
+                                                        <template v-if="errors.price">
+                                                            <ErrorMessage
+                                                                v-for="(errorMessage, index) in errors.price"
+                                                                :key="index"
+                                                            >{{ errorMessage }}</ErrorMessage
+                                                            >
+                                                        </template>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <template v-if="errors.price">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.price"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
                                         </div>
-                                    </div>
-                                </div>
+                                    </b-tab>
+                                    <b-tab
+                                        :title="$t('general.panel')"
+                                    >
+<!--                                        :disabled="!package_id"-->
+                                        <div class="row justify-content-center mb-3">
+                                            <div class="col-4">
+                                                <div class="face">
+                                                    <span class="face-name">A</span>
+                                                    <span class="face-number">2</span>
+                                                </div>
+                                                <div class="face">
+                                                    <span class="face-name">B</span>
+                                                    <span class="face-number">4</span>
+                                                </div>
+                                                <div class="face">
+                                                    <span class="face-name">Multi</span>
+                                                    <span class="face-number">5</span>
+                                                </div>
+                                                <div class="face">
+                                                    <span class="face-name">One-Face</span>
+                                                    <span class="face-number">3</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       <template v-for="(item, index) in panels">
+                                           <div class="row" :key="index">
+                                                   <div class="col-md-2">
+                                                       <div class="form-group">
+                                                           <label class="control-label">
+                                                               {{ getCompanyKey("boardRent_panel_governorate") }}
+                                                               <span class="text-danger">*</span>
+                                                           </label>
+                                                           <multiselect
+                                                               @input="showGovernorateModal"
+                                                               v-model="location[index].governorate_id"
+                                                               :options="governorates.map((type) => type.id)"
+                                                               :custom-label="(opt) => $i18n.locale == 'ar' ? governorates.find((x) => x.id == opt).name : governorates.find((x) => x.id == opt).name_e"
+                                                           >
+                                                           </multiselect>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-md-2">
+                                                       <div class="form-group">
+                                                           <label class="control-label">
+                                                               {{ getCompanyKey("boardRent_panel_city") }}
+                                                               <span class="text-danger">*</span>
+                                                           </label>
+                                                           <multiselect
+                                                               @input="showCityModal(index)"
+                                                               v-model="location[index].city_id"
+                                                               :options="cities[index].cities.map((type) => type.id)"
+                                                               :custom-label="(opt) => $i18n.locale == 'ar' ? cities[index].cities.find((x) => x.id == opt).name : cities[index].cities.find((x) => x.id == opt).name_e"
+                                                           >
+                                                           </multiselect>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-md-2">
+                                                       <div class="form-group">
+                                                           <label class="control-label">
+                                                               {{ getCompanyKey("boardRent_panel_avenue") }}
+                                                               <span class="text-danger">*</span>
+                                                           </label>
+                                                           <multiselect
+                                                               @input="showAvenueModal(index)"
+                                                               v-model="location[index].avenue_id"
+                                                               :options="avenues[index].avenues.map((type) => type.id)"
+                                                               :custom-label="(opt) => $i18n.locale == 'ar' ? avenues[index].avenues.find((x) => x.id == opt).name : avenues[index].avenues.find((x) => x.id == opt).name_e"
+                                                           >
+                                                           </multiselect>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-md-2">
+                                                       <div class="form-group">
+                                                           <label class="control-label">
+                                                               {{ getCompanyKey("boardRent_panel_street") }}
+                                                               <span class="text-danger">*</span>
+                                                           </label>
+                                                           <multiselect
+                                                               @input="showStreetModal(index)"
+                                                               v-model="location[index].street_id"
+                                                               :options="streets[index].streets.map((type) => type.id)"
+                                                               :custom-label="(opt) => $i18n.locale == 'ar' ? streets[index].streets.find((x) => x.id == opt).name : streets[index].streets.find((x) => x.id == opt).name_e"
+                                                           >
+                                                           </multiselect>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("boardRent_panel_face") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <multiselect
+                                                                v-model="location[index].face"
+                                                                :options="faces"
+                                                            >
+                                                            </multiselect>
+                                                        </div>
+                                                    </div>
+                                                   <div class="col-md-3">
+                                                       <div class="form-group">
+                                                           <label>{{ $t('general.panel') }}</label>
+                                                           <multiselect
+                                                                        v-model="$v.panels.$each[index].panel_id.$model"
+                                                                        :options="pans[index].pans.map((type) => type.id)" :custom-label="
+                                                            (opt) =>
+                                                              $i18n.locale == 'ar'
+                                                                ? pans[index].pans.find((x) => x.id == opt).name
+                                                                : pans[index].pans.find((x) => x.id == opt).name_e
+                                                          ">
+                                                           </multiselect>
+                                                           <div v-if="$v.panels.$each[index].panel_id.$error" class="text-danger">
+                                                               {{ $t("general.fieldIsRequired") }}
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-md-2 p-0 pt-3">
+                                                        <button v-if="(panels.length - 1) == index" type="button"
+                                                                @click.prevent="addNewField" class="custom-btn-dowonload">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                        <button v-if="panels.length > 1" type="button"
+                                                                @click.prevent="removeNewField(index)" class="custom-btn-dowonload">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </div>
+                                           </div>
+                                       </template>
+                                    </b-tab>
+                                </b-tabs>
                             </form>
                         </b-modal>
                         <!--  /create   -->
@@ -1117,155 +1499,276 @@ export default {
                                                         {{ $t("general.Cancel") }}
                                                     </b-button>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="edit-1" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_name_ar") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div dir="rtl">
-                                                                <input
-                                                                    @keyup="arabicValue(edit.name)"
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    data-edit="1"
-                                                                    v-model="$v.edit.name.$model"
-                                                                    :class="{
-                                      'is-invalid': $v.edit.name.$error || errors.name,
-                                      'is-valid': !$v.edit.name.$invalid && !errors.name,
-                                    }"
-                                                                    id="edit-1"
-                                                                />
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name.minLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatleast") }}
-                                                                {{ $v.edit.name.$params.minLength.min }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name.maxLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatmost") }}
-                                                                {{ $v.edit.name.$params.maxLength.max }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <template v-if="errors.name">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.name"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="edit-2" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_name_en") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div dir="ltr">
-                                                                <input
-                                                                    @keyup="englishValue(edit.name_e)"
-                                                                    type="text"
-                                                                    class="form-control englishInput"
-                                                                    data-edit="2"
-                                                                    v-model="$v.edit.name_e.$model"
-                                                                    :class="{
-                                      'is-invalid':
-                                        $v.edit.name_e.$error || errors.name_e,
-                                      'is-valid':
-                                        !$v.edit.name_e.$invalid && !errors.name_e,
-                                    }"
-                                                                    id="edit-2"
-                                                                />
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name_e.minLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatleast") }}
-                                                                {{ $v.edit.name_e.$params.minLength.min }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name_e.maxLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatmost") }}
-                                                                {{ $v.edit.name_e.$params.maxLength.max }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <template v-if="errors.name_e">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.name_e"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="field-33" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_code") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    type="number"
-                                                                    class="form-control"
-                                                                    v-model="$v.edit.code.$model"
-                                                                    :class="{
+                                                <b-tabs nav-class="nav-tabs nav-bordered">
+                                                    <b-tab :title="$t('general.DataEntry')" active>
+                                                        <div class="row">
+                                                            <div class="row col-7">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="field-edit-1" class="control-label">
+                                                                            {{ getCompanyKey("boardRent_package_name_ar") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <div dir="rtl">
+                                                                            <input
+                                                                                @keyup="arabicValue(edit.name)"
+                                                                                type="text"
+                                                                                class="form-control"
+                                                                                data-create="1"
+                                                                                v-model="$v.edit.name.$model"
+                                                                                :class="{
+                                                                                    'is-invalid': $v.edit.name.$error || errors.name,
+                                                                                    'is-valid': !$v.edit.name.$invalid && !errors.name,
+                                                                                  }"
+                                                                                id="field-edit-1"
+                                                                            />
+                                                                        </div>
+                                                                        <div v-if="!$v.edit.name.minLength" class="invalid-feedback">
+                                                                            {{ $t("general.Itmustbeatleast") }}
+                                                                            {{ $v.edit.name.$params.minLength.min }}
+                                                                            {{ $t("general.letters") }}
+                                                                        </div>
+                                                                        <div v-if="!$v.edit.name.maxLength" class="invalid-feedback">
+                                                                            {{ $t("general.Itmustbeatmost") }}
+                                                                            {{ $v.edit.name.$params.maxLength.max }}
+                                                                            {{ $t("general.letters") }}
+                                                                        </div>
+                                                                        <template v-if="errors.name">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.name"
+                                                                                :key="index"
+                                                                            >{{ errorMessage }}</ErrorMessage
+                                                                            >
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="field-edit-2" class="control-label">
+                                                                            {{ getCompanyKey("boardRent_package_name_en") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <div dir="ltr">
+                                                                            <input
+                                                                                @keyup="englishValue(edit.name_e)"
+                                                                                type="text"
+                                                                                class="form-control englishInput"
+                                                                                data-create="2"
+                                                                                v-model="$v.edit.name_e.$model"
+                                                                                :class="{
+                                                        'is-invalid': $v.edit.name_e.$error || errors.name_e,
+                                                        'is-valid': !$v.edit.name_e.$invalid && !errors.name_e,
+                                                      }"
+                                                                                id="field-edit-2"
+                                                                            />
+                                                                        </div>
+                                                                        <div v-if="!$v.edit.name_e.minLength" class="invalid-feedback">
+                                                                            {{ $t("general.Itmustbeatleast") }}
+                                                                            {{ $v.edit.name_e.$params.minLength.min }}
+                                                                            {{ $t("general.letters") }}
+                                                                        </div>
+                                                                        <div v-if="!$v.edit.name_e.maxLength" class="invalid-feedback">
+                                                                            {{ $t("general.Itmustbeatmost") }}
+                                                                            {{ $v.edit.name_e.$params.maxLength.max }}
+                                                                            {{ $t("general.letters") }}
+                                                                        </div>
+                                                                        <template v-if="errors.name_e">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.name_e"
+                                                                                :key="index"
+                                                                            >{{ errorMessage }}</ErrorMessage
+                                                                            >
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="field-edit-3" class="control-label">
+                                                                            {{ getCompanyKey("boardRent_package_code") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <div >
+                                                                            <input
+                                                                                type="number"
+                                                                                class="form-control"
+                                                                                v-model="$v.edit.code.$model"
+                                                                                :class="{
                                                     'is-invalid': $v.edit.code.$error || errors.code,
                                                     'is-valid': !$v.edit.code.$invalid && !errors.code,
                                                   }"
-                                                                    id="field-33"
-                                                                />
-                                                            </div>
-                                                            <template v-if="errors.code">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.code"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="field-44" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_price") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    step=".01"
-                                                                    type="number"
-                                                                    class="form-control"
-                                                                    v-model="$v.edit.price.$model"
-                                                                    :class="{
+                                                                                id="field-edit-3"
+                                                                            />
+                                                                        </div>
+                                                                        <template v-if="errors.code">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.code"
+                                                                                :key="index"
+                                                                            >{{ errorMessage }}</ErrorMessage
+                                                                            >
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="field-edit-4" class="control-label">
+                                                                            {{ getCompanyKey("boardRent_package_price") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <div>
+                                                                            <input
+                                                                                step=".01"
+                                                                                type="number"
+                                                                                class="form-control"
+                                                                                v-model="$v.edit.price.$model"
+                                                                                :class="{
                                                     'is-invalid': $v.edit.price.$error || errors.price,
                                                     'is-valid': !$v.edit.price.$invalid && !errors.price,
                                                   }"
-                                                                    id="field-44"
-                                                                />
+                                                                                id="field-edit-4"
+                                                                            />
+                                                                        </div>
+                                                                        <template v-if="errors.price">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.price"
+                                                                                :key="index"
+                                                                            >{{ errorMessage }}</ErrorMessage
+                                                                            >
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <template v-if="errors.price">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.price"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    </b-tab>
+                                                    <b-tab
+                                                        :title="$t('general.panel')"
+                                                        :disabled="!package_id"
+                                                    >
+                                                        <div class="row justify-content-center mb-3">
+                                                            <div class="col-4">
+                                                                <div class="face">
+                                                                    <span class="face-name">A</span>
+                                                                    <span class="face-number">2</span>
+                                                                </div>
+                                                                <div class="face">
+                                                                    <span class="face-name">B</span>
+                                                                    <span class="face-number">4</span>
+                                                                </div>
+                                                                <div class="face">
+                                                                    <span class="face-name">Multi</span>
+                                                                    <span class="face-number">5</span>
+                                                                </div>
+                                                                <div class="face">
+                                                                    <span class="face-name">One-Face</span>
+                                                                    <span class="face-number">3</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <template v-for="(item, index) in panels">
+                                                            <div class="row" :key="index">
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ getCompanyKey("boardRent_panel_governorate") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect
+                                                                            @input="showGovernorateModal"
+                                                                            v-model="location[index].governorate_id"
+                                                                            :options="governorates.map((type) => type.id)"
+                                                                            :custom-label="(opt) => $i18n.locale == 'ar' ? governorates.find((x) => x.id == opt).name : governorates.find((x) => x.id == opt).name_e"
+                                                                        >
+                                                                        </multiselect>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ getCompanyKey("boardRent_panel_city") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect
+                                                                            @input="showCityModal(index)"
+                                                                            v-model="location[index].city_id"
+                                                                            :options="cities[index].cities.map((type) => type.id)"
+                                                                            :custom-label="(opt) => $i18n.locale == 'ar' ? cities[index].cities.find((x) => x.id == opt).name : cities[index].cities.find((x) => x.id == opt).name_e"
+                                                                        >
+                                                                        </multiselect>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ getCompanyKey("boardRent_panel_avenue") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect
+                                                                            @input="showAvenueModal(index)"
+                                                                            v-model="location[index].avenue_id"
+                                                                            :options="avenues[index].avenues.map((type) => type.id)"
+                                                                            :custom-label="(opt) => $i18n.locale == 'ar' ? avenues[index].avenues.find((x) => x.id == opt).name : avenues[index].avenues.find((x) => x.id == opt).name_e"
+                                                                        >
+                                                                        </multiselect>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ getCompanyKey("boardRent_panel_street") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect
+                                                                            @input="showStreetModal(index)"
+                                                                            v-model="location[index].street_id"
+                                                                            :options="streets[index].streets.map((type) => type.id)"
+                                                                            :custom-label="(opt) => $i18n.locale == 'ar' ? streets[index].streets.find((x) => x.id == opt).name : streets[index].streets.find((x) => x.id == opt).name_e"
+                                                                        >
+                                                                        </multiselect>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ getCompanyKey("boardRent_panel_face") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect
+                                                                            v-model="location[index].face"
+                                                                            :options="faces"
+                                                                        >
+                                                                        </multiselect>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>{{ $t('general.panel') }}</label>
+                                                                        <multiselect
+                                                                            v-model="$v.panels.$each[index].panel_id.$model"
+                                                                            :options="pans[index].pans.map((type) => type.id)" :custom-label="
+                                                            (opt) =>
+                                                              $i18n.locale == 'ar'
+                                                                ? pans[index].pans.find((x) => x.id == opt).name
+                                                                : pans[index].pans.find((x) => x.id == opt).name_e
+                                                          ">
+                                                                        </multiselect>
+                                                                        <div v-if="$v.panels.$each[index].panel_id.$error" class="text-danger">
+                                                                            {{ $t("general.fieldIsRequired") }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2 p-0 pt-3">
+                                                                    <button v-if="(panels.length - 1) == index" type="button"
+                                                                            @click.prevent="addNewField" class="custom-btn-dowonload">
+                                                                        <i class="fas fa-plus"></i>
+                                                                    </button>
+                                                                    <button v-if="panels.length > 1" type="button"
+                                                                            @click.prevent="removeNewField(index)" class="custom-btn-dowonload">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </b-tab>
+                                                </b-tabs>
                                             </form>
                                         </b-modal>
                                         <!--  /edit   -->
@@ -1301,3 +1804,27 @@ export default {
         </div>
     </Layout>
 </template>
+
+<style scoped>
+.face {
+    display: inline-block;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.face .face-name{
+    background-color: #6dc6f5;
+    padding: 5px 10px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 7px;
+    display: block;
+}
+
+.face .face-number{
+    font-size: 20px;
+    font-weight: 600;
+    padding: 5px 10px;
+}
+</style>

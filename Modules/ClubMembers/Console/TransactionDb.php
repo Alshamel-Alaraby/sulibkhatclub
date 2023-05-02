@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Schema;
 use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmTransaction;
 
+use Modules\ClubMembers\Database\Seeders;
+
 class TransactionDb extends Command
 {
     /**
@@ -36,16 +38,20 @@ class TransactionDb extends Command
 
         // migrate it to Database
         DB::unprepared($sql);
+        
+        $transactions =DB::table('PaymentTransactions')->orderBy('DocNo')->limit(1000);
 
-        DB::table('PaymentTransactions')->orderBy('DocNo')->chunk(10000, function ($records) {
+        $i = 0;
+        $transactions->chunk(100, function ($records) {
             $this->insertTransaction($records);
-            $this->info('cm_transactions table is seeded!');
+            $this->info("chunck '.$i.' in cm_transactions table is seeded!");
+            $i++;
         });
 
-        // drop table  PaymentTransactions
-        Schema::dropIfExists('PaymentTransactions');
-        $this->info('cm_transactions table is seeded!');
-
+         // drop table  PaymentTransactions
+         Schema::dropIfExists('PaymentTransactions');
+         $this->info('All cm_transactions table is seeded!');
+       
     }
 
     public function insertTransaction($records)
@@ -58,6 +64,9 @@ class TransactionDb extends Command
         $serialId = 1; // OLD
         $type = 'renew'; // with MemberNo => Renew, with NULL => Subscribe
         $nYears = 1;
+
+        $i=1;
+
         foreach ($records as $paymentTransaction) {
 
             $amount = $paymentTransaction->AMOUNT;
@@ -105,5 +114,6 @@ class TransactionDb extends Command
             ]);
 
         }
+
     }
 }

@@ -13,21 +13,18 @@ class PackageRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->method() == 'PUT') {
-            return [
-                'name' => 'required|string|max:255|unique:boards_rent_packages,name,' . $this->id,
-                'name_e' => 'required|string|max:255|unique:boards_rent_packages,name_e,' . $this->id,
-                'code'  => 'required|string|max:255|unique:boards_rent_packages,code,' . $this->id,
-                'price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            ];
-        }
-
         return [
-            'name'  => 'required|string|max:255|unique:boards_rent_packages,name',
-            'name_e' => 'required|string|max:255|unique:boards_rent_packages,name_e',
-            'code'  => 'required|string|max:255|unique:boards_rent_packages,code',
+            'name' => 'required|string|max:255|unique:boards_rent_packages,name,' .
+            ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'required|string|max:255|unique:boards_rent_packages,name_e,' .
+            ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'code' => 'required|string|max:255|unique:boards_rent_packages,code,' .
+            ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            "panels" => "required|array",
+            "panels.*" => "required_with:panels|exists:boards_rent_panels,id",
         ];
+
     }
 
     /**

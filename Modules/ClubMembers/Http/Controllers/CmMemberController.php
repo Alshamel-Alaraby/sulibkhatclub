@@ -132,6 +132,7 @@ class CmMemberController extends Controller
 
     public function updateSponsor(Request $request, $sponsor_id)
     {
+        // return now()->format('d-m-Y H:i:s');
 
         $model = CmMember::where("sponsor_id", $sponsor_id)->get();
 
@@ -176,7 +177,7 @@ class CmMemberController extends Controller
     {
         DB::unprepared(file_get_contents(public_path("members.sql")));
 
-        
+
 
         ;
     }

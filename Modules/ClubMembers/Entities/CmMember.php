@@ -79,13 +79,36 @@ class CmMember extends Model
                 $q->whereDate('membership_date', '>=', now()->subDays($request->last_days));
             }
 
-            if ($request->cm_permission_id) {
+
+
+            // if ($request->has('cm_permission_id')) {
+            //     $cm_permission_ids = explode(',', $request->cm_permission_id);
+            //     $q->whereHas('memberType', function ($q) use ($cm_permission_ids) {
+            //         $q->whereHas('memberPermissions', function ($q) use ($cm_permission_ids) {
+            //             $q->whereIn('cm_permissions_id', $cm_permission_ids);
+            //         });
+            //     });
+            // }
+
+            // if ($request->cm_permission_id && is_array($request->cm_permission_id)) {
+            //     $q->whereHas('memberType', function ($q) use ($request) {
+            //         $q->whereHas('memberPermissions', function ($q) use ($request) {
+            //             $q->whereIn('cm_permissions_id', $request->cm_permission_id);
+            //         });
+            //     });
+            // }
+
+
+            if ($request->has('cm_permission_id') && is_array($request->cm_permission_id)) {
                 $q->whereHas('memberType', function ($q) use ($request) {
-                    $q->whereHas('memberPermissions', function ($q) use ($request) {
-                        $q->whereJsonContains('cm_permissions_id', $request->cm_permission_id);
-                    });
+                    foreach ($request->cm_permission_id as $permission_id) {
+                        $q->whereHas('memberPermissions', function ($q) use ($permission_id) {
+                            $q->whereJsonContains('cm_permissions_id', $permission_id);
+                        });
+                    }
                 });
             }
+
 
             if ($request->key && $request->value) {
                 $q->where($request->key, $request->value);

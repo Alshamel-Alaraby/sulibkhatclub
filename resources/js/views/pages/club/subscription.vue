@@ -61,8 +61,8 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: new Date().toISOString().slice(0, 10),
-                date_to: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 number_of_years:1,
                 type: "",
                 amount: "",
@@ -74,8 +74,8 @@ export default {
                 branch_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                date_from: new Date().toISOString().slice(0, 10),
-                date_to: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 type: "",
                 number_of_years:1,
                 amount: "",
@@ -86,8 +86,8 @@ export default {
                 branch_id: true,
                 serial_number: true,
                 cm_member_id: true,
-                date_from: true,
-                date_to: true,
+                year_from: true,
+                year_to: true,
                 number_of_years:true,
                 type: true,
                 amount: true,
@@ -101,8 +101,8 @@ export default {
             current_page: 1,
             filterSetting: [
                 "cm_member_id",
-                "date_from",
-                "date_to",
+                "year_from",
+                "year_to",
                 "number_of_years",
                 "amount",
             ],
@@ -117,8 +117,8 @@ export default {
             branch_id: {required},
             serial_id: {required},
             cm_member_id: {required},
-            date_from: {required},
-            date_to: {required},
+            year_from: {required},
+            year_to: {required},
             number_of_years: {required},
             amount: {required},
             type: {required},
@@ -126,9 +126,9 @@ export default {
         edit: {
             branch_id: {required},
             cm_member_id: {required},
-            date_from: {required},
+            year_from: {required},
             number_of_years: {required},
-            date_to: {required},
+            year_to: {required},
             type: {required},
             amount: {required},
         },
@@ -189,10 +189,10 @@ export default {
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
-                date_from: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 number_of_years:1,
                 amount: "",
                 module_type:"club",
@@ -214,7 +214,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/transactions?module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `/club-members/transactions?module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -246,7 +246,7 @@ export default {
                 }
                 adminApi
                     .get(
-                        `/transactions?module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `/club-members/transactions?module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -323,7 +323,7 @@ export default {
                     if (result.value) {
                         this.isLoader = true;
                         adminApi
-                            .post(`/transactions/bulk-delete`, {ids: id})
+                            .post(`/club-members/transactions/bulk-delete`, {ids: id})
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -372,7 +372,7 @@ export default {
                         this.isLoader = true;
 
                         adminApi
-                            .delete(`/transactions/${id}`)
+                            .delete(`/club-members/transactions/${id}`)
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -418,10 +418,10 @@ export default {
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
-                date_from: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -437,17 +437,17 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await this.getType();
+            await this.getMember();
             await this.getBranches();
             await this.getSerials();
             this.create = {
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
-                date_from: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -471,9 +471,11 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 this.is_disabled = false;
+                this.create.year_from = new Date(this.create.year_from).getFullYear();
+                this.create.year_to = new Date(this.create.year_to).getFullYear();
                 let transactions = [this.create]
                 adminApi
-                    .post(`/transactions`, {transactions, company_id: this.company_id})
+                    .post(`/club-members/transactions`, {transactions, company_id: this.company_id})
                     .then((res) => {
                         this.getData();
                         this.is_disabled = true;
@@ -513,7 +515,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`/transactions/${id}`, this.edit)
+                    .put(`/club-members/transactions/${id}`, this.edit)
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -546,17 +548,17 @@ export default {
          *   show Modal (edit)
          */
         async resetModalEdit(id) {
-            await this.getType();
+            await this.getMember();
             await this.getBranches();
             await this.getSerials();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
-            this.edit.date_from = setting.date_from;
+            this.edit.year_from = setting.year_from;
             this.edit.number_of_years = setting.number_of_years;
             this.edit.type = setting.type;
             this.edit.document_id = setting.document_id;
-            this.edit.date_to = setting.date_to;
+            this.edit.year_to = setting.year_to;
             this.edit.amount = setting.amount;
             this.edit.module_type = "club";
             this.edit.date = new Date().toISOString().slice(0, 10);
@@ -570,10 +572,10 @@ export default {
             this.edit = {
                 branch_id: null,
                 cm_member_id: null,
-                date_from: new Date().toISOString().slice(0, 10),
+                year_from: new Date().toISOString().slice(0, 10),
                 type: "",
                 document_id: 8,
-                date_to: new Date().toISOString().slice(0, 10),
+                year_to: new Date().toISOString().slice(0, 10),
                 number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
@@ -605,10 +607,22 @@ export default {
          *  end  ckeckRow
          */
 
-        async getType() {
+        async searchMember(e)
+        {
+            let search = e??'';
+            if (search)
+            {
+                clearTimeout(this.debounce);
+                this.debounce = setTimeout(() => {
+                    this.getMember(search);
+                }, 500);
+            }
+        },
+
+        async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members`)
+                .get(`/club-members/members?limet=10&company_id=${this.company_id}&national_id=${search}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -633,7 +647,7 @@ export default {
                 this.Tooltip = "";
                 this.mouseEnter = id;
                 adminApi
-                    .get(`/transactions/logs/${id}`)
+                    .get(`/club-members/transactions/logs/${id}`)
                     .then((res) => {
                         let l = res.data.data;
                         l.forEach((e) => {
@@ -657,7 +671,7 @@ export default {
 
         async renewalDataCreate ()
         {
-            if(this.create.date_from && this.create.date_to)
+            if(this.create.year_from && this.create.year_to)
             {
                 this.dateDifference();
                 await this.getRenewal();
@@ -666,11 +680,11 @@ export default {
 
         dateDifference()
         {
-           let date_from = new Date(this.create.date_from).getFullYear();
-           let date_to = new Date(this.create.date_to).getFullYear();
-           if (date_from < date_to)
+           let year_from = new Date(this.create.year_from).getFullYear();
+           let year_to = new Date(this.create.year_to).getFullYear();
+           if (year_from < year_to)
            {
-               let number_of_years = date_to - date_from;
+               let number_of_years = year_to - year_from;
                this.create.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
            }
         },
@@ -678,7 +692,7 @@ export default {
        async getRenewal()
         {
             await adminApi
-                .get(`/club-members/memberships-renewals?from=${this.create.date_from}&to=${this.create.date_to}`)
+                .get(`/club-members/memberships-renewals?from=${this.create.year_from}&to=${this.create.year_to}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
@@ -714,11 +728,11 @@ export default {
 
         dateDifferenceEdit()
         {
-            let date_from = new Date(this.edit.date_from).getFullYear();
-            let date_to = new Date(this.edit.date_to).getFullYear();
-            if (date_from < date_to)
+            let year_from = new Date(this.edit.year_from).getFullYear();
+            let year_to = new Date(this.edit.year_to).getFullYear();
+            if (year_from < year_to)
             {
-                let number_of_years = date_to - date_from;
+                let number_of_years = year_to - year_from;
                 this.edit.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
             }
         },
@@ -734,7 +748,7 @@ export default {
                 if (dl) {
                     XLSX.write(wb, {bookType: type, bookSST: true, type: 'base64'});
                 } else {
-                    XLSX.writeFile(wb, fn || (('transactions' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
+                    XLSX.writeFile(wb, fn || (('subscription' + '.' || 'SheetJSTableExport.') + (type || 'xlsx')));
                 }
                 this.enabled3 = true;
             }, 100);
@@ -767,19 +781,19 @@ export default {
                                                          class="mb-1"
                                         >{{ getCompanyKey("member") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="date_from"
+                                        <b-form-checkbox v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("date_from") }}
+                                        >{{ getCompanyKey("year_from") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="date_to"
+                                        <b-form-checkbox v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("date_to") }}
+                                        >{{ getCompanyKey("year_to") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="amount"
+                                        <b-form-checkbox v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("subscription_amount") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="type"
+                                        <b-form-checkbox v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("subscription_type") }}
                                         </b-form-checkbox>
@@ -821,13 +835,13 @@ export default {
                                     <button v-print="'#printData'" class="custom-btn-dowonload">
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <button
-                                        class="custom-btn-dowonload"
-                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1"
-                                    >
-                                        <i class="mdi mdi-square-edit-outline"></i>
-                                    </button>
+<!--                                    <button-->
+<!--                                        class="custom-btn-dowonload"-->
+<!--                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
+<!--                                        v-if="checkAll.length == 1"-->
+<!--                                    >-->
+<!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
+<!--                                    </button>-->
                                     <!-- start mult delete  -->
                                     <button
                                         class="custom-btn-dowonload"
@@ -885,13 +899,13 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("subscription_type") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date_from"
+                                            <b-form-checkbox v-model="setting.year_from"
                                                              class="mb-1">
-                                                {{ getCompanyKey("date_from") }}
+                                                {{ getCompanyKey("year_from") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date_to"
+                                            <b-form-checkbox v-model="setting.year_to"
                                                              class="mb-1">
-                                                {{ getCompanyKey("date_to") }}
+                                                {{ getCompanyKey("year_to") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.number_of_years"
                                                              class="mb-1">
@@ -1048,27 +1062,27 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ getCompanyKey('date_from') }}
+                                                {{ getCompanyKey('year_from') }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
                                                 type="date"
                                                 @input="renewalDataCreate"
-                                                v-model="$v.create.date_from.$model"
+                                                v-model="$v.create.year_from.$model"
                                                 format="YYYY-MM-DD"
                                                 valueType="format"
                                                 :confirm="false"
                                                 :class="{ 'is-invalid':
-                                                        $v.create.date_from.$error ||
-                                                        errors.date_from,
+                                                        $v.create.year_from.$error ||
+                                                        errors.year_from,
                                                     'is-valid':
-                                                        !$v.create.date_from
+                                                        !$v.create.year_from
                                                             .$invalid &&
-                                                        !errors.date_from,
+                                                        !errors.year_from,
                                                 }"
                                             ></date-picker>
-                                            <template v-if="errors.date_from">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                            <template v-if="errors.year_from">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_from"
                                                               :key="index">
                                                     {{ errorMessage }}
                                                 </ErrorMessage>
@@ -1078,27 +1092,27 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ getCompanyKey('date_to') }}
+                                                {{ getCompanyKey('year_to') }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
                                                 type="date"
-                                                v-model="$v.create.date_to.$model"
+                                                v-model="$v.create.year_to.$model"
                                                 @input="renewalDataCreate"
                                                 format="YYYY-MM-DD"
                                                 valueType="format"
                                                 :confirm="false"
                                                 :class="{ 'is-invalid':
-                                                        $v.create.date_to.$error ||
-                                                        errors.date_to,
+                                                        $v.create.year_to.$error ||
+                                                        errors.year_to,
                                                     'is-valid':
-                                                        !$v.create.date_to
+                                                        !$v.create.year_to
                                                             .$invalid &&
-                                                        !errors.date_to,
+                                                        !errors.year_to,
                                                 }"
                                             ></date-picker>
-                                            <template v-if="errors.date_to">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                            <template v-if="errors.year_to">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_to"
                                                               :key="index">
                                                     {{ errorMessage }}
                                                 </ErrorMessage>
@@ -1112,6 +1126,8 @@ export default {
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <multiselect
+                                                :internalSearch="false"
+                                                @search-change="searchMember"
                                                 v-model="create.cm_member_id"
                                                 :options="members.map((type) => type.id)"
                                                 :custom-label="
@@ -1309,32 +1325,32 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.date_from">
+                                    <th v-if="setting.year_from">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("date_from") }}</span>
+                                            <span>{{ getCompanyKey("year_from") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('date_from'))"
+                                                    @click="transactions.sort(sortString('year_from'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-date_from'))"
+                                                    @click="transactions.sort(sortString('-year_from'))"
                                                 ></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.date_to">
+                                    <th v-if="setting.year_to">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("date_to") }}</span>
+                                            <span>{{ getCompanyKey("year_to") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('date_to'))"
+                                                    @click="transactions.sort(sortString('year_to'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-date_to'))"
+                                                    @click="transactions.sort(sortString('-year_to'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -1363,11 +1379,12 @@ export default {
                                 <tbody v-if="transactions.length > 0">
                                 <tr
                                     @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
                                     v-for="(data, index) in transactions"
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
+
+<!--                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"-->
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="form-check custom-control" style="min-height: 1.9em">
                                             <input
@@ -1397,11 +1414,11 @@ export default {
                                     <td v-if="setting.type">
                                         <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
                                     </td>
-                                    <td v-if="setting.date_from">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
+                                    <td v-if="setting.year_from">
+                                        <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
                                     </td>
-                                    <td v-if="setting.date_to">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5>
+                                    <td v-if="setting.year_to">
+                                        <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
                                     </td>
                                     <td v-if="setting.number_of_years">
                                         <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
@@ -1418,18 +1435,18 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a
-                                                    class="dropdown-item"
-                                                    href="#"
-                                                    @click="$bvModal.show(`modal-edit-${data.id}`)"
-                                                >
-                                                    <div
-                                                        class="d-flex justify-content-between align-items-center text-black"
-                                                    >
-                                                        <span>{{ $t("general.edit") }}</span>
-                                                        <i class="mdi mdi-square-edit-outline text-info"></i>
-                                                    </div>
-                                                </a>
+<!--                                                <a-->
+<!--                                                    class="dropdown-item"-->
+<!--                                                    href="#"-->
+<!--                                                    @click="$bvModal.show(`modal-edit-${data.id}`)"-->
+<!--                                                >-->
+<!--                                                    <div-->
+<!--                                                        class="d-flex justify-content-between align-items-center text-black"-->
+<!--                                                    >-->
+<!--                                                        <span>{{ $t("general.edit") }}</span>-->
+<!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
+<!--                                                    </div>-->
+<!--                                                </a>-->
                                                 <a
                                                     class="dropdown-item text-black"
                                                     href="#"
@@ -1546,27 +1563,27 @@ export default {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="control-label">
-                                                                {{ getCompanyKey('date_from') }}
+                                                                {{ getCompanyKey('year_from') }}
                                                                 <span class="text-danger">*</span>
                                                             </label>
                                                             <date-picker
                                                                 type="date"
-                                                                v-model="$v.edit.date_from.$model"
+                                                                v-model="$v.edit.year_from.$model"
                                                                 @input="dateDifferenceEdit"
                                                                 format="YYYY-MM-DD"
                                                                 valueType="format"
                                                                 :confirm="false"
                                                                 :class="{ 'is-invalid':
-                                                                        $v.edit.date_from.$error ||
-                                                                        errors.date_from,
+                                                                        $v.edit.year_from.$error ||
+                                                                        errors.year_from,
                                                                     'is-valid':
-                                                                        !$v.edit.date_from
+                                                                        !$v.edit.year_from
                                                                             .$invalid &&
-                                                                        !errors.date_from,
+                                                                        !errors.year_from,
                                                                 }"
                                                             ></date-picker>
-                                                            <template v-if="errors.date_from">
-                                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                                            <template v-if="errors.year_from">
+                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_from"
                                                                               :key="index">
                                                                     {{ errorMessage }}
                                                                 </ErrorMessage>
@@ -1576,27 +1593,27 @@ export default {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label class="control-label">
-                                                                {{ getCompanyKey('date_to') }}
+                                                                {{ getCompanyKey('year_to') }}
                                                                 <span class="text-danger">*</span>
                                                             </label>
                                                             <date-picker
                                                                 type="date"
-                                                                v-model="$v.edit.date_to.$model"
+                                                                v-model="$v.edit.year_to.$model"
                                                                 @input="dateDifferenceEdit"
                                                                 format="YYYY-MM-DD"
                                                                 valueType="format"
                                                                 :confirm="false"
                                                                 :class="{ 'is-invalid':
-                                                                        $v.edit.date_to.$error ||
-                                                                        errors.date_to,
+                                                                        $v.edit.year_to.$error ||
+                                                                        errors.year_to,
                                                                     'is-valid':
-                                                                        !$v.edit.date_to
+                                                                        !$v.edit.year_to
                                                                             .$invalid &&
-                                                                        !errors.date_to,
+                                                                        !errors.year_to,
                                                                 }"
                                                             ></date-picker>
-                                                            <template v-if="errors.date_to">
-                                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                                            <template v-if="errors.year_to">
+                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_to"
                                                                               :key="index">
                                                                     {{ errorMessage }}
                                                                 </ErrorMessage>

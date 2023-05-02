@@ -42,8 +42,8 @@ class PackageController extends Controller
     public function create(PackageRequest $request)
     {
         $model = $this->model->create($request->validated());
+        $model->panels()->sync($request->panels);
         $model->refresh();
-
         return responseJson(200, 'created', new PackageResource($model));
 
     }
@@ -56,6 +56,7 @@ class PackageController extends Controller
         }
 
         $model->update($request->validated());
+        $model->panels()->sync($request->panels);
         $model->refresh();
 
         return responseJson(200, 'updated', new PackageResource($model));
