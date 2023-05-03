@@ -353,6 +353,24 @@ export const menuItems = [
                         label: 'general.PermissionMemberReport',
                         link: '/dashboard/club/permission-member-report'
                     },
+                    {
+                        id: 313399601,
+                        name: 'real estate',
+                        label: 'general.UncoverReports',
+                        link: '/'
+                    },
+                    {
+                        id: 318745601,
+                        name: 'real estate',
+                        label: 'general.ElectionDisclosure',
+                        link: '/'
+                    },
+                    {
+                        id: 3982639601,
+                        name: 'real estate',
+                        label: 'general.PaymentsAndSubscriptions',
+                        link: '/'
+                    },
                 ]
             },
         ]

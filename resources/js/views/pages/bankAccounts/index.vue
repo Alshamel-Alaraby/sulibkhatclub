@@ -1155,7 +1155,6 @@ export default {
                       </b-button>
                     </div>
                   </div>
-
                   <b-tabs nav-class="nav-tabs nav-bordered">
                     <b-tab :title="$t('general.DataEntry')" active>
                       <div class="row">

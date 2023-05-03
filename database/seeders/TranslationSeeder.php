@@ -9100,8 +9100,8 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
-                "key" => "date_from",
-                "default_en" => "From Date",
+                "key" => "year_from",
+                "default_en" => "From Year",
                 "default_ar" => "تاريخ بداية الاشتراك",
                 "new_ar" => "",
                 "new_en" => "",
@@ -9109,8 +9109,8 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
-                "key" => "date_to",
-                "default_en" => "To Date",
+                "key" => "year_to",
+                "default_en" => "To Year",
                 "default_ar" => "تاريخ نهاية الاشتراك",
                 "new_ar" => "",
                 "new_en" => "",

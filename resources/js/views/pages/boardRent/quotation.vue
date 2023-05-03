@@ -19,6 +19,7 @@ import Category from "../../../components/create/category";
 import SellMethod from "../../../components/create/boardRent/sell-methods";
 import Package from "../../../components/create/boardRent/package";
 import TabGovernorate from "../../../components/tabGovernorate";
+import QuotationPanel from "../../../components/create/boardRent/quotation-panel";
 /**
  * Advanced Table component
  */
@@ -61,7 +62,8 @@ export default {
         SellMethod,
         Category,
         Package,
-        TabGovernorate
+        TabGovernorate,
+        QuotationPanel
     },
     data() {
         return {
@@ -812,7 +814,6 @@ export default {
                     to: this.formatDate(new Date()),
                 }]
             };
-            this.total = 0;
             this.phone = '';
             this.codeCountry = this.$store.getters["locationIp/countryCode"];
             await this.getCustomers();
@@ -834,7 +835,6 @@ export default {
          */
         resetForm() {
             this.multDate = [{to: new Date(),from: new Date()}];
-            this.total = 0;
             this.create =  {
                 branch_id: null,
                 status_id: null,
@@ -1626,9 +1626,13 @@ export default {
                                                                     getCompanyKey("boardRent_order_quantity") }}</div>
                                                                 <div class="col-1">{{ $t("general.Action") }}</div>
                                                             </div>
-                                                            <div v-for="(item, index) in create.details"
-                                                                 class="text-95  text-secondary-d3">
-
+                                                            <div
+                                                                v-for="(item, index) in create.details"
+                                                                class="text-95  text-secondary-d3"
+                                                            >
+                                                                <!--  create panels   -->
+                                                                <QuotationPanel :id="`create-panel-quotation-${index}`" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" />
+                                                                <!--  /create panels   -->
                                                                 <div class="row mb-2 mb-sm-0 py-25" :class="index % 2 == 0 ? 'bgc-default-l4' : ''">
                                                                     <div class="col-2">
                                                                         <multiselect
@@ -1761,39 +1765,48 @@ export default {
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-1">
-                                                                        <button v-if="create.details.length > 1"
-                                                                                type="button"
-                                                                                @click.prevent="removeNewField(index)"
-                                                                                class="custom-btn-dowonload">
+                                                                        <button
+                                                                            type="button"
+                                                                            @click.prevent="$bvModal.show(`create-panel-quotation-${index}`)"
+                                                                            class="custom-panel-quotation"
+                                                                        >
+                                                                            {{ $t('general.panel') }}
+                                                                        </button>
+                                                                        <button
+                                                                            v-if="create.details.length > 1"
+                                                                            type="button"
+                                                                            @click.prevent="removeNewField(index)"
+                                                                            class="custom-btn-dowonload"
+                                                                        >
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row border-b-2 brc-default-l2"></div>
-                                                            <div class="row mt-3">
-                                                                <div
-                                                                    class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                    {{ $t("general.Extra_note") }}
-                                                                </div>
-
-                                                                <div
-                                                                    class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                                                                <div class="row border-b-2 brc-default-l2"></div>
+                                                                <div class="row mt-3">
                                                                     <div
-                                                                        class="row my-2 align-items-center bgc-primary-l3 p-2">
-                                                                        <div class="col-7 text-right">
-                                                                            {{ $t("general.Total_Amount") }}
-                                                                        </div>
-                                                                        <div class="col-5">
-                                                                                    <span
-                                                                                        class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
-                                                                                    </span>
+                                                                        class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+                                                                        {{ $t("general.Extra_note") }}
+                                                                    </div>
+
+                                                                    <div
+                                                                        class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                                                                        <div
+                                                                            class="row my-2 align-items-center bgc-primary-l3 p-2">
+                                                                            <div class="col-7 text-right">
+                                                                                {{ $t("general.Total_Amount") }}
+                                                                            </div>
+                                                                            <div class="col-5">
+                                                                                        <span
+                                                                                            class="text-150 text-success-d3 opacity-2">
+                                                                                            {{ !create.total ? '0.00' : create.total }}
+                                                                                        </span>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
 
-                                                            </div>
+                                                                </div>
                                                             <hr />
                                                             <div>
                                                                 <span class="text-secondary-d1 text-105">{{
@@ -1820,8 +1833,11 @@ export default {
                                                                 <div class="col-1">{{ $t("general.Action") }}</div>
                                                             </div>
                                                             <div v-for="(item, index) in create.details"
-                                                                 class="text-95  text-secondary-d3">
-
+                                                                 class="text-95  text-secondary-d3"
+                                                            >
+                                                                <!--  create panels   -->
+                                                                <QuotationPanel :id="`create2-panel-quotation-${index}`" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" />
+                                                                <!--  /create panels   -->
                                                                 <div class="row mb-2 mb-sm-0 py-25"
                                                                      :class="index % 2 == 0 ? 'bgc-default-l4' : ''">
                                                                     <div class="col-1">
@@ -1896,6 +1912,13 @@ export default {
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-1">
+                                                                        <button
+                                                                            type="button"
+                                                                            @click.prevent="$bvModal.show(`create2-panel-quotation-${index}`)"
+                                                                            class="custom-panel-quotation"
+                                                                        >
+                                                                            {{ $t('general.panel') }}
+                                                                        </button>
                                                                         <button v-if="create.details.length > 1"
                                                                                 type="button"
                                                                                 @click.prevent="removeNewField(index)"
@@ -2662,7 +2685,7 @@ export default {
                                                                                         <div class="col-5">
                                                                                     <span
                                                                                         class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
+                                                                                        {{ !edit.total ? '0.00' : edit.total }}
                                                                                     </span>
                                                                                         </div>
                                                                                     </div>
@@ -2717,6 +2740,12 @@ export default {
 </template>
 
 <style scoped>
+.custom-panel-quotation{
+    background-color: #81afca !important;
+    color: lemonchiffon;
+    font-size: 16px;
+    border: none;
+}
 .page-content {
     width: 100%;
 }

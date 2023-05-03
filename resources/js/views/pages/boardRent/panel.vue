@@ -583,9 +583,6 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await  this.getUnitStatus();
-            await  this.getCategory();
-            await  this.getCountry();
             this.create = {
                 name: "",
                 name_e: "",
@@ -614,6 +611,9 @@ export default {
                 lat: 0,
                 lng: 0,
             };
+            await  this.getUnitStatus();
+            await  this.getCategory();
+            await  this.getCountry();
             this.$nextTick(() => {
                 this.$v.$reset();
             });
