@@ -21,7 +21,6 @@ class CmMemberController extends Controller
     public function __construct(private CmMemberInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
-
     }
 
     public function all(Request $request)
@@ -132,6 +131,7 @@ class CmMemberController extends Controller
 
     public function updateSponsor(Request $request, $sponsor_id)
     {
+        // return now()->format('d-m-Y H:i:s');
 
         $model = CmMember::where("sponsor_id", $sponsor_id)->get();
 
@@ -172,11 +172,12 @@ class CmMemberController extends Controller
     }
 
 
+
     public function TestTransfer()
     {
         DB::unprepared(file_get_contents(public_path("members.sql")));
 
-        
+
 
         ;
     }

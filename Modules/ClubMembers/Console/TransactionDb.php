@@ -33,18 +33,15 @@ class TransactionDb extends Command
     {
         // load sql file
         $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/transactions.sql'));
-
         // migrate it to Database
         DB::unprepared($sql);
 
-        DB::table('PaymentTransactions')->orderBy('DocNo')->chunk(10000, function ($records) {
+        DB::table('PaymentTransactions')->orderBy('DocNo')->chunk(100, function ($records) {
             $this->insertTransaction($records);
-            $this->info('cm_transactions table is seeded!');
         });
-
         // drop table  PaymentTransactions
         Schema::dropIfExists('PaymentTransactions');
-        $this->info('cm_transactions table is seeded!');
+        $this->info('All cm_transactions table is seeded!');
 
     }
 
@@ -58,6 +55,9 @@ class TransactionDb extends Command
         $serialId = 1; // OLD
         $type = 'renew'; // with MemberNo => Renew, with NULL => Subscribe
         $nYears = 1;
+
+        $i = 1;
+
         foreach ($records as $paymentTransaction) {
 
             $amount = $paymentTransaction->AMOUNT;
@@ -105,5 +105,6 @@ class TransactionDb extends Command
             ]);
 
         }
+
     }
 }

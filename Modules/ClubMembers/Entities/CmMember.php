@@ -41,7 +41,6 @@ class CmMember extends Model
         return $this->belongsTo(CmFinancialStatus::class, 'financial_status_id');
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -60,15 +59,14 @@ class CmMember extends Model
                 $q->whereDate('date', $request->date);
             }
 
-            // member_type_id
             if ($request->search && $request->columns) {
                 foreach ($request->columns as $column) {
                     if (strpos($column, ".") > 0) {
                         $column = explode(".", $column);
                         $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
-                        // $q->orWhereHas($column[0], function ($q) use ($column, $request) {
-                        //     $q->where($column[1], 'like', '%' . $request->search . '%');
-                        // });
+                        $q->orWhereHas($column[0], function ($q) use ($column, $request) {
+                            $q->where($column[1], 'like', '%' . $request->search . '%');
+                        });
                     } else {
                         $q->orWhere($column, 'like', '%' . $request->search . '%');
                     }
@@ -79,10 +77,12 @@ class CmMember extends Model
                 $q->whereDate('membership_date', '>=', now()->subDays($request->last_days));
             }
 
-            if ($request->cm_permission_id) {
+            if ($request->has('cm_permission_id') && is_array($request->cm_permission_id)) {
                 $q->whereHas('memberType', function ($q) use ($request) {
                     $q->whereHas('memberPermissions', function ($q) use ($request) {
-                        $q->whereJsonContains('cm_permissions_id', $request->cm_permission_id);
+                        foreach ($request->cm_permission_id as $permission_id) {
+                            $q->whereJsonContains('cm_permissions_id', $permission_id);
+                        }
                     });
                 });
             }
