@@ -29,7 +29,6 @@ class MemberDb extends Command
      */
     public function handle()
     {
-        // get data from sql file
 
         $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.sql'));
 
@@ -105,6 +104,7 @@ class MemberDb extends Command
         $this->FinancialYears();
         foreach ($members as $member) {
             $new_member = \Modules\ClubMembers\Entities\CmMember::create([
+                "id" => $member->MEMBER_ID,
                 "applying_number" => $member->ORDER_NO,
                 "membership_number" => $member->MemberNo,
                 "home_address" => $member->HouseAddress,
@@ -149,6 +149,7 @@ class MemberDb extends Command
                 $new_member->update(['sponsor_id' => 1]);
             }
         }
+        $this->paymentTransactions();
 
         // drop table  Members
         Schema::dropIfExists('Members');
@@ -185,5 +186,58 @@ class MemberDb extends Command
             \App\Models\FinancialYear::create($single);
         }
         $this->info('financial years seed');
+    }
+
+
+    private function paymentTransactions()
+    {
+        $this->info("start payment transaction");
+        // get data from sql file
+        $branch_id = \App\Models\Branch::create([
+            "name_e" => "old branch",
+            "name" => "فرع قديم",
+        ]);
+        $columns = \Maatwebsite\Excel\Facades\Excel::toArray(new \App\Imports\GeneralImport(), base_path('Modules/ClubMembers/Resources/assets/db/PaymentTransactions.xlsx'));
+        $data = [];
+
+        foreach ($columns as $column) {
+            foreach ($column as $key =>  $row) {
+                if ($key === array_key_first($column)) {
+                    continue;
+                }
+                $row = [
+                    "MEMBER_ID" => $row[0],
+                    "MemberNO" => $row[1],
+                    "user_id" => $row[2],
+                    "AMOUNT" => $row[3],
+                    "DocNo" => $row[4],
+                    "DocDate" => $this->fromExcelToLinux($row[5]),
+                    "YersPay" => $row[6]
+                ];
+
+                $data[] = $row;
+            }
+        }
+        foreach ($data as $payment) {
+            $member = \Modules\ClubMembers\Entities\CmMember::where('id', $payment['MEMBER_ID'])->first();
+            \Modules\ClubMembers\Entities\CmTransaction::create([
+                'cm_member_id' => $payment['MEMBER_ID'],
+                "member_number" =>  $payment['MemberNO'],
+                "amount" =>  $payment['AMOUNT'],
+                "old_doc" => $payment['DocNo'],
+                "date" => $payment['DocDate'],
+                "year_from" => $payment['YersPay'],
+                "year_to" => $payment['YersPay'],
+                "document_id" => 8,
+                "branch_id" => $branch_id->id,
+                "serial_id" => date('2022-12-31') >= $member->ORDER_DATE ? 1 : 2,
+                'serial_number' => date('2022-12-31') >= $member->ORDER_DATE ? $member->id
+                    : 8,
+                'prefix' => date('2022-12-31') >= $member->ORDER_DATE ? 'old-one' : 'cast-2023',
+                "type" => "subscribe"
+            ]);
+            $this->info('seeded ' . $payment['MemberNO']);
+            $this->info("finish payment transaction");
+        }
     }
 }
