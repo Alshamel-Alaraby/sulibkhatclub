@@ -44,6 +44,7 @@ return new class extends Migration
             $table->string('member_type')->default('pending')->nullable();
             $table->string('notes')->nullable();
             $table->boolean('gender')->nullable();
+            $table->unsignedBigInteger('financial_year_id');
             $table->softDeletes();
             $table->timestamps();
         });

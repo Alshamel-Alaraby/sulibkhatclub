@@ -27,7 +27,6 @@ class CmFinancialStatus extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Sponser')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 }

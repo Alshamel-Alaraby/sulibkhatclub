@@ -74,6 +74,7 @@ class ClubMembersServiceProvider extends ServiceProvider
             \Modules\ClubMembers\Console\TransactionDb::class,
             \Modules\ClubMembers\Console\MemberDb::class,
             \Modules\ClubMembers\Console\PrefixDb::class,
+            \Modules\ClubMembers\Console\FullNameDb::class,
         ]);
 
     }

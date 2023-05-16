@@ -53,6 +53,7 @@ class CmMemberRequest extends FormRequest
             'member_type' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
             'gender' => 'nullable|in:0,1',
+            'financial_year_id' => 'required|exists:general_financial_years,id',
         ];
     }
 }

@@ -35,6 +35,8 @@ Route::prefix('club-members')->group(function () {
     Route::group(['prefix' => 'members'], function () {
 
         Route::get('/test-transfer', 'CmMemberController@TestTransfer');
+        Route::get('/dataMemberTable', 'CmMemberController@dataMemberTable');
+        Route::get('/dataMemberFildFullNameTable', 'CmMemberController@dataMemberFildFullNameTable');
 
         Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
 

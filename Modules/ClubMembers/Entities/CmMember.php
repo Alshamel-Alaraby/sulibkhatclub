@@ -2,12 +2,12 @@
 
 namespace Modules\ClubMembers\Entities;
 
-use App\Models\Status;
 use App\Traits\LogTrait;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Modules\ClubMembers\Entities\Status;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CmMember extends Model
 {
@@ -48,8 +48,9 @@ class CmMember extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Sponser')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
 
     public function scopeFilter($query, $request)
     {
@@ -90,7 +91,6 @@ class CmMember extends Model
             if ($request->key && $request->value) {
                 $q->where($request->key, $request->value);
             }
-
         });
     }
 }

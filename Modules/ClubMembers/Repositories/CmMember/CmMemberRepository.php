@@ -62,17 +62,27 @@ class CmMemberRepository implements CmMemberInterface
 
     public function create($request)
     {
+
         return DB::transaction(function () use ($request) {
-            return $this->model->create($request);
+            $full_name = ($request['first_name'] ?? '') . ' ' .
+                ($request['second_name'] ?? '') . ' ' .
+                ($request['third_name'] ?? '') . ' ' .
+                ($request['last_name'] ?? '') . ' ' .
+                ($request['family_name'] ?? '') ;
+            return $this->model->create(array_merge($request,['full_name' => $full_name]));
         });
     }
 
     public function update($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
-            $this->model->where("id", $id)->update($request);
+            $full_name = ($request['first_name'] ?? '') . ' ' .
+                ($request['second_name'] ?? '') . ' ' .
+                ($request['third_name'] ?? '') . ' ' .
+                ($request['last_name'] ?? '') . ' ' .
+                ($request['family_name'] ?? '') ;
+            $this->model->where("id", $id)->update(array_merge($request,['full_name' => $full_name]));
         });
-
         $model = $this->model->find($id);
         return $model;
         //
