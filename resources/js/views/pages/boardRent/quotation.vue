@@ -19,6 +19,9 @@ import Category from "../../../components/create/category";
 import SellMethod from "../../../components/create/boardRent/sell-methods";
 import Package from "../../../components/create/boardRent/package";
 import TabGovernorate from "../../../components/tabGovernorate";
+import Avnue from "../../../components/create/avenue";
+import Street from "../../../components/create/street";
+import City from "../../../components/city";
 /**
  * Advanced Table component
  */
@@ -61,7 +64,10 @@ export default {
         SellMethod,
         Category,
         Package,
-        TabGovernorate
+        TabGovernorate,
+        Avnue,
+        Street,
+        City
     },
     data() {
         return {
@@ -79,6 +85,7 @@ export default {
             countries: [],
             packages: [],
             governorates: [],
+            faceNumbers: [{'A': 0,'B': 0,'Multi': 0,'One-Face': 0}],
             enabled3: true,
             isLoader: false,
             create: {
@@ -100,6 +107,7 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 }]
             },
             edit: {
@@ -145,7 +153,20 @@ export default {
             multDateEdit: [],
             printObj: {
                 id: "printReservation",
-            }
+            },
+            faces: ['A','B','Multi','One-Face'],
+            cities: [{cities: []}],
+            avenues: [{avenues: []}],
+            streets: [{streets: []}],
+            pans: [{pans: []}],
+            pansPaginations: [{pansPaginations: {}}],
+            locations: [{city_id: null, avenue_id: null, street_id: null, face: ''}],
+            allPanelPackages: [{allPanelPackages: []}],
+            panelPackages: [{panelPackages: []}],
+            panelPackagesPaginatations: [{panelPackagesPaginatations: {}}],
+            current_page_pans: [1],
+            current_page_pans_packs: [1],
+            CheckAllPanels: [[]]
         };
     },
     validations: {
@@ -177,7 +198,10 @@ export default {
                         }), minValue: minValue(0) },
                     from: { required },
                     to: { required },
-                    price: { required, minValue: minValue(0)}
+                    price: { required, minValue: minValue(0)},
+                    panels: {
+                        required,
+                    }
                 }
             }
         },
@@ -208,7 +232,10 @@ export default {
                         }), minValue: minValue(0) },
                     from: { required },
                     to: { required },
-                    price: { required, minValue: minValue(0)}
+                    price: { required, minValue: minValue(0)},
+                    panels: {
+                        required,
+                    }
                 }
             },
             serial_number: {required}
@@ -248,6 +275,10 @@ export default {
             handler: function (after, before) {
                 // Changes detected. Do work...
                 if(this.create.is_stripe == 0){
+                    this.cities= [{cities: []}];
+                    this.avenues= [{avenues: []}];
+                    this.streets = [{streets: []}];
+                    this.pans = [{pans: []}];
                     this.create.details = [{
                         category_id: null,
                         governorate_id: null,
@@ -255,6 +286,7 @@ export default {
                         price: 0,
                         from: this.formatDate(new Date()),
                         to: this.formatDate(new Date()),
+                        panels: []
                     }];
                 }else {
                     this.create.details = [{
@@ -262,6 +294,7 @@ export default {
                         price: 0,
                         from: this.formatDate(new Date()),
                         to: this.formatDate(new Date()),
+                        panels: []
                     }];
                     if(this.packages.length == 0) this.getPackage();
                 }
@@ -274,6 +307,10 @@ export default {
             handler: function (after, before) {
                 // Changes detected. Do work...
                 if(this.edit.is_stripe == 0){
+                    this.cities= [{cities: []}];
+                    this.avenues= [{avenues: []}];
+                    this.streets = [{streets: []}];
+                    this.pans = [{pans: []}];
                     this.edit.details = [{
                         category_id: null,
                         governorate_id: null,
@@ -281,6 +318,7 @@ export default {
                         price: 0,
                         from: this.formatDate(new Date()),
                         to: this.formatDate(new Date()),
+                        panels: []
                     }];
                 }else {
                     this.edit.details = [{
@@ -288,6 +326,7 @@ export default {
                         price: 0,
                         from: this.formatDate(new Date()),
                         to: this.formatDate(new Date()),
+                        panels: []
                     }];
                     if(this.packages.length == 0) this.getPackage();
                 }
@@ -303,25 +342,50 @@ export default {
         this.$store.dispatch('locationIp/getIp');
     },
     methods: {
-        moveEnter(action, index, nextNumberInput) {
-            if (nextNumberInput == 6 && action == "create") {
-                if (this.create.details.length == (index + 1)) {
-                    this.addNewField();
-                }
-                setTimeout(() => {
-                    document.getElementById(`${action}-${index + 1}-1`).focus();
-                }, 500)
+        async showCityModal(index) {
+            if (this.locations[index].city_id == 0) {
+                this.$bvModal.show("city-create");
+                this.locations[index].city_id = null;
+            }else {
+                await this.getAvnue(index);
             }
-            else if (nextNumberInput == 6 && action == "edit") {
-                if (this.edit.details.length == (index + 1)) {
-                    this.addNewFieldEdit();
-                }
-                setTimeout(() => {
-                    document.getElementById(`${action}-${index + 1}-1`).focus();
-                }, 500)
+        },
+        async showAvenueModal(index) {
+            if (this.locations[index].avenue_id == 0) {
+                this.$bvModal.show("avenue-create");
+                this.locations[index].avenue_id = null;
+            }else {
+                await this.getStreet(index);
             }
-            else if (nextNumberInput < 6) {
-                document.getElementById(`${action}-${index}-${nextNumberInput}`).focus();
+        },
+        async showStreetModal(index) {
+            if (this.locations[index].street_id == 0) {
+                this.$bvModal.show("street-create");
+                this.locations[index].street_id = null;
+            }else {
+                await this.getPanel(index);
+            }
+        },
+        async showCityModalEdit(index) {
+            if (this.locations[index].city_id == 0) {
+                this.$bvModal.show("city-create");
+                this.locations[index].city_id = null;
+            }else {
+                await this.getAvnue(index);
+            }
+        },
+        async showAvenueModalEdit(index) {
+            if (this.locations[index].avenue_id == 0) {
+                this.$bvModal.show("avenue-create");
+                this.locations[index].avenue_id = null;
+            }else {
+                await this.getStreet(index);
+            }
+        },
+        async showStreetModalEdit(index) {
+            if (this.locations[index].street_id == 0) {
+                this.$bvModal.show("street-create");
+                this.locations[index].street_id = null;
             }
         },
         v_startCreate(e,index) {
@@ -366,17 +430,19 @@ export default {
                 this.edit.date = null;
             }
         },
-        changeValue(){
+        changeValue(index = null){
             let sum = 0;
             if(this.create.is_stripe == 0){
-                this.create.details.forEach(e =>  sum += e.price * e.quantity );
+                this.create.details.forEach(e => {
+                    sum += e.price * e.quantity;
+                });
                 this.create.total = sum;
             }else {
                 this.create.details.forEach(e =>  sum += e.price );
                 this.create.total = sum;
             }
         },
-        changeValueEdit(){
+        changeValueEdit(index = null){
             let sum = 0;
             if(this.edit.is_stripe == 0){
                 this.edit.details.forEach(e =>  sum += e.price * e.quantity );
@@ -386,8 +452,21 @@ export default {
                 this.edit.total = sum;
             }
         },
-        addNewField(){
+        addNewField(index){
             if(this.create.is_stripe == 0){
+                this.locations.push({city_id: null, avenue_id: null, street_id: null, face: ''});
+                this.faceNumbers.push({'A': 0,'B': 0,'Multi': 0,'One-Face': 0});
+                this.cities.push({cities: []});
+                this.avenues.push({avenues: []});
+                this.streets.push({streets: []});
+                this.pans.push({pans: []});
+                this.pansPaginations.push({pansPaginations: []});
+                this.allPanelPackages.push({allPanelPackages: []});
+                this.panelPackages.push({panelPackages: []});
+                this.panelPackagesPaginatations.push({panelPackagesPaginatations: []});
+                this.current_page_pans.push(1);
+                this.current_page_pans_packs.push(1);
+                this.CheckAllPanels.push([]);
                 this.create.details.push({
                     category_id: null,
                     governorate_id: null,
@@ -395,6 +474,7 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 });
             }else {
                 this.create.details.push({
@@ -402,6 +482,7 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 });
             }
             this.multDate.push({to: new Date(),from: new Date()});
@@ -411,10 +492,38 @@ export default {
             if(this.create.details.length > 1){
                 this.create.details.splice(index,1);
                 this.multDate.splice(index,1);
+                if(this.create.is_stripe == 0){
+                    this.cities.splice(index,1);
+                    this.avenues.splice(index,1);
+                    this.streets.splice(index,1);
+                    this.pans.splice(index,1);
+                    this.locations.splice(index,1);
+                    this.pansPaginations.splice(index,1);
+                    this.allPanelPackages.splice(index,1);
+                    this.panelPackages.splice(index,1);
+                    this.panelPackagesPaginatations.splice(index,1);
+                    this.current_page_pans.splice(index,1);
+                    this.current_page_pans_packs.splice(index,1);
+                    this.CheckAllPanels.splice(index,1);
+                    this.faceNumbers.splice(index,1);
+                }
             }
         },
-        addNewFieldEdit(){
+        addNewFieldEdit(index){
             if(this.edit.is_stripe == 0){
+                this.locations.push({city_id: null, avenue_id: null, street_id: null, face: ''});
+                this.faceNumbers.push({'A': 0,'B': 0,'Multi': 0,'One-Face': 0});
+                this.cities.push({cities: []});
+                this.avenues.push({avenues: []});
+                this.streets.push({streets: []});
+                this.pans.push({pans: []});
+                this.pansPaginations.push({pansPaginations: []});
+                this.allPanelPackages.push({allPanelPackages: []});
+                this.panelPackages.push({panelPackages: []});
+                this.panelPackagesPaginatations.push({panelPackagesPaginatations: []});
+                this.current_page_pans.push(1);
+                this.current_page_pans_packs.push(1);
+                this.CheckAllPanels.push([]);
                 this.edit.details.push({
                     category_id: null,
                     governorate_id: null,
@@ -438,6 +547,21 @@ export default {
             if(this.edit.details.length > 1){
                 this.edit.details.splice(index,1);
                 this.multDateEdit.splice(index,1);
+                if(this.create.is_stripe == 0){
+                    this.cities.splice(index,1);
+                    this.avenues.splice(index,1);
+                    this.streets.splice(index,1);
+                    this.pans.splice(index,1);
+                    this.locations.splice(index,1);
+                    this.pansPaginations.splice(index,1);
+                    this.allPanelPackages.splice(index,1);
+                    this.panelPackages.splice(index,1);
+                    this.panelPackagesPaginatations.splice(index,1);
+                    this.current_page_pans.splice(index,1);
+                    this.current_page_pans_packs.splice(index,1);
+                    this.CheckAllPanels.splice(index,1);
+                    this.faceNumbers.splice(index,1);
+                }
             }
         },
         showSaleManModal() {
@@ -508,19 +632,21 @@ export default {
                 this.edit.sell_method_id = null;
             }
         },
-        showGovernorateModal(index) {
+        async showGovernorateModal(index) {
             if (this.create.details[index].governorate_id == 0) {
                 this.$bvModal.show(`tab-governorate-create`);
                 this.create.details[index].governorate_id = null;
+            }else {
+                await this.getCity(index);
             }
-            this.moveEnter('create', index, 2);
         },
-        showGovernorateModalEdit(index) {
+        async showGovernorateModalEdit(index) {
             if (this.edit.details[index].governorate_id == 0) {
                 this.$bvModal.show(`tab-governorate-create`);
                 this.edit.details[index].governorate_id = null;
+            }else {
+                await this.getCity(index);
             }
-            this.moveEnter('edit', index, 2);
         },
         showeCategoryModal(index) {
             if (this.create.details[index].category_id == 0) {
@@ -778,6 +904,7 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 }]
             };
             this.is_disabled = false;
@@ -792,6 +919,19 @@ export default {
         async resetModal() {
             this.date = new Date();
             this.multDate = [{to: new Date(),from: new Date()}];
+            this.locations = [{city_id: null, avenue_id: null, street_id: null, face: ''}];
+            this.cities= [{cities: []}];
+            this.avenues= [{streets: []}];
+            this.streets = [{streets: []}];
+            this.faceNumbers = [{'A': 0,'B': 0,'Multi': 0,'One-Face': 0}];
+            this.pans = [{pans: []}];
+            this.pansPaginations = [{pansPaginations: []}];
+            this.allPanelPackages = [{allPanelPackages: []}];
+            this.panelPackages = [{panelPackages: []}];
+            this.panelPackagesPaginatations= [{panelPackagesPaginatations: []}];
+            this.current_page_pans = [1];
+            this.current_page_pans_packs = [1];
+            this.CheckAllPanels = [[]];
             this.create = {
                 branch_id: null,
                 status_id: null,
@@ -810,9 +950,9 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 }]
             };
-            this.total = 0;
             this.phone = '';
             this.codeCountry = this.$store.getters["locationIp/countryCode"];
             await this.getCustomers();
@@ -834,7 +974,19 @@ export default {
          */
         resetForm() {
             this.multDate = [{to: new Date(),from: new Date()}];
-            this.total = 0;
+            this.locations = [{city_id: null, avenue_id: null, street_id: null, face: ''}];
+            this.cities= [{cities: []}];
+            this.avenues= [{streets: []}];
+            this.streets = [{streets: []}];
+            this.faceNumbers = [{'A': 0,'B': 0,'Multi': 0,'One-Face': 0}];
+            this.pans = [{pans: []}];
+            this.pansPaginations = [{pansPaginations: []}];
+            this.allPanelPackages = [{allPanelPackages: []}];
+            this.panelPackages = [{panelPackages: []}];
+            this.panelPackagesPaginatations= [{panelPackagesPaginatations: []}];
+            this.current_page_pans = [1];
+            this.current_page_pans_packs = [1];
+            this.CheckAllPanels = [[]];
             this.create =  {
                 branch_id: null,
                 status_id: null,
@@ -853,6 +1005,7 @@ export default {
                     price: 0,
                     from: this.formatDate(new Date()),
                     to: this.formatDate(new Date()),
+                    panels: []
                 }]
             };
             this.date = new Date();
@@ -1047,7 +1200,7 @@ export default {
                     this.isLoader = false;
                 });
         },
-        async getCategory() {
+        async getCategory(index = null) {
             this.isLoader = true;
 
             await adminApi
@@ -1116,24 +1269,167 @@ export default {
                     this.isLoader = false;
                 });
         },
+        async getCity(index) {
+            this.isLoader = true;
+            let governorate = this.create.details[index].governorate_id;
+            this.locations[index].city_id = null;
+            this.locations[index].avenue_id = null;
+            this.locations[index].street_id = null;
+            this.cities[index].cities = [];
+            this.avenues[index].avenues = [];
+            this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/cities?columns[0]=governorate.id&search=${governorate}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.cities[index].cities = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getAvnue(index) {
+            this.isLoader = true;
+            let city = this.locations[index].city_id;
+            this.locations[index].avenue_id = null;
+            this.locations[index].street_id = null;
+            this.avenues[index].avenues = [];
+            this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/avenues?columns[0]=city.id&search=${city}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.avenues[index].avenues = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getStreet(index) {
+            this.isLoader = true;
+            let avenue = this.locations[index].avenue_id;
+            this.locations[index].street_id = null;
+            this.streets[index].streets = [];
+
+            await adminApi
+                .get(`/streets?columns[0]=avenue.id&search=${avenue}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.streets[index].streets = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getPanel(index) {
+            this.isLoader = true;
+            let category_id = this.create.details[index].category_id;
+            let governorate_id = this.create.details[index].governorate_id;
+            let city_id = this.locations[index].city_id;
+            let avenue_id = this.locations[index].avenue_id;
+            let face = this.locations[index].face;
+            let street_id = this.locations[index].street_id;
+
+            await adminApi
+                .get(
+                    `/boards-rent/panels?page=${1}&per_page=${7}&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}`
+                )
+                .then((res) => {
+                    let l = res.data;
+                    this.pans[index].pans = l.data;
+                    this.pansPaginations[index].pansPaginations = l.pagination;
+                    this.current_page_pans[index] = l.pagination.current_page;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getPanelPagination(index) {
+
+            if (
+                this.current_page_pans[index] <= this.pansPaginations[index].pansPaginations.last_page &&
+                this.current_page_pans[index] != this.pansPaginations[index].pansPaginations.current_page &&
+                this.current_page_pans[index]
+            ) {
+                this.isLoader = true;
+                let category_id = this.location[index].category_id ?? null;
+                let governorate_id = this.location[index].governorate_id ?? null;
+                let city_id = this.location[index].city_id ?? null;
+                let avenue_id = this.location[index].avenue_id ?? null;
+                let face = this.location[index].face ?? null;
+                let street_id = this.location[index].street_id ?? null;
+
+                await adminApi
+                    .get(
+                        `/boards-rent/panels?page=${1}&per_page=${7}&packages=1&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}`
+                    )
+                    .then((res) => {
+                        let l = res.data;
+                        this.pans[index].pans = l.data;
+                        this.pansPaginations[index].pansPaginations = l.pagination;
+                        this.current_page_pans[index] = l.pagination.current_page;
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
         /**
          *   show Modal (edit)
          */
         async resetModalEdit(id) {
-            let reservation = this.reservations.find((e) => id == e.id);
-            this.date = new Date(reservation.date);
-            this.edit.serial_number = reservation.serial_number;
-            this.edit.date = reservation.date;
-            await this.getBranches();
-            this.edit.branch_id = reservation.branch.id;
-            await this.getSalesmen();
-            this.edit.salesman_id = reservation.salesman.id;
-            await this.getSellmethod();
-            this.edit.sell_method_id = reservation.sell_method.id;
-            await this.getStatus();
-            this.edit.status_id = reservation.customer.id;
-            await this.getCustomers();
-            this.edit.customer_id = reservation.status.id;
+            this.locations = [];
+            this.cities = [];
+            this.avenues = [];
+            this.streets = [];
+            this.pans = [];this.pansPaginations = [];
+            this.allPanelPackages = [];
+            this.panelPackages = [];this.faceNumbers = [];this.panelPackagesPaginatations= [];
+            this.current_page_pans = [];this.current_page_pans_packs = [];this.CheckAllPanels = [];
+            let reservation = this.reservations.find((e) => id == e.id);this.date = new Date(reservation.date);
+            this.edit.serial_number = reservation.serial_number;this.edit.date = reservation.date;
+            await this.getBranches();this.edit.branch_id = reservation.branch.id;
+            await this.getSalesmen();this.edit.salesman_id = reservation.salesman.id;
+            await this.getSellmethod();this.edit.sell_method_id = reservation.sell_method.id;
+            await this.getStatus();this.edit.status_id = reservation.customer.id;
+            await this.getCustomers();this.edit.customer_id = reservation.status.id;
             this.edit.is_stripe = reservation.is_stripe;
             if(reservation.is_stripe == 1){
                 await this.getPackage();
@@ -1145,6 +1441,25 @@ export default {
             reservation.order_details.forEach(  (e,index) => {
                 this.multDateEdit.push({to: new Date(e.to),from: new Date(e.from)});
                 if(reservation.is_stripe == 0){
+                    this.locations.push({city_id: null, avenue_id: null, street_id: null, face: ''});
+                    this.faceNumbers.push({'A': 0,'B': 0,'Multi': 0,'One-Face': 0});
+                    this.cities.push({cities: []});
+                    this.avenues.push({avenues: []});
+                    this.streets.push({streets: []});
+                    this.pans.push({pans: []});
+                    this.pansPaginations.push({pansPaginations: []});
+                    this.allPanelPackages.push({allPanelPackages: []});
+                    this.panelPackages.push({panelPackages: []});
+                    this.panelPackagesPaginatations.push({panelPackagesPaginatations: []});
+                    this.current_page_pans.push(1);
+                    this.current_page_pans_packs.push(1);
+                    this.CheckAllPanels.push([]);
+                    this.allPanelPackages[index].allPanelPackages = e.panels;
+                    e.panels.forEach((el,index) => {
+                        this.CheckAllPanels[index].push(el.id);
+                    });
+                    this.paginate(index);
+                    this.changeValuePanel(index);
                     this.edit.details.push({
                         category_id: e.category_id,
                         governorate_id: e.governorate_id,
@@ -1152,6 +1467,7 @@ export default {
                         price: e.price,
                         from: this.formatDate(e.from),
                         to: this.formatDate(e.to),
+                        panels: []
                     });
                 }else {
                     this.edit.details.push({
@@ -1159,6 +1475,7 @@ export default {
                         price: e.price,
                         from: this.formatDate(e.from),
                         to: this.formatDate(e.to),
+                        panels: []
                     });
                 }
                 this.edit.total += e.price;
@@ -1169,6 +1486,18 @@ export default {
          */
         resetModalHiddenEdit(id) {
             this.errors = {};
+            this.locations = [{city_id: null, avenue_id: null, street_id: null, face: ''}];
+            this.cities= [{cities: []}];
+            this.avenues= [{streets: []}];
+            this.streets = [{streets: []}];
+            this.pans = [{pans: []}];
+            this.pansPaginations = [{pansPaginations: []}];
+            this.allPanelPackages = [{allPanelPackages: []}];
+            this.panelPackages = [{panelPackages: []}];
+            this.panelPackagesPaginatations= [{panelPackagesPaginatations: []}];
+            this.current_page_pans = [1];
+            this.current_page_pans_packs = [1];
+            this.CheckAllPanels = [[]];
             this.edit = {
                 branch_id: null,
                 status_id: null,
@@ -1238,6 +1567,63 @@ export default {
                 }
                 this.enabled3 = true;
             }, 100);
+        },
+        showPanel(index){this.$bvModal.show(`create-panel-quotation-${index}`);},
+        showPanelEdit(index){this.$bvModal.show(`edit-panel-quotation-${index}`);},
+        changeValuePanel (index){
+            this.faceNumbers[index] = {'A': 0,'B': 0,'Multi': 0,'One-Face': 0};
+            this.allPanelPackages[index].allPanelPackages.forEach((e,index) => {
+                if(e.face == 'A'){
+                    this.faceNumbers[index].A = this.faceNumbers[index].A + 1;
+                }else if(e.face == 'B'){
+                    this.faceNumbers[index].B = this.faceNumbers[index].B + 1;
+                }else if(e.face == 'Multi'){
+                    this.faceNumbers[index].Multi = this.faceNumbers[index].Multi + 1;
+                }else if(e.face == 'One-Face'){
+                    this.faceNumbers[index]['One-Face'] = this.faceNumbers[index]['One-Face'] + 1;
+                }
+            });
+        },
+        checkRowPanel(index,data) {
+            let panel = this.allPanelPackages[index].allPanelPackages.find((el) => el.id == data.id);
+            if (!panel) {
+                this.allPanelPackages[index].allPanelPackages.push(data);
+            } else {
+                let index = this.allPanelPackages[index].allPanelPackages.findIndex((el) => el.id == data.id);
+                this.allPanelPackages[index].allPanelPackages.splice(index, 1);
+            }
+            this.paginate(
+                this.panelPackagesPaginatations[index].panelPackagesPaginatations.currentPage ?
+                    this.panelPackagesPaginatations[index].panelPackagesPaginatations.currentPage : 1
+            );
+            this.changeValuePanel(index);
+        },
+        // paginate
+        paginate(p = 1,index){
+
+            const page = p;
+            this.current_page_pans_packs[index] = page;
+            const limit = 7;
+            const skip = (page - 1) * limit;
+            const endIndex = page * limit;
+            const total = this.allPanelPackages[index].allPanelPackages.length;
+
+            // Pagination result
+            this.panelPackagesPaginatations[index].panelPackagesPaginatations.total = total;
+            this.panelPackagesPaginatations[index].panelPackagesPaginatations.limit = limit;
+            this.panelPackagesPaginatations[index].panelPackagesPaginatations.last_page = Math.ceil(total / limit);
+
+            if(
+                this.current_page_pans_packs[index] <= this.panelPackagesPaginatations.last_page &&
+                this.current_page_pans_packs[index] != this.packagesPagination.current_page
+            ){
+                this.panelPackagesPaginatations[index].panelPackagesPaginatations.to = skip? (skip + limit) : limit;
+                this.panelPackagesPaginatations[index].panelPackagesPaginatations.from = skip ? skip : 1;
+                this.panelPackagesPaginatations[index].panelPackagesPaginatations.currentPage = page;
+                this.panelPackages[index].panelPackages = [];
+                this.panelPackages = this.allPanelPackages[index].allPanelPackages.slice(skip,skip+limit);
+            }
+
         }
     }
 };
@@ -1626,8 +2012,422 @@ export default {
                                                                     getCompanyKey("boardRent_order_quantity") }}</div>
                                                                 <div class="col-1">{{ $t("general.Action") }}</div>
                                                             </div>
-                                                            <div v-for="(item, index) in create.details"
-                                                                 class="text-95  text-secondary-d3">
+                                                            <div
+                                                                v-for="(item, index) in create.details"
+                                                                class="text-95  text-secondary-d3"
+                                                            >
+                                                                <!--  create panels   -->
+                                                                <b-modal
+                                                                    :id="`create-panel-quotation-${index}`"
+                                                                    :title="getCompanyKey('boardRent_panel_create_form')"
+                                                                    title-class="font-18"
+                                                                    body-class="p-1"
+                                                                    dialog-class="modal-full-width"
+                                                                    :hide-footer="true"
+                                                                >
+                                                                    <div :class="['row justify-content-center']">
+                                                                        <div :class="['col-5']">
+                                                                            <div class="face">
+                                                                                <span class="face-name">A : {{ faceNumbers[index].A }}</span>
+                                                                            </div>
+                                                                            <div class="face">
+                                                                                <span class="face-name">B : {{ faceNumbers[index].B }}</span>
+                                                                            </div>
+                                                                            <div class="face">
+                                                                                <span class="face-name">Multi : {{ faceNumbers[index].Multi }}</span>
+                                                                            </div>
+                                                                            <div class="face">
+                                                                                <span class="face-name">One-Face : {{ faceNumbers[index]["One-Face"] }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="d-flex justify-content-end">
+                                                                        <div>
+                                                                            <b-button
+                                                                                @click.prevent="$bvModal.show(`search-${index}`)"
+                                                                                variant="primary"
+                                                                                class="mx-1 font-weight-bold"
+                                                                            >
+                                                                                {{ $t('general.Search') }}
+                                                                                <i class="fe-search"></i>
+                                                                            </b-button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <!-- selet panals -->
+                                                                        <div class="col-md-6">
+                                                                            <!-- start Pagination -->
+                                                                            <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                                <div>
+                                                                                    <div class="d-inline-block" style="font-size: 13px">
+                                                                                        {{ pansPaginations[index].pansPaginations.from }}-{{ pansPaginations[index].pansPaginations.to }} /
+                                                                                        {{ pansPaginations[index].pansPaginations.total }}
+                                                                                    </div>
+                                                                                    <div class="d-inline-block">
+                                                                                        <a
+                                                                                            href="javascript:void(0)"
+                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                pansPaginations[index].pansPaginations.current_page > 1 ? '' : 'none',
+                                                                                            }"
+                                                                                            @click.prevent="getPanel(pansPaginations[index].pansPaginations.current_page - 1,index)"
+                                                                                        >
+                                                                                            <span>&lt;</span>
+                                                                                        </a>
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            @keyup.enter="getPanelPagination(index)"
+                                                                                            v-model="current_page_pans[index]"
+                                                                                            class="pagination-current-page"
+                                                                                        />
+                                                                                        <a
+                                                                                            href="javascript:void(0)"
+                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                (pansPaginations[index].pansPaginations.last_page ==
+                                                                                                pansPaginations[index].pansPaginations.current_page) || !pansPaginations[index].pansPaginations
+                                                                                                  ? 'none'
+                                                                                                  : '',
+                                                                                            }"
+                                                                                            @click.prevent="getPanel(pansPaginations[index].pansPaginations.current_page + 1)"
+                                                                                        >
+                                                                                            <span>&gt;</span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div style="position: absolute;transform: translate(230px, 0px)">
+                                                                                    <h3>{{ $t('general.SelectPanel') }}</h3>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- end Pagination -->
+                                                                            <table class="table table-borderless table-hover table-centered m-0">
+                                                                                <thead>
+                                                                                <tr>
+                                                                                    <th>
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        {{ $t("general.Action") }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                                </thead>
+                                                                                <tbody v-if="pans[index].pans.length > 0">
+                                                                                <tr
+                                                                                    v-for="(data, index) in pans[index].pans"
+                                                                                    :key="data.id"
+                                                                                    class="body-tr-custom"
+                                                                                >
+                                                                                    <td scope="col">
+                                                                                        {{ data.code }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.face }}
+                                                                                    </td>
+                                                                                    <td scope="col" style="width: 0">
+                                                                                        <div class="form-check custom-control">
+                                                                                            <input
+                                                                                                class="form-check-input"
+                                                                                                type="checkbox"
+                                                                                                :value="data.id"
+                                                                                                @change="checkRowPanel(index,data)"
+                                                                                                v-model="CheckAllPanels[index]"
+                                                                                                style="width: 17px; height: 17px"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                </tbody>
+                                                                                <tbody v-else>
+                                                                                <tr>
+                                                                                    <th class="text-center" colspan="11">
+                                                                                        {{ $t("general.notDataFound") }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+
+                                                                        <!-- panals package -->
+                                                                        <div class="col-md-6">
+                                                                            <!-- start Pagination -->
+                                                                            <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                                <div>
+                                                                                    <div class="d-inline-block" style="font-size: 13px">
+                                                                                        {{ panelPackagesPaginatations[index].panelPackagesPaginatations.from }}-{{ panelPackagesPaginatations[index].panelPackagesPaginatations.to }} /
+                                                                                        {{ panelPackagesPaginatations[index].panelPackagesPaginatations.total }}
+                                                                                    </div>
+                                                                                    <div class="d-inline-block">
+                                                                                        <a
+                                                                                            href="javascript:void(0)"
+                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                panelPackagesPaginatations[index].panelPackagesPaginatations.current_page > 1 ? '' : 'none',
+                                                                                            }"
+                                                                                            @click.prevent="paginate(panelPackagesPaginatations[index].panelPackagesPaginatations.current_page - 1,index)"
+                                                                                        >
+                                                                                            <span>&lt;</span>
+                                                                                        </a>
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            @keyup.enter="paginate(current_page_pans_packs[index],index)"
+                                                                                            v-model="current_page_pans_packs[index]"
+                                                                                            class="pagination-current-page"
+                                                                                        />
+                                                                                        <a
+                                                                                            href="javascript:void(0)"
+                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                (panelPackagesPaginatations[index].panelPackagesPaginatations.last_page ==
+                                                                                                panelPackagesPaginatations[index].panelPackagesPaginatations.current_page) || !panelPackagesPaginatations[index].panelPackagesPaginatations
+                                                                                                  ? 'none'
+                                                                                                  : '',
+                                                                                            }"
+                                                                                            @click.prevent="paginate(panelPackagesPaginatations[index].panelPackagesPaginatations.current_page + 1)"
+                                                                                        >
+                                                                                            <span>&gt;</span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div style="position: absolute;transform: translate(230px, 0px)">
+                                                                                    <h3>{{ $t('general.Selected') }}</h3>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- end Pagination -->
+
+                                                                            <table class="table table-borderless table-hover table-centered">
+                                                                                <thead>
+                                                                                <tr>
+                                                                                    <th>
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th >
+                                                                                        <div class="d-flex justify-content-center">
+                                                                                            <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        {{ $t("general.Action") }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                                </thead>
+                                                                                <tbody v-if="panelPackages[index].panelPackages.length > 0">
+                                                                                <tr
+                                                                                    v-for="(data, index) in panelPackages[index].panelPackages"
+                                                                                    :key="data.id"
+                                                                                    class="body-tr-custom"
+                                                                                >
+                                                                                    <td scope="col">
+                                                                                        {{ data.code }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                                    </td>
+                                                                                    <td scope="col">
+                                                                                        {{ data.face }}
+                                                                                    </td>
+                                                                                    <td scope="col" style="width: 0">
+                                                                                        <div class="form-check custom-control">
+                                                                                            <input
+                                                                                                class="form-check-input"
+                                                                                                type="checkbox"
+                                                                                                :value="data.id"
+                                                                                                @change="checkRowPanel(index,data)"
+                                                                                                v-model="CheckAllPanels[index]"
+                                                                                                style="width: 17px; height: 17px"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                </tbody>
+                                                                                <tbody v-else>
+                                                                                <tr>
+                                                                                    <th class="text-center" colspan="11">
+                                                                                        {{ $t("general.notDataFound") }}
+                                                                                    </th>
+                                                                                </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </b-modal>
+                                                                <!--  /create panels   -->
+
+                                                                <!--  search   -->
+                                                                <b-modal
+                                                                    :id="`search-${index}`"
+                                                                    :title="$t('general.Search')"
+                                                                    title-class="font-18"
+                                                                    body-class="p-4"
+                                                                    size="lg"
+                                                                    :hide-footer="true"
+                                                                >
+                                                                    <form>
+                                                                        <div class="mb-3 d-flex justify-content-end">
+                                                                            <b-button
+                                                                                variant="success"
+                                                                                type="button" class="mx-1"
+                                                                                v-if="!isLoader"
+                                                                                @click.prevent="getPanel(index)"
+                                                                            >
+                                                                                {{ $t('general.Search') }}
+                                                                            </b-button>
+
+                                                                            <b-button variant="success" class="mx-1" disabled v-else>
+                                                                                <b-spinner small></b-spinner>
+                                                                                <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                                                            </b-button>
+                                                                            <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                                                            <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`search-${index}`)">
+                                                                                {{ $t('general.Cancel') }}
+                                                                            </b-button>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="control-label">
+                                                                                        {{ getCompanyKey("boardRent_panel_city") }}
+                                                                                    </label>
+                                                                                    <multiselect
+                                                                                        @input="showCityModal(index)"
+                                                                                        v-model="locations[index].city_id"
+                                                                                        :options="cities[index].cities.map((type) => type.id)"
+                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? cities[index].cities.find((x) => x.id == opt).name : cities[index].cities.find((x) => x.id == opt).name_e"
+                                                                                    >
+                                                                                    </multiselect>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="control-label">
+                                                                                        {{ getCompanyKey("boardRent_panel_avenue") }}
+                                                                                    </label>
+                                                                                    <multiselect
+                                                                                        @input="showAvenueModal(index)"
+                                                                                        v-model="locations[index].avenue_id"
+                                                                                        :options="avenues[index].avenues.map((type) => type.id)"
+                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? avenues[index].avenues.find((x) => x.id == opt).name : avenues[index].avenues.find((x) => x.id == opt).name_e"
+                                                                                    >
+                                                                                    </multiselect>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="control-label">
+                                                                                        {{ getCompanyKey("boardRent_panel_street") }}
+                                                                                    </label>
+                                                                                    <multiselect
+                                                                                        @input="showStreetModal(index)"
+                                                                                        v-model="locations[index].street_id"
+                                                                                        :options="streets[index].streets.map((type) => type.id)"
+                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? streets[index].streets.find((x) => x.id == opt).name : streets[index].streets.find((x) => x.id == opt).name_e"
+                                                                                    >
+                                                                                    </multiselect>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label class="control-label">
+                                                                                        {{ getCompanyKey("boardRent_panel_face") }}
+                                                                                    </label>
+                                                                                    <multiselect
+                                                                                        v-model="locations[index].face"
+                                                                                        :options="faces"
+                                                                                    >
+                                                                                    </multiselect>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </b-modal>
+                                                                <!--  /search   -->
 
                                                                 <div class="row mb-2 mb-sm-0 py-25" :class="index % 2 == 0 ? 'bgc-default-l4' : ''">
                                                                     <div class="col-2">
@@ -1729,7 +2529,6 @@ export default {
                                                                     </div>
                                                                     <div class="col-2">
                                                                         <input
-                                                                            @keyup.enter="moveEnter('create', index, 4)"
                                                                             :id="`create-${index}-4`"
                                                                             v-model.number="$v.create.details.$each[index].price.$model"
                                                                             @input="changeValue"
@@ -1746,10 +2545,9 @@ export default {
                                                                     </div>
                                                                     <div class="col-1">
                                                                         <input
-                                                                            @keyup.enter="moveEnter('create', index, 5)"
                                                                             :id="`create-${index}-4`"
                                                                             v-model.number="$v.create.details.$each[index].quantity.$model"
-                                                                            @input="changeValue"
+                                                                            @input="changeValue(index,'panel')"
                                                                             class="form-control"
                                                                             type="number" :class="{
                                                                                         'is-invalid':
@@ -1761,39 +2559,49 @@ export default {
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-1">
-                                                                        <button v-if="create.details.length > 1"
-                                                                                type="button"
-                                                                                @click.prevent="removeNewField(index)"
-                                                                                class="custom-btn-dowonload">
+                                                                        <button
+                                                                            type="button"
+                                                                            :disabled="!item.category_id && !item.governorate_id && !(item.quantity < 0)"
+                                                                            @click.prevent="showPanel(index)"
+                                                                            class="custom-panel-quotation"
+                                                                        >
+                                                                            {{ $t('general.panel') }}
+                                                                        </button>
+                                                                        <button
+                                                                            v-if="create.details.length > 1"
+                                                                            type="button"
+                                                                            @click.prevent="removeNewField(index)"
+                                                                            class="custom-btn-dowonload"
+                                                                        >
                                                                             <i class="fas fa-trash-alt"></i>
                                                                         </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row border-b-2 brc-default-l2"></div>
-                                                            <div class="row mt-3">
-                                                                <div
-                                                                    class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                    {{ $t("general.Extra_note") }}
-                                                                </div>
-
-                                                                <div
-                                                                    class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                                                                <div class="row border-b-2 brc-default-l2"></div>
+                                                                <div class="row mt-3">
                                                                     <div
-                                                                        class="row my-2 align-items-center bgc-primary-l3 p-2">
-                                                                        <div class="col-7 text-right">
-                                                                            {{ $t("general.Total_Amount") }}
-                                                                        </div>
-                                                                        <div class="col-5">
-                                                                                    <span
-                                                                                        class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
-                                                                                    </span>
+                                                                        class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+                                                                        {{ $t("general.Extra_note") }}
+                                                                    </div>
+
+                                                                    <div
+                                                                        class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                                                                        <div
+                                                                            class="row my-2 align-items-center bgc-primary-l3 p-2">
+                                                                            <div class="col-7 text-right">
+                                                                                {{ $t("general.Total_Amount") }}
+                                                                            </div>
+                                                                            <div class="col-5">
+                                                                                        <span
+                                                                                            class="text-150 text-success-d3 opacity-2">
+                                                                                            {{ !create.total ? '0.00' : create.total }}
+                                                                                        </span>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
 
-                                                            </div>
+                                                                </div>
                                                             <hr />
                                                             <div>
                                                                 <span class="text-secondary-d1 text-105">{{
@@ -1820,8 +2628,8 @@ export default {
                                                                 <div class="col-1">{{ $t("general.Action") }}</div>
                                                             </div>
                                                             <div v-for="(item, index) in create.details"
-                                                                 class="text-95  text-secondary-d3">
-
+                                                                 class="text-95  text-secondary-d3"
+                                                            >
                                                                 <div class="row mb-2 mb-sm-0 py-25"
                                                                      :class="index % 2 == 0 ? 'bgc-default-l4' : ''">
                                                                     <div class="col-1">
@@ -1879,7 +2687,6 @@ export default {
                                                                     </div>
                                                                     <div class="col-2">
                                                                         <input
-                                                                            @keyup.enter="moveEnter('create', index, 4)"
                                                                             :id="`create-${index}-4`"
                                                                             v-model.number="$v.create.details.$each[index].price.$model"
                                                                             @input="changeValue"
@@ -2370,6 +3177,419 @@ export default {
                                                                             <div v-for="(item, index) in edit.details"
                                                                                  class="text-95  text-secondary-d3">
 
+                                                                                <!--  edit panels   -->
+                                                                                <b-modal
+                                                                                    :id="`edit-panel-quotation-${index}`"
+                                                                                    :title="getCompanyKey('boardRent_panel_create_form')"
+                                                                                    title-class="font-18"
+                                                                                    body-class="p-1"
+                                                                                    dialog-class="modal-full-width"
+                                                                                    :hide-footer="true"
+                                                                                >
+                                                                                    <div :class="['row justify-content-center']">
+                                                                                        <div :class="['col-5']">
+                                                                                            <div class="face">
+                                                                                                <span class="face-name">A : {{ faceNumbers[index].A }}</span>
+                                                                                            </div>
+                                                                                            <div class="face">
+                                                                                                <span class="face-name">B : {{ faceNumbers[index].B }}</span>
+                                                                                            </div>
+                                                                                            <div class="face">
+                                                                                                <span class="face-name">Multi : {{ faceNumbers[index].Multi }}</span>
+                                                                                            </div>
+                                                                                            <div class="face">
+                                                                                                <span class="face-name">One-Face : {{ faceNumbers[index]["One-Face"] }}</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="d-flex justify-content-end">
+                                                                                        <div>
+                                                                                            <b-button
+                                                                                                @click.prevent="$bvModal.show(`search-${index}`)"
+                                                                                                variant="primary"
+                                                                                                class="mx-1 font-weight-bold"
+                                                                                            >
+                                                                                                {{ $t('general.Search') }}
+                                                                                                <i class="fe-search"></i>
+                                                                                            </b-button>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div class="row">
+                                                                                        <!-- selet panals -->
+                                                                                        <div class="col-md-6">
+                                                                                            <!-- start Pagination -->
+                                                                                            <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                                                <div>
+                                                                                                    <div class="d-inline-block" style="font-size: 13px">
+                                                                                                        {{ pansPaginations[index].pansPaginations.from }}-{{ pansPaginations[index].pansPaginations.to }} /
+                                                                                                        {{ pansPaginations[index].pansPaginations.total }}
+                                                                                                    </div>
+                                                                                                    <div class="d-inline-block">
+                                                                                                        <a
+                                                                                                            href="javascript:void(0)"
+                                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                pansPaginations[index].pansPaginations.current_page > 1 ? '' : 'none',
+                                                                                            }"
+                                                                                                            @click.prevent="getPanel(pansPaginations[index].pansPaginations.current_page - 1,index)"
+                                                                                                        >
+                                                                                                            <span>&lt;</span>
+                                                                                                        </a>
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            @keyup.enter="getPanelPagination(index)"
+                                                                                                            v-model="current_page_pans[index]"
+                                                                                                            class="pagination-current-page"
+                                                                                                        />
+                                                                                                        <a
+                                                                                                            href="javascript:void(0)"
+                                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                (pansPaginations[index].pansPaginations.last_page ==
+                                                                                                pansPaginations[index].pansPaginations.current_page) || !pansPaginations[index].pansPaginations
+                                                                                                  ? 'none'
+                                                                                                  : '',
+                                                                                            }"
+                                                                                                            @click.prevent="getPanel(pansPaginations[index].pansPaginations.current_page + 1)"
+                                                                                                        >
+                                                                                                            <span>&gt;</span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div style="position: absolute;transform: translate(230px, 0px)">
+                                                                                                    <h3>{{ $t('general.SelectPanel') }}</h3>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <!-- end Pagination -->
+                                                                                            <table class="table table-borderless table-hover table-centered m-0">
+                                                                                                <thead>
+                                                                                                <tr>
+                                                                                                    <th>
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th>
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th>
+                                                                                                        {{ $t("general.Action") }}
+                                                                                                    </th>
+                                                                                                </tr>
+                                                                                                </thead>
+                                                                                                <tbody v-if="pans[index].pans.length > 0">
+                                                                                                <tr
+                                                                                                    v-for="(data, index) in pans[index].pans"
+                                                                                                    :key="data.id"
+                                                                                                    class="body-tr-custom"
+                                                                                                >
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.code }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.face }}
+                                                                                                    </td>
+                                                                                                    <td scope="col" style="width: 0">
+                                                                                                        <div class="form-check custom-control">
+                                                                                                            <input
+                                                                                                                class="form-check-input"
+                                                                                                                type="checkbox"
+                                                                                                                :value="data.id"
+                                                                                                                @change="checkRowPanel(index,data)"
+                                                                                                                v-model="CheckAllPanels[index]"
+                                                                                                                style="width: 17px; height: 17px"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                                </tbody>
+                                                                                                <tbody v-else>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="11">
+                                                                                                        {{ $t("general.notDataFound") }}
+                                                                                                    </th>
+                                                                                                </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </div>
+
+                                                                                        <!-- panals package -->
+                                                                                        <div class="col-md-6">
+                                                                                            <!-- start Pagination -->
+                                                                                            <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                                                <div>
+                                                                                                    <div class="d-inline-block" style="font-size: 13px">
+                                                                                                        {{ panelPackagesPaginatations[index].panelPackagesPaginatations.from }}-{{ panelPackagesPaginatations[index].panelPackagesPaginatations.to }} /
+                                                                                                        {{ panelPackagesPaginatations[index].panelPackagesPaginatations.total }}
+                                                                                                    </div>
+                                                                                                    <div class="d-inline-block">
+                                                                                                        <a
+                                                                                                            href="javascript:void(0)"
+                                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                panelPackagesPaginatations[index].panelPackagesPaginatations.current_page > 1 ? '' : 'none',
+                                                                                            }"
+                                                                                                            @click.prevent="paginate(panelPackagesPaginatations[index].panelPackagesPaginatations.current_page - 1,index)"
+                                                                                                        >
+                                                                                                            <span>&lt;</span>
+                                                                                                        </a>
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            @keyup.enter="paginate(current_page_pans_packs[index],index)"
+                                                                                                            v-model="current_page_pans_packs[index]"
+                                                                                                            class="pagination-current-page"
+                                                                                                        />
+                                                                                                        <a
+                                                                                                            href="javascript:void(0)"
+                                                                                                            :style="{
+                                                                                              'pointer-events':
+                                                                                                (panelPackagesPaginatations[index].panelPackagesPaginatations.last_page ==
+                                                                                                panelPackagesPaginatations[index].panelPackagesPaginatations.current_page) || !panelPackagesPaginatations[index].panelPackagesPaginatations
+                                                                                                  ? 'none'
+                                                                                                  : '',
+                                                                                            }"
+                                                                                                            @click.prevent="paginate(panelPackagesPaginatations[index].panelPackagesPaginatations.current_page + 1)"
+                                                                                                        >
+                                                                                                            <span>&gt;</span>
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div style="position: absolute;transform: translate(230px, 0px)">
+                                                                                                    <h3>{{ $t('general.Selected') }}</h3>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <!-- end Pagination -->
+
+                                                                                            <table class="table table-borderless table-hover table-centered">
+                                                                                                <thead>
+                                                                                                <tr>
+                                                                                                    <th>
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th>
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th >
+                                                                                                        <div class="d-flex justify-content-center">
+                                                                                                            <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                                        </div>
+                                                                                                    </th>
+                                                                                                    <th>
+                                                                                                        {{ $t("general.Action") }}
+                                                                                                    </th>
+                                                                                                </tr>
+                                                                                                </thead>
+                                                                                                <tbody v-if="panelPackages[index].panelPackages.length > 0">
+                                                                                                <tr
+                                                                                                    v-for="(data, index) in panelPackages[index].panelPackages"
+                                                                                                    :key="data.id"
+                                                                                                    class="body-tr-custom"
+                                                                                                >
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.code }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                                                    </td>
+                                                                                                    <td scope="col">
+                                                                                                        {{ data.face }}
+                                                                                                    </td>
+                                                                                                    <td scope="col" style="width: 0">
+                                                                                                        <div class="form-check custom-control">
+                                                                                                            <input
+                                                                                                                class="form-check-input"
+                                                                                                                type="checkbox"
+                                                                                                                :value="data.id"
+                                                                                                                @change="checkRowPanel(index,data)"
+                                                                                                                v-model="CheckAllPanels[index]"
+                                                                                                                style="width: 17px; height: 17px"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                                </tbody>
+                                                                                                <tbody v-else>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="11">
+                                                                                                        {{ $t("general.notDataFound") }}
+                                                                                                    </th>
+                                                                                                </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </b-modal>
+                                                                                <!--  /edit panels   -->
+
+                                                                                <!--  search   -->
+                                                                                <b-modal
+                                                                                    :id="`search-edit-${index}`"
+                                                                                    :title="$t('general.Search')"
+                                                                                    title-class="font-18"
+                                                                                    body-class="p-4"
+                                                                                    size="lg"
+                                                                                    :hide-footer="true"
+                                                                                >
+                                                                                    <form>
+                                                                                        <div class="mb-3 d-flex justify-content-end">
+                                                                                            <b-button
+                                                                                                variant="success"
+                                                                                                type="button" class="mx-1"
+                                                                                                v-if="!isLoader"
+                                                                                                @click.prevent="getPanel"
+                                                                                            >
+                                                                                                {{ $t('general.Search') }}
+                                                                                            </b-button>
+
+                                                                                            <b-button variant="success" class="mx-1" disabled v-else>
+                                                                                                <b-spinner small></b-spinner>
+                                                                                                <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                                                                            </b-button>
+                                                                                            <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                                                                            <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`search-edit-${index}`)">
+                                                                                                {{ $t('general.Cancel') }}
+                                                                                            </b-button>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="control-label">
+                                                                                                        {{ getCompanyKey("boardRent_panel_city") }}
+                                                                                                    </label>
+                                                                                                    <multiselect
+                                                                                                        @input="showCityModal(index)"
+                                                                                                        v-model="locations[index].city_id"
+                                                                                                        :options="cities[index].cities.map((type) => type.id)"
+                                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? cities[index].cities.find((x) => x.id == opt).name : cities[index].cities.find((x) => x.id == opt).name_e"
+                                                                                                    >
+                                                                                                    </multiselect>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="control-label">
+                                                                                                        {{ getCompanyKey("boardRent_panel_avenue") }}
+                                                                                                    </label>
+                                                                                                    <multiselect
+                                                                                                        @input="showAvenueModal(index)"
+                                                                                                        v-model="locations[index].avenue_id"
+                                                                                                        :options="avenues[index].avenues.map((type) => type.id)"
+                                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? avenues[index].avenues.find((x) => x.id == opt).name : avenues[index].avenues.find((x) => x.id == opt).name_e"
+                                                                                                    >
+                                                                                                    </multiselect>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="control-label">
+                                                                                                        {{ getCompanyKey("boardRent_panel_street") }}
+                                                                                                    </label>
+                                                                                                    <multiselect
+                                                                                                        @input="showStreetModal(index)"
+                                                                                                        v-model="locations[index].street_id"
+                                                                                                        :options="streets[index].streets.map((type) => type.id)"
+                                                                                                        :custom-label="(opt) => $i18n.locale == 'ar' ? streets[index].streets.find((x) => x.id == opt).name : streets[index].streets.find((x) => x.id == opt).name_e"
+                                                                                                    >
+                                                                                                    </multiselect>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="control-label">
+                                                                                                        {{ getCompanyKey("boardRent_panel_face") }}
+                                                                                                    </label>
+                                                                                                    <multiselect
+                                                                                                        v-model="locations[index].face"
+                                                                                                        :options="faces"
+                                                                                                    >
+                                                                                                    </multiselect>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </form>
+                                                                                </b-modal>
+                                                                                <!--  /search   -->
+
                                                                                 <div class="row mb-2 mb-sm-0 py-25" :class="index % 2 == 0 ? 'bgc-default-l4' : ''">
                                                                                     <div class="col-2">
                                                                                         <multiselect
@@ -2469,7 +3689,6 @@ export default {
                                                                                     </div>
                                                                                     <div class="col-2">
                                                                                         <input
-                                                                                            @keyup.enter="moveEnter('edit', index, 4)"
                                                                                             :id="`edit-${index}-4`"
                                                                                             v-model.number="$v.edit.details.$each[index].price.$model"
                                                                                             @input="changeValueEdit"
@@ -2486,7 +3705,6 @@ export default {
                                                                                     </div>
                                                                                     <div class="col-1">
                                                                                         <input
-                                                                                            @keyup.enter="moveEnter('edit', index, 5)"
                                                                                             :id="`edit-${index}-4`"
                                                                                             v-model.number="$v.edit.details.$each[index].quantity.$model"
                                                                                             @input="changeValueEdit"
@@ -2501,6 +3719,14 @@ export default {
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="col-1">
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            :disabled="!item.category_id && !item.governorate_id && !(item.quantity < 0)"
+                                                                                            @click.prevent="showPanelEdit(index)"
+                                                                                            class="custom-panel-quotation"
+                                                                                        >
+                                                                                            {{ $t('general.panel') }}
+                                                                                        </button>
                                                                                         <button v-if="edit.details.length > 1"
                                                                                                 type="button"
                                                                                                 @click.prevent="removeNewFieldEdit(index)"
@@ -2619,7 +3845,6 @@ export default {
                                                                                     </div>
                                                                                     <div class="col-2">
                                                                                         <input
-                                                                                            @keyup.enter="moveEnter('edit', index, 4)"
                                                                                             :id="`edit-${index}-4`"
                                                                                             v-model.number="$v.edit.details.$each[index].price.$model"
                                                                                             @input="changeValueEdit"
@@ -2662,7 +3887,7 @@ export default {
                                                                                         <div class="col-5">
                                                                                     <span
                                                                                         class="text-150 text-success-d3 opacity-2">
-                                                                                        {{ !total ? '0.00' : total }}
+                                                                                        {{ !edit.total ? '0.00' : edit.total }}
                                                                                     </span>
                                                                                         </div>
                                                                                     </div>
@@ -2717,6 +3942,12 @@ export default {
 </template>
 
 <style scoped>
+.custom-panel-quotation{
+    background-color: #81afca !important;
+    color: lemonchiffon;
+    font-size: 16px;
+    border: none;
+}
 .page-content {
     width: 100%;
 }
@@ -2861,5 +4092,21 @@ hr {
 
 .align-bottom {
     vertical-align: bottom !important;
+}
+
+.face {
+    display: inline-block;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.face .face-name {
+    background-color: #6dc6f5;
+    padding: 0px 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 7px;
+    display: block;
 }
 </style>

@@ -11,6 +11,23 @@ export default [
         component: () => import('../../views/pages/realEstate/unit-status'),
     },
     {
+        path: '/dashboard/realEstate/admin-report',
+        name: 'admin-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/admin-report'),
+    },
+    {
+        path: '/dashboard/realEstate/unsold-unit-report',
+        name: 'unsold-unit-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/unsold-unit-report'),
+    },
+    
+    {
         path: '/dashboard/realEstate/contract',
         name: 'realEstate-contract',
         meta: {

@@ -20,6 +20,7 @@ import salesmenTypes from "./routeChild/salesmenTypes";
 import branches from "./routeChild/branch";
 import serial from "./routeChild/serial";
 import store from "./routeChild/store";
+import hr from "./routeChild/hr";
 import dictionary from "./routeChild/dictionary";
 import workflowhotfields from "./routeChild/workflowhotfield";
 import screenproperties from "./routeChild/screen-property";
@@ -39,6 +40,7 @@ import department from "./routeChild/department";
 import statuses from "./routeChild/statuses";
 import category from "./routeChild/category";
 import club from "./routeChild/club";
+import equipment from "./routeChild/equipment";
 
 export default [
     ...login,
@@ -63,6 +65,7 @@ export default [
     ...users,
     ...screenproperties,
     ...store,
+    ...hr,
     ...workflowhotfields,
     ...serial,
     ...propertyTrees,
@@ -80,6 +83,7 @@ export default [
     ...department,
     ...statuses,
     ...category,
+    ...equipment,
     {
         path: '/dashboard/notifications',
         name: 'notifications',

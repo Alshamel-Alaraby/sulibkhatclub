@@ -176,6 +176,9 @@ export default {
     },
     mixins: [transMixinComp],
     props: {
+        module_type: {
+            default: '',
+        },
         companyKeys: {
             default: [],
         },
@@ -229,6 +232,7 @@ export default {
                 this.$v.$reset();
             });
             this.errors = {};
+            this.is_disabled = false;
             this.$bvModal.hide(`unitStatus-create`);
         },
         /**
@@ -316,9 +320,7 @@ export default {
             this.isLoader = true;
 
             await adminApi
-                .get(
-                    `/statuses`
-                )
+                .get(`/statuses?module_type=${this.module_type}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });

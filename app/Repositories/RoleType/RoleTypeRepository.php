@@ -26,7 +26,7 @@ class RoleTypeRepository implements RoleTypeRepositoryInterface
     public function create(array $data)
     {
         DB::transaction(function () use ($data) {
-            $this->model->create($data);
+            $this->model->create(request()->all());
             cacheForget("role_types");
         });
     }

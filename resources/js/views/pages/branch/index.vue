@@ -55,13 +55,13 @@ export default {
       create: {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
           parent_id: null,
       },
       edit: {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
           parent_id: null,
       },
       company_id: null,
@@ -452,7 +452,7 @@ export default {
       this.create = {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
           parent_id: null,
       };
       this.$nextTick(() => {
@@ -469,7 +469,7 @@ export default {
       this.create = {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
           parent_id: null,
       };
       this.$nextTick(() => {
@@ -484,7 +484,7 @@ export default {
       this.create = {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
           parent_id: null,
       };
       this.$nextTick(() => {
@@ -618,7 +618,7 @@ export default {
       this.edit = {
         name: "",
         name_e: "",
-        is_active: "active",
+        is_active: 1,
         parent_id: null,
       };
     },
@@ -1044,14 +1044,14 @@ export default {
                           class="d-inline-block"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="active"
+                          value="1"
                           >{{ $t("general.Active") }}</b-form-radio
                         >
                         <b-form-radio
                           class="d-inline-block m-1"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="inactive"
+                          value="0"
                           >{{ $t("general.Inactive") }}</b-form-radio
                         >
                       </b-form-group>
@@ -1376,14 +1376,14 @@ export default {
                                     class="d-inline-block"
                                     v-model="$v.edit.is_active.$model"
                                     name="some-radios"
-                                    value="active"
+                                    value="1"
                                     >{{ $t("general.Active") }}</b-form-radio
                                   >
                                   <b-form-radio
                                     class="d-inline-block m-1"
                                     v-model="$v.edit.is_active.$model"
                                     name="some-radios"
-                                    value="inactive"
+                                    value="0"
                                     >{{ $t("general.Inactive") }}</b-form-radio
                                   >
                                 </b-form-group>

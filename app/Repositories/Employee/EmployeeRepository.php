@@ -3,24 +3,26 @@
 namespace App\Repositories\Employee;
 
 use App\Models\Employee;
-use App\Models\UserSettingScreen;
 use Illuminate\Support\Facades\DB;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EmployeeRepository implements EmployeeInterface
 {
 
-    public function __construct(private Employee $model, private Media $media, private UserSettingScreen $setting)
+    public function __construct(private Employee $model)
     {
         $this->model = $model;
-        $this->media = $media;
-        $this->setting = $setting;
 
     }
 
     public function all($request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if ($request->customer_handel) {
+            $models->where('customer_handel', '!=', 'non_customer');
+        }
+        if ($request->is_salesman) {
+            $models->where('is_salesman', 'true');
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -38,7 +40,11 @@ class EmployeeRepository implements EmployeeInterface
     {
         DB::transaction(function () use ($request) {
             $model = $this->model->create($request->all());
-            cacheForget("employees");
+            if ($request->plans) {
+                $model->plans()->sync($request->plans);
+            }
+
+            return $model;
         });
     }
 
@@ -47,9 +53,9 @@ class EmployeeRepository implements EmployeeInterface
         DB::transaction(function () use ($id, $request) {
             $model = $this->model->find($id);
             $model->update($request->except(["media"]));
-
-            $this->forget($id);
-
+            if ($request->plans) {
+                $model->plans()->sync($request->plans);
+            }
         });
 
     }
@@ -57,7 +63,6 @@ class EmployeeRepository implements EmployeeInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
         $model->delete();
     }
 
@@ -65,16 +70,41 @@ class EmployeeRepository implements EmployeeInterface
     {
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
-    private function forget($id)
-    {
-        $keys = [
-            "employees",
-            "employees_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
 
+    public function processJsonData(array $data): void
+    {
+        foreach ($data['data'] as $item) {
+            switch ($item['op']) {
+                case 'ADD':
+                    $this->model->insert([
+                        'name' => $item['name'],
+                        'name_e' => $item['name_e'],
+                        'department_id' => $item['department_id'] ?? null,
+                        'job_id' => $item['job_id'] ?? null,
+                        'manager_id' => $item['manager_id'] ?? null,
+                        'branch_id' => $item['branch_id'] ?? null,
+                        'manage_others' => $item['manage_others'] ?? 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    break;
+                case 'UPD':
+                    $this->model->where('id', $item['id'])->update([
+                        'name' => $item['name'],
+                        'name_e' => $item['name_e'],
+                        'department_id' => $item['department_id'] ?? null,
+                        'job_id' => $item['job_id'] ?? null,
+                        'manager_id' => $item['manager_id'] ?? null,
+                        'branch_id' => $item['branch_id'] ?? null,
+                        'manage_others' => $item['manage_others'] ?? 1,
+                        'updated_at' => now(),
+                    ]);
+                    break;
+                case 'DEL':
+                    $this->model->where('id', $item['id'])->delete();
+                    break;
+            }
+        }
     }
 
 }

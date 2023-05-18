@@ -351,3 +351,20 @@ td i.fe-info {
 #sidebar-menu > ul > li > a.router-link-exact-active , #sidebar-menu > ul > li >  a.router-link-active{
     color: #000 !important;
 }
+
+.tab-content.tab-content-custom {
+    padding: 5px 0px 10px !important;
+    background-color: #f5f5f5;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: unset !important;
+}
+
+.fc .fc-daygrid-day-frame {
+    background-color: #fff !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
+    background-color: #e1f0fd !important;
+}

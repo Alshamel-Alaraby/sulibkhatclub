@@ -2,6 +2,7 @@
 
 namespace Modules\ClubMembers\Entities;
 
+use App\Models\Branch;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,24 @@ class CmTransaction extends Model
 
     protected $guarded = ['id'];
     protected $table = 'cm_transactions';
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
+
+    }
+
+    public function sponsor()
+    {
+        return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponser::class, 'sponsor_id');
+
+    }
 
 
     public function getActivitylogOptions(): LogOptions

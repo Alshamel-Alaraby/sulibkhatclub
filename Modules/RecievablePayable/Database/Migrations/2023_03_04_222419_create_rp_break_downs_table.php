@@ -35,6 +35,7 @@ return new class extends Migration
             $table->unsignedInteger('invoice_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
         });
     }
     /**

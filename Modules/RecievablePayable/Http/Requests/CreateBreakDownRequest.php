@@ -34,6 +34,7 @@ class CreateBreakDownRequest extends FormRequest
             "break_downs.*.terms"  => "nullable|array",
             'break_downs.*.installment_statu_id' => 'nullable|integer',
             'break_downs.*.details' => 'nullable|string',
+            'break_downs.*.amount_status' => 'nullable|string|in:Paid_Partially,Paid',
         ];
     }
 

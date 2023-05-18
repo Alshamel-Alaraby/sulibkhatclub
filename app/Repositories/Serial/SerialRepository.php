@@ -39,6 +39,16 @@ class SerialRepository implements SerialRepositoryInterface
 
     public function create(array $data)
     {
+
+        $serial = $this->model
+            ->where('document_id', $data['document_id'])
+            ->where('branch_id', $data['branch_id'])
+            ->first();
+        
+        if ($serial) {
+            return null;
+        }
+
         return DB::transaction(function () use ($data) {
             return $model = $this->model->create($data);
             if (request()->is_default == 1) {
@@ -56,6 +66,15 @@ class SerialRepository implements SerialRepositoryInterface
 
     public function update($request, $id)
     {
+        $serial = $this->model
+            ->where('document_id', $request['document_id'])
+            ->where('branch_id', $request['branch_id'])
+            ->first();
+
+        if ($serial) {
+            return null;
+        }
+
         DB::transaction(function () use ($id, $request) {
             $this->model->where("id", $id)->update($request->validated());
             if (request()->is_default == 1) {

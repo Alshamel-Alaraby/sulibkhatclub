@@ -4,10 +4,17 @@ namespace Modules\RealEstate\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
 use App\Models\Serial;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\RealEstate\Entities\RlstContract;
+use Modules\RealEstate\Entities\RlstContractDetail;
+use Modules\RealEstate\Entities\RlstOwner;
+use Modules\RealEstate\Entities\RlstReservationDetail;
+use Modules\RealEstate\Entities\RlstUnit;
+use Modules\RealEstate\Http\Requests\RlstContractFilterRequest;
 use Modules\RealEstate\Http\Requests\RlstContractRequest;
+use Modules\RealEstate\Transformers\RlstContractFilterResource;
 use Modules\RealEstate\Transformers\RlstContractResource;
 use Modules\RecievablePayable\Entities\RpBreakDown;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -15,11 +22,30 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class RlstContractController extends Controller
 {
 
-    public function __construct(private RlstContract $model, private Media $media ,private RpBreakDown $modelBreakDown )
-    {
+    public function __construct(private RlstContract $model, private Media $media, private RpBreakDown $modelBreakDown,
+        private RlstOwner $modelOwner) {
+
         $this->model = $model;
         $this->media = $media;
         $this->modelBreakDown = $modelBreakDown;
+        $this->modelOwner = $modelOwner;
+    }
+
+    public function generalFilter(RlstContractFilterRequest $request)
+    {
+
+        $models = \Modules\RealEstate\Entities\RlstContractDetail::whereHas('contract', function ($q) use ($request) {
+            $q->filter($request)->generalfilter($request);
+        })->with('contract')->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+        // return $models;
+        return responseJson(200, 'success', RlstContractFilterResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
     }
 
     public function find($id)
@@ -49,9 +75,11 @@ class RlstContractController extends Controller
     {
 
         $model = DB::transaction(function () use ($request) {
+
             $data = $request->validated();
-            $serial = Serial::where([['branch_id',$request->branch_id],['document_id',$request->document_id]])->first();
-            $data['serial_id'] = $serial ? $serial->id:null;
+            $serial = Serial::where([['branch_id', $request->branch_id], ['document_id', $request->document_id]])->first();
+
+            $data['serial_id'] = $serial ? $serial->id : null;
             $model = $this->model->create($data);
             if ($request->media) {
                 foreach ($request->media as $media) {
@@ -61,9 +89,13 @@ class RlstContractController extends Controller
                     ]);
                 }
             }
+
             foreach ($request->details as $detail) {
                 $model->details()->create($detail);
+
+                RlstUnit::find($detail['unit_id'])->update(['unit_status_id' => 3]);
             }
+
             $model->refresh();
             $serials = generalSerial($model);
             $model->update([
@@ -119,10 +151,9 @@ class RlstContractController extends Controller
             }
 
             foreach ($request->details as $detail) {
-                if(isset($detail['id'])){
+                if (isset($detail['id'])) {
                     $model->details()->update($detail);
-                }
-                else{
+                } else {
                     $model->details()->create($detail);
                 }
             }
@@ -155,12 +186,12 @@ class RlstContractController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
-        if ($model->hasChildren()){
+        if ($model->hasChildren()) {
             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
 
         }
-        if ($model->breakDowns){
-            $this->modelBreakDown->where([['break_id',$model->id],['break_type','contract']])->delete();
+        if ($model->breakDowns) {
+            $this->modelBreakDown->where([['break_id', $model->id], ['break_type', 'contract']])->delete();
         }
         $model->delete();
         return responseJson(200, 'deleted');
@@ -181,5 +212,39 @@ class RlstContractController extends Controller
             $model->delete();
         });
         return responseJson(200, 'deleted');
+    }
+
+    public function getSerialNumber($unit_id, $unit_status_id)
+    {
+        if ($unit_status_id == 3) { //sold
+
+            $contract_detail = RlstContractDetail::where('unit_id', $unit_id)
+                ->whereHas('unit', function ($query) use ($unit_status_id) {
+                    $query->where('unit_status_id', $unit_status_id);
+                })
+                ->with('contract')
+                ->first();
+            if (!$contract_detail) {
+                return response()->json(['message' => 'Unit not found in contracts'], 404);
+            }
+
+            $serial_number = $contract_detail->contract->serial_number;
+
+        } elseif ($unit_status_id == 2) { //reserved
+
+            $reservation_detail = RlstReservationDetail::where('unit_id', $unit_id)
+                ->whereHas('unit', function ($query) use ($unit_status_id) {
+                    $query->where('unit_status_id', $unit_status_id);
+                })
+                ->with('reservation')
+                ->first();
+            if (!$reservation_detail) {
+                return response()->json(['message' => 'Unit not found in reservations'], 404);
+            }
+
+            $serial_number = $reservation_detail->reservation->serial_number;
+        }
+
+        return response()->json(['serial_number' => $serial_number], 200);
     }
 }

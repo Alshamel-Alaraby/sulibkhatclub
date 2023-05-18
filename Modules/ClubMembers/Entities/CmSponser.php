@@ -43,7 +43,6 @@ class CmSponser extends Model
         return $this->hasMany(\Modules\ClubMembers\Entities\CmMember::class, 'sponsor_id');
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

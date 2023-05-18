@@ -14,7 +14,7 @@ class Street extends Model
     protected $fillable = ['name', 'name_e', "avenue_id", 'is_active'];
 
     protected $casts = [
-        'is_active' => '\App\Enums\IsActive',
+        // 'is_active' => '\App\Enums\IsActive',
     ];
 
     public function avenue()
@@ -34,7 +34,6 @@ class Street extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Street')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 }

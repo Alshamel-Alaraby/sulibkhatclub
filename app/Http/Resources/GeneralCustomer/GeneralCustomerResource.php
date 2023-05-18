@@ -4,6 +4,7 @@ namespace App\Http\Resources\GeneralCustomer;
 
 use App\Http\Resources\City\CityResource;
 use App\Http\Resources\Country\CountryResource;
+use App\Http\Resources\Employee\EmployeeResource;
 use App\Http\Resources\FileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\BankAccount\BankAccountResource;
@@ -39,6 +40,8 @@ class GeneralCustomerResource extends JsonResource
             'note2'=>$this->note2,
             'note3'=>$this->note3,
             'note4'=>$this->note4,
+            'employee_id'=>$this->employee_id,
+            "employee" => new EmployeeResource($this->employee),
             "country" => new CountryResource($this->country),
             "city" => new CityResource($this->city),
             "bankAccount" => new BankAccountResource($this->bankAccount),

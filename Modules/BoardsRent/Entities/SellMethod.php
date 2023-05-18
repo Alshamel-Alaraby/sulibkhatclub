@@ -14,6 +14,8 @@ class SellMethod extends Model
     protected $fillable = [
         'name',
         'name_e',
+        'commission_ratio',
+        'target_calculation_ratio',
     ];
     protected $table = "boards_rent_sell_methods";
 

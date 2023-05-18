@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Depertment;
 
+use App\Http\Resources\Employee\EmployeeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepertmentResource extends JsonResource
@@ -14,11 +15,14 @@ class DepertmentResource extends JsonResource
      */
     public function toArray($request)
     {
-       return [
-           'id' => $this->id,
-           'name' => $this->name,
-           'name_e' => $this->name_e,
-           'company_id' => $this->company_id,
-       ];
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'name_e' => $this->name_e,
+            'supervisors' => $this->supervisors,
+            'attentions' => $this->attentions,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
+        ];
     }
 }

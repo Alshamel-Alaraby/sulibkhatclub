@@ -24,15 +24,18 @@ class DocumentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'       => 'nullable',
-            'name_e'     => 'nullable',
-            'is_default' => 'nullable|integer',
+            'name' => 'nullable',
+            'name_e' => 'nullable',
+            'document_detail_type' => "nullable|in:normal,rent_unit,sell_unit,board_rent",
+            'is_default' => "nullable|in:1,0",
             'attributes' => "nullable|array",
             'branche_id' => "nullable",
             'serial_id' => "nullable",
-            "contusion" => "nullable|in:true,false",
+            "contusion" => "nullable|in:1,0",
             'company_id' => 'nullable|integer',
             'document_relateds.*' => 'nullable|integer',
+            'required' => 'nullable',
+            'need_approve' => 'nullable',
         ];
     }
 }

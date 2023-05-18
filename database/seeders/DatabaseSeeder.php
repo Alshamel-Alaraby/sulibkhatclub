@@ -6,6 +6,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\StatuseSeeder;
+use Modules\ClubMembers\Database\Seeders\StatusSeederTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,6 +33,13 @@ class DatabaseSeeder extends Seeder
             // DataTypeSeeder::class,
             // UserSeeder::class
             // ArchiveFileSeeder::class
+            RlstUnitStatuesTableSeeder::class,
+            RestartPeriodTableSeeder::class,
+            // SalesmenPlansSeeder::class,
+            StatuseSeeder::class,
+            RestartPeriodTableSeeder::class,
+            DocumentStatuseSeeder::class,
+            StatusSeederTableSeeder::class
 
         ]);
         DB::unprepared(file_get_contents(public_path("country_lookup.sql")));

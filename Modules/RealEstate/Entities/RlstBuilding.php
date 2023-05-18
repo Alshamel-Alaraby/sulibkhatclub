@@ -41,7 +41,7 @@ class RlstBuilding extends Model implements HasMedia
     // relations
     public function buildingWallet()
     {
-        return $this->hasMany(\Modules\RealEstate\Entities\RlstBuildingWallet::class);
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstBuildingWallet::class, 'wallet_id');
     }
 
     public function module()

@@ -14,7 +14,6 @@ class Store extends Model
 
     protected $table = 'general_stores';
 
-
     protected $fillable = [
         "name_e",
         "name",
@@ -35,7 +34,7 @@ class Store extends Model
 
     public function branch()
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function serials()
@@ -53,9 +52,9 @@ class Store extends Model
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
-    public function hasChildren()
-    {
-        $h = $this->serials()->count() > 0;
-        return $h;
-    }
+    // public function hasChildren()
+    // {
+    //     $h = $this->serials()->count() > 0;
+    //     return $h;
+    // }
 }

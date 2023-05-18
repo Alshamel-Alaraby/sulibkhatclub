@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-
 Route::prefix('real-estate')->group(function () {
     // owners routes
     Route::group(['prefix' => 'owners'], function () {
@@ -98,6 +97,10 @@ Route::prefix('real-estate')->group(function () {
     // contracs
 
     Route::group(['prefix' => 'contracts'], function () {
+        Route::get('/general-filter', 'RlstContractController@generalFilter');
+
+        Route::get('/{unit_id}/{unit_status_id}', 'RlstContractController@getSerialNumber');
+
         Route::get('/', 'RlstContractController@all')->name('rlst-contracts.all');
         Route::get('/logs/{id}', 'RlstContractController@logs')->name('rlst-contracts.logs');
         Route::get('/{id}', 'RlstContractController@find')->name('rlst-contracts.find');
@@ -105,6 +108,8 @@ Route::prefix('real-estate')->group(function () {
         Route::put('/{id}', 'RlstContractController@update')->name('rlst-contracts.update');
         Route::post("/bulk-delete", "RlstContractController@bulkDelete");
         Route::delete('/{id}', 'RlstContractController@delete')->name('rlst-contracts.delete');
+
+
     });
 
     //unit contracts
@@ -120,6 +125,12 @@ Route::prefix('real-estate')->group(function () {
 
     // units
     Route::group(['prefix' => 'units'], function () {
+        Route::get('/general-filter', 'RlstUnitController@generalFilter');
+
+        Route::get('/owner-wallet/{wallet_id}','RlstUnitController@getOwnerByWalletId');
+
+        Route::get('/building-wallet/{wallet_id}','RlstUnitController@getBuildingByWalletId');
+
         Route::get('/', 'RlstUnitController@all')->name('rlst-units.all');
         Route::get('/logs/{id}', 'RlstUnitController@logs')->name('rlst-units.logs');
         Route::get('/{id}', 'RlstUnitController@find')->name('rlst-units.find');
@@ -127,6 +138,7 @@ Route::prefix('real-estate')->group(function () {
         Route::put('/{id}', 'RlstUnitController@update')->name('rlst-units.update');
         Route::post("/bulk-delete", "RlstUnitController@bulkDelete");
         Route::delete('/{id}', 'RlstUnitController@delete')->name('rlst-units.delete');
+
     });
 
     // unit statuses
@@ -211,7 +223,6 @@ Route::prefix('real-estate')->group(function () {
         Route::delete('/{id}', 'RlstItemController@delete')->name('rlst-item.delete');
     });
 
-
     //Category-Items
     Route::group(['prefix' => 'Categories-item'], function () {
         Route::get('/', 'RlstCategoriesItemController@all')->name('rlst-Category-items.all');
@@ -223,6 +234,5 @@ Route::prefix('real-estate')->group(function () {
 
         Route::delete('/{category_item_id}/{item_id}', 'RlstCategoriesItemController@delete')->name('rlst-Category-items.delete');
     });
-
 
 });

@@ -73,17 +73,11 @@ export const menuItems = [
                 link: '/dashboard/salesmen'
             },
             {
-                id: 9,
-                label: 'menuitems.dashboard.list.externalSalesmen',
-                name: 'external salesmen',
-                link: '/dashboard/externalSalesmen'
-            },
-            {
                 id: 7636473,
                 label: 'menuitems.dashboard.list.internalSalesmen',
                 name: 'internal salesmen',
                 link: '/dashboard/internalSalesman'
-            }
+            },
         ]
     },
     {
@@ -320,12 +314,6 @@ export const menuItems = [
                         link: '/dashboard/custom-table'
                     },
                     {
-                        id: 2011311,
-                        name: 'real estate',
-                        label: 'general.backup',
-                        link: '/'
-                    },
-                    {
                         id: 100004,
                         name: 'real estate',
                         label: 'general.DatabaseBackup',
@@ -353,7 +341,58 @@ export const menuItems = [
                         label: 'general.PermissionMemberReport',
                         link: '/dashboard/club/permission-member-report'
                     },
+                    {
+                        id: 313399601,
+                        name: 'real estate',
+                        label: 'general.UncoverReports',
+                        link: '/'
+                    },
+                    {
+                        id: 318745601,
+                        name: 'real estate',
+                        label: 'general.ElectionDisclosure',
+                        link: '/'
+                    },
+                    {
+                        id: 3982639601,
+                        name: 'real estate',
+                        label: 'general.PaymentsAndSubscriptions',
+                        link: '/'
+                    },
                 ]
+            },
+        ]
+    },
+    {
+        id: 1112568,
+        label: "general.hr",
+        icon: "fas fa-hotel",
+        name: 'hr',
+        isMenuCollapsed: false,
+        subItems: [
+            {
+                id: 12222,
+                name: 'hr',
+                label: 'general.payrollHeads',
+                link: '/dashboard/hr-payroll-head'
+            },
+            {
+                id: 12223,
+                name: 'hr',
+                label: 'general.jobTitles',
+                link: '/dashboard/hr-job-title'
+            },
+            {
+                id: 12224,
+                name: 'hr',
+                label: 'general.requestTypes',
+                link: '/dashboard/hr-request-type'
+            },
+            {
+                id: 123334,
+                name: 'hr',
+                label: 'general.onlineRequests',
+                link: '/dashboard/hr-online-request'
             },
         ]
     },
@@ -401,12 +440,12 @@ export const menuItems = [
                         label: 'general.owner',
                         link: '/dashboard/realEstate/owner'
                     },
-                    {
-                        id: 1042323,
-                        name: 'wallet owner',
-                        label: 'general.walletOwner',
-                        link: '/dashboard/realEstate/wallet-owner'
-                    },
+                    // {
+                    //     id: 1042323,
+                    //     name: 'wallet owner',
+                    //     label: 'general.walletOwner',
+                    //     link: '/dashboard/realEstate/wallet-owner'
+                    // },
                 ]
             },
             {
@@ -416,12 +455,12 @@ export const menuItems = [
                 label: 'general.master_file',
                 isMenuCollapsed: false,
                 subItems: [
-                    {
-                        id: 102371,
-                        name: 'building wallet',
-                        label: 'general.building_wallet',
-                        link: '/dashboard/realEstate/building-wallet'
-                    },
+                    // {
+                    //     id: 102371,
+                    //     name: 'building wallet',
+                    //     label: 'general.building_wallet',
+                    //     link: '/dashboard/realEstate/building-wallet'
+                    // },
                     {
                         id: 10048103,
                         name: 'building',
@@ -486,7 +525,21 @@ export const menuItems = [
                         id: 333201,
                         name: 'real estate',
                         label: 'general.Admin report',
-                        link: '/'
+                        isMenuCollapsed: false,
+                        subItems: [
+                            {
+                                id: 322201,
+                                name: 'real estate',
+                                label: 'general.SolidUnitReport',
+                                link: '/dashboard/realEstate/admin-report',
+                            },
+                            {
+                                id: 322201,
+                                name: 'real estate',
+                                label: 'general.UnsolidUnitReport',
+                                link: '/dashboard/realEstate/unsold-unit-report',
+                            }
+                        ]
                     },
                 ]
             },
@@ -505,10 +558,11 @@ export const menuItems = [
                         link: '/dashboard/custom-table'
                     },
                     {
-                        id: 2011311,
+                        id: 100004,
                         name: 'real estate',
-                        label: 'general.backup',
-                        link: '/'
+                        label: 'general.DatabaseBackup',
+                        icon: 'far fa-list-alt',
+                        link: '/dashboard/database-backup'
                     },
                 ]
             },
@@ -527,12 +581,6 @@ export const menuItems = [
                 label: 'general.master_file',
                 isMenuCollapsed: false,
                 subItems: [
-                    {
-                        id: 100024,
-                        name: 'board-realEstate unit status',
-                        label: 'general.sellMethod',
-                        link: '/dashboard/boardRent/sell-method'
-                    },
                     {
                         id: 100021,
                         name: 'board-realEstate unit status',
@@ -560,6 +608,12 @@ export const menuItems = [
                         link: '/dashboard/boardRent/tasks'
                     },
                     {
+                        id: 1023775,
+                        name: 'boardRent tasks calender',
+                        label: 'general.TasksCalender',
+                        link: '/dashboard/boardRent/tasks-calender'
+                    },
+                    {
                         id: 102373,
                         name: 'building wallet',
                         label: 'general.quotation',
@@ -570,6 +624,12 @@ export const menuItems = [
                         name: 'building wallet',
                         label: 'general.order',
                         link: '/dashboard/boardRent/order'
+                    },
+                    {
+                        id: 100002373,
+                        name: 'board-Rent-quotation',
+                        label: 'general.quotation',
+                        link: '/dashboard/boardRent/board-Rent-quotation'
                     },
                     {
                         id: 102374,
@@ -604,7 +664,30 @@ export const menuItems = [
                         link: '/dashboard/boardRent/look-up'
                     },
                 ]
-            }
+            },
+            {
+                id: 1021111,
+                icon: "fas fa-hotel",
+                name: 'real estate',
+                label: 'general.tools',
+                isMenuCollapsed: false,
+                subItems: [
+                    {
+                        id: 100004,
+                        name: 'real estate',
+                        label: 'general.DatabaseBackup',
+                        icon: 'far fa-list-alt',
+                        link: '/dashboard/database-backup'
+                    },
+                    {
+                        id: 1222,
+                        label: 'general.customTable',
+                        icon: 'fas fa-tasks',
+                        name: 'custom table',
+                        link: '/dashboard/custom-table'
+                    },
+                ]
+            },
         ]
     },
     {
@@ -825,7 +908,23 @@ export const menuItems = [
                         id: 1003321,
                         name: 'receivable payable',
                         label: 'general.Finance report',
-                        link: '/'
+                        isMenuCollapsed: false,
+                        subItems: [
+                            {
+                                id: 9876542859,
+                                label: 'general.PaymentsReport',
+                                icon: 'fas fa-hot-tub',
+                                name: 'receivable payable',
+                                link: '/dashboard/receivablePayable/report/financeReports/payments'
+                            },
+                            {
+                                id: 6985623,
+                                label: 'general.VoucherReport',
+                                icon: 'fas fa-hot-tub',
+                                name: 'receivable payable',
+                                link: '/dashboard/receivablePayable/report/financeReports/voucher'
+                            },
+                        ]
                     },
                     {
                         id: 222311,
@@ -850,10 +949,11 @@ export const menuItems = [
                         link: '/dashboard/custom-table'
                     },
                     {
-                        id: 222311,
-                        name: 'receivable payable',
-                        label: 'general.backup',
-                        link: '/'
+                        id: 100004,
+                        name: 'real estate',
+                        label: 'general.DatabaseBackup',
+                        icon: 'far fa-list-alt',
+                        link: '/dashboard/database-backup'
                     },
                 ]
             },
@@ -869,7 +969,7 @@ export const menuItems = [
     {
         id: 100023,
         icon: 'fas fa-hot-tub',
-        name: 'color',
+        name: 'department',
         label: 'general.department',
         link: '/dashboard/department'
     },
@@ -902,6 +1002,13 @@ export const menuItems = [
         link: '/dashboard/customer'
     },
     {
+        id: 2225,
+        name: 'equipment',
+        label: 'general.equipments',
+        icon: 'fas fa-wrench',
+        link: '/dashboard/equipment'
+    },
+    {
         id: 5,
         name: 'currencies',
         label: 'menuitems.currency.text',
@@ -913,7 +1020,42 @@ export const menuItems = [
         name: 'employees',
         label: 'menuitems.employee.text',
         icon: 'fas fa-briefcase',
-        link: '/dashboard/employee'
+        link: '/dashboard/employee',
+        isMenuCollapsed: false,
+        subItems: [
+            {
+                id: 63332,
+                name: 'employees',
+                label: 'menuitems.employee.text',
+                icon: 'fas fa-briefcase',
+                link: '/dashboard/employee',
+            },
+            {
+                id: 7636473,
+                label: 'general.plans',
+                name: 'employees',
+                link: '/dashboard/salesman-plan'
+            },
+            {
+                id: 7636473,
+                label: 'general.plandDetails',
+                name: 'employees',
+                link: '/dashboard/salesman-plan-details'
+            },
+            {
+                id: 9,
+                label: 'menuitems.dashboard.list.externalSalesmen',
+                name: 'employees',
+                link: '/dashboard/externalSalesmen'
+            },
+        ]
+    },
+    {
+        id: 100024,
+        icon: 'fas fa-briefcase',
+        name: 'sell method',
+        label: 'general.sellMethod',
+        link: '/dashboard/boardRent/sell-method'
     },
     {
         id: 7,
@@ -931,10 +1073,31 @@ export const menuItems = [
     },
     {
         id: 100006,
+        label: "general.document",
+        icon: "fas fa-file-alt",
         name: 'document',
-        label: 'general.document',
-        icon: 'fas fa-file-alt',
-        link: '/dashboard/document'
+        isMenuCollapsed: false,
+        subItems: [
+            {
+                id: 1000627,
+                label: 'general.document',
+                name: 'document',
+                link: '/dashboard/document/index'
+            },
+            {
+                id: 1000627,
+                label: 'general.documentStatus',
+                name: 'document status',
+                link: '/dashboard/document/document-status'
+            },
+            // {
+            //     id: 1000628,
+            //     label: 'general.documentReason',
+            //     name: 'document reason',
+            //     link: '/dashboard/document/document-reason'
+            // },
+
+        ]
     },
     {
         id: 10005,

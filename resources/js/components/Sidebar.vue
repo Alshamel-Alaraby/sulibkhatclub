@@ -396,9 +396,37 @@ export default {
                           >
                             <router-link
                               :to="subSubitem.link"
+                              v-if="!hasItems(subSubitem)"
                               class="side-nav-link-ref"
                               >{{ $t(subSubitem.label) }}</router-link
                             >
+                              <a
+                                  v-if="hasItems(subSubitem)"
+                                  class="side-nav-link-a-ref has-arrow"
+                                  @click="subSubitem.isMenuCollapsed = !subSubitem.isMenuCollapsed"
+                                  href="javascript:void(0);"
+                              >{{ $t(subSubitem.label) }}
+                                  <span class="menu-arrow"></span>
+                              </a>
+                              <div class="collapse" :class="{ show: subSubitem.isMenuCollapsed }">
+                                  <ul
+                                      v-if="hasItems(subSubitem)"
+                                      class="sub-menu"
+                                      aria-expanded="false"
+                                  >
+                                      <li
+                                          v-for="(subSubSubitem, index) of subSubitem.subItems"
+                                          :key="index"
+                                      >
+                                          <router-link
+                                              :to="subSubSubitem.link"
+                                              class="side-nav-link-ref"
+                                          >{{ $t(subSubSubitem.label) }}</router-link>
+                                      </li>
+                                  </ul>
+
+                              </div>
+
                           </li>
                         </ul>
                       </div>

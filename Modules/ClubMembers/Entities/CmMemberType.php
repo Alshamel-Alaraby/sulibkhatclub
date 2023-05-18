@@ -21,7 +21,6 @@ class CmMemberType extends Model
         return $this->belongsToMany(CmMemberPermission::class, 'cm_type_permissions', 'cm_members_type_id', 'cm_permissions_id');
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

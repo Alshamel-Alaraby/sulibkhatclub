@@ -111,6 +111,7 @@ export default {
         name_e: "",
         salesman_type_id: null,
       };
+        this.is_disabled = false;
       this.$nextTick(() => {
         this.$v.$reset();
       });

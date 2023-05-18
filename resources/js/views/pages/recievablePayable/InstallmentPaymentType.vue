@@ -426,6 +426,7 @@ export default {
      */
     resetModalHidden() {
      this.resetForm();
+        this.is_disabled = false;
       this.$bvModal.hide(`create`);
     },
     /**

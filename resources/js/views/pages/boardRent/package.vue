@@ -3,7 +3,7 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import { required, minLength, maxLength, decimal, minValue } from "vuelidate/lib/validators";
+import { required, minLength, maxLength, decimal, minValue, requiredIf } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/loader";
@@ -11,7 +11,12 @@ import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort"
 import translation from "../../../helper/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-
+import Multiselect from "vue-multiselect";
+import Governate from "../../../components/governate";
+import City from "../../../components/city";
+import Avnue from "../../../components/create/avenue";
+import Street from "../../../components/create/street";
+import Category from "../../../components/create/category";
 /**
  * Advanced Table component
  */
@@ -27,6 +32,12 @@ export default {
         Switches,
         ErrorMessage,
         loader,
+        Multiselect,
+        Governate,
+        Avnue,
+        Street,
+        City,
+        Category
     },
     data() {
         return {
@@ -39,23 +50,40 @@ export default {
             isLoader: false,
             Tooltip: "",
             mouseEnter: "",
+            package_id: null,
+            location: {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null},
+            panels: [],
             create: {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             },
             edit: {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             },
+            faces: ['A','B','Multi','One-Face'],
+            faceNumber: {'A': 0,'B': 0,'Multi': 0,'One-Face': 0},
             company_id: null,
+            governorates: [],
+            cities: [],
+            avenues: [],
+            streets: [],
+            categories: [],
+            pans: [],
+            pansPagination: {},
+            current_page_pans: 1,
             errors: {},
             isCheckAll: false,
             checkAll: [],
+            allPanelPackages: [],
+            panelPackages: [],
+            panelPackagesPaginatation: {},
             current_page: 1,
+            current_page_pans_pack: 1,
             setting: {
                 name: true,
                 name_e: true,
@@ -67,7 +95,9 @@ export default {
             printLoading: true,
             printObj: {
                 id: "printUnitStatus",
-            }
+            },
+            is_panel: false,
+            CheckAllPanel: [],
         };
     },
     validations: {
@@ -75,13 +105,13 @@ export default {
             name: { required, minLength: minLength(2), maxLength: maxLength(255) },
             name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
             code: { required, decimal , minValue: minValue(0.01)},
-            price: { required, decimal , minValue: minValue(0.01) }
+            price: { required, decimal , minValue: minValue(0.01) },
         },
         edit: {
             name: { required, minLength: minLength(2), maxLength: maxLength(255) },
             name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
             code: { required, decimal , minValue: minValue(0.01)},
-            price: { required, decimal , minValue: minValue(0.01) }
+            price: { required, decimal , minValue: minValue(0.01) },
         },
     },
     watch: {
@@ -119,26 +149,6 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
     },
-    // updated() {
-    //   $(function () {
-    //     $(".englishInput").keypress(function (event) {
-    //       var ew = event.which;
-    //       if (ew == 32) return true;
-    //       if (48 <= ew && ew <= 57) return true;
-    //       if (65 <= ew && ew <= 90) return true;
-    //       if (97 <= ew && ew <= 122) return true;
-    //       return false;
-    //     });
-    //     $(".arabicInput").keypress(function (event) {
-    //       var ew = event.which;
-    //       if (ew == 32) return true;
-    //       if (48 <= ew && ew <= 57) return false;
-    //       if (65 <= ew && ew <= 90) return false;
-    //       if (97 <= ew && ew <= 122) return false;
-    //       return true;
-    //     });
-    //   });
-    // },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             if (vm.$store.state.auth.work_flow_trees.includes("board rent-e")) {
@@ -266,6 +276,7 @@ export default {
         /**
          *  start delete countrie
          */
+
         deleteBranch(id, index) {
             if (Array.isArray(id)) {
                 Swal.fire({
@@ -282,7 +293,7 @@ export default {
                     if (result.value) {
                         this.isLoader = true;
                         adminApi
-                            .post(`/boards-rent/packages/bulk-delete`, { ids: id })
+                            .delete(`/boards-rent/packages/bulk-delete`, { ids: id })
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -377,28 +388,223 @@ export default {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.package_id = null;
+            this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null};
+            this.faceNumber = {'A': 0,'B': 0,'Multi': 0,'One-Face': 0};
             this.$nextTick(() => {
                 this.$v.$reset();
             });
             this.errors = {};
+            this.is_panel = false;
+            this.is_disabled = false;
             this.$bvModal.hide(`create`);
+            this.current_page_pans_pack = 1;
+            this.allPanelPackages = [];
+            this.panelPackages = [];
+            this.panelPackagesPaginatation = {};
+            this.pans = [];
+            this.pansPagination = {};
+            this.current_page_pans = 1;
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
         },
         /**
          *  hidden Modal (create)
          */
-        resetModal() {
+        async resetModal() {
             this.create = {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.package_id = null;
+            await  this.getGovernorate();
+            await  this.getCategory();
             this.$nextTick(() => {
                 this.$v.$reset();
             });
             this.errors = {};
+        },
+        async getGovernorate() {
+
+            this.governorates = [];this.cities = [];this.avenues = [];this.streets = [];
+
+            await adminApi
+                .get(`/governorates?columns[0]=country.id&search=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.governorates = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
+        async getCity() {
+            this.isLoader = true;
+            let governorate = this.location.governorate_id;
+            this.location.city_id = null;
+            this.location.avenue_id = null;
+            this.location.street_id = null;
+            this.cities = [];this.avenues = [];this.streets = [];
+
+            await adminApi
+                .get(`/cities?columns[0]=governorate.id&search=${governorate}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.cities = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getAvnue() {
+            this.isLoader = true;
+            let city = this.location.city_id;
+            this.location.avenue_id = null;
+            this.location.street_id = null;
+            this.avenues = [];this.streets = [];
+
+            await adminApi
+                .get(`/avenues?columns[0]=city.id&search=${city}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.avenues = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getStreet() {
+            this.isLoader = true;
+            let avenue = this.location.avenue_id;
+            this.location.street_id = null;
+            this.streets = [];
+
+            await adminApi
+                .get(`/streets?columns[0]=avenue.id&search=${avenue}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.streets = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getPanel() {
+            this.isLoader = true;
+            let category_id = this.location.category_id ?? null;
+            let governorate_id = this.location.governorate_id ?? null;
+            let city_id = this.location.city_id ?? null;
+            let avenue_id = this.location.avenue_id ?? null;
+            let face = this.location.face ?? null;
+            let street_id = this.location.street_id ?? null;
+
+            await adminApi
+                .get(
+                    `/boards-rent/panels?page=${1}&per_page=${7}&packages=1&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}`
+                )
+                .then((res) => {
+                    let l = res.data;
+                    this.pans = l.data;
+                    this.pansPagination = l.pagination;
+                    this.current_page_pans = l.pagination.current_page;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async getPanelPagination() {
+
+            if (
+                this.current_page_pans <= this.pansPagination.last_page &&
+                this.current_page_pans != this.pansPagination.current_page &&
+                this.current_page_pans
+            ) {
+                this.isLoader = true;
+                let category_id = this.location.category_id ?? null;
+                let governorate_id = this.location.governorate_id ?? null;
+                let city_id = this.location.city_id ?? null;
+                let avenue_id = this.location.avenue_id ?? null;
+                let face = this.location.face ?? null;
+                let street_id = this.location.street_id ?? null;
+
+                await adminApi
+                    .get(
+                        `/boards-rent/panels?page=${1}&per_page=${7}&packages=1&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}`
+                    )
+                    .then((res) => {
+                        let l = res.data;
+                        this.pans = l.data;
+                        this.pansPagination = l.pagination;
+                        this.current_page_pans = l.pagination.current_page;
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
+        async getCategory() {
+            this.isLoader = true;
+
+            await adminApi
+                .get(
+                    `/categories`
+                )
+                .then((res) => {
+                    let l = res.data.data;
+                    this.categories = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  create countrie
@@ -408,13 +614,25 @@ export default {
                 name: "",
                 name_e: "",
                 code: "",
-                price: ""
+                price: "",
             };
+            this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null};
+            this.faceNumber = {'A': 0,'B': 0,'Multi': 0,'One-Face': 0};
             this.$nextTick(() => {
                 this.$v.$reset();
             });
             this.errors = {};
+            this.package_id = null;
+            this.is_panel = false;
             this.is_disabled = false;
+            this.current_page_pans_pack = 1;
+            this.allPanelPackages = [];
+            this.panelPackages = [];
+            this.panelPackagesPaginatation = {};
+            this.pans = [];
+            this.pansPagination = {};
+            this.current_page_pans = 1;
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
         },
         AddSubmit() {
             if (!this.create.name) {
@@ -432,9 +650,11 @@ export default {
                 this.errors = {};
 
                 adminApi
-                    .post(`/boards-rent/packages`, {...this.create,company_id: this.company_id})
+                    .post(`/boards-rent/packages`, {...this.create,company_id: this.company_id,panels: this.CheckAllPanel})
                     .then((res) => {
                         this.is_disabled = true;
+                        this.package_id = res.data.data.id;
+                        this.edit = this.create;
                         this.getData();
                         setTimeout(() => {
                             Swal.fire({
@@ -464,7 +684,7 @@ export default {
         /**
          *  edit countrie
          */
-        editSubmit(id) {
+        editSubmit(id = null) {
             if (!this.edit.name) {
                 this.edit.name = this.edit.name_e;
             }
@@ -472,14 +692,14 @@ export default {
                 this.edit.name_e = this.edit.name;
             }
             this.$v.edit.$touch();
-
-            if (this.$v.edit.$invalid) {
+            this.$v.panels.$touch();
+            if (this.$v.edit.$invalid || this.$v.panels.$invalid) {
                 return;
             } else {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`/boards-rent/packages/${id}`, this.edit)
+                    .put(`/boards-rent/packages/${this.package_id}`, {...this.edit,panels: this.CheckAllPanel})
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -511,12 +731,34 @@ export default {
         /**
          *   show Modal (edit)
          */
-        resetModalEdit(id) {
+        async resetModalEdit(id) {
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
+            this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null};
+            this.is_panel = false;
+            this.current_page_pans_pack = 1;
             let packages = this.packages.find((e) => id == e.id);
+            this.package_id = packages.id;
             this.edit.name = packages.name;
             this.edit.name_e = packages.name_e;
             this.edit.code = packages.code;
             this.edit.price = packages.price;
+            await  this.getGovernorate();
+            await  this.getCategory();
+            if(packages.panels && packages.panels.length > 0){
+                this.allPanelPackages = packages.panels;
+                this.allPanelPackages.forEach((el,index) => {
+                    this.CheckAllPanel.push(el.id);
+                });
+                this.paginate();
+                this.changeValuePanel();
+            }else{
+                this.cities = [];
+                this.avenues = [];
+                this.streets = [];
+                this.pans = [];
+                this.location= {category_id: null,governorate_id: null,city_id: null, avenue_id: null, street_id: null,face: ''};
+                this.CheckAllPanel = [];
+            }
             this.errors = {};
         },
         /**
@@ -524,12 +766,25 @@ export default {
          */
         resetModalHiddenEdit(id) {
             this.errors = {};
+            this.package_id = null;
+            this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null};
+            this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
+            this.faceNumber = {'A': 0,'B': 0,'Multi': 0,'One-Face': 0};
             this.edit = {
                 name: "",
                 name_e: "",
                 code: "",
                 price: ""
             };
+            this.current_page_pans_pack = 1;
+            this.allPanelPackages = [];
+            this.panelPackages = [];
+            this.is_panel = false;
+            this.panelPackagesPaginatation = {};
+            this.pans = [];
+            this.CheckAllPanel = [];
+            this.pansPagination = {};
+            this.current_page_pans = 1;
         },
         /*
          *  start  dynamicSortString
@@ -551,6 +806,17 @@ export default {
                 this.checkAll.splice(index, 1);
             }
         },
+        checkRowPanel(data) {
+            let panel = this.allPanelPackages.find((el) => el.id == data.id);
+            if (!panel) {
+                this.allPanelPackages.push(data);
+            } else {
+                let index = this.allPanelPackages.findIndex((el) => el.id == data.id);
+                this.allPanelPackages.splice(index, 1);
+            }
+            this.paginate(this.current_page_pans_pack ? this.current_page_pans_pack : 1);
+            this.changeValuePanel();
+        },
         /**
          *  end  ckeckRow
          */
@@ -566,6 +832,76 @@ export default {
                 }
                 this.enabled3 = true;
             }, 100);
+        },
+        async showGovernorateModal() {
+            if (this.location.governorate_id == 0) {
+                this.$bvModal.show("governorate-create");
+                this.location.governorate_id = null;
+            }else {
+                await this.getCity();
+            }
+        },
+        async showCityModal() {
+            if (this.location.city_id == 0) {
+                this.$bvModal.show("city-create");
+                this.location.city_id = null;
+            }else {
+                await this.getAvnue();
+            }
+        },
+        async showAvenueModal() {
+            if (this.location.avenue_id == 0) {
+                this.$bvModal.show("avenue-create");
+                this.location.avenue_id = null;
+            }else {
+                await this.getStreet();
+            }
+        },
+        async showStreetModal() {
+            if (this.location.street_id == 0) {
+                this.$bvModal.show("street-create");
+                this.location.street_id = null;
+            }
+        },
+        async showCategoryModal(){
+            if (this.location.category_id == 0) {
+                this.$bvModal.show("category-create");
+                this.location.category_id = null;
+            }
+        },
+        changeValuePanel (){
+            this.faceNumber = {'A': 0,'B': 0,'Multi': 0,'One-Face': 0};
+            this.allPanelPackages.forEach((e,index) => {
+                if(e.face == 'A'){
+                    this.faceNumber.A = this.faceNumber.A + 1
+                }else if(e.face == 'B'){
+                    this.faceNumber.B = this.faceNumber.B + 1
+                }else if(e.face == 'Multi'){
+                    this.faceNumber.Multi = this.faceNumber.Multi + 1
+                }else if(e.face == 'One-Face'){
+                    this.faceNumber['One-Face'] = this.faceNumber['One-Face'] + 1
+                }
+            });
+        },
+        // paginate
+        paginate(p = 1){
+
+            const page = p;
+            this.current_page_pans_pack = page;
+            const limit = 7;
+            const skip = (page - 1) * limit;
+            const endIndex = page * limit;
+            const total = this.allPanelPackages.length;
+
+            // Pagination result
+            this.panelPackagesPaginatation.total = total;
+            this.panelPackagesPaginatation.limit = limit;
+            this.panelPackagesPaginatation.last_page = Math.ceil(total / limit);
+            this.panelPackagesPaginatation.to = skip? (skip + limit) : limit;
+            this.panelPackagesPaginatation.from = skip ? skip : 1;
+            this.panelPackages = [];
+            this.panelPackages = this.allPanelPackages.slice(skip,skip+limit);
+
         }
     },
 };
@@ -726,9 +1062,9 @@ export default {
                                             <a
                                                 href="javascript:void(0)"
                                                 :style="{
-                          'pointer-events':
-                            packagesPagination.current_page == 1 ? 'none' : '',
-                        }"
+                                                  'pointer-events':
+                                                    packagesPagination.current_page == 1 ? 'none' : '',
+                                                }"
                                                 @click.prevent="getData(packagesPagination.current_page - 1)"
                                             >
                                                 <span>&lt;</span>
@@ -742,12 +1078,12 @@ export default {
                                             <a
                                                 href="javascript:void(0)"
                                                 :style="{
-                          'pointer-events':
-                            packagesPagination.last_page ==
-                            packagesPagination.current_page
-                              ? 'none'
-                              : '',
-                        }"
+                                                  'pointer-events':
+                                                    packagesPagination.last_page ==
+                                                    packagesPagination.current_page
+                                                      ? 'none'
+                                                      : '',
+                                                }"
                                                 @click.prevent="getData(packagesPagination.current_page + 1)"
                                             >
                                                 <span>&gt;</span>
@@ -764,186 +1100,651 @@ export default {
                             id="create"
                             :title="getCompanyKey('boardRent_package_create_form')"
                             title-class="font-18"
-                            body-class="p-4 "
+                            :body-class="is_panel?'p-1':'p-4'"
                             :hide-footer="true"
                             @show="resetModal"
                             @hidden="resetModalHidden"
+                            dialog-class="modal-full-width"
+                        >
+                            <form>
+                                <div :class="{'position-relative': is_panel}">
+                                    <div
+                                        :class="['row justify-content-center']"
+                                        v-if="package_id && is_panel"
+                                    >
+                                        <div :class="['col-5',{'position-absolute': is_panel}]">
+                                            <div class="face">
+                                                <span class="face-name">A : {{ faceNumber.A }}</span>
+                                            </div>
+                                            <div class="face">
+                                                <span class="face-name">B : {{ faceNumber.B }}</span>
+                                            </div>
+                                            <div class="face">
+                                                <span class="face-name">Multi : {{ faceNumber.Multi }}</span>
+                                            </div>
+                                            <div class="face">
+                                                <span class="face-name">One-Face : {{ faceNumber["One-Face"] }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div :class="['d-flex justify-content-end']">
+                                        <div :class="{'position-absolute': is_panel}">
+                                            <b-button
+                                                variant="success"
+                                                :disabled="!is_disabled"
+                                                @click.prevent="resetForm"
+                                                type="button"
+                                                :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                                            >
+                                                {{ $t("general.AddNewRecord") }}
+                                            </b-button>
+                                            <template v-if="!is_disabled">
+                                                <b-button
+                                                    variant="success"
+                                                    type="button"
+                                                    class="mx-1"
+                                                    v-if="!isLoader"
+                                                    @click.prevent="AddSubmit"
+                                                >
+                                                    {{ $t("general.Add") }}
+                                                </b-button>
+
+                                                <b-button variant="success" class="mx-1" disabled v-else>
+                                                    <b-spinner small></b-spinner>
+                                                    <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                </b-button>
+                                            </template>
+                                            <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                            <b-button
+                                                variant="danger"
+                                                type="button"
+                                                @click.prevent="resetModalHidden"
+                                            >
+                                                {{ $t("general.Cancel") }}
+                                            </b-button>
+                                        </div>
+                                    </div>
+
+                                    <b-tabs :content-class="is_panel?'tab-content-custom':''" nav-class="nav-tabs nav-bordered">
+                                        <b-tab :title="$t('general.DataEntry')" active @click="is_panel = false">
+                                            <div class="row">
+                                                <div class="row col-7">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="field-1" class="control-label">
+                                                                {{ getCompanyKey("boardRent_package_name_ar") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="rtl">
+                                                                <input
+                                                                    @keyup="arabicValue(create.name)"
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    data-create="1"
+                                                                    v-model="$v.create.name.$model"
+                                                                    :class="{
+                                                        'is-invalid': $v.create.name.$error || errors.name,
+                                                        'is-valid': !$v.create.name.$invalid && !errors.name,
+                                                      }"
+                                                                    id="field-1"
+                                                                />
+                                                            </div>
+                                                            <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                {{ $v.create.name.$params.minLength.min }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                {{ $v.create.name.$params.maxLength.max }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <template v-if="errors.name">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.name"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}</ErrorMessage
+                                                                >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="field-2" class="control-label">
+                                                                {{ getCompanyKey("boardRent_package_name_en") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="ltr">
+                                                                <input
+                                                                    @keyup="englishValue(create.name_e)"
+                                                                    type="text"
+                                                                    class="form-control englishInput"
+                                                                    data-create="2"
+                                                                    v-model="$v.create.name_e.$model"
+                                                                    :class="{
+                                                        'is-invalid': $v.create.name_e.$error || errors.name_e,
+                                                        'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                                                      }"
+                                                                    id="field-2"
+                                                                />
+                                                            </div>
+                                                            <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                {{ $v.create.name_e.$params.minLength.min }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                {{ $v.create.name_e.$params.maxLength.max }}
+                                                                {{ $t("general.letters") }}
+                                                            </div>
+                                                            <template v-if="errors.name_e">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.name_e"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}</ErrorMessage
+                                                                >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="field-3" class="control-label">
+                                                                {{ getCompanyKey("boardRent_package_code") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div >
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    v-model="$v.create.code.$model"
+                                                                    :class="{
+                                                    'is-invalid': $v.create.code.$error || errors.code,
+                                                    'is-valid': !$v.create.code.$invalid && !errors.code,
+                                                  }"
+                                                                    id="field-3"
+                                                                />
+                                                            </div>
+                                                            <template v-if="errors.code">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.code"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}</ErrorMessage
+                                                                >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="field-4" class="control-label">
+                                                                {{ getCompanyKey("boardRent_package_price") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div>
+                                                                <input
+                                                                    step=".01"
+                                                                    type="number"
+                                                                    class="form-control"
+                                                                    v-model="$v.create.price.$model"
+                                                                    :class="{
+                                                    'is-invalid': $v.create.price.$error || errors.price,
+                                                    'is-valid': !$v.create.price.$invalid && !errors.price,
+                                                  }"
+                                                                    id="field-4"
+                                                                />
+                                                            </div>
+                                                            <template v-if="errors.price">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.price"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}</ErrorMessage
+                                                                >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </b-tab>
+                                        <b-tab
+                                            :title="$t('general.panel')"
+                                            :disabled="!package_id"
+                                            @click="is_panel = !is_panel"
+                                        >
+                                            <div class="d-flex justify-content-end position-relative">
+                                                <div>
+                                                    <b-button
+                                                        v-if="package_id && is_panel"
+                                                        @click.prevent="$bvModal.show(`search`)"
+                                                        variant="primary"
+                                                        class="mx-1 font-weight-bold"
+                                                    >
+                                                        {{ $t('general.Search') }}
+                                                        <i class="fe-search"></i>
+                                                    </b-button>
+                                                    <b-button
+                                                        variant="success"
+                                                        type="button"
+                                                        class="mx-1"
+                                                        v-if="!isLoader"
+                                                        @click.prevent="AddSubmit"
+                                                    >
+                                                        {{ $t("general.Add") }}
+                                                    </b-button>
+                                                    <b-button variant="success" class="mx-1" disabled v-else>
+                                                        <b-spinner small></b-spinner>
+                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                    </b-button>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <!-- selet panals -->
+                                                <div class="col-md-6">
+                                                    <!-- start Pagination -->
+                                                    <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                        <div>
+                                                            <div class="d-inline-block" style="font-size: 13px">
+                                                                {{ pansPagination.from }}-{{ pansPagination.to }} /
+                                                                {{ pansPagination.total }}
+                                                            </div>
+                                                            <div class="d-inline-block">
+                                                                <a
+                                                                    href="javascript:void(0)"
+                                                                    :style="{
+                                                          'pointer-events':
+                                                            pansPagination.current_page > 1 ? '' : 'none',
+                                                        }"
+                                                                    @click.prevent="getPanel(pansPagination.current_page - 1)"
+                                                                >
+                                                                    <span>&lt;</span>
+                                                                </a>
+                                                                <input
+                                                                    type="text"
+                                                                    @keyup.enter="getPanelPagination()"
+                                                                    v-model="current_page_pans"
+                                                                    class="pagination-current-page"
+                                                                />
+                                                                <a
+                                                                    href="javascript:void(0)"
+                                                                    :style="{
+                                                          'pointer-events':
+                                                            (pansPagination.last_page ==
+                                                            pansPagination.current_page) || !pansPagination
+                                                              ? 'none'
+                                                              : '',
+                                                        }"
+                                                                    @click.prevent="getPanel(pansPagination.current_page + 1)"
+                                                                >
+                                                                    <span>&gt;</span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div style="position: absolute;transform: translate(230px, 0px)">
+                                                            <h3>{{ $t('general.SelectPanel') }}</h3>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end Pagination -->
+                                                    <table class="table table-borderless table-hover table-centered m-0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                {{ $t("general.Action") }}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody v-if="pans.length > 0">
+                                                        <tr
+                                                            v-for="(data, index) in pans"
+                                                            :key="data.id"
+                                                            class="body-tr-custom"
+                                                        >
+                                                            <td scope="col">
+                                                                {{ data.code }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.face }}
+                                                            </td>
+                                                            <td scope="col" style="width: 0">
+                                                                <div class="form-check custom-control">
+                                                                    <input
+                                                                        class="form-check-input"
+                                                                        type="checkbox"
+                                                                        :value="data.id"
+                                                                        @change="checkRowPanel(data)"
+                                                                        v-model="CheckAllPanel"
+                                                                        style="width: 17px; height: 17px"
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                        <tbody v-else>
+                                                        <tr>
+                                                            <th class="text-center" colspan="11">
+                                                                {{ $t("general.notDataFound") }}
+                                                            </th>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <!-- panals package -->
+                                                <div class="col-md-6">
+                                                    <!-- start Pagination -->
+                                                    <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                        <div>
+                                                            <div class="d-inline-block" style="font-size: 13px">
+                                                                {{ panelPackagesPaginatation.from }}-{{ panelPackagesPaginatation.to }} /
+                                                                {{ panelPackagesPaginatation.total }}
+                                                            </div>
+                                                            <div class="d-inline-block">
+                                                                <a
+                                                                    href="javascript:void(0)"
+                                                                    :style="{
+                                                          'pointer-events':
+                                                            current_page_pans_pack > 1 ? '' : 'none',
+                                                        }"
+                                                                    @click.prevent="paginate(current_page_pans_pack - 1)"
+                                                                >
+                                                                    <span>&lt;</span>
+                                                                </a>
+                                                                <input
+                                                                    type="text"
+                                                                    @keyup.enter="paginate(current_page_pans_pack)"
+                                                                    v-model="current_page_pans_pack"
+                                                                    class="pagination-current-page"
+                                                                />
+                                                                <a
+                                                                    href="javascript:void(0)"
+                                                                    :style="{
+                                                          'pointer-events':
+                                                            (panelPackagesPaginatation.last_page ==
+                                                            current_page_pans_pack) || !panelPackagesPaginatation
+                                                              ? 'none'
+                                                              : '',
+                                                        }"
+                                                                    @click.prevent="paginate(current_page_pans_pack + 1)"
+                                                                >
+                                                                    <span>&gt;</span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div style="position: absolute;transform: translate(230px, 0px)">
+                                                            <h3>{{ $t('general.Selected') }}</h3>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end Pagination -->
+
+                                                    <table class="table table-borderless table-hover table-centered">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th >
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                {{ $t("general.Action") }}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody v-if="panelPackages.length > 0">
+                                                        <tr
+                                                            v-for="(data, index) in panelPackages"
+                                                            :key="data.id"
+                                                            class="body-tr-custom"
+                                                        >
+                                                            <td scope="col">
+                                                                {{ data.code }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                            </td>
+                                                            <td scope="col">
+                                                                {{ data.face }}
+                                                            </td>
+                                                            <td scope="col" style="width: 0">
+                                                                <div class="form-check custom-control">
+                                                                    <input
+                                                                        class="form-check-input"
+                                                                        type="checkbox"
+                                                                        :value="data.id"
+                                                                        @change="checkRowPanel(data)"
+                                                                        v-model="CheckAllPanel"
+                                                                        style="width: 17px; height: 17px"
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                        <tbody v-else>
+                                                        <tr>
+                                                            <th class="text-center" colspan="11">
+                                                                {{ $t("general.notDataFound") }}
+                                                            </th>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </b-tab>
+                                    </b-tabs>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /create   -->
+
+                        <!--  search   -->
+                        <b-modal
+                            id="search"
+                            :title="$t('general.Search')"
+                            title-class="font-18"
+                            body-class="p-4"
+                            size="lg"
+                            :hide-footer="true"
                         >
                             <form>
                                 <div class="mb-3 d-flex justify-content-end">
                                     <b-button
                                         variant="success"
-                                        :disabled="!is_disabled"
-                                        @click.prevent="resetForm"
-                                        type="button"
-                                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                                        type="button" class="mx-1"
+                                        v-if="!isLoader"
+                                        @click.prevent="getPanel"
                                     >
-                                        {{ $t("general.AddNewRecord") }}
+                                        {{ $t('general.Search') }}
                                     </b-button>
-                                    <template v-if="!is_disabled">
-                                        <b-button
-                                            variant="success"
-                                            type="button"
-                                            class="mx-1"
-                                            v-if="!isLoader"
-                                            @click.prevent="AddSubmit"
-                                        >
-                                            {{ $t("general.Add") }}
-                                        </b-button>
 
-                                        <b-button variant="success" class="mx-1" disabled v-else>
-                                            <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                        </b-button>
-                                    </template>
+                                    <b-button variant="success" class="mx-1" disabled v-else>
+                                        <b-spinner small></b-spinner>
+                                        <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                    </b-button>
                                     <!-- Emulate built in modal footer ok and cancel button actions -->
 
-                                    <b-button
-                                        variant="danger"
-                                        type="button"
-                                        @click.prevent="resetModalHidden"
-                                    >
-                                        {{ $t("general.Cancel") }}
+                                    <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`search`)">
+                                        {{ $t('general.Cancel') }}
                                     </b-button>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="field-1" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_name_ar") }}
-                                                <span class="text-danger">*</span>
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_category") }}
                                             </label>
-                                            <div dir="rtl">
-                                                <input
-                                                    @keyup="arabicValue(create.name)"
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="1"
-                                                    v-model="$v.create.name.$model"
-                                                    :class="{
-                            'is-invalid': $v.create.name.$error || errors.name,
-                            'is-valid': !$v.create.name.$invalid && !errors.name,
-                          }"
-                                                    id="field-1"
-                                                />
-                                            </div>
-                                            <div v-if="!$v.create.name.minLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatleast") }}
-                                                {{ $v.create.name.$params.minLength.min }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatmost") }}
-                                                {{ $v.create.name.$params.maxLength.max }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <template v-if="errors.name">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.name"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
+                                            <multiselect
+                                                @input="showCategoryModal"
+                                                v-model="location.category_id"
+                                                :options="categories.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name : categories.find((x) => x.id == opt).name_e"
+                                            >
+                                            </multiselect>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="field-2" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_name_en") }}
-                                                <span class="text-danger">*</span>
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_governorate") }}
                                             </label>
-                                            <div dir="ltr">
-                                                <input
-                                                    @keyup="englishValue(create.name_e)"
-                                                    type="text"
-                                                    class="form-control englishInput"
-                                                    data-create="2"
-                                                    v-model="$v.create.name_e.$model"
-                                                    :class="{
-                            'is-invalid': $v.create.name_e.$error || errors.name_e,
-                            'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
-                          }"
-                                                    id="field-2"
-                                                />
-                                            </div>
-                                            <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatleast") }}
-                                                {{ $v.create.name_e.$params.minLength.min }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
-                                                {{ $t("general.Itmustbeatmost") }}
-                                                {{ $v.create.name_e.$params.maxLength.max }}
-                                                {{ $t("general.letters") }}
-                                            </div>
-                                            <template v-if="errors.name_e">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.name_e"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
+                                            <multiselect
+                                                @input="showGovernorateModal"
+                                                v-model="location.governorate_id"
+                                                :options="governorates.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ? governorates.find((x) => x.id == opt).name : governorates.find((x) => x.id == opt).name_e"
+                                            >
+                                            </multiselect>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="field-3" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_code") }}
-                                                <span class="text-danger">*</span>
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_city") }}
                                             </label>
-                                            <div >
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="$v.create.code.$model"
-                                                    :class="{
-                                                    'is-invalid': $v.create.code.$error || errors.code,
-                                                    'is-valid': !$v.create.code.$invalid && !errors.code,
-                                                  }"
-                                                    id="field-3"
-                                                />
-                                            </div>
-                                            <template v-if="errors.code">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.code"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
+                                            <multiselect
+                                                @input="showCityModal"
+                                                v-model="location.city_id"
+                                                :options="cities.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ? cities.find((x) => x.id == opt).name : cities.find((x) => x.id == opt).name_e"
+                                            >
+                                            </multiselect>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="field-4" class="control-label">
-                                                {{ getCompanyKey("boardRent_package_price") }}
-                                                <span class="text-danger">*</span>
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_avenue") }}
                                             </label>
-                                            <div>
-                                                <input
-                                                    step=".01"
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="$v.create.price.$model"
-                                                    :class="{
-                                                    'is-invalid': $v.create.price.$error || errors.price,
-                                                    'is-valid': !$v.create.price.$invalid && !errors.price,
-                                                  }"
-                                                    id="field-4"
-                                                />
-                                            </div>
-                                            <template v-if="errors.price">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.price"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
+                                            <multiselect
+                                                @input="showAvenueModal"
+                                                v-model="location.avenue_id"
+                                                :options="avenues.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ? avenues.find((x) => x.id == opt).name : avenues.find((x) => x.id == opt).name_e"
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_street") }}
+                                            </label>
+                                            <multiselect
+                                                @input="showStreetModal"
+                                                v-model="location.street_id"
+                                                :options="streets.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ? streets.find((x) => x.id == opt).name : streets.find((x) => x.id == opt).name_e"
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_face") }}
+                                            </label>
+                                            <multiselect
+                                                v-model="location.face"
+                                                :options="faces"
+                                            >
+                                            </multiselect>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </b-modal>
-                        <!--  /create   -->
+                        <!--  /search   -->
 
                         <!-- start .table-responsive-->
                         <div class="table-responsive mb-3 custom-table-theme position-relative">
@@ -1085,186 +1886,505 @@ export default {
                                             :id="`modal-edit-${data.id}`"
                                             :title="getCompanyKey('boardRent_package_edit_form')"
                                             title-class="font-18"
-                                            body-class="p-4"
+                                            dialog-class="modal-full-width"
+                                            :body-class="is_panel?'p-1':'p-4'"
                                             :ref="`edit-${data.id}`"
                                             :hide-footer="true"
                                             @show="resetModalEdit(data.id)"
                                             @hidden="resetModalHiddenEdit(data.id)"
                                         >
                                             <form>
-                                                <div class="mb-3 d-flex justify-content-end">
-                                                    <!-- Emulate built in modal footer ok and cancel button actions -->
-                                                    <b-button
-                                                        variant="success"
-                                                        type="submit"
-                                                        class="mx-1"
-                                                        v-if="!isLoader"
-                                                        @click.prevent="editSubmit(data.id)"
+                                                <div :class="{'position-relative': is_panel}">
+                                                    <div :class="['row justify-content-center']"
+                                                         v-if="is_panel"
                                                     >
-                                                        {{ $t("general.Edit") }}
-                                                    </b-button>
-
-                                                    <b-button variant="success" class="mx-1" disabled v-else>
-                                                        <b-spinner small></b-spinner>
-                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                                    </b-button>
-
-                                                    <b-button
-                                                        variant="danger"
-                                                        type="button"
-                                                        @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
-                                                    >
-                                                        {{ $t("general.Cancel") }}
-                                                    </b-button>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="edit-1" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_name_ar") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div dir="rtl">
-                                                                <input
-                                                                    @keyup="arabicValue(edit.name)"
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    data-edit="1"
-                                                                    v-model="$v.edit.name.$model"
-                                                                    :class="{
-                                      'is-invalid': $v.edit.name.$error || errors.name,
-                                      'is-valid': !$v.edit.name.$invalid && !errors.name,
-                                    }"
-                                                                    id="edit-1"
-                                                                />
+                                                        <div :class="['col-5',{'position-absolute': is_panel}]">
+                                                            <div class="face">
+                                                                <span class="face-name">A : {{ faceNumber.A }}</span>
                                                             </div>
-                                                            <div
-                                                                v-if="!$v.edit.name.minLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatleast") }}
-                                                                {{ $v.edit.name.$params.minLength.min }}
-                                                                {{ $t("general.letters") }}
+                                                            <div class="face">
+                                                                <span class="face-name">B : {{ faceNumber.B }}</span>
                                                             </div>
-                                                            <div
-                                                                v-if="!$v.edit.name.maxLength"
-                                                                class="invalid-feedback"
-                                                            >
-                                                                {{ $t("general.Itmustbeatmost") }}
-                                                                {{ $v.edit.name.$params.maxLength.max }}
-                                                                {{ $t("general.letters") }}
+                                                            <div class="face">
+                                                                <span class="face-name">Multi : {{ faceNumber.Multi }}</span>
                                                             </div>
-                                                            <template v-if="errors.name">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.name"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
+                                                            <div class="face">
+                                                                <span class="face-name">One-Face : {{ faceNumber["One-Face"] }}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="edit-2" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_name_en") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div dir="ltr">
-                                                                <input
-                                                                    @keyup="englishValue(edit.name_e)"
-                                                                    type="text"
-                                                                    class="form-control englishInput"
-                                                                    data-edit="2"
-                                                                    v-model="$v.edit.name_e.$model"
-                                                                    :class="{
-                                      'is-invalid':
-                                        $v.edit.name_e.$error || errors.name_e,
-                                      'is-valid':
-                                        !$v.edit.name_e.$invalid && !errors.name_e,
-                                    }"
-                                                                    id="edit-2"
-                                                                />
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name_e.minLength"
-                                                                class="invalid-feedback"
+
+                                                    <div :class="['d-flex justify-content-end']">
+                                                        <div :class="{'position-absolute': is_panel}">
+                                                            <!-- Emulate built in modal footer ok and cancel button actions -->
+                                                            <b-button
+                                                                variant="success"
+                                                                type="submit"
+                                                                class="mx-1"
+                                                                v-if="!isLoader"
+                                                                @click.prevent="editSubmit(data.id)"
                                                             >
-                                                                {{ $t("general.Itmustbeatleast") }}
-                                                                {{ $v.edit.name_e.$params.minLength.min }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <div
-                                                                v-if="!$v.edit.name_e.maxLength"
-                                                                class="invalid-feedback"
+                                                                {{ $t("general.Edit") }}
+                                                            </b-button>
+
+                                                            <b-button variant="success" class="mx-1" disabled v-else>
+                                                                <b-spinner small></b-spinner>
+                                                                <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                            </b-button>
+
+                                                            <b-button
+                                                                variant="danger"
+                                                                type="button"
+                                                                @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
                                                             >
-                                                                {{ $t("general.Itmustbeatmost") }}
-                                                                {{ $v.edit.name_e.$params.maxLength.max }}
-                                                                {{ $t("general.letters") }}
-                                                            </div>
-                                                            <template v-if="errors.name_e">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.name_e"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
+                                                                {{ $t("general.Cancel") }}
+                                                            </b-button>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="field-33" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_code") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    type="number"
-                                                                    class="form-control"
-                                                                    v-model="$v.edit.code.$model"
-                                                                    :class="{
+
+                                                    <b-tabs :content-class="is_panel?'tab-content-custom':''" nav-class="nav-tabs nav-bordered">
+                                                        <b-tab :title="$t('general.DataEntry')" @click="is_panel = false" active>
+                                                            <div class="row">
+                                                                <div class="row col-7">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="field-edit-1" class="control-label">
+                                                                                {{ getCompanyKey("boardRent_package_name_ar") }}
+                                                                                <span class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div dir="rtl">
+                                                                                <input
+                                                                                    @keyup="arabicValue(edit.name)"
+                                                                                    type="text"
+                                                                                    class="form-control"
+                                                                                    data-create="1"
+                                                                                    v-model="$v.edit.name.$model"
+                                                                                    :class="{
+                                                                                    'is-invalid': $v.edit.name.$error || errors.name,
+                                                                                    'is-valid': !$v.edit.name.$invalid && !errors.name,
+                                                                                  }"
+                                                                                    id="field-edit-1"
+                                                                                />
+                                                                            </div>
+                                                                            <div v-if="!$v.edit.name.minLength" class="invalid-feedback">
+                                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                                {{ $v.edit.name.$params.minLength.min }}
+                                                                                {{ $t("general.letters") }}
+                                                                            </div>
+                                                                            <div v-if="!$v.edit.name.maxLength" class="invalid-feedback">
+                                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                                {{ $v.edit.name.$params.maxLength.max }}
+                                                                                {{ $t("general.letters") }}
+                                                                            </div>
+                                                                            <template v-if="errors.name">
+                                                                                <ErrorMessage
+                                                                                    v-for="(errorMessage, index) in errors.name"
+                                                                                    :key="index"
+                                                                                >{{ errorMessage }}</ErrorMessage
+                                                                                >
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="field-edit-2" class="control-label">
+                                                                                {{ getCompanyKey("boardRent_package_name_en") }}
+                                                                                <span class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div dir="ltr">
+                                                                                <input
+                                                                                    @keyup="englishValue(edit.name_e)"
+                                                                                    type="text"
+                                                                                    class="form-control englishInput"
+                                                                                    data-create="2"
+                                                                                    v-model="$v.edit.name_e.$model"
+                                                                                    :class="{
+                                                        'is-invalid': $v.edit.name_e.$error || errors.name_e,
+                                                        'is-valid': !$v.edit.name_e.$invalid && !errors.name_e,
+                                                      }"
+                                                                                    id="field-edit-2"
+                                                                                />
+                                                                            </div>
+                                                                            <div v-if="!$v.edit.name_e.minLength" class="invalid-feedback">
+                                                                                {{ $t("general.Itmustbeatleast") }}
+                                                                                {{ $v.edit.name_e.$params.minLength.min }}
+                                                                                {{ $t("general.letters") }}
+                                                                            </div>
+                                                                            <div v-if="!$v.edit.name_e.maxLength" class="invalid-feedback">
+                                                                                {{ $t("general.Itmustbeatmost") }}
+                                                                                {{ $v.edit.name_e.$params.maxLength.max }}
+                                                                                {{ $t("general.letters") }}
+                                                                            </div>
+                                                                            <template v-if="errors.name_e">
+                                                                                <ErrorMessage
+                                                                                    v-for="(errorMessage, index) in errors.name_e"
+                                                                                    :key="index"
+                                                                                >{{ errorMessage }}</ErrorMessage
+                                                                                >
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="field-edit-3" class="control-label">
+                                                                                {{ getCompanyKey("boardRent_package_code") }}
+                                                                                <span class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div >
+                                                                                <input
+                                                                                    type="text"
+                                                                                    class="form-control"
+                                                                                    v-model="$v.edit.code.$model"
+                                                                                    :class="{
                                                     'is-invalid': $v.edit.code.$error || errors.code,
                                                     'is-valid': !$v.edit.code.$invalid && !errors.code,
                                                   }"
-                                                                    id="field-33"
-                                                                />
+                                                                                    id="field-edit-3"
+                                                                                />
+                                                                            </div>
+                                                                            <template v-if="errors.code">
+                                                                                <ErrorMessage
+                                                                                    v-for="(errorMessage, index) in errors.code"
+                                                                                    :key="index"
+                                                                                >{{ errorMessage }}</ErrorMessage
+                                                                                >
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="field-edit-4" class="control-label">
+                                                                                {{ getCompanyKey("boardRent_package_price") }}
+                                                                                <span class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div>
+                                                                                <input
+                                                                                    step=".01"
+                                                                                    type="number"
+                                                                                    class="form-control"
+                                                                                    v-model="$v.edit.price.$model"
+                                                                                    :class="{
+                                                                                    'is-invalid': $v.edit.price.$error || errors.price,
+                                                                                    'is-valid': !$v.edit.price.$invalid && !errors.price,
+                                                                                  }"
+                                                                                    id="field-edit-4"
+                                                                                />
+                                                                            </div>
+                                                                            <template v-if="errors.price">
+                                                                                <ErrorMessage
+                                                                                    v-for="(errorMessage, index) in errors.price"
+                                                                                    :key="index"
+                                                                                >{{ errorMessage }}</ErrorMessage
+                                                                                >
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <template v-if="errors.code">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.code"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="field-44" class="control-label">
-                                                                {{ getCompanyKey("boardRent_package_price") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    step=".01"
-                                                                    type="number"
-                                                                    class="form-control"
-                                                                    v-model="$v.edit.price.$model"
-                                                                    :class="{
-                                                    'is-invalid': $v.edit.price.$error || errors.price,
-                                                    'is-valid': !$v.edit.price.$invalid && !errors.price,
-                                                  }"
-                                                                    id="field-44"
-                                                                />
+                                                        </b-tab>
+                                                        <b-tab
+                                                            :title="$t('general.panel')"
+                                                            :disabled="!package_id"
+                                                            @click="is_panel = !is_panel"
+                                                        >
+                                                            <div class="d-flex justify-content-end position-relative">
+                                                                <div>
+                                                                    <b-button
+                                                                        v-if="package_id && is_panel"
+                                                                        @click.prevent="$bvModal.show(`search`)"
+                                                                        variant="primary"
+                                                                        class="mx-1 font-weight-bold"
+                                                                    >
+                                                                        {{ $t('general.Search') }}
+                                                                        <i class="fe-search"></i>
+                                                                    </b-button>
+                                                                </div>
                                                             </div>
-                                                            <template v-if="errors.price">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.price"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
+                                                            <div class="row">
+                                                                <!-- selet panals -->
+                                                                <div class="col-md-6">
+                                                                    <!-- start Pagination -->
+                                                                    <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                        <div>
+                                                                            <div class="d-inline-block" style="font-size: 13px">
+                                                                                {{ pansPagination.from }}-{{ pansPagination.to }} /
+                                                                                {{ pansPagination.total }}
+                                                                            </div>
+                                                                            <div class="d-inline-block">
+                                                                                <a
+                                                                                    href="javascript:void(0)"
+                                                                                    :style="{
+                                                                              'pointer-events':
+                                                                                pansPagination.current_page > 1 ? '' : 'none',
+                                                                            }"
+                                                                                    @click.prevent="getPanel(pansPagination.current_page - 1)"
+                                                                                >
+                                                                                    <span>&lt;</span>
+                                                                                </a>
+                                                                                <input
+                                                                                    type="text"
+                                                                                    @keyup.enter="getPanelPagination()"
+                                                                                    v-model="current_page_pans"
+                                                                                    class="pagination-current-page"
+                                                                                />
+                                                                                <a
+                                                                                    href="javascript:void(0)"
+                                                                                    :style="{
+                                                          'pointer-events':
+                                                            (pansPagination.last_page ==
+                                                            pansPagination.current_page) || !pansPagination
+                                                              ? 'none'
+                                                              : '',
+                                                        }"
+                                                                                    @click.prevent="getPanel(pansPagination.current_page + 1)"
+                                                                                >
+                                                                                    <span>&gt;</span>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style="position: absolute;transform: translate(230px, 0px)">
+                                                                            <h3>{{ $t('general.SelectPanel') }}</h3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- end Pagination -->
+                                                                    <table class="table table-borderless table-hover table-centered m-0">
+                                                                        <thead>
+                                                                        <tr>
+                                                                            <th>
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                {{ $t("general.Action") }}
+                                                                            </th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody v-if="pans.length > 0">
+                                                                        <tr
+                                                                            v-for="(data, index) in pans"
+                                                                            :key="data.id"
+                                                                            class="body-tr-custom"
+                                                                        >
+                                                                            <td scope="col">
+                                                                                {{ data.code }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.face }}
+                                                                            </td>
+                                                                            <td scope="col" style="width: 0">
+                                                                                <div class="form-check custom-control">
+                                                                                    <input
+                                                                                        class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        :value="data.id"
+                                                                                        @change="checkRowPanel(data)"
+                                                                                        v-model="CheckAllPanel"
+                                                                                        style="width: 17px; height: 17px"
+                                                                                    />
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                        <tbody v-else>
+                                                                        <tr>
+                                                                            <th class="text-center" colspan="11">
+                                                                                {{ $t("general.notDataFound") }}
+                                                                            </th>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                                <!-- panals package -->
+                                                                <div class="col-md-6">
+                                                                    <!-- start Pagination -->
+                                                                    <div class="d-inline-flex align-items-center pagination-custom position-relative">
+                                                                        <div>
+                                                                            <div class="d-inline-block" style="font-size: 13px">
+                                                                                {{ panelPackagesPaginatation.from }}-{{ panelPackagesPaginatation.to }} /
+                                                                                {{ panelPackagesPaginatation.total }}
+                                                                            </div>
+                                                                            <div class="d-inline-block">
+                                                                                <a
+                                                                                    href="javascript:void(0)"
+                                                                                    :style="{
+                                                                              'pointer-events':
+                                                                                current_page_pans_pack > 1 ? '' : 'none',
+                                                                            }"
+                                                                                    @click.prevent="paginate(current_page_pans_pack - 1)"
+                                                                                >
+                                                                                    <span>&lt;</span>
+                                                                                </a>
+                                                                                <input
+                                                                                    type="text"
+                                                                                    @keyup.enter="paginate(current_page_pans_pack)"
+                                                                                    v-model="current_page_pans_pack"
+                                                                                    class="pagination-current-page"
+                                                                                />
+                                                                                <a
+                                                                                    href="javascript:void(0)"
+                                                                                    :style="{
+                                                          'pointer-events':
+                                                            (panelPackagesPaginatation.last_page ==
+                                                            current_page_pans_pack) || !panelPackagesPaginatation
+                                                              ? 'none'
+                                                              : '',
+                                                        }"
+                                                                                    @click.prevent="paginate(current_page_pans_pack + 1)"
+                                                                                >
+                                                                                    <span>&gt;</span>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style="position: absolute;transform: translate(250px, 0px)">
+                                                                            <h3>{{ $t('general.Selected') }}</h3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- end Pagination -->
+
+                                                                    <table class="table table-borderless table-hover table-centered">
+                                                                        <thead>
+                                                                        <tr>
+                                                                            <th>
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_code") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_category") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_city") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_avenue") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_street") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th >
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    <span>{{ getCompanyKey("boardRent_panel_face") }}</span>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                {{ $t("general.Action") }}
+                                                                            </th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody v-if="panelPackages.length > 0">
+                                                                        <tr
+                                                                            v-for="(data, index) in panelPackages"
+                                                                            :key="data.id"
+                                                                            class="body-tr-custom"
+                                                                        >
+                                                                            <td scope="col">
+                                                                                {{ data.code }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ $i18n.locale == 'ar' ? data.category.name : data.category.name_e }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.city ? $i18n.locale == 'ar' ? data.city.name : data.city.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.avenue ? $i18n.locale == 'ar' ? data.avenue.name : data.avenue.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.street ? $i18n.locale == 'ar' ? data.street.name : data.street.name_e : '-' }}
+                                                                            </td>
+                                                                            <td scope="col">
+                                                                                {{ data.face }}
+                                                                            </td>
+                                                                            <td scope="col" style="width: 0">
+                                                                                <div class="form-check custom-control">
+                                                                                    <input
+                                                                                        class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        :value="data.id"
+                                                                                        @change="checkRowPanel(data)"
+                                                                                        v-model="CheckAllPanel"
+                                                                                        style="width: 17px; height: 17px"
+                                                                                    />
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                        <tbody v-else>
+                                                                        <tr>
+                                                                            <th class="text-center" colspan="11">
+                                                                                {{ $t("general.notDataFound") }}
+                                                                            </th>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                        </b-tab>
+                                                    </b-tabs>
                                                 </div>
                                             </form>
                                         </b-modal>
@@ -1301,3 +2421,23 @@ export default {
         </div>
     </Layout>
 </template>
+
+<style scoped>
+.face {
+    display: inline-block;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.face .face-name {
+    background-color: #6dc6f5;
+    padding: 0px 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 7px;
+    display: block;
+}
+
+
+</style>

@@ -15,10 +15,10 @@ class DepartmentResource extends JsonResource
      */
     public function toArray($request)
     {
-//        $key_val = DocumentField::query()->where('id', $this->key_value)->first();
-        $id=$this->id;
-        $docItems=$this->arch_documents()->get()->map(function($item) use($id){
-            $item->arch_department_id=$id;
+        //        $key_val = DocumentField::query()->where('id', $this->key_value)->first();
+        $id = $this->id;
+        $docItems = $this->arch_documents()->get()->map(function ($item) use ($id) {
+            $item->arch_department_id = $id;
             return $item;
         });
         return [
@@ -31,13 +31,10 @@ class DepartmentResource extends JsonResource
             'arch_documents' => DocTypeResource::collection($docItems),
             'is_active' => $this->is_active,
             'is_key' => (bool) $this->is_key,
-//            'key_value' => new DocumentFieldResource($key_val),
+            //            'key_value' => new DocumentFieldResource($key_val),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-//            "archive_file"=>new ArchiveFileResource($this->archiveFile)
+            //            "archive_file"=>new ArchiveFileResource($this->archiveFile)
         ];
-
-
-
     }
 }

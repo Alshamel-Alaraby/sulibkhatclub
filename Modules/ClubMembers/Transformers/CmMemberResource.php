@@ -2,8 +2,8 @@
 
 namespace Modules\ClubMembers\Transformers;
 
-use App\Http\Resources\Status\StatusResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\ClubMembers\Transformers\StatusResource;
 
 class CmMemberResource extends JsonResource
 {
@@ -23,6 +23,7 @@ class CmMemberResource extends JsonResource
             'third_name' => $this->third_name,
             'last_name' => $this->last_name,
             'family_name' => $this->family_name,
+            'full_name' => $this->full_name,
             'birth_date' => $this->birth_date,
             'national_id' => $this->national_id,
             'nationality_class' => $this->nationality_class,
@@ -47,12 +48,12 @@ class CmMemberResource extends JsonResource
             'member_type' => $this->member_type,
             'notes' => $this->notes,
             'gender' => $this->gender,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'sponsors' => $this->sponsors,
             'membersType' => $this->memberType,
-            'financial-status' => $this->financialStatus,
+            'financial_status' => $this->financialStatus,
             "status" => new StatusResource($this->status),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

@@ -34,7 +34,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       if (
-        vm.$store.state.auth.work_flow_trees.includes("units") ||
+        vm.$store.state.auth.work_flow_trees.includes("department") ||
         vm.$store.state.auth.user.type == "super_admin"
       ) {
         return true;
@@ -62,12 +62,26 @@ export default {
         name: "",
         name_e: "",
       },
+      createTask: {
+        name: "",
+        name_e: "",
+        description: "",
+        description_e: "",
+      },
+      editTask: {
+        name: "",
+        name_e: "",
+        description: "",
+        description_e: "",
+      },
+      department_id: null,
       errors: {},
-      dropDownSenders: [],
       isButton: true,
       isCheckAll: false,
+      tasks: [],
       checkAll: [],
       is_disabled: false,
+      is_disabledTask: false,
       current_page: 1,
       setting: {
         name: true,
@@ -100,6 +114,18 @@ export default {
                 return this.isRequired("name_e");
             }) , minLength: minLength(3), maxLength: maxLength(100) },
     },
+      createTask: {
+          name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+          name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
+          description: {required},
+          description_e: {required},
+      },
+      editTask: {
+          name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+          name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
+          description: {required, minLength: minLength(2), maxLength: maxLength(1000)},
+          description_e: {required, minLength: minLength(2), maxLength: maxLength(1000)},
+      },
   },
   watch: {
     /**
@@ -187,6 +213,22 @@ export default {
           });
           return res.length > 0 && res[0].is_required == 1 ? true : false;
       },
+      arabicValueTask(txt) {
+          this.createTask.name = arabicValue(txt);
+          this.editTask.name = arabicValue(txt);
+      },
+      englishValueTask(txt) {
+          this.createTask.name_e = englishValue(txt);
+          this.editTask.name_e = englishValue(txt);
+      },
+      arabicValueDescriptionTask(txt){
+          this.createTask.description = arabicValue(txt);
+          this.editTask.description = arabicValue(txt);
+      },
+      englishValueDescriptionTask(txt){
+          this.createTask.description_e = englishValue(txt);
+          this.editTask.description_e = englishValue(txt);
+      },
     /**
      *  start get Data module && pagination
      */
@@ -252,6 +294,28 @@ export default {
           });
       }
     },
+      getDataTask(page = 1) {
+          this.isLoader = true;
+
+          adminApi
+              .get(
+                  `/tasks?page=${page}&per_page=${this.per_page}&department_id=${this.department_id}`
+              )
+              .then((res) => {
+                  let l = res.data;
+                  this.tasks = l.data;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
     /**
      *  end get Data module && pagination
      */
@@ -358,6 +422,105 @@ export default {
         });
       }
     },
+      deleteTasks(id, index) {
+          if (Array.isArray(id)) {
+              Swal.fire({
+                  title: `${this.$t("general.Areyousure")}`,
+                  text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                  type: "warning",
+                  showCancelButton: true,
+                  confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
+                  cancelButtonText: `${this.$t("general.Nocancel")}`,
+                  confirmButtonClass: "btn btn-success mt-2",
+                  cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                  buttonsStyling: false,
+              }).then((result) => {
+                  if (result.value) {
+                      this.isLoader = true;
+                      adminApi
+                          .post(`/department-tasks/bulk-delete`, { ids: id })
+                          .then((res) => {
+                              this.checkAll = [];
+                              this.getDataTask();
+                              Swal.fire({
+                                  icon: "success",
+                                  title: `${this.$t("general.Deleted")}`,
+                                  text: `${this.$t("general.Yourrowhasbeendeleted")}`,
+                                  showConfirmButton: false,
+                                  timer: 1500,
+                              });
+                          })
+                          .catch((err) => {
+                              if (err.response.status == 400) {
+                                  Swal.fire({
+                                      icon: "error",
+                                      title: `${this.$t("general.Error")}`,
+                                      text: `${this.$t("general.CantDeleteRelation")}`,
+                                  });
+                                  this.getData();
+                              } else {
+                                  Swal.fire({
+                                      icon: "error",
+                                      title: `${this.$t("general.Error")}`,
+                                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                  });
+                              }
+                          })
+                          .finally(() => {
+                              this.isLoader = false;
+                          });
+                  }
+              });
+          } else {
+              Swal.fire({
+                  title: `${this.$t("general.Areyousure")}`,
+                  text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                  type: "warning",
+                  showCancelButton: true,
+                  confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
+                  cancelButtonText: `${this.$t("general.Nocancel")}`,
+                  confirmButtonClass: "btn btn-success mt-2",
+                  cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                  buttonsStyling: false,
+              }).then((result) => {
+                  if (result.value) {
+                      this.isLoader = true;
+
+                      adminApi
+                          .delete(`/department-tasks/${id}`)
+                          .then((res) => {
+                              this.getDataTask();
+                              Swal.fire({
+                                  icon: "success",
+                                  title: `${this.$t("general.Deleted")}`,
+                                  text: `${this.$t("general.Yourrowhasbeendeleted")}`,
+                                  showConfirmButton: false,
+                                  timer: 1500,
+                              });
+                          })
+
+                          .catch((err) => {
+                              if (err.response.status == 400) {
+                                  Swal.fire({
+                                      icon: "error",
+                                      title: `${this.$t("general.Error")}`,
+                                      text: `${this.$t("general.CantDeleteRelation")}`,
+                                  });
+                              } else {
+                                  Swal.fire({
+                                      icon: "error",
+                                      title: `${this.$t("general.Error")}`,
+                                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                  });
+                              }
+                          })
+                          .finally(() => {
+                              this.isLoader = false;
+                          });
+                  }
+              });
+          }
+      },
     /**
      *  end delete module
      */
@@ -366,10 +529,18 @@ export default {
      */
     resetModalHidden() {
       this.create = { name: "", name_e: ""};
+        this.createTask = {
+            name: "",
+            name_e: "",
+            description: "",
+            description_e: "",
+        };
       this.$nextTick(() => {
         this.$v.$reset();
       });
+        this.department_id = null;
       this.is_disabled = false;
+        this.is_disabledTask = false;
       this.errors = {};
       this.$bvModal.hide(`create`);
     },
@@ -378,6 +549,12 @@ export default {
      */
     resetModal() {
       this.create = { name: "", name_e: ""};
+        this.createTask = {
+            name: "",
+            name_e: "",
+            description: "",
+            description_e: "",
+        };
       this.$nextTick(() => {
         this.$v.$reset();
       });
@@ -388,8 +565,23 @@ export default {
       this.$nextTick(() => {
         this.$v.$reset();
       });
+      this.department_id = null;
       this.is_disabled = false;
+        this.is_disabledTask = false;
       this.errors = {};
+    },
+    resetFormTask(){
+        this.createTask = {
+            name: "",
+            name_e: "",
+            description: "",
+            description_e: "",
+        };
+        this.$nextTick(() => {
+            this.$v.$reset();
+        });
+        this.errors = {};
+        this.is_disabledTask = false;
     },
     /**
      *  create module
@@ -413,6 +605,7 @@ export default {
           .post(`/depertments`, { ...this.create, company_id: this.company_id })
           .then((res) => {
             this.is_disabled = true;
+            this.department_id = res.data.data.id;
             this.getData();
             setTimeout(() => {
               Swal.fire({
@@ -460,7 +653,6 @@ export default {
         adminApi
           .put(`/depertments/${id}`, { name, name_e })
           .then((res) => {
-            this.$bvModal.hide(`modal-edit-${id}`);
             this.getData();
             setTimeout(() => {
               Swal.fire({
@@ -488,15 +680,141 @@ export default {
       }
     },
 
+    AddSubmitTask() {
+          if (!this.createTask.name) {
+              this.createTask.name = this.createTask.name_e;
+          }
+          if (!this.createTask.name_e) {
+              this.createTask.name_e = this.createTask.name;
+          }
+          if(!this.createTask.description){ this.createTask.description = this.createTask.description_e}
+          if(!this.createTask.description_e){ this.createTask.description_e = this.createTask.description}
+          this.$v.createTask.$touch();
+
+          if (this.$v.createTask.$invalid) {
+              return;
+          } else {
+              this.isLoader = true;
+              this.errors = {};
+
+              adminApi
+                  .post(`/department-tasks`, {...this.createTask,department_id: this.department_id ,company_id: this.company_id})
+                  .then((res) => {
+                      this.is_disabledTask = true;
+                      this.getDataTask();
+                      setTimeout(() => {
+                          Swal.fire({
+                              icon: "success",
+                              text: `${this.$t("general.Addedsuccessfully")}`,
+                              showConfirmButton: false,
+                              timer: 1500,
+                          });
+                      }, 500);
+                  })
+                  .catch((err) => {
+                      if (err.response.data) {
+                          this.errors = err.response.data.errors;
+                      } else {
+                          Swal.fire({
+                              icon: "error",
+                              title: `${this.$t("general.Error")}`,
+                              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                          });
+                      }
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }
+      },
+      /**
+       *  edit countrie
+       */
+    editSubmitTask(id) {
+          if (!this.editTask.name) {
+              this.editTask.name = this.editTask.name_e;
+          }
+          if (!this.editTask.name_e) {
+              this.editTask.name_e = this.editTask.name;
+          }
+          if(!this.editTask.description){ this.editTask.description = this.editTask.description_e}
+          if(!this.editTask.description_e){ this.editTask.description_e = this.editTask.description}
+          this.$v.editTask.$touch();
+
+          if (this.$v.editTask.$invalid) {
+              return;
+          } else {
+              this.isLoader = true;
+              this.errors = {};
+              adminApi
+                  .put(`/department-tasks/${id}`, {...this.editTask,department_id: this.department_id})
+                  .then((res) => {
+                      this.getDataTask();
+                      setTimeout(() => {
+                          Swal.fire({
+                              icon: "success",
+                              text: `${this.$t("general.Editsuccessfully")}`,
+                              showConfirmButton: false,
+                              timer: 1500,
+                          });
+                      }, 500);
+                  })
+                  .catch((err) => {
+                      if (err.response.data) {
+                          this.errors = err.response.data.errors;
+                      } else {
+                          Swal.fire({
+                              icon: "error",
+                              title: `${this.$t("general.Error")}`,
+                              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                          });
+                      }
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }
+      },
+
     /**
      *   show Modal (edit)
      */
     resetModalEdit(id) {
       let module = this.departments.find((e) => id == e.id);
+      this.department_id = module.id;
       this.edit.name = module.name;
       this.edit.name_e = module.name_e;
+      this.getDataTask();
       this.errors = {};
     },
+      resetModalHiddenTask() {
+          this.createTask = {
+              name: "",
+              name_e: "",
+              description: "",
+              description_e: "",
+          };
+          this.$nextTick(() => {
+              this.$v.$reset();
+          });
+          this.errors = {};
+          this.$bvModal.hide(`create-task`);
+      },
+      /**
+       *  hidden Modal (create)
+       */
+       resetModalTask() {
+          this.createTask = {
+              name: "",
+              name_e: "",
+              description: "",
+              description_e: "",
+          };
+          this.$nextTick(() => {
+              this.$v.$reset();
+          });
+          this.errors = {};
+      },
     /**
      *  hidden Modal (edit)
      */
@@ -506,7 +824,34 @@ export default {
         name: "",
         name_e: "",
       };
+      this.editTask =  {
+            name: "",
+                name_e: "",
+                description: "",
+                description_e: "",
+        };
+      this.tasks =  [];
     },
+      async resetModalEditTask(id) {
+          let tasks = this.tasks.find((e) => id == e.id);
+          this.editTask.name = tasks.name;
+          this.editTask.name_e = tasks.name_e;
+          this.editTask.description = tasks.description;
+          this.editTask.description_e = tasks.description_e;
+          this.errors = {};
+      },
+      /**
+       *  hidden Modal (edit)
+       */
+      resetModalHiddenEditTask(id) {
+          this.errors = {};
+          this.editTask = {
+              name: "",
+              name_e: "",
+              description: "",
+              description_e: "",
+          };
+      },
 
     /**
      *  start  dynamicSortString
@@ -573,11 +918,11 @@ export default {
               this.enabled3 = true;
           }, 100);
       },
-      arabicValueName(txt){
+    arabicValueName(txt){
           this.create.name = arabicValue(txt);
           this.edit.name = arabicValue(txt);
       },
-      englishValueName(txt){
+    englishValueName(txt){
           this.create.name_e = englishValue(txt);
           this.edit.name_e = englishValue(txt);
       }
@@ -766,6 +1111,7 @@ export default {
               :title="getCompanyKey('department_create_form')"
               title-class="font-18"
               body-class="p-4 "
+              size="lg"
               :hide-footer="true"
               @show="resetModal"
               @hidden="resetModalHidden"
@@ -807,87 +1153,236 @@ export default {
                     {{ $t("general.Cancel") }}
                   </b-button>
                 </div>
-                <div class="row">
-                  <div class="col-md-12" v-if="isVisible('name')">
-                    <div class="form-group">
-                      <label for="field-1" class="control-label">
-                        {{ getCompanyKey("department_name_ar") }}
-                        <span v-if="isRequired('name')"  class="text-danger">*</span>
-                      </label>
-                      <div dir="rtl">
-                        <input
-                          type="text"
-                          class="form-control"
-                          data-create="1"
-                          @keyup="arabicValueName(create.name)"
-                          v-model="$v.create.name.$model"
-                          :class="{
-                            'is-invalid': $v.create.name.$error || errors.name,
-                            'is-valid': !$v.create.name.$invalid && !errors.name,
-                          }"
-                          id="field-1"
-                        />
-                      </div>
-                      <div v-if="!$v.create.name.minLength" class="invalid-feedback">
-                        {{ $t("general.Itmustbeatleast") }}
-                        {{ $v.create.name.$params.minLength.min }}
-                        {{ $t("general.letters") }}
-                      </div>
-                      <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
-                        {{ $t("general.Itmustbeatmost") }}
-                        {{ $v.create.name.$params.maxLength.max }}
-                        {{ $t("general.letters") }}
-                      </div>
-                      <template v-if="errors.name">
-                        <ErrorMessage
-                          v-for="(errorMessage, index) in errors.name"
-                          :key="index"
-                        >
-                          {{ errorMessage }}
-                        </ErrorMessage>
-                      </template>
-                    </div>
-                  </div>
-                  <div class="col-md-12" v-if="isVisible('name_e')">
-                    <div class="form-group">
-                      <label for="field-2" class="control-label">
-                        {{ getCompanyKey("department_name_en") }}
-                        <span v-if="isRequired('name_e')" class="text-danger">*</span>
-                      </label>
-                      <div dir="ltr">
-                        <input
-                          type="text"
-                          class="form-control"
-                          data-create="2"
-                          @keyup="englishValueName(create.name_e)"
-                          v-model="$v.create.name_e.$model"
-                          :class="{
+                <b-tabs nav-class="nav-tabs nav-bordered">
+                      <b-tab :title="$t('general.DataEntry')" active>
+                          <div class="row justify-content-center">
+                              <div class="col-md-8" v-if="isVisible('name')">
+                                  <div class="form-group">
+                                      <label for="field-1" class="control-label">
+                                          {{ getCompanyKey("department_name_ar") }}
+                                          <span v-if="isRequired('name')"  class="text-danger">*</span>
+                                      </label>
+                                      <div dir="rtl">
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              data-create="1"
+                                              @keyup="arabicValueName(create.name)"
+                                              v-model="$v.create.name.$model"
+                                              :class="{
+                                                'is-invalid': $v.create.name.$error || errors.name,
+                                                'is-valid': !$v.create.name.$invalid && !errors.name,
+                                              }"
+                                              id="field-1"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.create.name.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.create.name.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name"
+                                              :key="index"
+                                          >
+                                              {{ errorMessage }}
+                                          </ErrorMessage>
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-8" v-if="isVisible('name_e')">
+                                  <div class="form-group">
+                                      <label for="field-2" class="control-label">
+                                          {{ getCompanyKey("department_name_en") }}
+                                          <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                                      </label>
+                                      <div dir="ltr">
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              data-create="2"
+                                              @keyup="englishValueName(create.name_e)"
+                                              v-model="$v.create.name_e.$model"
+                                              :class="{
                             'is-invalid': $v.create.name_e.$error || errors.name_e,
                             'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
                           }"
-                          id="field-2"
-                        />
-                      </div>
-                      <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
-                        {{ $t("general.Itmustbeatleast") }}
-                        {{ $v.create.name_e.$params.minLength.min }}
-                        {{ $t("general.letters") }}
-                      </div>
-                      <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
-                        {{ $t("general.Itmustbeatmost") }}
-                        {{ $v.create.name_e.$params.maxLength.max }}
-                        {{ $t("general.letters") }}
-                      </div>
-                      <template v-if="errors.name_e">
-                        <ErrorMessage
-                          v-for="(errorMessage, index) in errors.name_e"
-                          :key="index"
-                          >{{ errorMessage }}
-                        </ErrorMessage>
-                      </template>
-                    </div>
-                  </div>
-                </div>
+                                              id="field-2"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.create.name_e.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.create.name_e.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name_e">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name_e"
+                                              :key="index"
+                                          >{{ errorMessage }}
+                                          </ErrorMessage>
+                                      </template>
+                                  </div>
+                              </div>
+                          </div>
+                      </b-tab>
+                      <b-tab
+                          :title="$t('general.tasks')"
+                          :disabled="!department_id"
+                      >
+                          <div class="mb-2 d-flex justify-content-end">
+                              <b-button
+                                  variant="success"
+                                  :disabled="!is_disabledTask"
+                                  @click.prevent="resetFormTask"
+                                  type="button"
+                                  :class="['font-weight-bold px-2', is_disabledTask ? 'mx-2' : '']"
+                              >
+                                  {{ $t("general.AddNewRecord") }}
+                              </b-button>
+                              <template v-if="!is_disabledTask">
+                                  <b-button
+                                      variant="success"
+                                      type="button"
+                                      class="mx-1"
+                                      v-if="!isLoader"
+                                      @click.prevent="AddSubmitTask"
+                                  >
+                                      {{ $t("general.Add") }}
+                                  </b-button>
+
+                                  <b-button variant="success" class="mx-1" disabled v-else>
+                                      <b-spinner small></b-spinner>
+                                      <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                  </b-button>
+                              </template>
+                              <!-- Emulate built in modal footer ok and cancel button actions -->
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="fieldTask-1" class="control-label">
+                                          {{ getCompanyKey("boardRent_task_name_ar") }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <div dir="rtl">
+                                          <input
+                                              @keyup="arabicValueTask(createTask.name)"
+                                              type="text"
+                                              class="form-control"
+                                              data-create="1"
+                                              v-model="$v.createTask.name.$model"
+                                              :class="{
+                                                'is-invalid': $v.createTask.name.$error || errors.name,
+                                                'is-valid': !$v.createTask.name.$invalid && !errors.name,
+                                              }"
+                                              id="fieldTask-1"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.createTask.name.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.createTask.name.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.createTask.name.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.createTask.name.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="fieldTask-2" class="control-label">
+                                          {{ getCompanyKey("boardRent_task_name_en") }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <div dir="ltr">
+                                          <input
+                                              @keyup="englishValueTask(createTask.name_e)"
+                                              type="text"
+                                              class="form-control englishInput"
+                                              data-create="2"
+                                              v-model="$v.createTask.name_e.$model"
+                                              :class="{
+                            'is-invalid': $v.createTask.name_e.$error || errors.name_e,
+                            'is-valid': !$v.createTask.name_e.$invalid && !errors.name_e,
+                          }"
+                                              id="fieldTask-2"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.createTask.name_e.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.createTask.name_e.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.create.name_e.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name_e">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name_e"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label class="mr-2">
+                                          {{ getCompanyKey('boardRent_task_description_ar') }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <textarea @input="arabicValueDescriptionTask(createTask.description)" v-model="$v.createTask.description.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                      <template v-if="errors.description">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.description"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label class="mr-2">
+                                          {{ getCompanyKey('boardRent_task_description_en') }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <textarea @input="englishValueDescriptionTask(createTask.description_e)" v-model="$v.createTask.description_e.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                      <template v-if="errors.description_e">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.description_e"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                          </div>
+                      </b-tab>
+                  </b-tabs>
               </form>
             </b-modal>
             <!--  /create   -->
@@ -1019,13 +1514,14 @@ export default {
                         :title="getCompanyKey('department_edit_form')"
                         title-class="font-18"
                         body-class="p-4"
+                        size="lg"
                         :ref="`edit-${data.id}`"
                         :hide-footer="true"
                         @show="resetModalEdit(data.id)"
                         @hidden="resetModalHiddenEdit(data.id)"
                       >
                         <form>
-                          <div class="mb-3 d-flex justify-content-end">
+                          <div class="mb-2 d-flex justify-content-end">
                             <!-- Emulate built in modal footer ok and cancel button actions -->
                             <b-button
                               variant="success"
@@ -1050,8 +1546,8 @@ export default {
                               {{ $t("general.Cancel") }}
                             </b-button>
                           </div>
-                          <div class="row">
-                            <div class="col-md-12" v-if="isVisible('name')">
+                          <div class="row justify-content-center">
+                            <div class="col-md-6" v-if="isVisible('name')">
                               <div class="form-group">
                                 <label for="field-u-1" class="control-label">
                                   {{ getCompanyKey("department_name_ar") }}
@@ -1095,7 +1591,7 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div class="col-md-12" v-if="isVisible('name_e')">
+                            <div class="col-md-6" v-if="isVisible('name_e')">
                             <div class="form-group">
                                 <label for="field-u-2" class="control-label">
                                   {{ getCompanyKey("department_name_en") }}
@@ -1142,6 +1638,297 @@ export default {
                               </div>
                             </div>
                           </div>
+
+                        <div class="row justify-content-between align-items-center mt-1">
+                            <h4 class="col-6 header-title">{{ $t("general.tasks") }}</h4>
+                            <!-- start create and printer -->
+                            <div class="col-2 header-title">
+                                <b-button
+                                    v-b-modal.create-task
+                                    variant="primary"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                >
+                                    {{ $t("general.Create") }}
+                                    <i class="fas fa-plus"></i>
+                                </b-button>
+                                <!-- end create and printer -->
+                            </div>
+                        </div>
+                          <!-- start .table-responsive-->
+                          <div class="table-responsive mb-3 custom-table-theme position-relative">
+                                <!--       start loader       -->
+                                <loader size="large" v-if="isLoader" />
+                                <!--       end loader       -->
+                                <table class="table table-borderless table-hover table-centered m-0">
+                                    <thead>
+                                    <tr>
+                                        <th v-if="setting.name">
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("boardRent_task_name_ar") }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="tasks.sort(sortString('name'))"
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="tasks.sort(sortString('-name'))"
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.name_e">
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("boardRent_task_name_en") }}</span>
+                                                <div class="arrow-sort">
+                                                    <i
+                                                        class="fas fa-arrow-up"
+                                                        @click="tasks.sort(sortString('name_e'))"
+                                                    ></i>
+                                                    <i
+                                                        class="fas fa-arrow-down"
+                                                        @click="tasks.sort(sortString('-name_e'))"
+                                                    ></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="enabled3" class="do-not-print">
+                                            {{ $t("general.Action") }}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody v-if="tasks.length > 0">
+                                    <tr
+                                        @dblclick.prevent="$bvModal.show(`modal-edit-task-${data.id}`)"
+                                        v-for="(data2, index) in tasks"
+                                        :key="data2.id"
+                                        class="body-tr-custom"
+                                    >
+                                        <td v-if="setting.name">
+                                            <h5 class="m-0 font-weight-normal">{{ data2.name }}</h5>
+                                        </td>
+                                        <td v-if="setting.name_e">
+                                            <h5 class="m-0 font-weight-normal">{{ data2.name_e }}</h5>
+                                        </td>
+                                        <td v-if="enabled3" class="do-not-print">
+                                            <div class="btn-group">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm dropdown-toggle dropdown-coustom"
+                                                    data-toggle="dropdown"
+                                                    aria-expanded="false"
+                                                >
+                                                    {{ $t("general.commands") }}
+                                                    <i class="fas fa-angle-down"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-custom">
+                                                    <a
+                                                        class="dropdown-item"
+                                                        href="#"
+                                                        @click="$bvModal.show(`modal-edit-task-${data2.id}`)"
+                                                    >
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center text-black"
+                                                        >
+                                                            <span>{{ $t("general.edit") }}</span>
+                                                            <i class="mdi mdi-square-edit-outline text-info"></i>
+                                                        </div>
+                                                    </a>
+                                                    <a
+                                                        class="dropdown-item text-black"
+                                                        href="#"
+                                                        @click.prevent="deleteTasks(data.id)"
+                                                    >
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center text-black"
+                                                        >
+                                                            <span>{{ $t("general.delete") }}</span>
+                                                            <i class="fas fa-times text-danger"></i>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <!--  edit   -->
+                                            <b-modal
+                                                :id="`modal-edit-task-${data2.id}`"
+                                                :title="getCompanyKey('boardRent_task_edit_form')"
+                                                title-class="font-18"
+                                                body-class="p-4"
+                                                :ref="`edit-${data2.id}`"
+                                                size="lg"
+                                                :hide-footer="true"
+                                                @show="resetModalEditTask(data2.id)"
+                                                @hidden="resetModalHiddenEditTask(data2.id)"
+                                            >
+                                                <form>
+                                                    <div class="mb-3 d-flex justify-content-end">
+                                                        <!-- Emulate built in modal footer ok and cancel button actions -->
+                                                        <b-button
+                                                            variant="success"
+                                                            type="submit"
+                                                            class="mx-1"
+                                                            v-if="!isLoader"
+                                                            @click.prevent="editSubmitTask(data2.id)"
+                                                        >
+                                                            {{ $t("general.Edit") }}
+                                                        </b-button>
+
+                                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                                            <b-spinner small></b-spinner>
+                                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                        </b-button>
+
+                                                        <b-button
+                                                            variant="danger"
+                                                            type="button"
+                                                            @click.prevent="$bvModal.hide(`modal-edit-task-${data2.id}`)"
+                                                        >
+                                                            {{ $t("general.Cancel") }}
+                                                        </b-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="edit-Task-1" class="control-label">
+                                                                    {{ getCompanyKey("boardRent_task_name_ar") }}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                                <div dir="rtl">
+                                                                    <input
+                                                                        @keyup="arabicValueTask(editTask.name)"
+                                                                        type="text"
+                                                                        class="form-control"
+                                                                        data-edit="1"
+                                                                        v-model="$v.editTask.name.$model"
+                                                                        :class="{
+                                                                          'is-invalid': $v.editTask.name.$error || errors.name,
+                                                                          'is-valid': !$v.editTask.name.$invalid && !errors.name,
+                                                                        }"
+                                                                        id="edit-Task-1"
+                                                                    />
+                                                                </div>
+                                                                <div
+                                                                    v-if="!$v.edit.name.minLength"
+                                                                    class="invalid-feedback"
+                                                                >
+                                                                    {{ $t("general.Itmustbeatleast") }}
+                                                                    {{ $v.edit.name.$params.minLength.min }}
+                                                                    {{ $t("general.letters") }}
+                                                                </div>
+                                                                <div
+                                                                    v-if="!$v.edit.name.maxLength"
+                                                                    class="invalid-feedback"
+                                                                >
+                                                                    {{ $t("general.Itmustbeatmost") }}
+                                                                    {{ $v.edit.name.$params.maxLength.max }}
+                                                                    {{ $t("general.letters") }}
+                                                                </div>
+                                                                <template v-if="errors.name">
+                                                                    <ErrorMessage
+                                                                        v-for="(errorMessage, index) in errors.name"
+                                                                        :key="index"
+                                                                    >{{ errorMessage }}</ErrorMessage
+                                                                    >
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="edit-Task-2" class="control-label">
+                                                                    {{ getCompanyKey("boardRent_task_name_en") }}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                                <div dir="ltr">
+                                                                    <input
+                                                                        @keyup="englishValueTask(editTask.name_e)"
+                                                                        type="text"
+                                                                        class="form-control englishInput"
+                                                                        data-edit="2"
+                                                                        v-model="$v.editTask.name_e.$model"
+                                                                        :class="{
+                                                                          'is-invalid':
+                                                                            $v.editTask.name_e.$error || errors.name_e,
+                                                                          'is-valid':
+                                                                            !$v.editTask.name_e.$invalid && !errors.name_e,
+                                                                        }"
+                                                                        id="edit-Task-2"
+                                                                    />
+                                                                </div>
+                                                                <div
+                                                                    v-if="!$v.editTask.name_e.minLength"
+                                                                    class="invalid-feedback"
+                                                                >
+                                                                    {{ $t("general.Itmustbeatleast") }}
+                                                                    {{ $v.editTask.name_e.$params.minLength.min }}
+                                                                    {{ $t("general.letters") }}
+                                                                </div>
+                                                                <div
+                                                                    v-if="!$v.editTask.name_e.maxLength"
+                                                                    class="invalid-feedback"
+                                                                >
+                                                                    {{ $t("general.Itmustbeatmost") }}
+                                                                    {{ $v.editTask.name_e.$params.maxLength.max }}
+                                                                    {{ $t("general.letters") }}
+                                                                </div>
+                                                                <template v-if="errors.name_e">
+                                                                    <ErrorMessage
+                                                                        v-for="(errorMessage, index) in errors.name_e"
+                                                                        :key="index"
+                                                                    >{{ errorMessage }}</ErrorMessage
+                                                                    >
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label class="mr-2">
+                                                                    {{ getCompanyKey('boardRent_task_description_ar') }}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                                <textarea @input="arabicValueDescriptionTask(editTask.description)" v-model="$v.editTask.description.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                                                <template v-if="errors.description">
+                                                                    <ErrorMessage
+                                                                        v-for="(errorMessage, index) in errors.description"
+                                                                        :key="index"
+                                                                    >{{ errorMessage }}</ErrorMessage
+                                                                    >
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label class="mr-2">
+                                                                    {{ getCompanyKey('boardRent_task_description_en') }}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                                <textarea @input="englishValueDescriptionTask(editTask.description_e)" v-model="$v.editTask.description_e.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                                                <template v-if="errors.description_e">
+                                                                    <ErrorMessage
+                                                                        v-for="(errorMessage, index) in errors.description_e"
+                                                                        :key="index"
+                                                                    >{{ errorMessage }}</ErrorMessage
+                                                                    >
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </b-modal>
+                                            <!--  /edit   -->
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tbody v-else>
+                                    <tr>
+                                        <th class="text-center" colspan="11">
+                                            {{ $t("general.notDataFound") }}
+                                        </th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                          <!-- end .table-responsive-->
                         </form>
                       </b-modal>
                       <!--  /edit   -->
@@ -1168,6 +1955,172 @@ export default {
                     </th>
                   </tr>
                 </tbody>
+
+                  <!--  create   -->
+                  <b-modal
+                      id="create-task"
+                      :title="getCompanyKey('boardRent_task_create_form')"
+                      title-class="font-18"
+                      body-class="p-4 "
+                      size="lg"
+                      :hide-footer="true"
+                      @show="resetModalTask"
+                      @hidden="resetModalHiddenTask"
+                  >
+                      <form>
+                          <div class="mb-3 d-flex justify-content-end">
+                              <b-button
+                                  variant="success"
+                                  :disabled="!is_disabledTask"
+                                  @click.prevent="resetFormTask"
+                                  type="button"
+                                  :class="['font-weight-bold px-2', is_disabledTask ? 'mx-2' : '']"
+                              >
+                                  {{ $t("general.AddNewRecord") }}
+                              </b-button>
+                              <template v-if="!is_disabledTask">
+                                  <b-button
+                                      variant="success"
+                                      type="button"
+                                      class="mx-1"
+                                      v-if="!isLoader"
+                                      @click.prevent="AddSubmitTask"
+                                  >
+                                      {{ $t("general.Add") }}
+                                  </b-button>
+
+                                  <b-button variant="success" class="mx-1" disabled v-else>
+                                      <b-spinner small></b-spinner>
+                                      <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                  </b-button>
+                              </template>
+                              <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                              <b-button
+                                  variant="danger"
+                                  type="button"
+                                  @click.prevent="resetModalHiddenTask"
+                              >
+                                  {{ $t("general.Cancel") }}
+                              </b-button>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="field-1" class="control-label">
+                                          {{ getCompanyKey("boardRent_task_name_ar") }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <div dir="rtl">
+                                          <input
+                                              @keyup="arabicValueTask(createTask.name)"
+                                              type="text"
+                                              class="form-control"
+                                              data-create="1"
+                                              v-model="$v.createTask.name.$model"
+                                              :class="{
+                            'is-invalid': $v.create.name.$error || errors.name,
+                            'is-valid': !$v.create.name.$invalid && !errors.name,
+                          }"
+                                              id="field-Task-11"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.createTask.name.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.createTask.name.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.createTask.name.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.createTask.name.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="field-2" class="control-label">
+                                          {{ getCompanyKey("boardRent_task_name_en") }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <div dir="ltr">
+                                          <input
+                                              @keyup="englishValueTask(createTask.name_e)"
+                                              type="text"
+                                              class="form-control englishInput"
+                                              data-create="2"
+                                              v-model="$v.createTask.name_e.$model"
+                                              :class="{
+                            'is-invalid': $v.createTask.name_e.$error || errors.name_e,
+                            'is-valid': !$v.createTask.name_e.$invalid && !errors.name_e,
+                          }"
+                                              id="field-Task-12"
+                                          />
+                                      </div>
+                                      <div v-if="!$v.createTask.name_e.minLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatleast") }}
+                                          {{ $v.createTask.name_e.$params.minLength.min }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <div v-if="!$v.createTask.name_e.maxLength" class="invalid-feedback">
+                                          {{ $t("general.Itmustbeatmost") }}
+                                          {{ $v.createTask.name_e.$params.maxLength.max }}
+                                          {{ $t("general.letters") }}
+                                      </div>
+                                      <template v-if="errors.name_e">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.name_e"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label class="mr-2">
+                                          {{ getCompanyKey('boardRent_task_description_ar') }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <textarea @input="arabicValueDescriptionTask(createTask.description)" v-model="$v.createTask.description.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                      <template v-if="errors.description">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.description"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label class="mr-2">
+                                          {{ getCompanyKey('boardRent_task_description_en') }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <textarea @input="englishValueDescriptionTask(createTask.description_e)" v-model="$v.createTask.description_e.$model" class="form-control" :maxlength="1000" rows="5"></textarea>
+                                      <template v-if="errors.description_e">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.description_e"
+                                              :key="index"
+                                          >{{ errorMessage }}</ErrorMessage
+                                          >
+                                      </template>
+                                  </div>
+                              </div>
+                          </div>
+                      </form>
+                  </b-modal>
+                  <!--  /create   -->
+
+
               </table>
             </div>
             <!-- end .table-responsive-->

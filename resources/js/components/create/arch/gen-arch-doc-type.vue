@@ -260,6 +260,7 @@ export default {
       this.$nextTick(() => {
         this.$v.$reset();
       });
+        this.is_disabled = false;
       this.errors = {};
     },
     /**

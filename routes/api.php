@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\Branch\BranchController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\City\CityController;
+use App\Http\Controllers\Roles\RoleController;
+use App\Http\Controllers\Branch\BranchController;
+use App\Http\Controllers\Serials\SerialController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\Currency\CurrencyController;
-use App\Http\Controllers\GeneralCustomer\GeneralCustomerController;
-use App\Http\Controllers\InternalSalesman\InternalSalesmanController;
-use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\RoleType\RoleTypeController;
 use App\Http\Controllers\RoleWorkflow\RoleWorkflowController;
-use App\Http\Controllers\ScreenTreeProperty\ScreenTreePropertyController;
-use App\Http\Controllers\Serials\SerialController;
 use App\Http\Controllers\TreeProperty\TreePropertyController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GeneralCustomer\GeneralCustomerController;
+use App\Http\Controllers\InternalSalesman\InternalSalesmanController;
+use App\Http\Controllers\ScreenTreeProperty\ScreenTreePropertyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +29,6 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/backup', function () {
 //     Artisan::call('backup:run');
 // });
-
-
 
 Route::controller(\App\Http\Controllers\MainController::class)->group(function () {
     Route::post("/media", "media");
@@ -76,7 +75,6 @@ Route::group(['prefix' => 'modules'], function () {
         // Route::delete('/{module_id}/company/{company_id}', 'removeModuleFromCompany')->name('modules.company.remove');
         Route::post("bulk-delete", "bulkDelete");
         Route::post('/moduleDisable', 'moduleDisable');
-
     });
 });
 
@@ -164,8 +162,9 @@ Route::group(['prefix' => 'employees'], function () {
         Route::put('/{id}', 'update')->name('employees.update');
         Route::delete('/{id}', 'delete')->name('employees.destroy');
         Route::post("bulk-delete", "bulkDelete");
-    });
+        Route::post('/hr-employees','processJsonData');
 
+    });
 });
 
 Route::group(['prefix' => 'customTable'], function () {
@@ -178,7 +177,6 @@ Route::group(['prefix' => 'customTable'], function () {
         Route::put('/update', 'update')->name('customTable.update');
         Route::delete('/{id}', 'delete')->name('customTable.destroy');
         Route::post("bulk-delete", "bulkDelete");
-
     });
 });
 
@@ -207,8 +205,24 @@ Route::group(['prefix' => 'depertments'], function () {
         Route::post("bulk-delete", "bulkDelete");
 
         Route::post('from_admin', 'createFromAdmin')->name('document.create.from.admin');
+
+        Route::post('/hr-depertments','processJsonData');
     });
 });
+
+
+Route::group(['prefix' => 'tasks'], function () {
+
+    Route::post('/all', '\App\Http\Controllers\TaskController@allPost')->name('tasks.all.post');
+    Route::get('/', '\App\Http\Controllers\TaskController@all')->name('tasks.all');
+    Route::post('/', '\App\Http\Controllers\TaskController@create')->name('tasks.create');
+    Route::put('/{id}', '\App\Http\Controllers\TaskController@update')->name('tasks.update');
+    Route::delete("/bulk-delete", "\App\Http\Controllers\TaskController@bulkDelete");
+    Route::get('/logs/{id}', '\App\Http\Controllers\TaskController@logs')->name('tasks.logs');
+    Route::get('/{id}', '\App\Http\Controllers\TaskController@find')->name('tasks.find');
+    Route::delete('/{id}', '\App\Http\Controllers\TaskController@delete')->name('tasks.delete');
+});
+
 
 Route::group(['prefix' => 'transactions'], function () {
     Route::controller(\App\Http\Controllers\Transaction\TransactionController::class)->group(function () {
@@ -246,6 +260,69 @@ Route::group(['prefix' => 'categories'], function () {
         Route::post("bulk-delete", "bulkDelete");
     });
 });
+
+Route::group(['prefix' => 'equipments'], function () {
+    Route::controller(\App\Http\Controllers\EquipmentController::class)->group(function () {
+        Route::get('/', 'all')->name('equipments.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('equipments.create');
+        Route::put('/{id}', 'update')->name('equipments.update');
+        Route::delete('/{id}', 'delete')->name('equipments.destroy');
+        Route::get('logs/{id}', 'logs')->name('equipments.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'priorities'], function () {
+    Route::controller(\App\Http\Controllers\PriorityController::class)->group(function () {
+        Route::get('/', 'all')->name('priorities.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('priorities.create');
+        Route::put('/{id}', 'update')->name('priorities.update');
+        Route::delete('/{id}', 'delete')->name('priorities.destroy');
+        Route::get('logs/{id}', 'logs')->name('priorities.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'periodic-maintenances'], function () {
+    Route::controller(\App\Http\Controllers\PeriodicMaintenanceController::class)->group(function () {
+        Route::get('/', 'all')->name('periodic-maintenances.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('periodic-maintenances.create');
+        Route::put('/{id}', 'update')->name('periodic-maintenances.update');
+        Route::delete('/{id}', 'delete')->name('periodic-maintenances.destroy');
+        Route::get('logs/{id}', 'logs')->name('periodic-maintenances.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+
+
+Route::group(['prefix' => 'locations'], function () {
+    Route::controller(\App\Http\Controllers\LocationController::class)->group(function () {
+        Route::get('/', 'all')->name('locations.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('locations.create');
+        Route::put('/{id}', 'update')->name('locations.update');
+        Route::delete('/{id}', 'delete')->name('locations.destroy');
+        Route::get('logs/{id}', 'logs')->name('locations.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'salesman-plan-source'], function () {
+    Route::controller(\App\Http\Controllers\SalesmanPlansSourceController::class)->group(function () {
+        Route::get('/', 'all')->name('salesman-plan-source.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('salesman-plan-source.create');
+        Route::put('/{id}', 'update')->name('salesman-plan-source.update');
+        Route::delete('/{id}', 'delete')->name('salesman-plan-source.destroy');
+        Route::get('logs/{id}', 'logs')->name('salesman-plan-source.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+// general_salesmen_plans
 
 Route::group(['prefix' => 'financial-years'], function () {
     Route::controller(\App\Http\Controllers\FinancialYear\FinancialYearController::class)->group(function () {
@@ -377,7 +454,6 @@ Route::group(['prefix' => 'user-role'], function () {
         Route::delete('/{id}', 'delete')->name('user.role.destroy');
         Route::post("bulk-delete", "bulkDelete");
         Route::get("user-count/{roleId}", "getRoleUsersCount");
-
     });
 });
 
@@ -477,10 +553,25 @@ Route::group(['prefix' => 'internal-salesmen'], function () {
     });
 });
 
+
+Route::group(['prefix' => 'department-tasks'], function () {
+    Route::controller(\App\Http\Controllers\DepertmentTask\DepertmentTaskController::class)->group(function () {
+        Route::get('/', 'all')->name('department-task.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('department-task.create');
+        Route::post("bulk-delete", "bulkDelete");
+        Route::put('/{id}', 'update')->name('department-task.update');
+        Route::delete('/{id}', 'delete')->name('department-task.destroy');
+        Route::get('logs/{id}', 'logs')->name('department-task.logs');
+    });
+});
+
+
 Route::group(['prefix' => 'branches'], function () {
     Route::controller(BranchController::class)->group(function () {
         Route::get('logs/{id}', 'logs')->name('branches.logs');
         Route::post("bulk-delete", "bulkDelete");
+        Route::post('/hr-branches','processJsonData');
     });
 });
 
@@ -501,6 +592,116 @@ Route::group(['prefix' => 'role_types'], function () {
 Route::group(['prefix' => 'serials'], function () {
     Route::controller(SerialController::class)->group(function () {
         Route::get('logs/{id}', 'logs')->name('serials.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'restart-period'], function () {
+    Route::controller(\App\Http\Controllers\RestartPeriod\RestartPeriodController::class)->group(function () {
+        Route::get('/get-Restart-period-data', 'getRestartPeriodData');
+        Route::get('/get-Restart-period-in-serial', 'getRestartPeriodInSerial');
+        Route::get('logs/{id}', 'logs')->name('restart-period.logs');
+        Route::get('/', 'all')->name('restart-period.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('restart-period.create');
+        Route::put('/{id}', 'update')->name('restart-period.update');
+        Route::delete('/{id}', 'delete')->name('restart-period.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'salesmen-plans'], function () {
+    Route::controller(\App\Http\Controllers\SalesmenPlanController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('salesmen-plans.logs');
+        Route::get('/', 'all')->name('salesmen-plans.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('salesmen-plans.create');
+        Route::put('/{id}', 'update')->name('salesmen-plans.update');
+        Route::delete('/{id}', 'delete')->name('salesmen-plans.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+Route::group(['prefix' => 'salesmen-plans-source'], function () {
+    Route::controller(\App\Http\Controllers\SalesmenPlansSource\SalesmenPlansSourceController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('salesmen-plans-source.logs');
+        Route::get('/', 'all')->name('salesmen-plans-source.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('salesmen-plans-source.create');
+        Route::put('/{id}', 'update')->name('salesmen-plans-source.update');
+        Route::delete('/{id}', 'delete')->name('salesmen-plans-source.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'salesmen-plans-details'], function () {
+    Route::controller(\App\Http\Controllers\SalesmenPlansDetailController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('salesmen-plans-details.logs');
+        Route::get('/', 'all')->name('salesmen-plans-details.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('salesmen-plans-details.create');
+        Route::put('/{id}', 'update')->name('salesmen-plans-details.update');
+        Route::delete('/{id}', 'delete')->name('salesmen-plans-details.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'document-approval-details'], function () {
+    Route::controller(\App\Http\Controllers\DocumentApprovalDetail\DocumentApprovalDetailController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('document-approval-details.logs');
+        Route::get('/', 'all')->name('document-approval-details.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-approval-details.create');
+        Route::put('/{id}', 'update')->name('document-approval-details.update');
+        Route::delete('/{id}', 'delete')->name('document-approval-details.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+Route::group(['prefix' => 'document-statuses'], function () {
+    Route::controller(\App\Http\Controllers\DocumentStatuse\DocumentStatuseController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('document-statuses.logs');
+        Route::get('/', 'all')->name('document-statuses.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-statuses.create');
+        Route::put('/{id}', 'update')->name('document-statuses.update');
+        Route::delete('/{id}', 'delete')->name('document-statuses.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'document-headers'], function () {
+    Route::controller(\App\Http\Controllers\DocumentHeader\DocumentHeaderController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('document-headers.logs');
+        Route::get('check-date', 'checkDateModelFinancialYear');
+        Route::get('check-related-document', 'getDateRelatedDocumentId');
+        Route::get('/', 'all')->name('document-headers.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-headers.create');
+        Route::put('/{id}', 'update')->name('document-headers.update');
+        Route::delete('/{id}', 'delete')->name('document-headers.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'item-break-downs'], function () {
+    Route::controller(\App\Http\Controllers\ItemBreakDown\ItemBreakDownController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('item-break-downs.logs');
+        Route::get('/', 'all')->name('item-break-downs.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('item-break-downs.create');
+        Route::put('/{id}', 'update')->name('item-break-downs.update');
+        Route::delete('/{id}', 'delete')->name('item-break-downs.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'document-header-details'], function () {
+    Route::controller(\App\Http\Controllers\DocumentHeaderDetail\DocumentHeaderDetailController::class)->group(function () {
+        Route::get('logs/{id}', 'logs')->name('document-header-details.logs');
+        Route::get('/', 'all')->name('document-header-details.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-header-details.create');
+        Route::put('/{id}', 'update')->name('document-header-details.update');
+        Route::delete('/{id}', 'delete')->name('document-header-details.destroy');
         Route::post("bulk-delete", "bulkDelete");
     });
 });

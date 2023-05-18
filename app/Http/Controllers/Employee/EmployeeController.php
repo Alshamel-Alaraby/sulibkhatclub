@@ -3,29 +3,21 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Requests\EmployeeRequest;
-use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Http\Resources\Employee\EmployeeResource;
+use App\Repositories\Employee\EmployeeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class EmployeeController extends Controller
 {
-    public function __construct(private \App\Repositories\Employee\EmployeeInterface$modelInterface)
+    public function __construct(private EmployeeInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
 
     public function find($id)
     {
-        // $model = cacheGet('employees_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('employees_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -35,15 +27,6 @@ class EmployeeController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('employees');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('employees', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
 
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', EmployeeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -108,6 +91,16 @@ class EmployeeController extends Controller
         if (count($arr) > 0) {
             return responseJson(400, __('some items has relation cant delete'));
         }
+        return responseJson(200, __('Done'));
+    }
+
+    public function processJsonData(Request $request)
+    {
+        $jsonData = $request->getContent();
+        $data = json_decode($jsonData, true);
+
+        $this->modelInterface->processJsonData($data);
+
         return responseJson(200, __('Done'));
     }
 

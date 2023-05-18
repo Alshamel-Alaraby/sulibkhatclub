@@ -24,8 +24,19 @@ class ClubMembersDatabaseSeeder extends Seeder
             CmSponsorDatabaseSeederTableSeeder::class,
             CmStatusesTableSeeder::class,
             CmSerialTableSeeder::class,
-            CmBranchTableSeeder::class
+            CmBranchTableSeeder::class,
 
         ]);
+
+   
+        // // this MUST be separated from above call
+        // $this->call([
+        //     Artisan::call('member:db'),
+        //     Artisan::call('transaction:db'),
+        //     Artisan::call('Prefix:db'),
+        // ]);
+
+
+
     }
 }

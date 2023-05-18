@@ -1552,7 +1552,8 @@ export default {
                                             </label>
                                             <multiselect @input="showStatusModal" v-model="create.status_id"
                                                          :options="statuses.map((type) => type.id)"
-                                                         :custom-label="(opt) => $i18n.locale == 'ar'? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e">
+                                                         :custom-label="(opt) => $i18n.locale == 'ar'? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e"
+                                            >
                                             </multiselect>
                                             <div v-if="$v.create.status_id.$error || errors.status_id" class="text-danger">
                                                 {{ $t("general.fieldIsRequired") }}

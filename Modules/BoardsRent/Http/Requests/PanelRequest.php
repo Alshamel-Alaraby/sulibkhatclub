@@ -44,6 +44,7 @@ class PanelRequest extends FormRequest
             "street_id" => "nullable|exists:general_streets,id",
             "lat" => "required|numeric",
             "lng" => "required|numeric",
+
         ];
     }
 

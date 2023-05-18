@@ -14,7 +14,47 @@ class Document extends Model
     protected $table = 'general_documents';
 
     protected $guarded = [''];
-    protected $casts = ["attributes" => "json", "contusion" => "\App\Enums\BooleanStatus"];
+    
+//    public function getRequired()
+//    {
+//        return $this->required == 1 ? 'Yes' : 'No';
+//    }
+//
+//    public function getNeedApprove()
+//    {
+//        return $this->required == 1 ? 'Yes' : 'No';
+//    }
+//
+//    public function getContusion()
+//    {
+//        return $this->contusion == 1 ? 'True' : 'False';
+//    }
+//    public function getIsDefault()
+//    {
+//        return $this->is_default == 1 ? 'Default' : 'Non Default';
+//    }
+
+    // public function getRequired()
+    // {
+    //     return $this->required == 1 ? 'Yes' : 'No';
+    // }
+
+    // public function getNeedApprove()
+    // {
+    //     return $this->required == 1 ? 'Yes' : 'No';
+    // }
+
+    // public function getContusion()
+    // {
+    //     return $this->contusion == 1 ? 'True' : 'False';
+    // }
+    // public function getIsDefault()
+    // {
+    //     return $this->is_default == 1 ? 'Default' : 'Non Default';
+    // }
+
+
+    protected $casts = ["attributes" => "json"];
 
     public function payment_plan_installments()
     {
@@ -30,6 +70,13 @@ class Document extends Model
     {
         return $this->belongsToMany(Document::class, 'general_document_related', 'document_id', 'document_related_id','id','id');
     }
+
+    public function employees()
+    {
+        return $this->belongsToMany(Employee::class, 'general_documents_approve_personal', 'document_id', 'employee_id','id','id');
+    }
+
+
 
 
     public function hasChildren()

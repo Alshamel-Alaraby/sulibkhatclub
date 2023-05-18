@@ -39,7 +39,7 @@ class SerialController extends Controller
     public function store(SerialRequest $request)
     {
 
-        $model = $this->repository->create($request->validated());
+        return $model = $this->repository->create($request->validated());
         return responseJson(200, __('done'), new SerialResource($model));
 
     }

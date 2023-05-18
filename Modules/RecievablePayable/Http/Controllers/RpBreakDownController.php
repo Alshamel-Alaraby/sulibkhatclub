@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Modules\RecievablePayable\Entities\RpBreakDown;
 use Modules\RecievablePayable\Http\Requests\CreateBreakDownRequest;
 use Modules\RecievablePayable\Transformers\BreakDownResource;
+use Modules\RecievablePayable\Transformers\FilterBreakResource;
 
 class RpBreakDownController extends Controller
 {
@@ -110,6 +111,19 @@ class RpBreakDownController extends Controller
         }
         $model->delete();
         return responseJson(200, 'deleted');
+    }
+
+    public function filterBreak(Request $request)
+    {
+
+        $models = $this->model->filter($request)->filterbreak($request)->doesnthave('children')->orderBy('instalment_date', 'ASC');
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+        return responseJson(200, 'success', FilterBreakResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
     }
 
 

@@ -24,9 +24,16 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
                 });
             });
 
+        if($request->employee_id)
+        {
+            $models->where('employee_id',$request->employee_id);
+        }
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } else {
+        } elseif ($request->limet){
+            return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
+        }else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
+            $table->json('supervisors')->nullable();
+            $table->json('attentions')->nullable();
             $table->timestamps();
         });
     }

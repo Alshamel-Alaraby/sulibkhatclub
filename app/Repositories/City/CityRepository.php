@@ -18,6 +18,11 @@ class CityRepository implements CityRepositoryInterface
         if ($request->country_id){
             $models->where('country_id',$request->country_id);
         }
+
+        if ($request->governorate_id){
+            $models->where('governorate_id',$request->governorate_id);
+        }
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

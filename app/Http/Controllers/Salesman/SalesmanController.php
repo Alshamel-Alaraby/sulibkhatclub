@@ -9,7 +9,7 @@ use Illuminate\Routing\Controller;
 
 class SalesmanController extends Controller
 {
-    public function __construct(private \App\Repositories\Salesman\SalesmanInterface$modelInterface)
+    public function __construct(private \App\Repositories\Salesman\SalesmanInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamp('end_date')->nullable();
             $table->text('note')->nullable();
             $table->string('must_completed')->default('false');
+            $table->string("duration")->default(0);
             $table->timestamps();
         });
     }

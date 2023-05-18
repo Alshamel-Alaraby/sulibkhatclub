@@ -46,6 +46,8 @@ class Transaction extends Model
 
     }
 
+
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

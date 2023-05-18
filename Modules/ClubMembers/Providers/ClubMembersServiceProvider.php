@@ -19,6 +19,9 @@ use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberInterface;
 use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberRepository;
 use Modules\ClubMembers\Repositories\CmSponser\CmSponserInterface;
 use Modules\ClubMembers\Repositories\CmSponser\CmSponserRepository;
+use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
+use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionRepository;
+
 
 class ClubMembersServiceProvider extends ServiceProvider
 {
@@ -64,9 +67,14 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmMemberPermissionInterface::class, CmMemberPermissionRepository::class);
         $this->app->bind(CmMembershipRenewalInterface::class, CmMembershipRenewalRepository::class);
         $this->app->bind(CmMemberSettingInterface::class, CmMemberSettingRepository::class);
+        $this->app->bind(CmTransactionInterface::class, CmTransactionRepository::class);
+
 
         $this->commands([
-            \Modules\ClubMembers\Console\TransDb::class
+            \Modules\ClubMembers\Console\TransactionDb::class,
+            \Modules\ClubMembers\Console\MemberDb::class,
+            \Modules\ClubMembers\Console\PrefixDb::class,
+            \Modules\ClubMembers\Console\FullNameDb::class,
         ]);
 
     }

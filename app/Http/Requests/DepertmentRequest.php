@@ -25,15 +25,15 @@ class DepertmentRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => ["nullable",Rule::unique('general_departments')->where(function($querry){
-                $querry
-                    ->where("company_id",request()->company_id);
-            })],
-            "name_e" => ["nullable",Rule::unique('general_departments')->where(function($querry){
-                $querry
-                    ->where("company_id",request()->company_id);
-            })],
-            "company_id" => "nullable",
+            'name' => ['required', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
+            'name_e' => ['required', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
+            'supervisors' => ['required', 'array'],
+            'attentions' => ['required', 'array'],
+            'supervisors.*'
+            => ['required', 'exists:general_employees,id'],
+            'attentions.*'
+            => ['required', 'exists:general_employees,id'],
+
         ];
     }
 }

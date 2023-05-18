@@ -315,6 +315,7 @@ export default {
         this.$v.$reset();
       });
       this.$bvModal.hide(`role-create`);
+        this.is_disabled = false;
       this.errors = {};
     },
     /**

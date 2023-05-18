@@ -26,7 +26,7 @@ class SerialRequest extends FormRequest
     {
         return [
             'company_id' => 'nullable',
-            'restart_period' => 'nullable',
+            'restart_period_id' => "nullable|exists:general_restart_period,id",
             'is_default' => 'nullable',
             'start_no' => 'nullable',
             'perfix' => 'nullable',
@@ -37,5 +37,4 @@ class SerialRequest extends FormRequest
             "name_e" => "nullable|max:151|string",
         ];
     }
-
 }

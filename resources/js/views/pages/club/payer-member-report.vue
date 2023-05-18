@@ -68,7 +68,7 @@ export default {
         name_e: true,
       },
       is_disabled: false,
-      filterSetting: ["name", "name_e"],
+      filterSetting: ["name"],
       printLoading: true,
       printObj: {
         id: "printData",
@@ -200,7 +200,7 @@ export default {
 
         adminApi
           .get(
-            `/club-members/members/?page=${page}&per_page=${this.per_page}&financial_status_id=${this.status_id}`
+            `/club-members/members/?page=${this.current_page}&per_page=${this.per_page}&financial_status_id=${this.status_id}`
           )
           .then((res) => {
             let l = res.data;
@@ -348,7 +348,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                 <div style="width: 100%">
                   <multiselect
-                    @select="getData(1)"
+                    @input="getData(1)"
                     v-model="status_id"
                     :options="statuses.map((type) => type.id)"
                     :custom-label="
@@ -387,24 +387,6 @@ export default {
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
-                  <!-- start mult delete  -->
-                  <button
-                    class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
-                    @click.prevent="deleteBranch(checkAll)"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                  <!-- end mult delete  -->
-                  <!--  start one delete  -->
-                  <button
-                    class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
-                    @click.prevent="deleteBranch(checkAll[0])"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                  <!--  end one delete  -->
                 </div>
                 <!-- end create and printer -->
               </div>
@@ -432,10 +414,7 @@ export default {
                       class="dropdown-custom-ali"
                     >
                       <b-form-checkbox v-model="setting.name" class="mb-1">
-                        {{ $t("general.Name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
-                        {{ $t("general.Name_en") }}
+                          {{ getCompanyKey("member") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
                         <a
@@ -529,7 +508,7 @@ export default {
                     </th>
                     <th v-if="setting.name">
                       <div class="d-flex justify-content-center">
-                        <span>{{ $t("general.Name") }}</span>
+                        <span>{{getCompanyKey("member")}}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -538,21 +517,6 @@ export default {
                           <i
                             class="fas fa-arrow-down"
                             @click="items.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.name_e">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ $t("general.Name_en") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="items.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="items.sort(sortString('-name_e'))"
                           ></i>
                         </div>
                       </div>
@@ -582,19 +546,13 @@ export default {
                       </div>
                     </td>
                     <td v-if="setting.name">
-                      <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
-                    </td>
-                    <td v-if="setting.name_e">
-                      <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
-                    </td>
-                    <td v-if="setting.created_at">
-                      {{ data.created_at }}
+                      <h5 class="m-0 font-weight-normal">{{ data.first_name ?data.first_name: '' }} {{data.second_name ?data.second_name : ""}} {{data.third_name ?data.third_name: ""}} {{data.last_name ?data.last_name: ""}} {{data.family_name ?data.family_name: ""}}</h5>
                     </td>
                   </tr>
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <th class="text-center" colspan="11">
+                    <th class="text-center" colspan="2">
                       {{ $t("general.notDataFound") }}
                     </th>
                   </tr>

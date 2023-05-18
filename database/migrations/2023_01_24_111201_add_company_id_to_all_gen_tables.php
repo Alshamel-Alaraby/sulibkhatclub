@@ -127,6 +127,9 @@ return new class extends Migration
         Schema::table($pref . 'statuses', function (Blueprint $table) {
             $table->unsignedBigInteger('company_id')->nullable()->default(0);
         });
+        Schema::table($pref . 'depertment_tasks', function (Blueprint $table) {
+            $table->unsignedBigInteger('company_id')->nullable()->default(0);
+        });
 
     }
 

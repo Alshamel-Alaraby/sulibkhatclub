@@ -92,10 +92,8 @@ export default {
                 work_phone: true,
                 home_address: true,
                 work_address: true,
-                membership_request_number: true,
                 job: true,
                 degree: true,
-                sponsor: true,
                 sponsor_id: true,
                 membership_number: true
             },
@@ -114,10 +112,8 @@ export default {
                 "work_phone",
                 "home_address",
                 "work_address",
-                "membership_request_number",
                 "job",
                 "degree",
-                "sponsor",
                 "sponsor_id",
             ],
             printLoading: true,
@@ -602,9 +598,6 @@ export default {
                                             <b-form-checkbox v-model="setting.last_name" class="mb-1">{{
                                                     getCompanyKey("member_last_name") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{
-                                                    getCompanyKey("member_last_name") }}
-                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.family_name" class="mb-1">{{
                                                     getCompanyKey("member_family_name") }}
                                             </b-form-checkbox>
@@ -613,9 +606,6 @@ export default {
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{
                                                     getCompanyKey("member_membership_number") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.degree" class="mb-1">{{
-                                                    getCompanyKey("member_degree") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>

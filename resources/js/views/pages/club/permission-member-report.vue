@@ -166,9 +166,11 @@ export default {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
-        .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&cm_permission_id=${this.cm_permission_id}`
-        )
+        .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+          params: {
+            cm_permission_id: this.cm_permission_id,
+          },
+        })
         .then((res) => {
           let l = res.data;
           this.items = l.data;
@@ -199,9 +201,11 @@ export default {
         }
 
         adminApi
-          .get(
-            `/club-members/members?page=${page}&per_page=${this.per_page}&cm_permission_id=${this.cm_permission_id}`
-          )
+          .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+            params: {
+              cm_permission_id: this.cm_permission_id,
+            },
+          })
           .then((res) => {
             let l = res.data;
             this.items = l.data;
@@ -348,6 +352,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                 <div style="width: 100%">
                   <multiselect
+                    :multiple="true"
                     @select="getData(1)"
                     v-model="cm_permission_id"
                     :options="permissions.map((type) => type.id)"
@@ -432,10 +437,7 @@ export default {
                       class="dropdown-custom-ali"
                     >
                       <b-form-checkbox v-model="setting.name" class="mb-1">
-                        {{ $t("general.Name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
-                        {{ $t("general.Name_en") }}
+                        {{ getCompanyKey("member") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
                         <a
@@ -529,7 +531,7 @@ export default {
                     </th>
                     <th v-if="setting.name">
                       <div class="d-flex justify-content-center">
-                        <span>{{ $t("general.Name") }}</span>
+                        <span>{{ getCompanyKey("member") }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -538,21 +540,6 @@ export default {
                           <i
                             class="fas fa-arrow-down"
                             @click="items.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.name_e">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ $t("general.Name_en") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="items.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="items.sort(sortString('-name_e'))"
                           ></i>
                         </div>
                       </div>
@@ -582,19 +569,13 @@ export default {
                       </div>
                     </td>
                     <td v-if="setting.name">
-                      <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
-                    </td>
-                    <td v-if="setting.name_e">
-                      <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
-                    </td>
-                    <td v-if="setting.created_at">
-                      {{ data.created_at }}
+                        <h5 class="m-0 font-weight-normal">{{ data.first_name ?data.first_name: '' }} {{data.second_name ?data.second_name : ""}} {{data.third_name ?data.third_name: ""}} {{data.last_name ?data.last_name: ""}} {{data.family_name ?data.family_name: ""}}</h5>
                     </td>
                   </tr>
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <th class="text-center" colspan="11">
+                    <th class="text-center" colspan="2">
                       {{ $t("general.notDataFound") }}
                     </th>
                   </tr>

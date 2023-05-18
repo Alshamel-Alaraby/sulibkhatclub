@@ -14,7 +14,7 @@ class RoleType extends Model
 
     protected $table = 'general_role_types';
 
-    protected $guarded = ['id'];
+    protected $fillable = ['name',"name_e"];
 
     public function getActivitylogOptions(): LogOptions
     {

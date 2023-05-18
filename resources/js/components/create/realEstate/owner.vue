@@ -383,7 +383,7 @@ export default {
         },
     },
     computed: {
-    
+
     },
     mounted(){
         this.$store.dispatch('locationIp/getIp');
@@ -416,6 +416,7 @@ export default {
             this.$nextTick(() => { this.$v.$reset() });
             this.errors = {};
             this.$bvModal.hide(`owner-create`);
+            this.is_disabled = false;
             this.isVaildPhone = false;
         },
         /**
@@ -425,7 +426,7 @@ export default {
             await this.getCategory();
             await this.getBankAcount();
             this.codeCountry = this.$store.getters["locationIp/countryCode"];
-            
+
             this.create = {
                 name: '',
                 name_e: '',

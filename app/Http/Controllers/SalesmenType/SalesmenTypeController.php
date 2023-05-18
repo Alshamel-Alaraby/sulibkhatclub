@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 
 class SalesmenTypeController extends Controller
 {
-    public function __construct(private \App\Repositories\SalesmenType\SalesmenTypeInterface$modelInterface)
+    public function __construct(private \App\Repositories\SalesmenType\SalesmenTypeInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

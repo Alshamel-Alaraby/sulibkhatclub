@@ -14,9 +14,15 @@ class Branch extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'is_active' => 'App\Enums\IsActive',
-    ];
+    // protected $casts = [
+    //     'is_active' => 'App\Enums\IsActive',
+    // ];
+
+
+    // public function getIsActive()
+    // {
+    //     return $this->is_active == 1 ? 'Active' : 'Non Active';
+    // }
 
     public function stores()
     {
@@ -57,4 +63,8 @@ class Branch extends Model
             ->useLogName('Branch')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
+
+
+
 }

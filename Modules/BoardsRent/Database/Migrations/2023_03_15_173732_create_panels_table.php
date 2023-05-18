@@ -36,6 +36,8 @@ return new class extends Migration
             $table->double('lat');
             $table->double('lng');
             $table->timestamps();
+            // drop lat
+          
         });
     }
 

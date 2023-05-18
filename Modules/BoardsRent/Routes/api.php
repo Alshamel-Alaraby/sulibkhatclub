@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
+
 Route::prefix('boards-rent')->group(function () {
-
-
 
     // sell methods routes
     Route::group(['prefix' => 'sell-methods'], function () {
@@ -51,6 +50,8 @@ Route::prefix('boards-rent')->group(function () {
 
     // Package
     Route::group(['prefix' => 'packages'], function () {
+        Route::get('/panels/{id}', 'PackageController@panels')->name('boards-rent.packages.panels');
+        Route::patch('/panels/toggle/{panel_id}/{package_id}', 'PackageController@toggle')->name('boards-rent.package.panels');
         Route::get('/', 'PackageController@all')->name('boards-rent.packages.all');
         Route::post('/', 'PackageController@create')->name('boards-rent.packages.create');
         Route::put('/{id}', 'PackageController@update')->name('boards-rent.packages.update');
@@ -82,16 +83,7 @@ Route::prefix('boards-rent')->group(function () {
         Route::delete('/{id}', 'PanelController@delete')->name('boards-rent.panels.delete');
     });
 
-    //Tasks
-    Route::group(['prefix' => 'tasks'], function () {
-        Route::get('/', 'TaskController@all')->name('boards-rent.tasks.all');
-        Route::post('/', 'TaskController@create')->name('boards-rent.tasks.create');
-        Route::put('/{id}', 'TaskController@update')->name('boards-rent.tasks.update');
-        Route::delete("/bulk-delete", "TaskController@bulkDelete");
-        Route::get('/logs/{id}', 'TaskController@logs')->name('boards-rent.tasks.logs');
-        Route::get('/{id}', 'TaskController@find')->name('boards-rent.tasks.find');
-        Route::delete('/{id}', 'TaskController@delete')->name('boards-rent.tasks.delete');
-    });
+
     // order-task
     Route::group(['prefix' => 'order-task'], function () {
         Route::get('/', 'OrderTaskController@all')->name('boards-rent.order-task.all');
@@ -125,16 +117,15 @@ Route::prefix('boards-rent')->group(function () {
         Route::get('/{id}', 'OrderController@find')->name('boards-rent.orders.find');
         Route::delete('/{id}', 'OrderController@delete')->name('boards-rent.orders.delete');
     });
-
 });
 
 // customers
-Route::group(['prefix' => 'general-customer'], function () {
-    Route::get('/', 'CustomerController@all')->name('boards-rent.customers.all');
-    Route::post('/', 'CustomerController@create')->name('boards-rent.customers.create');
-    Route::put('/{id}', 'CustomerController@update')->name('boards-rent.customers.update');
-    Route::delete("/bulk-delete", "CustomerController@bulkDelete");
-    Route::get('/logs/{id}', 'CustomerController@logs')->name('boards-rent.customers.logs');
-    Route::get('/{id}', 'CustomerController@find')->name('boards-rent.customers.find');
-    Route::delete('/{id}', 'CustomerController@delete')->name('boards-rent.customers.delete');
-});
+//Route::group(['prefix' => 'general-customer'], function () {
+//    Route::get('/', 'CustomerController@all')->name('boards-rent.customers.all');
+//    Route::post('/', 'CustomerController@create')->name('boards-rent.customers.create');
+//    Route::put('/{id}', 'CustomerController@update')->name('boards-rent.customers.update');
+//    Route::delete("/bulk-delete", "CustomerController@bulkDelete");
+//    Route::get('/logs/{id}', 'CustomerController@logs')->name('boards-rent.customers.logs');
+//    Route::get('/{id}', 'CustomerController@find')->name('boards-rent.customers.find');
+//    Route::delete('/{id}', 'CustomerController@delete')->name('boards-rent.customers.delete');
+//});

@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Package;
 use Modules\BoardsRent\Http\Requests\PackageRequest;
 use Modules\BoardsRent\Transformers\PackageResource;
+use Modules\BoardsRent\Transformers\PanelResource;
 
 class PackageController extends Controller
 {
@@ -42,8 +43,8 @@ class PackageController extends Controller
     public function create(PackageRequest $request)
     {
         $model = $this->model->create($request->validated());
+        $model->panels()->sync($request->panels);
         $model->refresh();
-
         return responseJson(200, 'created', new PackageResource($model));
 
     }
@@ -56,6 +57,7 @@ class PackageController extends Controller
         }
 
         $model->update($request->validated());
+        $model->panels()->sync($request->panels);
         $model->refresh();
 
         return responseJson(200, 'updated', new PackageResource($model));
@@ -105,4 +107,53 @@ class PackageController extends Controller
         });
         return responseJson(200, 'deleted');
     }
+
+    public function panels(Request $request, $id)
+    {
+        $model = $this->model->find($id);
+
+        if (!$model) {
+            return responseJson(404, 'not found');
+        }
+
+        $busy_panels = $model->panels()->filter($request)->orderBy('created_at', 'DESC');
+
+        $free_panels = \Modules\BoardsRent\Entities\Panel::WhereDoesntHave('packages')->filter($request);
+
+        if ($request->per_page) {        $model->panels()->sync($request->panels);
+
+            $busy_panels = ['data' => $busy_panels->paginate($request->per_page), 'paginate' => true];
+            $free_panels = ['data' => $free_panels->paginate($request->per_page), 'paginate' => true];
+
+        } else {
+            $busy_panels = ['data' => $busy_panels->get(), 'paginate' => false];
+            $free_panels = ['data' => $free_panels->get(), 'paginate' => false];
+        }
+        return responseJson(200, 'success', [
+            'free' => ['data' => PanelResource::collection($free_panels['data']), 'pagination' => $free_panels['paginate'] ? getPaginates($free_panels['data']) : null],
+            'busy' => ['data' => PanelResource::collection($busy_panels['data']), 'pagination' => $busy_panels['paginate'] ? getPaginates($busy_panels['data']) : null],
+        ]);
+
+    }
+
+    public function toggle($panel_id, $package_id)
+    {
+        $panel = \Modules\BoardsRent\Entities\Panel::find($panel_id);
+        if (!$panel) {
+            return responseJson(404, 'not found');
+        }
+        $package = $this->model->find($package_id);
+        if (!$package) {
+            return responseJson(404, 'not found');
+        }
+
+        if ($panel->packages()->where('package_id', $package_id)->count() > 0) {
+            $panel->packages()->detach($package_id);
+            return responseJson(200, 'success', 'removed');
+        } else {
+            $panel->packages()->attach($package_id);
+            return responseJson(200, 'success', 'added');
+        }
+    }
+
 }

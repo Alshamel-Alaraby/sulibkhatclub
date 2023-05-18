@@ -17,8 +17,8 @@ use Spatie\MediaLibrary\HasMedia;
 
 class User extends Authenticatable implements HasMedia
 {
-    protected $table="general_users";
-    use HasApiTokens, HasFactory, Notifiable, MediaTrait, LogsActivity, CausesActivity, LogTrait   ;
+    protected $table = "general_users";
+    use HasApiTokens, HasFactory, Notifiable, MediaTrait, LogsActivity, CausesActivity, LogTrait;
 
     protected $fillable = [
         'name',
@@ -29,7 +29,7 @@ class User extends Authenticatable implements HasMedia
         'active',
         "employee_id",
         "type",
-        "company_id"
+        "company_id",
     ];
 
     protected $hidden = [
@@ -39,7 +39,7 @@ class User extends Authenticatable implements HasMedia
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'is_active' => '\App\Enums\IsActive',
+        // 'is_active' => '\App\Enums\IsActive',
     ];
 
     protected function password(): Attribute
@@ -71,7 +71,44 @@ class User extends Authenticatable implements HasMedia
 
     public function receivesBroadcastNotificationsOn()
     {
-        return 'App.Models.User.'.$this->id;
+        return 'App.Models.User.' . $this->id;
     }
 
+    // scopes
+    public function scopeFilter($query, $request)
+    {
+        return $query->where(function ($q) use ($request) {
+
+            // $q->whereNull('type');
+
+            if ($request->has('date')) {
+                $q->whereDate('date', $request->date);
+            }
+
+            if ($request->search && $request->columns) {
+                foreach ($request->columns as $column) {
+                    if (strpos($column, ".") > 0) {
+                        $column = explode(".", $column);
+                        $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
+                        // $q->orWhereHas($column[0], function ($q) use ($column, $request) {
+                        //     $q->where($column[1], 'like', '%' . $request->search . '%');
+                        // });
+                    } else {
+                        $q->orWhere($column, 'like', '%' . $request->search . '%');
+                    }
+                }
+            }
+
+            if (request()->header('company-id')) {
+                if (in_array('company_id', $this->fillable)) {
+                    $q->where('company_id', request()->header('company-id'));
+                }
+            }
+
+            if ($request->key && $request->value) {
+                $q->where($request->key, $request->value);
+            }
+
+        });
+    }
 }

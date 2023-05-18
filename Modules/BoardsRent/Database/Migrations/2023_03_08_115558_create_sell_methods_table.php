@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
+            $table->double("commission_ratio");
+            $table->double("target_ratio");
             $table->timestamps();
         });
     }

@@ -207,6 +207,7 @@ export default {
                 this.$v.$reset()
             });
             this.errors = {};
+            this.is_disabled = false;
             this.$bvModal.hide(`wallet-create`);
         },
         /**

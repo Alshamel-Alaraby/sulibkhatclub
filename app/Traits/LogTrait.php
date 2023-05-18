@@ -24,7 +24,7 @@ trait LogTrait
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Employee')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
     public function scopeFilter($query, $request)
@@ -49,6 +49,9 @@ trait LogTrait
                 }
             }
 
+            if ($request->parent_id) {
+                $q->where('parent_id', $request->parent_id);
+            }
             if (request()->header('company-id')) {
                 if (in_array('company_id', $this->fillable)) {
                     $q->where('company_id', request()->header('company-id'));
@@ -58,7 +61,6 @@ trait LogTrait
             if ($request->key && $request->value) {
                 $q->where($request->key, $request->value);
             }
-
         });
     }
 }

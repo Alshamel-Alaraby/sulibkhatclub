@@ -133,4 +133,23 @@ export default [
         },
         component: () => import('../../views/pages/recievablePayable/transaction/debitNote'),
     },
+
+    //start report
+
+    {
+        path: '/dashboard/receivablePayable/report/financeReports/payments',
+        name: 'financeReports payments',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/report/payments'),
+    },
+    {
+        path: '/dashboard/receivablePayable/report/financeReports/voucher',
+        name: 'financeReports payments',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/report/voucher'),
+    },
 ];

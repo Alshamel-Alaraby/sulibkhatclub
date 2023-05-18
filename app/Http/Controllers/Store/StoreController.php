@@ -84,9 +84,9 @@ class StoreController extends Controller
             return responseJson(404, __('message.data not found'));
         }
 
-        if ($model->hasChildren()) {
-            return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-        }
+        // if ($model->hasChildren()) {
+        //     return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
+        // }
 
         $this->modelInterface->delete($id);
 

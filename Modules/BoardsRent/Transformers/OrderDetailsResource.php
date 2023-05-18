@@ -24,6 +24,7 @@ class OrderDetailsResource extends JsonResource
             "category" => $this->category ? new CategoryResource($this->category) : null,
             'governorate' => $this->governorate ? new GovernorateResource($this->governorate) : null,
             'package' => $this->package ? new PackageResource($this->package) : null,
+            'panels' => $this->panels ?  PanelResource::collection($this->panels) : null,
             'quantity' => $this->quantity,
             'from' => $this->from,
             'to' => $this->to,

@@ -14,6 +14,235 @@ class TranslationSeeder extends Seeder
      */
     public function run()
     {
+
+        //Admin report
+        Translation::insert([
+            [
+                "key" => "admin_report_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_start_date",
+                "default_en" => "Start date",
+                "default_ar" => "تاريخ البداية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_end_date",
+                "default_en" => "End date",
+                "default_ar" => "تاريخ النهاية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_serial_number",
+                "default_en" => "Serial number",
+                "default_ar" => "رقم السيريال",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_prefix",
+                "default_en" => "Prefix",
+                "default_ar" => "البريفيكس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "customer",
+                "default_en" => "Customer name",
+                "default_ar" => "اسم الزبون",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "saleman",
+                "default_en" => "Saleman name",
+                "default_ar" => "اسم رجل المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_phone",
+                "default_en" => "Customer phone",
+                "default_ar" => "رقم هاتف العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_contact_phone",
+                "default_en" => "Customer contact phone",
+                "default_ar" => "هاتف العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "branch",
+                "default_en" => "Branch name",
+                "default_ar" => "اسم الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "document",
+                "default_en" => "Document name",
+                "default_ar" => "اسم الوثيقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "unit",
+                "default_en" => "Unit name",
+                "default_ar" => "اسم الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_unit_area",
+                "default_en" => "Unit area",
+                "default_ar" => "مساحة الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_path",
+                "default_en" => "Pathroom",
+                "default_ar" => "الحمام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_rooms",
+                "default_en" => "Rooms",
+                "default_ar" => "الغرف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_unit_value",
+                "default_en" => "Unit value",
+                "default_ar" => "قيمة الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "building",
+                "default_en" => "Building name",
+                "default_ar" => "اسم المبنى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_building_lng",
+                "default_en" => "Building lng",
+                "default_ar" => "لنج المبني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_building_lat",
+                "default_en" => "Building lat",
+                "default_ar" => "لات المبنى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "city",
+                "default_en" => "City name",
+                "default_ar" => "اسم المدينة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "owner",
+                "default_en" => "Owner name",
+                "default_ar" => "اسم المالك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "wallet",
+                "default_en" => "Wallet name",
+                "default_ar" => "اسم المحفظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "unit_status",
+                "default_en" => "Unit status name",
+                "default_ar" => "اسم حالة الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_owner_phone",
+                "default_en" => "Owner phone",
+                "default_ar" => "هاتف المالك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "admin_report_unit_ty",
+                "default_en" => "Unity type",
+                "default_ar" => "نوع الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+        ]);
         //Branch
         Translation::insert([
             [
@@ -1507,6 +1736,16 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "employee_department",
+                "default_en" => "Department",
+                "default_ar" => "القسم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+
+            ],
+            [
                 "key" => "employee_name_ar",
                 "default_en" => "Employee name (arabic)",
                 "default_ar" => "اسم الموظف (عربي)",
@@ -1525,6 +1764,70 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "employees"
 
+            ],
+            [
+                "key" => "manager",
+                "default_en" => "Manager name",
+                "default_ar" => "اسم المدير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "is_salesman",
+                "default_en" => "is salesman",
+                "default_ar" => "رجل مبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "manage_others",
+                "default_en" => "Manage others",
+                "default_ar" => "مدير للاخرين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            
+            [
+                "key" => "for_all_customer",
+                "default_en" => "For all customer",
+                "default_ar" => "لجميع العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "customer_handel",
+                "default_en" => "Customer handle",
+                "default_ar" => "التعامل مع العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "plan",
+                "default_en" => "Plan name",
+                "default_ar" => "اسم الخطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "sale_man_type",
+                "default_en" => "Sale man type",
+                "default_ar" => "نوع رجل المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
             ],
         ]);
         //Financial Year
@@ -3809,6 +4112,52 @@ class TranslationSeeder extends Seeder
                 "key" => "sale_man_create_form",
                 "default_en" => "Add new sale man",
                 "default_ar" => "اضف رجل مبيعات جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sales men"
+            ],
+            [
+                "key" => "manager",
+                "default_en" => "Manager name",
+                "default_ar" => "اسم المدير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sales men"
+            ],
+            [
+                "key" => "is_salesman",
+                "default_en" => "is salesman",
+                "default_ar" => "رجل مبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sales men"
+            ],
+            [
+                "key" => "for_all_customer",
+                "default_en" => "For all customer",
+                "default_ar" => "لجميع العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sales men"
+            ],
+            [
+                "key" => "customer_handel",
+                "default_en" => "Customer handle",
+                "default_ar" => "التعامل مع العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sales men"
+
+            ],
+            [
+                "key" => "plan",
+                "default_en" => "Plan name",
+                "default_ar" => "اسم الخطة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7086,7 +7435,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "document_create_form",
                 "default_en" => "Add new document",
-                "default_ar" => "اضف لون جديد",
+                "default_ar" => "اضف مستند جديد",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7095,7 +7444,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "document_edit_form",
                 "default_en" => "Edit document form",
-                "default_ar" => "نموذج تعديل اللون",
+                "default_ar" => "نموذج تعديل المستند",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7105,7 +7454,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "document_name_ar",
                 "default_en" => "Document name (arabic)",
-                "default_ar" => "اسم اللون (عربي)",
+                "default_ar" => "اسم المستند (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7115,7 +7464,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "document_name_en",
                 "default_en" => "Document name (english)",
-                "default_ar" => "اسم اللون (انجليزي)",
+                "default_ar" => "اسم المستند (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7132,6 +7481,172 @@ class TranslationSeeder extends Seeder
                 "screen" => "document"
 
             ],
+            [
+                "key" => "document_required",
+                "default_en" => "Document Required",
+                "default_ar" => "المستند مطلوب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_need_approve",
+                "default_en" => "Document Need Approve",
+                "default_ar" => "المستند يحتاج الى موافقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_detail_type",
+                "default_en" => "document detail type",
+                "default_ar" => "نوع المستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+        ]);
+        //document status
+        Translation::insert([
+            [
+                "key" => "document_status_create_form",
+                "default_en" => "Add new document status",
+                "default_ar" => "اضف حالة جديدة للمستندات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+            ],
+            [
+                "key" => "document_status_edit_form",
+                "default_en" => "Edit document status form",
+                "default_ar" => "نموذج تعديل خالة المستندات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_status_name_ar",
+                "default_en" => "Document status name (arabic)",
+                "default_ar" => "اسم حالة المستند (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_status_name_en",
+                "default_en" => "Document status name (english)",
+                "default_ar" => "اسم حالة المستند (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_status_status",
+                "default_en" => "status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_status_default",
+                "default_en" => "Document status default",
+                "default_ar" => "الحالة الافتراضية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+
+        ]);
+        //document reason
+        Translation::insert([
+            [
+                "key" => "document_reason_create_form",
+                "default_en" => "Add new document reason",
+                "default_ar" => "اضف قرار جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+            ],
+            [
+                "key" => "document_reason_edit_form",
+                "default_en" => "Edit document reason form",
+                "default_ar" => "نموذج تعديل القرار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_serial_number",
+                "default_en" => "Document serial number",
+                "default_ar" => "الرقم التسلسلي للمستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_reason_notes",
+                "default_en" => "notes",
+                "default_ar" => "الملاحظات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_decision_date",
+                "default_en" => "Decision date",
+                "default_ar" => "تاريخ القرار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_approval_time",
+                "default_en" => "Approval time",
+                "default_ar" => "وقت الموافقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_decision",
+                "default_en" => "Decision",
+                "default_ar" => "القرار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+
         ]);
         // installment opening balance
         Translation::insert([
@@ -7331,7 +7846,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "department"
             ],
             [
                 "key" => "department_edit_form",
@@ -7340,7 +7855,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "department"
 
             ],
             [
@@ -7350,7 +7865,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "department"
 
             ],
             [
@@ -7360,7 +7875,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "department"
 
             ],
         ]);
@@ -7446,7 +7961,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "sell method"
             ],
             [
                 "key" => "boardRent_sellMethod_edit_form",
@@ -7455,7 +7970,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "sell method"
 
             ],
             [
@@ -7465,8 +7980,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
-
+                "screen" => "sell method"
             ],
             [
                 "key" => "boardRent_sellMethod_name_en",
@@ -7475,8 +7989,25 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
-
+                "screen" => "sell method"
+            ],
+            [
+                "key" => "boardRent_sellMethod_calculated_percentage",
+                "default_en" => "Calculated target",
+                "default_ar" => "الهدف المحسوب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sell method"
+            ],
+            [
+                "key" => "boardRent_sellMethod_commission_ratio",
+                "default_en" => "Commission ratio",
+                "default_ar" => "العمولة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sell method"
             ],
         ]);
         //boardRealestate sector
@@ -7700,6 +8231,126 @@ class TranslationSeeder extends Seeder
                 "key" => "boardRent_task_department",
                 "default_en" => "Department",
                 "default_ar" => "القسم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_title",
+                "default_en" => "Task Title",
+                "default_ar" => "عنوان المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_type",
+                "default_en" => "Task Type",
+                "default_ar" => "نوع المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_owners",
+                "default_en" => "Task Owners",
+                "default_ar" => "مالكو المهام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_notifications",
+                "default_en" => "Task Notification",
+                "default_ar" => "اشعارات المهام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_supervisors",
+                "default_en" => "Task Supervisor",
+                "default_ar" => "مشرف المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_status",
+                "default_en" => "Task Status",
+                "default_ar" => "حالة المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "execution_date",
+                "default_en" => "Task Execution Date",
+                "default_ar" => "تاريخ تنفيذ المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_start_time",
+                "default_en" => "Task Start Time",
+                "default_ar" => "وقت بداية المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "task_end_time",
+                "default_en" => "Task End Time",
+                "default_ar" => "وقت نهاية المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "execution_duration",
+                "default_en" => "Task Execution Duration",
+                "default_ar" => "المدة المتوقعة للمهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "notification_date",
+                "default_en" => "Task Notification Date",
+                "default_ar" => "تاريخ اشعار المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "execution_end_date",
+                "default_en" => "Task Expected End Date",
+                "default_ar" => "تاريخ الانتهاء المتوقع للمهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -8394,13 +9045,58 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "status",
-                "default_en" => "Status name",
-                "default_ar" => "اسم الحالة",
+                "default_en" => "Registered status name",
+                "default_ar" => "اسم الحالة المسجلة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "club"
             ],
+            [
+                "key" => "financial_status",
+                "default_en" => "Financial status name",
+                "default_ar" => "اسم الحالة المالية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_membership_number",
+                "default_en" => "Membership number",
+                "default_ar" => "رقم الحالة المالية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_applying_number",
+                "default_en" => "Applying number",
+                "default_ar" => "رقم الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "auto_status_sun",
+                "default_en" => "Auto status name",
+                "default_ar" => "اسم الحالة الالية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "auto_status_parent",
+                "default_en" => "Auto status parent name",
+                "default_ar" => "اسم الحالة الالية للاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"  
+            ],  
             [
                 "key" => "member_birth_date",
                 "default_en" => "Birth date",
@@ -8413,7 +9109,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "member_national_id",
                 "default_en" => "National id",
-                "default_ar" => "الرقم القومي",
+                "default_ar" => "الرقم المدني",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -9100,8 +9796,8 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
-                "key" => "date_from",
-                "default_en" => "From Date",
+                "key" => "year_from",
+                "default_en" => "From Year",
                 "default_ar" => "تاريخ بداية الاشتراك",
                 "new_ar" => "",
                 "new_en" => "",
@@ -9109,8 +9805,8 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ],
             [
-                "key" => "date_to",
-                "default_en" => "To Date",
+                "key" => "year_to",
+                "default_en" => "To Year",
                 "default_ar" => "تاريخ نهاية الاشتراك",
                 "new_ar" => "",
                 "new_en" => "",
@@ -9209,6 +9905,490 @@ class TranslationSeeder extends Seeder
                 "screen" => "receivable payable"
             ],
 
+        ]);
+        //Salesman plans
+        Translation::insert([
+            [
+                "key" => "salesmanplan_create_form",
+                "default_en" => "Add new plan",
+                "default_ar" => "اضف خطة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_edit_form",
+                "default_en" => "Edit plan",
+                "default_ar" => "تعديل الخطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_name_ar",
+                "default_en" => "Plan name (arabic)",
+                "default_ar" => "اسم الخطة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_name_en",
+                "default_en" => "Plan name (english)",
+                "default_ar" => "اسم الخطة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "period",
+                "default_en" => "Period name",
+                "default_ar" => "اسم الدورة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "source",
+                "default_en" => "Source name",
+                "default_ar" => "اسم المصدر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+        ]);
+        //Salesman plan details
+        Translation::insert([
+            [
+                "key" => "salesmanplan_detail_create_form",
+                "default_en" => "Add new plan detail",
+                "default_ar" => "اضف تفاصيل خطة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_detail_edit_form",
+                "default_en" => "Edit plan detail",
+                "default_ar" => "تعديل تفاصيل الخطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "plan",
+                "default_en" => "Plan name",
+                "default_ar" => "اسم الخطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_detail_amount_from",
+                "default_en" => "Amount from",
+                "default_ar" => "الكمية من",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_detail_amount_to",
+                "default_en" => "Amount to",
+                "default_ar" => "الكمية الى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "salesmanplan_detail_commission_percent",
+                "default_en" => "Commission percent",
+                "default_ar" => "نسبة العمولة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+        ]);
+        //Hr payroll heads
+        Translation::insert([
+            [
+                "key" => "payroll_head_create_form",
+                "default_en" => "Add new payroll head",
+                "default_ar" => "اضف رئيس جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_head_edit_form",
+                "default_en" => "Edit payroll head",
+                "default_ar" => "تعديل الرئيس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_head_name_ar",
+                "default_en" => "Payroll head name (arabic)",
+                "default_ar" => "اسم الرئيس (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_head_name_en",
+                "default_en" => "Payroll name (english)",
+                "default_ar" => "اسم الرئيس (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //Job titles
+        Translation::insert([
+            [
+                "key" => "job_title_create_form",
+                "default_en" => "Add new job title",
+                "default_ar" => "اضف عنوان جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "job_title_edit_form",
+                "default_en" => "Edit job title",
+                "default_ar" => "تعديل العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "job_title_name_ar",
+                "default_en" => "Job title head name (arabic)",
+                "default_ar" => "اسم العنوان (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "job_title_name_en",
+                "default_en" => "Job title name (english)",
+                "default_ar" => "اسم العنوان (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //HR request types
+        Translation::insert([
+            [
+                "key" => "request_type_create_form",
+                "default_en" => "Add new request type",
+                "default_ar" => "اضف نوع جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_edit_form",
+                "default_en" => "Edit type",
+                "default_ar" => "تعديل النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_name_ar",
+                "default_en" => "Type name (arabic)",
+                "default_ar" => "اسم النوع (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_name_en",
+                "default_en" => "Type name (english)",
+                "default_ar" => "اسم النوع (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_start_from",
+                "default_en" => "Start from",
+                "default_ar" => "بداية من",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_end_date",
+                "default_en" => "End date",
+                "default_ar" => "تاريخ النهاية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_amount",
+                "default_en" => "Amount",
+                "default_ar" => "الكمية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_from_hour",
+                "default_en" => "From hour",
+                "default_ar" => "من الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_to_hour",
+                "default_en" => "To hour",
+                "default_ar" => "الى الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //Equipments
+        Translation::insert([
+            [
+                "key" => "equipment_create_form",
+                "default_en" => "Add new Equipment form",
+                "default_ar" => "اضف معدات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "equipment",
+            ],
+            [
+                "key" => "equipment_edit_form",
+                "default_en" => "Edit Equipment form",
+                "default_ar" => "نموذج تعديل المعدات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "equipment",
+
+            ],
+            [
+                "key" => "equipment_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "اسم ( الانجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "equipment",
+
+            ],
+            [
+                "key" => "equipment_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "اسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "screen properties",
+
+            ],
+        ]);
+        //HR online request
+        Translation::insert([
+            [
+                "key" => "online_request_create_form",
+                "default_en" => "Add new online request",
+                "default_ar" => "اضف طلب جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_edit_form",
+                "default_en" => "Edit online request",
+                "default_ar" => "تعديل الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type",
+                "default_en" => "Request type name",
+                "default_ar" => "اسم الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            
+            [
+                "key" => "employee",
+                "default_en" => "Employee name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr",
+            ],
+            [
+                "key" => "online_request_start_from",
+                "default_en" => "Start from",
+                "default_ar" => "بداية من",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_last_status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_end_date",
+                "default_en" => "End date",
+                "default_ar" => "تاريخ النهاية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_descriptions",
+                "default_en" => "Description",
+                "default_ar" => "الوصف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_amount",
+                "default_en" => "Amount",
+                "default_ar" => "الكمية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_from_hour",
+                "default_en" => "From hour",
+                "default_ar" => "من الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_to_hour",
+                "default_en" => "To hour",
+                "default_ar" => "الى الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_start_from",
+                "default_en" => "Approved start from",
+                "default_ar" => "اعتماد تاريخ البداية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_end_date",
+                "default_en" => "Approved end date",
+                "default_ar" => "اعتماد تاريخ النهاية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_date",
+                "default_en" => "Approved date",
+                "default_ar" => "اعتماد التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_from_hour",
+                "default_en" => "Approved from hour",
+                "default_ar" => "اعتماد من الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_to_hour",
+                "default_en" => "Approved to hour",
+                "default_ar" => "اعتماد الى الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "online_request_approved_amount",
+                "default_en" => "Approved amount",
+                "default_ar" => "اعتماد المبلغ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
         ]);
     }
 }

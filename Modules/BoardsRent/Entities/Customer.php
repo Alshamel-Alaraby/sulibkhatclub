@@ -33,6 +33,7 @@ class Customer extends GeneralCustomer
         'customer_source_id',
         "sector_id",
         "website",
+        'type'
     ];
 
     public function avenue()
@@ -82,7 +83,6 @@ class Customer extends GeneralCustomer
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Customer')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 }

@@ -84,7 +84,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -112,7 +112,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -148,7 +148,7 @@ export default {
             is_disabled: false,
             filterSetting: [
                 "name", "name_e","description","description_e","code","new_code","size","note","face", 'unit_status_id',
-                'category_id','country_id','governorate_id', 'city_id', 'avenue_id', 'street_id'
+                'category_id','governorate_id', 'city_id', 'avenue_id', 'street_id'
             ],
             printLoading: true,
             printObj: {
@@ -178,7 +178,6 @@ export default {
             face: { required },
             unit_status_id: { required },
             category_id: { required },
-            country_id: {  },
             governorate_id: {  },
             city_id: {  },
             avenue_id: {  },
@@ -207,7 +206,6 @@ export default {
             face: { required },
             unit_status_id: { required },
             category_id: { required },
-            country_id: {  },
             governorate_id: {  },
             city_id: {  },
             avenue_id: {  },
@@ -343,14 +341,12 @@ export default {
             let _filterSetting = [...this.filterSetting];
             let unit_status = this.filterSetting.indexOf("unit_status_id");
             let category = this.filterSetting.indexOf("category_id");
-            let country = this.filterSetting.indexOf("country_id");
             let city = this.filterSetting.indexOf("city_id");
             let governorate = this.filterSetting.indexOf("governorate_id");
             let avenue = this.filterSetting.indexOf("avenue_id");
             let street = this.filterSetting.indexOf("street_id");
             if (unit_status > -1) {_filterSetting[unit_status] = this.$i18n.locale == "ar" ? "unitStatus.name" : "unitStatus.name_e";}
             if (category > -1) {_filterSetting[category] = this.$i18n.locale == "ar" ? "category.name" : "category.name_e";}
-            if (country > -1) {_filterSetting[country] = this.$i18n.locale == "ar" ? "country.name" : "country.name_e";}
             if (city > -1) {_filterSetting[city] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";}
             if (avenue > -1) {_filterSetting[avenue] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";}
             if (street > -1) {_filterSetting[street] = this.$i18n.locale == "ar" ? "avenue.name" : "avenue.name_e";}
@@ -392,14 +388,12 @@ export default {
                 let _filterSetting = [...this.filterSetting];
                 let unit_status = this.filterSetting.indexOf("unit_status_id");
                 let category = this.filterSetting.indexOf("category_id");
-                let country = this.filterSetting.indexOf("country_id");
                 let city = this.filterSetting.indexOf("city_id");
                 let governorate = this.filterSetting.indexOf("governorate_id");
                 let avenue = this.filterSetting.indexOf("avenue_id");
                 let street = this.filterSetting.indexOf("street_id");
                 if (unit_status > -1) {_filterSetting[unit_status] = this.$i18n.locale == "ar" ? "unitStatus.name" : "unitStatus.name_e";}
                 if (category > -1) {_filterSetting[category] = this.$i18n.locale == "ar" ? "category.name" : "category.name_e";}
-                if (country > -1) {_filterSetting[country] = this.$i18n.locale == "ar" ? "country.name" : "country.name_e";}
                 if (city > -1) {_filterSetting[city] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";}
                 if (avenue > -1) {_filterSetting[avenue] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";}
                 if (street > -1) {_filterSetting[street] = this.$i18n.locale == "ar" ? "avenue.name" : "avenue.name_e";}
@@ -565,7 +559,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -576,6 +570,7 @@ export default {
             this.$nextTick(() => {
                 this.$v.$reset();
             });
+            this.is_disabled = false;
             this.errors = {};
             this.$bvModal.hide(`create`);
         },
@@ -583,9 +578,7 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await  this.getUnitStatus();
-            await  this.getCategory();
-            await  this.getCountry();
+            await  this.getGovernorate();
             this.create = {
                 name: "",
                 name_e: "",
@@ -606,7 +599,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -614,6 +607,8 @@ export default {
                 lat: 0,
                 lng: 0,
             };
+            await  this.getUnitStatus();
+            await  this.getCategory();
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -643,7 +638,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -772,8 +767,7 @@ export default {
             this.edit.category_id = panels.category_id;
             await this.getUnitStatus();
             this.edit.unit_status_id = panels.unit_status_id;
-            await this.getCategory();
-            this.edit.country_id = panels.country_id;
+            this.edit.country_id = 1;
             await this.getGovernorate();
             this.edit.governorate_id = panels.governorate_id;
             await this.getCity();
@@ -819,7 +813,7 @@ export default {
                 face: "A",
                 unit_status_id: null,
                 category_id: null,
-                country_id: null,
+                country_id: 1,
                 governorate_id: null,
                 city_id: null,
                 avenue_id: null,
@@ -1001,7 +995,7 @@ export default {
         async getCategory() {
             this.isLoader = true;
 
-            adminApi
+            await adminApi
                 .get(
                     `/categories`
                 )
@@ -1045,7 +1039,6 @@ export default {
                 });
         },
         async getGovernorate() {
-            let country = this.create.country_id ?? this.edit.country_id;
             this.create.governorate_id = null;this.edit.governorate_id = null;
             this.create.city_id = null;this.edit.city_id = null;
             this.create.avenue_id = null;this.edit.avenue_id = null;
@@ -1054,7 +1047,7 @@ export default {
             this.streets = [];
 
             await adminApi
-                .get(`/governorates?columns[0]=country_id&search=${country}`)
+                .get(`/governorates?columns[0]=country.id&search=${1}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف المحافظه", name_e: "Add Governorate" });
@@ -1075,9 +1068,8 @@ export default {
             this.create.avenue_id = null;this.edit.avenue_id = null;
             this.create.street_id = null;this.edit.street_id = null;
             this.cities = [];this.avenues = [];this.streets = [];
-
             await adminApi
-                .get(`/cities?columns[0]=governorate_id&search=${governorate}`)
+                .get(`/cities?columns[0]=governorate.id&search=${governorate}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف المدينه", name_e: "Add City" });
@@ -1102,7 +1094,7 @@ export default {
             this.avenues = [];this.streets = [];
 
             await adminApi
-                .get(`/avenues?columns[0]=city_id&search=${city}`)
+                .get(`/avenues?columns[0]=city.id&search=${city}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف المنطقه", name_e: "Add Avenue" });
@@ -1126,7 +1118,7 @@ export default {
             this.streets = [];
 
             await adminApi
-                .get(`/streets?columns[0]=avenue_id&search=${avenue}`)
+                .get(`/streets?columns[0]=avenue.id&search=${avenue}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف الشارع", name_e: "Add Street" });
@@ -1150,7 +1142,7 @@ export default {
 <template>
     <Layout>
         <PageHeader />
-        <UnitStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getUnitStatus" />
+        <UnitStatus :module_type="'panel'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getUnitStatus" />
         <Category :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCategory" />
         <Country :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCountry" />
         <Governate :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getGovernorate" />
@@ -1204,9 +1196,6 @@ export default {
                                         <b-form-checkbox v-model="filterSetting" value="category_id" class="mb-1">
                                             {{ getCompanyKey("boardRent_panel_category") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="country_id" class="mb-1">
-                                            {{ getCompanyKey("boardRent_panel_country") }}
-                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="governorate_id" class="mb-1">
                                             {{ getCompanyKey("boardRent_panel_governorate") }}
                                         </b-form-checkbox>
@@ -1215,9 +1204,6 @@ export default {
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="avenue_id" class="mb-1">
                                             {{ getCompanyKey("boardRent_panel_avenue") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="street_id" class="mb-1">
-                                            {{ getCompanyKey("boardRent_panel_street") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
@@ -1309,7 +1295,7 @@ export default {
                                             variant="primary"
                                             :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                             ref="dropdown"
-                                            class="dropdown-custom-ali"
+                                            class="dropdown-custom-ali dropdown-menu-custom-company"
                                         >
                                             <b-form-checkbox v-model="setting.name" class="mb-1"
                                             >{{ getCompanyKey("boardRent_panel_name_ar") }}
@@ -1346,9 +1332,6 @@ export default {
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.face" class="mb-1"
                                             >{{ getCompanyKey("boardRent_panel_face") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.country_id" class="mb-1">
-                                                {{ getCompanyKey("boardRent_panel_country") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.governorate_id" class="mb-1"
                                             >{{ getCompanyKey("boardRent_panel_governorate") }}
@@ -1619,6 +1602,33 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="field-1" class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_size") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div dir="rtl">
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    v-model="$v.create.size.$model"
+                                                    :class="{
+                                                    'is-invalid': $v.create.size.$error || errors.size,
+                                                    'is-valid': !$v.create.size.$invalid && !errors.size,
+                                                  }"
+                                                    id="field-1"
+                                                />
+                                            </div>
+                                            <template v-if="errors.size">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.size"
+                                                    :key="index"
+                                                >{{ errorMessage }}</ErrorMessage
+                                                >
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
                                 <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
                                 <div class="row">
@@ -1666,28 +1676,6 @@ export default {
                                             <template v-if="errors.unit_status_id">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.unit_status_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}</ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("boardRent_panel_country") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <multiselect
-                                                @input="showCountryModal"
-                                                v-model="$v.create.country_id.$model"
-                                                :options="countries.map((type) => type.id)"
-                                                :custom-label="(opt) => $i18n.locale == 'ar' ? countries.find((x) => x.id == opt).name :  countries.find((x) => x.id == opt).name_e"
-                                            >
-                                            </multiselect>
-                                            <template v-if="errors.country_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.country_id"
                                                     :key="index"
                                                 >{{ errorMessage }}</ErrorMessage
                                                 >
@@ -2147,11 +2135,6 @@ export default {
                                             <span>{{ getCompanyKey("boardRent_panel_unit_status") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.country_id">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("boardRent_panel_country") }}</span>
-                                        </div>
-                                    </th>
                                     <th v-if="setting.governorate_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("boardRent_panel_governorate") }}</span>
@@ -2237,12 +2220,6 @@ export default {
                                     <th v-if="setting.unit_status_id">
                                         {{ $i18n.locale == 'ar' ? data.unit_status.name : data.unit_status.name_e }}
                                     </th>
-                                    <th v-if="setting.country_id">
-                                        {{
-                                            data.country ? $i18n.locale == 'ar' ? data.country.name : data.country.name_e :
-                                                '-'
-                                        }}
-                                    </th>
                                     <th v-if="setting.governorate_id">
                                         {{  data.governorate ? $i18n.locale == 'ar' ? data.governorate.name : data.governorate.name_e : '-' }}
                                     </th>
@@ -2308,6 +2285,7 @@ export default {
                                             body-class="p-4"
                                             :ref="`edit-${data.id}`"
                                             :hide-footer="true"
+                                            dialog-class="modal-full-width"
                                             @show="resetModalEdit(data.id)"
                                             @hidden="resetModalHiddenEdit(data.id)"
                                         >
@@ -2493,6 +2471,33 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="field-edit-13" class="control-label">
+                                                                {{ getCompanyKey("boardRent_panel_size") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="rtl">
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    v-model="$v.edit.size.$model"
+                                                                    :class="{
+                                                                        'is-invalid': $v.edit.size.$error || errors.size,
+                                                                        'is-valid': !$v.edit.size.$invalid && !errors.size,
+                                                                      }"
+                                                                    id="field-edit-13"
+                                                                />
+                                                            </div>
+                                                            <template v-if="errors.size">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.size"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}</ErrorMessage
+                                                                >
+                                                            </template>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
                                                 <div class="row">
@@ -2503,7 +2508,7 @@ export default {
                                                                 <span class="text-danger">*</span>
                                                             </label>
                                                             <multiselect
-                                                                @input="showeCategoryModalEdit"
+                                                                @input="showCategoryModalEdit"
                                                                 v-model="$v.edit.category_id.$model"
                                                                 :options="categories.map((type) => type.id)"
                                                                 :custom-label="(opt) => $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name : categories.find((x) => x.id == opt).name_e"
@@ -2540,28 +2545,6 @@ export default {
                                                             <template v-if="errors.unit_status_id">
                                                                 <ErrorMessage
                                                                     v-for="(errorMessage, index) in errors.unit_status_id"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}</ErrorMessage
-                                                                >
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">
-                                                                {{ getCompanyKey("boardRent_panel_country") }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <multiselect
-                                                                @input="showCountryModalEdit"
-                                                                v-model="$v.edit.country_id.$model"
-                                                                :options="countries.map((type) => type.id)"
-                                                                :custom-label="(opt) => $i18n.locale == 'ar' ? countries.find((x) => x.id == opt).name :  countries.find((x) => x.id == opt).name_e"
-                                                            >
-                                                            </multiselect>
-                                                            <template v-if="errors.country_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.country_id"
                                                                     :key="index"
                                                                 >{{ errorMessage }}</ErrorMessage
                                                                 >
@@ -2943,3 +2926,11 @@ export default {
         </div>
     </Layout>
 </template>
+
+<style>
+.dropdown-menu-custom-company.dropdown .dropdown-menu {
+    padding: 5px 10px !important;
+    overflow-y: scroll;
+    height: 300px;
+}
+</style>

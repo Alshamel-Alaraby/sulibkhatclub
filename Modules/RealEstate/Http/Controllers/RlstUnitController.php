@@ -3,20 +3,44 @@
 namespace Modules\RealEstate\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstUnit;
+use Modules\RealEstate\Entities\RlstWallet;
 use Modules\RealEstate\Http\Requests\RlstUnitEditRequest;
+use Modules\RealEstate\Http\Requests\RlstUnitFilterRequest;
 use Modules\RealEstate\Http\Requests\RlstUnitRequest;
 use Modules\RealEstate\Transformers\RlstUnitResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Modules\RealEstate\Transformers\RlstUnitFilterResource;
+
 
 class RlstUnitController extends Controller
 {
 
-    public function __construct(private RlstUnit $model)
+    public function __construct(private RlstUnit $model,  RlstWallet $modelWallet)
     {
         $this->model = $model;
+        $this->modelWallet = $modelWallet;
     }
+
+    public function generalFilter(RlstUnitFilterRequest $request)
+    {
+
+        $models = $this->model->filter($request)->generalfilter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+        // return $models;
+        return responseJson(200, 'success', RlstUnitFilterResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
 
     public function find($id)
     {
@@ -34,6 +58,12 @@ class RlstUnitController extends Controller
             $q->where("building_id", $request->building_id);
         })
         ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->unit_status_id) {
+            $models->where('unit_status_id', $request->unit_status_id);
+        }
+
+
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -156,5 +186,22 @@ class RlstUnitController extends Controller
         });
         return responseJson(200, 'deleted');
     }
+
+    public function getOwnerByWalletId($wallet_id)
+    {
+        $owner = $this->modelWallet->with('owners')->find($wallet_id);
+        // $owner = $wallet->owners;
+        return responseJson(200, 'success', $owner );
+    }
+
+
+    public function getBuildingByWalletId($wallet_id)
+    {
+        $building = $this->modelWallet->with('buildings')->find($wallet_id);
+        // $owner = $wallet->owners;
+        return responseJson(200, 'success', $building );
+    }
+
+
 
 }

@@ -17,7 +17,7 @@ class UserController extends Controller
         $this->modelInterface = $modelInterface;
     }
 
-    public function login(\App\Http\Requests\User\LoginUserRequest$request)
+    public function login(\App\Http\Requests\User\LoginUserRequest $request)
     {
         // login with sanctum using email and password
         $user = \App\Models\User::where('email', $request->email)->first();
@@ -39,32 +39,13 @@ class UserController extends Controller
     public function find($id)
     {
 
-        // $model = cacheGet('users_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('users_' . $id, $model);
-        //     }
-        // }
-
         $model = $this->modelInterface->find($id);
         return responseJson(200, 'success', new UserResource($model));
     }
 
     public function all(AllRequest $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('users');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('users', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
-        
+
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', UserResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

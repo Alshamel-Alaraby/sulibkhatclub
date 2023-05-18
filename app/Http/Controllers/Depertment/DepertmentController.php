@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepertmentController extends Controller
 {
-    public function __construct(private \App\Repositories\Depertment\DepertmentInterface$modelInterface)
+    public function __construct(private \App\Repositories\Depertment\DepertmentInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -39,7 +39,7 @@ class DepertmentController extends Controller
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success');
+        return responseJson(200, 'success', new DepertmentResource($model));
     }
 
 
@@ -48,12 +48,11 @@ class DepertmentController extends Controller
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
-            return responseJson( 404 , __('message.data not found'));
+            return responseJson(404, __('message.data not found'));
         }
-        $this->modelInterface->update($request->validated(),$id);
+        $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
         return responseJson(200, 'success', new DepertmentResource($model));
-
     }
     public function logs($id)
     {
@@ -72,9 +71,8 @@ class DepertmentController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        if ($model->hasChildren()){
+        if ($model->hasChildren()) {
             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-
         }
         $this->modelInterface->delete($id);
         return responseJson(200, 'success');
@@ -95,6 +93,16 @@ class DepertmentController extends Controller
         if (count($arr) > 0) {
             return responseJson(400, __('some items has relation cant delete'));
         }
+        return responseJson(200, __('Done'));
+    }
+
+    public function processJsonData(Request $request)
+    {
+        $jsonData = $request->getContent();
+        $data = json_decode($jsonData, true);
+
+        $this->modelInterface->processJsonData($data);
+
         return responseJson(200, __('Done'));
     }
 

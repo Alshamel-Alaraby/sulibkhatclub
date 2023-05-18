@@ -19,15 +19,7 @@ class FinancialYearController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('financial-years_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('financial-years_' . $id, $model);
-        //     }
-        // }
+        
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));

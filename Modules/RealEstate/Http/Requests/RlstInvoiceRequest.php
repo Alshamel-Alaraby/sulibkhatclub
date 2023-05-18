@@ -44,7 +44,9 @@ class RlstInvoiceRequest extends FormRequest
             'transactions.*.date' => 'nullable|date',
             'transactions.*.amount' => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
             'transactions.*.module_type' => "nullable|string",
+
             'transactions.*.break_id' => "nullable|exists:rp_break_downs,id",
+            'transactions.*.amount_status' => 'nullable|string|in:Paid_Partially,Paid',
         ];
     }
 

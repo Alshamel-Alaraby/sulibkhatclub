@@ -10,7 +10,7 @@ use Spatie\Activitylog\LogOptions;
 
 class FinancialYear extends Model
 {
-    use HasFactory, SoftDeletes, LogTrait   ;
+    use HasFactory, SoftDeletes, LogTrait;
     protected $table = 'general_financial_years';
 
 
@@ -19,13 +19,19 @@ class FinancialYear extends Model
         'name_e',
         'start_date',
         'end_date',
-        "company_id"
+        "company_id",
+        'is_active'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    // public function getIsActive()
+    // {
+    //     return $this->is_active == 1 ? 'Active' : 'Non Active';
+    // }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -34,7 +40,6 @@ class FinancialYear extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Financial Year')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 }

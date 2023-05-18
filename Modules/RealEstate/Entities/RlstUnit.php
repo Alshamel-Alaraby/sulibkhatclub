@@ -12,10 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 
-
 class RlstUnit extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, LogTrait,MediaTrait, VideoLink;
+    use HasFactory, SoftDeletes, LogTrait, MediaTrait, VideoLink;
 
     protected $guarded = ['id'];
 
@@ -41,6 +40,10 @@ class RlstUnit extends Model implements HasMedia
         return $this->belongsTo(\App\Models\Currency::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(RlstItem::class, 'unit_id');
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -69,4 +72,78 @@ class RlstUnit extends Model implements HasMedia
             set:fn($value) => json_encode($value),
         );
     }
+
+    public function scopeGeneralFilter($query, $request)
+    {
+        return $query->where(function ($q) use ($request) {
+            $q->where(function ($q) use ($request) {
+                $q->when($request->building_id, function ($q) use ($request) {
+                    $q->where('building_id', $request->building_id);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->unit_ty, function ($q) use ($request) {
+                    $q->where('unit_ty', $request->unit_ty);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->unit_area, function ($q) use ($request) {
+                    $q->where('unit_area', $request->unit_area);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->rooms, function ($q) use ($request) {
+                    $q->where('rooms', $request->rooms);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->path, function ($q) use ($request) {
+                    $q->where('path', $request->path);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->properties, function ($q) use ($request) {
+                    $q->whereJsonContains('properties', $request->properties);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->wallet_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereHas('buildingWallet', function ($q) use ($request) {
+                            $q->where('wallet_id', $request->wallet_id);
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->owner_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereHas('buildingWallet', function ($q) use ($request) {
+                            $q->whereHas('wallet', function ($q) use ($request) {
+                                $q->whereHas('walletOwner', function ($q) use ($request) {
+                                    $q->where('owner_id', $request->owner_id);
+                                });
+                            });
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->country_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->where('country_id', $request->country_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->city_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->where('city_id', $request->city_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->governorate_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereHas('city', function ($q) use ($request) {
+                            $q->where('governorate_id', $request->governorate_id);
+                        });
+                    });
+
+                });
+            });
+
+        });
+    }
+
 }

@@ -13,4 +13,6 @@ interface BranchRepositoryInterface
     public function delete($id);
 
     public function logs($id);
+    public function processJsonData(array $data);
+
 }

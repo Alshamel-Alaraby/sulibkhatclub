@@ -21,6 +21,7 @@ import translation from "../../../helper/translation-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import Avenue from "../../../components/create/avenue";
 import Street from "../../../components/create/street";
+import employee from "../../../components/create/employee";
 
 /**
  * Advanced Table component
@@ -52,7 +53,8 @@ export default {
         City,
         Multiselect,
         bankAccount,
-        Street
+        Street,
+        employee
     },
     data() {
         return {
@@ -64,6 +66,7 @@ export default {
             customers: [],
             cities: [],
             countries: [],
+            employees: [],
             bank_accounts: [],
             branchCities: [],
             branchCountries: [],
@@ -86,6 +89,7 @@ export default {
                 city_id: null ,
                 whatsapp: '',
                 passport_no: null,
+                employee_id: null,
                 Note1: '',
                 Note2: '',
                 Note3: '',
@@ -104,6 +108,7 @@ export default {
                 national_id: null,
                 nationality: null,
                 bank_account_id: null,
+                employee_id: null,
                 code_country: '',
                 country_id: null,
                 city_id: null ,
@@ -161,6 +166,7 @@ export default {
                 contact_phone: true,
                 national_id:true,
                 bank_account_id: true,
+                employee_id: true,
                 country_id: true ,
                 city_id: true,
                 whatsapp: true,
@@ -230,6 +236,9 @@ export default {
             bank_account_id: {required: requiredIf(function (model) {
                     return this.isRequired("bank_account_id");
                 })},
+            employee_id: {required: requiredIf(function (model) {
+                    return this.isRequired("employee_id");
+                })},
             whatsapp: {required: requiredIf(function (model) {
                     return this.isRequired("whatsapp");
                 }),maxLength: maxLength(20)},
@@ -274,6 +283,9 @@ export default {
                 })},
             bank_account_id: {required: requiredIf(function (model) {
                     return this.isRequired("bank_account_id");
+                })},
+            employee_id: {required: requiredIf(function (model) {
+                    return this.isRequired("employee_id");
                 })},
             whatsapp: {required: requiredIf(function (model) {
                     return this.isRequired("whatsapp");
@@ -570,6 +582,7 @@ export default {
                 national_id: null,
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null ,
                 whatsapp: '',
@@ -581,6 +594,7 @@ export default {
             this.$nextTick(() => { this.$v.$reset() });
             this.errors = {};
             this.images = [];
+            this.is_disabled = false;
             this.$bvModal.hide(`create`);
         },
         /**
@@ -592,6 +606,7 @@ export default {
             this.bank_accounts = [];
             if(this.isVisible('country_id')) await this.getCategory();
             if(this.isVisible('bank_account_id'))await this.getBankAcount();
+            if(this.isVisible('employee_id'))await this.getEmployees();
             this.create = {
                 name: '',
                 name_e: '',
@@ -604,6 +619,7 @@ export default {
                 contact_phone:'',
                 national_id: null,
                 bank_account_id: null,
+                employee_id: null,
                 passport_no:'',
                 country_id: null,
                 city_id: null ,
@@ -636,6 +652,7 @@ export default {
                 national_id: null,
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null ,
                 whatsapp: ''
@@ -746,11 +763,13 @@ export default {
             this.bank_accounts = [];
             if(this.isVisible('country_id'))await this.getCategory();
             if(this.isVisible('bank_account_id'))await this.getBankAcount();
+            if(this.isVisible('employee_id'))await this.getEmployees();
             let build = this.customers.find(e => id == e.id );
             if(this.isVisible('city_id'))await this.getCity(build.country.id);
             this.edit.name = build.name;
             this.edit.name_e = build.name_e;
             this.edit.bank_account_id = build.bank_account_id ?? null;
+            this.edit.employee_id = build.employee_id ?? null;
             this.edit.city_id = build.city ? build.city.id : null;
             this.edit.contact_person = build.contact_person;
             this.edit.contact_phone = build.contact_phone;
@@ -790,6 +809,7 @@ export default {
                 code_country: '',
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null ,
                 whatsapp: '',
@@ -1210,6 +1230,22 @@ export default {
                         this.isLoader = false;
                     });
         },
+        async getEmployees() {
+            await adminApi
+                .get(`/employees?customer_handel=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضاف موظف", name_e: "Add Employee" });
+                    this.employees = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
         showCountryModal() {
             if (this.branchCreate.country_id == 0) {
                 this.$bvModal.show("country-create");
@@ -1257,6 +1293,18 @@ export default {
             if (this.edit.bank_account_id == 0) {
                 this.$bvModal.show("bank-account-create");
                 this.edit.bank_account_id = null;
+            }
+        },
+        showEmployeeModal() {
+            if (this.create.employee_id == 0) {
+                this.$bvModal.show("employee-create");
+                this.create.employee_id = null;
+            }
+        },
+         showEmployeeModalEdit() {
+            if(this.edit.employee_id == 0) {
+                this.$bvModal.show("employee-create");
+                this.edit.employee_id = null;
             }
         },
         showStreetModal(){
@@ -1319,6 +1367,7 @@ export default {
 <template>
     <Layout>
         <PageHeader />
+        <employee :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getEmployees" />
         <bankAccount :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"  @created="getBankAcount" />
         <Country :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'country-create'" @created="getCategory" />
         <City :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCity(create.country_id ? create.country_id: edit.country_id)" />
@@ -1348,6 +1397,7 @@ export default {
                                         <b-form-checkbox v-if="isVisible('city_id')" v-model="filterSetting" :value="$i18n.locale == 'ar'? 'city.name': 'city.name_e'" class="mb-1">{{ getCompanyKey('general_customer_city') }}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('national_id')" v-model="filterSetting" value="national_id" class="mb-1">{{ getCompanyKey('customer_national_id') }}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('bank_account_id')" v-model="filterSetting" :value="$i18n.locale == 'ar'? 'bankAccount.name': 'bankAccount.name_e'" class="mb-1">{{ getCompanyKey('bank_account') }}</b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('employee_id')" v-model="filterSetting" :value="$i18n.locale == 'ar'? 'employee.name': 'employee.name_e'" class="mb-1">{{ getCompanyKey('employee') }}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('whatsapp')" v-model="filterSetting" value="whatsapp" class="mb-1">{{ getCompanyKey('general_customer_whatsapp') }}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('passport_no')" v-model="filterSetting" value="passport_no" class="mb-1">{{ getCompanyKey('general_customer_passport_number') }}</b-form-checkbox>
                                     </b-dropdown>
@@ -1452,6 +1502,7 @@ export default {
                                             <b-form-checkbox v-if="isVisible('nationality')" v-model="setting.nationality" class="mb-1">{{ getCompanyKey('general_customer_nationality') }}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('national_id')" v-model="setting.national_id" class="mb-1">{{ getCompanyKey('general_customer_national_id') }}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('bank_account_id')" v-model="setting.bank_account_id" class="mb-1">{{getCompanyKey('bank_account') }}</b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('employee_id')" v-model="setting.employee_id" class="mb-1">{{getCompanyKey('employee') }}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('country_id')" v-model="setting.country_id" class="mb-1">{{getCompanyKey('general_customer_country') }}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('city_id')" v-model="setting.city_id" class="mb-1">{{ getCompanyKey('general_customer_city') }}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('whatsapp')" v-model="setting.whatsapp" class="mb-1">{{ getCompanyKey('general_customer_whatsapp') }}</b-form-checkbox>
@@ -1834,7 +1885,7 @@ export default {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <hr v-if="isVisible('contact_person') || isVisible('contact_phone')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                                            <hr v-if="isVisible('contact_person') || isVisible('contact_phone') || isVisible('employee_id')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
                                             <div class="row">
                                                 <div class="col-md-4" v-if="isVisible('contact_person')">
                                                     <div class="form-group">
@@ -1848,9 +1899,9 @@ export default {
                                                             data-create="9"
                                                             v-model="$v.create.contact_person.$model"
                                                             :class="{
-                                                'is-invalid':$v.create.contact_person.$error || errors.contact_person,
-                                                'is-valid':!$v.create.contact_person.$invalid && !errors.contact_person
-                                            }"
+                                                                'is-invalid':$v.create.contact_person.$error || errors.contact_person,
+                                                                'is-valid':!$v.create.contact_person.$invalid && !errors.contact_person
+                                                            }"
                                                         />
                                                         <template v-if="errors.contact_person">
                                                             <ErrorMessage v-for="(errorMessage,index) in errors.contact_person" :key="index">{{ errorMessage }}</ErrorMessage>
@@ -1873,6 +1924,24 @@ export default {
                                                         />
                                                         <template v-if="errors.contact_phone">
                                                             <ErrorMessage v-for="(errorMessage,index) in errors.contact_phone" :key="index">{{ errorMessage }}</ErrorMessage>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" v-if="isVisible('employee_id')">
+                                                    <div class="form-group">
+                                                        <label>{{ getCompanyKey('employee') }}<span v-if="isRequired('employee_id')" class="text-danger">*</span></label>
+                                                        <multiselect
+                                                            @input="showEmployeeModal"
+                                                            v-model="create.employee_id"
+                                                            :options="employees.map((type) => type.id)"
+                                                            :custom-label=" (opt) => $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e "
+                                                            :class="{'is-invalid': $v.create.employee_id.$error || errors.employee_id,'is-valid': !$v.create.employee_id.$invalid && !errors.employee_id,}"
+                                                        >
+                                                        </multiselect>
+                                                        <template v-if="errors.employee_id">
+                                                            <ErrorMessage v-for="(errorMessage, index) in errors.employee_id"
+                                                                          :key="index">{{ errorMessage }}
+                                                            </ErrorMessage>
                                                         </template>
                                                     </div>
                                                 </div>
@@ -2338,6 +2407,11 @@ export default {
                                             <span>{{ getCompanyKey('bank_account') }}</span>
                                         </div>
                                     </th>
+                                    <th v-if="setting.employee_id && isVisible('employee_id')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey('employee') }}</span>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.whatsapp && isVisible('whatsapp')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey('general_customer_whatsapp') }}</span>
@@ -2393,6 +2467,9 @@ export default {
                                     </td>
                                     <td v-if="setting.bank_account_id && isVisible('bank_account_id')">
                                         {{ data.bankAccount ?  data.bankAccount.account_number : ' - '}}
+                                    </td>
+                                    <td v-if="setting.employee_id && isVisible('employee_id')">
+                                        {{ data.employee ?  $i18n.locale == 'ar'? data.employee.name : data.employee.name_e : ' - '}}
                                     </td>
                                     <td v-if="setting.whatsapp && isVisible('whatsapp')">{{ data.whatsapp }}</td>
                                     <td v-if="setting.rp_code && isVisible('rp_code')">{{ data.rp_code }}</td>
@@ -2763,7 +2840,7 @@ export default {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <hr v-if="isVisible('contact_person') || isVisible('contact_phone')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                                                            <hr v-if="isVisible('contact_person') || isVisible('contact_phone') || isVisible('employee_id')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
                                                             <div class="row">
                                                                 <div class="col-md-4" v-if="isVisible('contact_person')">
                                                                     <div class="form-group">
@@ -2776,10 +2853,10 @@ export default {
                                                                             class="form-control"
                                                                             data-edit="9"
                                                                             v-model="$v.edit.contact_person.$model"
-                                                                            :class="{
-                                                'is-invalid':$v.edit.contact_person.$error || errors.contact_person,
-                                                'is-valid':!$v.edit.contact_person.$invalid && !errors.contact_person
-                                            }"
+                                                                                                            :class="{
+                                                                                'is-invalid':$v.edit.contact_person.$error || errors.contact_person,
+                                                                                'is-valid':!$v.edit.contact_person.$invalid && !errors.contact_person
+                                                                            }"
                                                                         />
                                                                         <template v-if="errors.contact_person">
                                                                             <ErrorMessage v-for="(errorMessage,index) in errors.contact_person" :key="index">{{ errorMessage }}</ErrorMessage>
@@ -2802,6 +2879,25 @@ export default {
                                                                         />
                                                                         <template v-if="errors.contact_phone">
                                                                             <ErrorMessage v-for="(errorMessage,index) in errors.contact_phone" :key="index">{{ errorMessage }}</ErrorMessage>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4" v-if="isVisible('employee_id')">
+                                                                    <div class="form-group">
+                                                                        <label>{{ getCompanyKey('employee') }}<span v-if="isRequired('employee_id')" class="text-danger">*</span></label>
+                                                                        <multiselect
+                                                                            @input="showEmployeeModalEdit"
+                                                                            v-model="edit.employee_id"
+                                                                            :options="employees.map((type) => type.id)"
+                                                                            :custom-label="(opt) =>$i18n.locale == 'ar'? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e"
+                                                                            :class="{'is-invalid': $v.edit.employee_id.$error || errors.employee_id,'is-valid': !$v.edit.employee_id.$invalid && !errors.employee_id,}"
+                                                                        >
+                                                                        </multiselect>
+
+                                                                        <template v-if="errors.employee_id">
+                                                                            <ErrorMessage v-for="(errorMessage, index) in errors.employee_id" :key="index">
+                                                                                {{ errorMessage }}
+                                                                            </ErrorMessage>
                                                                         </template>
                                                                     </div>
                                                                 </div>
@@ -2971,6 +3067,5 @@ export default {
 }
 .modal-body .card .tabs .tab-content {
     padding: 20px 60px 40px !important;
-dding: 5px 10px !important;
-    overflow-y: scroll;
-    height: 300px;
+}
+</style>

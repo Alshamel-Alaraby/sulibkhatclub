@@ -27,8 +27,18 @@ use App\Repositories\DatabaseBackup\DatabaseBackupInterface;
 use App\Repositories\DatabaseBackup\DatabaseBackupRepository;
 use App\Repositories\Depertment\DepertmentInterface;
 use App\Repositories\Depertment\DepertmentRepository;
+use App\Repositories\DepertmentTask\DepertmentTaskInterface;
+use App\Repositories\DepertmentTask\DepertmentTaskRepository;
 use App\Repositories\Document\DocumentInterface;
 use App\Repositories\Document\DocumentIRepository;
+use App\Repositories\DocumentApprovalDetail\DocumentApprovalDetailInterface;
+use App\Repositories\DocumentApprovalDetail\DocumentApprovalDetailRepository;
+use App\Repositories\DocumentHeader\DocumentHeaderInterface;
+use App\Repositories\DocumentHeader\DocumentHeaderRepository;
+use App\Repositories\DocumentHeaderDetail\DocumentHeaderDetailInterface;
+use App\Repositories\DocumentHeaderDetail\DocumentHeaderDetailRepository;
+use App\Repositories\DocumentStatuse\DocumentStatuseInterface;
+use App\Repositories\DocumentStatuse\DocumentStatuseRepository;
 use App\Repositories\Employee\EmployeeInterface;
 use App\Repositories\Employee\EmployeeRepository;
 use App\Repositories\ExternalSalesmen\ExternalSalesmenInterface;
@@ -41,12 +51,16 @@ use App\Repositories\Governorate\GovernorateInterface;
 use App\Repositories\Governorate\GovernorateRepository;
 use App\Repositories\InternalSalesman\InternalSalesmanRepository;
 use App\Repositories\InternalSalesman\InternalSalesmanRepositoryInterface;
+use App\Repositories\ItemBreakDown\ItemBreakDownInterface;
+use App\Repositories\ItemBreakDown\ItemBreakDownRepository;
 use App\Repositories\Module\ModuleInterface;
 use App\Repositories\Module\ModuleRepository;
 use App\Repositories\PaymentMethod\PaymentMethodInterface;
 use App\Repositories\PaymentMethod\PaymentMethodRepository;
 use App\Repositories\PaymentType\PaymentTypeInterface;
 use App\Repositories\PaymentType\PaymentTypeRepository;
+use App\Repositories\RestartPeriod\RestartPeriodInterface;
+use App\Repositories\RestartPeriod\RestartPeriodRepository;
 use App\Repositories\RoleScreenHotfield\RoleScreenHotfieldRepository;
 use App\Repositories\RoleScreenHotfield\RoleScreenHotfieldRepositoryInterface;
 use App\Repositories\RoleType\RoleTypeRepository;
@@ -60,6 +74,8 @@ use App\Repositories\Role\RoleRepositoryInterface;
 use App\Repositories\Salesman\SalesmanInterface;
 use App\Repositories\Salesman\SalesmanRepository;
 use App\Repositories\Salesman\SalesmanRepositoryInterface;
+use App\Repositories\SalesmenPlansSource\SalesmenPlansSourceInterface;
+use App\Repositories\SalesmenPlansSource\SalesmenPlansSourceRepository;
 use App\Repositories\SalesmenType\SalesmenTypeInterface;
 use App\Repositories\SalesmenType\SalesmenTypeRepository;
 use App\Repositories\ScreenTreeProperty\ScreenTreePropertyRepository;
@@ -146,6 +162,20 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(PaymentMethodInterface::class, PaymentMethodRepository::class);
         $this->app->bind(DatabaseBackupInterface::class, DatabaseBackupRepository::class);
+
+
+        $this->app->bind(DepertmentTaskInterface::class, DepertmentTaskRepository::class);
+        $this->app->bind(RestartPeriodInterface::class, RestartPeriodRepository::class);
+        $this->app->bind(SalesmenPlansSourceInterface::class, SalesmenPlansSourceRepository::class);
+        $this->app->bind(DocumentApprovalDetailInterface::class, DocumentApprovalDetailRepository::class);
+        $this->app->bind(DocumentStatuseInterface::class, DocumentStatuseRepository::class);
+        $this->app->bind(DocumentHeaderInterface::class, DocumentHeaderRepository::class);
+        $this->app->bind(DocumentHeaderDetailInterface::class, DocumentHeaderDetailRepository::class);
+
+        $this->app->bind(ItemBreakDownInterface::class, ItemBreakDownRepository::class);
+
+
+
 
 
     }

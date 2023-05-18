@@ -58,7 +58,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
       },
       edit: {
         name: "",
@@ -66,7 +66,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
         old_media: [],
       },
       errors: {},
@@ -413,7 +413,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
         media: null,
       };
       this.$nextTick(() => {
@@ -422,6 +422,7 @@ export default {
       this.images = [];
       this.user_id = null;
       this.errors = {};
+        this.is_disabled = false;
       this.employees = [];
     },
     /**
@@ -435,7 +436,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
       };
       this.showPhoto = "./images/img-1.png";
       this.$nextTick(() => {
@@ -456,7 +457,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -591,7 +592,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: "1",
         old_media: [],
       };
       this.user_id = null;
@@ -1298,14 +1299,14 @@ export default {
                                   class="d-inline-block"
                                   v-model="$v.create.is_active.$model"
                                   name="some-radios"
-                                  value="active"
+                                  value="1"
                                   >{{ $t("general.Active") }}</b-form-radio
                                 >
                                 <b-form-radio
                                   class="d-inline-block m-1"
                                   v-model="$v.create.is_active.$model"
                                   name="some-radios"
-                                  value="inactive"
+                                  value="0"
                                   >{{ $t("general.Inactive") }}</b-form-radio
                                 >
                               </b-form-group>
@@ -1588,12 +1589,12 @@ export default {
                     <td v-if="setting.is_active && isVisible('is_active')">
                       <span
                         :class="[
-                          data.is_active == 'active' ? 'text-success' : 'text-danger',
+                          data.is_active ? 'text-success' : 'text-danger',
                           'badge',
                         ]"
                       >
                         {{
-                          data.is_active == "active"
+                          data.is_active
                             ? `${$t("general.Active")}`
                             : `${$t("general.Inactive")}`
                         }}
@@ -1878,14 +1879,14 @@ export default {
                                           class="d-inline-block"
                                           v-model="$v.edit.is_active.$model"
                                           name="some-radios"
-                                          value="active"
+                                          value="1"
                                           >{{ $t("general.Active") }}</b-form-radio
                                         >
                                         <b-form-radio
                                           class="d-inline-block m-1"
                                           v-model="$v.edit.is_active.$model"
                                           name="some-radios"
-                                          value="inactive"
+                                          value="0"
                                           >{{ $t("general.Inactive") }}</b-form-radio
                                         >
                                       </b-form-group>

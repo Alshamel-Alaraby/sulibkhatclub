@@ -23,7 +23,7 @@ class Avenue extends Model
     ];
 
     protected $casts = [
-        'is_active' => '\App\Enums\IsActive',
+        // 'is_active' => '\App\Enums\IsActive',
     ];
 
     public function country()

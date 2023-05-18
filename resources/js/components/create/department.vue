@@ -2,7 +2,7 @@
   <div>
       <!--  create   -->
       <b-modal
-          id="department-create"
+          :id="id"
           :title="getCompanyKey('department_create_form')"
           title-class="font-18"
           body-class="p-4 "
@@ -155,6 +155,9 @@ export default {
     },
     mixins: [transMixinComp],
     props: {
+        id: {
+            default: "department-create",
+        },
         companyKeys: {
             default: [],
         },
@@ -226,7 +229,7 @@ export default {
             });
             this.is_disabled = false;
             this.errors = {};
-            this.$bvModal.hide(`department-create`);
+            this.$bvModal.hide(this.id);
         },
         /**
          *  hidden Modal (create)

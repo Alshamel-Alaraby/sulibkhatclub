@@ -185,6 +185,7 @@ export default {
             this.$bvModal.hide(`create-unit`);
             this.images = [];
             this.mime_type = '';
+            this.is_disabled = false;
             this.unit_id = null;
         },
         /**
@@ -223,6 +224,8 @@ export default {
             this.mime_type = '';
             this.images = [];
             this.errors = {};
+      this.create.unit_status_id = 1;
+        
         },
         /**
          *  create countrie
@@ -258,6 +261,8 @@ export default {
             this.media = {};
             this.images = [];
             this.mime_type = '';
+      this.create.unit_status_id = 1;
+        
         },
         AddSubmit() {
 
@@ -750,7 +755,7 @@ export default {
                                         {{ getCompanyKey('realEstate_unit_status') }}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <multiselect @input="showUnitStatusModal" v-model="$v.create.unit_status_id.$model"
+                                    <multiselect :disabled="true" @input="showUnitStatusModal" v-model="$v.create.unit_status_id.$model"
                                         :options="unit_status.map((type) => type.id)"
                                         :custom-label="(opt) => $i18n.locale == 'ar' ? unit_status.find((x) => x.id == opt).name : unit_status.find((x) => x.id == opt).name_e">
                                     </multiselect>

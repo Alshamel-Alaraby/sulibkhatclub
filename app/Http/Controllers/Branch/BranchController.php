@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Branch;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Branch\CreateBranchRequest;
-use App\Http\Requests\Branch\EditBranchRequest;
 use App\Http\Requests\BranchRequest;
 use App\Http\Resources\Branch\BranchResource;
 use App\Repositories\Branch\BranchRepositoryInterface;
@@ -22,18 +20,6 @@ class BranchController extends Controller
     public function index(Request $request)
     {
 
-        // if (count($_GET) > 0) {
-        //     cacheForget('branches');
-        // }
-        // $branches = cacheGet('branches');
-        // if ($request->search || $request->is_active) {
-        //     cacheForget('branches');
-        //     $branches = $this->repository->getAllBranches($request);
-        // }
-        // if (!$branches) {
-        //     $branches = $this->repository->getAllBranches($request);
-        //     cachePut('branches', $branches);
-        // }
         $branches = $this->repository->getAllBranches($request);
 
         return responseJson(200, 'success', ($this->resource)::collection($branches['data']), $branches['paginate'] ? getPaginates($branches['data']) : null);
@@ -101,9 +87,13 @@ class BranchController extends Controller
     public function destroy($id)
     {
         $model = $this->repository->find($id);
+
         if (!$model) {
             return responseJson(404, __('not found'));
         }
+
+
+
         if ($model->hasChildren()) {
             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
         }
@@ -125,6 +115,16 @@ class BranchController extends Controller
         if (count($arr) > 0) {
             return responseJson(400, __('some items has relation cant delete'));
         }
+        return responseJson(200, __('Done'));
+    }
+
+    public function processJsonData(Request $request)
+    {
+        $jsonData = $request->getContent();
+        $data = json_decode($jsonData, true);
+
+        $this->repository->processJsonData($data);
+
         return responseJson(200, __('Done'));
     }
 }

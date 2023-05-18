@@ -3,6 +3,7 @@
 namespace Modules\BoardsRent\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use App\Models\ItemBreakDown;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Panel;
@@ -11,9 +12,10 @@ use Modules\BoardsRent\Transformers\PanelResource;
 
 class PanelController extends Controller
 {
-    public function __construct(private Panel $model)
+    public function __construct(private Panel $model , ItemBreakDown $modeItem)
     {
         $this->model = $model;
+        $this->modeItem = $modeItem;
     }
 
     public function find($id)
@@ -54,7 +56,6 @@ class PanelController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
-
         $model->update($request->validated());
         $model->refresh();
 

@@ -71,6 +71,7 @@ class RlstInvoiceRepository implements RlstInvoiceInterface
     public function create($request)
     {
         return DB::transaction(function () use ($request) {
+
             $data = $request->validated();
             $serial = Serial::where([['branch_id',$request->branch_id],['document_id',$request->document_id]])->first();
             $data['serial_id'] = $serial ? $serial->id:null;
@@ -91,9 +92,13 @@ class RlstInvoiceRepository implements RlstInvoiceInterface
             }
 
             if ($request['break_downs'] !=  null){
-                foreach ($request['break_downs'] as $break_down ){
-                    $break_down =  $this->modelBreakDown->where('id',$break_down)->first();
-                    $break_down->update(['invoice_id'=>$model->id]);
+
+                foreach ($request['transactions'] as $break_down_data ){
+                    $break_down =  $this->modelBreakDown->where('id',$break_down_data['break_id'])->first();
+                    $break_down->update([
+                        'amount_status'=>$break_down_data['amount_status'],
+                        'invoice_id'=>$model->id,
+                    ]);
                 }
                 foreach ($request['transactions'] as $transaction):
                     $this->modelTransaction->create(array_merge($transaction,['invoice_id'=>$model->id]));
@@ -126,18 +131,17 @@ class RlstInvoiceRepository implements RlstInvoiceInterface
 
             if ($request['break_downs'] !=  null){
                 collect($this->modelBreakDown->where('invoice_id',$model->id)->get())->each(function ($item){
-                    $item->update(["invoice_id" => null]);
+                    $item->update(["invoice_id" => null,'amount_status'=>'Unpaid']);
                 });
-                foreach ($request['break_downs'] as $break_down ){
-                    $break_down =  $this->modelBreakDown->where('id',$break_down)->first();
-                    $break_down->update(['invoice_id'=>$model->id]);
+                foreach ($request['transactions'] as $break_down_data ){
+                    $break_down =  $this->modelBreakDown->where('id',$break_down_data['break_id'])->first();
+                    $break_down->update(['invoice_id'=>$model->id,'amount_status'=>$break_down_data['amount_status']]);
                 }
                 $this->modelTransaction->where('invoice_id',$model->id)->delete();
                 foreach ($request['transactions'] as $transaction):
                     $this->modelTransaction->create(array_merge($transaction,['invoice_id'=>$model->id]));
                 endforeach;
             }
-
 
             return $model;
         });

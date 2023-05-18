@@ -77,7 +77,8 @@ export default {
                 payment_method_id: null,
                 customer_id: null,
                 document_id:6,
-                module_type:"credit"
+                module_type:"credit",
+                amount_status:"Paid"
             },
             edit: {
                 branch_id: null,
@@ -87,7 +88,8 @@ export default {
                 customer_id: null,
                 serial_number: null,
                 document_id:6,
-                module_type:"credit"
+                module_type:"credit",
+                amount_status:"Paid"
             },
             setting: {
                 date: true,
@@ -417,13 +419,15 @@ export default {
                 payment_method_id: null,
                 customer_id: null,
                 document_id: 6,
-                module_type:"credit"
+                module_type:"credit",
+                amount_status:"Paid"
             };
             this.invoice_id = null;
 
             this.$nextTick(() => {
                 this.$v.$reset();
             });
+            this.is_disabled = false;
             this.errors = {};
         },
         /**
@@ -461,6 +465,7 @@ export default {
                         date:el.instalment_date,
                         amount:parseInt(el.amount),
                         module_type:el.break_type,
+                        amount_status:el.amount_status
                     })
                 });
                 this.create.break_downs = ids ;
@@ -520,6 +525,7 @@ export default {
                         date:el.instalment_date,
                         amount:parseInt(el.amount),
                         module_type:el.break_type,
+                        amount_status:el.amount_status,
                     })
                 });
                 this.edit.break_downs = ids ;
@@ -643,7 +649,8 @@ export default {
                             amount:parseInt(e.total),
                             instalment_date:e.instalment_date,
                             serial_number: e.break_type == 'invoice' ? e.invoice? e.invoice.salesman?e.invoice.salesman.name:'---':'---':e.break_type == 'contract' ?e.contract? e.contract.salesman?e.contract.salesman.name:'---':'---':'---',
-                            salesman: e.break_type == 'invoice'? e.invoice?e.invoice.prefix:'---' : e.break_type == 'contract'?e.contract?e.contract.prefix:'---':'---'
+                            salesman: e.break_type == 'invoice'? e.invoice?e.invoice.prefix:'---' : e.break_type == 'contract'?e.contract?e.contract.prefix:'---':'---',
+                            amount_status:e.amount_status
                         });
                     });
                     this.accountTotalAmount();
@@ -670,7 +677,8 @@ export default {
                             amount:parseInt(e.amount),
                             instalment_date:e.break_down.instalment_date,
                             serial_number: e.break_down.break_type == 'invoice' ? e.break_down.invoice? e.break_down.invoice.salesman?e.break_down.invoice.salesman.name:'---':'---':e.break_down.break_type == 'contract' ?e.break_down.contract? e.break_down.contract.salesman?e.break_down.contract.salesman.name:'---':'---':e.break_down.break_type == 'reservation' ?e.break_down.reservation? e.break_down.reservation.salesman?e.break_down.reservation.salesman.name:'---':'---':'---',
-                            salesman: e.break_down.break_type == 'invoice'? e.break_down.invoice? e.break_down.invoice.prefix:'---' : e.break_down.break_type == 'contract'?e.break_down.contract?e.break_down.contract.prefix:'---': e.break_down.break_type == 'reservation'?e.break_down.reservation?e.break_down.reservation.prefix:'---':'---'
+                            salesman: e.break_down.break_type == 'invoice'? e.break_down.invoice? e.break_down.invoice.prefix:'---' : e.break_down.break_type == 'contract'?e.break_down.contract?e.break_down.contract.prefix:'---': e.break_down.break_type == 'reservation'?e.break_down.reservation?e.break_down.reservation.prefix:'---':'---',
+                            amount_status:e.break_down.amount_status
                         });
                     });
                     this.accountTotalAmount();
@@ -735,7 +743,8 @@ export default {
                 document_id: 6,
                 customer_id: null,
                 serial_number: null,
-                module_type:"credit"
+                module_type:"credit",
+                amount_status:"Paid"
             };
             this.invoice_id = null;
         },
@@ -804,6 +813,7 @@ export default {
                 endAmount = parseInt(this.remainingAmount) - parseInt(this.customerBreak[index].amount);
                 if (endAmount >= 0){
                     orderTransfer = this.customerBreak.splice(index,1);
+                    orderTransfer[0].amount_status = "Paid";
                     this.breakTransactions.push(orderTransfer[0]);
                 }else {
                     this.breakTransactions.push({
@@ -813,6 +823,7 @@ export default {
                         serial_number:this.customerBreak[index].serial_number,
                         salesman:this.customerBreak[index].salesman,
                         amount:parseInt(this.remainingAmount),
+                        amount_status:"Paid_Partially",
                     });
                     this.customerBreak[index].amount = parseInt(this.customerBreak[index].amount) - parseInt(this.remainingAmount);
                 }

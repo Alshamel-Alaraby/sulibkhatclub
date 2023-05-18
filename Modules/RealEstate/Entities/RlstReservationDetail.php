@@ -42,6 +42,11 @@ class RlstReservationDetail extends Model implements HasMedia
         return $this->belongsTo(\Modules\RecievablePayable\Entities\RpInstallmentPaymentPlan::class);
     }
 
+    public function reservation()
+    {
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstReservation::class, 'reservation_id', 'id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

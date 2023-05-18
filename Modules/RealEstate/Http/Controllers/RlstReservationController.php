@@ -7,6 +7,7 @@ use App\Models\Serial;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\RealEstate\Entities\RlstReservation;
+use Modules\RealEstate\Entities\RlstUnit;
 use Modules\RealEstate\Http\Requests\RlstReservationRequest;
 use Modules\RealEstate\Transformers\RlstReservationResource;
 use Modules\RecievablePayable\Entities\RpBreakDown;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class RlstReservationController extends Controller
 {
 
-    public function __construct(private RlstReservation $model, private Media $media ,private RpBreakDown $modelBreakDown)
+    public function __construct(private RlstReservation $model, private Media $media, private RpBreakDown $modelBreakDown)
     {
         $this->model = $model;
         $this->modelBreakDown = $modelBreakDown;
@@ -50,11 +51,12 @@ class RlstReservationController extends Controller
     {
         $model = DB::transaction(function () use ($request) {
             $data = $request->validated();
-            $serial = Serial::where([['branch_id',$request->branch_id],['document_id',$request->document_id]])->first();
-            $data['serial_id'] = $serial ? $serial->id:null;
+            $serial = Serial::where([['branch_id', $request->branch_id], ['document_id', $request->document_id]])->first();
+            $data['serial_id'] = $serial ? $serial->id : null;
             $model = $this->model->create($data);
             foreach ($request->details as $detail) {
                 $model->details()->create($detail);
+                RlstUnit::find($detail['unit_id'])->update(['unit_status_id' => 2]);
             }
             if ($request->media) {
                 foreach ($request->media as $media) {
@@ -155,8 +157,8 @@ class RlstReservationController extends Controller
 //            return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
 //
 //        }
-        if ($model->breakDowns){
-            $this->modelBreakDown->where([['break_id',$model->id],['break_type','reservation']])->delete();
+        if ($model->breakDowns) {
+            $this->modelBreakDown->where([['break_id', $model->id], ['break_type', 'reservation']])->delete();
         }
         $model->delete();
         return responseJson(200, 'deleted');

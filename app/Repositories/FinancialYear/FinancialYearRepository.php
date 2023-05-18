@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\DB;
 class FinancialYearRepository implements FinancialYearInterface
 {
 
-    public function __construct(private \App\Models\FinancialYear$model, private UserSettingScreen $setting)
+    public function __construct(private \App\Models\FinancialYear $model, private UserSettingScreen $setting)
     {
         $this->model = $model;
-
     }
 
     public function all($request)
@@ -43,9 +42,7 @@ class FinancialYearRepository implements FinancialYearInterface
         DB::transaction(function () use ($id, $request) {
             $this->model->where("id", $id)->update($request->all());
             $this->forget($id);
-
         });
-
     }
 
     public function delete($id)
@@ -70,7 +67,6 @@ class FinancialYearRepository implements FinancialYearInterface
 
                 $model->update($request->all());
             }
-
         });
     }
 
@@ -94,7 +90,5 @@ class FinancialYearRepository implements FinancialYearInterface
         foreach ($keys as $key) {
             cacheForget($key);
         }
-
     }
-
 }

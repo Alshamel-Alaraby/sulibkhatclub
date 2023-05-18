@@ -241,6 +241,7 @@ export default {
             this.isDrop = false;
             this.images = [];
             this.dropDownSenders = [];
+            this.is_disabled = false;
             this.$bvModal.hide(`item-create`);
             this.item_id = null;
         },

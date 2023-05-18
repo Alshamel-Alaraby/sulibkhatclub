@@ -17,7 +17,7 @@ class Serial extends Model
         'start_no',
         'perfix',
         'suffix',
-        'restart_period',
+        'restart_period_id',
         'company_id',
         'document_id',
         'is_default',
@@ -25,11 +25,18 @@ class Serial extends Model
         "name",
         "name_e"
     ];
-    protected $casts = [
-        'is_default' => 'App\Enums\IsDefault',
-    ];
+    // protected $casts = [
+    //     'is_default' => 'App\Enums\IsDefault',
+    // ];
+
+    // public function getIsDefault()
+    // {
+    //     return $this->is_default == 1 ? 'Default' : 'Non Default';
+    // }
+
+
+
     protected $appends = [
-        'serial_number',
         'has_child',
     ];
 
@@ -63,6 +70,12 @@ class Serial extends Model
             return 1;
         }
         return  0;
+    }
+
+
+    public function restartPeriod()
+    {
+        return $this->belongsTo(RestartPeriod::class);
     }
 
 

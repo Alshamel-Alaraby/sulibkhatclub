@@ -212,6 +212,9 @@ export default {
         loader,
     },
     props: {
+        module_type: {
+            default: "general",
+        },
         companyKeys:{
             default:[]
         },
@@ -336,6 +339,7 @@ export default {
             if (!this.create.name_e) {
                 this.create.name_e = this.create.name;
             }
+            this.create.module_type = this.module_type;
             this.$v.create.$touch();
 
             if (this.$v.create.$invalid) {

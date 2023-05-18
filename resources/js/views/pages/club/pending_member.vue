@@ -191,7 +191,7 @@ export default {
               text: `${this.$t("general.Thereisanerrorinthesystem")}`,
             });
           });
-      } else {      
+      } else {
       }
     },
     /**
@@ -397,6 +397,7 @@ export default {
       this.$nextTick(() => {
         this.$v.$reset();
       });
+        this.is_disabled = false;
       this.errors = {};
       this.$bvModal.hide(`create`);
     },
@@ -1246,7 +1247,7 @@ export default {
                                   :class="{
                                     'is-invalid':
                                       $v.edit.is_active.$error || errors.is_active,
-                                    'is-valid':     
+                                    'is-valid':
                                       !$v.edit.is_active.$invalid && !errors.is_active,
                                   }"
                                 >

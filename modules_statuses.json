@@ -9,5 +9,6 @@
     "Custodyd": true,
     "Stock": true,
     "BoardsRent": true,
-    "ClubMembers": true
+    "ClubMembers": true,
+    "HR": true
 }

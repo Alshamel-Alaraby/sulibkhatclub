@@ -11,20 +11,11 @@ class Governorate extends Model
 {
     use HasFactory, LogTrait;
     protected $table = 'general_governorates';
-
-    protected $fillable = [
-        'name',
-        'name_e',
-        'country_id',
-        'is_active',
-        'is_default',
-        "phone_key",
-        "company_id",
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
-        'is_active' => '\App\Enums\IsActive',
-        'is_default' => '\App\Enums\IsDefault',
+        // 'is_active' => '\App\Enums\IsActive',
+        // 'is_default' => '\App\Enums\IsDefault',
     ];
 
     public function country()

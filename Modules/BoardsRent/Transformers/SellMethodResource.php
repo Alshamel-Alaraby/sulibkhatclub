@@ -18,6 +18,8 @@ class SellMethodResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
+            'commission_ratio' => $this->commission_ratio,
+            'target_calculation_ratio' => $this->target_calculation_ratio,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

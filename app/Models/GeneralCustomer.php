@@ -11,6 +11,7 @@ use Spatie\MediaLibrary\HasMedia;
 
 class GeneralCustomer extends Model implements HasMedia
 {
+
     use HasFactory, MediaTrait, LogTrait;
     protected $table = 'general_customers';
 
@@ -34,6 +35,10 @@ class GeneralCustomer extends Model implements HasMedia
     public function bankAccount()
     {
         return $this->belongsTo(BankAccount::class);
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
     }
 
 

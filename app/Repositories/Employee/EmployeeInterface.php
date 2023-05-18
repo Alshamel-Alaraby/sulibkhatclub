@@ -17,4 +17,7 @@ interface EmployeeInterface
 
     public function delete($id);
 
+    public function processJsonData(array $data);
+
+
 }

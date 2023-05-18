@@ -56,18 +56,25 @@ export default {
             document_id: null,
             branches: [],
             serials: [],
+            employees: [],
             create_linked_with_docs: [],
             edit_linked_with_docs: [],
+            create_approve_employee: [],
+            edit_approve_employee: [],
             docsList: [],
             create: {
                 name: "",
                 name_e: "",
-                is_default: 0,
+                document_detail_type: "normal",
+                required: 0,
+                need_approve: 0,
             },
             edit: {
                 name: "",
                 name_e: "",
-                is_default: 0,
+                document_detail_type: "normal",
+                required: 0,
+                need_approve: 0,
             },
             create_effects: {
                 cash: 0,
@@ -106,9 +113,11 @@ export default {
             setting: {
                 name: true,
                 name_e: true,
-                is_default: true,
+                document_detail_type: true,
+                required: true,
+                need_approve: true,
             },
-            filterSetting: ["name", "name_e"],
+            filterSetting: ["name", "name_e","document_detail_type"],
             Tooltip: "",
             mouseEnter: null,
             printLoading: true,
@@ -129,9 +138,19 @@ export default {
                     return this.isRequired("name_e");
                 }), minLength: minLength(3), maxLength: maxLength(100)
             },
-            is_default: {
+            required: {
                 required: requiredIf(function (model) {
-                    return this.isRequired("is_default");
+                    return this.isRequired("required");
+                })
+            },
+            document_detail_type: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("document_detail_type");
+                })
+            },
+            need_approve: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("need_approve");
                 })
             },
         },
@@ -146,9 +165,19 @@ export default {
                     return this.isRequired("name_e");
                 }), minLength: minLength(3), maxLength: maxLength(100)
             },
-            is_default: {
+            document_detail_type: {
                 required: requiredIf(function (model) {
-                    return this.isRequired("is_default");
+                    return this.isRequired("document_detail_type");
+                })
+            },
+            required: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("required");
+                })
+            },
+            need_approve: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("need_approve");
                 })
             },
         },
@@ -225,6 +254,29 @@ export default {
             adminApi
                 .put(`/document/${this.document_id}`, {
                     document_relateds: linked_with_docs,
+                })
+                .then((res) => {
+                    this.isLoader = false;
+                    this.getData();
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.Addedsuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+
+                }).catch((err) => {
+                })
+        },
+        addApproveEmployee($action) {
+            this.isLoader = true;
+            let linked_with_docs = $action == "create" ? this.create_approve_employee : this.edit_approve_employee;
+            let data = $action == "create" ? this.create : this.edit;
+            adminApi
+                .put(`/document/${this.document_id}`, {
+                    employees: linked_with_docs,
                 })
                 .then((res) => {
                     this.isLoader = false;
@@ -588,7 +640,7 @@ export default {
          *  reset Modal (create)
          */
         resetModalHidden() {
-            this.create = { name: "", name_e: "", is_default: 0 };
+            this.create = { name: "", name_e: "", document_detail_type: "normal", required: 0, need_approve: 0 };
             this.create_linked_with_docs = [];
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -608,13 +660,14 @@ export default {
                 serial_id: null,
             };
             this.document_id = null;
+            this.is_disabled = false;
             this.$bvModal.hide(`create`);
         },
         /**
          *  hidden Modal (create)
          */
         resetModal() {
-            this.create = { name: "", name_e: "", is_default: 0 };
+            this.create = { name: "", name_e: "", document_detail_type: "normal", required: 0, need_approve: 0 };
             this.create_linked_with_docs = [];
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -642,7 +695,7 @@ export default {
          *  create module
          */
         resetForm() {
-            this.create = { name: "", name_e: "", is_default: 0 };
+            this.create = { name: "", name_e: "", document_detail_type: "normal", required: 0, need_approve: 0 };
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -726,9 +779,9 @@ export default {
             } else {
                 this.isLoader = true;
                 this.errors = {};
-                let { name, name_e, is_default } = this.edit;
+                let { name, name_e, required, need_approve, document_detail_type } = this.edit;
                 adminApi
-                    .put(`/document/${id}`, { name, name_e, is_default })
+                    .put(`/document/${id}`, { name, name_e,required, need_approve, document_detail_type })
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -763,12 +816,15 @@ export default {
          */
         async resetModalEdit(id) {
             await this.docType();
+            await this.getEmployees();
             let module = this.documents.find((e) => id == e.id);
 
             this.$bvModal.show(`modal-edit-${id}`)
             this.edit.name = module.name;
             this.edit.name_e = module.name_e;
-            this.edit.is_default = module.is_default;
+            this.edit.required = module.required;
+            this.edit.need_approve = module.need_approve;
+            this.edit.document_detail_type = module.document_detail_type;
             if (module.attributes) {
                 this.edit_effects.cash = module.attributes.cash;
                 this.edit_effects.customer = module.attributes.customer;
@@ -783,7 +839,8 @@ export default {
             this.document_id = module.id;
             this.branchFormEdit.branche_id = module.branche_id;
             this.branchFormEdit.serial_id = module.serial_id;
-            this.edit_linked_with_docs = module.document_Relateds.map(doc => { return doc.id });
+            this.edit_linked_with_docs = module.document_relateds.map(doc => { return doc.id });
+            this.edit_approve_employee = module.employees.map(doc => { return doc.id });
             this.errors = {};
         },
         /**
@@ -791,11 +848,14 @@ export default {
          */
         resetModalHiddenEdit(id) {
             this.edit_linked_with_docs = [];
+            this.edit_approve_employee = [];
             this.errors = {};
             this.edit = {
                 name: "",
                 name_e: "",
-                is_default: 0,
+                document_detail_type: "normal",
+                required: 0,
+                need_approve: 0,
             };
             this.edit_effects = {
                 cash: 0,
@@ -884,7 +944,22 @@ export default {
         englishValueName(txt) {
             this.create.name_e = englishValue(txt);
             this.edit.name_e = englishValue(txt);
-        }
+        },
+        async getEmployees() {
+            await adminApi
+                .get(`/employees`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.employees = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
     },
 };
 </script>
@@ -986,9 +1061,17 @@ export default {
                                                 class="mb-1">
                                                 {{ getCompanyKey("document_name_en") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('is_default')" v-model="setting.is_default"
+                                            <b-form-checkbox v-if="isVisible('required')" v-model="setting.required"
                                                 class="mb-1">
-                                                {{ getCompanyKey("document_status") }}
+                                                {{ getCompanyKey("document_required") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('need_approve')" v-model="setting.need_approve"
+                                                class="mb-1">
+                                                {{ getCompanyKey("document_need_approve") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('document_detail_type')" v-model="setting.document_detail_type"
+                                                class="mb-1">
+                                                {{ getCompanyKey("document_detail_type") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
@@ -1120,25 +1203,49 @@ export default {
                                                     </template>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12" v-if="isVisible('is_default')">
+                                            <div class="col-md-6" v-if="isVisible('required')">
                                                 <div class="form-group">
                                                     <label class="mr-2">
-                                                        {{ getCompanyKey("document_status") }}
-                                                        <span v-if="isRequired('is_default')" class="text-danger">*</span>
+                                                        {{ getCompanyKey("document_required") }}
+                                                        <span v-if="isRequired('required')" class="text-danger">*</span>
                                                     </label>
                                                     <b-form-group :class="{
-                                                        'is-invalid': $v.create.is_default.$error || errors.is_default,
-                                                        'is-valid': !$v.create.is_default.$invalid && !errors.is_default,
+                                                        'is-invalid': $v.create.required.$error || errors.required,
+                                                        'is-valid': !$v.create.required.$invalid && !errors.required,
                                                     }">
                                                         <b-form-radio class="d-inline-block"
-                                                            v-model="$v.create.is_default.$model" name="some-radios"
+                                                            v-model="$v.create.required.$model" name="some-radios"
                                                             value="1">{{ $t("general.Yes") }}</b-form-radio>
                                                         <b-form-radio class="d-inline-block m-1"
-                                                            v-model="$v.create.is_default.$model" name="some-radios"
+                                                            v-model="$v.create.required.$model" name="some-radios"
                                                             value="0">{{ $t("general.No") }}</b-form-radio>
                                                     </b-form-group>
-                                                    <template v-if="errors.is_default">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.is_default"
+                                                    <template v-if="errors.required">
+                                                        <ErrorMessage v-for="(errorMessage, index) in errors.required"
+                                                            :key="index">{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6" v-if="isVisible('need_approve')">
+                                                <div class="form-group">
+                                                    <label class="mr-2">
+                                                        {{ getCompanyKey("document_need_approve") }}
+                                                        <span v-if="isRequired('need_approve')" class="text-danger">*</span>
+                                                    </label>
+                                                    <b-form-group :class="{
+                                                        'is-invalid': $v.create.need_approve.$error || errors.need_approve,
+                                                        'is-valid': !$v.create.need_approve.$invalid && !errors.need_approve,
+                                                    }">
+                                                        <b-form-radio class="d-inline-block"
+                                                            v-model="$v.create.need_approve.$model" name="some-radios"
+                                                            value="1">{{ $t("general.Yes") }}</b-form-radio>
+                                                        <b-form-radio class="d-inline-block m-1"
+                                                            v-model="$v.create.need_approve.$model" name="some-radios"
+                                                            value="0">{{ $t("general.No") }}</b-form-radio>
+                                                    </b-form-group>
+                                                    <template v-if="errors.need_approve">
+                                                        <ErrorMessage v-for="(errorMessage, index) in errors.need_approve"
                                                             :key="index">{{ errorMessage }}
                                                         </ErrorMessage>
                                                     </template>
@@ -1258,7 +1365,7 @@ export default {
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :disabled="!document_id" :title="$t('general.branch')">
+                                    <!-- <b-tab :disabled="!document_id" :title="$t('general.branch')">
                                         <div class="d-flex justify-content-end">
                                             <b-button variant="success" v-if="!isLoader" type="submit" class="mx-1"
                                                 @click.prevent="addBranchForm('create')">
@@ -1308,7 +1415,7 @@ export default {
                                                 </div>
                                             </div>
                                         </div>
-                                    </b-tab>
+                                    </b-tab> -->
                                     <b-tab :disabled="!document_id" :title="$t('general.linkedWithDocs')">
                                         <div class="d-flex justify-content-end">
                                             <b-button variant="success" v-if="!isLoader" type="submit" class="mx-1"
@@ -1389,14 +1496,36 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.is_default && isVisible('is_default')">
+                                        <th v-if="setting.required && isVisible('required')">
                                             <div class="d-flex justify-content-center">
-                                                <span>{{ getCompanyKey("document_status") }}</span>
+                                                <span>{{ getCompanyKey("document_required") }}</span>
                                                 <div class="arrow-sort">
                                                     <i class="fas fa-arrow-up"
                                                         @click="documents.sort(sortString('name_e'))"></i>
                                                     <i class="fas fa-arrow-down"
                                                         @click="documents.sort(sortString('-name_e'))"></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.need_approve && isVisible('need_approve')">
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("document_need_approve") }}</span>
+                                                <div class="arrow-sort">
+                                                    <i class="fas fa-arrow-up"
+                                                        @click="documents.sort(sortString('name_e'))"></i>
+                                                    <i class="fas fa-arrow-down"
+                                                        @click="documents.sort(sortString('-name_e'))"></i>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th v-if="setting.document_detail_type && isVisible('document_detail_type')">
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("document_detail_type") }}</span>
+                                                <div class="arrow-sort">
+                                                    <i class="fas fa-arrow-up"
+                                                        @click="documents.sort(sortString('document_detail_type'))"></i>
+                                                    <i class="fas fa-arrow-down"
+                                                        @click="documents.sort(sortString('-document_detail_type'))"></i>
                                                 </div>
                                             </div>
                                         </th>
@@ -1421,17 +1550,18 @@ export default {
                                         <td v-if="setting.name_e && isVisible('name_e')">
                                             <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                                         </td>
-                                        <td v-if="setting.is_default && isVisible('is_default')">
-                                            <span :class="[
-                                                data.is_default == 'active' ? 'text-success' : 'text-danger',
-                                                'badge',
-                                            ]">
-                                                {{
-                                                    data.is_default == "active"
-                                                    ? `${$t("general.Active")}`
-                                                    : `${$t("general.Inactive")}`
-                                                }}
+                                        <td v-if="setting.required && isVisible('required')">
+                                            <span :class="[ parseInt(data.required) == 1 ? 'text-success' : 'text-danger','badge',]">
+                                                {{ parseInt(data.required) == "active" ? `${$t("general.Active")}` : `${$t("general.Inactive")}`}}
                                             </span>
+                                        </td>
+                                        <td v-if="setting.need_approve && isVisible('need_approve')">
+                                            <span :class="[ parseInt(data.need_approve)  == 1 ? 'text-success' : 'text-danger','badge',]">
+                                                {{ parseInt(data.need_approve) == "active" ? `${$t("general.Active")}` : `${$t("general.Inactive")}`}}
+                                            </span>
+                                        </td>
+                                        <td v-if="setting.document_detail_type && isVisible('document_detail_type')">
+                                            <h5 class="m-0 font-weight-normal">{{$t('general.'+data.document_detail_type)  }}</h5>
                                         </td>
                                         <td v-if="enabled3" class="do-not-print">
                                             <div class="btn-group">
@@ -1449,13 +1579,13 @@ export default {
                                                         </div>
                                                     </a>
                                                     <!-- <a class="dropdown-item text-black" href="#"
-                                                                                                    @click.prevent="deleteModule(data.id)">
-                                                                                                    <div
-                                                                                                        class="d-flex justify-content-between align-items-center text-black">
-                                                                                                        <span>{{ $t("general.delete") }}</span>
-                                                                                                        <i class="fas fa-times text-danger"></i>
-                                                                                                    </div>
-                                                                                                </a> -->
+                                                        @click.prevent="deleteModule(data.id)">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center text-black">
+                                                            <span>{{ $t("general.delete") }}</span>
+                                                            <i class="fas fa-times text-danger"></i>
+                                                        </div>
+                                                    </a> -->
                                                 </div>
                                             </div>
 
@@ -1465,8 +1595,7 @@ export default {
                                                 body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
                                                 @hidden="resetModalHiddenEdit(data.id)" size="lg">
                                                 <form>
-                                                    <div v-if="$store.state.auth.user.type == 'super_admin'"
-                                                        class="mb-3 d-flex justify-content-end">
+                                                    <div class="mb-3 d-flex justify-content-end">
                                                         <!-- Emulate built in modal footer ok and cancel button actions -->
                                                         <b-button variant="success" type="submit" class="mx-1"
                                                             v-if="!isLoader" @click.prevent="editSubmit(data.id)">
@@ -1495,6 +1624,7 @@ export default {
                                                                         </label>
                                                                         <div dir="rtl">
                                                                             <input type="text"
+                                                                                   :disabled="true"
                                                                                 class="form-control arabicInput"
                                                                                 v-model="$v.edit.name.$model"
                                                                                 @keyup="arabicValueName(edit.name)" :class="{
@@ -1531,6 +1661,7 @@ export default {
                                                                         </label>
                                                                         <div dir="ltr">
                                                                             <input type="text"
+                                                                                   :disabled="true"
                                                                                 @keyup="englishValueName(edit.name_e)"
                                                                                 class="form-control englishInput"
                                                                                 v-model="$v.edit.name_e.$model" :class="{
@@ -1564,33 +1695,89 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-12" v-if="isVisible('is_default')">
+                                                                <div class="col-md-6" v-if="isVisible('required')">
                                                                     <div class="form-group">
                                                                         <label class="mr-2">
-                                                                            {{ getCompanyKey("document_status") }}
-                                                                            <span v-if="isRequired('is_default')"
+                                                                            {{ getCompanyKey("document_required") }}
+                                                                            <span v-if="isRequired('required')"
                                                                                 class="text-danger">*</span>
                                                                         </label>
                                                                         <b-form-group :class="{
                                                                             'is-invalid':
-                                                                                $v.edit.is_default.$error || errors.is_default,
+                                                                                $v.edit.required.$error || errors.required,
                                                                             'is-valid':
-                                                                                !$v.edit.is_default.$invalid && !errors.is_default,
+                                                                                !$v.edit.required.$invalid && !errors.required,
                                                                         }">
                                                                             <b-form-radio class="d-inline-block"
-                                                                                v-model="$v.edit.is_default.$model"
+                                                                                v-model="$v.edit.required.$model"
                                                                                 name="some-radios" value="1">{{
                                                                                     $t("general.Yes")
                                                                                 }}</b-form-radio>
                                                                             <b-form-radio class="d-inline-block m-1"
-                                                                                v-model="$v.edit.is_default.$model"
+                                                                                v-model="$v.edit.required.$model"
                                                                                 name="some-radios" value="0">{{
                                                                                     $t("general.No")
                                                                                 }}</b-form-radio>
                                                                         </b-form-group>
-                                                                        <template v-if="errors.is_default">
+                                                                        <template v-if="errors.required">
                                                                             <ErrorMessage
-                                                                                v-for="(errorMessage, index) in errors.is_default"
+                                                                                v-for="(errorMessage, index) in errors.required"
+                                                                                :key="index">{{ errorMessage }}
+                                                                            </ErrorMessage>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6" v-if="isVisible('need_approve')">
+                                                                    <div class="form-group">
+                                                                        <label class="mr-2">
+                                                                            {{ getCompanyKey("document_need_approve") }}
+                                                                            <span v-if="isRequired('need_approve')"
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <b-form-group :class="{
+                                                                            'is-invalid':
+                                                                                $v.edit.need_approve.$error || errors.need_approve,
+                                                                            'is-valid':
+                                                                                !$v.edit.need_approve.$invalid && !errors.need_approve,
+                                                                        }">
+                                                                            <b-form-radio class="d-inline-block"
+                                                                                v-model="$v.edit.need_approve.$model"
+                                                                                name="need_approve" value="1">{{
+                                                                                    $t("general.Yes")
+                                                                                }}</b-form-radio>
+                                                                            <b-form-radio class="d-inline-block m-1"
+                                                                                v-model="$v.edit.need_approve.$model"
+                                                                                name="need_approve" value="0">{{
+                                                                                    $t("general.No")
+                                                                                }}</b-form-radio>
+                                                                        </b-form-group>
+                                                                        <template v-if="errors.need_approve">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.need_approve"
+                                                                                :key="index">{{ errorMessage }}
+                                                                            </ErrorMessage>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6" v-if="isVisible('document_detail_type')">
+                                                                    <div class="form-group">
+                                                                        <label class="mr-2">
+                                                                            {{ getCompanyKey("document_detail_type") }}
+                                                                            <span v-if="isRequired('document_detail_type')"
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <select
+                                                                            class="custom-select"
+                                                                            v-model="edit.document_detail_type"
+                                                                        >
+                                                                            <option value="normal">{{ $t('general.normal') }}</option>
+                                                                            <option value="rent_unit">{{ $t('general.rent_unit') }}</option>
+                                                                            <option value="sell_unit">{{ $t('general.sell_unit') }}</option>
+                                                                            <option value="board_rent">{{ $t('general.board_rent') }}</option>
+                                                                        </select>
+                                                                        <template v-if="errors.document_detail_type">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.document_detail_type"
                                                                                 :key="index">{{ errorMessage }}
                                                                             </ErrorMessage>
                                                                         </template>
@@ -1687,12 +1874,11 @@ export default {
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <label for="inlineFormCustomSelectPref">
+                                                                        <label>
                                                                             {{ $t("general.reserved_quantity") }}
                                                                             <span class="text-danger">*</span>
                                                                         </label>
                                                                         <select class="custom-select"
-                                                                            id="inlineFormCustomSelectPref"
                                                                             v-model="edit_effects.reserved_quantity">
                                                                             <option value="0" selected>{{
                                                                                 $t("general.noeffect") }}...</option>
@@ -1705,12 +1891,11 @@ export default {
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <label for="inlineFormCustomSelectPref">
+                                                                        <label>
                                                                             {{ $t("general.ordered_quantity") }}
                                                                             <span class="text-danger">*</span>
                                                                         </label>
                                                                         <select class="custom-select"
-                                                                            id="inlineFormCustomSelectPref"
                                                                             v-model="edit_effects.ordered_quantity">
                                                                             <option value="0" selected>{{
                                                                                 $t("general.noeffect") }}...</option>
@@ -1723,12 +1908,11 @@ export default {
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <label for="inlineFormCustomSelectPref">
+                                                                        <label>
                                                                             {{ $t("general.available") }}
                                                                             <span class="text-danger">*</span>
                                                                         </label>
                                                                         <select class="custom-select"
-                                                                            id="inlineFormCustomSelectPref"
                                                                             v-model="edit_effects.available">
                                                                             <option value="0" selected>{{
                                                                                 $t("general.noeffect") }}...</option>
@@ -1741,7 +1925,7 @@ export default {
                                                                 </div>
                                                             </div>
                                                         </b-tab>
-                                                        <b-tab :title="$t('general.branch')">
+                                                        <!-- <b-tab :title="$t('general.branch')">
                                                             <div class="d-flex justify-content-end">
                                                                 <b-button variant="success" v-if="!isLoader" type="submit"
                                                                     class="mx-1" @click.prevent="addBranchForm('update')">
@@ -1796,7 +1980,7 @@ export default {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </b-tab>
+                                                        </b-tab> -->
                                                         <b-tab :title="$t('general.linkedWithDocs')">
                                                             <div class="d-flex justify-content-end">
                                                                 <b-button variant="success" v-if="!isLoader" type="submit"
@@ -1829,6 +2013,45 @@ export default {
                                                                         <template v-if="errors.document_types">
                                                                             <ErrorMessage
                                                                                 v-for="(errorMessage, index) in errors.document_types"
+                                                                                :key="index">{{
+                                                                                    errorMessage
+                                                                                }}</ErrorMessage>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </b-tab>
+                                                        <b-tab :title="$t('general.ApproveEmployee')">
+                                                            <div class="d-flex justify-content-end">
+                                                                <b-button variant="success" v-if="!isLoader" type="submit"
+                                                                          class="mx-1" @click.prevent="addApproveEmployee('edit')">
+                                                                    {{ $t("general.Add") }}
+                                                                </b-button>
+                                                                <b-button variant="success" class="mx-1" disabled v-else>
+                                                                    <b-spinner small></b-spinner>
+                                                                    <span class="sr-only">{{ $t("login.Loading")}}...</span>
+                                                                </b-button>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label">
+                                                                            {{ $t("general.employees") }}
+                                                                            <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <multiselect :multiple="true"
+                                                                            v-model="edit_approve_employee"
+                                                                            :options="employees.map((type) => type.id)"
+                                                                            :custom-label="
+                                                                                (opt) =>
+                                                                                    $i18n.locale == 'ar'
+                                                                                        ? employees.find((x) => x.id == opt).name
+                                                                                        : employees.find((x) => x.id == opt).name_e
+                                                                            ">
+                                                                        </multiselect>
+                                                                        <template v-if="errors.employees">
+                                                                            <ErrorMessage
+                                                                                v-for="(errorMessage, index) in errors.employees"
                                                                                 :key="index">{{
                                                                                     errorMessage
                                                                                 }}</ErrorMessage>

@@ -82,4 +82,20 @@ export default [
         },
         component: () => import('../../views/pages/boardRent/lookUps'),
     },
+    {
+        path: '/dashboard/boardRent/tasks-calender',
+        name: 'boardRent tasks calender',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/calender'),
+    },
+    {
+        path: '/dashboard/boardRent/board-Rent-quotation',
+        name: 'board-Rent-quotation',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/quotationBoardRent'),
+    },
 ];

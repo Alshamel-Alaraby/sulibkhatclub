@@ -15,7 +15,7 @@ class OrderTask extends Model
     protected $fillable = [
         'order_id', 'task_id', 'note', 'customer_id', 'user_id', 'department_id',
         'start_date', 'end_date', 'must_completed',
-        'note',
+        'note','duration'
     ];
 
     protected $casts = [

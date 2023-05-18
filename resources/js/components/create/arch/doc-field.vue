@@ -425,6 +425,7 @@ export default {
         tree_property_id: null,
         field_characters:null
       };
+        this.is_disabled = false;
       this.$nextTick(() => {
         this.$v.$reset();
       });

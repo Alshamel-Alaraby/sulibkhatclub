@@ -18,48 +18,44 @@ class CmMembersTypesDatabaseSeederTableSeeder extends Seeder
         DB::table('cm_members_types')->delete();
 
         $attributes = [
-            [
-                'id' => 1,
-                'name' => 'عضو عادي',
-                'name_e' => 'ٌRegular Member',
+               
+                [
+                    'id' => 1,
+                    'name' => 'عضو عادي',
+                    'name_e' => 'ٌRegular Member',
+                    'parent_id' => 1,
+                    
+                ],
                 
-            ],
-            [
-                'id' => 2,
-                'name' => 'عضو تابع',
-                'name_e' => 'Subordinate Member',
-                
-            ],
-            [
-                'id' => 3,
-                'name' => 'عضو عامل',
-                'name_e' => 'Active Member',
-                
-            ],
-            [
-                'id' => 4,
-                'name' => 'عضو مؤسس',
-                'name_e' => 'Founding Member',
-                
-            ],
-            [
-                'id' => 5,
-                'name' => 'عضو شرفي',
-                'name_e' => 'Honorary Member',
-                
-            ],
-            [
-                'id' => 6,
-                'name' => 'عضو مشطوب',
-                'name_e' => 'Canceled member',
-                
-            ],
-            [
-                'id' => 7,
-                'name' => 'عضو موقوف',
-                'name_e' => 'suspended member',
-                
-            ],
+                [
+                    'id' => 2,
+                    'name' => 'عضو مؤسس',
+                    'name_e' => 'Founding Member',
+                    'parent_id' => 1,
+                    
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'عضو شرفي',
+                    'name_e' => 'Honorary Member',
+                    'parent_id' => 1,
+                    
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'عضو مشطوب',
+                    'name_e' => 'Canceled member',
+                    'parent_id' => 1,
+                    
+                ],
+                [
+                    'id' => 5,
+                    'name' => 'عضو موقوف',
+                    'name_e' => 'suspended member',
+                    'parent_id' => 1,
+                    
+                ],
+    
 
         ];
 

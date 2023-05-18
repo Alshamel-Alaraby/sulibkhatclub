@@ -14,6 +14,7 @@ class Category extends Model
     protected $table = 'general_categories';
 
     protected $fillable = [
+        'id',
         'name',
         'name_e',
 
@@ -26,8 +27,7 @@ class Category extends Model
 
     public function hasChildren()
     {
-        return
-        $this->orderDetails()->count() > 0;
+        return  $this->orderDetails()->count() > 0;
     }
 
     public function getActivitylogOptions(): LogOptions

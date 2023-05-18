@@ -16,6 +16,7 @@ import loader from "../../components/loader";
 import Multiselect from "vue-multiselect";
 import country from "../country";
 import city from "../city";
+import employee from "./employee";
 import bankAccount from "../create/bankAccount"
 import {arabicValue, englishValue} from "../../helper/langTransform";
 
@@ -37,7 +38,8 @@ export default {
         Multiselect,
         country,
         bankAccount,
-        city
+        city,
+        employee
     },
     mixins: [transMixinComp],
     data() {
@@ -46,6 +48,7 @@ export default {
             cities: [],
             countries: [],
             bank_accounts: [],
+            employees: [],
             isLoader: false,
             create: {
                 name: "",
@@ -58,6 +61,7 @@ export default {
                 national_id: null,
                 nationality: null,
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null,
                 whatsapp: "",
@@ -135,6 +139,11 @@ export default {
                     return this.isRequired("bank_account_id");
                 })
             },
+            employee_id: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("employee_id");
+                })
+            },
             whatsapp: {
                 required: requiredIf(function (model) {
                     return this.isRequired("whatsapp");
@@ -206,6 +215,7 @@ export default {
                 national_id: null,
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null,
                 whatsapp: "",
@@ -215,6 +225,7 @@ export default {
             });
             this.errors = {};
             this.$bvModal.hide(this.id);
+            this.is_disabled = false;
             this.$bvModal.hide(`customer-create`);
         },
         /**
@@ -223,6 +234,7 @@ export default {
         async resetModal() {
             await this.getCategory();
             await this.getBankAcount();
+            await this.getEmployees();
             this.create = {
                 name: "",
                 name_e: "",
@@ -236,6 +248,7 @@ export default {
                 national_id: null,
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null,
                 whatsapp: "",
@@ -252,6 +265,7 @@ export default {
         async resetForm() {
             await this.getCategory();
             await this.getBankAcount();
+            await this.getEmployees();
             this.create = {
                 name: "",
                 name_e: "",
@@ -265,6 +279,7 @@ export default {
                 national_id: null,
                 passport_no:'',
                 bank_account_id: null,
+                employee_id: null,
                 country_id: null,
                 city_id: null,
                 whatsapp: "",
@@ -342,6 +357,12 @@ export default {
                 this.getCity(this.create.country_id)
             }
         },
+        showEmployeeModal() {
+            if (this.create.employee_id == 0) {
+                this.$bvModal.show("employee-create");
+                this.create.employee_id = null;
+            }
+        },
         showBankAccountModal() {
             if (this.create.bank_account_id == 0) {
                 this.$bvModal.show("bank-account-create");
@@ -362,6 +383,22 @@ export default {
                     let l = res.data.data;
                     l.unshift({id: 0, name: "اضافة دولة", name_e: "Add Country"});
                     this.countries = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
+        async getEmployees() {
+            await adminApi
+                .get(`/employees?customer_handel=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضاف موظف", name_e: "Add Employee" });
+                    this.employees = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -433,6 +470,7 @@ export default {
 
 <template>
     <div>
+        <employee :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getEmployees" />
         <country :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'country-create-customer'"
                  @created="getCategory"/>
         <bankAccount :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBankAcount"/>
@@ -812,7 +850,7 @@ export default {
                         </div>
                     </div>
                 </div>
-                <hr v-if="isVisible('contact_person') || isVisible('contact_phone')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                <hr v-if="isVisible('contact_person') || isVisible('contact_phone') || isVisible('employee_id')" style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
                 <div class="row">
                     <div class="col-md-4" v-if="isVisible('contact_person')">
                         <div class="form-group">
@@ -854,6 +892,24 @@ export default {
                             <template v-if="errors.contact_phone">
                                 <ErrorMessage v-for="(errorMessage,index) in errors.contact_phone" :key="index">
                                     {{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="col-md-4" v-if="isVisible('employee_id')">
+                        <div class="form-group">
+                            <label>{{ getCompanyKey('employee') }}<span v-if="isRequired('employee_id')" class="text-danger">*</span></label>
+                            <multiselect
+                                @input="showEmployeeModal"
+                                v-model="create.employee_id"
+                                :options="employees.map((type) => type.id)"
+                                :custom-label=" (opt) => $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e "
+                                :class="{'is-invalid': $v.create.employee_id.$error || errors.employee_id,'is-valid': !$v.create.employee_id.$invalid && !errors.employee_id,}"
+                            >
+                            </multiselect>
+                            <template v-if="errors.employee_id">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.employee_id"
+                                              :key="index">{{ errorMessage }}
                                 </ErrorMessage>
                             </template>
                         </div>

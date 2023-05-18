@@ -44,6 +44,7 @@ class GeneralCustomerRequest extends FormRequest
             'note3' => [],
             'note4' => [],
             'company_id' => [],
+            "employee_id" => "nullable|exists:general_employees,id",
             "media" => "nullable|array",
             "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
         ];

@@ -3,7 +3,6 @@
 namespace Modules\BoardsRent\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 
 class BoardsRentServiceProvider extends ServiceProvider
 {
@@ -38,6 +37,12 @@ class BoardsRentServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+
+        $this->commands([
+            \Modules\BoardsRent\Console\TransData::class,
+            \Modules\BoardsRent\Console\EmployeeData::class,
+            \Modules\BoardsRent\Console\CustomerData::class,
+        ]);
     }
 
     /**
@@ -51,7 +56,8 @@ class BoardsRentServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 
@@ -67,7 +73,7 @@ class BoardsRentServiceProvider extends ServiceProvider
         $sourcePath = module_path($this->moduleName, 'Resources/views');
 
         $this->publishes([
-            $sourcePath => $viewPath
+            $sourcePath => $viewPath,
         ], ['views', $this->moduleNameLower . '-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);

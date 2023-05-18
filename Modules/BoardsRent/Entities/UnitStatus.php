@@ -13,6 +13,7 @@ class UnitStatus extends Model
     use HasFactory, LogTrait;
 
     protected $fillable = [
+        'id',
         'name',
         'name_e',
         'status_id',
@@ -22,15 +23,13 @@ class UnitStatus extends Model
 
     public function status()
     {
-        return $this->hasMany(Status::class,'status_id');
+        return $this->belongsTo(Status::class, 'status_id');
     }
-
 
     public function Panels()
     {
-        return $this->hasMany(Panel::class,'unit_status_id');
+        return $this->hasMany(Panel::class, 'unit_status_id');
     }
-
 
     public function hasChildren()
     {

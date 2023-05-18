@@ -29,8 +29,8 @@ class Country extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'is_active' => 'App\Enums\IsActive',
-        "is_default" => '\App\Enums\IsDefault',
+        // 'is_active' => 'App\Enums\IsActive',
+        // "is_default" => '\App\Enums\IsDefault',
     ];
 
     // relations

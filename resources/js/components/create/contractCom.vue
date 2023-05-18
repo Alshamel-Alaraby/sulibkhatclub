@@ -2628,6 +2628,7 @@ export default {
             };
             this.reservation_id = null;
             this.images = [];
+            this.is_disabled = false;
             this.total = 0;
         },
 

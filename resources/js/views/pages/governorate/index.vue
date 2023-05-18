@@ -475,6 +475,7 @@ export default {
         this.$v.$reset();
       });
       this.errors = {};
+        this.is_disabled = false;
       this.$bvModal.hide(`create`);
     },
     /**
@@ -1285,7 +1286,7 @@ export default {
                     <td v-if="setting.is_default && isVisible('is_default')">
                       <span
                         :class="[
-                          data.is_default == 'active' ? 'text-success' : 'text-danger',
+                          data.is_default ? 'text-success' : 'text-danger',
                           'badge',
                         ]"
                       >

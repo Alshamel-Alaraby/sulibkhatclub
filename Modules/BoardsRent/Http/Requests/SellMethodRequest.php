@@ -23,18 +23,16 @@ class SellMethodRequest extends FormRequest
      */
     public function rules()
     {
-        // if method put
-        if ($this->method() == 'PUT') {
-            return [
-                'name' => 'required|string|max:255|unique:boards_rent_sell_methods,name,' . $this->id,
-                'name_e' => 'required|string|max:255|unique:boards_rent_sell_methods,name_e,' . $this->id,
-            ];
-        }
 
         return [
-            'name' => 'required|string|max:255|unique:boards_rent_sell_methods,name',
-            'name_e' => 'required|string|max:255|unique:boards_rent_sell_methods,name_e',
+            'name' => 'sometimes|unique:boards_rent_sell_methods,name,' . ($this->method() == 'PUT' ? $this->id : ''),
+            'name_e' => 'sometimes|unique:boards_rent_sell_methods,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
+            "commission_ratio" =>
+            "sometimes|numeric|min:0|max:100",
+            "target_calculation_ratio" =>
+            "sometimes|numeric|min:0|max:100",
         ];
+
     }
 
 }

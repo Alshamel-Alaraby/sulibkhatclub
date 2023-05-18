@@ -18,6 +18,7 @@ class City extends Model
     {
         return $this->belongsTo(Governorate::class);
     }
+
     public function rlstOwners()
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstOwner::class);

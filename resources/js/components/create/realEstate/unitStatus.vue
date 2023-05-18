@@ -125,36 +125,28 @@
                         </template>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label class="mr-2">
-                            {{ getCompanyKey("unitstatus_default") }}
-                            <span class="text-danger">*</span>
-                        </label>
-                        <select
-                            class="custom-select mr-sm-2"
-                            data-create="4"
-                            v-model="$v.create.is_default.$model"
-                            :class="{
-                          'is-invalid': $v.create.is_default.$error || errors.is_default,
-                          'is-valid':
-                            !$v.create.is_default.$invalid && !errors.is_default,
-                        }"
-                        >
-                            <option value="">{{ $t("general.Choose") }}...</option>
-                            <option value="1">{{ $t("general.Default") }}</option>
-                            <option value="0">{{ $t("general.Nondefault") }}</option>
-                        </select>
-                        <template v-if="errors.is_default">
-                            <ErrorMessage
-                                v-for="(errorMessage, index) in errors.is_default"
-                                :key="index"
-                            >{{ errorMessage }}</ErrorMessage
-                            >
-                        </template>
+                      <label class="mr-2">
+                        {{ getCompanyKey("unitstatus_default") }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <b-form-group :class="{
+                        'is-invalid': $v.create.is_default.$error || errors.is_default,
+                        'is-valid': !$v.create.is_default.$invalid && !errors.is_default,
+                      }">
+                        <b-form-radio class="d-inline-block" v-model="$v.create.is_default.$model"
+                          name="create_def_some-radios" value="1">{{ $t("general.Default") }}</b-form-radio>
+                        <b-form-radio class="d-inline-block m-1" v-model="$v.create.is_default.$model"
+                          name="create_def_some-radios" value="0">{{ $t("general.Nondefault") }}</b-form-radio>
+                      </b-form-group>
+                      <template v-if="errors.is_default">
+                        <ErrorMessage v-for="(errorMessage, index) in errors.is_default" :key="index">{{ errorMessage }}
+                        </ErrorMessage>
+                      </template>
                     </div>
-                </div>
-                <div class="col-md-12">
+                  </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label class="mr-2">
                             {{ getCompanyKey("unitstatus_status") }}
@@ -259,6 +251,7 @@ export default {
                 this.$v.$reset();
             });
             this.errors = {};
+            this.is_disabled = false;
             this.$bvModal.hide(`unit-satatus-create`);
         },
         /**

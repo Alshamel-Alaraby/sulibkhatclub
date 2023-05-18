@@ -12,5 +12,7 @@ interface DepertmentInterface
     public function update($request,$id);
     public function logs($id);
     public function delete($id);
+    public function processJsonData(array $data);
+
 
 }

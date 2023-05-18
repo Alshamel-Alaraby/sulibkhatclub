@@ -23,7 +23,6 @@ class SalesmanResource extends JsonResource
             "salesmanType" => new SalesmenTypeResource($this->salesmanType),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-
         ];
     }
 }

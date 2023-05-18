@@ -635,6 +635,7 @@ export default {
       });
       this.images = [];
       this.bankAccount_id = null;
+        this.is_disabled = false;
       this.errors = {};
     },
     /**

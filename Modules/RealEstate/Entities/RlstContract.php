@@ -28,7 +28,7 @@ class RlstContract extends Model implements HasMedia
         "start_date",
         "end_date",
         "serial_number",
-        "prefix"
+        "prefix",
     ];
 
     // relations
@@ -53,6 +53,16 @@ class RlstContract extends Model implements HasMedia
         return $this->hasMany(\Modules\RealEstate\Entities\RlstContractDetail::class, 'contract_id', 'id');
     }
 
+    public function contDetails()
+    {
+        $filter = $this->details()->with(['building.buildingWallet' => function ($q) {
+            $q->with(['wallet.owners']);
+        }]);
+
+        return $filter;
+
+    }
+
     public function branch()
     {
         return $this->belongsTo(\App\Models\Branch::class, 'branch_id', 'id');
@@ -75,7 +85,7 @@ class RlstContract extends Model implements HasMedia
 
     public function hasChildren()
     {
-        return $this->details()->count() > 0  ;
+        return $this->details()->count() > 0;
 
     }
 
@@ -88,4 +98,202 @@ class RlstContract extends Model implements HasMedia
             ->useLogName('Rlst Contracts')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
+    public function scopeGeneralFilter($query, $request)
+    {
+
+        return $query->where(function ($q) use ($request) {
+            $q->where(function ($q) use ($request) {
+                $q->when($request->salesman_id, function ($q) use ($request) {
+                    $q->where('salesman_id', $request->salesman_id);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->start_date && $request->end_date, function ($q) use ($request) {
+                    $q->whereDate('start_date', $request->start_date)->whereDate('end_date', $request->end_date);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->building_id, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->where('building_id', $request->building_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->unit_id, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->where('unit_id', $request->unit_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->wallet_id, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->whereHas('building', function ($q) use ($request) {
+                            $q->whereHas('buildingWallet', function ($q) use ($request) {
+                                $q->where('wallet_id', $request->wallet_id);
+                            });
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->owner_id, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->whereHas('building', function ($q) use ($request) {
+                            $q->whereHas('buildingWallet', function ($q) use ($request) {
+                                $q->whereHas('wallet', function ($q) use ($request) {
+                                    $q->whereHas('walletOwner', function ($q) use ($request) {
+                                        $q->where('owner_id', $request->owner_id);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->price, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+
+                        $q->whereHas('unit', function ($q) use ($request) {
+
+                            $q->whereHas('items', function ($q) use ($request) {
+
+                                if ($request->price_from && $request->price_to) {
+                                    $q->whereBetween('price', [$request->price_from, $request->price_to]);
+                                }
+
+                                if ($request->price_from || !$request->price_to) {
+                                    $q->where('price', '>=', $request->price_from);
+                                }
+
+                                if ($request->price_to || !$request->price_from) {
+                                    $q->where('price', '<=', $request->price_to);
+                                }
+
+                            });
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->properties, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->whereHas('unit', function ($q) use ($request) {
+                            $q->whereJsonContains('properties', $request->properties);
+                        });
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->lat && $request->lng, function ($q) use ($request) {
+                    $q->whereHas('details', function ($q) use ($request) {
+                        $q->whereHas('building', function ($q) use ($request) {
+                            $q->where('lat', $request->lat)->where('lng', $request->lng);
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    // public function scopeFilter($query, $request)
+    // {
+    //     return $query->where(function ($q) use ($request) {
+
+    //         if ($request->salesman_id) {
+    //             $q->where('salesman_id', $request->salesman_id);
+    //         }
+    //         if ($request->start_date) {
+    //             $q->whereDate('start_date', $request->start_date);
+    //         }
+
+    //         if ($request->end_date) {
+    //             $q->whereDate('end_date', $request->end_date);
+    //         }
+
+    //         if (
+    //             $request->building_id || $request->wallet_id ||
+    //             $request->owner_id || $request->unit_value_from || $request->unit_value_to ||
+    //             $request->properties || $request->lat || $request->lng
+    //         ) {
+    //             $q->whereHas('details', function ($q) use ($request) {
+    //                 if ($request->building_id) {
+    //                     $q->where('building_id', $request->building_id);
+    //                 }
+    //                 if ($request->unit_id) {
+    //                     $q->where('unit_id', $request->unit_id);
+    //                 }
+
+    //                 if ($request->wallet_id || $request->owner_id) {
+    //                     $q->whereHas("building", function ($q) use ($request) {
+    //                         if ($request->wallet_id) {
+    //                             $q->whereHas("buildingWallet", function ($q) use ($request) {
+    //                                 $q->where('wallet_id', $request->wallet_id);
+    //                             });
+    //                         }
+    //                         if ($request->owner_id) {
+    //                             $q->whereHas("buildingWallet", function ($q) use ($request) {
+    //                                 $q->whereHas("wallet", function ($q) use ($request) {
+    //                                     $q->whereHas("walletOwner", function ($q) use ($request) {
+    //                                         $q->where('owner_id', $request->owner_id);
+    //                                     });
+    //                                 });
+    //                             });
+    //                         }
+
+
+    //                     });
+
+    //                 }
+
+    //                 if ($request->unit_value_from && $request->unit_value_to) {
+    //                     $q->whereBetween('unit_value', [$request->unit_value_from, $request->unit_value_to]);
+    //                 }
+
+    //                 if ($request->unit_value_from || !$request->unit_value_to) {
+    //                     $q->where('unit_value', '>=', $request->unit_value_from);
+    //                 }
+
+    //                 if ($request->unit_value_to || !$request->unit_value_from) {
+    //                     $q->where('unit_value', '<=', $request->unit_value_to);
+    //                 }
+
+    //                 if ($request->properties) {
+    //                     $q->whereHas('unit', function ($q) use ($request) {
+    //                         $q->whereJsonContains('properties', $request->properties);
+    //                     });
+    //                 }
+
+
+
+    //             });
+    //         }
+
+    //         // normal search
+
+    //         if ($request->has('date')) {
+    //             $q->whereDate('date', $request->date);
+    //         }
+
+    //         if ($request->search && $request->columns) {
+    //             foreach ($request->columns as $column) {
+    //                 if (strpos($column, ".") > 0) {
+    //                     $column = explode(".", $column);
+    //                     $q->orWhereRelation($column[0], $column[1], 'like', '%' . $request->search . '%');
+    //                     // $q->orWhereHas($column[0], function ($q) use ($column, $request) {
+    //                     //     $q->where($column[1], 'like', '%' . $request->search . '%');
+    //                     // });
+    //                 } else {
+    //                     $q->orWhere($column, 'like', '%' . $request->search . '%');
+    //                 }
+    //             }
+    //         }
+
+    //         if (request()->header('company-id')) {
+    //             if (in_array('company_id', $this->fillable)) {
+    //                 $q->where('company_id', request()->header('company-id'));
+    //             }
+    //         }
+
+    //         if ($request->key && $request->value) {
+    //             $q->where($request->key, $request->value);
+    //         }
+
+    //     });
+    // }
 }

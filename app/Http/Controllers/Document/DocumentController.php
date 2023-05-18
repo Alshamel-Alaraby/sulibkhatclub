@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DocumentController extends Controller
 {
-    public function __construct(private \App\Repositories\Document\DocumentInterface$modelInterface)
+    public function __construct(private \App\Repositories\Document\DocumentInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -47,14 +47,14 @@ class DocumentController extends Controller
 
     public function update(DocumentRequest $request, $id)
     {
+//        return $request;
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson( 404 , __('message.data not found'));
         }
-        $this->modelInterface->update($request->validated(),$id);
+        return $this->modelInterface->update($request->validated(),$id);
         $model->refresh();
         return responseJson(200, 'success', new DocumentResource($model));
-
     }
     public function logs($id)
     {

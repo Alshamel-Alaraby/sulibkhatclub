@@ -90,7 +90,7 @@ export default {
       isLoader: false,
       createVideo: "",
       frameUrl: "",
-
+      prevUnitStatusId: null,
       create: {
         name: "",
         name_e: "",
@@ -558,10 +558,10 @@ export default {
       this.frameUrl = "";
 
       await this.getBuildings();
-      await this.getUnitStatus();
       await this.getProperty();
-      this.createVideo = "";
+      await this.getUnitStatus();
 
+      this.createVideo = "";
       this.create = {
         name: "",
         name_e: "",
@@ -593,6 +593,7 @@ export default {
       this.mime_type = "";
       this.images = [];
       this.errors = {};
+      this.create.unit_status_id = 1;
     },
     /**
      *  create countrie
@@ -633,6 +634,7 @@ export default {
       this.media = {};
       this.images = [];
       this.mime_type = "";
+      this.create.unit_status_id = 1;
     },
     AddSubmit() {
       if (!this.create.name) {
@@ -759,6 +761,7 @@ export default {
       this.edit.description_e = unit.description_e;
       this.edit.building_id = unit.building_id;
       this.edit.unit_status_id = unit.unit_status_id;
+      this.prevUnitStatusId = unit.unit_status_id;
       this.edit.module = unit.name;
       this.edit.code = unit.code;
       this.edit.unit_ty = unit.unit_ty;
@@ -885,11 +888,11 @@ export default {
         .get(`real-estate/unit-statuses?is_active=active`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({
-            id: 0,
-            name: "اضف حاله الوحده  ",
-            name_e: "Add Unit Status",
-          });
+          // l.unshift({
+          //   id: 0,
+          //   name: "اضف حاله الوحده  ",
+          //   name_e: "Add Unit Status",
+          // });
           this.unit_status = l;
         })
         .catch((err) => {
@@ -962,6 +965,17 @@ export default {
       }
     },
     showUnitStatusEditModal() {
+      if (this.prevUnitStatusId == 2 || this.prevUnitStatusId == 3) {
+        this.edit.unit_status_id = this.prevUnitStatusId;
+        adminApi.get(`/real-estate/contracts/${this.unit_id}/${this.prevUnitStatusId}`).then((res) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.ReservedOrSold", { serial_number: res.data.serial_number })}`,
+          });
+        });
+        return;
+      }
       if (this.edit.unit_status_id == 0) {
         this.$bvModal.show("unit-satatus-create");
         this.edit.unit_status_id = null;
@@ -1819,6 +1833,7 @@ export default {
                             <span class="text-danger">*</span>
                           </label>
                           <multiselect
+                            :disabled="true"
                             @input="showUnitStatusModal"
                             v-model="$v.create.unit_status_id.$model"
                             :options="unit_status.map((type) => type.id)"
@@ -2769,9 +2784,7 @@ export default {
                                       class="invalid-feedback"
                                     >
                                       {{ $t("general.Itmustbeatmost") }}
-                                      {{
-                                        $v.create.code.$params.maxLength.max
-                                      }}
+                                      {{ $v.create.code.$params.maxLength.max }}
                                       {{ $t("general.letters") }}
                                     </div>
                                     <template v-if="errors.code">
@@ -2906,9 +2919,7 @@ export default {
                                       class="invalid-feedback"
                                     >
                                       {{ $t("general.Itmustbeatleast") }}
-                                      {{
-                                        $v.edit.name_e.$params.minLength.min
-                                      }}
+                                      {{ $v.edit.name_e.$params.minLength.min }}
                                       {{ $t("general.letters") }}
                                     </div>
                                     <div
@@ -2916,9 +2927,7 @@ export default {
                                       class="invalid-feedback"
                                     >
                                       {{ $t("general.Itmustbeatmost") }}
-                                      {{
-                                        $v.edit.name_e.$params.maxLength.max
-                                      }}
+                                      {{ $v.edit.name_e.$params.maxLength.max }}
                                       {{ $t("general.letters") }}
                                     </div>
                                     <template v-if="errors.name_e">
@@ -2980,7 +2989,7 @@ export default {
                                       <span class="text-danger">*</span>
                                     </label>
                                     <multiselect
-                                      @input="showUnitStatusModal"
+                                      @select="showUnitStatusEditModal"
                                       v-model="$v.edit.unit_status_id.$model"
                                       :options="
                                         unit_status.map((type) => type.id)

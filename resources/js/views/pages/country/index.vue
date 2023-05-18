@@ -632,7 +632,7 @@ export default {
     async getGovernorates(id) {
       this.governorate_id = id ? id : null;
       await adminApi
-        .get(`/governorates?columns[0]=country_id&search=${this.country_id}`)
+        .get(`/governorates?columns[0]=country.id&search=${this.country_id}`)
         .then((res) => {
           this.governorates = res.data.data;
         })
@@ -647,7 +647,7 @@ export default {
     async getAvenues(id) {
       this.avenue_id = id ? id : null;
       await adminApi
-        .get(`/avenues?columns[0]=city_id&search=${this.city_id}`)
+        .get(`/avenues?columns[0]=city.id&search=${this.city_id}`)
         .then((res) => {
           this.avenues = res.data.data;
         })
@@ -661,7 +661,7 @@ export default {
     },
     async getStreet() {
           await adminApi
-              .get(`/streets?columns[0]=avenue_id&search=${this.avenue_id}`)
+              .get(`/streets?columns[0]=avenue.id&search=${this.avenue_id}`)
               .then((res) => {
                   this.streets = res.data.data;
               })
@@ -676,7 +676,7 @@ export default {
     async getCities(id) {
       this.city_id = id ? id : null;
       await adminApi
-        .get(`/cities?columns[0]=governorate_id&search=${this.governorate_id}`)
+        .get(`/cities?columns[0]=governorate.id&search=${this.governorate_id}`)
         .then((res) => {
           this.cities = res.data.data;
         })
@@ -932,6 +932,7 @@ export default {
         is_active: "active",
         media: null,
       };
+        this.is_disabled = false;
       this.$nextTick(() => {
         this.$v.$reset();
       });
