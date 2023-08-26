@@ -26,6 +26,7 @@ class CmMemberPermissionRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'name_e' => 'sometimes|string|max:255',
+            "company_id"=>'nullable',
 
         ];
     }

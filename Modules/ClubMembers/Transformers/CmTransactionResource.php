@@ -30,7 +30,9 @@ class CmTransactionResource extends JsonResource
             'type' => $this->type,
             'prefix' => $this->prefix,
             'serial_number' => $this->serial_number,
-            'number_of_years' =>$this->number_of_years
+            'number_of_years' =>$this->number_of_years,
+            'created_by' => $this->created_by,
+            'financial_year_id' => $this->financial_year_id
         ];
     }
 }

@@ -11,6 +11,8 @@ use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingInterface;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
 
+use Modules\ClubMembers\Entities\CmTransaction;
+
 class CmTransactionController extends Controller
 {
     public function __construct(private CmTransactionInterface $modelInterface)
@@ -94,4 +96,39 @@ class CmTransactionController extends Controller
         }
         return responseJson(200, __('Done'));
     }
+
+
+    public function selectedMemberTransactions($member_id)
+    {
+
+        $models = CmTransaction::where("cm_member_id", $member_id)->get();
+
+        return responseJson(200, 'success', CmTransactionResource::collection($models));
+
+    }
+
+    // public function financialStatusCheck()
+    // {
+
+    //     $paidMembers = CmTransaction::where('date', '>', '2022-12-31')->value('cm_member_id')->get();
+
+    //     foreach($paidMembers as $member_id)
+    //     {
+
+    //         CmMember::where('id', $member_id)->value('')
+
+
+
+    //     }
+
+
+
+
+
+
+
+
+    // }
+
+
 }

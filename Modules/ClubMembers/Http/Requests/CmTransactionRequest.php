@@ -30,6 +30,7 @@ class CmTransactionRequest extends FormRequest
             'transactions.*.year_to' => 'required|gte:transactions.*.year_from',
             'transactions.*.prefix' => "nullable|string",
             'transactions.*.type' => "required|string|in:subscribe,renew",
+            "company_id"=>'nullable',
         ];
     }
 

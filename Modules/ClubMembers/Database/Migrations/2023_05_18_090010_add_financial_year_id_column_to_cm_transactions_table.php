@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cm_transactions', function (Blueprint $table) {
-            $table->string('old_doc')->nullable();
+            $table->unsignedInteger('financial_year_id')->nullable();
+
         });
     }
 
@@ -25,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('cm_transactions', function (Blueprint $table) {
 
+        });
     }
 };

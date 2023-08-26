@@ -36,7 +36,7 @@ class CmMembershipRenewalRequest extends FormRequest
 
             'memberships_renewals.*.renewal_availability' => 'required|in:0,1',
             'memberships_renewals.*.renewal_cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-
+            "company_id"=>'nullable',
         ];
 
     }

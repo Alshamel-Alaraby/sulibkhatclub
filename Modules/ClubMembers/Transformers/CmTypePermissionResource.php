@@ -19,10 +19,11 @@ class CmTypePermissionResource extends JsonResource
         return [
             "id" => $this->id,
             "type" => new CmMemberTypeResource($this->type),
-            "permission" => $this->permissions($this->cm_permissions_id),
+            "permission" => new CmMemberPermissionResource($this->permission),
             "financialStatus" => new CmFinancialStatusResource($this->financialStatus),
             "membership_period" => $this->membership_period,
             "allowed_subscription_date" => $this->allowed_subscription_date,
+            "allowed_vote_date" => $this->allowed_vote_date,
             "cm_permissions_id" => $this->cm_permissions_id,
 
         ];
@@ -30,13 +31,13 @@ class CmTypePermissionResource extends JsonResource
 
     }
 
-    public function permissions ($permissions_id)
-    {
-        $data = [];
-        foreach ($permissions_id as $id)
-        {
-            $data[]=CmMemberPermission::find($id);
-        }
-        return $data;
-    }
+    // public function permissions ($permissions_id)
+    // {
+    //     $data = [];
+    //     foreach ($permissions_id as $id)
+    //     {
+    //         $data[]=CmMemberPermission::find($id);
+    //     }
+    //     return $data;
+    // }
 }

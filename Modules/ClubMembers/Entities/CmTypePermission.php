@@ -20,6 +20,8 @@ class CmTypePermission extends Model
         'cm_financial_status_id',
         'membership_period',
         'allowed_subscription_date',
+        'allowed_vote_date',
+        'company_id',
     ];
 
     protected $table = 'cm_type_permissions';
@@ -67,11 +69,11 @@ class CmTypePermission extends Model
     }
 
 
-    protected function CmPermissionsId(): Attribute
-    {
-        return Attribute::make(
-            set:fn($value) => json_encode($value),
-            get:fn($value) => json_decode($value)
-        );
-    }
+    // protected function CmPermissionsId(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set:fn($value) => json_encode($value),
+    //         get:fn($value) => json_decode($value)
+    //     );
+    // }
 }

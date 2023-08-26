@@ -3,6 +3,8 @@
 namespace Modules\ClubMembers\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\ClubMembers\Repositories\CmCustomTable\CmCustomTableInterface;
+use Modules\ClubMembers\Repositories\CmCustomTable\CmCustomTableRepository;
 use Modules\ClubMembers\Repositories\CmFinancialStatus\CmFinancialStatusInterface;
 use Modules\ClubMembers\Repositories\CmFinancialStatus\CmFinancialStatusRepository;
 use Modules\ClubMembers\Repositories\CmMemberPermission\CmMemberPermissionInterface;
@@ -68,6 +70,7 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmMembershipRenewalInterface::class, CmMembershipRenewalRepository::class);
         $this->app->bind(CmMemberSettingInterface::class, CmMemberSettingRepository::class);
         $this->app->bind(CmTransactionInterface::class, CmTransactionRepository::class);
+        $this->app->bind(CmCustomTableInterface::class, CmCustomTableRepository::class);
 
 
         $this->commands([

@@ -17,6 +17,7 @@ class CmSponser extends Model
         'name',
         'name_e',
         'parent_id',
+        'company_id',
 
     ];
 

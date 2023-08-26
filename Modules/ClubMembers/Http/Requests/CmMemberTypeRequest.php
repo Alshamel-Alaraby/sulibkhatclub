@@ -27,7 +27,7 @@ class CmMemberTypeRequest extends FormRequest
         return [
             'name'      => 'sometimes|string|max:255|unique:cm_members_types,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'name_e'    => 'sometimes|string|max:255|unique:cm_members_types,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
-            
+            "company_id"=>'nullable',
         ];
     }
 

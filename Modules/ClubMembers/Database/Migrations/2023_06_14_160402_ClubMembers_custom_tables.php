@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('cm_transactions', function (Blueprint $table) {
-            $table->string('old_doc')->nullable();
+        Schema::create('ClubMembers_custom_tables', function (Blueprint $table) {
+            $table->id();
+            $table->string('table_name');
+            $table->json('columns');
+            $table->unsignedBigInteger('company_id')->default(0);
+
+            $table->timestamps();
         });
     }
 
@@ -25,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-
+        Schema::dropIfExists('ClubMembers_custom_tables');
     }
 };

@@ -24,8 +24,9 @@ class CmFinancialStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'sometimes|string|max:255|unique:cm_financial_status,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e'    => 'sometimes|string|max:255|unique:cm_financial_status,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
+            'name' => 'sometimes|string|max:255|unique:cm_financial_status,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'sometimes|string|max:255|unique:cm_financial_status,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'company_id' => 'nullable',
         ];
     }
 
@@ -36,7 +37,5 @@ class CmFinancialStatusRequest extends FormRequest
             'name_e.unique' => __('message.name already exists'),
         ];
     }
-
-
 
 }

@@ -42,7 +42,7 @@ class CmMemberResource extends JsonResource
             'applying_date' => $this->applying_date,
             'applying_number' => $this->applying_number,
             'sponsor_id' => $this->sponsor_id,
-            'member_type_id' => $this->member_type_id,
+            'member_type_id' => new CmMemberTypeResource($this->member_type_id), //$this->member_type_id,
             'financial_status_id' => $this->financial_status_id,
             "status_id" => $this->status_id,
             'member_type' => $this->member_type,

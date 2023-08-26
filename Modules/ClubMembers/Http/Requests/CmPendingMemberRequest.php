@@ -28,6 +28,7 @@ class CmPendingMemberRequest extends FormRequest
             'name'      => 'sometimes|string|max:255|unique:cm_pending_members,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'name_e'    => 'sometimes|string|max:255|unique:cm_pending_members,name_e' . ($this->method() == 'PUT' ? ','. $this->id : ''),
             'status'    => 'sometimes|string|max:255|unique:cm_pending_members,status' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
+            "company_id"=>'nullable',
         ];
     }
 

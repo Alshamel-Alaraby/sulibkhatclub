@@ -16,7 +16,7 @@ class CmMemberPermission extends Model
 
     protected $table = 'cm_members_permissions';
 
-
+    
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

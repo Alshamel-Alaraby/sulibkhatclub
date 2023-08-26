@@ -18,6 +18,23 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('club-members')->group(function () {
+
+    //customTable
+    Route::group(['prefix' => 'clubMembersCustomTable'], function () {
+        Route::controller(\Modules\ClubMembers\Http\Controllers\ClubMembersCustomTableController::class)->group(function () {
+
+            Route::get('/seeder', 'seeder');
+            Route::get('/', 'all')->name('customTable.index');
+            Route::get('/table-columns/{tableName}', 'getCustomTableFields');
+            Route::get('logs/{id}', 'logs')->name('customTable.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('customTable.create');
+            Route::put('/update', 'update')->name('customTable.update');
+            Route::delete('/{id}', 'delete')->name('customTable.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
     // sponsers routes
     Route::group(['prefix' => 'sponsers'], function () {
         Route::get('/root-nodes', 'CmSponserController@getRootNodes')->name('modules.root-nodes');
@@ -39,7 +56,6 @@ Route::prefix('club-members')->group(function () {
         Route::get('/dataMemberFildFullNameTable', 'CmMemberController@dataMemberFildFullNameTable');
 
         Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
-
 
         Route::get('/Acceptance', 'CmMemberController@allAcceptance')->name('cm-members.allAcceptance');
 
@@ -151,6 +167,10 @@ Route::prefix('club-members')->group(function () {
         Route::put('/{id}', 'CmTransactionController@update')->name('transactionupdate');
         Route::post("/bulk-delete", "CmTransactionController@bulkDelete");
         Route::delete('/{id}', 'CmTransactionController@delete')->name('transaction.delete');
+
+        // club-members/transactions/selected-member-transaction/{id}
+        Route::get('/selected-member-transaction/{id}', 'CmTransactionController@selectedMemberTransactions')
+            ->name('selectedMemberTransaction.find');
     });
 
 });

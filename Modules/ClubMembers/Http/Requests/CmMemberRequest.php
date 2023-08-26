@@ -48,12 +48,13 @@ class CmMemberRequest extends FormRequest
             'applying_number' => 'nullable|string|max:255|unique:cm_members,applying_number' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'status_id' => 'nullable|exists:general_statuses,id',
             'sponsor_id' => 'nullable|exists:cm_sponsers,id',
-            'member_type_id' => 'nullable|exists:cm_members_types,id',
+            'auto_member_type_id' => 'nullable|exists:cm_members_types,id',
             'financial_status_id' => 'nullable|exists:cm_financial_status,id',
-            'member_type' => 'nullable|string|max:255',
+            'member_type_id' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
             'gender' => 'nullable|in:0,1',
             'financial_year_id' => 'required|exists:general_financial_years,id',
+            "company_id"=>'nullable',
         ];
     }
 }

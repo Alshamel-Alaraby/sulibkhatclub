@@ -16,6 +16,7 @@ class CmFinancialStatus extends Model
     protected $fillable = [
         'name',
         'name_e',
+        'company_id'
     ];
 
     protected $table = 'cm_financial_status';

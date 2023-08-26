@@ -45,10 +45,13 @@ class CmTypePermissionController extends Controller
 
     public function create(CmTypePermissionRequest $request)
     {
-        $model = $this->model->create($request->validated());
-        $model->refresh();
 
-        return responseJson(200, 'created', new CmTypePermissionResource($model));
+        foreach ($request->input('data') as $data) {
+            // return $data;
+             $this->model->create($data);
+        }
+
+        return responseJson(200, 'created');
 
     }
 

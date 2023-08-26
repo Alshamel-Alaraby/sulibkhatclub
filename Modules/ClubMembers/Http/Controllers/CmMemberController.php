@@ -247,6 +247,6 @@ class CmMemberController extends Controller
 
     }
 
-
+    
 
 }

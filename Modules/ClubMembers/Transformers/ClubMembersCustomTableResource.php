@@ -4,7 +4,7 @@ namespace Modules\ClubMembers\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CmMemberTypeResource extends JsonResource
+class ClubMembersCustomTableResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,9 @@ class CmMemberTypeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'name_e' => $this->name_e,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'parent_id' => $this->parent_id
+            'table_name' => $this->table_name,
+            'company_id' => $this->company_id,
+            'columns' => $this->columns,
         ];
     }
 }
