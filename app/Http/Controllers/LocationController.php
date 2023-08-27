@@ -99,5 +99,12 @@ class LocationController extends Controller
         return responseJson(200, 'deleted');
     }
 
-
+    public function getRootNodes()
+    {
+        return $this->model->whereNull("parent_id")->get();
+    }
+    public function getChildNodes($parentId)
+    {
+        return $this->model->where("parent_id", $parentId)->get();
+    }
 }

@@ -14,6 +14,8 @@ use Modules\Stock\Repositories\ProfitReportInterface;
 use Modules\Stock\Repositories\ProfitReportRepository;
 use Modules\Stock\Repositories\RealizedUnrealizedInterface;
 use Modules\Stock\Repositories\RealizedUnrealizedRepository;
+use Modules\Stock\Repositories\StCustomTable\StCustomTableInterface;
+use Modules\Stock\Repositories\StCustomTable\StCustomTableRepository;
 use Modules\Stock\Repositories\StockInterface;
 use Modules\Stock\Repositories\StockMarketInterface;
 use Modules\Stock\Repositories\StockMarketRepository;
@@ -58,6 +60,7 @@ class StockServiceProvider extends ServiceProvider
         $this->app->bind (StockSalePurchaseDetailInterface::class,StockSalePurchaseDetailRepository::class);
         $this->app->bind (StockSectorInterface::class,StockSectorRepository::class);
         $this->app->bind (WalletInterface::class,WalletRepository::class);
+        $this->app->bind (StCustomTableInterface::class,StCustomTableRepository::class);
     }
 
     /**

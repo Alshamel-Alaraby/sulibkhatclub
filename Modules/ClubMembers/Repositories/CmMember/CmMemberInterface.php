@@ -29,5 +29,9 @@ interface CmMemberInterface
 
     public function acceptMembers($request);
 
-   
+    public function reportCmMember($request);
+    public function updateCmMember();
+
+
+
 }

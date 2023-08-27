@@ -16,6 +16,9 @@ class SellMethod extends Model
         'name_e',
         'commission_ratio',
         'target_calculation_ratio',
+        'is_all_value',
+        'is_default',
+        'company_id',
     ];
     protected $table = "boards_rent_sell_methods";
 

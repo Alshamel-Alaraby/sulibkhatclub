@@ -37,6 +37,7 @@ class StockSalePurchaseDetailRequest extends FormRequest
             'price' => ['required'],
             'fixed_commission' => ['required'],
             'other_commission' => ['nullable'],
+            "company_id"=>'nullable',
         ];
     }
     protected function failedValidation(Validator $validator, $code = 400)

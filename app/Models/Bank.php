@@ -30,10 +30,25 @@ class Bank extends Model
         return $this->hasMany(BankAccount::class);
     }
 
+    // public function hasChildren()
+    // {
+    //     return $this->bankAccounts()->count() > 0;
+    // }
+
     public function hasChildren()
     {
-        $h = $this->bankAccounts()->exists();
-        return $h;
+        $relationsWithChildren = [];
+
+        if ($this->bankAccounts()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'bankAccounts',
+                'count' => $this->bankAccounts()->count(),
+                'ids' => $this->bankAccounts()->pluck('id')->toArray()
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

@@ -18,6 +18,7 @@ class RlstInstallment extends Model
         'pay_type',
         'amount',
         "currency_id",
+        "company_id",
         "rest_amount",
     ];
 

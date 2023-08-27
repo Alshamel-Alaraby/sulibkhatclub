@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\PointOfSale\Entities\Order;
+use Modules\PointOfSale\Entities\Product;
 use Spatie\Activitylog\LogOptions;
 
 class Branch extends Model
@@ -12,12 +14,11 @@ class Branch extends Model
     use HasFactory, LogTrait;
     protected $table = 'general_branches';
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     // protected $casts = [
     //     'is_active' => 'App\Enums\IsActive',
     // ];
-
 
     // public function getIsActive()
     // {
@@ -44,10 +45,63 @@ class Branch extends Model
         return $this->belongsTo(Branch::class, 'parent_id');
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+
+
     public function hasChildren()
     {
-        return $this->stores()->count() > 0 || $this->serials()->count() > 0 || $this->children()->count() > 0 ;
+        $relationsWithChildren = [];
+
+        if ($this->stores()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'stores',
+                'count' => $this->stores()->count(),
+                'ids' => $this->stores()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->serials()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'serials',
+                'count' => $this->serials()->count(),
+                'ids' => $this->serials()->pluck('id')->toArray()
+            ];
+        }
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'branches',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->orders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orders',
+                'count' => $this->orders()->count(),
+                'ids' => $this->orders()->pluck('id')->toArray()
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
     public function company()
     {
@@ -63,8 +117,5 @@ class Branch extends Model
             ->useLogName('Branch')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
-
-
 
 }

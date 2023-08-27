@@ -65,7 +65,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer",
                 "default_en" => "Customer name",
-                "default_ar" => "اسم الزبون",
+                "default_ar" => "اسم العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -290,6 +290,854 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "branch"
             ],
+            [
+                "key" => "branch_parent",
+                "default_en" => "Parent",
+                "default_ar" => "الاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+        //Customer Category
+        Translation::insert([
+            [
+                "key" => "customer_category_create_form",
+                "default_en" => "Add new category",
+                "default_ar" => "اضف فئة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "customer_category_edit_form",
+                "default_en" => "Edit category",
+                "default_ar" => "تعديل الفئة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "customer_category_name_ar",
+                "default_en" => "Category name (arabic)",
+                "default_ar" => "اسم الفئة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "customer_category_name_en",
+                "default_en" => "Category name (english)",
+                "default_ar" => "اسم الفئة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "customer_category_parent",
+                "default_en" => "parent",
+                "default_ar" => "الاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+        ]);
+        //Customer Source
+        Translation::insert([
+            [
+                "key" => "customer_source_create_form",
+                "default_en" => "Add new source",
+                "default_ar" => "اضف مصدر جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "customer_source_edit_form",
+                "default_en" => "Edit source",
+                "default_ar" => "تعديل المصدر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "customer_source_name_ar",
+                "default_en" => "Source name (arabic)",
+                "default_ar" => "اسم المصدر (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "customer_source_name_en",
+                "default_en" => "Source name (english)",
+                "default_ar" => "اسم المصدر (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+        //Sales list
+        Translation::insert([
+            [
+                "key" => "sales_list_invoice_id",
+                "default_en" => "Invoice ID",
+                "default_ar" => "رقم الفاتورة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_type",
+                "default_en" => "Type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_sold_by",
+                "default_en" => "Sold by",
+                "default_ar" => "تم البيع بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_sold_to",
+                "default_en" => "Sold to",
+                "default_ar" => "تم البيع ل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_item_purchased",
+                "default_en" => "Item purchased",
+                "default_ar" => "الصنف المشترى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_tax",
+                "default_en" => "Tax",
+                "default_ar" => "الضريبة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_total",
+                "default_en" => "Total",
+                "default_ar" => "الاجمالي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_list_due",
+                "default_en" => "Due",
+                "default_ar" => "المستحقات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+        //POS Reports
+        Translation::insert([
+            [
+                "key" => "product",
+                "default_en" => "Product Name",
+                "default_ar" => "اسم المنتج",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "pos_report_month",
+                "default_en" => "Month",
+                "default_ar" => "شهر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "pos_report_year",
+                "default_en" => "Year",
+                "default_ar" => "سنة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+
+            [
+                "key" => "order_type",
+                "default_en" => "Order Type",
+                "default_ar" => "نوع الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "supplier_purchase",
+                "default_en" => "Supplier Purchase",
+                "default_ar" => "المشتريات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "variant",
+                "default_en" => "Variant Name",
+                "default_ar" => "اسم المتغير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "adjustment_item",
+                "default_en" => "Adjustment Item",
+                "default_ar" => "عنصر التسوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "adjustment_type",
+                "default_en" => "Adjustment Type",
+                "default_ar" => "نوع التسوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sales_type",
+                "default_en" => "Sales type",
+                "default_ar" => "انواع المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "purchase_type",
+                "default_en" => "Purchase Type",
+                "default_ar" => "نوع الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "supplier",
+                "default_en" => "Supplier",
+                "default_ar" => "المورد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "purchased_by",
+                "default_en" => "Purchased by",
+                "default_ar" => "تم الشراء بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "items",
+                "default_en" => "Items",
+                "default_ar" => "الاصناف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sub_total",
+                "default_en" => "Sub total",
+                "default_ar" => "الاجمالي الجزئي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "brand",
+                "default_en" => "Brand name",
+                "default_ar" => "اسم العلامة التجارية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "item_sold",
+                "default_en" => "Item sold",
+                "default_ar" => "الصنف المباع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "purchase_type",
+                "default_en" => "Purchase Type",
+                "default_ar" => "نوع المشتريات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "supplier",
+                "default_en" => "Supplier Name",
+                "default_ar" => "اسم المورد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "purchased_by",
+                "default_en" => "Purchased By",
+                "default_ar" => "تم الشراء بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "id",
+                "default_en" => "id",
+                "default_ar" => "الاي دي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "title",
+                "default_en" => "Title",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "opened_by",
+                "default_en" => "Opened by",
+                "default_ar" => "مفتوح بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "closed_by",
+                "default_en" => "Closed by",
+                "default_ar" => "مغلق بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "note",
+                "default_en" => "Note",
+                "default_ar" => "ملحوظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "opening_amount",
+                "default_en" => "Opening amount",
+                "default_ar" => "الكمية الافتتاحية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "cash_sales",
+                "default_en" => "Cash Sales",
+                "default_ar" => "المبيعات النقدية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "cash_receives",
+                "default_en" => "Cash Receives",
+                "default_ar" => "المستلمات النقدية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "closing_amount",
+                "default_en" => "Closing amount",
+                "default_ar" => "الكمية المغلقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "difference",
+                "default_en" => "Difference",
+                "default_ar" => "الفرق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "sku",
+                "default_en" => "SKU",
+                "default_ar" => "SKU",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "item",
+                "default_en" => "Item Name",
+                "default_ar" => "اسم الصنف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "variant",
+                "default_en" => "Variant",
+                "default_ar" => "المتغير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "category",
+                "default_en" => "Category",
+                "default_ar" => "الفئة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "group",
+                "default_en" => "Group",
+                "default_ar" => "الجروب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "brand",
+                "default_en" => "Brand",
+                "default_ar" => "العلامة التجارية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "purchase_price",
+                "default_en" => "Purchase price",
+                "default_ar" => "سعر الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "selling_price",
+                "default_en" => "Selling Price",
+                "default_ar" => "سعر البيع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "inventory",
+                "default_en" => "Inventory",
+                "default_ar" => "المخزن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "barcode",
+                "default_en" => "Barcode",
+                "default_ar" => "الباركود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "method",
+                "default_en" => "Method",
+                "default_ar" => "طريقة الدفع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "paid_by",
+                "default_en" => "Paid by",
+                "default_ar" => "تم الدفع بواسطة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "cash_register",
+                "default_en" => "Cash Register",
+                "default_ar" => "تسجيل نقدي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "amount",
+                "default_en" => "Amount",
+                "default_ar" => "الكمية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "year",
+                "default_en" => "Year",
+                "default_ar" => "السنة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "grand_total",
+                "default_en" => "Grand Total",
+                "default_ar" => "المجموع الكلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "profit_amount",
+                "default_en" => "Profit Amount",
+                "default_ar" => "مبلغ الربح",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "customer",
+                "default_en" => "Customer",
+                "default_ar" => "العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "total_sales",
+                "default_en" => "Total Sales",
+                "default_ar" => "اجمالي المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "total_return",
+                "default_en" => "Total Return",
+                "default_ar" => "اجمالي المرتجعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "total_payment",
+                "default_en" => "Total Payment",
+                "default_ar" => "اجمالي الدفع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " supplier",
+                "default_en" => "Supplier",
+                "default_ar" => "المورد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " supplier_purchase",
+                "default_en" => "Supplier Purchase",
+                "default_ar" => "مشتريات المورد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " shipping_area",
+                "default_en" => "Shipping area",
+                "default_ar" => "منطقة الشحن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " address",
+                "default_en" => "Address",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " shipping_cost",
+                "default_en" => "Shipping Cost",
+                "default_ar" => "تكلفة الشحن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => " shipping_status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+        //Stock Adjustment type
+        Translation::insert([
+            [
+                "key" => "stock_adjustment_type_create_form",
+                "default_en" => "Add new stock adjustment type",
+                "default_ar" => "اضف نوع تسوية مخزن جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "stock_adjustment_type_edit_form",
+                "default_en" => "Edit stock adjustment type",
+                "default_ar" => "تعديل نوع تسوية المخزن",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "stock_adjustment_type_title_ar",
+                "default_en" => "Stock adjustment type name (arabic)",
+                "default_ar" => "اسم نوع تسوية المخزن (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "stock_adjustment_type_title_en",
+                "default_en" => "Stock adjustment type name (english)",
+                "default_ar" => "اسم نوع تسوية المخزن (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+        //Serial
+        Translation::insert([
+            [
+                "key" => "serial_create_form",
+                "default_en" => "Add new serial",
+                "default_ar" => "اضف سيريال جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_edit_form",
+                "default_en" => "Edit serial form",
+                "default_ar" => "تعديل السيريال",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_name_ar",
+                "default_en" => "Serial name (arabic)",
+                "default_ar" => "اسم السيريال (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_name_en",
+                "default_en" => "Serial name (english)",
+                "default_ar" => "اسم السريال (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_branch",
+                "default_en" => "Branch name",
+                "default_ar" => "اسم الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_document",
+                "default_en" => "Document name",
+                "default_ar" => "اسم المستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_prefix",
+                "default_en" => "Prefix",
+                "default_ar" => "البريفيكس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_suffix",
+                "default_en" => "Suffix",
+                "default_ar" => "السفيكس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_restart_period",
+                "default_en" => "Restart period",
+                "default_ar" => "اعادة التشغيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+            [
+                "key" => "serial_start_no",
+                "default_en" => "Start no",
+                "default_ar" => "رقم البداية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
+
         ]);
         //Unit status
         Translation::insert([
@@ -614,7 +1462,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
             ],
             [
                 "key" => "external_sale_man_edit_form",
@@ -623,7 +1471,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
             ],
             [
                 "key" => "external_sale_man_phone",
@@ -632,7 +1480,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
             ],
             [
                 "key" => "external_sale_man_email",
@@ -641,17 +1489,17 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
 
             ],
             [
-                "key" => "country",
+                "key" => "external_saleman_country",
                 "default_en" => "Country name",
                 "default_ar" => "اسم الدولة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
             ],
             [
                 "key" => "external_sale_man_national_id",
@@ -660,7 +1508,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
 
             ],
             [
@@ -670,7 +1518,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
 
             ],
             [
@@ -680,7 +1528,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
 
             ],
             [
@@ -690,7 +1538,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "external salesmen"
+                "screen" => "employees"
 
             ],
         ]);
@@ -1307,27 +2155,18 @@ class TranslationSeeder extends Seeder
                 "screen" => "roles"
             ],
             [
-                "key" => "role_name_ar",
-                "default_en" => "Role name (arabic)",
-                "default_ar" => "اسم الدور (عربي)",
+                "key" => "role_name",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "roles"
             ],
             [
-                "key" => "role_name_en",
-                "default_en" => "Role name (english)",
-                "default_ar" => "اسم الدور (انجليزي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "roles"
-            ],
-            [
-                "key" => "role_type",
-                "default_en" => "Role type name",
-                "default_ar" => "اسم نوع الدور",
+                "key" => "role_name_e",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم (الانجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -1565,7 +2404,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "users"
             ],
             [
-                "key" => "employee",
+                "key" => "employee_user",
                 "default_en" => "Employee name",
                 "default_ar" => "اسم الموظف",
                 "new_ar" => "",
@@ -1574,9 +2413,27 @@ class TranslationSeeder extends Seeder
                 "screen" => "users"
             ],
             [
+                "key" => "role_user",
+                "default_en" => "Role name",
+                "default_ar" => "اسم الدور",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "role"
+            ],
+            [
                 "key" => "user_password",
                 "default_en" => "User Password",
                 "default_ar" => "كلمة مرور المستخدم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "users"
+            ],
+            [
+                "key" => "role",
+                "default_en" => "Role",
+                "default_ar" => "الدور",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -1766,7 +2623,7 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "manager",
+                "key" => "employee_manager",
                 "default_en" => "Manager name",
                 "default_ar" => "اسم المدير",
                 "new_ar" => "",
@@ -1775,7 +2632,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "employees"
             ],
             [
-                "key" => "is_salesman",
+                "key" => "employee_is_salesman",
                 "default_en" => "is salesman",
                 "default_ar" => "رجل مبيعات",
                 "new_ar" => "",
@@ -1792,9 +2649,8 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "employees"
             ],
-            
             [
-                "key" => "for_all_customer",
+                "key" => "employee_for_all_customer",
                 "default_en" => "For all customer",
                 "default_ar" => "لجميع العملاء",
                 "new_ar" => "",
@@ -1803,7 +2659,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "employees"
             ],
             [
-                "key" => "customer_handel",
+                "key" => "employee_customer_handel",
                 "default_en" => "Customer handle",
                 "default_ar" => "التعامل مع العملاء",
                 "new_ar" => "",
@@ -1812,7 +2668,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "employees"
             ],
             [
-                "key" => "plan",
+                "key" => "employee_plan",
                 "default_en" => "Plan name",
                 "default_ar" => "اسم الخطة",
                 "new_ar" => "",
@@ -1821,9 +2677,99 @@ class TranslationSeeder extends Seeder
                 "screen" => "employees"
             ],
             [
-                "key" => "sale_man_type",
+                "key" => "employee_sale_man_type",
                 "default_en" => "Sale man type",
                 "default_ar" => "نوع رجل المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_mobile",
+                "default_en" => "Mobile",
+                "default_ar" => "رقم التليفون",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_whatsapp",
+                "default_en" => "Whatsapp",
+                "default_ar" => "واتساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_email",
+                "default_en" => "Email",
+                "default_ar" => "الاميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "sale_man_type_create_form",
+                "default_en" => "Add new sale man type",
+                "default_ar" => "اضف نوع رجل مبيعات جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "sale_man_type_edit_form",
+                "default_en" => "Edit sale man type form",
+                "default_ar" => "نموذج تعديل نوع رجل المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "sale_man_type_name_ar",
+                "default_en" => "Sale man type name (arabic)",
+                "default_ar" => "اسم نوع رجل المبيعات (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "sale_man_type_name_en",
+                "default_en" => "Sale man type name (english)",
+                "default_ar" => "اسم نوع رجل المبيعات (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "is_employee",
+                "default_en" => "Is employee",
+                "default_ar" => "هل موظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_job",
+                "default_en" => "Job name",
+                "default_ar" => "اسم الوظيفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_branch",
+                "default_en" => "Branch name",
+                "default_ar" => "اسم الفرع",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -1901,7 +2847,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "Units"
             ],
             [
                 "key" => "unit_edit_form",
@@ -1910,7 +2856,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "Units"
 
             ],
             [
@@ -1920,7 +2866,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "Units"
 
             ],
             [
@@ -1930,7 +2876,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "Units"
 
             ],
             [
@@ -1940,7 +2886,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "units"
+                "screen" => "Units"
 
             ],
         ]);
@@ -2042,7 +2988,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer",
                 "default_en" => "Customer name",
-                "default_ar" => "اسم الزبون",
+                "default_ar" => "اسم العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2132,6 +3078,125 @@ class TranslationSeeder extends Seeder
                 "screen" => "real estate"
             ],
         ]);
+        //Real estate unit types
+        Translation::insert([
+            [
+                "key" => "unit_type_create_form",
+                "default_en" => "Add new unit type",
+                "default_ar" => "اضف نوع وحدة جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "unit_type_edit_form",
+                "default_en" => "Edit unit type",
+                "default_ar" => "تعديل نوع الوحدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "unit_type_name_ar",
+                "default_en" => "Unit type name (arabic)",
+                "default_ar" => "اسم نوع الوحدة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "unit_type_name_en",
+                "default_en" => "Unit type name (english)",
+                "default_ar" => "اسم نوع الوحدة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+        ]);
+        //Real estate finishing
+        Translation::insert([
+            [
+                "key" => "finishing_create_form",
+                "default_en" => "Add finishing",
+                "default_ar" => "اضف تشطيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "finishing_edit_form",
+                "default_en" => "Edit finishing",
+                "default_ar" => "تعديل التشطيف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "finishing_name_ar",
+                "default_en" => "Finishing name (arabic)",
+                "default_ar" => "اسم التشطيب (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "finishing_name_en",
+                "default_en" => "Finishing name (english)",
+                "default_ar" => "اسم التشطيب (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+        ]);
+        //Real estate view
+        Translation::insert([
+            [
+                "key" => "view_create_form",
+                "default_en" => "Add view",
+                "default_ar" => "اضف منظر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "view_edit_form",
+                "default_en" => "Edit view",
+                "default_ar" => "تعديل منظر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "view_name_ar",
+                "default_en" => "View name (arabic)",
+                "default_ar" => "اسم المنظر (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "view_name_en",
+                "default_en" => "View name (english)",
+                "default_ar" => "اسم المنظر (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+
+
+        ]);
         //real estate units
         Translation::insert([
             [
@@ -2206,7 +3271,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_unit_ty",
                 "default_en" => "Unit Ty ",
-                "default_ar" => "Unit Ty",
+                "default_ar" => "نوع الوحدة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2336,7 +3401,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_view",
                 "default_en" => "View ",
-                "default_ar" => "View ",
+                "default_ar" => "المنظر",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2355,7 +3420,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_finishing",
                 "default_en" => "Finishing ",
-                "default_ar" => "Finishing ",
+                "default_ar" => "التشطيب",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2364,7 +3429,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_properties",
                 "default_en" => "Properties ",
-                "default_ar" => "Properties ",
+                "default_ar" => "الخصائص",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2566,6 +3631,16 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "building_street",
+                "default_en" => "Street name",
+                "default_ar" => "اسم الشارع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+
+            ],
+            [
                 "key" => "building_name_ar",
                 "default_en" => "Building name (arabic)",
                 "default_ar" => "اسم البناء (عربي)",
@@ -2721,7 +3796,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_edit_form",
                 "default_en" => "Edit customer form",
-                "default_ar" => "نموذج تعديل الزبون",
+                "default_ar" => "نموذج تعديل العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2751,7 +3826,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_name_ar",
                 "default_en" => "Customer name (arabic)",
-                "default_ar" => "اسم الزبون (عربي)",
+                "default_ar" => "اسم العميل (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2761,7 +3836,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_name_en",
                 "default_en" => "Customer name (english)",
-                "default_ar" => "اسم الزبون (انجليزي)",
+                "default_ar" => "اسم العميل (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2771,7 +3846,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_phone",
                 "default_en" => "Customer phone",
-                "default_ar" => "هاتف الزبون",
+                "default_ar" => "هاتف العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2781,7 +3856,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_email",
                 "default_en" => "Customer email",
-                "default_ar" => "بريد الزبون الالكتروني",
+                "default_ar" => "بريد العميل الالكتروني",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2791,7 +3866,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_nationality",
                 "default_en" => "Customer nationality",
-                "default_ar" => "جنسية الزبون",
+                "default_ar" => "جنسية العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2811,7 +3886,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_contact_person",
                 "default_en" => "Customer contact person",
-                "default_ar" => "معلومات الزبون الشخصية",
+                "default_ar" => "معلومات العميل الشخصية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2821,7 +3896,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_contact_phones",
                 "default_en" => "Customer contact phones",
-                "default_ar" => "هواتف اتصال الزبون",
+                "default_ar" => "هواتف اتصال العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2831,7 +3906,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_whatsapp",
                 "default_en" => "Customer whatsapp",
-                "default_ar" => "رقم واتساب الزبون",
+                "default_ar" => "رقم واتساب العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2841,7 +3916,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_code",
                 "default_en" => "Customer code",
-                "default_ar" => "كود الزبون",
+                "default_ar" => "كود العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2851,13 +3926,14 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_passport_number",
                 "default_en" => "Customer passport number",
-                "default_ar" => "رقم جواز سفر الزبون",
+                "default_ar" => "رقم جواز سفر العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "customer"
 
             ],
+
         ]);
         //reservation
         Translation::insert([
@@ -2893,7 +3969,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer",
                 "default_en" => "Customer name",
-                "default_ar" => "اسم الزبون",
+                "default_ar" => "اسم العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -4060,51 +5136,51 @@ class TranslationSeeder extends Seeder
 
         //Sales men types
         Translation::insert([
-            [
-                "key" => "sale_man_type_create_form",
-                "default_en" => "Add new sale man type",
-                "default_ar" => "اضف نوع رجل مبيعات جديد",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "sale_man_type_edit_form",
-                "default_en" => "Edit sale man type form",
-                "default_ar" => "نموذج تعديل نوع رجل المبيعات",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "sale_man_type_name_ar",
-                "default_en" => "Sale man type name (arabic)",
-                "default_ar" => "اسم نوع رجل المبيعات (عربي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "sale_man_type_name_en",
-                "default_en" => "Sale man type name (english)",
-                "default_ar" => "اسم نوع رجل المبيعات (انجليزي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "is_employee",
-                "default_en" => "Is employee",
-                "default_ar" => "هل موظف",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
+            // [
+            //     "key" => "sale_man_type_create_form",
+            //     "default_en" => "Add new sale man type",
+            //     "default_ar" => "اضف نوع رجل مبيعات جديد",
+            //     "new_ar" => "",
+            //     "new_en" => "",
+            //     "company_id" => 0,
+            //     "screen" => "sales men"
+            // ],
+            // [
+            //     "key" => "sale_man_type_edit_form",
+            //     "default_en" => "Edit sale man type form",
+            //     "default_ar" => "نموذج تعديل نوع رجل المبيعات",
+            //     "new_ar" => "",
+            //     "new_en" => "",
+            //     "company_id" => 0,
+            //     "screen" => "sales men"
+            // ],
+            // [
+            //     "key" => "sale_man_type_name_ar",
+            //     "default_en" => "Sale man type name (arabic)",
+            //     "default_ar" => "اسم نوع رجل المبيعات (عربي)",
+            //     "new_ar" => "",
+            //     "new_en" => "",
+            //     "company_id" => 0,
+            //     "screen" => "sales men"
+            // ],
+            // [
+            //     "key" => "sale_man_type_name_en",
+            //     "default_en" => "Sale man type name (english)",
+            //     "default_ar" => "اسم نوع رجل المبيعات (انجليزي)",
+            //     "new_ar" => "",
+            //     "new_en" => "",
+            //     "company_id" => 0,
+            //     "screen" => "sales men"
+            // ],
+            // [
+            //     "key" => "is_employee",
+            //     "default_en" => "Is employee",
+            //     "default_ar" => "هل موظف",
+            //     "new_ar" => "",
+            //     "new_en" => "",
+            //     "company_id" => 0,
+            //     "screen" => "sales men"
+            // ],
         ]);
         //Sales man
         Translation::insert([
@@ -4201,94 +5277,94 @@ class TranslationSeeder extends Seeder
             ],
         ]);
         //External sale man
-        Translation::insert([
-            [
-                "key" => "external_sale_man_create_form",
-                "default_en" => "Add new external sale man",
-                "default_ar" => "اضف رجل مبيعات خارجي جديد",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "external_sale_man_edit_form",
-                "default_en" => "Edit external sale man form",
-                "default_ar" => "نموذج تعديل رجل مبيعات خارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "external_sale_man_phone",
-                "default_en" => "External Sale man phone",
-                "default_ar" => "هاتف رجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "external_sale_man_email",
-                "default_en" => "External Sale man email",
-                "default_ar" => "البريد الالكتروني لرجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
+        // Translation::insert([
+        //     [
+        //         "key" => "external_sale_man_create_form",
+        //         "default_en" => "Add new external sale man",
+        //         "default_ar" => "اضف رجل مبيعات خارجي جديد",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_edit_form",
+        //         "default_en" => "Edit external sale man form",
+        //         "default_ar" => "نموذج تعديل رجل مبيعات خارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_phone",
+        //         "default_en" => "External Sale man phone",
+        //         "default_ar" => "هاتف رجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_email",
+        //         "default_en" => "External Sale man email",
+        //         "default_ar" => "البريد الالكتروني لرجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
 
-            ],
-            [
-                "key" => "country",
-                "default_en" => "Country name",
-                "default_ar" => "اسم الدولة",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
-            ],
-            [
-                "key" => "external_sale_man_national_id",
-                "default_en" => "External Sale man national id",
-                "default_ar" => "الرقم القومي لرجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "country",
+        //         "default_en" => "Country name",
+        //         "default_ar" => "اسم الدولة",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_national_id",
+        //         "default_en" => "External Sale man national id",
+        //         "default_ar" => "الرقم القومي لرجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
 
-            ],
-            [
-                "key" => "external_sale_man_address",
-                "default_en" => "External Sale man address",
-                "default_ar" => "عنوان رجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_address",
+        //         "default_en" => "External Sale man address",
+        //         "default_ar" => "عنوان رجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
 
-            ],
-            [
-                "key" => "external_sale_man_code",
-                "default_en" => "External Sale man code",
-                "default_ar" => "كود رجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_code",
+        //         "default_en" => "External Sale man code",
+        //         "default_ar" => "كود رجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
 
-            ],
-            [
-                "key" => "external_sale_man_status",
-                "default_en" => "External Sale man status",
-                "default_ar" => "حالة رجل المبيعات الخارجي",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "sales men"
+        //     ],
+        //     [
+        //         "key" => "external_sale_man_status",
+        //         "default_en" => "External Sale man status",
+        //         "default_ar" => "حالة رجل المبيعات الخارجي",
+        //         "new_ar" => "",
+        //         "new_en" => "",
+        //         "company_id" => 0,
+        //         "screen" => "sales men"
 
-            ],
-        ]);
+        //     ],
+        // ]);
         //Internal sale man
         Translation::insert([
             [
@@ -4506,7 +5582,7 @@ class TranslationSeeder extends Seeder
             ],
 
             [
-                "key" => "employee",
+                "key" => "bank_account_employee",
                 "default_en" => "Employee name",
                 "default_ar" => "اسم الموظف",
                 "new_ar" => "",
@@ -4921,15 +5997,6 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "role"
             ],
-            [
-                "key" => "role_type",
-                "default_en" => "Role type name",
-                "default_ar" => "اسم نوع الدور",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "role"
-            ],
         ]);
         //Role workflow
         Translation::insert([
@@ -5152,7 +6219,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer",
                 "default_en" => "Customer name",
-                "default_ar" => "اسم الزبون",
+                "default_ar" => "اسم العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5314,7 +6381,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_unit_ty",
                 "default_en" => "Unit Ty ",
-                "default_ar" => "Unit Ty",
+                "default_ar" => "نوع الوحدة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5344,7 +6411,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_building",
                 "default_en" => "Unit building ",
-                "default_ar" => "وحده المبنا (عقارات)",
+                "default_ar" => "وحده المبنى (عقارات)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5474,7 +6541,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "realEstate_unit_view",
                 "default_en" => "View ",
-                "default_ar" => "View ",
+                "default_ar" => "المنظر",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5831,7 +6898,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_edit_form",
                 "default_en" => "Edit customer form",
-                "default_ar" => "نموذج تعديل الزبون",
+                "default_ar" => "نموذج تعديل العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5861,7 +6928,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_name_ar",
                 "default_en" => "Customer name (arabic)",
-                "default_ar" => "اسم الزبون (عربي)",
+                "default_ar" => "اسم العميل (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5871,7 +6938,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_name_en",
                 "default_en" => "Customer name (english)",
-                "default_ar" => "اسم الزبون (انجليزي)",
+                "default_ar" => "اسم العميل (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5881,7 +6948,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_phone",
                 "default_en" => "Customer phone",
-                "default_ar" => "هاتف الزبون",
+                "default_ar" => "هاتف العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5891,7 +6958,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_email",
                 "default_en" => "Customer email",
-                "default_ar" => "بريد الزبون الالكتروني",
+                "default_ar" => "بريد العميل الالكتروني",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5901,7 +6968,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_nationality",
                 "default_en" => "Customer nationality",
-                "default_ar" => "جنسية الزبون",
+                "default_ar" => "جنسية العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5921,7 +6988,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_contact_person",
                 "default_en" => "Customer contact person",
-                "default_ar" => "معلومات الزبون الشخصية",
+                "default_ar" => "معلومات العميل الشخصية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5931,7 +6998,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_contact_phones",
                 "default_en" => "Customer contact phones",
-                "default_ar" => "هواتف اتصال الزبون",
+                "default_ar" => "هواتف اتصال العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5941,7 +7008,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_whatsapp",
                 "default_en" => "Customer whatsapp",
-                "default_ar" => "رقم واتساب الزبون",
+                "default_ar" => "رقم واتساب العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5951,7 +7018,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_code",
                 "default_en" => "Customer code",
-                "default_ar" => "كود الزبون",
+                "default_ar" => "كود العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -5961,7 +7028,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer_passport_number",
                 "default_en" => "Customer passport number",
-                "default_ar" => "رقم جواز سفر الزبون",
+                "default_ar" => "رقم جواز سفر العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -6001,7 +7068,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "customer",
                 "default_en" => "Customer name",
-                "default_ar" => "اسم الزبون",
+                "default_ar" => "اسم العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7103,6 +8170,33 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "receivable payable"
             ],
+            [
+                "key" => "day_mounth",
+                "default_en" => "Day mounth",
+                "default_ar" => "يوم الشهر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "installment_payment_plan_note_a",
+                "default_en" => "Note a",
+                "default_ar" => "ملحوظة الف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
+                "key" => "installment_payment_plan_note_e",
+                "default_en" => "Note e",
+                "default_ar" => "ملحوظة ب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
         ]);
         //installment document plan
         Translation::insert([
@@ -7292,7 +8386,28 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_edit_form",
                 "default_en" => "Edit customer form",
-                "default_ar" => "نموذج تعديل الزبون",
+                "default_ar" => "نموذج تعديل العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+
+            ],
+
+            [
+                "key" => "general_customer_group",
+                "default_en" => "Group Name",
+                "default_ar" => "اسم الجروب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+
+            ],
+            [
+                "key" => "general_customer_is_supplier",
+                "default_en" => "Is supplier",
+                "default_ar" => "مورد",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7322,7 +8437,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_name_ar",
                 "default_en" => "Customer name (arabic)",
-                "default_ar" => "اسم الزبون (عربي)",
+                "default_ar" => "اسم العميل (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7332,7 +8447,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_name_en",
                 "default_en" => "Customer name (english)",
-                "default_ar" => "اسم الزبون (انجليزي)",
+                "default_ar" => "اسم العميل (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7342,7 +8457,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_phone",
                 "default_en" => "Customer phone",
-                "default_ar" => "هاتف الزبون",
+                "default_ar" => "هاتف العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7352,7 +8467,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_email",
                 "default_en" => "Customer email",
-                "default_ar" => "بريد الزبون الالكتروني",
+                "default_ar" => "بريد العميل الالكتروني",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7362,7 +8477,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_nationality",
                 "default_en" => "Customer nationality",
-                "default_ar" => "جنسية الزبون",
+                "default_ar" => "جنسية العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7382,7 +8497,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_contact_person",
                 "default_en" => "Customer contact person",
-                "default_ar" => "معلومات الزبون الشخصية",
+                "default_ar" => "معلومات العميل الشخصية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7392,7 +8507,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_contact_phones",
                 "default_en" => "Customer contact phones",
-                "default_ar" => "هواتف اتصال الزبون",
+                "default_ar" => "هواتف اتصال العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7402,7 +8517,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_whatsapp",
                 "default_en" => "Customer whatsapp",
-                "default_ar" => "رقم واتساب الزبون",
+                "default_ar" => "رقم واتساب العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7412,7 +8527,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_code",
                 "default_en" => "Customer code",
-                "default_ar" => "كود الزبون",
+                "default_ar" => "كود العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7422,13 +8537,130 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "general_customer_passport_number",
                 "default_en" => "Customer passport number",
-                "default_ar" => "رقم جواز سفر الزبون",
+                "default_ar" => "رقم جواز سفر العميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "general customer"
 
             ],
+            [
+                "key" => "customer_employee",
+                "default_en" => "Employee name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "customer_salesman",
+                "default_en" => "Salesman name",
+                "default_ar" => "اسم البائع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_facebook",
+                "default_en" => "Facebook",
+                "default_ar" => "الفيسبوك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_instagram",
+                "default_en" => "Instagram",
+                "default_ar" => "انستجرام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_linkedin",
+                "default_en" => "Linkedin",
+                "default_ar" => "لنكدان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_snapchat",
+                "default_en" => "Snapchat",
+                "default_ar" => "سناب شات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_twitter",
+                "default_en" => "Twitter",
+                "default_ar" => "تويتر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_website",
+                "default_en" => "Website",
+                "default_ar" => "الموقع الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "general_customer_note",
+                "default_en" => "Note",
+                "default_ar" => "الملاحظه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "customer_main_category",
+                "default_en" => "Main Category",
+                "default_ar" => "الفئه الرئيسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "customer_sub_category",
+                "default_en" => "Sub Category",
+                "default_ar" => "الفئه الرئيسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "customer_source",
+                "default_en" => "Customer Source",
+                "default_ar" => "مصدر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ],
+            [
+                "key" => "customer_sector",
+                "default_en" => "Sector",
+                "default_ar" => "قطاع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+            ]
         ]);
         //document
         Translation::insert([
@@ -7495,6 +8727,16 @@ class TranslationSeeder extends Seeder
                 "key" => "document_need_approve",
                 "default_en" => "Document Need Approve",
                 "default_ar" => "المستند يحتاج الى موافقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_need_is_copy",
+                "default_en" => "Is Copy",
+                "default_ar" => "متكرر",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -7848,6 +9090,54 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "department"
             ],
+
+            [
+                "key" => "department_task_name_ar",
+                "default_en" => "task name (arabic)",
+                "default_ar" => "اسم مهمة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_task_supervisors",
+                "default_en" => "Task Supervisor",
+                "default_ar" => "مشرف المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_task_name_en",
+                "default_en" => "task name (english)",
+                "default_ar" => "اسم مهمة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_task_description_ar",
+                "default_en" => "Task description (arabic)",
+                "default_ar" => "وصف المهمه (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+
+            ],
+            [
+                "key" => "department_task_description_en",
+                "default_en" => "Task description (english)",
+                "default_ar" => "وصف المهمه (الانجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+
+            ],
             [
                 "key" => "department_edit_form",
                 "default_en" => "Edit department form",
@@ -7876,8 +9166,53 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "department"
-
             ],
+            [
+                "key" => "department_attentions",
+                "default_en" => "attentions",
+                "default_ar" => "مراجعين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_estimated_time",
+                "default_en" => "Estimated time",
+                "default_ar" => "الوقت التقديري",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_estimated_day",
+                "default_en" => "Estimated day",
+                "default_ar" => "اليوم التقديري",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_task_edit_form",
+                "default_en" => "Edit task",
+                "default_ar" => "تعديل المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
+                "key" => "department_task_create_form",
+                "default_en" => "Add new task",
+                "default_ar" => "اضف مهمة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+
         ]);
         //statuses
         Translation::insert([
@@ -8009,48 +9344,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "sell method"
             ],
-        ]);
-        //boardRealestate sector
-        Translation::insert([
             [
-                "key" => "boardRent_sector_create_form",
-                "default_en" => "Add new sector",
-                "default_ar" => "اضف قطاع جديد",
+                "key" => "is_all_value",
+                "default_en" => "Full Value",
+                "default_ar" => "كامل القيمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "sell method"
             ],
-            [
-                "key" => "boardRent_sector_edit_form",
-                "default_en" => "Edit sector form",
-                "default_ar" => "تعديل نموذج قطاع",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "board rent"
-
-            ],
-            [
-                "key" => "boardRent_sector_name_ar",
-                "default_en" => "Sector name (arabic)",
-                "default_ar" => "اسم القطاع (عربي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "board rent"
-
-            ],
-            [
-                "key" => "boardRent_sector_name_en",
-                "default_en" => "Sector name (english)",
-                "default_ar" => "اسم القطاع (انجليزي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "board rent"
-
-            ]
         ]);
         //boardRealestate package
         Translation::insert([
@@ -8169,13 +9471,76 @@ class TranslationSeeder extends Seeder
         //boardRealestate Task
         Translation::insert([
             [
+                "key" => "boardRent_task_type",
+                "default_en" => "Type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_equipment",
+                "default_en" => "Equipment Type",
+                "default_ar" => "نوع المعده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_location",
+                "default_en" => "Location",
+                "default_ar" => "الموقع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_type",
+                "default_en" => "Type",
+                "default_ar" => "نوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_task_requirement",
+                "default_en" => "Task Requirement",
+                "default_ar" => "متطلبات المهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_is_closed",
+                "default_en" => "Is Closed ?",
+                "default_ar" => "مغلقه ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_panel_admin_note",
+                "default_en" => "Admin Note",
+                "default_ar" => "ملاحظة المسؤول",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
                 "key" => "boardRent_task_create_form",
                 "default_en" => "Add new Task",
                 "default_ar" => "اضف مهمة جديدة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
             ],
             [
                 "key" => "boardRent_task_edit_form",
@@ -8184,7 +9549,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8194,8 +9559,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
-
+                "screen" => "ticket manager"
             ],
             [
                 "key" => "boardRent_task_name_en",
@@ -8204,7 +9568,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8214,7 +9578,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8224,8 +9588,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
-
+                "screen" => "ticket manager"
             ],
             [
                 "key" => "boardRent_task_department",
@@ -8234,7 +9597,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8244,7 +9607,17 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "equipment",
+                "default_en" => "Equipment",
+                "default_ar" => "المعدات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8254,7 +9627,17 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "task_priority",
+                "default_en" => "priority",
+                "default_ar" => "الاولويه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8264,7 +9647,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8274,7 +9657,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8284,7 +9667,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8294,7 +9677,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8304,7 +9687,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8314,7 +9697,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8324,7 +9707,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8334,7 +9717,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8344,7 +9727,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
             [
@@ -8354,7 +9737,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "board rent"
+                "screen" => "ticket manager"
 
             ],
         ]);
@@ -8831,7 +10214,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "Category"
             ],
             [
                 "key" => "category_edit_form",
@@ -8840,7 +10223,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "Category"
 
             ],
             [
@@ -8850,7 +10233,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "Category"
 
             ],
             [
@@ -8860,7 +10243,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "employees"
+                "screen" => "Category"
             ]
         ]);
         //Sponsor
@@ -9095,8 +10478,8 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "club"  
-            ],  
+                "screen" => "club"
+            ],
             [
                 "key" => "member_birth_date",
                 "default_en" => "Birth date",
@@ -9454,54 +10837,6 @@ class TranslationSeeder extends Seeder
             ],
         ]);
 
-        //Item category
-        Translation::insert([
-            [
-                "key" => "category_create_form",
-                "default_en" => "Add new category",
-                "default_ar" => "اضف فئة جديدة",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "real estate"
-            ],
-            [
-                "key" => "category_edit_form",
-                "default_en" => "Edit category form",
-                "default_ar" => "تعديل الفئة",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "real estate"
-            ],
-            [
-                "key" => "category_name_ar",
-                "default_en" => "Category name (arabic)",
-                "default_ar" => "اسم الفئة (عربي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "real estate"
-            ],
-            [
-                "key" => "category_name_en",
-                "default_en" => "Category name (english)",
-                "default_ar" => "اسم الفئة (انجليزي)",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "real estate"
-            ],
-            [
-                "key" => "parent",
-                "default_en" => "Parent name",
-                "default_ar" => "اسم الوالد",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "real estate"
-            ],
-        ]);
         //Item
         Translation::insert([
             [
@@ -9579,6 +10914,130 @@ class TranslationSeeder extends Seeder
 
         ]);
 
+        //Service
+        Translation::insert([
+            [
+                "key" => "service_name_ar",
+                "default_en" => "Service name (arabic)",
+                "default_ar" => "اسم الفئة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "service_name_en",
+                "default_en" => "Service name (english)",
+                "default_ar" => "اسم الصنف (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "service_create_form",
+                "default_en" => "Add new service",
+                "default_ar" => "اضف خدمة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "service_edit_form",
+                "default_en" => "Edit service form",
+                "default_ar" => "تعديل الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "service_price",
+                "default_en" => "Price",
+                "default_ar" => "السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "service_type",
+                "default_en" => "The Nature Of The Item",
+                "default_ar" => "طبيعة الصنف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+
+        ]);
+        //Service
+        Translation::insert([
+            [
+                "key" => "company_name_ar",
+                "default_en" => "Company name (arabic)",
+                "default_ar" => "اسم الشركة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_name_en",
+                "default_en" => "Compaany name (english)",
+                "default_ar" => "اسم الشركة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_create_form",
+                "default_en" => "Add new company",
+                "default_ar" => "اضف شركة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_edit_form",
+                "default_en" => "Edit company form",
+                "default_ar" => "تعديل الشركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_phone",
+                "default_en" => "Phone",
+                "default_ar" => "الهاتف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_address",
+                "default_en" => "Address",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+            [
+                "key" => "company_tax_record",
+                "default_en" => "Tax Record",
+                "default_ar" => "السجل الضريبي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "real estate"
+            ],
+        ]);
         //club settings
         Translation::insert([
             [
@@ -9854,6 +11313,16 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "receivable payable"
             ],
+            [
+                "key" => "serial_number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم التسلسلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+
             [
                 "key" => "credit_note_create_form",
                 "default_en" => "Add New Credit Note",
@@ -10220,9 +11689,206 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "screen properties",
+                "screen" => "equipment",
 
             ],
+            [
+                "key" => "equipment_location",
+                "default_en" => "Location",
+                "default_ar" => "موقع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "equipment",
+
+            ],
+            [
+                "key" => "equipment_periodic_maintenance",
+                "default_en" => "Periodic Maintenance",
+                "default_ar" => "صيانه دوريه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "equipment",
+
+            ],
+        ]);
+        // priority
+        Translation::insert([
+            [
+                "key" => "priority_create_form",
+                "default_en" => "Add new priority",
+                "default_ar" => "اضف اولويه جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+            ],
+            [
+                "key" => "priority_edit_form",
+                "default_en" => "Edit priority form",
+                "default_ar" => "نموذج تعديل الاولويه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+
+            ],
+            [
+                "key" => "priority_name_ar",
+                "default_en" => " name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+
+            ],
+            [
+                "key" => "priority_name_en",
+                "default_en" => " name (english)",
+                "default_ar" => "اسم  (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+
+            ],
+            [
+                "key" => "priority_is_valid",
+                "default_en" => "priority status",
+                "default_ar" => "حالة ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+
+            ],
+            [
+                "key" => "priority_is_default",
+                "default_en" => "Is default",
+                "default_ar" => "افتراضي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "priority"
+            ],
+        ]);
+        //locations
+        Translation::insert([
+            [
+                "key" => "location_create_form",
+                "default_en" => "Add new Location form",
+                "default_ar" => "اضف موقع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "location",
+            ],
+            [
+                "key" => "location_edit_form",
+                "default_en" => "Edit Location form",
+                "default_ar" => "نموذج تعديل الموقع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "location",
+
+            ],
+            [
+                "key" => "location_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "اسم ( الانجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "location",
+            ],
+            [
+                "key" => "location_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "اسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "location",
+            ],
+            [
+                "key" => "location_priority_id",
+                "default_en" => "Priority",
+                "default_ar" => "الاولويه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "location",
+            ],
+        ]);
+        //Periodic maintenance
+        Translation::insert([
+            [
+                "key" => "periodic_maintenance_create_form",
+                "default_en" => "Add new Periodic Maintenance",
+                "default_ar" => "اضف صيانة دورية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ],
+            [
+                "key" => "periodic_maintenance_edit_form",
+                "default_en" => "Edit Periodic Maintenance form",
+                "default_ar" => "نموذج تعديل صيانة دورية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+
+            ],
+            [
+                "key" => "periodic_maintenance_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "اسم ( الانجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ],
+            [
+                "key" => "periodic_maintenance_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "اسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ],
+            [
+                "key" => "periodic_maintenance_status",
+                "default_en" => "Status",
+                "default_ar" => "الحاله",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ],
+            [
+                "key" => "periodic_maintenance_task",
+                "default_en" => "Task",
+                "default_ar" => "مهمات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ],
+            [
+                "key" => "periodic_maintenance_period",
+                "default_en" => "Period",
+                "default_ar" => "فترة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "periodic maintenance",
+            ]
         ]);
         //HR online request
         Translation::insert([
@@ -10245,6 +11911,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "hr"
             ],
             [
+                "key" => "online_request_admin_comment",
+                "default_en" => "Reply comment",
+                "default_ar" => "تعليق الرد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
                 "key" => "request_type",
                 "default_en" => "Request type name",
                 "default_ar" => "اسم الطلب",
@@ -10253,7 +11928,7 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "hr"
             ],
-            
+
             [
                 "key" => "employee",
                 "default_en" => "Employee name",
@@ -10302,7 +11977,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "online_request_amount",
                 "default_en" => "Amount",
-                "default_ar" => "الكمية",
+                "default_ar" => "مبلغ",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -10345,6 +12020,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "hr"
             ],
             [
+                "key" => "online_request_remark",
+                "default_en" => "Remark",
+                "default_ar" => "ملاحظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
                 "key" => "online_request_approved_end_date",
                 "default_en" => "Approved end date",
                 "default_ar" => "اعتماد تاريخ النهاية",
@@ -10355,8 +12039,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "online_request_approved_date",
-                "default_en" => "Approved date",
-                "default_ar" => "اعتماد التاريخ",
+                "default_en" => "Reply date",
+                "default_ar" => "تاريخ الرد",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -10389,6 +12073,2107 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "hr"
             ],
+        ]);
+        //Payroll statement
+        Translation::insert([
+            [
+                "key" => "payroll_statement_view_form",
+                "default_en" => "Payroll view form",
+                "default_ar" => "نموذج عرض الراتب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "employee",
+                "default_en" => "Employee name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_work_days",
+                "default_en" => "Work days",
+                "default_ar" => "ايام العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_work_value",
+                "default_en" => "Work value",
+                "default_ar" => "قيمة العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_net",
+                "default_en" => "Net",
+                "default_ar" => "الصافي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_basic_salary",
+                "default_en" => "Basic salary",
+                "default_ar" => "المرتب الاساسي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_benefits",
+                "default_en" => "Benefits",
+                "default_ar" => "الفوائد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "payroll_statement_deductions",
+                "default_en" => "Deductions",
+                "default_ar" => "النواقص",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //Vacation balance
+        Translation::insert([
+            [
+                "key" => "vacation_balance_view_form",
+                "default_en" => "Vacation balance form",
+                "default_ar" => "نموذج عرض رصيد الاجازة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "vacation_balance_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "vacation_balance_days",
+                "default_en" => "Days",
+                "default_ar" => "الايام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //Emergency balance
+        Translation::insert([
+            [
+                "key" => "emergency_balance_view_form",
+                "default_en" => "Emergency balance form",
+                "default_ar" => "نموذج عرض رصيد الطواريء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "emergency_balance_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "emergency_balance_days",
+                "default_en" => "Days",
+                "default_ar" => "الايام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //Request
+        Translation::insert([
+            [
+                "key" => "request_view_form",
+                "default_en" => "Request view form",
+                "default_ar" => "نموذج عرض الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+
+        ]);
+        //End service
+        Translation::insert([
+            [
+                "key" => "end_service_view_form",
+                "default_en" => "End service view form",
+                "default_ar" => "نموذج عرض نهاية الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "end_service_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "end_service_days",
+                "default_en" => "Days",
+                "default_ar" => "الايام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "end_service_value",
+                "default_en" => "Value",
+                "default_ar" => "القيمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+        ]);
+        //sector
+        Translation::insert([
+            [
+                "key" => "sector_create_form",
+                "default_en" => "Add new sector",
+                "default_ar" => "اضف قطاع جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sector"
+            ],
+            [
+                "key" => "sector_edit_form",
+                "default_en" => "Edit sector form",
+                "default_ar" => "تعديل نموذج قطاع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sector"
+
+            ],
+            [
+                "key" => "sector_name_ar",
+                "default_en" => "Sector name (arabic)",
+                "default_ar" => "اسم القطاع (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sector"
+
+            ],
+            [
+                "key" => "sector_name_en",
+                "default_en" => "Sector name (english)",
+                "default_ar" => "اسم القطاع (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "sector"
+
+            ]
+        ]);
+        //customer resource
+        Translation::insert([
+            [
+                "key" => "customer_resource_create_form",
+                "default_en" => "Add new customer resource form",
+                "default_ar" => "اضف موارد للعملاء جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer resource"
+            ],
+            [
+                "key" => "customer_resource_edit_form",
+                "default_en" => "Edit customer resource form",
+                "default_ar" => "نموذج تعديل موارد العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer resource"
+            ],
+            [
+                "key" => "customer_resource_name_ar",
+                "default_en" => " name (arabic)",
+                "default_ar" => "اسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer resource"
+
+            ],
+            [
+                "key" => "customer_resource_name_en",
+                "default_en" => " name (english)",
+                "default_ar" => "اسم  (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer resource"
+            ],
+            [
+                "key" => "customer_resource_parent",
+                "default_en" => "Parent name",
+                "default_ar" => "اسم الاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer resource"
+            ],
+        ]);
+        //customer groups
+        Translation::insert([
+            [
+                "key" => "customer_groups_create_form",
+                "default_en" => "Add New Customer Groups",
+                "default_ar" => "اضف مجموعة عملاء جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+            ],
+            [
+                "key" => "customer_groups_edit_form",
+                "default_en" => "Edit Customer Group form",
+                "default_ar" => "تعديل نموذج مجموعة العملاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+
+            ],
+            [
+                "key" => "customer_groups_title_ar",
+                "default_en" => "title (arabic)",
+                "default_ar" => "العنوان (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+
+            ],
+            [
+                "key" => "customer_groups_title_en",
+                "default_en" => "title (english)",
+                "default_ar" => "العنوان (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+
+            ],
+            [
+                "key" => "customer_groups_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+
+            ],
+            [
+                "key" => "customer_groups_default",
+                "default_en" => "Default",
+                "default_ar" => "الحالة الافتراضية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Customer Group"
+
+            ],
+        ]);
+        //general supplier
+        Translation::insert([
+            [
+                "key" => "supplier_create_form",
+                "default_en" => "Add new supplier",
+                "default_ar" => "اضف زبون جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_edit_form",
+                "default_en" => "Edit supplier form",
+                "default_ar" => "نموذج تعديل الزبون",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_country",
+                "default_en" => "Country name",
+                "default_ar" => "اسم الدولة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_city",
+                "default_en" => "City name",
+                "default_ar" => "اسم المدينة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_name_ar",
+                "default_en" => "Supplier name (arabic)",
+                "default_ar" => "اسم المورد (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_name_en",
+                "default_en" => "Supplier name (english)",
+                "default_ar" => "اسم المورد (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_phone",
+                "default_en" => "Supplier phone",
+                "default_ar" => "هاتف المورد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_email",
+                "default_en" => "email",
+                "default_ar" => "بريد الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_nationality",
+                "default_en" => "nationality",
+                "default_ar" => "جنسية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_national_id",
+                "default_en" => "national id",
+                "default_ar" => "الرقم القومي ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_contact_person",
+                "default_en" => " contact person",
+                "default_ar" => "معلومات  الشخصية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_contact_phones",
+                "default_en" => " contact phones",
+                "default_ar" => "هواتف اتصال ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_whatsapp",
+                "default_en" => " whatsapp",
+                "default_ar" => "رقم واتساب ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_code",
+                "default_en" => " code",
+                "default_ar" => "كود ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "supplier_passport_number",
+                "default_en" => " passport number",
+                "default_ar" => "رقم جواز سفر ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "customer_employee",
+                "default_en" => "Employee name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "customer_salesman",
+                "default_en" => "Salesman name",
+                "default_ar" => "اسم البائع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_facebook",
+                "default_en" => "Facebook",
+                "default_ar" => "الفيسبوك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_instagram",
+                "default_en" => "Instagram",
+                "default_ar" => "انستجرام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_linkedin",
+                "default_en" => "Linkedin",
+                "default_ar" => "لنكدان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_snapchat",
+                "default_en" => "Snapchat",
+                "default_ar" => "سناب شات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_twitter",
+                "default_en" => "Twitter",
+                "default_ar" => "تويتر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_website",
+                "default_en" => "Website",
+                "default_ar" => "الموقع الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_note",
+                "default_en" => "Note",
+                "default_ar" => "الملاحظه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_main_category",
+                "default_en" => "Main Category",
+                "default_ar" => "الفئه الرئيسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_sub_category",
+                "default_en" => "Sub Category",
+                "default_ar" => "الفئه الرئيسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_source",
+                "default_en" => "Customer Source",
+                "default_ar" => "مصدر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_sector",
+                "default_en" => "Sector",
+                "default_ar" => "قطاع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_customer",
+                "default_en" => "Customer",
+                "default_ar" => "زبون",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_customer_group",
+                "default_en" => "Customer Group",
+                "default_ar" => "مجموعه الم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+            [
+                "key" => "supplier_bank_account",
+                "default_en" => "Bank account name",
+                "default_ar" => "اسم الحساب البنكي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+
+            ],
+            [
+                "key" => "customer_sub_category",
+                "default_en" => "Sub Category",
+                "default_ar" => "الفئه الرئيسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Supplier"
+            ],
+        ]);
+        //brand
+        Translation::insert([
+            [
+                "key" => "brand_create_form",
+                "default_en" => "Add New Brand",
+                "default_ar" => "اضف ماركة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+            ],
+            [
+                "key" => "brand_edit_form",
+                "default_en" => "Edit Brand form",
+                "default_ar" => "تعديل الماركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ],
+            [
+                "key" => "brand_name_ar",
+                "default_en" => "Brand Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ],
+            [
+                "key" => "brand_name_en",
+                "default_en" => "Brand Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ]
+
+        ]);
+        //group
+        Translation::insert([
+            [
+                "key" => "group_create_form",
+                "default_en" => "Add New Group",
+                "default_ar" => "اضف مجموعة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+            ],
+            [
+                "key" => "group_edit_form",
+                "default_en" => "Edit Group form",
+                "default_ar" => "تعديل المجموعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "group_name_ar",
+                "default_en" => "Group Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "group_name_en",
+                "default_en" => "Group Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ]
+
+        ]);
+        //Variant Attributes
+        Translation::insert([
+            [
+                "key" => "variant_attributes_create_form",
+                "default_en" => "Add New Variant Attributes",
+                "default_ar" => "اضف سمة المتغيرة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Variant Attributes"
+            ],
+            [
+                "key" => "variant_attributes_edit_form",
+                "default_en" => "Edit Variant Attributes form",
+                "default_ar" => "تعديل السمات المتغيرة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Variant Attributes"
+
+            ],
+            [
+                "key" => "variant_attributes_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Variant Attributes"
+
+            ],
+            [
+                "key" => "variant_attributes_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Variant Attributes"
+
+            ]
+
+        ]);
+        //taxes
+        Translation::insert([
+            [
+                "key" => "taxes_create_form",
+                "default_en" => "Add New Tax",
+                "default_ar" => "اضف ضريبة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+            ],
+            [
+                "key" => "taxes_edit_form",
+                "default_en" => "Edit Tax form",
+                "default_ar" => "تعديل الضريبة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+
+            ],
+            [
+                "key" => "taxes_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+
+            ],
+            [
+                "key" => "taxes_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+
+            ],
+            [
+                "key" => "taxes_percentage",
+                "default_en" => "Percentage",
+                "default_ar" => "النسبة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+
+            ],
+            [
+                "key" => "taxes_default",
+                "default_en" => "Default",
+                "default_ar" => "الحالة الافتراضية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Taxes"
+
+            ],
+
+        ]);
+        //inventories
+        Translation::insert([
+            [
+                "key" => "inventories_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_brand",
+                "default_en" => "Brand",
+                "default_ar" => "الماركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_category",
+                "default_en" => "Category",
+                "default_ar" => "الفئة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_group",
+                "default_en" => "Group",
+                "default_ar" => "المجموعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_re_order",
+                "default_en" => "Re order",
+                "default_ar" => "اعادة الطلب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_ID",
+                "default_en" => "ID",
+                "default_ar" => "الرقم التسلسلى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_SKU",
+                "default_en" => "SKU",
+                "default_ar" => "كود التخزين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Barcode",
+                "default_en" => "Barcode",
+                "default_ar" => "الباركود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Item_Name",
+                "default_en" => "Item Name",
+                "default_ar" => "اسم الصنف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Variant_Name",
+                "default_en" => "Variant Name",
+                "default_ar" => "اسم المتغير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Category_Name",
+                "default_en" => "Category Name",
+                "default_ar" => "اسم الفئه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Group_Name",
+                "default_en" => "Group Name",
+                "default_ar" => "اسم المجموعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Brand_Name",
+                "default_en" => "Brand Name",
+                "default_ar" => "اسم الماركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Purchase_Price",
+                "default_en" => "Purchase Price",
+                "default_ar" => "سعر الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Selling_Price",
+                "default_en" => "Selling Price",
+                "default_ar" => "سعر البيع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+            [
+                "key" => "inventories_Inventory",
+                "default_en" => "Inventory",
+                "default_ar" => "الجرد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS inventories"
+            ],
+        ]);
+
+        // product (point of sale)
+        Translation::insert([
+            [
+                "key" => "pointOfSell_create_form",
+                "default_en" => "Add New Product",
+                "default_ar" => "اضف منتج جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_edit_form",
+                "default_en" => "Edit Product form",
+                "default_ar" => "تعديل المنتج",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+
+            ],
+            [
+                "key" => "pointOfSell_show_form",
+                "default_en" => "Show Product",
+                "default_ar" => "عرض المنتج",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+
+            ],
+            [
+                "key" => "pointOfSell_product_title",
+                "default_en" => "Title (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_title_e",
+                "default_en" => "Title (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_description",
+                "default_en" => "Description (arabic)",
+                "default_ar" => "الوصف (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_description_e",
+                "default_en" => "Description (english)",
+                "default_ar" => "الوصف (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_category",
+                "default_en" => "Category",
+                "default_ar" => "الفئه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_brand",
+                "default_en" => "Brand",
+                "default_ar" => "الماركه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_unit",
+                "default_en" => "Unit",
+                "default_ar" => "الوحده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_group",
+                "default_en" => "Group",
+                "default_ar" => "مجموعه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_tax",
+                "default_en" => "Tax",
+                "default_ar" => "الضريبه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_product_type",
+                "default_en" => "Product Type",
+                "default_ar" => "نوع المنتج",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_is_quantity",
+                "default_ar" => "هل يوجد كميه؟",
+                "default_en" => "is_quantity",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_purchase_price",
+                "default_en" => "Purchase Price",
+                "default_ar" => "سعر الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_selling_price",
+                "default_en" => "Selling Price",
+                "default_ar" => "سعر البيع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_quantity",
+                "default_en" => "Quantity",
+                "default_ar" => "الكميه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_sku",
+                "default_en" => "Sku",
+                "default_ar" => "Sku",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_Barcode",
+                "default_en" => "Barcode",
+                "default_ar" => "الباركود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_re_order",
+                "default_en" => "Re Order",
+                "default_ar" => "Re Order",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_created_by",
+                "default_en" => "Created By",
+                "default_ar" => "بواسطه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+            [
+                "key" => "pointOfSell_product_descriptionShow",
+                "default_en" => "Description",
+                "default_ar" => "الوصف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS product"
+            ],
+        ]);
+
+        //pos cash register
+        Translation::insert([
+            [
+                "key" => "cash_register_create_form",
+                "default_en" => "Add New Cash Register",
+                "default_ar" => "اضف تسجيل النقدية جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+            ],
+            [
+                "key" => "cash_register_edit_form",
+                "default_en" => "Edit Cash Register form",
+                "default_ar" => "تعديل نموذج تسجيل النقدية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+            [
+                "key" => "cash_register_title_ar",
+                "default_en" => "title (arabic)",
+                "default_ar" => "العنوان (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+            [
+                "key" => "cash_register_title_en",
+                "default_en" => "title (english)",
+                "default_ar" => "العنوان (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+            [
+                "key" => "cash_register_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+            [
+                "key" => "cash_register_multiple_access",
+                "default_en" => "Allow multi user",
+                "default_ar" => "السماح لعدة مستخدمين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+            [
+                "key" => "cash_register_created_by",
+                "default_en" => "Created By",
+                "default_ar" => "تمت الاضافة بواسطه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "POS Cash Register"
+
+            ],
+        ]);
+
+        //booking rooms
+        Translation::insert([
+            [
+                "key" => "room_create_form",
+                "default_en" => "Add New Room",
+                "default_ar" => "اضف غرفة جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+            ],
+            [
+                "key" => "room_edit_form",
+                "default_en" => "Edit Room form",
+                "default_ar" => "تعديل نموذج الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_code",
+                "default_en" => "Code",
+                "default_ar" => "الكود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_price",
+                "default_en" => "Price",
+                "default_ar" => "السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+            ],
+            [
+                "key" => "room_description_ar",
+                "default_en" => "Description (arabic)",
+                "default_ar" => "الوصف (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_description_en",
+                "default_en" => "Description (english)",
+                "default_ar" => "الوصف (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+        ]);
+
+        //booking attendant
+        Translation::insert([
+            [
+                "key" => "attendant_create_form",
+                "default_en" => "Add New attendant",
+                "default_ar" => "اضف رفيق جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking attendands"
+            ],
+            [
+                "key" => "attendant_edit_form",
+                "default_en" => "Edit attendant",
+                "default_ar" => "تعديل بيانات المرافق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "attendant_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "attendant_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "attendant_customer",
+                "default_en" => "Customer Name",
+                "default_ar" => "اسم العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "attendant_national_id",
+                "default_en" => "Nationality",
+                "default_ar" => "الجنسية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+            ],
+            [
+                "key" => "attendant_id_number",
+                "default_en" => "Id number",
+                "default_ar" => "رقم الهوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+            ],
+
+            [
+                "key" => "attendant_notes",
+                "default_en" => "Notes",
+                "default_ar" => "الملاحظات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+        ]);
+
+        //booking guest
+        Translation::insert([
+            [
+                "key" => "guest_employee",
+                "default_en" => "Employee Name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_create_form",
+                "default_en" => "Add new guest",
+                "default_ar" => "اضف نزيل جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+            [
+                "key" => "guest_edit_form",
+                "default_en" => "Edit guest",
+                "default_ar" => "تعديل بيانات النزيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_phone",
+                "default_en" => "Phone",
+                "default_ar" => "رقم الهاتف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_email",
+                "default_en" => "Email",
+                "default_ar" => "البريد الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_id_number",
+                "default_en" => "ID Number",
+                "default_ar" => "رقم الهوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_address",
+                "default_en" => "Address",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+            [
+                "key" => "guest_nationality",
+                "default_en" => "Nationality",
+                "default_ar" => "الجنسية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "guest_passport_number",
+                "default_en" => "Passport Number",
+                "default_ar" => "رقم جواز السفر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+
+            ],
+            [
+                "key" => "guest_passport_expiration_date",
+                "default_en" => "Passport Expiration Date",
+                "default_ar" => "تاريخ انتهاء الجواز",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+
+            ],
+            [
+                "key" => "guest_visa_number",
+                "default_en" => "Visa Number",
+                "default_ar" => "رقم التأشيرة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "general customer"
+
+            ],
+
+        ]);
+
+        //booking company
+        Translation::insert([
+            [
+                "key" => "company_create_form",
+                "default_en" => "Add new company",
+                "default_ar" => "اضف شركة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+            [
+                "key" => "company_email",
+                "default_en" => "Email",
+                "default_ar" => "البريد الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_employee",
+                "default_en" => "Employee Name",
+                "default_ar" => "اسم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_edit_form",
+                "default_en" => "Edit company form",
+                "default_ar" => "نموذج تعديل الشركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_phone",
+                "default_en" => "Phone",
+                "default_ar" => "رقم الهاتف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "company_tax_record",
+                "default_en" => "Tax record",
+                "default_ar" => "السجل الضريبي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "comapny_address",
+                "default_en" => "Address",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "comapny_contact_person",
+                "default_en" => "Contact Person",
+                "default_ar" => "الشخص المسؤل عن الاتصال",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+            [
+                "key" => "comapny_contact_phones",
+                "default_en" => "Contact Phone",
+                "default_ar" => "هاتف الاتصال",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+
+            ],
+        ]);
+        //booking setting
+        Translation::insert([
+            [
+                "key" => "key_value_edit_form",
+                "default_en" => "Edit key and value",
+                "default_ar" => "تعديل المفتاح والقيمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+            [
+                "key" => "key",
+                "default_en" => "Key",
+                "default_ar" => "المفتاح",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+            [
+                "key" => "value",
+                "default_en" => "Value",
+                "default_ar" => "القيمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Guest"
+            ],
+
+        ]);
+
+        //Payment Method
+        Translation::insert([
+            [
+                "key" => "payment_method_create_form",
+                "default_en" => "Add new Payment Method",
+                "default_ar" => "اضف طريقة دفع جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Payment Method"
+            ],
+            [
+                "key" => "payment_method_edit_form",
+                "default_en" => "Edit Payment Method form",
+                "default_ar" => "نموذج تعديل طريقة الدفع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Payment Method"
+
+            ],
+            [
+                "key" => "payment_method_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Payment Method"
+
+            ],
+            [
+                "key" => "payment_method_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Payment Method"
+
+            ],
+            [
+                "key" => "payment_method_default",
+                "default_en" => "Is Default",
+                "default_ar" => "الافتراضى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Payment Method"
+
+            ],
+
+        ]);
+
+        //check in report
+        Translation::insert([
+            [
+                "key" => "check_in_report_customer",
+                "default_en" => "Customer",
+                "default_ar" => "نزيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_serial_number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم التسلسلى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_date_from",
+                "default_en" => "Date From",
+                "default_ar" => "من تاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_date_to",
+                "default_en" => "Date To",
+                "default_ar" => "الى تاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_booking_days",
+                "default_en" => "Booking Days",
+                "default_ar" => "أيام الحجز",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_check_in_time",
+                "default_en" => "Check In Time",
+                "default_ar" => "وقت الوصول",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_room",
+                "default_en" => "Room",
+                "default_ar" => "غرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_price_per_day",
+                "default_en" => "Price Per Day",
+                "default_ar" => "سعر اليوم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_total",
+                "default_en" => "Total",
+                "default_ar" => "الاجمالى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+            [
+                "key" => "check_in_report_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "check in report"
+            ],
+
+        ]);
+
+        //accommodation invoice report
+        Translation::insert([
+            [
+                "key" => "accommodation_report_customer",
+                "default_en" => "Customer",
+                "default_ar" => "نزيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_serial_number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم التسلسلى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_date",
+                "default_en" => "Date",
+                "default_ar" => "تاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_room",
+                "default_en" => "Room",
+                "default_ar" => "غرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_price_per_day",
+                "default_en" => "Price Per Day",
+                "default_ar" => "سعر اليوم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_total",
+                "default_en" => "Total",
+                "default_ar" => "الاجمالى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+            [
+                "key" => "accommodation_report_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "accommodation invoice report"
+            ],
+
+        ]);
+
+        //items report
+        Translation::insert([
+            [
+                "key" => "items_report_customer",
+                "default_en" => "Customer",
+                "default_ar" => "نزيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_serial_number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم التسلسلى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_date",
+                "default_en" => "Date",
+                "default_ar" => "تاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_item",
+                "default_en" => "Service",
+                "default_ar" => "الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_quantity",
+                "default_en" => "Quantity",
+                "default_ar" => "الكمية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_price_per_day",
+                "default_en" => "Price",
+                "default_ar" => "السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_total",
+                "default_en" => "Total",
+                "default_ar" => "الاجمالى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+            [
+                "key" => "items_report_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "items report"
+            ],
+
+        ]);
+
+        //club member reject
+        Translation::insert([
+            [
+                "key" => "member_reject_create_form",
+                "default_en" => "Add new member reject",
+                "default_ar" => "اضف شطب عضوية جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_edit_form",
+                "default_en" => "Edit member reject form",
+                "default_ar" => "تعديل شطب العضوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_Serial_Number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم التسلسلى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_member",
+                "default_en" => "Member",
+                "default_ar" => "العضو",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_session_number",
+                "default_en" => "session number",
+                "default_ar" => "رقم الجلسه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_reason",
+                "default_en" => "reason",
+                "default_ar" => "السبب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+            [
+                "key" => "member_reject_note",
+                "default_en" => "note",
+                "default_ar" => "ملاحظات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
+
         ]);
     }
 }

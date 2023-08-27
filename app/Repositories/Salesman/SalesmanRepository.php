@@ -42,7 +42,7 @@ class SalesmanRepository implements SalesmanInterface
         DB::transaction(function () use ($id, $request) {
             $model = $this->model->find($id);
             $model->update($request->all());
-            $this->forget($id);
+            // $this->forget($id);
         });
     }
     public function logs($id)
@@ -52,18 +52,29 @@ class SalesmanRepository implements SalesmanInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
+        // $this->forget($id);
         $model->delete();
     }
 
-    private function forget($id)
+    // private function forget($id)
+    // {
+    //     $keys = [
+    //         "salesmen",
+    //         "salesmen_" . $id,
+    //     ];
+    //     foreach ($keys as $key) {
+    //         cacheForget($key);
+    //     }
+    // }
+
+    public function getName($request)
     {
-        $keys = [
-            "salesmen",
-            "salesmen_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
         }
     }
 }

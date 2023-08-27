@@ -1,18 +1,19 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import {
-  required,
-  minLength,                                
-  maxLength,
-} from "vuelidate/lib/validators";
+import {required, minLength, maxLength, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
-import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
+import loader from "../../../components/general/loader";
+import permissionGuard from "../../../helper/permission";
+
+import {
+  dynamicSortString,
+  dynamicSortNumber,
+} from "../../../helper/tableSort";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -71,17 +72,25 @@ export default {
   },
   validations: {
     create: {
-      name: {required, minLength: minLength(2), maxLength: maxLength(100)},
-      name_e: {required, minLength: minLength(2), maxLength: maxLength(100)},
+      name: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
+      name_e: { required: requiredIf(function (model) {
+              return this.isRequired("name_e");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
     },
     edit: {
       name: {
-        required,
+          required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),
         minLength: minLength(2),
         maxLength: maxLength(100),
       },
       name_e: {
-        required,
+          required: requiredIf(function (model) {
+              return this.isRequired("name_e");
+          }),
         minLength: minLength(2),
         maxLength: maxLength(100),
       },
@@ -120,41 +129,51 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.getCustomTableFields();
     this.getData();
   },
-  updated() {
-    // $(function () {
-    //   $(".englishInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return true;
-    //     if (65 <= ew && ew <= 90) return true;
-    //     if (97 <= ew && ew <= 122) return true;
-    //     return false;
-    //   });
-    //   $(".arabicInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return false;
-    //     if (65 <= ew && ew <= 90) return false;
-    //     if (97 <= ew && ew <= 122) return false;
-    //     return true;
-    //   });
-    // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+      return permissionGuard(vm, "Financial Status Club", "all financialStatus club");
+    });
+
   },
-//   beforeRouteEnter(to, from, next) {
-//     next((vm) => {
-//       if (
-//         vm.$store.state.auth.work_flow_trees.includes("pending-member") ||
-//         vm.$store.state.auth.user.type == "super_admin"
-//       ) {
-//         return true;
-//       } else {
-//         return vm.$router.push({ name: "home" });
-//       }
-//     });
-//   },
   methods: {
+    isPermission(item) {
+          if (this.$store.state.auth.type == 'user'){
+              return this.$store.state.auth.permissions.includes(item)
+          }
+          return true;
+      },
+    getCustomTableFields() {
+          adminApi
+              .get(`/customTable/table-columns/cm_financial_status`)
+              .then((res) => {
+                  this.fields = res.data;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+    isVisible(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      },
+    isRequired(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_required == 1 ? true : false;
+      },
     formatDate(value) {
       return formatDateOnly(value);
     },
@@ -181,7 +200,7 @@ export default {
               text: `${this.$t("general.Thereisanerrorinthesystem")}`,
             });
           });
-      } else {      
+      } else {
       }
     },
     /**
@@ -203,23 +222,6 @@ export default {
           this.financialStatuses = l.data;
           this.financialStatusesPagination = l.pagination;
           this.current_page = l.pagination.current_page;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
-        });
-    },
-    getCustomTableFields() {
-      adminApi
-        .get(`/customTable/table-columns/general_financialStatuses`)
-        .then((res) => {
-          this.fields = res.data;
         })
         .catch((err) => {
           Swal.fire({
@@ -601,7 +603,9 @@ export default {
           <div class="card-body">
             <!-- start search -->
             <div class="row justify-content-between align-items-center mb-2">
-              <h4 class="header-title">{{ $t("general.financialStatusesTable") }}</h4>
+              <h4 class="header-title">
+                {{ $t("general.financialStatusesTable") }}
+              </h4>
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->
@@ -612,22 +616,31 @@ export default {
                     class="btn-block setting-search"
                   >
                     <b-form-checkbox
+                      v-if="isVisible('name')"
                       v-model="filterSetting"
                       value="name"
                       class="mb-1"
-                      >{{ getCompanyKey("financial_status_name_ar") }}</b-form-checkbox
+                      >{{
+                        getCompanyKey("financial_status_name_ar")
+                      }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('name_e')"
                       v-model="filterSetting"
                       value="name_e"
                       class="mb-1"
-                      >{{ getCompanyKey("financial_status_name_en") }}</b-form-checkbox
+                      >{{
+                        getCompanyKey("financial_status_name_en")
+                      }}</b-form-checkbox
                     >
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
 
-                <div class="d-inline-block position-relative" style="width: 77%">
+                <div
+                  class="d-inline-block position-relative"
+                  style="width: 77%"
+                >
                   <span
                     :class="[
                       'search-custom position-absolute',
@@ -648,10 +661,13 @@ export default {
             </div>
             <!-- end search -->
 
-            <div class="row justify-content-between align-items-center mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mb-2 px-1"
+            >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
+                  v-if="isPermission('create financialStatus hr')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -660,7 +676,10 @@ export default {
                   <i class="fas fa-plus"></i>
                 </b-button>
                 <div class="d-inline-flex">
-                  <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                  <button
+                    @click="ExportExcel('xlsx')"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fas fa-file-download"></i>
                   </button>
                   <button v-print="'#printData'" class="custom-btn-dowonload">
@@ -669,14 +688,20 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('update financialStatus hr')
+                    "
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="
+                      checkAll.length > 1 &&
+                      isPermission('delete financialStatus hr')
+                    "
                     @click.prevent="deleteBranch(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -685,7 +710,10 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('delete financialStatus hr')
+                    "
                     @click.prevent="deleteBranch(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -711,23 +739,22 @@ export default {
                     <!-- Basic dropdown -->
                     <b-dropdown
                       variant="primary"
-                      :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                      :html="`${$t(
+                        'general.setting'
+                      )} <i class='fe-settings'></i>`"
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
-                      <b-form-checkbox
-                        v-model="setting.name"
-                        class="mb-1"
+                      <b-form-checkbox v-if="isVisible('name')"   v-model="setting.name" class="mb-1"
                         >{{ getCompanyKey("financial_status_name_ar") }}
                       </b-form-checkbox>
-                      <b-form-checkbox
-                        v-model="setting.name_e"
-                        class="mb-1"
-                      >
+                      <b-form-checkbox v-if="isVisible('name_e')"   v-model="setting.name_e" class="mb-1">
                         {{ getCompanyKey("financial_status_name_en") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
-                        <a href="javascript:void(0)" class="btn btn-primary btn-sm"
+                        <a
+                          href="javascript:void(0)"
+                          class="btn btn-primary btn-sm"
                           >Apply</a
                         >
                       </div>
@@ -737,9 +764,14 @@ export default {
                   <!-- end filter and setting -->
 
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 13px">
-                      {{ financialStatusesPagination.from }}-{{ financialStatusesPagination.to }} /
+                      {{ financialStatusesPagination.from }}-{{
+                        financialStatusesPagination.to
+                      }}
+                      /
                       {{ financialStatusesPagination.total }}
                     </div>
                     <div class="d-inline-block">
@@ -747,9 +779,13 @@ export default {
                         href="javascript:void(0)"
                         :style="{
                           'pointer-events':
-                            financialStatusesPagination.current_page == 1 ? 'none' : '',
+                            financialStatusesPagination.current_page == 1
+                              ? 'none'
+                              : '',
                         }"
-                        @click.prevent="getData(financialStatusesPagination.current_page - 1)"
+                        @click.prevent="
+                          getData(financialStatusesPagination.current_page - 1)
+                        "
                       >
                         <span>&lt;</span>
                       </a>
@@ -768,7 +804,9 @@ export default {
                               ? 'none'
                               : '',
                         }"
-                        @click.prevent="getData(financialStatusesPagination.current_page + 1)"
+                        @click.prevent="
+                          getData(financialStatusesPagination.current_page + 1)
+                        "
                       >
                         <span>&gt;</span>
                       </a>
@@ -796,7 +834,10 @@ export default {
                     :disabled="!is_disabled"
                     @click.prevent="resetForm"
                     type="button"
-                    :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                    :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
                   >
                     {{ $t("general.AddNewRecord") }}
                   </b-button>
@@ -827,11 +868,11 @@ export default {
                   </b-button>
                 </div>
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-12" v-if="isVisible('name')"  >
                     <div class="form-group">
                       <label for="field-1" class="control-label">
                         {{ getCompanyKey("financial_status_name_ar") }}
-                        <span class="text-danger">*</span>
+                        <span v-if="isRequired('name')"   class="text-danger">*</span>
                       </label>
                       <div dir="rtl">
                         <input
@@ -840,18 +881,25 @@ export default {
                           v-model="$v.create.name.$model"
                           :class="{
                             'is-invalid': $v.create.name.$error || errors.name,
-                            'is-valid': !$v.create.name.$invalid && !errors.name,
+                            'is-valid':
+                              !$v.create.name.$invalid && !errors.name,
                           }"
                           @keyup="arabicValue(create.name)"
                           id="field-1"
                         />
                       </div>
-                      <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name.minLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatleast") }}
                         {{ $v.create.name.$params.minLength.min }}
                         {{ $t("general.letters") }}
                       </div>
-                      <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name.maxLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatmost") }}
                         {{ $v.create.name.$params.maxLength.max }}
                         {{ $t("general.letters") }}
@@ -865,11 +913,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div  class="col-md-12">
+                  <div class="col-md-12" v-if="isVisible('name_e')"  >
                     <div class="form-group">
                       <label for="field-2" class="control-label">
                         {{ getCompanyKey("financial_status_name_en") }}
-                        <span  class="text-danger">*</span>
+                        <span v-if="isRequired('name_e')"   class="text-danger">*</span>
                       </label>
                       <div dir="ltr">
                         <input
@@ -877,19 +925,27 @@ export default {
                           class="form-control englishInput"
                           v-model="$v.create.name_e.$model"
                           :class="{
-                            'is-invalid': $v.create.name_e.$error || errors.name_e,
-                            'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                            'is-invalid':
+                              $v.create.name_e.$error || errors.name_e,
+                            'is-valid':
+                              !$v.create.name_e.$invalid && !errors.name_e,
                           }"
                           @keyup="englishValue(create.name_e)"
                           id="field-2"
                         />
                       </div>
-                      <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name_e.minLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatleast") }}
                         {{ $v.create.name_e.$params.minLength.min }}
                         {{ $t("general.letters") }}
                       </div>
-                      <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name_e.maxLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatmost") }}
                         {{ $v.create.name_e.$params.maxLength.max }}
                         {{ $t("general.letters") }}
@@ -903,14 +959,15 @@ export default {
                       </template>
                     </div>
                   </div>
-                  
                 </div>
               </form>
             </b-modal>
             <!--  /create   -->
 
             <!-- start .table-responsive-->
-            <div class="table-responsive mb-3 custom-table-theme position-relative">
+            <div
+              class="table-responsive mb-3 custom-table-theme position-relative"
+            >
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
@@ -921,7 +978,12 @@ export default {
               >
                 <thead>
                   <tr>
-                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
+                    <th
+                      v-if="enabled3"
+                      class="do-not-print"
+                      scope="col"
+                      style="width: 0"
+                    >
                       <div class="form-check custom-control">
                         <input
                           class="form-check-input"
@@ -931,9 +993,11 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name ">
+                    <th v-if="setting.name && isVisible('name')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("financial_status_name_ar") }}</span>
+                        <span>{{
+                          getCompanyKey("financial_status_name_ar")
+                        }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -946,17 +1010,23 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e ">
+                    <th v-if="setting.name_e && isVisible('name_e')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("financial_status_name_en") }}</span>
+                        <span>{{
+                          getCompanyKey("financial_status_name_en")
+                        }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
-                            @click="financialStatuses.sort(sortString('name_e'))"
+                            @click="
+                              financialStatuses.sort(sortString('name_e'))
+                            "
                           ></i>
                           <i
                             class="fas fa-arrow-down"
-                            @click="financialStatuses.sort(sortString('-name_e'))"
+                            @click="
+                              financialStatuses.sort(sortString('-name_e'))
+                            "
                           ></i>
                         </div>
                       </div>
@@ -972,13 +1042,20 @@ export default {
                 <tbody v-if="financialStatuses.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="
+                      isPermission('update financialStatus hr')
+                        ? $bvModal.show(`modal-edit-${data.id}`)
+                        : false
+                    "
                     v-for="(data, index) in financialStatuses"
                     :key="data.id"
                     class="body-tr-custom"
                   >
                     <td v-if="enabled3" class="do-not-print">
-                      <div class="form-check custom-control" style="min-height: 1.9em">
+                      <div
+                        class="form-check custom-control"
+                        style="min-height: 1.9em"
+                      >
                         <input
                           style="width: 17px; height: 17px"
                           class="form-check-input"
@@ -988,10 +1065,10 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name">
+                    <td v-if="setting.name && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e">
+                    <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
                     <td v-if="enabled3" class="do-not-print">
@@ -1007,6 +1084,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                            v-if="isPermission('update financialStatus hr')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -1015,10 +1093,13 @@ export default {
                               class="d-flex justify-content-between align-items-center text-black"
                             >
                               <span>{{ $t("general.edit") }}</span>
-                              <i class="mdi mdi-square-edit-outline text-info"></i>
+                              <i
+                                class="mdi mdi-square-edit-outline text-info"
+                              ></i>
                             </div>
                           </a>
                           <a
+                            v-if="isPermission('delete financialStatus hr')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteBranch(data.id)"
@@ -1057,25 +1138,36 @@ export default {
                               {{ $t("general.Edit") }}
                             </b-button>
 
-                            <b-button variant="success" class="mx-1" disabled v-else>
+                            <b-button
+                              variant="success"
+                              class="mx-1"
+                              disabled
+                              v-else
+                            >
                               <b-spinner small></b-spinner>
-                              <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                              <span class="sr-only"
+                                >{{ $t("login.Loading") }}...</span
+                              >
                             </b-button>
 
                             <b-button
                               variant="danger"
                               type="button"
-                              @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
+                              @click.prevent="
+                                $bvModal.hide(`modal-edit-${data.id}`)
+                              "
                             >
                               {{ $t("general.Cancel") }}
                             </b-button>
                           </div>
                           <div class="row">
-                            <div  class="col-md-12">
+                            <div class="col-md-12" v-if="isVisible('name')">
                               <div class="form-group">
                                 <label for="edit-1" class="control-label">
-                                  {{ getCompanyKey("financial_status_name_ar") }}
-                                  <span class="text-danger">*</span>
+                                  {{
+                                    getCompanyKey("financial_status_name_ar")
+                                  }}
+                                  <span v-if="isRequired('name')"   class="text-danger">*</span>
                                 </label>
                                 <div dir="rtl">
                                   <input
@@ -1083,8 +1175,10 @@ export default {
                                     class="form-control arabicInput"
                                     v-model="$v.edit.name.$model"
                                     :class="{
-                                      'is-invalid': $v.edit.name.$error || errors.name,
-                                      'is-valid': !$v.edit.name.$invalid && !errors.name,
+                                      'is-invalid':
+                                        $v.edit.name.$error || errors.name,
+                                      'is-valid':
+                                        !$v.edit.name.$invalid && !errors.name,
                                     }"
                                     @keyup="arabicValue(edit.name)"
                                     id="edit-1"
@@ -1115,11 +1209,13 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div  class="col-md-12">
+                            <div class="col-md-12" v-if="isVisible('name_e')"  >
                               <div class="form-group">
                                 <label for="edit-2" class="control-label">
-                                  {{ getCompanyKey("financial_status_name_en") }}
-                                  <span class="text-danger">*</span>
+                                  {{
+                                    getCompanyKey("financial_status_name_en")
+                                  }}
+                                  <span v-if="isRequired('name_e')"   class="text-danger">*</span>
                                 </label>
                                 <div dir="ltr">
                                   <input
@@ -1130,7 +1226,8 @@ export default {
                                       'is-invalid':
                                         $v.edit.name_e.$error || errors.name_e,
                                       'is-valid':
-                                        !$v.edit.name_e.$invalid && !errors.name_e,
+                                        !$v.edit.name_e.$invalid &&
+                                        !errors.name_e,
                                     }"
                                     @keyup="englishValue(edit.name_e)"
                                     id="edit-2"
@@ -1154,7 +1251,9 @@ export default {
                                 </div>
                                 <template v-if="errors.name_e">
                                   <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.name_e"
+                                    v-for="(
+                                      errorMessage, index
+                                    ) in errors.name_e"
                                     :key="index"
                                     >{{ errorMessage }}</ErrorMessage
                                   >
@@ -1173,7 +1272,9 @@ export default {
                         type="button"
                         class="btn"
                         data-toggle="tooltip"
-                        :data-placement="$i18n.locale == 'en' ? 'left' : 'right'"
+                        :data-placement="
+                          $i18n.locale == 'en' ? 'left' : 'right'
+                        "
                         :title="Tooltip"
                       >
                         <i class="fe-info" style="font-size: 22px"></i>

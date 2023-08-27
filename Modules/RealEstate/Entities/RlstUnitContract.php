@@ -13,6 +13,7 @@ class RlstUnitContract extends Model
 
     protected $fillable = [
         'unit_code',
+        'company_id',
     ];
 
     // relations

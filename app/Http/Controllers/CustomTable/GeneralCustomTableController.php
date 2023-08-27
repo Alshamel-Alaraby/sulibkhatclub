@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomTableRequest;
 use App\Http\Resources\CustomTable\CustomTableResource;
 use App\Models\GeneralCustomTable;
+use Database\Seeders\CustomTableSeeder;
 use Illuminate\Http\Request;
 
 class GeneralCustomTableController extends Controller
 {
 
-    public function __construct(private \App\Repositories\CustomTable\CustomTableInterface$modelInterface)
+    public function __construct(private \App\Repositories\CustomTable\CustomTableInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -88,5 +89,16 @@ class GeneralCustomTableController extends Controller
             ])->first();
         }
         return $customTable ? $customTable->columns : [];
+    }
+
+    public function seeder()
+    {
+
+        GeneralCustomTable::where('company_id', 0)->delete();
+
+        $seeder = new CustomTableSeeder();
+        $seeder->run();
+
+        return responseJson(200, __('Done'));
     }
 }

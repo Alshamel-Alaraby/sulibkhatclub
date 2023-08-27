@@ -27,6 +27,7 @@ class RlstUnitStatusRequest extends FormRequest
             'name_e' => 'required|string|max:100',
             "is_active" => "nullable|in:active,inactive",
             "is_default" => "nullable|in:0,1",
+            "company_id"=>'nullable',
         ];
     }
 

@@ -1,16 +1,18 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import ArchDoc from "../../../components/create/arch/gen-arch-doc-type";
 import DocField from "../../../components/create/arch/doc-field";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
+
 
 /**
  * Advanced Table component
@@ -31,13 +33,11 @@ export default {
         DocField,
     },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("arch doc type fields") || vm.$store.state.auth.work_flow_trees.includes('archiving') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
+            next((vm) => {
+      return permissionGuard(vm, "Archiving Document Type Field", "all Store");
+    });
+
+
     },
     updated() {
         $(".englishInput").keypress(function (event) {
@@ -99,6 +99,7 @@ export default {
             is_disabled: false,
             current_page: 1,
             printLoading: true,
+            company_id:null,
             printObj: {
                 id: "printField",
             },
@@ -152,6 +153,7 @@ export default {
         },
     },
     mounted() {
+        this.company_id = this.$store.getters["auth/company_id"];
         this.getData();
     },
     methods: {
@@ -459,6 +461,7 @@ export default {
                     .post(`/arch-doc-type-field`, {
                         ...this.create,
                         is_required: this.create.is_required == "1" ? 1 : 0,
+                        company_id: this.company_id
                     })
                     .then((res) => {
                         this.getData();
@@ -512,6 +515,7 @@ export default {
                         field_order,
                         is_required: is_required == "1" ? 1 : 0,
                         field_characters,
+                        company_id: this.company_id
                     })
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);

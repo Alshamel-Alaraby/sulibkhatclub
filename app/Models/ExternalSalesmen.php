@@ -21,7 +21,9 @@ class ExternalSalesmen extends Model
         'is_active',
         'national_id',
         'country_id',
-        "company_id"
+        "company_id",
+        "name",
+        "name_e"
     ];
 
     public function country()

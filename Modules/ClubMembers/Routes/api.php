@@ -50,6 +50,8 @@ Route::prefix('club-members')->group(function () {
 
     // members routes
     Route::group(['prefix' => 'members'], function () {
+        Route::get('/report-cm-member', 'CmMemberController@getReportCmMember');
+        Route::get('/updateCmMember', 'CmMemberController@getUpdateCmMember');
 
         Route::get('/test-transfer', 'CmMemberController@TestTransfer');
         Route::get('/dataMemberTable', 'CmMemberController@dataMemberTable');
@@ -112,7 +114,6 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmMemberPermissionController@bulkDelete");
         Route::delete('/{id}', 'CmMemberPermissionController@delete')->name('cm_members_permissions.delete');
     });
-
     // members-types  routes
     Route::group(['prefix' => 'pending-members'], function () {
 
@@ -168,9 +169,8 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmTransactionController@bulkDelete");
         Route::delete('/{id}', 'CmTransactionController@delete')->name('transaction.delete');
 
-        // club-members/transactions/selected-member-transaction/{id}
-        Route::get('/selected-member-transaction/{id}', 'CmTransactionController@selectedMemberTransactions')
-            ->name('selectedMemberTransaction.find');
+        Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
+            ->name('MemberTransaction.find');
     });
 
 });

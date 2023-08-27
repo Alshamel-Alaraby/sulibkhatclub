@@ -1,19 +1,21 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import permissionGuard from "../../../helper/permission";
+
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import { required, minLength, maxLength, integer, decimal, minValue } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import { formatDateOnly } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import Owner from "../../../components/create/realEstate/owner";
-import Building from "../../../components/create/building";
+import Building from "../../../components/create/realEstate/building";
 /**
  * Advanced Table component
  */
@@ -21,25 +23,6 @@ export default {
     page: {
         title: "Wallet",
         meta: [{ name: "Wallets", content: 'Wallets' }],
-    },
-    beforeRouteEnter(to, from, next) {
-        next((vm) => {
-
-            if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-                Swal.fire({
-                    icon: "error",
-                    title: `${vm.$t("general.Error")}`,
-                    text: `${vm.$t("general.ModuleExpired")}`,
-                });
-                return vm.$router.push({ name: "home" });
-            }
-
-            if (vm.$store.state.auth.work_flow_trees.includes('wallets') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
     },
     mixins: [translation],
     components: {
@@ -52,8 +35,15 @@ export default {
         Building,
         Multiselect
     },
+    beforeRouteEnter(to, from, next) {
+            next((vm) => {
+      return permissionGuard(vm, "Wallet RealEstate", "all wallet RealState");
+    });
+
+     },
     data() {
         return {
+            fields: [],
             tab: '',
             per_page: 50,
             search: '',
@@ -119,12 +109,20 @@ export default {
     },
     validations: {
         create: {
-            name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
         },
         edit: {
-            name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
         },
         createOwner: {
             wallet_id: { required },
@@ -189,9 +187,45 @@ export default {
         }
     },
     mounted() {
+        this.getCustomTableFields();
         this.getData();
     },
     methods: {
+        isVisible(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_visible == 1 ? true : false;
+        },
+        isRequired(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_required == 1 ? true : false;
+        },
+        getCustomTableFields() {
+            adminApi
+                .get(`/customTable/table-columns/rlst_wallets`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         addNewField() {
             this.createOwner.wallet_owners.push({
                 owner_id: null,
@@ -233,7 +267,9 @@ export default {
                 .get(`/real-estate/owners`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف مالك  ", name_e: "Add Owner" });
+                    if(this.isPermission('create owner RealState')){
+                        l.unshift({ id: 0, name: "اضف مالك  ", name_e: "Add Owner" });
+                    }
                     this.owners = l;
                 })
                 .catch((err) => {
@@ -253,7 +289,9 @@ export default {
                 .get(`/real-estate/buildings`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+                    if(this.isPermission('create building RealState')){
+                        l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+                    }
                     this.buildings = l;
                 })
                 .catch((err) => {
@@ -923,10 +961,10 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                         class="btn-block setting-search">
-                                        <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('name')" v-model="filterSetting" value="name" class="mb-1">
                                             {{ getCompanyKey('wallet_name_ar') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="name_e" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('name_e')" v-model="filterSetting" value="name_e" class="mb-1">
                                             {{ getCompanyKey('wallet_name_en') }}
                                         </b-form-checkbox>
                                     </b-dropdown>
@@ -948,7 +986,7 @@ export default {
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create v-if="isPermission('create wallet RealState')" variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t('general.Create') }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -960,17 +998,17 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1">
+                                        v-if="checkAll.length == 1 && isPermission('update wallet RealState')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && isPermission('delete wallet RealState')"
                                         @click.prevent="deleteModule(checkAll)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && isPermission('delete wallet RealState')"
                                         @click.prevent="deleteModule(checkAll[0])">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -994,11 +1032,11 @@ export default {
                                         <b-dropdown variant="primary"
                                             :html="`${$t('general.setting')} <i class='fe-settings'></i>`" ref="dropdown"
                                             class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.name" class="mb-1">{{
+                                            <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1">{{
                                                 getCompanyKey('wallet_name_ar')
                                             }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.name_e" class="mb-1">
+                                            <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">
                                                 {{ getCompanyKey('wallet_name_en') }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
@@ -1065,11 +1103,11 @@ export default {
                                 <b-tabs nav-class="nav-tabs nav-bordered">
                                     <b-tab :title="$t('general.DataEntry')" active>
                                         <div class="row justify-content-center">
-                                            <div class="col-md-10">
+                                            <div class="col-md-10" v-if="isVisible('name')">
                                                 <div class="form-group">
                                                     <label for="field-1" class="control-label">
                                                         {{ getCompanyKey('wallet_name_ar') }}
-                                                        <span class="text-danger">*</span>
+                                                        <span v-if="isRequired('name')" class="text-danger">*</span>
                                                     </label>
                                                     <div dir="rtl">
                                                         <input @keyup="arabicValue(create.name)" type="text"
@@ -1096,11 +1134,11 @@ export default {
                                                     </template>
                                                 </div>
                                             </div>
-                                            <div class="col-md-10">
+                                            <div class="col-md-10" v-if="isVisible('name_e')">
                                                 <div class="form-group">
                                                     <label for="field-2" class="control-label">
                                                         {{ getCompanyKey('wallet_name_en') }}
-                                                        <span class="text-danger">*</span>
+                                                        <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                                     </label>
                                                     <div>
                                                         <input @keyup="englishValue(create.name_e)" type="text"
@@ -1298,7 +1336,7 @@ export default {
                                                     style="width: 17px;height: 17px;">
                                             </div>
                                         </th>
-                                        <th v-if="setting.name">
+                                        <th v-if="setting.name && isVisible('name')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey('wallet_name_ar') }}</span>
                                                 <div class="arrow-sort">
@@ -1309,7 +1347,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.name_e">
+                                        <th v-if="setting.name_e && isVisible('name_e')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey('wallet_name_en') }}</span>
                                                 <div class="arrow-sort">
@@ -1328,7 +1366,8 @@ export default {
                                 </thead>
                                 <tbody v-if="wallets.length > 0">
                                     <tr @click.capture="checkRow(data.id)"
-                                        @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                        @dblclick.prevent="isPermission('update wallet RealState')?
+                                        $bvModal.show(`modal-edit-${data.id}`):false"
                                         v-for="(data, index) in wallets" :key="data.id" class="body-tr-custom">
                                         <td v-if="enabled3" class="do-not-print">
                                             <div class="form-check custom-control" style="min-height: 1.9em;">
@@ -1336,22 +1375,11 @@ export default {
                                                     type="checkbox" :value="data.id" v-model="checkAll">
                                             </div>
                                         </td>
-                                        <td v-if="setting.name">
+                                        <td v-if="setting.name && isVisible('name')">
                                             <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                                         </td>
-                                        <td v-if="setting.name_e">
+                                        <td v-if="setting.name_e && isVisible('name_e')">
                                             <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
-                                        </td>
-                                        <td v-if="setting.is_active">
-                                            <span :class="[
-                                                data.is_active == 'active' ?
-                                                    'text-success' :
-                                                    'text-danger',
-                                                'badge'
-                                            ]">
-                                                {{ data.is_active == 'active' ? `${$t('general.Active')}` :
-                                                    `${$t('general.Inactive')}` }}
-                                            </span>
                                         </td>
                                         <td v-if="enabled3" class="do-not-print">
                                             <div class="btn-group">
@@ -1361,7 +1389,7 @@ export default {
                                                     <i class="fas fa-angle-down"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-custom">
-                                                    <a class="dropdown-item" href="#"
+                                                    <a class="dropdown-item" href="#" v-if="isPermission('update wallet RealState')"
                                                         @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -1369,7 +1397,7 @@ export default {
                                                             <i class="mdi mdi-square-edit-outline text-info"></i>
                                                         </div>
                                                     </a>
-                                                    <a class="dropdown-item text-black" href="#"
+                                                    <a class="dropdown-item text-black" href="#" v-if="isPermission('delete wallet RealState')"
                                                         @click.prevent="deleteModule(data.id)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -1406,11 +1434,11 @@ export default {
                                                     <b-tabs nav-class="nav-tabs nav-bordered">
                                                         <b-tab :title="$t('general.DataEntry')" active>
                                                             <div class="row justify-content-center">
-                                                                <div class="col-md-10">
+                                                                <div class="col-md-10" v-if="isVisible('name')">
                                                                     <div class="form-group">
                                                                         <label for="field-u-1" class="control-label">
                                                                             {{ getCompanyKey('wallet_name_ar') }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                                                         </label>
                                                                         <div dir="rtl">
                                                                             <input @keyup="arabicValue(edit.name)"
@@ -1440,11 +1468,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-10">
+                                                                <div class="col-md-10"  v-if="isVisible('name')">
                                                                     <div class="form-group">
                                                                         <label for="field-u-2" class="control-label">
                                                                             {{ getCompanyKey('wallet_name_en') }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span  v-if="isRequired('name_e')" class="text-danger">*</span>
                                                                         </label>
                                                                         <div dir="ltr">
                                                                             <input @keyup="englishValue(edit.name_e)"

@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
-use App\Traits\LogTrait;
 use App\Models\Depertment;
-use Spatie\Activitylog\LogOptions;
-use Modules\BoardsRent\Entities\Task;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Modules\BoardsRent\Entities\Task;
 use Modules\HR\Entities\JobTitle;
+use Modules\HR\Entities\RequestType;
+use Spatie\Activitylog\LogOptions;
 
 class Employee extends Model
 {
-    use HasFactory, SoftDeletes, LogTrait;
+    use HasFactory, LogTrait;
     protected $table = 'general_employees';
-
+    protected $casts = [
+        "manage_others" => "integer",
+    ];
     protected $fillable = [
+        'id',
         'name',
         'name_e',
         'salesman_type_id',
@@ -32,6 +35,7 @@ class Employee extends Model
         'job_id',
         'branch_id',
         'manage_others',
+        'code_country',
 
     ];
 
@@ -45,8 +49,6 @@ class Employee extends Model
         return $this->belongsTo(Branch::class, 'branch_id');
     }
 
-
-
     public function user()
     {
         return $this->hasOne(User::class);
@@ -55,6 +57,11 @@ class Employee extends Model
     public function internalSalesman()
     {
         return $this->hasOne(InternalSalesman::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Depertment::class, 'department_id');
     }
 
     public function depertment()
@@ -94,7 +101,6 @@ class Employee extends Model
         return $this->belongsToMany(Document::class, 'general_documents_approve_personal', 'employee_id', 'document_id', 'id', 'id');
     }
 
-
     public function manager()
     {
         return $this->belongsTo(Employee::class, 'manager_id');
@@ -102,12 +108,65 @@ class Employee extends Model
 
     public function children()
     {
-        return $this->hasMany(Employee::class, 'manger_id');
+        return $this->hasMany(Employee::class, 'manager_id');
     }
+
+    public function request_types()
+    {
+
+        return $this->belongsToMany(RequestType::class, 'hr_request_types_employees', 'employee_id', 'request_type_id');
+    }
+
+
     public function hasChildren()
     {
-        $h = $this->internalSalesman()->exists();
-        return $h;
+        $relationsWithChildren = [];
+
+        if ($this->user()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'user',
+                'count' => $this->user()->count(),
+                'ids' => $this->user()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->internalSalesman()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'internalSalesman',
+                'count' => $this->internalSalesman()->count(),
+                'ids' => $this->internalSalesman()->pluck('id')->toArray()
+            ];
+        }
+
+        if ($this->plans()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'plans',
+                'count' => $this->plans()->count(),
+                'ids' => $this->plans()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->documents()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documents',
+                'count' => $this->documents()->count(),
+                'ids' => $this->documents()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'Employees',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->request_types()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'request_types',
+                'count' => $this->request_types()->count(),
+                'ids' => $this->request_types()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -117,6 +176,6 @@ class Employee extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Employee')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

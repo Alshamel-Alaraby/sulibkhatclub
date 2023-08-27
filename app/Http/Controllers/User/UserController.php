@@ -5,9 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\User\UserLoginResource;
 use App\Http\Resources\User\UserResource;
 use App\Repositories\User\UserInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
 
 class UserController extends Controller
@@ -24,7 +26,7 @@ class UserController extends Controller
         if ($user) {
             if (\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('token')->plainTextToken;
-                return responseJson(200, 'success', ['token' => $token, 'user' => new UserResource($user)]);
+                return responseJson(200, 'success', ['token' => $token, 'user' => new UserLoginResource($user)]);
             }
         }
         return responseJson(400, 'invalid credentials');
@@ -33,7 +35,7 @@ class UserController extends Controller
     public function profile(Request $request)
     {
         $user = $request->user();
-        return responseJson(200, 'success', new UserResource($user));
+        return responseJson(200, 'success', ['user' => new UserLoginResource($user)]);
     }
 
     public function find($id)

@@ -51,13 +51,14 @@ class PackageController extends Controller
 
     public function update($id, PackageRequest $request)
     {
+
         $model = $this->model->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
 
         $model->update($request->validated());
-        $model->panels()->sync($request->panels);
+        if($request->panels){$model->panels()->sync($request->panels);}
         $model->refresh();
 
         return responseJson(200, 'updated', new PackageResource($model));

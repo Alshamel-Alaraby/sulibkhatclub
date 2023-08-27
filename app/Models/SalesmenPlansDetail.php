@@ -18,6 +18,7 @@ class SalesmenPlansDetail extends Model
         'amount_from',
         'amount_to',
         'commission_percent',
+        'company_id',
         'is_default'
     ];
 

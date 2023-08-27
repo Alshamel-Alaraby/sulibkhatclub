@@ -29,7 +29,7 @@ class Status extends Model
     public function hasChildren()
     {
         return $this->unitStatuses()->count() > 0 ||
-        $this->orders()->count() > 0;
+            $this->orders()->count() > 0;
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -39,6 +39,6 @@ class Status extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Status')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

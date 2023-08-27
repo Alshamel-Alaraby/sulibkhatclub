@@ -26,21 +26,28 @@ return new class extends Migration
             $table->unsignedBigInteger('related_document_id')->nullable();
             $table->unsignedBigInteger('related_document_number')->nullable();
             $table->unsignedBigInteger('related_document_prefix')->nullable();
-            $table->unsignedBigInteger('sell_method_id');
+            $table->unsignedBigInteger('sell_method_id')->nullable();
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('task_id')->nullable();
             $table->unsignedBigInteger('external_salesmen_id')->nullable();
-            $table->double('total_invoice')->nullable();
-            $table->double('invoice_discount')->nullable();
-            $table->double('net_invoice')->nullable();
+            $table->double('total_invoice')->default(0);
+            $table->double('invoice_discount')->default(0);
+            $table->double('net_invoice')->default(0);
+            $table->double('sell_method_discount')->default(0);
+            $table->double('unrelaized_revenue')->default(0);
+            $table->double('external_commission')->default(0);
+
+            $table->double('revenue')->default(0);
+            $table->double('unrealized_commission')->default(0);
+            $table->double('commission')->default(0);
+            $table->double('total_depit_note')->default(0);
             $table->string('remaining')->nullable();
-            $table->string('complete_status')->nullable()->comment('UnDelivered - partially - Delivered');
+            $table->string('complete_status')->default('UnDelivered')->comment('UnDelivered - partially - Delivered');
             $table->softDeletes();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

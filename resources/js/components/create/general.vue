@@ -13,20 +13,20 @@
 </template>
 
 <script>
-import employee from "../../components/create/employee.vue";
-import avenue from "../../components/create/avenue";
-import bank from "../../components/create/bank";
-import bankAccount from "../../components/create/bankAccount";
-import branch from "../../components/create/branch";
-import customerGeneral from "../../components/create/customerGeneral";
-import country from "../../components/country";
-import city from "../../components/city";
-import propertyTree from "./property-tree"
+import employee from "./general/employee.vue";
+import avenue from "./general/avenue";
+import bank from "./general/bank";
+import bankAccount from "./general/bankAccount";
+import branch from "./general/branch";
+import customerGeneral from "./general/customerGeneral";
+import country from "./general/country";
+import city from "./general/city";
+import propertyTree from "./general/property-tree"
 import Layout from "../../views/layouts/main";
-import PageHeader from "../Page-header";
+import PageHeader from "../general/Page-header";
 import Switches from "vue-switches";
 import ErrorMessage from "../widgets/errorMessage";
-import loader from "../loader";
+import loader from "../general/loader";
 import Multiselect from "vue-multiselect";
 
 export default {

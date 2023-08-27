@@ -19,6 +19,10 @@ class RequestTypeRequest extends FormRequest
             'start_from' => 'nullable|in:0,1',
             'end_date' => 'nullable|in:0,1',
             'amount' => 'nullable|in:0,1',
+            'from_hour' => 'nullable|in:0,1',
+            'to_hour' => 'nullable|in:0,1',
+            'managers' => 'nullable|array',
+            'managers.*' => 'nullable|exists:general_employees,id',
         ];
     }
 

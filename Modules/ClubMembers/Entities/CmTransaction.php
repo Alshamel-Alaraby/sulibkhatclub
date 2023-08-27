@@ -15,6 +15,10 @@ class CmTransaction extends Model
 
     protected $guarded = ['id'];
     protected $table = 'cm_transactions';
+    protected $casts = [
+
+        'date' => 'date',
+    ];
 
     public function branch()
     {
@@ -25,6 +29,7 @@ class CmTransaction extends Model
     public function member()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
+
 
     }
 

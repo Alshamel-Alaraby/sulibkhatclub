@@ -16,6 +16,7 @@ class RlstReservationUnitRequest extends FormRequest
     {
         return [
             "unit_code" => "required|exists:rlst_reservations,id",
+            "company_id"=>'nullable',
 
         ];
     }

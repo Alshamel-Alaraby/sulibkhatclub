@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_depertment_tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('name_e');
+            $table->string('name')->nullable();
+            $table->string('name_e')->nullable();
             $table->text('description')->nullable();
             $table->text('description_e')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();

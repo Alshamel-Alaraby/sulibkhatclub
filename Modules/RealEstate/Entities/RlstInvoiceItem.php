@@ -16,6 +16,7 @@ class RlstInvoiceItem extends Pivot
 
     protected $fillable = [
         'invoice_id',
+        'company_id',
         'item_id',
         'quantity',
         'amount',

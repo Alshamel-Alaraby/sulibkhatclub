@@ -9,12 +9,12 @@ class ArchiveFileFavourite extends Model
 {
     use HasFactory;
     protected $table = 'arch_archive_file_favourite';
-
-    protected $fillable = [
-        'arch_archive_file_id',
-        'user_id',
-        'admin_id',
-    ];
+    protected $guarded = ['id'];
+    // protected $fillable = [
+    //     'arch_archive_file_id',
+    //     'user_id',
+    //     'admin_id',
+    // ];
 
     public function archiveFile()
     {

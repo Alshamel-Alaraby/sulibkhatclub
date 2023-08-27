@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('rlst_units', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 20);
-            $table->string('name', 100);
-            $table->string('name_e', 100);
+            $table->string('code', 20)->default(0);
+            $table->string('name', 100)->default(0);
+            $table->string('name_e', 100)->default(0);
             $table->text('description')->nullable();
             $table->text('description_e')->nullable();
             $table->integer('unit_ty')->nullable()->default(0);
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->timestamps();
 
         });
-        
+
     }
 
     /**

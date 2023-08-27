@@ -15,6 +15,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('boards-rent')->group(function () {
 
+    //customTable
+    Route::group(['prefix' => 'customTable'], function () {
+        Route::controller(\Modules\BoardsRent\Http\Controllers\BoardsRentCustomTableController::class)->group(function () {
+            Route::get('/seeder', 'seeder');
+            Route::get('/', 'all')->name('customTable.index');
+            Route::get('/table-columns/{tableName}', 'getCustomTableFields');
+            Route::get('logs/{id}', 'logs')->name('customTable.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('customTable.create');
+            Route::put('/update', 'update')->name('customTable.update');
+            Route::delete('/{id}', 'delete')->name('customTable.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
     // sell methods routes
     Route::group(['prefix' => 'sell-methods'], function () {
         Route::get('/', 'SellMethodController@all')->name('boards-rent.sell-methods.all');
@@ -74,6 +89,8 @@ Route::prefix('boards-rent')->group(function () {
 
     //Panels
     Route::group(['prefix' => 'panels'], function () {
+        Route::get('/filter-panel', 'PanelController@getFilterPanel');
+        Route::get('/report-panel', 'PanelController@getReportPanel');
         Route::get('/', 'PanelController@all')->name('boards-rent.panels.all');
         Route::post('/', 'PanelController@create')->name('boards-rent.panels.create');
         Route::put('/{id}', 'PanelController@update')->name('boards-rent.panels.update');
@@ -82,7 +99,6 @@ Route::prefix('boards-rent')->group(function () {
         Route::get('/{id}', 'PanelController@find')->name('boards-rent.panels.find');
         Route::delete('/{id}', 'PanelController@delete')->name('boards-rent.panels.delete');
     });
-
 
     // order-task
     Route::group(['prefix' => 'order-task'], function () {

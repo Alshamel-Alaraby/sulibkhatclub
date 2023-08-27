@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\PaymentMethod;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -20,22 +19,26 @@ class PaymentMethodSeeder extends Seeder
 
         $payment_methods = [
             [
-            'id' => 1,
-            'name' => 'كاش',
-            'name_e' => 'Cash',
-            'is_default' => 1,
+                'id' => 1,
+                'name' => 'كاش',
+                'name_e' => 'Cash',
+                'is_default' => 1,
+                'type' => 'cash',
+                'status' => 'no_round',
 
             ],
             [
-            'id' => 2,
-            'name' => 'فيزا',
-            'name_e' => 'Visa',
-            'is_default' => 1,
-            ]
+                'id' => 2,
+                'name' => 'فيزا',
+                'name_e' => 'Visa',
+                'is_default' => 0,
+                'type' => 'credit',
+                'status' => 'no_round',
+            ],
 
         ];
 
-        foreach($payment_methods as $payment_method){
+        foreach ($payment_methods as $payment_method) {
             PaymentMethod::create($payment_method);
         }
 

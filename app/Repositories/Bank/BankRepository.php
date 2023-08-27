@@ -38,7 +38,7 @@ class BankRepository implements BankInterface
     {
         DB::transaction(function () use ($id, $request) {
             $this->model->where("id", $id)->update($request->all());
-            $this->forget($id);
+            // $this->forget($id);
         });
 
     }
@@ -46,7 +46,7 @@ class BankRepository implements BankInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
+        // $this->forget($id);
         $model->delete();
     }
 
@@ -65,6 +65,18 @@ class BankRepository implements BankInterface
             cacheForget($key);
         }
 
+    }
+
+
+    public function getName($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 
 }

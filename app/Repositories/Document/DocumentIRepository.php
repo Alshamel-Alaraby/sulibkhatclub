@@ -51,7 +51,7 @@ class DocumentIRepository implements DocumentInterface
             if ($request['document_relateds']){
                 $model->documentRelateds()->sync($request['document_relateds']);
             }
-            if ($request['employees']){
+            if (isset($request['employees'])){
                 $model->employees()->sync($request['employees']);
             }
 
@@ -60,18 +60,12 @@ class DocumentIRepository implements DocumentInterface
 
     public function createFromAdmin($request)
     {
-        $this->model->
-            where([
-            ['company_id', $request["documents"][0]['company_id']],
-            ['is_admin', 1],
-        ])->delete();
         foreach ($request['documents'] as $document):
             $nullIsAdmin = $this->model->find($document['id']);
-            if ($nullIsAdmin) {
-                $nullIsAdmin->delete();
+            if (!$nullIsAdmin) {
+                $model = $this->model->create(array_merge($document, ['is_admin' => 1]));
+                $model->documentRelateds()->sync($document['document_relateds']);
             }
-            $model = $this->model->create(array_merge($document, ['is_admin' => 1]));
-            $model->documentRelateds()->sync($document['document_relateds']);
         endforeach;
     }
 

@@ -1,18 +1,21 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
+import permissionGuard from "../../../helper/permission";
+
 import {
   required,
   minLength,
   maxLength,
   integer,
   numeric,
+  requiredIf,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import {
   dynamicSortNumber,
   dynamicSortString,
@@ -20,10 +23,13 @@ import {
 import { formatDateOnly, formatDateTime } from "../../../helper/startDate";
 import Multiselect from "vue-multiselect";
 import DatePicker from "vue2-datepicker";
-import translation from "../../../helper/translation-mixin";
-import Building from "../../../components/create/building";
+import translation from "../../../helper/mixin/translation-mixin";
+import Building from "../../../components/create/realEstate/building";
+import ViewComp from "../../../components/create/realEstate/view";
+import Finishing from "../../../components/create/realEstate/finishing";
+import UnitType from "../../../components/create/realEstate/unit_type";
 import unitStatus from "../../../components/create/realEstate/unitStatus";
-import propertyTree from "../../../components/create/property-tree";
+import propertyTree from "../../../components/create/general/property-tree";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
 /**
@@ -35,30 +41,10 @@ export default {
     title: "units",
     meta: [{ name: "description", content: "units" }],
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("realEstate units") ||
-        vm.$store.state.auth.work_flow_trees.includes("real estate") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
-    });
-  },
   mixins: [translation],
   components: {
+    ViewComp,
+    UnitType,
     Layout,
     PageHeader,
     Switches,
@@ -69,7 +55,14 @@ export default {
     Building,
     unitStatus,
     propertyTree,
+    Finishing,
   },
+//   beforeRouteEnter(to, from, next) {
+//         next((vm) => {
+//       return permissionGuard(vm, "Unit Realestate", "all units RealState");
+//     });
+
+//  },
   data() {
     return {
       per_page: 50,
@@ -91,13 +84,17 @@ export default {
       createVideo: "",
       frameUrl: "",
       prevUnitStatusId: null,
+      views: [],
+      finishings: [],
+      unitTypes: [],
+      fields: [],
       create: {
         name: "",
         name_e: "",
         description: "",
         description_e: "",
         code: "",
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         unit_net_area: 0,
         properties: [],
@@ -106,9 +103,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       },
       edit: {
         name: "",
@@ -117,7 +114,7 @@ export default {
         description_e: "",
         properties: [],
         code: "",
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         unit_net_area: 0,
         module: "sell",
@@ -125,9 +122,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       },
       errors: {},
       isCheckAll: false,
@@ -183,42 +180,208 @@ export default {
   validations: {
     createVideo: { required },
     create: {
-      name: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      description: { maxLength: maxLength(1000) },
-      description_e: { maxLength: maxLength(1000) },
-      code: { required, maxLength: maxLength(20) },
-      unit_ty: { integer },
-      unit_area: { numeric },
-      module: { required },
-      properties: { required },
-      building_id: { required },
-      unit_status_id: { required },
-      rooms: { integer },
-      path: { integer },
-      view: { integer },
-      floor: { integer },
-      finishing: { integer },
-      unit_net_area: { numeric },
+      name: {
+        required: requiredIf(function (model) {
+          return this.isRequired("name");
+        }),
+        minLength: minLength(2),
+        maxLength: maxLength(100),
+      },
+      name_e: {
+        required: requiredIf(function (model) {
+          return this.isRequired("name_e");
+        }),
+        minLength: minLength(2),
+        maxLength: maxLength(100),
+      },
+      description: {
+        required: requiredIf(function (model) {
+          return this.isRequired("description");
+        }),
+        maxLength: maxLength(1000),
+      },
+      description_e: {
+        required: requiredIf(function (model) {
+          return this.isRequired("description_e");
+        }),
+        maxLength: maxLength(1000),
+      },
+      code: {
+        required: requiredIf(function (model) {
+          return this.isRequired("code");
+        }),
+        maxLength: maxLength(20),
+      },
+      unit_ty: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_ty");
+        }),
+        integer,
+      },
+      unit_area: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_area");
+        }),
+        numeric,
+      },
+      // module: {
+      //   required: requiredIf(function (model) {
+      //     return this.isRequired("module");
+      //   }),
+      // },
+      properties: {
+        required: requiredIf(function (model) {
+          return this.isRequired("properties");
+        }),
+      },
+      building_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("building_id");
+        }),
+      },
+      unit_status_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_status_id");
+        }),
+      },
+      rooms: {
+        required: requiredIf(function (model) {
+          return this.isRequired("rooms");
+        }),
+        integer,
+      },
+      path: {
+        required: requiredIf(function (model) {
+          return this.isRequired("path");
+        }),
+        integer,
+      },
+      view: {
+        required: requiredIf(function (model) {
+          return this.isRequired("view");
+        }),
+        integer,
+      },
+      floor: {
+        required: requiredIf(function (model) {
+          return this.isRequired("floor");
+        }),
+        integer,
+      },
+      finishing: {
+        required: requiredIf(function (model) {
+          return this.isRequired("finishing");
+        }),
+        integer,
+      },
+      unit_net_area: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_net_area");
+        }),
+        numeric,
+      },
     },
     edit: {
-      name: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      description: { maxLength: maxLength(1000) },
-      description_e: { maxLength: maxLength(1000) },
-      code: { required, maxLength: maxLength(20) },
-      unit_ty: { integer },
-      properties: { required },
-      unit_area: { numeric },
-      module: { required },
-      building_id: { required },
-      unit_status_id: { required },
-      rooms: { integer },
-      path: { integer },
-      view: { integer },
-      floor: { integer },
-      finishing: { integer },
-      unit_net_area: { numeric },
+      name: {
+        required: requiredIf(function (model) {
+          return this.isRequired("name");
+        }),
+        minLength: minLength(2),
+        maxLength: maxLength(100),
+      },
+      name_e: {
+        required: requiredIf(function (model) {
+          return this.isRequired("name_e");
+        }),
+        minLength: minLength(2),
+        maxLength: maxLength(100),
+      },
+      description: {
+        required: requiredIf(function (model) {
+          return this.isRequired("description");
+        }),
+        maxLength: maxLength(1000),
+      },
+      description_e: {
+        required: requiredIf(function (model) {
+          return this.isRequired("description_e");
+        }),
+        maxLength: maxLength(1000),
+      },
+      code: {
+        required: requiredIf(function (model) {
+          return this.isRequired("code");
+        }),
+        maxLength: maxLength(20),
+      },
+      unit_ty: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_ty");
+        }),
+        integer,
+      },
+      unit_area: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_area");
+        }),
+        numeric,
+      },
+      // module: {
+      //   required: requiredIf(function (model) {
+      //     return this.isRequired("module");
+      //   }),
+      // },
+      properties: {
+        required: requiredIf(function (model) {
+          return this.isRequired("properties");
+        }),
+      },
+      building_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("building_id");
+        }),
+      },
+      unit_status_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_status_id");
+        }),
+      },
+      rooms: {
+        required: requiredIf(function (model) {
+          return this.isRequired("rooms");
+        }),
+        integer,
+      },
+      path: {
+        required: requiredIf(function (model) {
+          return this.isRequired("path");
+        }),
+        integer,
+      },
+      view: {
+        required: requiredIf(function (model) {
+          return this.isRequired("view");
+        }),
+        integer,
+      },
+      floor: {
+        required: requiredIf(function (model) {
+          return this.isRequired("floor");
+        }),
+        integer,
+      },
+      finishing: {
+        required: requiredIf(function (model) {
+          return this.isRequired("finishing");
+        }),
+        integer,
+      },
+      unit_net_area: {
+        required: requiredIf(function (model) {
+          return this.isRequired("unit_net_area");
+        }),
+        numeric,
+      },
     },
   },
   watch: {
@@ -253,37 +416,46 @@ export default {
     },
   },
   mounted() {
+    this.getCustomTableFields();
     this.getData();
   },
-  // updated(){
-  //     $(function(){
-  //         $(".englishInput").keypress(function(event){
-  //             var ew = event.which;
-  //             if(ew == 32)
-  //                 return true;
-  //             if(48 <= ew && ew <= 57)
-  //                 return true;
-  //             if(65 <= ew && ew <= 90)
-  //                 return true;
-  //             if(97 <= ew && ew <= 122)
-  //                 return true;
-  //             return false;
-  //         });
-  //         $(".arabicInput").keypress(function(event){
-  //             var ew = event.which;
-  //             if(ew == 32)
-  //                 return true;
-  //             if(48 <= ew && ew <= 57)
-  //                 return true;
-  //             if(65 <= ew && ew <= 90)
-  //                 return false;
-  //             if(97 <= ew && ew <= 122)
-  //                 return false;
-  //             return true;
-  //         });
-  //     });
-  // },
+
   methods: {
+  isVisible(fieldName) {
+    let res = this.fields.filter((field) => {
+      return field.column_name == fieldName;
+    });
+    return res.length > 0 && res[0].is_visible == 1 ? true : false;
+  },
+  isRequired(fieldName) {
+    let res = this.fields.filter((field) => {
+      return field.column_name == fieldName;
+    });
+    return res.length > 0 && res[0].is_required == 1 ? true : false;
+  },
+  getCustomTableFields() {
+      adminApi
+        .get(`/customTable/table-columns/rlst_units`)
+        .then((res) => {
+          this.fields = res.data;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        })
+        .finally(() => {
+          this.isLoader = false;
+        });
+  },
+    isPermission(item) {
+      if (this.$store.state.auth.type == "user") {
+        return this.$store.state.auth.permissions.includes(item);
+      }
+      return true;
+    },
     AddVideo(action) {
       let data = action == "create" ? this.create : this.edit;
       this.$v.createVideo.$touch();
@@ -530,7 +702,7 @@ export default {
         description_e: "",
         code: "",
         properties: [],
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         unit_net_area: 0,
         module: "sell",
@@ -538,9 +710,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -557,9 +729,24 @@ export default {
     async resetModal() {
       this.frameUrl = "";
 
-      await this.getBuildings();
-      await this.getProperty();
-      await this.getUnitStatus();
+      if (this.isVisible("building_id")) {
+        await this.getBuildings();
+      }
+      if (this.isVisible("properties")) {
+        await this.getProperty();
+      }
+      if (this.isVisible("unit_status_id")) {
+        await this.getUnitStatus();
+      }
+      if (this.isVisible("view")) {
+        await this.getViews();
+      }
+      if (this.isVisible("finishing")) {
+        await this.getFinishing();
+      }
+      if (this.isVisible("unit_ty")) {
+        await this.getUnitTypes();
+      }
 
       this.createVideo = "";
       this.create = {
@@ -569,7 +756,7 @@ export default {
         description_e: "",
         code: "",
         properties: [],
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         unit_net_area: 0,
         module: "sell",
@@ -577,9 +764,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -608,7 +795,7 @@ export default {
         description: "",
         description_e: "",
         code: "",
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         properties: [],
         unit_net_area: 0,
@@ -617,9 +804,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -659,7 +846,7 @@ export default {
         this.errors = {};
 
         adminApi
-          .post(`/real-estate/units`, this.create)
+          .post(`/real-estate/units`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.is_disabled = true;
             this.unit_id = res.data.data.id;
@@ -748,9 +935,24 @@ export default {
      */
     async resetModalEdit(id) {
       this.createVideo = "";
-      await this.getBuildings();
-      await this.getUnitStatus();
-      await this.getProperty();
+      if (this.isVisible("building_id")) {
+        await this.getBuildings();
+      }
+      if (this.isVisible("properties")) {
+        await this.getProperty();
+      }
+      if (this.isVisible("unit_status_id")) {
+        await this.getUnitStatus();
+      }
+      if (this.isVisible("view")) {
+        await this.getViews();
+      }
+      if (this.isVisible("finishing")) {
+        await this.getFinishing();
+      }
+      if (this.isVisible("unit_ty")) {
+        await this.getUnitTypes();
+      }
       let unit = this.units.find((e) => id == e.id);
       this.frameUrl = unit.video_link;
       this.unit_id = id;
@@ -795,7 +997,7 @@ export default {
         description_e: "",
         properties: [],
         code: "",
-        unit_ty: 0,
+        unit_ty: null,
         unit_area: 0,
         unit_net_area: 0,
         module: "sell",
@@ -803,9 +1005,9 @@ export default {
         unit_status_id: null,
         rooms: 0,
         path: 0,
-        view: 0,
+        view: null,
         floor: 0,
-        finishing: 0,
+        finishing: null,
       };
       this.unit_id = null;
       this.images = [];
@@ -870,8 +1072,64 @@ export default {
         .then((res) => {
           this.isLoader = false;
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+          if (this.isPermission("create building RealState")) {
+            l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+          }
           this.buildings = l;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        });
+    },
+    async getViews() {
+      this.isLoader = true;
+      await adminApi
+        .get(`/real-estate/view`)
+        .then((res) => {
+          this.isLoader = false;
+          let l = res.data.data;
+          l.unshift({ id: 0, name: "اضف منظر", name_e: "Add view" });
+          this.views = l;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        });
+    },
+    async getFinishing() {
+      this.isLoader = true;
+      await adminApi
+        .get(`/real-estate/finishing`)
+        .then((res) => {
+          this.isLoader = false;
+          let l = res.data.data;
+          l.unshift({ id: 0, name: "اضف تشطيب", name_e: "Add finishing" });
+          this.finishings = l;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        });
+    },
+    async getUnitTypes() {
+      this.isLoader = true;
+      await adminApi
+        .get(`/real-estate/unit-type`)
+        .then((res) => {
+          this.isLoader = false;
+          let l = res.data.data;
+          l.unshift({ id: 0, name: "اضف نوع وحدة", name_e: "Add unit type" });
+          this.unitTypes = l;
         })
         .catch((err) => {
           Swal.fire({
@@ -888,11 +1146,13 @@ export default {
         .get(`real-estate/unit-statuses?is_active=active`)
         .then((res) => {
           let l = res.data.data;
-          // l.unshift({
-          //   id: 0,
-          //   name: "اضف حاله الوحده  ",
-          //   name_e: "Add Unit Status",
-          // });
+          if (this.isPermission("create unit_status RealState")) {
+            l.unshift({
+              id: 0,
+              name: "اضف حاله الوحده  ",
+              name_e: "Add Unit Status",
+            });
+          }
           this.unit_status = l;
         })
         .catch((err) => {
@@ -913,7 +1173,9 @@ export default {
         .get(`/tree-properties`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضف خصائص  ", name_e: "Add Property" });
+          if (this.isPermission("create Tree Property")) {
+            l.unshift({ id: 0, name: "اضف خصائص  ", name_e: "Add Property" });
+          }
           this.properties = l;
         })
         .catch((err) => {
@@ -958,6 +1220,55 @@ export default {
         this.edit.building_id = null;
       }
     },
+    showViewModal() {
+      setTimeout(() => {
+        if (this.create.view == 0) {
+          this.$bvModal.show("create_view");
+          this.create.view = null;
+        }
+      }, 100);
+    },
+    showViewModalEdit() {
+      setTimeout(() => {
+        if (this.edit.view == 0) {
+          this.$bvModal.show("create_view");
+          this.edit.view = null;
+        }
+      }, 100);
+    },
+    showFinishingModal() {
+      setTimeout(() => {
+        if (this.create.finishing == 0) {
+          this.$bvModal.show("create_finishing");
+          this.create.finishing = null;
+        }
+      }, 100);
+    },
+    showFinishingModalEdit() {
+      setTimeout(() => {
+        if (this.edit.finishing == 0) {
+          this.$bvModal.show("create_finishing");
+          this.edit.finishing = null;
+        }
+      }, 100);
+    },
+    showUnitTypeModal() {
+      setTimeout(() => {
+        if (this.create.unit_ty == 0) {
+          this.$bvModal.show("create_unit_type");
+          this.create.unit_ty = null;
+        }
+      }, 100);
+    },
+    showUnitTypeModalEdit() {
+      setTimeout(() => {
+        if (this.edit.unit_ty == 0) {
+          this.$bvModal.show("create_unit_type");
+          this.edit.unit_ty = null;
+        }
+      }, 100);
+    },
+
     showUnitStatusModal() {
       if (this.create.unit_status_id == 0) {
         this.$bvModal.show("unit-satatus-create");
@@ -967,13 +1278,19 @@ export default {
     showUnitStatusEditModal() {
       if (this.prevUnitStatusId == 2 || this.prevUnitStatusId == 3) {
         this.edit.unit_status_id = this.prevUnitStatusId;
-        adminApi.get(`/real-estate/contracts/${this.unit_id}/${this.prevUnitStatusId}`).then((res) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.ReservedOrSold", { serial_number: res.data.serial_number })}`,
+        adminApi
+          .get(
+            `/real-estate/contracts/${this.unit_id}/${this.prevUnitStatusId}`
+          )
+          .then((res) => {
+            Swal.fire({
+              icon: "error",
+              title: `${this.$t("general.Error")}`,
+              text: `${this.$t("general.ReservedOrSold", {
+                serial_number: res.data.serial_number,
+              })}`,
+            });
           });
-        });
         return;
       }
       if (this.edit.unit_status_id == 0) {
@@ -1168,6 +1485,24 @@ export default {
       :defaultsKeys="defaultsKeys"
       @created="getBuildings"
     />
+    <ViewComp
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="getViews"
+    />
+
+    <Finishing
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="getFinishing"
+    />
+
+    <UnitType
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="getUnitTypes"
+    />
+
     <unitStatus
       :companyKeys="companyKeys"
       :defaultsKeys="defaultsKeys"
@@ -1198,6 +1533,7 @@ export default {
                     class="btn-block setting-search dropdown-menu-custom-company"
                   >
                     <b-form-checkbox
+                      v-if="isVisible('name')"
                       v-model="filterSetting"
                       value="name"
                       class="mb-1"
@@ -1206,6 +1542,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('name_e')"
                       v-model="filterSetting"
                       value="name_e"
                       class="mb-1"
@@ -1214,6 +1551,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('description')"
                       v-model="filterSetting"
                       value="description"
                       class="mb-1"
@@ -1222,6 +1560,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('description_e')"
                       v-model="filterSetting"
                       value="description_e"
                       class="mb-1"
@@ -1230,6 +1569,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('code')"
                       v-model="filterSetting"
                       value="code"
                       class="mb-1"
@@ -1238,6 +1578,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('unit_ty')"
                       v-model="filterSetting"
                       value="unit_ty"
                       class="mb-1"
@@ -1246,6 +1587,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('unit_area')"
                       v-model="filterSetting"
                       value="unit_area"
                       class="mb-1"
@@ -1254,6 +1596,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('building_id')"
                       v-model="filterSetting"
                       :value="
                         $i18n.locale == 'ar'
@@ -1266,6 +1609,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('unit_status_id')"
                       v-model="filterSetting"
                       :value="
                         $i18n.locale == 'ar'
@@ -1278,6 +1622,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('rooms')"
                       v-model="filterSetting"
                       value="rooms"
                       class="mb-1"
@@ -1286,6 +1631,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('path')"
                       v-model="filterSetting"
                       value="path"
                       class="mb-1"
@@ -1294,6 +1640,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('view')"
                       v-model="filterSetting"
                       value="view"
                       class="mb-1"
@@ -1302,6 +1649,7 @@ export default {
                       }}</b-form-checkbox
                     >
                     <b-form-checkbox
+                      v-if="isVisible('floor')"
                       v-model="filterSetting"
                       value="floor"
                       class="mb-1"
@@ -1343,6 +1691,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
+                  v-if="isPermission('create units RealState')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -1363,14 +1712,20 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('update units RealState')
+                    "
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="
+                      checkAll.length > 1 &&
+                      isPermission('delete units RealState')
+                    "
                     @click.prevent="deleteCountry(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1379,7 +1734,10 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('delete units RealState')
+                    "
                     @click.prevent="deleteCountry(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1411,13 +1769,24 @@ export default {
                       ref="dropdown"
                       class="dropdown-custom-ali dropdown-menu-custom-company"
                     >
-                      <b-form-checkbox v-model="setting.name" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_name_ar")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.name_e" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_name_en")
-                      }}</b-form-checkbox>
                       <b-form-checkbox
+                        v-if="isVisible('name')"
+                        v-model="setting.name"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_name_ar")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('name_e')"
+                        v-model="setting.name_e"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_name_en")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('description')"
                         v-model="setting.description"
                         class="mb-1"
                         >{{
@@ -1425,19 +1794,31 @@ export default {
                         }}</b-form-checkbox
                       >
                       <b-form-checkbox
+                        v-if="isVisible('description_e')"
                         v-model="setting.description_e"
                         class="mb-1"
                         >{{
                           getCompanyKey("realEstate_unit_description_en")
                         }}</b-form-checkbox
                       >
-                      <b-form-checkbox v-model="setting.code" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_code")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.unit_ty" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_unit_ty")
-                      }}</b-form-checkbox>
                       <b-form-checkbox
+                        v-if="isVisible('code')"
+                        v-model="setting.code"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_code")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('unit_ty')"
+                        v-model="setting.unit_ty"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_unit_ty")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('unit_area')"
                         v-model="setting.unit_area"
                         class="mb-1"
                         >{{
@@ -1445,6 +1826,7 @@ export default {
                         }}</b-form-checkbox
                       >
                       <b-form-checkbox
+                        v-if="isVisible('building_id')"
                         v-model="setting.building_id"
                         class="mb-1"
                         >{{
@@ -1452,25 +1834,47 @@ export default {
                         }}</b-form-checkbox
                       >
                       <b-form-checkbox
+                        v-if="isVisible('unit_status_id')"
                         v-model="setting.unit_status_id"
                         class="mb-1"
                         >{{
                           getCompanyKey("realEstate_unit_status")
                         }}</b-form-checkbox
                       >
-                      <b-form-checkbox v-model="setting.rooms" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_rooms")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.path" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_path")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.view" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_view")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.floor" class="mb-1">{{
-                        getCompanyKey("realEstate_unit_floor")
-                      }}</b-form-checkbox>
                       <b-form-checkbox
+                        v-if="isVisible('rooms')"
+                        v-model="setting.rooms"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_rooms")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('path')"
+                        v-model="setting.path"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_path")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('view')"
+                        v-model="setting.view"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_view")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('floor')"
+                        v-model="setting.floor"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("realEstate_unit_floor")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                        v-if="isVisible('module')"
                         v-model="setting.module_id"
                         class="mb-1"
                         >{{
@@ -1592,11 +1996,15 @@ export default {
                 <b-tabs nav-class="nav-tabs nav-bordered">
                   <b-tab :title="$t('general.DataEntry')" active>
                     <div class="row">
-                      <div class="col-md-3">
+                      <div v-if="isVisible('building_id')" class="col-md-3">
                         <div class="form-group position-relative">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_building") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('building_id')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <multiselect
                             @input="showBuildingModal"
@@ -1629,11 +2037,13 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div v-if="isVisible('code')" class="col-md-3">
                         <div class="form-group">
                           <label for="field-4353" class="control-label">
                             {{ getCompanyKey("realEstate_unit_code") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('code')" class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <div dir="ltr">
                             <input
@@ -1674,23 +2084,34 @@ export default {
                       "
                     />
                     <div class="row">
-                      <div class="col-md-3">
+                      <div v-if="isVisible('unit_ty')" class="col-md-3">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_unit_ty") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('unit_ty')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
-                          <input
-                            type="number"
-                            class="form-control"
+                          <multiselect
+                            @input="showUnitTypeModal"
                             v-model="$v.create.unit_ty.$model"
-                            :class="{
-                              'is-invalid':
-                                $v.create.unit_ty.$error || errors.unit_ty,
-                              'is-valid':
-                                !$v.create.unit_ty.$invalid && !errors.unit_ty,
-                            }"
-                          />
+                            :options="unitTypes.map((type) => type.id)"
+                            :custom-label="
+                              (opt) =>
+                                $i18n.locale == 'ar'
+                                  ? unitTypes.find((x) => x.id == opt).name
+                                  : unitTypes.find((x) => x.id == opt).name_e
+                            "
+                          >
+                          </multiselect>
+                          <div
+                            v-if="$v.create.unit_ty.$error || errors.unit_ty"
+                            class="text-danger"
+                          >
+                            {{ $t("general.fieldIsRequired") }}
+                          </div>
                           <template v-if="errors.unit_ty">
                             <ErrorMessage
                               v-for="(errorMessage, index) in errors.unit_ty"
@@ -1700,11 +2121,13 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('name')">
                         <div class="form-group">
                           <label for="field-1" class="control-label">
                             {{ getCompanyKey("realEstate_unit_name_ar") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('name')" class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <div dir="rtl">
                             <input
@@ -1746,11 +2169,15 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('name_e')">
                         <div class="form-group">
                           <label for="field-2" class="control-label">
                             {{ getCompanyKey("realEstate_unit_name_en") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('name_e')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <div dir="ltr">
                             <input
@@ -1792,11 +2219,13 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('floor')">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_floor") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('floor')" class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <input
                             type="number"
@@ -1826,8 +2255,11 @@ export default {
                       "
                     />
                     <div class="row">
-                      <div class="col-md-3">
-                        <div class="form-group position-relative">
+                      <div v-if="isVisible('unit_status_id')" class="col-md-3">
+                        <div
+                          v-if="isRequired('unit_status_id')"
+                          class="form-group position-relative"
+                        >
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_status") }}
                             <span class="text-danger">*</span>
@@ -1865,11 +2297,15 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div v-if="isVisible('unit_area')" class="col-md-3">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_unit_area") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('unit_area')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <input
                             type="number"
@@ -1893,11 +2329,15 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div v-if="isVisible('unit_net_area')" class="col-md-3">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_unit_net_area") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('unit_net_area')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <input
                             type="number"
@@ -1924,11 +2364,13 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div v-if="isVisible('rooms')" class="col-md-3">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_rooms") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('rooms')" class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <input
                             type="number"
@@ -1950,11 +2392,13 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div v-if="isVisible('path')" class="col-md-3">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_path") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('path')" class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <input
                             type="number"
@@ -1984,24 +2428,36 @@ export default {
                       "
                     />
                     <div class="row">
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('finishing')">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_finishing") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('finishing')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
-                          <input
-                            type="number"
-                            class="form-control"
+                          <multiselect
+                            @input="showFinishingModal"
                             v-model="$v.create.finishing.$model"
-                            :class="{
-                              'is-invalid':
-                                $v.create.finishing.$error || errors.finishing,
-                              'is-valid':
-                                !$v.create.finishing.$invalid &&
-                                !errors.finishing,
-                            }"
-                          />
+                            :options="finishings.map((type) => type.id)"
+                            :custom-label="
+                              (opt) =>
+                                $i18n.locale == 'ar'
+                                  ? finishings.find((x) => x.id == opt).name
+                                  : finishings.find((x) => x.id == opt).name_e
+                            "
+                          >
+                          </multiselect>
+                          <div
+                            v-if="
+                              $v.create.finishing.$error || errors.finishing
+                            "
+                            class="text-danger"
+                          >
+                            {{ $t("general.fieldIsRequired") }}
+                          </div>
                           <template v-if="errors.finishing">
                             <ErrorMessage
                               v-for="(errorMessage, index) in errors.finishing"
@@ -2011,23 +2467,32 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('view')">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_view") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('view')" class="text-danger"
+                              >*</span
+                            >
                           </label>
-                          <input
-                            type="number"
-                            class="form-control"
+                          <multiselect
+                            @input="showViewModal"
                             v-model="$v.create.view.$model"
-                            :class="{
-                              'is-invalid':
-                                $v.create.view.$error || errors.view,
-                              'is-valid':
-                                !$v.create.view.$invalid && !errors.view,
-                            }"
-                          />
+                            :options="views.map((type) => type.id)"
+                            :custom-label="
+                              (opt) =>
+                                $i18n.locale == 'ar'
+                                  ? views.find((x) => x.id == opt).name
+                                  : views.find((x) => x.id == opt).name_e
+                            "
+                          >
+                          </multiselect>
+                          <div
+                            v-if="$v.create.view.$error || errors.view"
+                            class="text-danger"
+                          >
+                            {{ $t("general.fieldIsRequired") }}
+                          </div>
                           <template v-if="errors.view">
                             <ErrorMessage
                               v-for="(errorMessage, index) in errors.view"
@@ -2037,11 +2502,15 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-3" v-if="isVisible('properties')">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("realEstate_unit_properties") }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('properties')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <multiselect
                             :multiple="true"
@@ -2065,13 +2534,17 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6" v-if="isVisible('description')">
                         <div class="form-group">
                           <label class="mr-2">
                             {{
                               getCompanyKey("realEstate_unit_description_ar")
                             }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isVisible('description')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <textarea
                             @input="arabicValueDescription(create.description)"
@@ -2091,13 +2564,17 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6" v-if="isVisible('description_e')">
                         <div class="form-group">
                           <label class="mr-2">
                             {{
                               getCompanyKey("realEstate_unit_description_en")
                             }}
-                            <span class="text-danger">*</span>
+                            <span
+                              v-if="isRequired('description_e')"
+                              class="text-danger"
+                              >*</span
+                            >
                           </label>
                           <textarea
                             @input="
@@ -2352,7 +2829,7 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name">
+                    <th v-if="setting.name && isVisible('name')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_name_ar")
@@ -2369,7 +2846,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e">
+                    <th v-if="setting.name_e && isVisible('name_e')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_name_en")
@@ -2386,7 +2863,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.description">
+                    <th v-if="setting.description && isVisible('description')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_description_ar")
@@ -2403,7 +2880,9 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.description_e">
+                    <th
+                      v-if="setting.description_e && isVisible('description_e')"
+                    >
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_description_en")
@@ -2420,7 +2899,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.code">
+                    <th v-if="setting.code && isVisible('code')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("realEstate_unit_code") }}</span>
                         <div class="arrow-sort">
@@ -2435,28 +2914,32 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.module_id">
+                    <th v-if="setting.module_id && isVisible('module')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_module")
                         }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.building_id">
+                    <th v-if="setting.building_id && isVisible('building_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_building")
                         }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.unit_status_id">
+                    <th
+                      v-if="
+                        setting.unit_status_id && isVisible('unit_status_id')
+                      "
+                    >
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_status")
                         }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.unit_ty">
+                    <th v-if="setting.unit_ty && isVisible('unit_ty')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_unit_ty")
@@ -2473,7 +2956,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.unit_area">
+                    <th v-if="setting.unit_area && isVisible('unit_area')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_unit_area")
@@ -2490,7 +2973,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.rooms">
+                    <th v-if="setting.rooms && isVisible('rooms')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_rooms")
@@ -2507,7 +2990,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.floor">
+                    <th v-if="setting.floor && isVisible('floor')">
                       <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("realEstate_unit_floor")
@@ -2524,7 +3007,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.path">
+                    <th v-if="setting.path && isVisible('path')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("realEstate_unit_path") }}</span>
                         <div class="arrow-sort">
@@ -2539,7 +3022,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.view">
+                    <th v-if="setting.view && isVisible('view')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("realEstate_unit_view") }}</span>
                         <div class="arrow-sort">
@@ -2565,7 +3048,11 @@ export default {
                 <tbody v-if="units.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="
+                      isPermission('update units RealState')
+                        ? $bvModal.show(`modal-edit-${data.id}`)
+                        : false
+                    "
                     v-for="(data, index) in units"
                     :key="data.id"
                     class="body-tr-custom"
@@ -2584,38 +3071,62 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name">
+                    <td v-if="setting.name && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e">
+                    <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
-                    <td v-if="setting.description">{{ data.description }}</td>
-                    <td v-if="setting.description_e">
+                    <td v-if="setting.description && isVisible('description')">
+                      {{ data.description }}
+                    </td>
+                    <td
+                      v-if="setting.description_e && isVisible('description_e')"
+                    >
                       {{ data.description_e }}
                     </td>
-                    <td v-if="setting.code">{{ data.code }}</td>
-                    <td v-if="setting.module_id">{{ data.module }}</td>
-                    <td v-if="setting.building_id">
+                    <td v-if="setting.code && isVisible('code')">
+                      {{ data.code }}
+                    </td>
+                    <td v-if="setting.module_id && isVisible('module')">
+                      {{ data.module }}
+                    </td>
+                    <td v-if="setting.building_id && isVisible('building_id')">
                       {{
                         $i18n.locale == "ar"
                           ? data.building.name
                           : data.building.name_e
                       }}
                     </td>
-                    <td v-if="setting.unit_status_id">
+                    <td
+                      v-if="
+                        setting.unit_status_id && isVisible('unit_status_id')
+                      "
+                    >
                       {{
                         $i18n.locale == "ar"
                           ? data.unit_status.name
                           : data.unit_status.name_e
                       }}
                     </td>
-                    <td v-if="setting.unit_ty">{{ data.unit_ty }}</td>
-                    <td v-if="setting.unit_area">{{ data.unit_area }}</td>
-                    <td v-if="setting.rooms">{{ data.rooms }}</td>
-                    <td v-if="setting.floor">{{ data.floor }}</td>
-                    <td v-if="setting.path">{{ data.path }}</td>
-                    <td v-if="setting.view">{{ data.view }}</td>
+                    <td v-if="setting.unit_ty && isVisible('unit_ty')">
+                      {{ data.unit_ty }}
+                    </td>
+                    <td v-if="setting.unit_area && isVisible('unit_area')">
+                      {{ data.unit_area }}
+                    </td>
+                    <td v-if="setting.rooms && isVisible('rooms')">
+                      {{ data.rooms }}
+                    </td>
+                    <td v-if="setting.floor && isVisible('floor')">
+                      {{ data.floor }}
+                    </td>
+                    <td v-if="setting.path && isVisible('path')">
+                      {{ data.path }}
+                    </td>
+                    <td v-if="setting.view && isVisible('view')">
+                      {{ data.view }}
+                    </td>
                     <td v-if="enabled3" class="do-not-print">
                       <div class="btn-group">
                         <button
@@ -2629,6 +3140,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                            v-if="isPermission('update units RealState')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -2643,6 +3155,7 @@ export default {
                             </div>
                           </a>
                           <a
+                            v-if="isPermission('delete units RealState')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteCountry(data.id)"
@@ -2707,7 +3220,10 @@ export default {
                           <b-tabs nav-class="nav-tabs nav-bordered">
                             <b-tab :title="$t('general.DataEntry')" active>
                               <div class="row">
-                                <div class="col-md-3">
+                                <div
+                                  v-if="isVisible('building_id')"
+                                  class="col-md-3"
+                                >
                                   <div class="form-group position-relative">
                                     <label class="control-label">
                                       {{
@@ -2715,7 +3231,11 @@ export default {
                                           "realEstate_unit_building"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('building_id')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <multiselect
                                       @input="showBuildingModal"
@@ -2753,7 +3273,7 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('code')">
                                   <div class="form-group">
                                     <label
                                       for="edit-4353"
@@ -2762,7 +3282,11 @@ export default {
                                       {{
                                         getCompanyKey("realEstate_unit_code")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('code')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <div dir="ltr">
                                       <input
@@ -2806,45 +3330,67 @@ export default {
                                 "
                               />
                               <div class="row">
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('unit_ty')"
+                                >
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_unit_ty")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('unit_ty')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
-                                    <input
-                                      type="number"
-                                      class="form-control"
+                                    <multiselect
+                                      @input="showUnitTypeModalEdit"
                                       v-model="$v.edit.unit_ty.$model"
-                                      :class="{
-                                        'is-invalid':
-                                          $v.edit.unit_ty.$error ||
-                                          errors.unit_ty,
-                                        'is-valid':
-                                          !$v.edit.unit_ty.$invalid &&
-                                          !errors.unit_ty,
-                                      }"
-                                    />
+                                      :options="
+                                        unitTypes.map((type) => type.id)
+                                      "
+                                      :custom-label="
+                                        (opt) =>
+                                          $i18n.locale == 'ar'
+                                            ? unitTypes.find((x) => x.id == opt)
+                                                .name
+                                            : unitTypes.find((x) => x.id == opt)
+                                                .name_e
+                                      "
+                                    >
+                                    </multiselect>
+                                    <div
+                                      v-if="
+                                        $v.edit.unit_ty.$error || errors.unit_ty
+                                      "
+                                      class="text-danger"
+                                    >
+                                      {{ $t("general.fieldIsRequired") }}
+                                    </div>
                                     <template v-if="errors.unit_ty">
                                       <ErrorMessage
                                         v-for="(
                                           errorMessage, index
                                         ) in errors.unit_ty"
                                         :key="index"
-                                        >{{ errorMessage }}
-                                      </ErrorMessage>
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('name')">
                                   <div class="form-group">
                                     <label for="edit-1" class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_name_ar")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('name')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <div dir="rtl">
                                       <input
@@ -2889,13 +3435,20 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div
+                                  v-if="isVisible('name_e')"
+                                  class="col-md-3"
+                                >
                                   <div class="form-group">
                                     <label for="edit-2" class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_name_en")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('name_e')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <div dir="ltr">
                                       <input
@@ -2941,13 +3494,17 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('floor')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_floor")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('floor')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <input
                                       type="number"
@@ -2980,13 +3537,20 @@ export default {
                                 "
                               />
                               <div class="row">
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('unit_status_id')"
+                                >
                                   <div class="form-group position-relative">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_status")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('unit_status_id')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <multiselect
                                       @select="showUnitStatusEditModal"
@@ -3026,7 +3590,10 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('unit_area')"
+                                >
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
@@ -3034,7 +3601,11 @@ export default {
                                           "realEstate_unit_unit_area"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('unit_area')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <input
                                       type="number"
@@ -3061,7 +3632,10 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('unit_net_area')"
+                                >
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
@@ -3069,7 +3643,11 @@ export default {
                                           "realEstate_unit_unit_net_area"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('unit_net_area')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <input
                                       type="number"
@@ -3096,13 +3674,17 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('rooms')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_rooms")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('rooms')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <input
                                       type="number"
@@ -3127,13 +3709,17 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('path')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_path")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('path')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <input
                                       type="number"
@@ -3166,7 +3752,10 @@ export default {
                                 "
                               />
                               <div class="row">
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('finishing')"
+                                >
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
@@ -3174,64 +3763,97 @@ export default {
                                           "realEstate_unit_finishing"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('finishing')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
-                                    <input
-                                      type="number"
-                                      class="form-control"
+                                    <multiselect
+                                      @input="showFinishingModalEdit"
                                       v-model="$v.edit.finishing.$model"
-                                      :class="{
-                                        'is-invalid':
-                                          $v.edit.finishing.$error ||
-                                          errors.finishing,
-                                        'is-valid':
-                                          !$v.edit.finishing.$invalid &&
-                                          !errors.finishing,
-                                      }"
-                                    />
+                                      :options="
+                                        finishings.map((type) => type.id)
+                                      "
+                                      :custom-label="
+                                        (opt) =>
+                                          $i18n.locale == 'ar'
+                                            ? finishings.find(
+                                                (x) => x.id == opt
+                                              ).name
+                                            : finishings.find(
+                                                (x) => x.id == opt
+                                              ).name_e
+                                      "
+                                    >
+                                    </multiselect>
+                                    <div
+                                      v-if="
+                                        $v.edit.finishing.$error ||
+                                        errors.finishing
+                                      "
+                                      class="text-danger"
+                                    >
+                                      {{ $t("general.fieldIsRequired") }}
+                                    </div>
                                     <template v-if="errors.finishing">
                                       <ErrorMessage
                                         v-for="(
                                           errorMessage, index
-                                        ) in errors.finishing"
+                                        ) in errors.view"
                                         :key="index"
-                                        >{{ errorMessage }}
-                                      </ErrorMessage>
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3" v-if="isVisible('view')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
                                         getCompanyKey("realEstate_unit_view")
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('view')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
-                                    <input
-                                      type="number"
-                                      class="form-control"
+                                    <multiselect
+                                      @input="showViewModalEdit"
                                       v-model="$v.edit.view.$model"
-                                      :class="{
-                                        'is-invalid':
-                                          $v.edit.view.$error || errors.view,
-                                        'is-valid':
-                                          !$v.edit.view.$invalid &&
-                                          !errors.view,
-                                      }"
-                                    />
+                                      :options="views.map((type) => type.id)"
+                                      :custom-label="
+                                        (opt) =>
+                                          $i18n.locale == 'ar'
+                                            ? views.find((x) => x.id == opt)
+                                                .name
+                                            : views.find((x) => x.id == opt)
+                                                .name_e
+                                      "
+                                    >
+                                    </multiselect>
+                                    <div
+                                      v-if="$v.edit.view.$error || errors.view"
+                                      class="text-danger"
+                                    >
+                                      {{ $t("general.fieldIsRequired") }}
+                                    </div>
                                     <template v-if="errors.view">
                                       <ErrorMessage
                                         v-for="(
                                           errorMessage, index
                                         ) in errors.view"
                                         :key="index"
-                                        >{{ errorMessage }}
-                                      </ErrorMessage>
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div
+                                  class="col-md-3"
+                                  v-if="isVisible('properties')"
+                                >
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{
@@ -3239,7 +3861,11 @@ export default {
                                           "realEstate_unit_properties"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('properties')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <multiselect
                                       :multiple="true"
@@ -3271,7 +3897,10 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div
+                                  v-if="isVisible('description')"
+                                  class="col-md-6"
+                                >
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
@@ -3279,12 +3908,16 @@ export default {
                                           "realEstate_unit_description_ar"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('description')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <textarea
                                       @input="
                                         arabicValueDescription(
-                                          create.description
+                                          edit.description
                                         )
                                       "
                                       v-model="$v.edit.description.$model"
@@ -3303,7 +3936,10 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div
+                                  class="col-md-6"
+                                  v-if="isVisible('description_e')"
+                                >
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
@@ -3311,12 +3947,16 @@ export default {
                                           "realEstate_unit_description_en"
                                         )
                                       }}
-                                      <span class="text-danger">*</span>
+                                      <span
+                                        v-if="isRequired('description_e')"
+                                        class="text-danger"
+                                        >*</span
+                                      >
                                     </label>
                                     <textarea
                                       @input="
                                         englishValueDescription(
-                                          create.description_e
+                                          edit.description_e
                                         )
                                       "
                                       v-model="$v.edit.description_e.$model"

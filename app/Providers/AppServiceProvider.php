@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-
+use App\Repositories\Attendant\AttendantInterface;
+use App\Repositories\Attendant\AttendantRepository;
+use App\Repositories\Attribute\AttributeInterface;
+use App\Repositories\Attribute\AttributeRepository;
 use App\Repositories\Avenue\AvenueInterface;
 use App\Repositories\Avenue\AvenueRepository;
 use App\Repositories\BankAccount\BankAccountInterface;
@@ -11,6 +14,8 @@ use App\Repositories\Bank\BankInterface;
 use App\Repositories\Bank\BankRepository;
 use App\Repositories\Branch\BranchRepository;
 use App\Repositories\Branch\BranchRepositoryInterface;
+use App\Repositories\Brand\BrandInterface;
+use App\Repositories\Brand\BrandRepository;
 use App\Repositories\City\CityRepository;
 use App\Repositories\City\CityRepositoryInterface;
 use App\Repositories\Color\ColorInterface;
@@ -21,10 +26,16 @@ use App\Repositories\Country\CountryInterface;
 use App\Repositories\Country\CountryRepository;
 use App\Repositories\Currency\CurrencyRepository;
 use App\Repositories\Currency\CurrencyRepositoryInterface;
+use App\Repositories\CustomerCategory\CustomerCategoryRepository;
+use App\Repositories\CustomerGroup\CustomerGroupInterface;
+use App\Repositories\CustomerGroup\CustomerGroupRepository;
+use App\Repositories\CustomerSource\CustomerSourceInterface;
+use App\Repositories\CustomerSource\CustomerSourceRepository;
 use App\Repositories\CustomTable\CustomTableInterface;
 use App\Repositories\CustomTable\CustomTableRepository;
 use App\Repositories\DatabaseBackup\DatabaseBackupInterface;
 use App\Repositories\DatabaseBackup\DatabaseBackupRepository;
+use App\Repositories\Depertment\CustomerCategoryInterface;
 use App\Repositories\Depertment\DepertmentInterface;
 use App\Repositories\Depertment\DepertmentRepository;
 use App\Repositories\DepertmentTask\DepertmentTaskInterface;
@@ -47,8 +58,12 @@ use App\Repositories\FinancialYear\FinancialYearInterface;
 use App\Repositories\FinancialYear\FinancialYearRepository;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepository;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepositoryInterface;
+use App\Repositories\GeneralItem\GeneralItemInterface;
+use App\Repositories\GeneralItem\GeneralItemRepository;
 use App\Repositories\Governorate\GovernorateInterface;
 use App\Repositories\Governorate\GovernorateRepository;
+use App\Repositories\Group\GroupInterface;
+use App\Repositories\Group\GroupRepository;
 use App\Repositories\InternalSalesman\InternalSalesmanRepository;
 use App\Repositories\InternalSalesman\InternalSalesmanRepositoryInterface;
 use App\Repositories\ItemBreakDown\ItemBreakDownInterface;
@@ -59,6 +74,8 @@ use App\Repositories\PaymentMethod\PaymentMethodInterface;
 use App\Repositories\PaymentMethod\PaymentMethodRepository;
 use App\Repositories\PaymentType\PaymentTypeInterface;
 use App\Repositories\PaymentType\PaymentTypeRepository;
+use App\Repositories\ReportDocument\ReportDocumentInterface;
+use App\Repositories\ReportDocument\ReportDocumentRepository;
 use App\Repositories\RestartPeriod\RestartPeriodInterface;
 use App\Repositories\RestartPeriod\RestartPeriodRepository;
 use App\Repositories\RoleScreenHotfield\RoleScreenHotfieldRepository;
@@ -80,12 +97,18 @@ use App\Repositories\SalesmenType\SalesmenTypeInterface;
 use App\Repositories\SalesmenType\SalesmenTypeRepository;
 use App\Repositories\ScreenTreeProperty\ScreenTreePropertyRepository;
 use App\Repositories\ScreenTreeProperty\ScreenTreePropertyRepositoryInterface;
+use App\Repositories\Sector\SectorInterface;
+use App\Repositories\Sector\SectorRepository;
 use App\Repositories\Serial\SerialRepository;
 use App\Repositories\Serial\SerialRepositoryInterface;
 use App\Repositories\Status\StatusInterface;
 use App\Repositories\Status\StatusRepository;
 use App\Repositories\Store\StoreInterface;
 use App\Repositories\Store\StoreRepository;
+use App\Repositories\Supplier\SupplierInterface;
+use App\Repositories\Supplier\SupplierRepository;
+use App\Repositories\Tax\TaxInterface;
+use App\Repositories\Tax\TaxRepository;
 use App\Repositories\Translation\TranslationInterface;
 use App\Repositories\Translation\TranslationRepository;
 use App\Repositories\TreeProperty\TreePropertyRepository;
@@ -95,10 +118,13 @@ use App\Repositories\Unit\UnitRepository;
 use App\Repositories\User\UserInterface;
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\VoucherHeader\VoucherHeaderInterface;
+use App\Repositories\VoucherHeader\VoucherHeaderRepository;
 use App\Repositories\WorkflowHotfield\WorkflowHotfieldRepository;
 use App\Repositories\WorkflowHotfield\WorkflowHotfieldRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -173,6 +199,41 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DocumentHeaderDetailInterface::class, DocumentHeaderDetailRepository::class);
 
         $this->app->bind(ItemBreakDownInterface::class, ItemBreakDownRepository::class);
+
+        $this->app->bind(SectorInterface::class, SectorRepository::class);
+        $this->app->bind(CustomerCategoryInterface::class, CustomerCategoryRepository::class);
+        $this->app->bind(VoucherHeaderInterface::class, VoucherHeaderRepository::class);
+        $this->app->bind(ReportDocumentInterface::class, ReportDocumentRepository::class);
+
+
+
+        $this->app->bind(CustomerGroupInterface::class, CustomerGroupRepository::class);
+        $this->app->bind(SupplierInterface::class, SupplierRepository::class);
+
+        $this->app->bind(BrandInterface::class, BrandRepository::class);
+
+
+        $this->app->bind(GroupInterface::class, GroupRepository::class);
+
+//        $this->app->bind(VariantAttributeInterface::class, VariantAttributeRepository::class);
+        $this->app->bind(AttributeInterface::class, AttributeRepository::class);
+
+
+        $this->app->bind(TaxInterface::class, TaxRepository::class);
+        $this->app->bind(CustomerSourceInterface::class, CustomerSourceRepository::class);
+
+
+        $this->app->bind(GeneralItemInterface::class, GeneralItemRepository::class);
+
+        $this->app->bind(AttendantInterface::class, AttendantRepository::class);
+
+
+
+
+
+
+
+
 
 
 

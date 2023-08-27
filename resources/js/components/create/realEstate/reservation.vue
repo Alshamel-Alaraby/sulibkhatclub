@@ -178,11 +178,11 @@
 </template>
 
 <script>
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import adminApi from "../../../api/adminAxios";
 import {required} from "vuelidate/lib/validators";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import {dynamicSortString} from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 
@@ -336,7 +336,7 @@ export default {
                 this.errors = {};
                 this.is_disabled = false;
                 adminApi
-                    .post(`real-estate/reservations`, this.create)
+                    .post(`real-estate/reservations`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.$emit('created');
                         this.is_disabled = true;

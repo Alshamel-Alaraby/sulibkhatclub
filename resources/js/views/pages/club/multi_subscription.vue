@@ -1,19 +1,20 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import {dynamicSortString, dynamicSortNumber} from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
-import Branch from "../../../components/create/branch";
+import Branch from "../../../components/create/general/branch";
 import Sponsor from "../../../components/create/club/sponsor.vue";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -35,18 +36,9 @@ export default {
         DatePicker,
         Sponsor
     },
-    beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes('club') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({name: "home"});
-            }
-        });
-
-    },
     data() {
         return {
+            fields: [],
             per_page: 50,
             search: "",
             debounce: {},
@@ -120,39 +112,102 @@ export default {
             }
         };
     },
+    beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "MultiSubscription", "all multiSubscription club");
+    });
+  },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "Multi Subscription", "all Multi Subscription club");
+        });
+    },
     validations: {
         create: {
-            sponsor_id: {required},
-            branch_id: {required},
-            serial_id: {required},
-            cm_member_id: {},
-            year_from: {required},
-            year_to: {required},
-            number_of_years: {required},
-            amount: {required},
-            type: {required},
+            branch_id: {required: requiredIf(function (model) {
+                    return this.isRequired("branch_id");
+                })},
+            serial_id: {required: requiredIf(function (model) {
+                    return this.isRequired("serial_id");
+                })},
+            cm_member_id: {required: requiredIf(function (model) {
+                    return this.isRequired("cm_member_id");
+                })},
+            year_from: {required: requiredIf(function (model) {
+                    return this.isRequired("year_from");
+                })},
+            year_to: {required: requiredIf(function (model) {
+                    return this.isRequired("year_to");
+                })},
+            number_of_years: {required: requiredIf(function (model) {
+                    return this.isRequired("number_of_years");
+                })},
+            amount: {required: requiredIf(function (model) {
+                    return this.isRequired("amount");
+                })},
+            type: {required: requiredIf(function (model) {
+                    return this.isRequired("type");
+                })},
+            sponsor_id: {required: requiredIf(function (model) {
+                    return this.isRequired("sponsor_id");
+                })},
             transactions: {
                 $each: {
-                    branch_id: {required},
-                    serial_id: {required},
-                    cm_member_id: {required},
-                    year_from: {required},
-                    year_to: {required},
-                    number_of_years: {required},
-                    amount: {required},
-                    type: {required},
+                    branch_id: {required: requiredIf(function (model) {
+                            return this.isRequired("branch_id");
+                        })},
+                    serial_id: {required: requiredIf(function (model) {
+                            return this.isRequired("serial_id");
+                        })},
+                    cm_member_id: {required: requiredIf(function (model) {
+                            return this.isRequired("cm_member_id");
+                        })},
+                    year_from: {required: requiredIf(function (model) {
+                            return this.isRequired("year_from");
+                        })},
+                    year_to: {required: requiredIf(function (model) {
+                            return this.isRequired("year_to");
+                        })},
+                    number_of_years: {required: requiredIf(function (model) {
+                            return this.isRequired("number_of_years");
+                        })},
+                    amount: {required: requiredIf(function (model) {
+                            return this.isRequired("amount");
+                        })},
+                    type: {required: requiredIf(function (model) {
+                            return this.isRequired("type");
+                        })},
                 },
             }
         },
         edit: {
-            sponsor_id: {required},
-            branch_id: {required},
-            cm_member_id: {required},
-            year_from: {required},
-            year_to: {required},
-            number_of_years: {required},
-            type: {required},
-            amount: {required},
+            branch_id: {required: requiredIf(function (model) {
+                    return this.isRequired("branch_id");
+                })},
+            serial_id: {required: requiredIf(function (model) {
+                    return this.isRequired("serial_id");
+                })},
+            cm_member_id: {required: requiredIf(function (model) {
+                    return this.isRequired("cm_member_id");
+                })},
+            year_from: {required: requiredIf(function (model) {
+                    return this.isRequired("year_from");
+                })},
+            year_to: {required: requiredIf(function (model) {
+                    return this.isRequired("year_to");
+                })},
+            number_of_years: {required: requiredIf(function (model) {
+                    return this.isRequired("number_of_years");
+                })},
+            amount: {required: requiredIf(function (model) {
+                    return this.isRequired("amount");
+                })},
+            type: {required: requiredIf(function (model) {
+                    return this.isRequired("type");
+                })},
+            sponsor_id: {required: requiredIf(function (model) {
+                    return this.isRequired("sponsor_id");
+                })},
         },
     },
     watch: {
@@ -188,10 +243,45 @@ export default {
     },
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
-
+        this.getCustomTableFields();
         this.getData();
     },
     methods: {
+        getCustomTableFields() {
+            adminApi
+                .get(`/customTable/table-columns/cm_transactions`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        isVisible(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_visible == 1 ? true : false;
+        },
+        isRequired(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_required == 1 ? true : false;
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         async showBranchModal() {
             if (this.create.branch_id == 0) {
                 this.$bvModal.show("create_branch");
@@ -310,7 +400,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
+                    if(this.isPermission('create Branch')){
+                        l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
+                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -327,7 +419,9 @@ export default {
                 .get(`/club-members/sponsers`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
+                    if(this.isPermission('create sponsor club')){
+                        l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
+                    }
                     this.sponsors = l;
                 })
                 .catch((err) => {
@@ -498,10 +592,10 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await this.getMember();
-            await this.getBranches();
-            await this.getSponsors();
-            await this.getSerials();
+            if(this.isVisible('cm_member_id')) await this.getMember();
+            if(this.isVisible('branch_id')) await this.getBranches();
+            if(this.isVisible('sponsor_id')) await this.getSponsors();
+            if(this.isVisible('serial_id')) await this.getSerials();
             this.total = 0;
             this.create = {
                 sponsor_id: null,
@@ -611,9 +705,9 @@ export default {
          *   show Modal (edit)
          */
         async resetModalEdit(id) {
-            await this.getMember();
-            await this.getBranches();
-            await this.getSponsors();
+            if(this.isVisible('cm_member_id')) await this.getMember();
+            if(this.isVisible('branch_id')) await this.getBranches();
+            if(this.isVisible('sponsor_id')) await this.getSponsors();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.sponsor_id = setting.sponsor.id;
@@ -880,23 +974,23 @@ export default {
                                     >
                                         <b-form-checkbox v-model="filterSetting" value="sponsor_id" class="mb-1">{{
                                                 getCompanyKey("sponsor") }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="cm_member_id"
+                                        <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="filterSetting" value="cm_member_id"
                                                          class="mb-1"
                                         >{{ getCompanyKey("member") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
+                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("year_from") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
+                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("year_to") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
+                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("subscription_amount") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
+                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
                                         >{{ getCompanyKey("subscription_type") }}
                                         </b-form-checkbox>
@@ -925,6 +1019,7 @@ export default {
                                 <!-- start create and printer -->
                                 <b-button
                                     v-b-modal.create
+                                    v-if="isPermission('create multiSubscription club')"
                                     variant="primary"
                                     class="btn-sm mx-1 font-weight-bold"
                                 >
@@ -941,14 +1036,14 @@ export default {
                                     <button
                                         class="custom-btn-dowonload"
                                         @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1"
+                                        v-if="checkAll.length == 1 && isPermission('update multiSubscription club')"
                                     >
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
                                     <button
                                         class="custom-btn-dowonload"
-                                        v-if="checkAll.length > 1"
+                                        v-if="checkAll.length > 1 && isPermission('delete multiSubscription club')"
                                         @click.prevent="deleteBranch(checkAll)"
                                     >
                                         <i class="fas fa-trash-alt"></i>
@@ -957,7 +1052,7 @@ export default {
                                     <!--  start one delete  -->
                                     <button
                                         class="custom-btn-dowonload"
-                                        v-if="checkAll.length == 1"
+                                        v-if="checkAll.length == 1 && isPermission('delete multiSubscription club')"
                                         @click.prevent="deleteBranch(checkAll[0])"
                                     >
                                         <i class="fas fa-trash-alt"></i>
@@ -987,36 +1082,35 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-
-                                            <b-form-checkbox v-model="setting.serial_number" class="mb-1">
+                                            <b-form-checkbox v-if="isVisible('sponsor_id')" v-model="setting.sponsor_id" class="mb-1">{{
+                                                    getCompanyKey("sponsor") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('serial_number')" v-model="setting.serial_number" class="mb-1">
                                                 {{ $t("general.serial_number") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.cm_member_id"
+                                            <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="setting.cm_member_id"
                                                              class="mb-1"
                                             >{{ getCompanyKey("member") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.amount"
+                                            <b-form-checkbox v-if="isVisible('amount')" v-model="setting.amount"
                                                              class="mb-1">
                                                 {{ getCompanyKey("subscription_amount") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.type"
+                                            <b-form-checkbox v-if="isVisible('type')" v-model="setting.type"
                                                              class="mb-1">
                                                 {{ getCompanyKey("subscription_type") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_from"
+                                            <b-form-checkbox v-if="isVisible('year_from')" v-model="setting.year_from"
                                                              class="mb-1">
                                                 {{ getCompanyKey("year_from") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_to"
+                                            <b-form-checkbox v-if="isVisible('year_to')" v-model="setting.year_to"
                                                              class="mb-1">
                                                 {{ getCompanyKey("year_to") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.number_of_years"
+                                            <b-form-checkbox v-if="isVisible('number_of_years')" v-model="setting.number_of_years"
                                                              class="mb-1">
                                                 {{ getCompanyKey("number_of_years") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.sponsor_id" class="mb-1">{{
-                                                    getCompanyKey("sponsor") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
@@ -1136,7 +1230,7 @@ export default {
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" v-if="isVisible('branch_id')">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("branch") }}</label>
                                             <multiselect @input="showBranchModal" v-model="create.branch_id"
@@ -1161,7 +1255,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" v-if="isVisible('serial_id')">
                                         <div class="form-group">
                                             <label>{{ $t("general.serial_number") }}</label>
                                             <multiselect @input="showBranchModal" v-model="create.serial_id"
@@ -1186,12 +1280,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('year_from')" class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ getCompanyKey('year_from') }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
                                                 type="date"
@@ -1217,11 +1309,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('year_to')" class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ getCompanyKey('year_to') }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
                                                 type="date"
@@ -1247,11 +1338,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('sponsor_id')" class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("sponsor") }}
-
                                             </label>
                                             <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
                                                          :options="sponsors.map((type) => type.id)"
@@ -1268,11 +1358,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('cm_member_id')" class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("member") }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <multiselect
                                                 :internalSearch="false"
@@ -1300,11 +1389,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('type')" class="col-md-3">
                                         <div class="form-group">
                                             <label  class="control-label">
                                                 {{ getCompanyKey("subscription_type") }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <select  disabled class="form-control" @change="renewalAmount" v-model="create.type" :class="{
                                                   'is-invalid': $v.create.type.$error || errors.amount,
@@ -1324,11 +1412,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('amount')"class="col-md-3">
                                         <div class="form-group">
                                             <label  class="control-label">
                                                 {{ getCompanyKey("subscription_amount") }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <input
                                                 type="number"
@@ -1350,11 +1437,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div v-if="isVisible('number_of_years')" class="col-md-3">
                                         <div class="form-group">
                                             <label  class="control-label">
                                                 {{ getCompanyKey("number_of_years") }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <input
                                                 disabled
@@ -1403,14 +1489,14 @@ export default {
                                                 <table class="table table-borderless table-hover table-centered m-0" >
                                                     <thead>
                                                     <tr>
-                                                        <th>{{ getCompanyKey("member_membership_number") }}</th>
+                                                        <th v-if="isVisible('membership_number')">{{ getCompanyKey("member_membership_number") }}</th>
                                                         <th>{{ $t("general.serial_number") }}</th>
                                                         <th>{{ getCompanyKey("member") }}</th>
-                                                        <th>{{ getCompanyKey("subscription_amount") }}</th>
-                                                        <th>{{ getCompanyKey("subscription_type") }}</th>
-                                                        <th>{{ getCompanyKey("year_from") }}</th>
-                                                        <th>{{ getCompanyKey("year_to") }}</th>
-                                                        <th>{{ getCompanyKey("number_of_years") }}</th>
+                                                        <th v-if="isVisible('amount')">{{ getCompanyKey("subscription_amount") }}</th>
+                                                        <th v-if="isVisible('type')">{{ getCompanyKey("subscription_type") }}</th>
+                                                        <th v-if="isVisible('year_from')">{{ getCompanyKey("year_from") }}</th>
+                                                        <th v-if="isVisible('year_to')">{{ getCompanyKey("year_to") }}</th>
+                                                        <th v-if="isVisible('membership_number')">{{ getCompanyKey("number_of_years") }}</th>
                                                         <th>{{ $t("general.Action") }}</th>
                                                     </tr>
                                                     </thead>
@@ -1419,7 +1505,7 @@ export default {
                                                         :key="data.id"
                                                         class="body-tr-custom"
                                                     >
-                                                        <td>
+                                                        <td v-if="isVisible('membership_number')">
                                                             <h5 class="m-0 font-weight-normal">{{ data.membership_number }}</h5>
                                                         </td>
                                                         <td>
@@ -1428,15 +1514,15 @@ export default {
                                                         <td>
                                                             <h5 class="m-0 font-weight-normal">{{ data.member_name }}</h5>
                                                         </td>
-                                                        <td>
+                                                        <td v-if="isVisible('amount')">
                                                             <h5 class="m-0 font-weight-normal">{{data.amount}}</h5>
                                                         </td>
-                                                        <td> <h5 class="m-0 font-weight-normal"> {{ data.type }}</h5></td>
-                                                        <td>
+                                                        <td v-if="isVisible('type')"> <h5 class="m-0 font-weight-normal"> {{ data.type }}</h5></td>
+                                                        <td v-if="isVisible('year_from')">
                                                             <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
                                                         </td>
-                                                        <td><h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5></td>
-                                                        <td><h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5></td>
+                                                        <td v-if="isVisible('year_to')"><h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5></td>
+                                                        <td v-if="isVisible('number_of_years')"><h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5></td>
                                                         <td>
                                                             <button  type="button"
                                                                      @click.prevent="removeNewField(index)"
@@ -1483,124 +1569,34 @@ export default {
                                             />
                                         </div>
                                     </th>
-                                    <th v-if="setting.serial_number">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.serial_number") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        transactions.sort(
-                                                            sortString(
-                                                                $i18n.locale == 'ar' ? 'serial_number' : 'serial_number'
-                                                            )
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        transactions.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-serial_number' : '-serial_number')
-                                                        )
-                                                    "></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.cm_member_id">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="
-                                                      transactions.sort(
-                                                        sortString(($i18n.locale = 'ar' ? 'name' : 'name_e'))
-                                                      )
-                                                    "
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="
-                                                      transactions.sort(
-                                                        sortString(($i18n.locale = 'ar' ? '-name' : '-name_e'))
-                                                      )
-                                                    "
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.amount">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("subscription_amount") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('amount'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-amount'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.type">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("subscription_type") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('type'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-type'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.year_from">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("year_from") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('year_from'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-year_from'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.year_to">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("year_to") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('year_to'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-year_to'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.number_of_years">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("number_of_years") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('number_of_years'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-number_of_years'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.sponsor_id">
+                                    <td v-if="setting.serial_number && isVisible('serial_number')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.prefix }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{
+                                                data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
+                                            }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.amount && isVisible('amount')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                    </td>
+                                    <td v-if="setting.type && isVisible('type')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
+                                    </td>
+                                    <td v-if="setting.year_from && isVisible('year_from')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
+                                    </td>
+                                    <td v-if="setting.year_to && isVisible('year_to')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
+                                    </td>
+                                    <td v-if="setting.number_of_years && isVisible('number_of_years')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
+                                    </td>
+                                    <th v-if="setting.sponsor_id && isVisible('sponsor_id')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("sponsor") }}</span>
                                             <div class="arrow-sort">
@@ -1620,7 +1616,8 @@ export default {
                                 <tbody v-if="transactions.length > 0">
                                 <tr
                                     @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                    @dblclick.prevent="isPermission('update multiSubscription club')?
+                                    $bvModal.show(`modal-edit-${data.id}`) : false"
                                     v-for="(data, index) in transactions"
                                     :key="data.id"
                                     class="body-tr-custom"
@@ -1637,34 +1634,34 @@ export default {
                                         </div>
                                     </td>
 
-                                    <td v-if="setting.serial_number">
+                                    <td v-if="setting.serial_number && isVisible('serial_number')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{ data.prefix }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.cm_member_id">
+                                    <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
                                                 data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
                                             }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.amount">
+                                    <td v-if="setting.amount && isVisible('amount')">
                                         <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
                                     </td>
-                                    <td v-if="setting.type">
+                                    <td v-if="setting.type && isVisible('type')">
                                         <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
                                     </td>
-                                    <td v-if="setting.year_from">
+                                    <td v-if="setting.year_from && isVisible('year_from')">
                                         <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
                                     </td>
-                                    <td v-if="setting.year_to">
+                                    <td v-if="setting.year_to && isVisible('year_to')">
                                         <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
                                     </td>
-                                    <td v-if="setting.number_of_years">
+                                    <td v-if="setting.number_of_years && isVisible('number_of_years')">
                                         <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
                                     </td>
-                                    <td v-if="setting.sponsor_id">
+                                    <td v-if="setting.sponsor_id && isVisible('sponsor_id')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{ data.sponsor ? ($i18n.locale == 'ar' ? data.sponsor.name :
                                             data.sponsor.name_e) : "-" }}
@@ -1683,6 +1680,7 @@ export default {
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
                                                 <a
+                                                    v-if="isPermission('update multiSubscription club')"
                                                     class="dropdown-item"
                                                     href="#"
                                                     @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -1695,6 +1693,7 @@ export default {
                                                     </div>
                                                 </a>
                                                 <a
+                                                    v-if="isPermission('delete multiSubscription club')"
                                                     class="dropdown-item text-black"
                                                     href="#"
                                                     @click.prevent="deleteBranch(data.id)"
@@ -1749,7 +1748,7 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('branch_id')">
                                                         <div class="form-group">
                                                             <label>{{ getCompanyKey("branch") }}</label>
                                                             <multiselect @input="showBranchModalEdit"
@@ -1776,11 +1775,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('cm_member_id')">
                                                         <div class="form-group position-relative">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("member") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <multiselect
                                                                 v-model="edit.cm_member_id"
@@ -1806,11 +1804,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('year_from')">
                                                         <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey('year_from') }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <date-picker
                                                                 type="date"
@@ -1836,11 +1833,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('year_to')">
                                                         <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey('year_to') }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <date-picker
                                                                 type="date"
@@ -1866,11 +1862,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('type')">
                                                         <div class="form-group">
                                                             <label  class="control-label">
                                                                 {{ getCompanyKey("subscription_type") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <select disabled class="form-control"  v-model="$v.edit.type.$model" :class="{
                                                                   'is-invalid': $v.edit.type.$error || errors.amount,
@@ -1890,11 +1885,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('amount')">
                                                         <div class="form-group">
                                                             <label  class="control-label">
                                                                 {{ getCompanyKey("subscription_amount") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <input
                                                                 type="number"
@@ -1916,11 +1910,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('number_of_years')">
                                                         <div class="form-group">
                                                             <label  class="control-label">
                                                                 {{ getCompanyKey("number_of_years") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <input
                                                                 disabled
@@ -1943,11 +1936,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('sponsor_id')">
                                                         <div class="form-group position-relative">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("sponsor") }}
-
                                                             </label>
                                                             <multiselect @input="showSponsorModalEdit"
                                                                          v-model="edit.sponsor_id"

@@ -3,11 +3,11 @@ import adminApi from "../../../api/adminAxios";
 import { required, minLength, maxLength, integer, url } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import Multiselect from "vue-multiselect";
 import ArchStatus from "../../../components/create/arch-status.vue";
 import ArchDocumentType from "../../../components/create/arch-document-type.vue";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 
 /**
  * Advanced Table component
@@ -189,6 +189,7 @@ export default {
         adminApi
           .post(`/arch-document`, {
             ...this.create,
+              company_id: this.$store.getters["auth/company_id"],
           })
           .then((res) => {
             this.getData();

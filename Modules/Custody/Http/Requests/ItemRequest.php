@@ -35,6 +35,7 @@ class ItemRequest extends FormRequest
                 'default_amount' => 'required|numeric',
                 'types' => 'required|array',
                 'types.*' => 'required|integer',
+                "company_id"=>'nullable',
                 // "last_update_user_id" => "required|exists:general_users,id",
 
             ];
@@ -50,6 +51,7 @@ class ItemRequest extends FormRequest
             'default_amount' => 'required|numeric',
             'types' => 'required|array',
             'types.*' => 'required|integer',
+            "company_id"=>'nullable',
             // "creation_user_id" => "required|exists:general_users,id",
         ];
     }

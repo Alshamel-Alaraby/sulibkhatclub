@@ -1,6 +1,8 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
+import permissionGuard from "../../../helper/permission";
+
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
@@ -12,7 +14,7 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
@@ -22,7 +24,7 @@ import {
 } from "../../../helper/startDate";
 import DatePicker from "vue2-datepicker";
 import { dynamicSortString, dynamicSortDate } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import Multiselect from "vue-multiselect";
 
@@ -56,14 +58,16 @@ export default {
       requestTypes: [],
       employees: [],
       statuses: [],
+      manageOthers: 1,
       create: {
         request_type_id: null,
-        last_status_id: null,
+        status_id: null,
         employee_id: null,
         start_from: formatDateOnly(new Date()),
         date: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
         descriptions: "",
+        admin_comment: "",
         amount: 0,
         from_hour: formatTime(new Date()),
         to_hour: formatTime(new Date()),
@@ -73,22 +77,22 @@ export default {
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
       },
       edit: {
         request_type_id: null,
         employee_id: null,
-        last_status_id: null,
-
+        status_id: null,
+        admin_comment: "",
         start_from: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
         date: formatDateOnly(new Date()),
@@ -102,14 +106,14 @@ export default {
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
       },
@@ -118,6 +122,9 @@ export default {
       checkAll: [],
       current_page: 1,
       setting: {
+        status_id: true,
+        approved_date: true,
+        admin_comment: true,
         request_type_id: true,
         employee_id: true,
         start_from: true,
@@ -142,8 +149,17 @@ export default {
   validations: {
     create: {
       request_type_id: { required },
-      last_status_id: { required },
+      status_id: {
+        required: requiredIf(function (model) {
+          return this.manageOthers;
+        }),
+      },
       employee_id: { required },
+      admin_comment: {
+        required: requiredIf(function (model) {
+          return this.manageOthers;
+        }),
+      },
       start_from: {
         required: requiredIf(function (model) {
           return (
@@ -153,12 +169,13 @@ export default {
           );
         }),
       },
-      approved_start_from: {
+      approved_from_date: {
         required: requiredIf(function (model) {
           return (
             !this.create.request_type_id ||
             (this.create.request_type_id &&
-              this.getRequestType(this.create.request_type_id).start_from)
+              this.getRequestType(this.create.request_type_id).start_from &&
+              this.manageOthers)
           );
         }),
       },
@@ -171,12 +188,13 @@ export default {
           );
         }),
       },
-      approved_end_date: {
+      approved_to_date: {
         required: requiredIf(function (model) {
           return (
             !this.create.request_type_id ||
             (this.create.request_type_id &&
-              this.getRequestType(this.create.request_type_id).end_date)
+              this.getRequestType(this.create.request_type_id).end_date &&
+              this.manageOthers)
           );
         }),
       },
@@ -197,7 +215,8 @@ export default {
           return (
             !this.create.request_type_id ||
             (this.create.request_type_id &&
-              this.getRequestType(this.create.request_type_id).amount)
+              this.getRequestType(this.create.request_type_id).amount &&
+              this.manageOthers)
           );
         }),
       },
@@ -215,7 +234,8 @@ export default {
           return (
             !this.create.request_type_id ||
             (this.create.request_type_id &&
-              this.getRequestType(this.create.request_type_id).from_hour)
+              this.getRequestType(this.create.request_type_id).from_hour &&
+              this.manageOthers)
           );
         }),
       },
@@ -233,13 +253,23 @@ export default {
           return (
             !this.create.request_type_id ||
             (this.create.request_type_id &&
-              this.getRequestType(this.create.request_type_id).to_hour)
+              this.getRequestType(this.create.request_type_id).to_hour &&
+              this.manageOthers)
           );
         }),
       },
     },
     edit: {
-      last_status_id: { required },
+      admin_comment: {
+        required: requiredIf(function (model) {
+          return this.manageOthers;
+        }),
+      },
+      status_id: {
+        required: requiredIf(function (model) {
+          return this.manageOthers;
+        }),
+      },
       request_type_id: { required },
       employee_id: { required },
       date: {},
@@ -253,12 +283,13 @@ export default {
           );
         }),
       },
-      approved_start_from: {
+      approved_from_date: {
         required: requiredIf(function (model) {
           return (
             !this.edit.request_type_id ||
             (this.edit.request_type_id &&
-              this.getRequestType(this.edit.request_type_id).start_from)
+              this.getRequestType(this.edit.request_type_id).start_from &&
+              this.manageOthers)
           );
         }),
       },
@@ -271,12 +302,13 @@ export default {
           );
         }),
       },
-      approved_end_date: {
+      approved_to_date: {
         required: requiredIf(function (model) {
           return (
             !this.edit.request_type_id ||
             (this.edit.request_type_id &&
-              this.getRequestType(this.edit.request_type_id).end_date)
+              this.getRequestType(this.edit.request_type_id).end_date &&
+              this.manageOthers)
           );
         }),
       },
@@ -295,7 +327,8 @@ export default {
           return (
             !this.edit.request_type_id ||
             (this.edit.request_type_id &&
-              this.getRequestType(this.edit.request_type_id).amount)
+              this.getRequestType(this.edit.request_type_id).amount &&
+              this.manageOthers)
           );
         }),
       },
@@ -313,7 +346,8 @@ export default {
           return (
             !this.edit.request_type_id ||
             (this.edit.request_type_id &&
-              this.getRequestType(this.edit.request_type_id).from_hour)
+              this.getRequestType(this.edit.request_type_id).from_hour &&
+              this.manageOthers)
           );
         }),
       },
@@ -331,7 +365,8 @@ export default {
           return (
             !this.edit.request_type_id ||
             (this.edit.request_type_id &&
-              this.getRequestType(this.edit.request_type_id).to_hour)
+              this.getRequestType(this.edit.request_type_id).to_hour &&
+              this.manageOthers)
           );
         }),
       },
@@ -372,39 +407,20 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  // updated() {
-  //   $(function () {
-  //     $(".englishInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return true;
-  //       if (97 <= ew && ew <= 122) return true;
-  //       return false;
-  //     });
-  //     $(".arabicInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return false;
-  //       if (97 <= ew && ew <= 122) return false;
-  //       return true;
-  //     });
-  //   });
-  // },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("hr") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+        next((vm) => {
+      return permissionGuard(vm, "Online Request", "all onlineRequest hr");
     });
+
+
   },
   methods: {
+    isPermission(item) {
+      if (this.$store.state.auth.type == "user") {
+        return this.$store.state.auth.permissions.includes(item);
+      }
+      return true;
+    },
     getRequestType(id) {
       let rt = this.requestTypes.filter((t) => t.id == id);
       return rt.length > 0 ? rt[0] : null;
@@ -423,9 +439,32 @@ export default {
           });
         });
     },
+    async getEmployeeChildren() {
+      this.isLoader = true;
+      await adminApi
+        .get(`employees?id=${this.$store.state.auth.user.employee_id}`)
+        .then((res) => {
+          let l = res.data.data;
+          this.employees = l;
+          let result = l.filter(
+            (e) => e.id == this.$store.state.auth.user.employee_id
+          );
+          this.manageOthers = result.length && result[0].manage_others ? 1 : 0;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        })
+        .finally(() => {
+          this.isLoader = false;
+        });
+    },
     async getStatuses() {
       await adminApi
-        .get(`/employees`)
+        .get(`/hr/statues`)
         .then((res) => {
           this.statuses = res.data.data;
         })
@@ -458,7 +497,7 @@ export default {
     getData(page = 1) {
       this.isLoader = true;
       let filter = "";
-      let _filterSetting = [];
+      let _filterSetting = [...this.filterSetting];
       let index = this.filterSetting.indexOf("employee_id");
       if (index > -1) {
         _filterSetting[index] =
@@ -641,10 +680,12 @@ export default {
      *  reset Modal (create)
      */
     resetModalHidden() {
+      this.manageOthers = 1;
+
       this.create = {
         request_type_id: null,
         employee_id: null,
-        last_status_id: null,
+        status_id: null,
         start_from: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
         date: formatDateOnly(new Date()),
@@ -658,16 +699,17 @@ export default {
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
+        admin_comment: "",
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -680,12 +722,18 @@ export default {
      *  hidden Modal (create)
      */
     async resetModal() {
-      await this.getEmployees();
+      if (!this.$store.state.auth.user.employee_id) {
+        await this.getEmployees();
+      } else {
+        await this.getEmployeeChildren();
+      }
+
       await this.getRequestTypes();
       await this.getStatuses();
       this.create = {
+        admin_comment: "",
+        status_id: null,
         request_type_id: null,
-        last_status_id: null,
         employee_id: null,
         start_from: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
@@ -700,50 +748,58 @@ export default {
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
       };
       this.$nextTick(() => {
         this.$v.$reset();
       });
+      if (!this.manageOthers && this.$store.state.auth.user.employee_id) {
+        this.create.employee_id = this.$store.state.auth.user.employee_id;
+      }
+      this.create.status_id = 1;
       this.errors = {};
     },
     /**
      *  create countrie
      */
     resetForm() {
+      this.manageOthers = 1;
       this.create = {
         request_type_id: null,
-        last_status_id: null,
-
+        status_id: null,
+        admin_comment: "",
         employee_id: null,
         start_from: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
         descriptions: "",
+        date: formatDateOnly(new Date()),
+
         amount: 0,
         from_hour: formatTime(new Date()),
         to_hour: formatTime(new Date()),
+        custom_date: new Date(),
         custom_start_from: new Date(),
         custom_end_date: new Date(),
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
       };
@@ -763,7 +819,7 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .post(`/hr/online-requests`, this.create)
+          .post(`/hr/online-requests`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.is_disabled = true;
             this.getData();
@@ -837,60 +893,90 @@ export default {
      *   show Modal (edit)
      */
     async resetModalEdit(id) {
-      await this.getEmployees();
+      if (!this.$store.state.auth.user.employee_id) {
+        await this.getEmployees();
+      } else {
+        await this.getEmployeeChildren();
+      }
       await this.getRequestTypes();
+      await this.getStatuses();
       let financialYear = this.onlineRequests.find((e) => id == e.id);
       this.edit.request_type_id = financialYear.request_type_id;
-      this.edit.last_status_id = financialYear.last_status_id;
+      this.edit.status_id = financialYear.status_id;
       this.edit.employee_id = financialYear.employee_id;
       this.edit.descriptions = financialYear.descriptions;
+      this.edit.admin_comment = financialYear.admin_comment;
       this.edit.amount = financialYear.amount;
       this.edit.approved_amount = financialYear.approved_amount;
       this.edit.start_from = this.formatDate(financialYear.start_from);
       this.edit.end_date = this.formatDate(financialYear.end_date);
       this.edit.date = this.formatDate(financialYear.date);
-      this.edit.from_hour = financialYear.from_hour;
-      this.edit.to_hour = financialYear.to_hour;
-      this.edit.approved_date = this.formatDate(financialYear.approved_date);
-      this.edit.approved_start_from = this.formatDate(
-        financialYear.approved_start_from
-      );
-      this.edit.approved_end_date = this.formatDate(
-        financialYear.approved_end_date
-      );
-      this.edit.approved_from_hour = financialYear.approved_from_hour;
-      this.edit.approved_to_hour = financialYear.approved_to_hour;
-      this.edit.custom_start_from = new Date(financialYear.start_from);
-      this.edit.custom_end_date = new Date(financialYear.end_date);
-      this.edit.custom_date = new Date(financialYear.date);
-      this.edit.custom_approved_date = new Date(financialYear.approved_date);
-      this.edit.custom_approved_start_from = new Date(
-        financialYear.approved_start_from
-      );
-      this.edit.custom_approved_end_date = new Date(
-        financialYear.approved_end_date
-      );
-      let currDate = new Date();
-      currDate.setHours(
+      let currDateFromHour = new Date();
+      currDateFromHour.setHours(
         financialYear.from_hour.split(":")[0],
         financialYear.from_hour.split(":")[1],
         financialYear.from_hour.split(":")[2]
       );
-      this.edit.custom_from_hour = currDate;
-      this.edit.custom_to_hour = currDate;
-      this.edit.custom_approved_from_hour = currDate;
-      this.edit.custom_approved_to_hour = currDate;
+      let currDateToHour = new Date();
+      currDateToHour.setHours(
+        financialYear.to_hour.split(":")[0],
+        financialYear.to_hour.split(":")[1],
+        financialYear.to_hour.split(":")[2]
+      );
+      let currDateApprovedFromHour = new Date();
+      currDateApprovedFromHour.setHours(
+        financialYear.approved_from_hour.split(":")[0],
+        financialYear.approved_from_hour.split(":")[1],
+        financialYear.approved_from_hour.split(":")[2]
+      );
+
+      let currDateApprovedToHour = new Date();
+      currDateApprovedToHour.setHours(
+        financialYear.approved_to_hour.split(":")[0],
+        financialYear.approved_to_hour.split(":")[1],
+        financialYear.approved_to_hour.split(":")[2]
+      );
+
+      this.edit.from_hour = this.formatTime(currDateFromHour);
+      this.edit.to_hour = this.formatTime(currDateToHour);
+      this.edit.approved_date = this.formatDate(financialYear.approved_date);
+      this.edit.approved_from_date = this.formatDate(
+        financialYear.approved_from_date
+      );
+      this.edit.approved_to_date = this.formatDate(
+        financialYear.approved_to_date
+      );
+      this.edit.approved_from_hour = this.formatTime(currDateApprovedFromHour);
+      this.edit.approved_to_hour = this.formatTime(currDateApprovedToHour);
+      this.edit.custom_start_from = new Date(financialYear.start_from);
+      this.edit.custom_end_date = new Date(financialYear.end_date);
+      this.edit.custom_date = new Date(financialYear.date);
+      this.edit.custom_approved_date = new Date(financialYear.approved_date);
+      this.edit.custom_approved_from_date = new Date(
+        financialYear.approved_from_date
+      );
+      this.edit.custom_approved_to_date = new Date(
+        financialYear.approved_to_date
+      );
+      this.edit.custom_from_hour = currDateFromHour;
+      this.edit.custom_to_hour = currDateToHour;
+
+      this.edit.custom_approved_from_hour = currDateApprovedFromHour;
+      this.edit.custom_approved_to_hour = currDateApprovedToHour;
       this.errors = {};
     },
     /**
      *  hidden Modal (edit)
      */
     resetModalHiddenEdit(id) {
+      this.manageOthers = 1;
+
       this.errors = {};
       this.edit = {
+        admin_comment: "",
         request_type_id: null,
         employee_id: null,
-        last_status_id: null,
+        status_id: null,
         start_from: formatDateOnly(new Date()),
         end_date: formatDateOnly(new Date()),
         date: formatDateOnly(new Date()),
@@ -904,14 +990,14 @@ export default {
         custom_from_hour: new Date(),
         custom_to_hour: new Date(),
         approved_date: formatDateOnly(new Date()),
-        approved_start_from: formatDateOnly(new Date()),
-        approved_end_date: formatDateOnly(new Date()),
+        approved_from_date: formatDateOnly(new Date()),
+        approved_to_date: formatDateOnly(new Date()),
         approved_from_hour: formatTime(new Date()),
         approved_to_hour: formatTime(new Date()),
         approved_amount: 0,
         custom_approved_date: new Date(),
-        custom_approved_start_from: new Date(),
-        custom_approved_end_date: new Date(),
+        custom_approved_from_date: new Date(),
+        custom_approved_to_date: new Date(),
         custom_approved_from_hour: new Date(),
         custom_approved_to_hour: new Date(),
       };
@@ -978,22 +1064,22 @@ export default {
         this.edit.approved_date = null;
       }
     },
-    approved_start_from(e) {
+    approved_from_date(e) {
       if (e) {
-        this.create.approved_start_from = formatDateOnly(e);
-        this.edit.approved_start_from = formatDateOnly(e);
+        this.create.approved_from_date = formatDateOnly(e);
+        this.edit.approved_from_date = formatDateOnly(e);
       } else {
-        this.create.approved_start_from = null;
-        this.edit.approved_start_from = null;
+        this.create.approved_from_date = null;
+        this.edit.approved_from_date = null;
       }
     },
-    approved_end_date(e) {
+    approved_to_date(e) {
       if (e) {
-        this.create.approved_end_date = formatDateOnly(e);
-        this.edit.approved_end_date = formatDateOnly(e);
+        this.create.approved_to_date = formatDateOnly(e);
+        this.edit.approved_to_date = formatDateOnly(e);
       } else {
-        this.create.approved_end_date = null;
-        this.edit.approved_end_date = null;
+        this.create.approved_to_date = null;
+        this.edit.approved_to_date = null;
       }
     },
     to_hour(e) {
@@ -1163,6 +1249,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
+                  v-if="isPermission('create onlineRequest hr')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -1183,14 +1270,20 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('update onlineRequest hr')
+                    "
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="
+                      checkAll.length > 1 &&
+                      isPermission('delete onlineRequest hr')
+                    "
                     @click.prevent="deleteFinancialYear(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1199,7 +1292,10 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('delete onlineRequest hr')
+                    "
                     @click.prevent="deleteFinancialYear(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1231,11 +1327,25 @@ export default {
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
+                      <b-form-checkbox v-model="setting.status_id" class="mb-1"
+                        >{{ getCompanyKey("online_request_last_status") }}
+                      </b-form-checkbox>
+                      <b-form-checkbox
+                        v-model="setting.approved_date"
+                        class="mb-1"
+                        >{{ getCompanyKey("online_request_approved_date") }}
+                      </b-form-checkbox>
+                      <b-form-checkbox
+                        v-model="setting.admin_comment"
+                        class="mb-1"
+                        >{{ getCompanyKey("online_request_admin_comment") }}
+                      </b-form-checkbox>
                       <b-form-checkbox
                         v-model="setting.request_type_id"
                         class="mb-1"
                         >{{ getCompanyKey("request_type") }}
                       </b-form-checkbox>
+
                       <b-form-checkbox
                         v-model="setting.employee_id"
                         class="mb-1"
@@ -1446,7 +1556,7 @@ export default {
                       </template>
                     </div>
                   </div>
-                   <div class="col-md-4">
+                  <div class="col-md-4">
                     <div class="form-group position-relative">
                       <label class="control-label">
                         {{ getCompanyKey("online_request_last_status") }}
@@ -1454,7 +1564,7 @@ export default {
                       </label>
                       <multiselect
                         :disabled="true"
-                        v-model="create.last_status_id"
+                        v-model="create.status_id"
                         :options="statuses.map((type) => type.id)"
                         :custom-label="
                           (opt) => statuses.find((x) => x.id == opt).name
@@ -1462,17 +1572,14 @@ export default {
                       >
                       </multiselect>
                       <div
-                        v-if="
-                          $v.create.last_status_id.$error ||
-                          errors.last_status_id
-                        "
+                        v-if="$v.create.status_id.$error || errors.status_id"
                         class="text-danger"
                       >
                         {{ $t("general.fieldIsRequired") }}
                       </div>
-                      <template v-if="errors.last_status_id">
+                      <template v-if="errors.status_id">
                         <ErrorMessage
-                          v-for="(errorMessage, index) in errors.last_status_id"
+                          v-for="(errorMessage, index) in errors.status_id"
                           :key="index"
                           >{{ errorMessage }}
                         </ErrorMessage>
@@ -1486,6 +1593,7 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <multiselect
+                        :disabled="!manageOthers"
                         v-model="create.employee_id"
                         :options="employees.map((type) => type.id)"
                         :custom-label="
@@ -1743,24 +1851,24 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <date-picker
-                        :disabled="true"
-                        v-model="create.custom_approved_start_from"
+                        :disabled="!manageOthers"
+                        v-model="create.custom_approved_from_date"
                         type="date"
-                        :default-value="create.custom_approved_start_from"
-                        @change="approved_start_from"
+                        :default-value="create.custom_approved_from_date"
+                        @change="approved_from_date"
                         confirm
                       ></date-picker>
                       <div
-                        v-if="!$v.create.approved_start_from.required"
+                        v-if="!$v.create.approved_from_date.required"
                         class="invalid-feedback"
                       >
                         {{ $t("general.fieldIsRequired") }}
                       </div>
-                      <template v-if="errors.approved_start_from">
+                      <template v-if="errors.approved_from_date">
                         <ErrorMessage
                           v-for="(
                             errorMessage, index
-                          ) in errors.approved_start_from"
+                          ) in errors.approved_from_date"
                           :key="index"
                           >{{ errorMessage }}</ErrorMessage
                         >
@@ -1781,24 +1889,24 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <date-picker
-                        :disabled="true"
-                        v-model="create.custom_approved_end_date"
+                        :disabled="!manageOthers"
+                        v-model="create.custom_approved_to_date"
                         type="date"
-                        :default-value="create.custom_approved_end_date"
-                        @change="approved_end_date"
+                        :default-value="create.custom_approved_to_date"
+                        @change="approved_to_date"
                         confirm
                       ></date-picker>
                       <div
-                        v-if="!$v.create.approved_end_date.required"
+                        v-if="!$v.create.approved_to_date.required"
                         class="invalid-feedback"
                       >
                         {{ $t("general.fieldIsRequired") }}
                       </div>
-                      <template v-if="errors.approved_end_date">
+                      <template v-if="errors.approved_to_date">
                         <ErrorMessage
                           v-for="(
                             errorMessage, index
-                          ) in errors.approved_end_date"
+                          ) in errors.approved_to_date"
                           :key="index"
                           >{{ errorMessage }}</ErrorMessage
                         >
@@ -1819,6 +1927,7 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <date-picker
+                        :disabled="!manageOthers"
                         v-model="create.custom_approved_from_hour"
                         type="time"
                         :default-value="create.custom_approved_from_hour"
@@ -1856,6 +1965,7 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <date-picker
+                        :disabled="!manageOthers"
                         v-model="create.custom_approved_to_hour"
                         type="time"
                         :default-value="create.custom_approved_to_hour"
@@ -1893,6 +2003,7 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <input
+                        :disabled="!manageOthers"
                         type="number"
                         class="form-control"
                         v-model="$v.create.approved_amount.$model"
@@ -1901,6 +2012,57 @@ export default {
                             $v.create.approved_amount.$error ||
                             errors.approved_amount,
                           'is-valid': !$v.create.approved_amount.$invalid,
+                        }"
+                        id="create-20"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group position-relative">
+                      <label class="control-label">
+                        {{ getCompanyKey("online_request_last_status") }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <multiselect
+                        :disabled="!manageOthers"
+                        v-model="create.status_id"
+                        :options="statuses.map((type) => type.id)"
+                        :custom-label="
+                          (opt) => statuses.find((x) => x.id == opt).name
+                        "
+                      >
+                      </multiselect>
+                      <div
+                        v-if="$v.create.status_id.$error || errors.status_id"
+                        class="text-danger"
+                      >
+                        {{ $t("general.fieldIsRequired") }}
+                      </div>
+                      <template v-if="errors.status_id">
+                        <ErrorMessage
+                          v-for="(errorMessage, index) in errors.status_id"
+                          :key="index"
+                          >{{ errorMessage }}
+                        </ErrorMessage>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="create-20" class="control-label">
+                        {{ getCompanyKey("online_request_admin_comment") }}
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        :disabled="!manageOthers"
+                        type="text"
+                        class="form-control"
+                        v-model="$v.create.admin_comment.$model"
+                        :class="{
+                          'is-invalid':
+                            $v.create.admin_comment.$error ||
+                            errors.admin_comment,
+                          'is-valid': !$v.create.admin_comment.$invalid,
                         }"
                         id="create-20"
                       />
@@ -1939,6 +2101,57 @@ export default {
                           v-model="isCheckAll"
                           style="width: 17px; height: 17px"
                         />
+                      </div>
+                    </th>
+                    <th v-if="setting.status_id">
+                      <div class="d-flex justify-content-center">
+                        <span>{{
+                          getCompanyKey("online_request_last_status")
+                        }}</span>
+                        <div class="arrow-sort">
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="onlineRequests.sort(sortString('name'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="onlineRequests.sort(sortString('-name'))"
+                          ></i>
+                        </div>
+                      </div>
+                    </th>
+                    <th v-if="setting.approved_date">
+                      <div class="d-flex justify-content-center">
+                        <span>{{
+                          getCompanyKey("online_request_approved_date")
+                        }}</span>
+                        <div class="arrow-sort">
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="onlineRequests.sort(sortString('name'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="onlineRequests.sort(sortString('-name'))"
+                          ></i>
+                        </div>
+                      </div>
+                    </th>
+                    <th v-if="setting.admin_comment">
+                      <div class="d-flex justify-content-center">
+                        <span>{{
+                          getCompanyKey("online_request_admin_comment")
+                        }}</span>
+                        <div class="arrow-sort">
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="onlineRequests.sort(sortString('name'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="onlineRequests.sort(sortString('-name'))"
+                          ></i>
+                        </div>
                       </div>
                     </th>
                     <th v-if="setting.request_type_id">
@@ -2086,7 +2299,11 @@ export default {
                 <tbody v-if="onlineRequests.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="
+                      isPermission('update onlineRequest')
+                        ? $bvModal.show(`modal-edit-${data.id}`)
+                        : false
+                    "
                     v-for="(data, index) in onlineRequests"
                     :key="data.id"
                     class="body-tr-custom"
@@ -2104,6 +2321,21 @@ export default {
                           v-model="checkAll"
                         />
                       </div>
+                    </td>
+                    <td v-if="setting.status_id">
+                      <h5 v-if="data.status" class="m-0 font-weight-normal">
+                        {{
+                          $i18n.locale == "ar"
+                            ? data.status.name
+                            : data.status.name_e
+                        }}
+                      </h5>
+                    </td>
+                    <td v-if="setting.approved_date">
+                      {{ data.approved_date }}
+                    </td>
+                    <td v-if="setting.admin_comment">
+                      {{ data.admin_comment }}
                     </td>
                     <td v-if="setting.request_type_id">
                       <h5
@@ -2167,6 +2399,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                            v-if="isPermission('update onlineRequest hr')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -2181,6 +2414,7 @@ export default {
                             </div>
                           </a>
                           <a
+                            v-if="isPermission('delete onlineRequest hr')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteFinancialYear(data.id)"
@@ -2316,8 +2550,8 @@ export default {
                                   <span class="text-danger">*</span>
                                 </label>
                                 <multiselect
-                                :disabled="true"
-                                  v-model="edit.last_status_id"
+                                  :disabled="true"
+                                  v-model="edit.status_id"
                                   :options="statuses.map((type) => type.id)"
                                   :custom-label="
                                     (opt) =>
@@ -2327,18 +2561,17 @@ export default {
                                 </multiselect>
                                 <div
                                   v-if="
-                                    $v.edit.last_status_id.$error ||
-                                    errors.last_status_id
+                                    $v.edit.status_id.$error || errors.status_id
                                   "
                                   class="text-danger"
                                 >
                                   {{ $t("general.fieldIsRequired") }}
                                 </div>
-                                <template v-if="errors.last_status_id">
+                                <template v-if="errors.status_id">
                                   <ErrorMessage
                                     v-for="(
                                       errorMessage, index
-                                    ) in errors.last_status_id"
+                                    ) in errors.status_id"
                                     :key="index"
                                     >{{ errorMessage }}
                                   </ErrorMessage>
@@ -2352,6 +2585,7 @@ export default {
                                   <span class="text-danger">*</span>
                                 </label>
                                 <multiselect
+                                  :disabled="!manageOthers"
                                   v-model="edit.employee_id"
                                   :options="employees.map((type) => type.id)"
                                   :custom-label="
@@ -2380,7 +2614,7 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            
+
                             <div
                               v-if="
                                 !edit.request_type_id ||
@@ -2639,26 +2873,25 @@ export default {
                                   <span class="text-danger">*</span>
                                 </label>
                                 <date-picker
-                                  :disabled="true"
-                                  v-model="edit.custom_approved_start_from"
+                                  v-model="edit.custom_approved_from_date"
                                   type="date"
                                   :default-value="
-                                    edit.custom_approved_start_from
+                                    edit.custom_approved_from_date
                                   "
-                                  @change="approved_start_from"
+                                  @change="approved_from_date"
                                   confirm
                                 ></date-picker>
                                 <div
-                                  v-if="!$v.edit.approved_start_from.required"
+                                  v-if="!$v.edit.approved_from_date.required"
                                   class="invalid-feedback"
                                 >
                                   {{ $t("general.fieldIsRequired") }}
                                 </div>
-                                <template v-if="errors.approved_start_from">
+                                <template v-if="errors.approved_from_date">
                                   <ErrorMessage
                                     v-for="(
                                       errorMessage, index
-                                    ) in errors.approved_start_from"
+                                    ) in errors.approved_from_date"
                                     :key="index"
                                     >{{ errorMessage }}</ErrorMessage
                                   >
@@ -2669,8 +2902,7 @@ export default {
                               v-if="
                                 !edit.request_type_id ||
                                 (edit.request_type_id &&
-                                  getRequestType(edit.request_type_id)
-                                    .end_date)
+                                  getRequestType(edit.request_type_id).end_date)
                               "
                               class="col-md-4"
                             >
@@ -2684,26 +2916,23 @@ export default {
                                   <span class="text-danger">*</span>
                                 </label>
                                 <date-picker
-                                  :disabled="true"
-                                  v-model="edit.custom_approved_end_date"
+                                  v-model="edit.custom_approved_to_date"
                                   type="date"
-                                  :default-value="
-                                    edit.custom_approved_end_date
-                                  "
-                                  @change="approved_end_date"
+                                  :default-value="edit.custom_approved_to_date"
+                                  @change="approved_to_date"
                                   confirm
                                 ></date-picker>
                                 <div
-                                  v-if="!$v.edit.approved_end_date.required"
+                                  v-if="!$v.edit.approved_to_date.required"
                                   class="invalid-feedback"
                                 >
                                   {{ $t("general.fieldIsRequired") }}
                                 </div>
-                                <template v-if="errors.approved_end_date">
+                                <template v-if="errors.approved_to_date">
                                   <ErrorMessage
                                     v-for="(
                                       errorMessage, index
-                                    ) in errors.approved_end_date"
+                                    ) in errors.approved_to_date"
                                     :key="index"
                                     >{{ errorMessage }}</ErrorMessage
                                   >
@@ -2758,8 +2987,7 @@ export default {
                               v-if="
                                 !edit.request_type_id ||
                                 (edit.request_type_id &&
-                                  getRequestType(edit.request_type_id)
-                                    .to_hour)
+                                  getRequestType(edit.request_type_id).to_hour)
                               "
                               class="col-md-4"
                             >
@@ -2775,9 +3003,7 @@ export default {
                                 <date-picker
                                   v-model="edit.custom_approved_to_hour"
                                   type="time"
-                                  :default-value="
-                                    edit.custom_approved_to_hour
-                                  "
+                                  :default-value="edit.custom_approved_to_hour"
                                   @change="approved_to_hour"
                                   confirm
                                 ></date-picker>
@@ -2830,6 +3056,66 @@ export default {
                                 />
                               </div>
                             </div>
+                            <div class="col-md-4">
+                              <div class="form-group position-relative">
+                                <label class="control-label">
+                                  {{
+                                    getCompanyKey("online_request_last_status")
+                                  }}
+                                  <span class="text-danger">*</span>
+                                </label>
+                                <multiselect
+                                  v-model="edit.status_id"
+                                  :options="statuses.map((type) => type.id)"
+                                  :custom-label="
+                                    (opt) =>
+                                      statuses.find((x) => x.id == opt).name
+                                  "
+                                >
+                                </multiselect>
+                                <div
+                                  v-if="
+                                    $v.edit.status_id.$error || errors.status_id
+                                  "
+                                  class="text-danger"
+                                >
+                                  {{ $t("general.fieldIsRequired") }}
+                                </div>
+                                <template v-if="errors.status_id">
+                                  <ErrorMessage
+                                    v-for="(
+                                      errorMessage, index
+                                    ) in errors.status_id"
+                                    :key="index"
+                                    >{{ errorMessage }}
+                                  </ErrorMessage>
+                                </template>
+                              </div>
+                            </div>
+                            <div class="col-md-4">
+                              <div class="form-group">
+                                <label for="create-20" class="control-label">
+                                  {{
+                                    getCompanyKey(
+                                      "online_request_admin_comment"
+                                    )
+                                  }}
+                                  <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  v-model="$v.edit.admin_comment.$model"
+                                  :class="{
+                                    'is-invalid':
+                                      $v.edit.admin_comment.$error ||
+                                      errors.admin_comment,
+                                    'is-valid': !$v.edit.admin_comment.$invalid,
+                                  }"
+                                  id="create-20"
+                                />
+                              </div>
+                            </div>
                           </div>
                         </form>
                       </b-modal>
@@ -2868,10 +3154,16 @@ export default {
     </div>
   </Layout>
 </template>
-<style scoped>
+<style lang="scss" scoped>
 .line {
   border-bottom: 1px solid #fff !important;
-  margin-top:.5rem !important;
-  margin-bottom:.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+table {
+  td,
+  th {
+    white-space: nowrap;
+  }
 }
 </style>

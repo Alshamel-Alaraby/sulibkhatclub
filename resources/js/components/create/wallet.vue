@@ -4,8 +4,8 @@ import Switches from "vue-switches";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../components/widgets/errorMessage";
-import loader from "../../components/loader";
-import transMixinComp from "../../helper/translation-comp-mixin";
+import loader from "../general/loader";
+import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 import {arabicValue, englishValue} from "../../helper/langTransform";
 
 /**
@@ -105,7 +105,7 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .post(`/real-estate/wallets`, this.create)
+          .post(`/real-estate/wallets`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.is_disabled = true;
             this.$emit("created");

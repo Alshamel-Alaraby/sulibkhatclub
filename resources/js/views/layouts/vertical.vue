@@ -1,10 +1,10 @@
 <script>
 import { layoutComputed } from "../../state/helpers";
 
-import Sidebar from "../../components/Sidebar";
-import Topbar from "../../components/Topbar";
-import Rightbar from "../../components/Rightbar";
-import Footer from "../../components/Footer";
+import Sidebar from "../../components/general/Sidebar";
+import Topbar from "../../components/general/Topbar";
+import Rightbar from "../../components/general/Rightbar";
+import Footer from "../../components/general/Footer";
 
 /**
  * Vertical layout

@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class DocumentApprovalDetailRepository implements DocumentApprovalDetailInterface
 {
 
-    public function __construct(private \App\Models\DocumentApprovalDetail$model)
+    public function __construct(private \App\Models\DocumentApprovalDetail $model)
     {
         $this->model = $model;
     }

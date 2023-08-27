@@ -12,6 +12,7 @@ class StockSalePurchaseDetail extends Model
 
     protected $fillable = [
         'wallet_id',
+        'company_id',
         'stock_id',
         'date',
         'time',

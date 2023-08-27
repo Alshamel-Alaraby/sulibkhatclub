@@ -7,6 +7,8 @@ use Modules\RealEstate\Repositories\RlstCategoriesItem\RlstCategoriesItemInterfa
 use Modules\RealEstate\Repositories\RlstCategoriesItem\RlstCategoriesItemRepository;
 use Modules\RealEstate\Repositories\RlstCategoryItem\RlstCategoryItemInterface;
 use Modules\RealEstate\Repositories\RlstCategoryItem\RlstCategoryItemRepository;
+use Modules\RealEstate\Repositories\RlstCustomTable\RlstCustomTableInterface;
+use Modules\RealEstate\Repositories\RlstCustomTable\RlstCustomTableRepository;
 use Modules\RealEstate\Repositories\RlstInvoice\RlstInvoiceInterface;
 use Modules\RealEstate\Repositories\RlstInvoice\RlstInvoiceRepository;
 use Modules\RealEstate\Repositories\RlstItem\RlstItemInterface;
@@ -49,6 +51,7 @@ class RealEstateServiceProvider extends ServiceProvider
         $this->app->bind(RlstItemInterface::class, RlstItemRepository::class);
         $this->app->bind(RlstCategoriesItemInterface::class, RlstCategoriesItemRepository::class);
         $this->app->bind(RlstInvoiceInterface::class, RlstInvoiceRepository::class);
+        $this->app->bind(RlstCustomTableInterface::class, RlstCustomTableRepository::class);
 
     }
 

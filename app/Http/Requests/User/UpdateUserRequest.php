@@ -26,13 +26,14 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'name_e' => 'nullable|string|max:255',
-            'is_active' => 'nullable|in:active,inactive',
+            'is_active' => 'nullable|in:0,1',
             "media" => "nullable|array",
             "media.*" => ["exists:media,id", new \App\Rules\MediaRule()],
             'old_media.*' => ['exists:media,id', new \App\Rules\MediaRule("App\Models\User")],
             'email' => 'nullable|string|email|max:255|unique:general_users,id,' . $this->id,
             'password' => 'nullable|string|min:8',
             'employee_id' => 'nullable|exists:general_employees,id',
+            'role_id' => 'nullable|exists:roles,id'
         ];
     }
 

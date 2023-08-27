@@ -27,4 +27,21 @@ class RpInstallmentPaymentType extends Model
     {
         return $this->hasOne(RpPaymentPlanInstallment::class,"installment_payment_type_id");
     }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->payment_plan_installment()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'payment_plan_installment',
+                'count' => $this->payment_plan_installment()->count(),
+                'ids' => $this->payment_plan_installment()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 }

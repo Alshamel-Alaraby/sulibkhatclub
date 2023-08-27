@@ -17,4 +17,5 @@ interface SalesmanInterface
 
 
     public function delete($id);
+    public function getName($request);
 }

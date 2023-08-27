@@ -26,6 +26,7 @@ class ClosedReferenceRequest extends FormRequest
         return [
             'docfields_id' => ['required', 'integer', 'exists:arch_document_fields,id'],
             'field_value' => ['required'],
+            "company_id"=>'nullable',
         ];
     }
 

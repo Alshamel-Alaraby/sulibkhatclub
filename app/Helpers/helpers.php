@@ -27,7 +27,6 @@ function responseJson($response_status, $massage, $object = null, $pagination = 
     return response()->json($response, $response_status);
 }
 
-
 /**
  * @param collection of data resource
  * @return array of properties for pagination
@@ -94,22 +93,21 @@ function get_trans()
             'default_ar' => $d->default_ar,
             'new_en' => $d->new_en,
             'new_ar' => $d->new_ar,
-            "screen" => $d->screen
+            "screen" => $d->screen,
         ];
     }
     return $arr;
 
 }
 
- function checkIsDefaultGeneral($default,$model)
+function checkIsDefaultGeneral($default, $model)
 {
-    if ($default == 1){
-        return collect($model->all())->each(function ($item){
+    if ($default == 1) {
+        return collect($model->all())->each(function ($item) {
             $item->update(["is_default" => 0]);
         });
+
     }
     return "fales";
 
 }
-
- 

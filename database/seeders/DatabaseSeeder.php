@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Database\Seeders\StatuseSeeder;
+use Illuminate\Support\Facades\Artisan;
 use Modules\ClubMembers\Database\Seeders\StatusSeederTableSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
 
         $this->call([
             CountrySeeder::class,
@@ -39,16 +41,35 @@ class DatabaseSeeder extends Seeder
             StatuseSeeder::class,
             RestartPeriodTableSeeder::class,
             DocumentStatuseSeeder::class,
-            StatusSeederTableSeeder::class
+            StatusSeederTableSeeder::class,
+            HrStatusSeeder::class,
+            BoardRentSellMethodSeeder::class,
+            BranchSeeder::class,
+            HrRequestsTypeSeeder::class,
+            // PermissionTableSeeder::class,
+            RealestateCustomTableSeederTableSeeder::class,
+            ClubMembersCustomTableSeederTableSeeder::class,
+            RecievablePayableCustomTableSeederTableSeeder::class,
+            ArchivingCustomTableSeederTableSeeder::class,
+            BoardsRentCustomTableSeederTableSeeder::class,
+            CustodyCustomTableSeederTableSeeder::class,
+            StockCustomTableSeederTableSeeder::class,
+            HRCustomTableSeederTableSeeder::class,
+            BookingUnitStatuesTableSeeder::class,
+            BookingSettingTableSeeder::class,
+
 
         ]);
         DB::unprepared(file_get_contents(public_path("country_lookup.sql")));
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'pname' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
+        // seed all modules
+        // Artisan::call('module:seed archiving');
+        // Artisan::call('module:seed boardsrent');
+        // Artisan::call('module:seed clubmembers');
+        // Artisan::call('module:seed custody');
+        // Artisan::call('module:seed gl');
+        // Artisan::call('module:seed hr');
+        // Artisan::call('module:seed realestate');
+        // Artisan::call('module:seed recievablepayable');
+        // Artisan::call('module:seed stock');
     }
 }

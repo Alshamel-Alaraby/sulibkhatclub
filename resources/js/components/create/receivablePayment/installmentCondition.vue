@@ -1,28 +1,27 @@
 <script>
 import adminApi from "../../../api/adminAxios";
-import Switches from "vue-switches";
-import { required, minLength, maxLength } from "vuelidate/lib/validators";
-import Swal from "sweetalert2";
+import {required, minLength, maxLength, requiredIf} from "vuelidate/lib/validators";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
-import { dynamicSortString } from "../../../helper/tableSort";
-import { formatDateOnly } from "../../../helper/startDate";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import loader from "../../general/loader";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
  */
 export default {
-  mixins: [transMixinComp],
-  components: {
-    Switches,
-    ErrorMessage,
-    loader,
-  },
-      props: ["companyKeys", "defaultsKeys"],
-
-  data() {
+    mixins: [transMixinComp,successError],
+    components: {
+        ErrorMessage,
+        loader,
+    },
+    props: {
+        id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+        isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
+        type: {default: 'create'}, idObjEdit: {default: null},isPermission: {},url: {default: '/recievable-payable/rp_installment_condation'}
+    },
+    data() {
     return {
       isLoader: false,
       create: {
@@ -30,147 +29,165 @@ export default {
         name_e: "",
         is_default: 0,
       },
+      fields: [],
       errors: {},
-      dropDownSenders: [],
+      isCustom: false,
+      company_id: null,
       is_disabled: false,
-      isCheckAll: false,
-      checkAll: [],
-      current_page: 1,
-      enabled3: true,
-      printLoading: true,
-      printObj: {
-        id: "printCustom",
-      },
     };
   },
-  validations: {
-    create: {
-      name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
-      is_default: { required },
+    mounted(){
+        this.company_id = this.$store.getters["auth/company_id"];
     },
-  },
-  watch: {
-    /**
-     * watch per_page
-     */
-    per_page(after, befour) {
-      this.getData();
+    validations: {
+        create: {
+          name: { required: requiredIf(function (model) {
+                  return this.isRequired("name");
+              }), minLength: minLength(3), maxLength: maxLength(100) },
+          name_e: { required: requiredIf(function (model) {
+                  return this.isRequired("name_e");
+              }), minLength: minLength(3), maxLength: maxLength(100) },
+          is_default: { required: requiredIf(function (model) {
+                  return this.isRequired("is_default");
+              }) },
+        },
     },
-    /**
-     * watch search
-     */
-    search(after, befour) {
-      clearTimeout(this.debounce);
-      this.debounce = setTimeout(() => {
-        this.getData();
-      }, 400);
-    },
-    /**
-     * watch check All table
-     */
-    isCheckAll(after, befour) {
-      if (after) {
-        this.conditions.forEach((el) => {
-          if (!this.checkAll.includes(el.id)) {
-            this.checkAll.push(el.id);
-          }
-        });
-      } else {
-        this.checkAll = [];
-      }
-    },
-  },
-  methods: {
-    resetModalHidden() {
-      this.create = { name: "", name_e: "", is_default: 0 };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-        this.is_disabled = false;
-      this.$bvModal.hide(`install_condition_create`);
-    },
-    /**
-     *  hidden Modal (create)
-     */
-    resetModal() {
-      this.create = { name: "", name_e: "", is_default: 0 };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-    },
-    /**
-     *  create module
-     */
-    resetForm() {
-      this.create = { name: "", name_e: "", is_default: 0 };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.is_disabled = false;
-      this.errors = {};
-    },
-    AddSubmit() {
-      if (!this.create.name) {
-        this.create.name = this.create.name_e;
-      }
-      if (!this.create.name_e) {
-        this.create.name_e = this.create.name;
-      }
-      this.$v.create.$touch();
-
-      if (this.$v.create.$invalid) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        adminApi
-          .post(`/recievable-payable/rp_installment_condation`, this.create)
-          .then((res) => {
-            this.is_disabled = true;
-            this.$emit("created");
-            setTimeout(() => {
-              Swal.fire({
-                icon: "success",
-                text: `${this.$t("general.Addedsuccessfully")}`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }, 500);
-          })
-          .catch((err) => {
-            if (err.response.data) {
-              this.errors = err.response.data.errors;
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
+    methods: {
+        getCustomTableFields() {
+            this.isCustom = true;
+            adminApi
+                .get(`/customTable/table-columns/rp_installment_condations`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                })
+                .finally(() => {
+                    this.isCustom = false;
+                });
+        },
+        isVisible(fieldName) {
+            if(!this.isPage){
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_visible == 1 ? true : false;
+            }else {
+                return this.isVisiblePage(fieldName);
             }
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
-      }
-    },
-    sortString(value) {
-      return dynamicSortString(value);
-    },
-    moveInput(tag, c, index) {
-      document.querySelector(`${tag}[data-${c}='${index}']`).focus();
-    },
-    formatDate(value) {
-      return formatDateOnly(value);
-    },
-    arabicValueName(txt) {
-      this.create.name = arabicValue(txt);
-    },
-    englishValueName(txt) {
-      this.create.name_e = englishValue(txt);
-    },
+        },
+        isRequired(fieldName) {
+            if(!this.isPage) {
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_required == 1 ? true : false;
+            }else {
+                return this.isRequiredPage(fieldName);
+            }
+        },
+        defaultData(edit = null){
+            this.create = { name: "", name_e: "", is_default: 0 };
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+            this.errors = {};
+            this.is_disabled = false;
+        },
+        resetModalHidden() {
+            this.defaultData();
+            this.$bvModal.hide(this.id);
+        },
+        resetModal() {
+            this.defaultData();
+            setTimeout( () => {
+                if(this.type != 'edit'){
+                    if(!this.isPage)  this.getCustomTableFields();
+                }else {
+                    if(this.idObjEdit.dataObj){
+                        let color = this.idObjEdit.dataObj;
+                        this.errors = {};
+                        this.create.name = color.name;
+                        this.create.name_e = color.name_e;
+                        this.create.is_default = color.is_default;
+                    }
+                }
+            },50);
+        },
+        resetForm() {
+            this.defaultData();
+        },
+        AddSubmit() {
+          if (!this.create.name) {
+            this.create.name = this.create.name_e;
+          }
+          if (!this.create.name_e) {
+            this.create.name_e = this.create.name;
+          }
+          this.$v.create.$touch();
+
+          if (this.$v.create.$invalid) {
+            return;
+          } else {
+            this.isLoader = true;
+            this.errors = {};
+            if(this.type != 'edit'){
+                  adminApi
+                      .post(this.url, { ...this.create, company_id: this.company_id })
+                      .then((res) => {
+                          this.is_disabled = true;
+                          if(!this.isPage)
+                              this.$emit("created");
+                          else
+                              this.$emit("getDataTable");
+
+                          setTimeout(() => {
+                              this.successFun('Addedsuccessfully');
+                          }, 500);
+                      })
+                      .catch((err) => {
+                          if (err.response.data) {
+                              this.errors = err.response.data.errors;
+                          } else {
+                              this.errorFun('Error','Thereisanerrorinthesystem');
+                          }
+                      })
+                      .finally(() => {
+                          this.isLoader = false;
+                      });
+              }else {
+                  adminApi
+                      .put(`${this.url}/${this.idObjEdit.idEdit}`, {
+                          ...this.create,
+                          company_id: this.$store.getters["auth/company_id"],
+                      })
+                      .then((res) => {
+                          this.$bvModal.hide(this.id);
+                          this.$emit("getDataTable");
+                          setTimeout(() => {
+                              this.successFun('Editsuccessfully');
+                          }, 500);
+                      })
+                      .catch((err) => {
+                          if (err.response.data) {
+                              this.errors = err.response.data.errors;
+                          } else {
+                              this.errorFun('Error','Thereisanerrorinthesystem');
+                          }
+                      })
+                      .finally(() => {
+                          this.isLoader = false;
+                      });
+              }
+          }
+        },
+        arabicValueName(txt) {
+          this.create.name = arabicValue(txt);
+        },
+        englishValueName(txt) {
+          this.create.name_e = englishValue(txt);
+        },
   },
 };
 </script>
@@ -178,8 +195,8 @@ export default {
 <template>
   <!--  create   -->
   <b-modal
-    id="install_condition_create"
-    :title="getCompanyKey('installment_condition_create_form')"
+    :id="id"
+    :title="type != 'edit'?getCompanyKey('installment_condition_create_form'):getCompanyKey('installment_condition_edit_form')"
     title-class="font-18"
     body-class="p-4 "
     :hide-footer="true"
@@ -187,38 +204,47 @@ export default {
     @hidden="resetModalHidden"
   >
     <form>
+      <loader size="large" v-if="isCustom && !isPage" />
       <div class="mb-3 d-flex justify-content-end">
-        <b-button
-          variant="success"
-          :disabled="!is_disabled"
-          @click.prevent="resetForm"
-          type="button"
-          :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
-        >
-          {{ $t("general.AddNewRecord") }}
-        </b-button>
-        <template v-if="!is_disabled">
-          <b-button
-            variant="success"
-            type="button"
-            class="mx-1"
-            v-if="!isLoader"
-            @click.prevent="AddSubmit"
-          >
-            {{ $t("general.Add") }}
-          </b-button>
+            <b-button
+                v-if="type != 'edit'"
+                variant="success"
+                :disabled="!is_disabled"
+                @click.prevent="resetForm"
+                type="button"
+                :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
+            >
+                {{ $t("general.AddNewRecord") }}
+            </b-button>
+            <template v-if="!is_disabled">
+                <b-button
+                    variant="success"
+                    type="button"
+                    class="mx-1"
+                    v-if="!isLoader"
+                    @click.prevent="AddSubmit"
+                >
+                    {{ type != 'edit'? $t("general.Add"): $t("general.edit") }}
+                </b-button>
 
-          <b-button variant="success" class="mx-1" disabled v-else>
-            <b-spinner small></b-spinner>
-            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-          </b-button>
-        </template>
-        <!-- Emulate built in modal footer ok and cancel button actions -->
+                <b-button variant="success" class="mx-1" disabled v-else>
+                    <b-spinner small></b-spinner>
+                    <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                </b-button>
+            </template>
+            <!-- Emulate built in modal footer ok and cancel button actions -->
 
-        <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
-          {{ $t("general.Cancel") }}
-        </b-button>
-      </div>
+            <b-button
+                variant="danger"
+                type="button"
+                @click.prevent="resetModalHidden"
+            >
+                {{ $t("general.Cancel") }}
+            </b-button>
+        </div>
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
@@ -335,3 +361,9 @@ export default {
   </b-modal>
   <!--  /create   -->
 </template>
+
+<style>
+form {
+    position: relative;
+}
+</style>

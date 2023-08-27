@@ -29,6 +29,7 @@ class TypeRequest extends FormRequest
         return [
             'name' => "required|string|unique:cus_types,name,{$this->id},id",
             'name_e' => "required|string|unique:cus_types,name_e,{$this->id},id",
+            "company_id"=>'nullable',
         ];
     }
 

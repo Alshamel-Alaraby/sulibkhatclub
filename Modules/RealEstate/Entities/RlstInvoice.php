@@ -8,13 +8,11 @@ use App\Models\GeneralCustomer;
 use App\Models\Salesman;
 use App\Models\Serial;
 use App\Traits\LogTrait;
-use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\RecievablePayable\Entities\RpBreakDown;
 use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\HasMedia;
 
 class RlstInvoice extends Model
 {
@@ -24,6 +22,7 @@ class RlstInvoice extends Model
 
     protected $fillable = [
         "branch_id",
+        "company_id",
         "document_id",
         "serial_id",
         "date",
@@ -40,7 +39,7 @@ class RlstInvoice extends Model
         "module_type",
         "serial_number",
         "payment_method_id",
-        "prefix"
+        "prefix",
 
     ];
 
@@ -79,7 +78,6 @@ class RlstInvoice extends Model
     {
         return $this->belongsTo(\App\Models\Serial::class);
     }
-
 
     public function building()
     {
@@ -123,18 +121,73 @@ class RlstInvoice extends Model
         return $this->hasMany(\App\Models\Transaction::class, 'invoice_id');
     }
 
-
     public function breakDowns()
     {
         return $this->hasMany(RpBreakDown::class, 'break_id');
     }
 
+    // public function hasChildren()
+    // {
+    //     return $this->contracts()->count() > 0 ||
+    //     $this->units()->count() > 0 ||
+    //     $this->items()->count() > 0 ||
+    //     $this->invoiceItems()->count() > 0 ||
+    //     $this->transactions()->count() > 0 ||
+    //     $this->breakDowns()->count() > 0
+    //     ;
+
+    // }
+
+
     public function hasChildren()
     {
-        return $this->invoiceItems()->count() > 0 || $this->transactions()->count() > 0  ;
+        $relationsWithChildren = [];
 
+        if ($this->contracts()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contracts',
+                'count' => $this->contracts()->count(),
+                'ids' => $this->contracts()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->units()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'units',
+                'count' => $this->units()->count(),
+                'ids' => $this->units()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->items()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'items',
+                'count' => $this->items()->count(),
+                'ids' => $this->items()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->invoiceItems()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'invoiceItems',
+                'count' => $this->invoiceItems()->count(),
+                'ids' => $this->invoiceItems()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'transactions',
+                'count' => $this->transactions()->count(),
+                'ids' => $this->transactions()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->breakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'breakDowns',
+                'count' => $this->breakDowns()->count(),
+                'ids' => $this->breakDowns()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
-
 
     // scopes
 

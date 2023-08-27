@@ -18,6 +18,7 @@ class LookUpRequest extends FormRequest
             'name_e' => 'required|unique:boards_rent_look_ups,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
             "type" => "nullable|string",
             "parent_id" => "nullable|exists:boards_rent_look_ups,id",
+            "company_id"=>'nullable',
         ];
     }
 

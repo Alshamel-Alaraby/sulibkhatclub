@@ -3,14 +3,6 @@ import checkAuth from "../../middleware/auth-check";
 
 export default [
     {
-        path: '/dashboard/boardRent/sell-method',
-        name: 'boardRent ',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/boardRent/sell-method'),
-    },
-    {
         path: '/dashboard/boardRent/panel',
         name: 'boardRent panel',
         meta: {
@@ -27,44 +19,12 @@ export default [
         component: () => import('../../views/pages/boardRent/package'),
     },
     {
-        path: '/dashboard/boardRent/order',
-        name: 'boardRent order',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/boardRent/order'),
-    },
-    {
-        path: '/dashboard/boardRent/quotation',
-        name: 'boardRent quotation',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/boardRent/quotation'),
-    },
-    {
         path: '/dashboard/boardRent/invoice',
         name: 'boardRent invoice',
         meta: {
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/boardRent/invoice'),
-    },
-    {
-        path: '/dashboard/boardRent/tasks',
-        name: 'boardRent tasks',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/boardRent/tasks'),
-    },
-    {
-        path: '/dashboard/boardRent/sector',
-        name: 'boardRent tasks',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/boardRent/sector'),
     },
     {
         path: '/dashboard/boardRent/unit-status',
@@ -83,12 +43,12 @@ export default [
         component: () => import('../../views/pages/boardRent/lookUps'),
     },
     {
-        path: '/dashboard/boardRent/tasks-calender',
-        name: 'boardRent tasks calender',
+        path: '/dashboard/boardRent/request-quotation',
+        name: 'board-Rent-request-quotation',
         meta: {
             middleware: [auth,checkAuth]
         },
-        component: () => import('../../views/pages/boardRent/calender'),
+        component: () => import('../../views/pages/boardRent/requestQuotation'),
     },
     {
         path: '/dashboard/boardRent/board-Rent-quotation',
@@ -98,4 +58,60 @@ export default [
         },
         component: () => import('../../views/pages/boardRent/quotationBoardRent'),
     },
+    {
+        path: '/dashboard/boardRent/publication-Contract',
+        name: 'board-Rent-publication-Contract',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/publicationContract'),
+    },
+    {
+        path: '/dashboard/boardRent/Job-Order',
+        name: 'board-Rent-Job-order',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/jobOrder'),
+    },
+    {
+        path: '/dashboard/boardRent/report/finance-report',
+        name: 'board-rent-finance-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/report/finance-report'),
+    },
+    {
+        path: '/dashboard/boardRent/report/annual-finance-report',
+        name: 'board-rent-annual-finance-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/report/annual-finance-report'),
+    },
+    {
+        path: '/dashboard/boardRent/report/panel-usage-rate-report',
+        name: 'board-rent-panel-usage-rate-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/report/panel-usage-rate'),
+    },
+    {
+        path: '/dashboard/boardRent/report/customer-statement-of-account',
+        name: 'board-rent-customer-statement-of-account-report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/report/customer-statment-of-account'),
+    },
+    {
+        path: '/dashboard/boardRent/sell-method',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/sell-method'),
+    },
+    
 ];

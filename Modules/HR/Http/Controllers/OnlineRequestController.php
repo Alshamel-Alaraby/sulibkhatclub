@@ -19,6 +19,10 @@ class OnlineRequestController extends Controller
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if ($request->employee_id) {
+            $models->where('employee_id', $request->employee_id);
+        }
+        
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

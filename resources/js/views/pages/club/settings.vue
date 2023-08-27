@@ -1,18 +1,18 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import {dynamicSortString, dynamicSortNumber} from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
-import Templates from "../email/templates";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -24,7 +24,6 @@ export default {
     },
     mixins: [translation],
     components: {
-        Templates,
         Layout,
         PageHeader,
         Switches,
@@ -34,13 +33,8 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes('club') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({name: "home"});
-            }
+            return permissionGuard(vm, "clubsetting", "all setting club");
         });
-
     },
     data() {
         return {
@@ -990,205 +984,205 @@ export default {
                                 </div>
                                 <template v-for="(item, index) in create.memberships_renewals">
                                     <div class="row" :key="index">
-                                    <div class="col-md-2">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("member_permission") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <multiselect
-                                                v-model="create.memberships_renewals[index].cm_permissions_id"
-                                                :options="permissions.map((type) => type.id)"
-                                                :custom-label="
+                                        <div class="col-md-2">
+                                            <div class="form-group position-relative">
+                                                <label class="control-label">
+                                                    {{ getCompanyKey("member_permission") }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <multiselect
+                                                    v-model="create.memberships_renewals[index].cm_permissions_id"
+                                                    :options="permissions.map((type) => type.id)"
+                                                    :custom-label="
                                                   (opt) =>
                                                     $i18n.locale == 'ar'
                                                       ? permissions.find((x) => x.id == opt).name
                                                       : permissions.find((x) => x.id == opt).name_e
                                                 "
-                                            >
-                                            </multiselect>
-                                            <div
-                                                v-if="$v.create.memberships_renewals.$each[index].cm_permissions_id.$error || errors.cm_permissions_id"
-                                                class="text-danger"
-                                            >
-                                                {{ $t("general.fieldIsRequired") }}
+                                                >
+                                                </multiselect>
+                                                <div
+                                                    v-if="$v.create.memberships_renewals.$each[index].cm_permissions_id.$error || errors.cm_permissions_id"
+                                                    class="text-danger"
+                                                >
+                                                    {{ $t("general.fieldIsRequired") }}
+                                                </div>
+                                                <template v-if="errors.cm_permissions_id">
+                                                    <ErrorMessage
+                                                        v-for="(errorMessage, index) in errors.cm_permissions_id"
+                                                        :key="index"
+                                                    >{{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
                                             </div>
-                                            <template v-if="errors.cm_permissions_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.cm_permissions_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("financial_status") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <multiselect
-                                                v-model="create.memberships_renewals[index].cm_financial_status_id"
-                                                :options="status.map((type) => type.id)"
-                                                :custom-label="
+                                        <div class="col-md-2">
+                                            <div class="form-group position-relative">
+                                                <label class="control-label">
+                                                    {{ getCompanyKey("financial_status") }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <multiselect
+                                                    v-model="create.memberships_renewals[index].cm_financial_status_id"
+                                                    :options="status.map((type) => type.id)"
+                                                    :custom-label="
                                                   (opt) =>
                                                     $i18n.locale == 'ar'
                                                       ? status.find((x) => x.id == opt).name
                                                       : status.find((x) => x.id == opt).name_e
                                                 "
-                                            >
-                                            </multiselect>
-                                            <div
-                                                v-if="$v.create.memberships_renewals.$each[index].cm_financial_status_id.$error || errors.cm_financial_status_id"
-                                                class="text-danger"
-                                            >
-                                                {{ $t("general.fieldIsRequired") }}
+                                                >
+                                                </multiselect>
+                                                <div
+                                                    v-if="$v.create.memberships_renewals.$each[index].cm_financial_status_id.$error || errors.cm_financial_status_id"
+                                                    class="text-danger"
+                                                >
+                                                    {{ $t("general.fieldIsRequired") }}
+                                                </div>
+                                                <template v-if="errors.cm_financial_status_id">
+                                                    <ErrorMessage
+                                                        v-for="(errorMessage, index) in errors.cm_financial_status_id"
+                                                        :key="index"
+                                                    >{{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
                                             </div>
-                                            <template v-if="errors.cm_financial_status_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.cm_financial_status_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("membership_period") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                v-model="$v.create.memberships_renewals.$each[index].membership_period.$model"
-                                                :class="{
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    {{ getCompanyKey("membership_period") }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    v-model="$v.create.memberships_renewals.$each[index].membership_period.$model"
+                                                    :class="{
                                                   'is-invalid': $v.create.memberships_renewals.$each[index].membership_period.$error || errors.membership_period,
                                                   'is-valid':
                                                     !$v.create.memberships_renewals.$each[index].membership_period.$invalid && !errors.membership_period,
                                                 }"
-                                            />
-                                            <template v-if="errors.membership_period">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.membership_period"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
+                                                />
+                                                <template v-if="errors.membership_period">
+                                                    <ErrorMessage
+                                                        v-for="(errorMessage, index) in errors.membership_period"
+                                                        :key="index"
+                                                    >{{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label>
-                                                {{ getCompanyKey("allowed_subscription_date") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="d-flex">
-                                                <div class="form-group col-6">
-                                                    <label>{{ $t("general.day") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].day.$model"
-                                                        class="custom-select"
-                                                        :class="{
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ getCompanyKey("allowed_subscription_date") }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="d-flex">
+                                                    <div class="form-group col-6">
+                                                        <label>{{ $t("general.day") }}</label>
+                                                        <select
+                                                            v-model="$v.create.memberships_renewals.$each[index].day.$model"
+                                                            class="custom-select"
+                                                            :class="{
                                                         'is-invalid': $v.create.memberships_renewals.$each[index].day.$error || errors.day,
                                                         'is-valid':
                                                           !$v.create.memberships_renewals.$each[index].day.$invalid && !errors.day,
                                                       }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                    </select>
-                                                    <template v-if="errors.day">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.day" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
-                                                </div>
-                                                <div class="form-group col-6">
-                                                    <label>{{ $t("general.month") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].month.$model"
-                                                        class="custom-select"
-                                                        :class="{
+                                                        >
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
+                                                        </select>
+                                                        <template v-if="errors.day">
+                                                            <ErrorMessage v-for="(errorMessage, index) in errors.day" :key="index">{{ errorMessage }}
+                                                            </ErrorMessage>
+                                                        </template>
+                                                    </div>
+                                                    <div class="form-group col-6">
+                                                        <label>{{ $t("general.month") }}</label>
+                                                        <select
+                                                            v-model="$v.create.memberships_renewals.$each[index].month.$model"
+                                                            class="custom-select"
+                                                            :class="{
                                                         'is-invalid': $v.create.memberships_renewals.$each[index].month.$error || errors.month,
                                                         'is-valid': !$v.create.memberships_renewals.$each[index].month.$invalid && !errors.month,
                                                       }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                    </select>
-                                                    <template v-if="errors.month">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.month" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
+                                                        >
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
+                                                        </select>
+                                                        <template v-if="errors.month">
+                                                            <ErrorMessage v-for="(errorMessage, index) in errors.month" :key="index">{{ errorMessage }}
+                                                            </ErrorMessage>
+                                                        </template>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <template v-if="errors.allowed_subscription_date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.allowed_subscription_date" :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
+                                                <template v-if="errors.allowed_subscription_date">
+                                                    <ErrorMessage v-for="(errorMessage, index) in errors.allowed_subscription_date" :key="index">
+                                                        {{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div v-if="create.memberships_renewals[index].cm_permissions_id == 2" class="col-md-2">
-                                        <div class="form-group">
-                                            <label>
-                                                {{ $t("general.allowed_vote_date") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="d-flex">
-                                                <div class="form-group col-6">
-                                                    <label>{{ $t("general.day") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].vote_day.$model"
-                                                        class="custom-select"
-                                                        :class="{
+                                        <div v-if="create.memberships_renewals[index].cm_permissions_id == 2" class="col-md-2">
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ $t("general.allowed_vote_date") }}
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="d-flex">
+                                                    <div class="form-group col-6">
+                                                        <label>{{ $t("general.day") }}</label>
+                                                        <select
+                                                            v-model="$v.create.memberships_renewals.$each[index].vote_day.$model"
+                                                            class="custom-select"
+                                                            :class="{
                                                         'is-invalid': $v.create.memberships_renewals.$each[index].vote_day.$error || errors.vote_day,
                                                         'is-valid':
                                                           !$v.create.memberships_renewals.$each[index].vote_day.$invalid && !errors.vote_day,
                                                       }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                    </select>
-                                                    <template v-if="errors.vote_day">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_day" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
-                                                </div>
-                                                <div class="form-group col-6">
-                                                    <label>{{ $t("general.month") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].vote_month.$model"
-                                                        class="custom-select"
-                                                        :class="{
+                                                        >
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
+                                                        </select>
+                                                        <template v-if="errors.vote_day">
+                                                            <ErrorMessage v-for="(errorMessage, index) in errors.vote_day" :key="index">{{ errorMessage }}
+                                                            </ErrorMessage>
+                                                        </template>
+                                                    </div>
+                                                    <div class="form-group col-6">
+                                                        <label>{{ $t("general.month") }}</label>
+                                                        <select
+                                                            v-model="$v.create.memberships_renewals.$each[index].vote_month.$model"
+                                                            class="custom-select"
+                                                            :class="{
                                                         'is-invalid': $v.create.memberships_renewals.$each[index].vote_month.$error || errors.vote_month,
                                                         'is-valid':
                                                           !$v.create.memberships_renewals.$each[index].vote_month.$invalid && !errors.vote_month,
                                                       }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                    </select>
-                                                    <template v-if="errors.vote_month">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_month" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
+                                                        >
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
+                                                        </select>
+                                                        <template v-if="errors.vote_month">
+                                                            <ErrorMessage v-for="(errorMessage, index) in errors.vote_month" :key="index">{{ errorMessage }}
+                                                            </ErrorMessage>
+                                                        </template>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <template v-if="errors.allowed_subscription_date">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.allowed_subscription_date"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
+                                                <template v-if="errors.allowed_subscription_date">
+                                                    <ErrorMessage
+                                                        v-for="(errorMessage, index) in errors.allowed_subscription_date"
+                                                        :key="index"
+                                                    >{{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2 p-0 pt-3">
+                                        <div class="col-md-2 p-0 pt-3">
                                             <button v-if="(create.memberships_renewals.length - 1) == index" type="button" @click.prevent="addNewField"
                                                     class="custom-btn-dowonload">
                                                 <i class="fas fa-plus"></i>
@@ -1198,7 +1192,7 @@ export default {
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </div>
-                                </div>
+                                    </div>
                                 </template>
                             </form>
                         </b-modal>

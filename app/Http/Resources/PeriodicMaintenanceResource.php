@@ -22,6 +22,8 @@ class PeriodicMaintenanceResource extends JsonResource
             'date' => $this->date,
             "task" => new TaskResource($this->task),
             "department" => new DepertmentResource($this->department),
+            "restart_period_id" => $this->restart_period_id,
+            "restart_period" => new RestartPeriodResource($this->restartPeriod),
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

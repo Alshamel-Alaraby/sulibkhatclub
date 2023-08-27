@@ -14,6 +14,7 @@ class RlstBuildingWallet extends Model
     protected $table = 'rlst_building_wallet';
     protected $fillable = [
         'wallet_id',
+        'company_id',
         'building_id',
         'bu_ty',
     ];

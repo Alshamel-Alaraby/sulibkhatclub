@@ -36,7 +36,7 @@ class CurrencyRequest extends FormRequest
             'fraction' => [],
             'fraction_e' => [],
             'fraction_no' => [],
-            "company_id"=>"required"
+            "company_id"=>"nullable"
         ];
 
     }

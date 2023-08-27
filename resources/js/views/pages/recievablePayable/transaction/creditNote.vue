@@ -1,19 +1,20 @@
 <script>
 import adminApi from "../../../../api/adminAxios";
 import Layout from "../../../layouts/main";
-import PageHeader from "../../../../components/Page-header";
+import PageHeader from "../../../../components/general/Page-header";
 import {minValue, required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
-import loader from "../../../../components/loader";
+import loader from "../../../../components/general/loader";
 import {dynamicSortString} from "../../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../../helper/startDate";
-import translation from "../../../../helper/translation-mixin";
-import Saleman from "../../../../components/create/saleman.vue";
-import customerGeneral from "../../../../components/create/customerGeneral";
-import Branch from "../../../../components/create/branch";
+import translation from "../../../../helper/mixin/translation-mixin";
+import Saleman from "../../../../components/create/general/saleman.vue";
+import customerGeneral from "../../../../components/create/general/customerGeneral";
+import Branch from "../../../../components/create/general/branch";
 import DatePicker from "vue2-datepicker";
+import permissionGuard from "../../../../helper/permission";
 
 export default {
     page: {
@@ -33,21 +34,10 @@ export default {
         DatePicker
     },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("receivable payable-e")) {
-                Swal.fire({
-                    icon: "error",
-                    title: `${vm.$t("general.Error")}`,
-                    text: `${vm.$t("general.ModuleExpired")}`,
-                });
-                return vm.$router.push({name: "home"});
-            }
-            if (vm.$store.state.auth.work_flow_trees.includes('installment credit note') || vm.$store.state.auth.work_flow_trees.includes('receivable payable') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({name: "home"});
-            }
-        });
+            next((vm) => {
+      return permissionGuard(vm, "Credit Note RP", "all creditNote RP");
+    });
+
     },
     data() {
         return {
@@ -170,6 +160,12 @@ export default {
         this.getData();
     },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         showSaleManModal() {
             if (this.create.salesman_id == 0) {
                 this.$bvModal.show("saleman-create");
@@ -570,7 +566,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضافة زبون", name_e: "Add customer"});
+                    if(this.isPermission('create Customer')){
+                        l.unshift({id: 0, name: "اضافة زبون", name_e: "Add customer"});
+                    }
                     this.customers = l;
                 })
                 .catch((err) => {
@@ -584,11 +582,13 @@ export default {
         async getBranches() {
             this.isLoader = true;
             await adminApi
-                .get(`/branches`)
+                .get(`/branches?document_id=6`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
+                    if(this.isPermission('create Branch')){
+                        l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
+                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -606,7 +606,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man"});
+                    if(this.isPermission('create Sales Man')){
+                        l.unshift({id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man"});
+                    }
                     this.salesmen = l;
                 })
                 .catch((err) => {
@@ -921,7 +923,9 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create variant="primary"
+                                          v-if="isPermission('create creditNote RP')"
+                                          class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -934,7 +938,7 @@ export default {
                                     </button>
                                     <button class="custom-btn-dowonload"
                                             @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
+                                            v-if="checkAll.length == 1 && isPermission('update creditNote RP')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
@@ -1457,7 +1461,8 @@ export default {
                                 </thead>
                                 <tbody v-if="invoices.length > 0">
                                 <tr @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                    @dblclick.prevent="isPermission('update creditNote RP')?
+                                    $bvModal.show(`modal-edit-${data.id}`): false"
                                     v-for="(data, index) in invoices" :key="data.id" class="body-tr-custom">
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="form-check custom-control" style="min-height: 1.9em">
@@ -1498,6 +1503,7 @@ export default {
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
                                                 <a class="dropdown-item" href="#"
+                                                   v-if="isPermission('update creditNote RP')"
                                                    @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
@@ -1505,14 +1511,14 @@ export default {
                                                         <i class="mdi mdi-square-edit-outline text-info"></i>
                                                     </div>
                                                 </a>
-                                                <a class="dropdown-item text-black" href="#"
-                                                   @click.prevent="deleteScreenButton(data.id)">
-                                                    <div
-                                                        class="d-flex justify-content-between align-items-center text-black">
-                                                        <span>{{ $t("general.delete") }}</span>
-                                                        <i class="fas fa-times text-danger"></i>
-                                                    </div>
-                                                </a>
+<!--                                                <a class="dropdown-item text-black" href="#"-->
+<!--                                                   @click.prevent="deleteScreenButton(data.id)">-->
+<!--                                                    <div-->
+<!--                                                        class="d-flex justify-content-between align-items-center text-black">-->
+<!--                                                        <span>{{ $t("general.delete") }}</span>-->
+<!--                                                        <i class="fas fa-times text-danger"></i>-->
+<!--                                                    </div>-->
+<!--                                                </a>-->
                                             </div>
                                         </div>
 

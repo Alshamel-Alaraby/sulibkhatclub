@@ -25,19 +25,39 @@ class RpOpeningBalance extends Model
     {
         return $this->hasMany(RpBreakDown::class,'break_id');
     }
+
+//    public function document()
+//    {
+//        return $this->belongsTo(Document::class,'break_id');
+//    }
+    // public function hasChildren()
+    // {
+    //     return $this->details()->count() > 0  ;
+
+    // }
+
+    // public function hisChildren()
+    // {
+    //     return $this->breakDowns()->count() > 0;
+    // }
+
+    // protected static function newFactory()
+    // {
+    //     return \Modules\RecievablePayable\Database\factories\RpOpeningBalanceFactory::new();
+    // }
+
     public function hasChildren()
     {
-        return $this->details()->count() > 0  ;
+        $relationsWithChildren = [];
 
-    }
+        if ($this->breakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'breakDowns',
+                'count' => $this->breakDowns()->count(),
+                'ids' => $this->breakDowns()->pluck('id')->toArray()
+            ];
+        }
 
-    public function hisChildren()
-    {
-        return $this->breakDowns()->count() > 0;
-    }
-
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpOpeningBalanceFactory::new();
+        return $relationsWithChildren;
     }
 }

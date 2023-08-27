@@ -21,6 +21,11 @@ class ItemBreakDown extends Model
     {
         return $this->belongsTo(Panel::class,'break_id');
     }
+    public function documentHeaderDetail()
+    {
+        return $this->belongsTo(DocumentHeaderDetail::class,'document_header_detail_id');
+
+    }
 
 
     public function getActivitylogOptions(): LogOptions

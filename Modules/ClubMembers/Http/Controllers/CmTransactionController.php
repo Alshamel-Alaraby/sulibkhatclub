@@ -98,7 +98,7 @@ class CmTransactionController extends Controller
     }
 
 
-    public function selectedMemberTransactions($member_id)
+    public function MemberTransactions($member_id)
     {
 
         $models = CmTransaction::where("cm_member_id", $member_id)->get();

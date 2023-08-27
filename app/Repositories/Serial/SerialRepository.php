@@ -44,16 +44,16 @@ class SerialRepository implements SerialRepositoryInterface
             ->where('document_id', $data['document_id'])
             ->where('branch_id', $data['branch_id'])
             ->first();
-        
+
         if ($serial) {
             return null;
         }
 
         return DB::transaction(function () use ($data) {
             return $model = $this->model->create($data);
-            if (request()->is_default == 1) {
-                $this->model->where('id', '!=', $model->id)->update(['is_default' => 0]);
-            }
+            // if (request()->is_default == 1) {
+            //     $this->model->where('id', '!=', $model->id)->update(['is_default' => 0]);
+            // }
 
         });
 
@@ -66,20 +66,11 @@ class SerialRepository implements SerialRepositoryInterface
 
     public function update($request, $id)
     {
-        $serial = $this->model
-            ->where('document_id', $request['document_id'])
-            ->where('branch_id', $request['branch_id'])
-            ->first();
-
-        if ($serial) {
-            return null;
-        }
-
         DB::transaction(function () use ($id, $request) {
             $this->model->where("id", $id)->update($request->validated());
-            if (request()->is_default == 1) {
-                $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
-            }
+            // if (request()->is_default == 1) {
+            //     $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
+            // }
             // $this->forget($id);
         });
 
@@ -121,20 +112,8 @@ class SerialRepository implements SerialRepositoryInterface
     {
         $model = $this->find($id);
         if ($model) {
-            $this->forget($id);
             $model->delete();
         }
     }
 
-    private function forget($id)
-    {
-        $keys = [
-            "serials",
-            "serials_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
-
-    }
 }

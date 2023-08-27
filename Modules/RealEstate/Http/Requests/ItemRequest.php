@@ -35,7 +35,7 @@ class ItemRequest extends FormRequest
             // "category-item" => 'required|array',
             'category_item_id.*' => 'nullable|exists:rlst_category_item,id',
 
-
+            "company_id"=>'nullable',
             // 'category-item.*.item_id'          => 'required|exists:rlst_items,id',
         ];
     }

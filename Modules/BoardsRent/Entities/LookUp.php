@@ -13,7 +13,7 @@ class LookUp extends Model
 
     protected $table = 'boards_rent_look_ups';
     protected $fillable = [
-        'parent_id', 'name', 'name_e', 'type',
+        'parent_id', 'name', 'name_e', 'type','company_id'
     ];
     protected $appends = ['haveChildren'];
 

@@ -4,8 +4,8 @@ import Switches from "vue-switches";
 import {required, minLength, maxLength} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../widgets/errorMessage";
-import loader from "../../../loader";
-import transMixinComp from "../../../../helper/translation-comp-mixin";
+import loader from "../../../general/loader";
+import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import Multiselect from "vue-multiselect";
 import InstallmentPaymentType from "../installmentPaymentType.vue";
 import InstallmentStatus from "../installmentStatus";
@@ -1027,7 +1027,7 @@ export default {
                         </div>
 
                         <div :class="[index == 0 ? ' pt-3':'' ,'col-md-1']">
-                            <b-button v-if="(create[index].repate > 1 && opening.is_update)||(create[index].repate > 1 && !create[index].id)"
+                            <b-button v-if="((create[index].repate > 1 && opening.is_update)||(create[index].repate > 1 && !create[index].id)) && parseInt(residual) == 0"
                                       variant="primary"
                                       class="btn btn-primary"
                                       @click="showBreakDetails(index)"

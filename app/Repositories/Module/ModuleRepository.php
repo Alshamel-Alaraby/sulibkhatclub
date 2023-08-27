@@ -83,11 +83,11 @@ class ModuleRepository implements ModuleInterface
 //        return Module::all();
 
         collect(Module::all())->each(function ($item , $key){
-            Module::disable($key);
+            Module::enable($key);
         });
-        foreach ($request['modules_name']  as $item){
-            Module::enable($item);
-        }
+//        foreach ($request['modules_name']  as $item){
+//            Module::enable($item);
+//        }
 
     }
 

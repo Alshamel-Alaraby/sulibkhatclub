@@ -17,14 +17,14 @@ class BranchResource extends JsonResource
         return [
             'id' => $this->id,
             'company' => $this->company_id,
-            'name' => $this->name,
-            'name_e' => $this->name_e,
+            'name'     => $this->name,
+            'name_e'   => $this->name_e,
             'is_active' => $this->is_active,
             'parent_id' => $this->parent_id,
-            "parent" => $this->parent,
-            "children" => BranchResource::collection($this->children),
-            "serials" => $this->serials,
-            "stores" => $this->stores,
+            "parent"   => $this->parent,
+            "children" => $this->children,
+            "serials"  => $this->serials,
+            "stores"   => $this->stores,
         ];
     }
 }

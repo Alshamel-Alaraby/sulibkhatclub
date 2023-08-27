@@ -35,8 +35,6 @@ class DocumentController extends Controller
     }
 
 
-
-
     public function create(DocumentRequest $request)
     {
         $model = $this->modelInterface->create($request->validated());

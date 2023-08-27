@@ -11,14 +11,12 @@ class PayrollHead extends Model
     use HasFactory, LogTrait;
 
     protected $fillable = [
+        'id',
         'name',
         'name_e'
     ];
 
     protected $table = "hr_payroll_heads";
-
-
-
 
     public function hasChildren()
     {
@@ -35,4 +33,9 @@ class PayrollHead extends Model
             ->useLogName('PayrollHead')
             ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
 }

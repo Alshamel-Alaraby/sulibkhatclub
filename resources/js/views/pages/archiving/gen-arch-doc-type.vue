@@ -1,21 +1,22 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import DocumentStatus from "../../../components/arciving/arch-doc-status";
 import DocumentTypeField from "../../../components/arciving/doc-type-field";
 import DocumentTypeFieldEdit from "../../../components/arciving/doc-type-field-edit";
 import DocumentDepartment from "../../../components/arciving/document-department";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 
-import ArchStatus from "../../../components/create/arch-status";
-import {arabicValue,englishValue} from "../../../helper/langTransform";
+import ArchStatus from "../../../components/create/arch/arch-status";
+import { arabicValue, englishValue } from "../../../helper/langTransform";
 /**
  * Advanced Table component
  */
@@ -39,35 +40,9 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("gen arch doc types") ||
-        vm.$store.state.auth.work_flow_trees.includes("archiving") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+      return permissionGuard(vm, "Gen Archiving Document Type", "Gen Archiving Document Type");
     });
   },
-  // updated() {
-  //   $(".englishInput").keypress(function (event) {
-  //     var ew = event.which;
-  //     if (ew == 32) return true;
-  //     if (48 <= ew && ew <= 57) return true;
-  //     if (65 <= ew && ew <= 90) return true;
-  //     if (97 <= ew && ew <= 122) return true;
-  //     return false;
-  //   });
-  //   $(".arabicInput").keypress(function (event) {
-  //     var ew = event.which;
-  //     if (ew == 32) return true;
-  //     if (48 <= ew && ew <= 57) return false;
-  //     if (65 <= ew && ew <= 90) return false;
-  //     if (97 <= ew && ew <= 122) return false;
-  //     return true;
-  //   });
-  // },
   data() {
     return {
       documentStatuses: [],
@@ -108,6 +83,7 @@ export default {
       is_disabled: false,
       current_page: 1,
       printLoading: true,
+      company_id: null,
       printObj: {
         id: "printType",
       },
@@ -165,18 +141,19 @@ export default {
     },
   },
   mounted() {
+    this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
     this.getDocumentStatuses();
   },
   methods: {
-    arabicValue(txt){
-        this.create.name = arabicValue(txt);
-        this.edit.name = arabicValue(txt);
-      } ,
-      englishValue(txt){
-        this.create.name_e = englishValue(txt);
-        this.edit.name_e = englishValue(txt);
-      },
+    arabicValue(txt) {
+      this.create.name = arabicValue(txt);
+      this.edit.name = arabicValue(txt);
+    },
+    englishValue(txt) {
+      this.create.name_e = englishValue(txt);
+      this.edit.name_e = englishValue(txt);
+    },
     addDocumentStatus(id) {
       if (id == 0) {
         this.$bvModal.show("arch-status-create");
@@ -270,7 +247,11 @@ export default {
         .get(`/arch-doc-status`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضف حالة ملف", name_e: "Add document status" });
+          l.unshift({
+            id: 0,
+            name: "اضف حالة ملف",
+            name_e: "Add document status",
+          });
           this.documentStatuses = l;
         })
         .catch((err) => {
@@ -307,7 +288,6 @@ export default {
               (e) => arch_doc_type_id == e.id
             );
             this.doc_type_field = editGenDocType.doc_type_field;
-
           }
         })
         .catch((err) => {
@@ -524,8 +504,12 @@ export default {
      */
     AddSubmit() {
       if (this.create.name || this.create.name_e) {
-        this.create.name = this.create.name ? this.create.name : this.create.name_e;
-        this.create.name_e = this.create.name_e ? this.create.name_e : this.create.name;
+        this.create.name = this.create.name
+          ? this.create.name
+          : this.create.name_e;
+        this.create.name_e = this.create.name_e
+          ? this.create.name_e
+          : this.create.name;
       }
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -538,6 +522,7 @@ export default {
           .post(`/arch-doc-type`, {
             ...this.create,
             is_valid: this.create.is_valid == "1" ? 1 : 0,
+            company_id: this.company_id,
           })
           .then((res) => {
             this.arch_doc_type_id = res.data.data.id;
@@ -574,7 +559,9 @@ export default {
     editSubmit(id) {
       if (this.edit.name || this.edit.name_e) {
         this.edit.name = this.edit.name ? this.edit.name : this.edit.name_e;
-        this.edit.name_e = this.edit.name_e ? this.edit.name_e : this.create.name;
+        this.edit.name_e = this.edit.name_e
+          ? this.edit.name_e
+          : this.create.name;
       }
       this.$v.edit.$touch();
       if (this.$v.edit.$invalid) {
@@ -589,6 +576,7 @@ export default {
             name_e,
             is_valid: is_valid == "1" ? 1 : 0,
             parent_id,
+            company_id: this.company_id,
           })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);
@@ -626,7 +614,9 @@ export default {
       let editGenDocType = this.genArchDocType.find((e) => id == e.id);
       this.edit.name = editGenDocType.name;
       this.edit.name_e = editGenDocType.name_e;
-      this.edit.parent_id = editGenDocType.parent_id ? editGenDocType.parent_id.id : "";
+      this.edit.parent_id = editGenDocType.parent_id
+        ? editGenDocType.parent_id.id
+        : "";
       this.edit.is_valid = editGenDocType.is_valid;
       this.errors = {};
       this.arch_doc_type_id = editGenDocType.id;
@@ -674,7 +664,9 @@ export default {
         } else {
           XLSX.writeFile(
             wb,
-            fn || ("Document Type" + "." || "SheetJSTableExport.") + (type || "xlsx")
+            fn ||
+              ("Document Type" + "." || "SheetJSTableExport.") +
+                (type || "xlsx")
           );
         }
         this.enabled3 = true;
@@ -708,10 +700,18 @@ export default {
                     ref="dropdown"
                     class="btn-block setting-search"
                   >
-                    <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      value="name"
+                      class="mb-1"
+                    >
                       {{ $t("general.Name") }}
                     </b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="name_e" class="mb-1">
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      value="name_e"
+                      class="mb-1"
+                    >
                       {{ $t("general.Name_en") }}
                     </b-form-checkbox>
                   </b-dropdown>
@@ -719,7 +719,10 @@ export default {
                 </div>
                 <!-- End search button -->
                 <!-- Start Search TB -->
-                <div class="d-inline-block position-relative" style="width: 77%">
+                <div
+                  class="d-inline-block position-relative"
+                  style="width: 77%"
+                >
                   <span
                     :class="[
                       'search-custom position-absolute',
@@ -740,7 +743,9 @@ export default {
               </div>
             </div>
 
-            <div class="row justify-content-between align-items-center mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mb-2 px-1"
+            >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create modal  -->
                 <b-button
@@ -753,7 +758,10 @@ export default {
                 </b-button>
                 <!-- end create modal  -->
                 <div class="d-inline-flex">
-                  <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                  <button
+                    @click="ExportExcel('xlsx')"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fas fa-file-download"></i>
                   </button>
                   <button v-print="'#printType'" class="custom-btn-dowonload">
@@ -807,7 +815,9 @@ export default {
                   <!-- Start setting dropdown -->
                   <b-dropdown
                     variant="primary"
-                    :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                    :html="`${$t(
+                      'general.setting'
+                    )} <i class='fe-settings'></i>`"
                     ref="dropdown"
                     class="dropdown-custom-ali"
                   >
@@ -824,14 +834,18 @@ export default {
                       {{ $t("general.isValid") }}
                     </b-form-checkbox>
                     <div class="d-flex justify-content-end">
-                      <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
-                        $t("general.Apply")
-                      }}</a>
+                      <a
+                        href="javascript:void(0)"
+                        class="btn btn-primary btn-sm"
+                        >{{ $t("general.Apply") }}</a
+                      >
                     </div>
                   </b-dropdown>
                   <!-- End setting dropdown -->
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 15px">
                       {{ genArchDocTypePagination.from }}-{{
                         genArchDocTypePagination.to
@@ -844,7 +858,9 @@ export default {
                         href="javascript:void(0)"
                         :style="{
                           'pointer-events':
-                            genArchDocTypePagination.current_page == 1 ? 'none' : '',
+                            genArchDocTypePagination.current_page == 1
+                              ? 'none'
+                              : '',
                         }"
                         @click.prevent="
                           getData(genArchDocTypePagination.current_page - 1)
@@ -902,7 +918,10 @@ export default {
                         :disabled="!is_disabled"
                         @click.prevent="resetForm"
                         type="button"
-                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                        :class="[
+                          'font-weight-bold px-2',
+                          is_disabled ? 'mx-2' : '',
+                        ]"
                       >
                         {{ $t("general.AddNewRecord") }}
                       </b-button>
@@ -920,9 +939,16 @@ export default {
                           {{ $t("general.Add") }}
                         </b-button>
                         <!-- End Add Button -->
-                        <b-button variant="success" class="mx-1" disabled v-else>
+                        <b-button
+                          variant="success"
+                          class="mx-1"
+                          disabled
+                          v-else
+                        >
                           <b-spinner small></b-spinner>
-                          <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                          <span class="sr-only"
+                            >{{ $t("login.Loading") }}...</span
+                          >
                         </b-button>
                       </template>
                       <!-- Start Cancel Button Modal -->
@@ -949,10 +975,12 @@ export default {
                                 class="form-control"
                                 v-model="$v.create.name.$model"
                                 :class="{
-                                  'is-invalid': $v.create.name.$error || errors.name,
-                                  'is-valid': !$v.create.name.$invalid && !errors.name,
+                                  'is-invalid':
+                                    $v.create.name.$error || errors.name,
+                                  'is-valid':
+                                    !$v.create.name.$invalid && !errors.name,
                                 }"
-                              @keyup="arabicValue(create.name)"
+                                @keyup="arabicValue(create.name)"
                                 id="field-1"
                               />
                               <div
@@ -987,14 +1015,16 @@ export default {
                                 <span class="text-danger">*</span>
                               </label>
                               <input
-                              @keyup="englishValue(create.name_e)"
+                                @keyup="englishValue(create.name_e)"
                                 type="text"
                                 class="form-control"
                                 v-model="$v.create.name_e.$model"
                                 :class="{
-                                  'is-invalid': $v.create.name_e.$error || errors.name_e,
+                                  'is-invalid':
+                                    $v.create.name_e.$error || errors.name_e,
                                   'is-valid':
-                                    !$v.create.name_e.$invalid && !errors.name_e,
+                                    !$v.create.name_e.$invalid &&
+                                    !errors.name_e,
                                 }"
                                 id="field-2"
                               />
@@ -1044,7 +1074,9 @@ export default {
 
                               <template v-if="errors.parent_id">
                                 <ErrorMessage
-                                  v-for="(errorMessage, index) in errors.parent_id"
+                                  v-for="(
+                                    errorMessage, index
+                                  ) in errors.parent_id"
                                   :key="index"
                                   >{{ errorMessage }}
                                 </ErrorMessage>
@@ -1060,9 +1092,11 @@ export default {
                               <b-form-group
                                 :class="{
                                   'is-invalid':
-                                    $v.create.is_valid.$error || errors.is_valid,
+                                    $v.create.is_valid.$error ||
+                                    errors.is_valid,
                                   'is-valid':
-                                    !$v.create.is_valid.$invalid && !errors.is_valid,
+                                    !$v.create.is_valid.$invalid &&
+                                    !errors.is_valid,
                                 }"
                               >
                                 <b-form-radio
@@ -1083,7 +1117,9 @@ export default {
                               </b-form-group>
                               <template v-if="errors.is_valid">
                                 <ErrorMessage
-                                  v-for="(errorMessage, index) in errors.is_valid"
+                                  v-for="(
+                                    errorMessage, index
+                                  ) in errors.is_valid"
                                   :key="index"
                                   >{{ errorMessage }}
                                 </ErrorMessage>
@@ -1142,8 +1178,10 @@ export default {
                               :custom-label="
                                 (opt) =>
                                   $i18n.locale
-                                    ? documentStatuses.find((x) => x.id == opt).name
-                                    : documentStatuses.find((x) => x.id == opt).name_e
+                                    ? documentStatuses.find((x) => x.id == opt)
+                                        .name
+                                    : documentStatuses.find((x) => x.id == opt)
+                                        .name_e
                               "
                             >
                             </multiselect>
@@ -1199,17 +1237,25 @@ export default {
                                       {{ $t("general.commands") }}
                                       <i class="fas fa-angle-down"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-custom">
+                                    <div
+                                      class="dropdown-menu dropdown-menu-custom"
+                                    >
                                       <a
                                         class="dropdown-item text-black"
                                         href="#"
-                                        @click.prevent="deleteDocumentStatus(data.id)"
+                                        @click.prevent="
+                                          deleteDocumentStatus(data.id)
+                                        "
                                       >
                                         <div
                                           class="d-flex justify-content-between align-items-center text-black"
                                         >
-                                          <span>{{ $t("general.delete") }}</span>
-                                          <i class="fas fa-times text-danger"></i>
+                                          <span>{{
+                                            $t("general.delete")
+                                          }}</span>
+                                          <i
+                                            class="fas fa-times text-danger"
+                                          ></i>
                                         </div>
                                       </a>
                                     </div>
@@ -1236,7 +1282,9 @@ export default {
             <!--  /create   -->
 
             <!-- start .table-responsive-->
-            <div class="table-responsive mb-3 custom-table-theme position-relative">
+            <div
+              class="table-responsive mb-3 custom-table-theme position-relative"
+            >
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
@@ -1248,7 +1296,12 @@ export default {
               >
                 <thead>
                   <tr>
-                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
+                    <th
+                      v-if="enabled3"
+                      class="do-not-print"
+                      scope="col"
+                      style="width: 0"
+                    >
                       <div class="form-check custom-control">
                         <input
                           class="form-check-input"
@@ -1298,7 +1351,9 @@ export default {
                           ></i>
                           <i
                             class="fas fa-arrow-down"
-                            @click="genArchDocType.sort(sortString('-is_valid'))"
+                            @click="
+                              genArchDocType.sort(sortString('-is_valid'))
+                            "
                           ></i>
                         </div>
                       </div>
@@ -1309,11 +1364,15 @@ export default {
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
-                            @click="genArchDocType.sort(sortString('parent_id'))"
+                            @click="
+                              genArchDocType.sort(sortString('parent_id'))
+                            "
                           ></i>
                           <i
                             class="fas fa-arrow-down"
-                            @click="genArchDocType.sort(sortString('-parent_id'))"
+                            @click="
+                              genArchDocType.sort(sortString('-parent_id'))
+                            "
                           ></i>
                         </div>
                       </div>
@@ -1335,7 +1394,10 @@ export default {
                     class="body-tr-custom"
                   >
                     <td v-if="enabled3" class="do-not-print">
-                      <div class="form-check custom-control" style="min-height: 1.9em">
+                      <div
+                        class="form-check custom-control"
+                        style="min-height: 1.9em"
+                      >
                         <input
                           style="width: 17px; height: 17px"
                           class="form-check-input"
@@ -1397,7 +1459,9 @@ export default {
                               class="d-flex justify-content-between align-items-center text-black"
                             >
                               <span>{{ $t("general.edit") }}</span>
-                              <i class="mdi mdi-square-edit-outline text-info"></i>
+                              <i
+                                class="mdi mdi-square-edit-outline text-info"
+                              ></i>
                             </div>
                           </a>
                           <a
@@ -1447,7 +1511,12 @@ export default {
                                   {{ $t("general.Edit") }}
                                 </b-button>
 
-                                <b-button variant="success" class="mx-1" disabled v-else>
+                                <b-button
+                                  variant="success"
+                                  class="mx-1"
+                                  disabled
+                                  v-else
+                                >
                                   <b-spinner small></b-spinner>
                                   <span class="sr-only"
                                     >{{ $t("login.Loading") }}...</span
@@ -1457,7 +1526,9 @@ export default {
                                 <b-button
                                   variant="danger"
                                   type="button"
-                                  @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
+                                  @click.prevent="
+                                    $bvModal.hide(`modal-edit-${data.id}`)
+                                  "
                                 >
                                   {{ $t("general.Cancel") }}
                                 </b-button>
@@ -1465,19 +1536,24 @@ export default {
                               <div class="row">
                                 <div class="col-md-6 direction" dir="rtl">
                                   <div class="form-group">
-                                    <label for="field-u-1" class="control-label">
+                                    <label
+                                      for="field-u-1"
+                                      class="control-label"
+                                    >
                                       {{ $t("general.Name") }}
                                       <span class="text-danger">*</span>
                                     </label>
                                     <input
-                              @keyup="arabicValue(edit.name)"
+                                      @keyup="arabicValue(edit.name)"
                                       type="text"
                                       class="form-control"
                                       v-model="$v.edit.name.$model"
                                       :class="{
-                                        'is-invalid': $v.edit.name.$error || errors.name,
+                                        'is-invalid':
+                                          $v.edit.name.$error || errors.name,
                                         'is-valid':
-                                          !$v.edit.name.$invalid && !errors.name,
+                                          !$v.edit.name.$invalid &&
+                                          !errors.name,
                                       }"
                                       :placeholder="$t('general.Name')"
                                       id="field-u-1"
@@ -1500,7 +1576,9 @@ export default {
                                     </div>
                                     <template v-if="errors.name">
                                       <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.name"
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.name"
                                         :key="index"
                                         >{{ errorMessage }}
                                       </ErrorMessage>
@@ -1509,21 +1587,25 @@ export default {
                                 </div>
                                 <div class="col-md-6 direction-ltr" dir="ltr">
                                   <div class="form-group">
-                                    <label for="field-u-2" class="control-label">
+                                    <label
+                                      for="field-u-2"
+                                      class="control-label"
+                                    >
                                       {{ $t("general.Name_en") }}
                                       <span class="text-danger">*</span>
                                     </label>
                                     <input
-                              @keyup="englishValue(edit.name_e)"
-
+                                      @keyup="englishValue(edit.name_e)"
                                       type="text"
                                       class="form-control"
                                       v-model="$v.edit.name_e.$model"
                                       :class="{
                                         'is-invalid':
-                                          $v.edit.name_e.$error || errors.name_e,
+                                          $v.edit.name_e.$error ||
+                                          errors.name_e,
                                         'is-valid':
-                                          !$v.edit.name_e.$invalid && !errors.name_e,
+                                          !$v.edit.name_e.$invalid &&
+                                          !errors.name_e,
                                       }"
                                       :placeholder="$t('general.Name_en')"
                                       id="field-u-2"
@@ -1546,7 +1628,9 @@ export default {
                                     </div>
                                     <template v-if="errors.name_e">
                                       <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.name_e"
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.name_e"
                                         :key="index"
                                         >{{ errorMessage }}
                                       </ErrorMessage>
@@ -1565,15 +1649,19 @@ export default {
                                       :custom-label="
                                         (opt) =>
                                           $i18n.locale
-                                            ? parent.find((x) => x.id == opt).name
-                                            : parent.find((x) => x.id == opt).name_e
+                                            ? parent.find((x) => x.id == opt)
+                                                .name
+                                            : parent.find((x) => x.id == opt)
+                                                .name_e
                                       "
                                     >
                                     </multiselect>
 
                                     <template v-if="errors.parent_id">
                                       <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.parent_id"
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.parent_id"
                                         :key="index"
                                         >{{ errorMessage }}
                                       </ErrorMessage>
@@ -1589,9 +1677,11 @@ export default {
                                     <b-form-group
                                       :class="{
                                         'is-invalid':
-                                          $v.edit.is_valid.$error || errors.is_valid,
+                                          $v.edit.is_valid.$error ||
+                                          errors.is_valid,
                                         'is-valid':
-                                          !$v.edit.is_valid.$invalid && !errors.is_valid,
+                                          !$v.edit.is_valid.$invalid &&
+                                          !errors.is_valid,
                                       }"
                                     >
                                       <b-form-radio
@@ -1613,7 +1703,9 @@ export default {
                                     </b-form-group>
                                     <template v-if="errors.is_valid">
                                       <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.is_valid"
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.is_valid"
                                         :key="index"
                                         >{{ errorMessage }}
                                       </ErrorMessage>
@@ -1663,12 +1755,18 @@ export default {
                                 <multiselect
                                   v-model="status_id"
                                   @select="addDocumentStatus"
-                                  :options="documentStatuses.map((type) => type.id)"
+                                  :options="
+                                    documentStatuses.map((type) => type.id)
+                                  "
                                   :custom-label="
                                     (opt) =>
                                       $i18n.locale
-                                        ? documentStatuses.find((x) => x.id == opt).name
-                                        : documentStatuses.find((x) => x.id == opt).name_e
+                                        ? documentStatuses.find(
+                                            (x) => x.id == opt
+                                          ).name
+                                        : documentStatuses.find(
+                                            (x) => x.id == opt
+                                          ).name_e
                                   "
                                 >
                                 </multiselect>
@@ -1688,12 +1786,16 @@ export default {
                                 <thead>
                                   <tr>
                                     <th>
-                                      <div class="d-flex justify-content-center">
+                                      <div
+                                        class="d-flex justify-content-center"
+                                      >
                                         <span>{{ $t("general.Name") }}</span>
                                       </div>
                                     </th>
                                     <th>
-                                      <div class="d-flex justify-content-center">
+                                      <div
+                                        class="d-flex justify-content-center"
+                                      >
                                         <span>{{ $t("general.Name_en") }}</span>
                                       </div>
                                     </th>
@@ -1702,7 +1804,9 @@ export default {
                                 </thead>
                                 <tbody v-if="documentTypeStatuses.length > 0">
                                   <tr
-                                    v-for="(data, index) in documentTypeStatuses"
+                                    v-for="(
+                                      data, index
+                                    ) in documentTypeStatuses"
                                     :key="data.id"
                                     class="body-tr-custom"
                                   >
@@ -1723,17 +1827,25 @@ export default {
                                           {{ $t("general.commands") }}
                                           <i class="fas fa-angle-down"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-custom">
+                                        <div
+                                          class="dropdown-menu dropdown-menu-custom"
+                                        >
                                           <a
                                             class="dropdown-item text-black"
                                             href="#"
-                                            @click.prevent="deleteDocumentStatus(data.id)"
+                                            @click.prevent="
+                                              deleteDocumentStatus(data.id)
+                                            "
                                           >
                                             <div
                                               class="d-flex justify-content-between align-items-center text-black"
                                             >
-                                              <span>{{ $t("general.delete") }}</span>
-                                              <i class="fas fa-times text-danger"></i>
+                                              <span>{{
+                                                $t("general.delete")
+                                              }}</span>
+                                              <i
+                                                class="fas fa-times text-danger"
+                                              ></i>
                                             </div>
                                           </a>
                                         </div>

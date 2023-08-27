@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DocumentApprovalDetailController extends Controller
 {
-    public function __construct(private \App\Repositories\DocumentApprovalDetail\DocumentApprovalDetailInterface$modelInterface)
+    public function __construct(private \App\Repositories\DocumentApprovalDetail\DocumentApprovalDetailInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

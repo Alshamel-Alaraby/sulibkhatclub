@@ -31,6 +31,8 @@ class ExternalSalesmenRequest extends FormRequest
             "country_id" => "nullable|exists:general_countries,id",
             'national_id' => "nullable|integer",
             'is_active' => 'nullable|in:active,inactive',
+            'name' => 'nullable|string|max:255|unique:general_external_salesmen,name,'. ($this->method() == 'PUT' ?  $this->id : ''),
+            'name_e' => 'nullable|string|max:255|unique:general_external_salesmen,name_e,'. ($this->method() == 'PUT' ?  $this->id : ''),
         ];
     }
 

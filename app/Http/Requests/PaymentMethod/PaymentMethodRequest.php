@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\PaymentMethod;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class PaymentMethodRequest extends FormRequest
@@ -26,9 +25,13 @@ class PaymentMethodRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'sometimes|string|max:255|unique:general_payment_methods,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e'      => 'sometimes|string|max:255|unique:general_payment_methods,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name' => 'nullable|string|max:255|unique:general_payment_methods,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'nullable|string|max:255|unique:general_payment_methods,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'is_default' => 'nullable|in:1,0',
+            "company_id" => 'nullable',
+            'type' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
+            'created_by' => 'nullable|string|max:255',
         ];
     }
 

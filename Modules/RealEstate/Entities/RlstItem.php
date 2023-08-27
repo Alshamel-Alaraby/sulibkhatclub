@@ -20,6 +20,7 @@ class RlstItem extends Model implements HasMedia
         "code_number",
         "type",
         "unit_id",
+        "company_id",
         "price",
 
     ];
@@ -36,6 +37,27 @@ class RlstItem extends Model implements HasMedia
     {
         return $this->belongsToMany(RlstCategoryItem::class, 'rlst_categories_item', 'item_id', 'category_item_id');
 
+    }
+
+    // public function hasChildren()
+    // {
+
+    //     return $this->categories()->count() > 0;
+    // }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->categories()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'categories',
+                'count' => $this->categories()->count(),
+                'ids' => $this->categories()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     // scopes

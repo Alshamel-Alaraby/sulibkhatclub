@@ -1,8 +1,12 @@
 <template>
   <!--  create   -->
   <b-modal
-    id="create-sell-method"
-    :title="getCompanyKey('boardRent_sellMethod_create_form')"
+    :id="id"
+    :title="
+      type != 'edit'
+        ? getCompanyKey('boardRent_sellMethod_create_form')
+        : getCompanyKey('boardRent_sellMethod_edit_form')
+    "
     title-class="font-18"
     body-class="p-4 "
     :hide-footer="true"
@@ -10,8 +14,10 @@
     @hidden="resetModalHidden"
   >
     <form>
+      <loader size="large" v-if="isCustom && !isPage" />
       <div class="mb-3 d-flex justify-content-end">
         <b-button
+          v-if="type != 'edit'"
           variant="success"
           :disabled="!is_disabled"
           @click.prevent="resetForm"
@@ -23,12 +29,12 @@
         <template v-if="!is_disabled">
           <b-button
             variant="success"
-            type="button"
+            type="submit"
             class="mx-1"
             v-if="!isLoader"
             @click.prevent="AddSubmit"
           >
-            {{ $t("general.Add") }}
+            {{ type != "edit" ? $t("general.Add") : $t("general.edit") }}
           </b-button>
 
           <b-button variant="success" class="mx-1" disabled v-else>
@@ -36,16 +42,15 @@
             <span class="sr-only">{{ $t("login.Loading") }}...</span>
           </b-button>
         </template>
-        <!-- Emulate built in modal footer ok and cancel button actions -->
-
         <b-button
+          @click.prevent="resetModalHidden"
           variant="danger"
           type="button"
-          @click.prevent="resetModalHidden"
         >
           {{ $t("general.Cancel") }}
         </b-button>
       </div>
+
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
@@ -179,12 +184,13 @@
 <script>
 import Switches from "vue-switches";
 import ErrorMessage from "../../widgets/errorMessage";
-import loader from "../../loader";
+import loader from "../../general/loader";
 import { maxLength, minLength, required } from "vuelidate/lib/validators";
-import { arabicValue, englishValue } from "../../../helper/langTransform";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
+import { arabicValue, englishValue } from "../../../helper/langTransform";
+import successError from "../../../helper/mixin/success&error";
 
 export default {
   name: "sell-methods",
@@ -205,29 +211,69 @@ export default {
       company_id: null,
       errors: {},
       is_disabled: false,
+      isCustom: false,
     };
   },
   validations: {
     create: {
       name: { required, minLength: minLength(2), maxLength: maxLength(255) },
       name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
-      calculated_percentage: {required},
-      commission_ratio: {required},
+      calculated_percentage: { required },
+      commission_ratio: { required },
     },
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
   },
-  mixins: [transMixinComp],
+  mixins: [transMixinComp, successError],
   props: {
-    companyKeys: {
-      default: [],
-    },
-    defaultsKeys: {
-      default: [],
-    },
+    id: { default: "create" },
+    companyKeys: { default: [] },
+    defaultsKeys: { default: [] },
+    isPage: { default: true },
+    isVisiblePage: { default: null },
+    isRequiredPage: { default: null },
+    type: { default: "create" },
+    idObjEdit: { default: null },
+    isPermission: {},
+    url: { default: "/boards-rent/sell-methods" },
   },
   methods: {
+    getCustomTableFields() {
+      this.isCustom = true;
+      adminApi
+        .get(`/customTable/table-columns/boards_rent_sell_methods`)
+        .then((res) => {
+          this.fields = res.data;
+        })
+        .catch((err) => {
+          this.errorFun("Error", "Thereisanerrorinthesystem");
+        })
+        .finally(() => {
+          this.isCustom = false;
+        });
+    },
+    isVisible(fieldName) {
+      if (!this.isPage) {
+        let res = this.fields.filter((field) => {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      } else {
+        return this.isVisiblePage(fieldName);
+      }
+    },
+    isRequired(fieldName) {
+      if (!this.isPage) {
+        let res = this.fields.filter((field) => {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_required == 1 ? true : false;
+      } else {
+        return this.isRequiredPage(fieldName);
+      }
+    },
+
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
       this.edit.name = arabicValue(txt);
@@ -236,7 +282,7 @@ export default {
       this.create.name_e = englishValue(txt);
       this.edit.name_e = englishValue(txt);
     },
-    resetModalHidden() {
+    defaultData(edit = null) {
       this.create = {
         name: "",
         name_e: "",
@@ -248,38 +294,43 @@ export default {
       });
       this.errors = {};
       this.is_disabled = false;
-      this.$bvModal.hide(`create-sell-method`);
+    },
+
+    resetModalHidden() {
+      this.defaultData();
+      this.$bvModal.hide(this.id);
     },
     /**
      *  hidden Modal (create)
      */
     resetModal() {
-      this.create = {
-        name: "",
-        name_e: "",
-        calculated_percentage: 0,
-        commission_ratio: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
+      this.defaultData();
+      setTimeout(() => {
+        if (this.type != "edit") {
+          if (!this.isPage) this.getCustomTableFields();
+          this.$nextTick(() => {
+            this.$v.$reset();
+          });
+        } else {
+          if (this.idObjEdit.dataObj) {
+            let sellMethods = this.idObjEdit.dataObj;
+            this.create.name = sellMethods.name;
+            this.create.name_e = sellMethods.name_e;
+            this.create.calculated_percentage =
+              sellMethods.target_calculation_ratio;
+            this.create.commission_ratio = sellMethods.commission_ratio;
+            this.create.is_all_value = sellMethods.is_all_value;
+            this.create.is_default = sellMethods.is_default;
+            this.errors = {};
+          }
+        }
+      }, 50);
     },
     /**
      *  create countrie
      */
     resetForm() {
-      this.create = {
-        name: "",
-        name_e: "",
-        calculated_percentage: 0,
-        commission_ratio: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-      this.is_disabled = false;
+      this.defaultData();
     },
     AddSubmit() {
       if (!this.create.name) {
@@ -295,39 +346,60 @@ export default {
       } else {
         this.isLoader = true;
         this.errors = {};
+        this.is_disabled = false;
+        if (this.type != "edit") {
+          adminApi
+            .post(this.url, {
+              ...this.create,
+              target_calculation_ratio: this.create.calculated_percentage,
+              commission_ratio: this.create.commission_ratio,
+              company_id: this.$store.getters["auth/company_id"],
+            })
+            .then((res) => {
+              this.is_disabled = true;
+              if (!this.isPage) this.$emit("created");
+              else this.$emit("getDataTable");
 
-        adminApi
-          .post(`/boards-rent/sell-methods`, {
-            ...this.create,
-            target_calculation_ratio: this.create.calculated_percentage,
-            commission_ratio: this.create.commission_ratio,
-          })
-          .then((res) => {
-            this.is_disabled = true;
-            this.$emit("created");
-            setTimeout(() => {
-              Swal.fire({
-                icon: "success",
-                text: `${this.$t("general.Addedsuccessfully")}`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }, 500);
-          })
-          .catch((err) => {
-            if (err.response.data) {
-              this.errors = err.response.data.errors;
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
-            }
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
+              setTimeout(() => {
+                this.successFun("Addedsuccessfully");
+              }, 500);
+            })
+            .catch((err) => {
+              if (err.response.data) {
+                this.errors = err.response.data.errors;
+              } else {
+                this.errorFun("Error", "Thereisanerrorinthesystem");
+              }
+            })
+            .finally(() => {
+              this.isLoader = false;
+            });
+        } else {
+          adminApi
+            .put(`${this.url}/${this.idObjEdit.idEdit}`, {
+              ...this.create,
+              target_calculation_ratio: this.create.calculated_percentage,
+              commission_ratio: this.create.commission_ratio,
+              company_id: this.$store.getters["auth/company_id"],
+            })
+            .then((res) => {
+              this.$bvModal.hide(this.id);
+              this.$emit("getDataTable");
+              setTimeout(() => {
+                this.successFun("Editsuccessfully");
+              }, 500);
+            })
+            .catch((err) => {
+              if (err.response.data) {
+                this.errors = err.response.data.errors;
+              } else {
+                this.errorFun("Error", "Thereisanerrorinthesystem");
+              }
+            })
+            .finally(() => {
+              this.isLoader = false;
+            });
+        }
       }
     },
   },

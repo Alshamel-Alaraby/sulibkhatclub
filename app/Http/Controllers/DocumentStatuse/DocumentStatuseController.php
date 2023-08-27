@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DocumentStatuseController extends Controller
 {
-    public function __construct(private \App\Repositories\DocumentStatuse\DocumentStatuseInterface$modelInterface)
+    public function __construct(private \App\Repositories\DocumentStatuse\DocumentStatuseInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -80,17 +80,17 @@ class DocumentStatuseController extends Controller
     {
 
         foreach ($request->ids as $id) {
-            $model = $this->modelInterface->find($id);
-            $arr = [];
-            if ($model->hasChildren()) {
-                $arr[] = $id;
-                continue;
-            }
+            // $model = $this->modelInterface->find($id);
+            // $arr = [];
+            // if ($model->hasChildren()) {
+            //     $arr[] = $id;
+            //     continue;
+            // }
             $this->modelInterface->delete($id);
         }
-        if (count($arr) > 0) {
-            return responseJson(400, __('some items has relation cant delete'));
-        }
+        // if (count($arr) > 0) {
+        //     return responseJson(400, __('some items has relation cant delete'));
+        // }
         return responseJson(200, __('Done'));
     }
 }

@@ -28,6 +28,7 @@ class DocumentRequest extends FormRequest
             'doc_description' => ['required', 'string', 'max:500'],
             'doc_status' => ['required', 'integer'],
             'url_reference' => ['required', "url", "string", "max:200"],
+            "company_id"=>'nullable',
         ];
     }
 

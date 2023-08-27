@@ -21,7 +21,9 @@ class EquipmentResource extends JsonResource
             'parent' => new EquipmentResource($this->parent),
             'parent_id' => $this->parent_id,
             "location" => new LocationResource($this->location),
+            "location_id" => $this->location_id,
             "periodic_maintenance" => new PeriodicMaintenanceResource($this->periodicMaintenance),
+            "periodic_maintenance_id" => $this->periodic_maintenance_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

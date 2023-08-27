@@ -43,7 +43,7 @@
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create v-if="isPermission('create contract RealState') || isPermission('create contract RP')" variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -55,17 +55,17 @@
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1">
+                                        v-if="checkAll.length == 1 && (isPermission('update contract RealState') || isPermission('update contract RP'))">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && (isPermission('delete contract RealState') || isPermission('delete contract RP'))"
                                         @click.prevent="deleteScreenButton(checkAll)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && (isPermission('delete contract RealState') || isPermission('delete contract RP'))"
                                         @click.prevent="deleteScreenButton(checkAll[0])">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -728,7 +728,8 @@
                                 </thead>
                                 <tbody v-if="contracts.length > 0">
                                     <tr @click.capture="checkRow(data.id)"
-                                        @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                        @dblclick.prevent="(isPermission('update contract RealState') || isPermission('update contract RP'))?
+                                        $bvModal.show(`modal-edit-${data.id}`):false"
                                         v-for="(data, index) in contracts" :key="data.id" class="body-tr-custom">
                                         <td v-if="enabled3" class="do-not-print">
                                             <div class="form-check custom-control" style="min-height: 1.9em">
@@ -772,6 +773,7 @@
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-custom">
                                                     <a class="dropdown-item" href="#"
+                                                       v-if="isPermission('update contract RealState') || isPermission('update contract RP')"
                                                         @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -780,6 +782,7 @@
                                                         </div>
                                                     </a>
                                                     <a class="dropdown-item text-black" href="#"
+                                                       v-if="isPermission('delete contract RealState') || isPermission('delete contract RP')"
                                                         @click.prevent="deleteScreenButton(data.id)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -1397,16 +1400,16 @@ import adminApi from "../../api/adminAxios";
 import { minValue, required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../widgets/errorMessage";
-import loader from "../loader";
+import loader from "../general/loader";
 import { dynamicSortString } from "../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../helper/startDate";
-import translation from "../../helper/translation-mixin";
-import Saleman from "./saleman.vue";
-import customerGeneral from "./customerGeneral";
-import Branch from "./branch";
+import translation from "../../helper/mixin/translation-mixin";
+import Saleman from "./general/saleman.vue";
+import customerGeneral from "./general/customerGeneral";
+import Branch from "./general/branch";
 import InstallmentPlan from "./receivablePayment/installmentPlan.vue";
-import Building from "./building";
+import Building from "./realEstate/building";
 import Unit from "./realEstate/unit";
 import DatePicker from "vue2-datepicker";
 import TransactionBreak from "./receivablePayment/transactionBreak/transactionBreak";
@@ -1611,6 +1614,12 @@ export default {
         this.getData();
     },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         moveEnter(action, index, nextNumberInput) {
             if (nextNumberInput == 6 && action == "create") {
                 if (this.create.details.length == (index + 1)) {
@@ -2397,7 +2406,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    if(this.isPermission('create Customer')){
+                        l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    }
                     this.customers = l;
                 })
                 .catch((err) => {
@@ -2415,7 +2426,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    if(this.isPermission('create Branch')){
+                        l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -2433,7 +2446,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف خطة تقسيط", name_e: "Add installment plan" });
+                    if(this.isPermission('create paymentPlan RP')){
+                        l.unshift({ id: 0, name: "اضف خطة تقسيط", name_e: "Add installment plan" });
+                    }
                     this.installment_plans = l;
                 })
                 .catch((err) => {
@@ -2451,7 +2466,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف مبنى", name_e: "Add building" });
+                    if(this.isPermission('create building RealState')){
+                        l.unshift({ id: 0, name: "اضف مبنى", name_e: "Add building" });
+                    }
                     this.buildings = l;
                 })
                 .catch((err) => {
@@ -2464,6 +2481,7 @@ export default {
         },
         async getUnits(buildingId = 0, index = null) {
             if (buildingId == 0) {
+
                 this.$bvModal.show("building-create");
                 if (this.create.details[index]) {
                     this.create.details[index].building_id = null;
@@ -2477,7 +2495,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    if(this.isPermission('create units RealState')){
+                        l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    }
                     this.multUnits[index].units = l;
                 })
                 .catch((err) => {
@@ -2505,7 +2525,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    if(this.isPermission('create units RealState')){
+                        l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    }
                     this.multUnitsEdit[index].units = l;
                 })
                 .catch((err) => {
@@ -2523,7 +2545,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    if(this.isPermission('create Sales Man')){
+                        l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    }
                     this.salesmen = l;
                 })
                 .catch((err) => {

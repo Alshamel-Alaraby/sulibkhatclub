@@ -15,6 +15,7 @@ class RestartPeriod extends Model
     protected $fillable = [
         'name',
         'name_e',
+        'company_id',
     ];
 
     public function salesmenPlans()

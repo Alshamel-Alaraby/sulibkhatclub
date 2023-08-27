@@ -23,6 +23,7 @@ class CreateOpeningBalanceRequest extends FormRequest
             'opening_balances.*.credit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'opening_balances.*.local_debit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'opening_balances.*.local_credit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
+            "company_id"=>'nullable',
         ];
     }
 

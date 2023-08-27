@@ -123,15 +123,13 @@
 </template>
 
 <script>
-import Layout from "../../../views/layouts/main";
-import PageHeader from "../../Page-header";
 import Switches from "vue-switches";
 import ErrorMessage from "../../widgets/errorMessage";
-import loader from "../../loader";
+import loader from "../../general/loader";
 import {maxLength, minLength, required} from "vuelidate/lib/validators";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 export default {
@@ -242,7 +240,7 @@ export default {
             } else {
                 this.isLoader = true;
                 this.errors = {};
-                adminApi.post(`/real-estate/wallets`, this.create)
+                adminApi.post(`/real-estate/wallets`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.is_disabled = true;
                         this.$emit('created');

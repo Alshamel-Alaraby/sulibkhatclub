@@ -1,19 +1,19 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -33,6 +33,7 @@ export default {
   },
   data() {
     return {
+        fields: [],
       per_page: 50,
       search: "",
       debounce: {},
@@ -75,16 +76,32 @@ export default {
   },
   validations: {
     create: {
-      name: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      is_active: { required },
-      is_default: { required },
+      name: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
+      name_e: { required: requiredIf(function (model) {
+              return this.isRequired("name_e");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
+      is_active: { required: requiredIf(function (model) {
+              return this.isRequired("is_active");
+          }) },
+      is_default: { required: requiredIf(function (model) {
+              return this.isRequired("is_default");
+          }) },
     },
     edit: {
-      name: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(100) },
-      is_active: { required },
-      is_default: { required },
+      name: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
+      name_e: { required: requiredIf(function (model) {
+              return this.isRequired("name_e");
+          }), minLength: minLength(2), maxLength: maxLength(100) },
+      is_active: { required: requiredIf(function (model) {
+              return this.isRequired("is_active");
+          }) },
+      is_default: { required: requiredIf(function (model) {
+              return this.isRequired("is_default");
+          }) },
     },
   },
   watch: {
@@ -120,47 +137,51 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.getCustomTableFields();
     this.getData();
   },
-  // updated() {
-  //   $(function () {
-  //     $(".englishInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return true;
-  //       if (97 <= ew && ew <= 122) return true;
-  //       return false;
-  //     });
-  //     $(".arabicInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return false;
-  //       if (65 <= ew && ew <= 90) return false;
-  //       if (97 <= ew && ew <= 122) return false;
-  //       return true;
-  //     });
-  //   });
-  // },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (vm.$store.state.auth.work_flow_trees.includes('realEstate unit status') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+        next((vm) => {
+      return permissionGuard(vm, "Unit Status RealEstate", "all unit_status RealState");
     });
+
   },
   methods: {
+      isVisible(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      },
+      isRequired(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_required == 1 ? true : false;
+      },
+      getCustomTableFields() {
+          adminApi
+              .get(`/customTable/table-columns/rlst_items`)
+              .then((res) => {
+                  this.fields = res.data;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+    isPermission(item) {
+          if (this.$store.state.auth.type == 'user'){
+              return this.$store.state.auth.permissions.includes(item)
+          }
+          return true;
+    },
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
       this.edit.name = arabicValue(txt);
@@ -602,10 +623,10 @@ export default {
                   <!-- Basic dropdown -->
                   <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                     class="btn-block setting-search">
-                    <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">{{
+                    <b-form-checkbox v-if="isVisible('name')" v-model="filterSetting" value="name" class="mb-1">{{
                       getCompanyKey("unitstatus_name_ar")
                     }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="name_e" class="mb-1">{{
+                    <b-form-checkbox v-if="isVisible('name_e')" v-model="filterSetting" value="name_e" class="mb-1">{{
                       getCompanyKey("unitstatus_name_en") }}</b-form-checkbox>
                   </b-dropdown>
                   <!-- Basic dropdown -->
@@ -628,7 +649,7 @@ export default {
             <div class="row justify-content-between align-items-center mb-2 px-1">
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
-                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                <b-button v-b-modal.create variant="primary" v-if="isPermission('create unit_status RealState')" class="btn-sm mx-1 font-weight-bold">
                   {{ $t("general.Create") }}
                   <i class="fas fa-plus"></i>
                 </b-button>
@@ -640,16 +661,17 @@ export default {
                     <i class="fe-printer"></i>
                   </button>
                   <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1">
+                    v-if="checkAll.length == 1 && isPermission('update unit_status RealState')">
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length > 1" @click.prevent="deleteBranch(checkAll)">
+                  <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && isPermission('delete unit_status RealState')"
+                          @click.prevent="deleteBranch(checkAll)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!-- end mult delete  -->
                   <!--  start one delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                  <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && isPermission('delete unit_status RealState')"
                     @click.prevent="deleteBranch(checkAll[0])">
                     <i class="fas fa-trash-alt"></i>
                   </button>
@@ -672,15 +694,15 @@ export default {
                     <!-- Basic dropdown -->
                     <b-dropdown variant="primary" :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                       ref="dropdown" class="dropdown-custom-ali">
-                      <b-form-checkbox v-model="setting.name" class="mb-1">{{ getCompanyKey("unitstatus_name_ar") }}
+                      <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1">{{ getCompanyKey("unitstatus_name_ar") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
+                      <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">
                         {{ getCompanyKey("unitstatus_name_en") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.is_active" class="mb-1">
+                      <b-form-checkbox v-if="isVisible('is_active')" v-model="setting.is_active" class="mb-1">
                         {{ getCompanyKey("unitstatus_status") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.is_default" class="mb-1">
+                      <b-form-checkbox v-if="isVisible('is_default')" v-model="setting.is_default" class="mb-1">
                         {{ getCompanyKey("unitstatus_default") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
@@ -748,11 +770,11 @@ export default {
                   </b-button>
                 </div>
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-12" v-if="isVisible('name')">
                     <div class="form-group">
                       <label for="field-1" class="control-label">
                         {{ getCompanyKey("unitstatus_name_ar") }}
-                        <span class="text-danger">*</span>
+                        <span v-if="isRequired('name')" class="text-danger">*</span>
                       </label>
                       <div dir="rtl">
                         <input @keyup="arabicValue(create.name)" type="text" class="form-control" data-create="1"
@@ -777,11 +799,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div class="col-md-12">
+                  <div class="col-md-12" v-if="isVisible('name_e')">
                     <div class="form-group">
                       <label for="field-2" class="control-label">
                         {{ getCompanyKey("unitstatus_name_en") }}
-                        <span class="text-danger">*</span>
+                        <span v-if="isRequired('name_e')" class="text-danger">*</span>
                       </label>
                       <div dir="ltr">
                         <input @keyup="englishValue(create.name_e)" type="text" class="form-control englishInput"
@@ -807,11 +829,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-6" v-if="isVisible('is_default')">
                     <div class="form-group">
                       <label class="mr-2">
                         {{ getCompanyKey("unitstatus_default") }}
-                        <span class="text-danger">*</span>
+                        <span v-if="isRequired('is_default')" class="text-danger">*</span>
                       </label>
                       <b-form-group :class="{
                         'is-invalid': $v.create.is_default.$error || errors.is_default,
@@ -828,11 +850,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-6" v-if="isVisible('is_default')">
                     <div class="form-group">
                       <label class="mr-2">
                         {{ getCompanyKey("unitstatus_status") }}
-                        <span class="text-danger">*</span>
+                        <span v-if="isRequired('is_active')" class="text-danger">*</span>
                       </label>
                       <b-form-group :class="{
                         'is-invalid': $v.create.is_active.$error || errors.is_active,
@@ -869,7 +891,7 @@ export default {
                           style="width: 17px; height: 17px" />
                       </div>
                     </th>
-                    <th v-if="setting.name">
+                    <th v-if="setting.name && isVisible('name')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("unitstatus_name_ar") }}</span>
                         <div class="arrow-sort">
@@ -878,7 +900,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e">
+                    <th v-if="setting.name_e && isVisible('name_e')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("unitstatus_name_en") }}</span>
                         <div class="arrow-sort">
@@ -887,7 +909,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.is_active">
+                    <th v-if="setting.is_active && isVisible('is_active')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("unitstatus_status") }}</span>
                         <div class="arrow-sort">
@@ -896,7 +918,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.is_default">
+                    <th v-if="setting.is_default && isVisible('is_default')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("unitstatus_default") }}</span>
                         <div class="arrow-sort">
@@ -912,7 +934,9 @@ export default {
                   </tr>
                 </thead>
                 <tbody v-if="unitStatuses.length > 0">
-                  <tr @click.capture="checkRow(data.id)" @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                  <tr @click.capture="checkRow(data.id)"
+                      @dblclick.prevent="isPermission('update unit_status RealState')?
+                      $bvModal.show(`modal-edit-${data.id}`):false"
                     v-for="(data, index) in unitStatuses" :key="data.id" class="body-tr-custom">
                     <td v-if="enabled3" class="do-not-print">
                       <div class="form-check custom-control" style="min-height: 1.9em">
@@ -920,13 +944,13 @@ export default {
                           v-model="checkAll" />
                       </div>
                     </td>
-                    <td v-if="setting.name">
+                    <td v-if="setting.name && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e">
+                    <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
-                    <td v-if="setting.is_active">
+                    <td v-if="setting.is_active && isVisible('is_active')">
                       <span :class="[
                           data.is_active == 'active' ? 'text-success' : 'text-danger',
                           'badge',
@@ -938,7 +962,7 @@ export default {
                         }}
                       </span>
                     </td>
-                    <td v-if="setting.is_default">
+                    <td v-if="setting.is_default && isVisible('is_default')">
                       <span :class="[
                             data.is_default == 1 ? 'text-success' : 'text-danger',
                             'badge',
@@ -958,13 +982,13 @@ export default {
                           <i class="fas fa-angle-down"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
-                          <a class="dropdown-item" href="#" @click="$bvModal.show(`modal-edit-${data.id}`)">
+                          <a class="dropdown-item" v-if="isPermission('update unit_status RealState')" href="#" @click="$bvModal.show(`modal-edit-${data.id}`)">
                             <div class="d-flex justify-content-between align-items-center text-black">
                               <span>{{ $t("general.edit") }}</span>
                               <i class="mdi mdi-square-edit-outline text-info"></i>
                             </div>
                           </a>
-                          <a class="dropdown-item text-black" href="#" @click.prevent="deleteBranch(data.id)">
+                          <a class="dropdown-item text-black" v-if="isPermission('delete unit_status RealState')" href="#" @click.prevent="deleteBranch(data.id)">
                             <div class="d-flex justify-content-between align-items-center text-black">
                               <span>{{ $t("general.delete") }}</span>
                               <i class="fas fa-times text-danger"></i>
@@ -996,11 +1020,11 @@ export default {
                             </b-button>
                           </div>
                           <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12" v-if="isVisible('name')">
                               <div class="form-group">
                                 <label for="edit-1" class="control-label">
                                   {{ getCompanyKey("unitstatus_name_ar") }}
-                                  <span class="text-danger">*</span>
+                                  <span v-if="isRequired('name')" class="text-danger">*</span>
                                 </label>
                                 <div dir="rtl">
                                   <input @keyup="arabicValue(edit.name)" type="text" class="form-control" data-edit="1"
@@ -1025,11 +1049,11 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" v-if="isVisible('name_e')">
                               <div class="form-group">
                                 <label for="edit-2" class="control-label">
                                   {{ getCompanyKey("unitstatus_name_en") }}
-                                  <span class="text-danger">*</span>
+                                  <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                 </label>
                                 <div dir="ltr">
                                   <input @keyup="englishValue(edit.name_e)" type="text" class="form-control englishInput"
@@ -1057,11 +1081,11 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" v-if="isVisible('is_default')">
                               <div class="form-group">
                                 <label class="mr-2">
                                   {{ getCompanyKey("unitstatus_default") }}
-                                  <span class="text-danger">*</span>
+                                  <span v-if="isRequired('is_default')" class="text-danger">*</span>
                                 </label>
                                 <b-form-group :class="{
                                   'is-invalid': $v.edit.is_default.$error || errors.is_default,
@@ -1079,11 +1103,11 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" v-if="isVisible('is_active')">
                               <div class="form-group">
                                 <label class="mr-2">
                                   {{ getCompanyKey("unitstatus_status") }}
-                                  <span class="text-danger">*</span>
+                                  <span v-if="isRequired('is_active')" class="text-danger">*</span>
                                 </label>
                                 <b-form-group :class="{
                                   'is-invalid':
@@ -1112,7 +1136,7 @@ export default {
                         data-toggle="tooltip" :data-placement="$i18n.locale == 'en' ? 'left' : 'right'" :title="Tooltip">
                         <i class="fe-info" style="font-size: 22px"></i>
                       </button>
-                    </td v-if="enabled3" class="do-not-print">
+                    </td>
                   </tr>
                 </tbody>
                 <tbody v-else>

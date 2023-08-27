@@ -17,4 +17,6 @@ interface GeneralCustomerRepositoryInterface
 
     public function delete($id);
 
+    public function checkSupplier($request);
+
 }

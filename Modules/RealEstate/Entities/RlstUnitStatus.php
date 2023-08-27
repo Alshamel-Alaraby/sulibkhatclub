@@ -17,6 +17,7 @@ class RlstUnitStatus extends Model
         'name_e',
         'is_default',
         'is_active',
+        'company_id',
     ];
 
     protected $casts = [
@@ -38,6 +39,27 @@ class RlstUnitStatus extends Model
     public function units()
     {
         return $this->hasMany(RlstUnit::class,"unit_status_id");
+    }
+
+    // public function hasChildren()
+    // {
+    //     return $this->units()->count() > 0;
+
+    // }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->units()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'units',
+                'count' => $this->units()->count(),
+                'ids' => $this->units()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Salesman;
 
 use App\Http\Requests\Salesman\SalesmanRequest;
+use App\Http\Resources\Salesman\GetNameSalesmanResource;
 use App\Http\Resources\Salesman\SalesmanResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -94,4 +95,14 @@ class SalesmanController extends Controller
         }
         return responseJson(200, __('Done'));
     }
+
+
+    public function getName(Request $request)
+    {
+
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', GetNameSalesmanResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
 }

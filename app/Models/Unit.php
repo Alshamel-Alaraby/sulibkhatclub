@@ -16,9 +16,29 @@ class Unit extends Model
     protected $table = 'general_units';
     protected $fillable = ['name', 'name_e', 'is_active','company_id'];
 
-    protected $casts = [
-        'is_active' => '\App\Enums\IsActive',
-    ];
+    // protected $casts = [
+    //     'is_active' => '\App\Enums\IsActive',
+    // ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'unit_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
 
     public function tapActivity(Activity $activity, string $eventName)
     {

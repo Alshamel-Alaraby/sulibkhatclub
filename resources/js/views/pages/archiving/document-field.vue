@@ -1,16 +1,17 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required, requiredIf, minLength, maxLength } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import Multiselect from "vue-multiselect";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import propertyTree from "../../../components/create/property-tree";
+import translation from "../../../helper/mixin/translation-mixin";
+import propertyTree from "../../../components/create/general/property-tree";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -30,26 +31,12 @@ export default {
     propertyTree,
   },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("archiving-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
 
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("document field") ||
-        vm.$store.state.auth.work_flow_trees.includes("archiving") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+    next((vm) => {
+      return permissionGuard(vm, "Archiving Document Field", "all Store");
     });
+
+
   },
   // updated() {
   //   $(".englishInput").keypress(function (event) {
@@ -117,6 +104,7 @@ export default {
         field_characters: true,
       }, //Table columns
       filterSetting: ["name", "name_e"],
+      company_id:null,
       errors: {}, //Server Side Validation Errors
       isCheckAll: false,
       checkAll: [],
@@ -202,6 +190,7 @@ export default {
     },
   },
   mounted() {
+    this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
   methods: {
@@ -500,6 +489,7 @@ export default {
             data_type_id: this.create.type,
             type: undefined,
             is_reference: this.create.is_reference == "1" ? 1 : 0,
+              company_id: this.company_id
           })
           .then((res) => {
             this.getData();
@@ -563,6 +553,7 @@ export default {
             lookup_table,
             tree_property_id,
             field_characters,
+              company_id: this.company_id
           })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);

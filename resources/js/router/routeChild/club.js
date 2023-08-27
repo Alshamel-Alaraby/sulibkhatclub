@@ -1,5 +1,6 @@
 import auth from "../../middleware/auth";
 import checkAuth from "../../middleware/auth-check";
+import permissionGuard from "../../helper/permission";
 
 export default [
     {
@@ -84,7 +85,7 @@ export default [
 
     },
     {
-        path: '/dashboard/club/members-requests',
+        path: '/dashboard/club/members-accept-reject',
         name: 'club-member',
         meta: {
             middleware: [auth, checkAuth]
@@ -114,5 +115,22 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/change-sponsor'),
+    },
+    {
+        path: '/dashboard/club/member-reject',
+        name: 'member reject',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/member-reject'),
+    },
+    {
+        path: '/dashboard/club/postal-report',
+        name: 'club-financial-status',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/poster-report'),
+
     },
 ];

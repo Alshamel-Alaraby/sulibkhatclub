@@ -28,7 +28,9 @@ class ToggleFavouriteRequest extends FormRequest
         return [
             "arch_archive_file_id" => "required|exists:arch_archive_files,id",
             "user_id" => "nullable|exists:general_users,id",
-            "type" => "required|in:admin,user"
+            "type" => "required|in:admin,user",
+            "company_id"=>'nullable',
+
         ];
     }
 

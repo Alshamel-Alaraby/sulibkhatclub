@@ -14,6 +14,7 @@ class Depertment extends Model
     protected $table = 'general_departments';
 
     protected $fillable = [
+        'id',
         'name',
         'name_e',
         'supervisors',

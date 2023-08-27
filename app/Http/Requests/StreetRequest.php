@@ -28,6 +28,7 @@ class StreetRequest extends FormRequest
             'name_e' => 'required|string|max:255',
             'avenue_id' => 'required|integer|exists:general_avenues,id',
             'is_active' => 'required|string|in:active,inactive',
+            "company_id"=>'nullable',
         ];
     }
 }

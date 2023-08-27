@@ -23,8 +23,11 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
         }
-        if ($request->national_id) {
-            $models->where('national_id', $request->national_id);
+        if ($request->financial_status_id) {
+            $models->where('financial_status_id', $request->financial_status_id);
+        }
+        if ($request->member_type_id) {
+            $models->where('member_type_id', $request->member_type_id);
         }
 
         if ($request->member_id){
@@ -185,6 +188,91 @@ class CmMemberRepository implements CmMemberInterface
                 }
             }
         });
+    }
+
+    public function reportCmMember($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->cm_permissions_id == 1) {
+            $models->where('auto_member_type_id', 1);
+        }
+        if ($request->cm_permissions_id == 2) {
+            $models->whereIn('auto_member_type_id', [1,2]);
+        }
+
+        if ($request->cm_permissions_id == 3){
+            $models->whereIn('auto_member_type_id', [1,2,3]);
+        }
+        if ($request->cm_permissions_id == "0"){
+            $models->where('auto_member_type_id', 0);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
+    }
+
+    public function updateCmMember()
+    {
+        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
+        set_time_limit(3600);
+        ini_set('memory_limit', -1);
+        $chunks =  collect( $this->model->whereNull('auto_member_type_id')->get())->chunk(1000);
+        foreach ($chunks as $chunk){
+            foreach ($chunk as  $key => $model){
+
+                if ($model->status_count_3 == 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 == 'yes' ){
+                    $model->update(['auto_member_type_id' => 3]);
+                }
+                if ($model->status_count_3 == 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 == 'yes' ){
+                    $model->update(['auto_member_type_id' => 3]);
+                }
+                if ($model->status_count_3 == 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 != 'yes' ){
+                    $model->update(['auto_member_type_id' => 3]);
+                }
+                if ($model->status_count_3 != 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 == 'yes' ){
+                    $model->update(['auto_member_type_id' => 2]);
+                }
+                if ($model->status_count_3 != 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 != 'yes' ){
+                    $model->update(['auto_member_type_id' => 2]);
+                }
+                if ($model->status_count_3 != 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 == 'yes' ){
+                    $model->update(['auto_member_type_id' => 1]);
+                }
+
+                if ($model->status_count_1 != 'yes' &&  $model->status_count_2 != 'yes' && $model->status_count_3 != 'yes' ){
+                    $model->update(['auto_member_type_id' => 0]);
+                }
+            }
+
+        }
+        return 'yes';
+
+
+//        $models = $this->model->all();
+//
+//
+//
+//        foreach ($models as $model){
+//            if ($model->status_count_1 == 'yes' ){
+//                $model->update(['test' => 1]);
+//            }
+//            if ($model->status_count_2 == 'yes' ){
+//                $model->update(['test' => 2]);
+//            }
+//            if ($model->status_count_1 == 'yes' ){
+//                $model->update(['test' => 3]);
+//            }
+//            if ($model->status_count_1 != 'yes' &&  $model->status_count_2 != 'yes' && $model->status_count_3 != 'yes' ){
+//                $model->update(['test' => 0]);
+//            }
+//        }
+//
+//        return 'yes';
     }
 
 }

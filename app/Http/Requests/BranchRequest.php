@@ -25,6 +25,7 @@ class BranchRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'nullable',
             "name" => "nullable|unique:general_branches,name,". ($this->method() == 'PUT' ?  $this->branch : ''),
             "name_e" => "nullable|unique:general_branches,name_e,". ($this->method() == 'PUT' ?  $this->branch : ''),
             "country_id" => "nullable|exists:general_countries,id",

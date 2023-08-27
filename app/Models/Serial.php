@@ -20,10 +20,9 @@ class Serial extends Model
         'restart_period_id',
         'company_id',
         'document_id',
-        'is_default',
         "branch_id",
         "name",
-        "name_e"
+        "name_e",
     ];
     // protected $casts = [
     //     'is_default' => 'App\Enums\IsDefault',
@@ -33,8 +32,6 @@ class Serial extends Model
     // {
     //     return $this->is_default == 1 ? 'Default' : 'Non Default';
     // }
-
-
 
     protected $appends = [
         'has_child',
@@ -57,28 +54,54 @@ class Serial extends Model
 
     public function invoices()
     {
-        return $this->hasMany(RlstInvoice::class,'serial_id');
+        return $this->hasMany(RlstInvoice::class, 'serial_id');
     }
+
+    // public function hasChildren()
+    // {
+    //     return $this->orders()->count() > 0 ||
+    //     $this->invoices()->count() > 0;
+    // }
 
     public function hasChildren()
     {
-        return $this->orders()->count() > 0 || $this->invoices()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->orders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orders',
+                'count' => $this->orders()->count(),
+                'ids' => $this->orders()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->invoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'invoices',
+                'count' => $this->invoices()->count(),
+                'ids' => $this->invoices()->pluck('id')->toArray()
+            ];
+        }
+
+
+
+        return $relationsWithChildren;
     }
 
-    public function getHasChildAttribute(){
-        if ($this->invoices()->count() > 0){
+
+
+
+    public function getHasChildAttribute()
+    {
+        if ($this->invoices()->count() > 0) {
             return 1;
         }
-        return  0;
+        return 0;
     }
-
 
     public function restartPeriod()
     {
         return $this->belongsTo(RestartPeriod::class);
     }
-
-
 
     public function getActivitylogOptions(): LogOptions
     {

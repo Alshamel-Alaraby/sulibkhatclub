@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'is_active' => $this->is_active,
             "email" => $this->email,
             "employee" => new EmployeeResource($this->employee),
-            "roles" => RoleResource::collection($this->roles),
+            "role" => $this->roles,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,

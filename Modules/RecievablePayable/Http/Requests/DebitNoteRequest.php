@@ -16,8 +16,8 @@ class DebitNoteRequest extends FormRequest
         return [
             'date' => 'required|date',
             'rate' => 'required|regex:/^\d+(\.\d{2,2})?$/',
-            'currency_id' => 'required|integer',
-            'customer_id' => 'required|integer',
+            'currency_id' => 'required|integer|exists:general_currencies,id',
+            'customer_id' => 'required|integer|exists:general_customers,id',
             'debit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'credit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'local_debit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',

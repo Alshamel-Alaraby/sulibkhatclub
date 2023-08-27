@@ -16,6 +16,7 @@ class Package extends Model
         'name_e',
         'code',
         'price',
+        'company_id',
     ];
     protected $table = "boards_rent_packages";
 

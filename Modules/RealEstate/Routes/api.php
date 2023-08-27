@@ -109,7 +109,6 @@ Route::prefix('real-estate')->group(function () {
         Route::post("/bulk-delete", "RlstContractController@bulkDelete");
         Route::delete('/{id}', 'RlstContractController@delete')->name('rlst-contracts.delete');
 
-
     });
 
     //unit contracts
@@ -127,9 +126,9 @@ Route::prefix('real-estate')->group(function () {
     Route::group(['prefix' => 'units'], function () {
         Route::get('/general-filter', 'RlstUnitController@generalFilter');
 
-        Route::get('/owner-wallet/{wallet_id}','RlstUnitController@getOwnerByWalletId');
+        Route::get('/owner-wallet/{wallet_id}', 'RlstUnitController@getOwnerByWalletId');
 
-        Route::get('/building-wallet/{wallet_id}','RlstUnitController@getBuildingByWalletId');
+        Route::get('/building-wallet/{wallet_id}', 'RlstUnitController@getBuildingByWalletId');
 
         Route::get('/', 'RlstUnitController@all')->name('rlst-units.all');
         Route::get('/logs/{id}', 'RlstUnitController@logs')->name('rlst-units.logs');
@@ -233,6 +232,55 @@ Route::prefix('real-estate')->group(function () {
         Route::post("/bulk-delete", "RlstCategoriesItemController@bulkDelete");
 
         Route::delete('/{category_item_id}/{item_id}', 'RlstCategoriesItemController@delete')->name('rlst-Category-items.delete');
+    });
+
+    // Unit Type
+    Route::group(['prefix' => 'unit-type'], function () {
+        Route::get('/', 'RlstUnitTypeController@all')->name('rlst-unit-type.all');
+        Route::post('/', 'RlstUnitTypeController@create')->name('rlst-unit-type.create');
+        Route::put('/{id}', 'RlstUnitTypeController@update')->name('rlst-unit-type.update');
+        Route::get('/logs/{id}', 'RlstUnitTypeController@logs')->name('rlst-unit-type.logs');
+        Route::get('/{id}', 'RlstUnitTypeController@find')->name('rlst-unit-type.find');
+        Route::post("/bulk-delete", "RlstUnitTypeController@bulkDelete");
+        Route::delete('/{id}', 'RlstUnitTypeController@delete')->name('rlst-unit-type.delete');
+    });
+
+    // Unit Type
+    Route::group(['prefix' => 'finishing'], function () {
+        Route::get('/', 'RlstFinishingController@all')->name('rlst-finishing.all');
+        Route::post('/', 'RlstFinishingController@create')->name('rlst-finishing.create');
+        Route::put('/{id}', 'RlstFinishingController@update')->name('rlst-finishing.update');
+        Route::get('/logs/{id}', 'RlstFinishingController@logs')->name('rlst-finishing.logs');
+        Route::get('/{id}', 'RlstFinishingController@find')->name('rlst-finishing.find');
+        Route::post("/bulk-delete", "RlstFinishingController@bulkDelete");
+        Route::delete('/{id}', 'RlstFinishingController@delete')->name('rlst-finishing.delete');
+    });
+
+    // view
+    Route::group(['prefix' => 'view'], function () {
+        Route::get('/', 'RlstViewController@all')->name('rlst-view.all');
+        Route::post('/', 'RlstViewController@create')->name('rlst-view.create');
+        Route::put('/{id}', 'RlstViewController@update')->name('rlst-view.update');
+        Route::get('/logs/{id}', 'RlstViewController@logs')->name('rlst-view.logs');
+        Route::get('/{id}', 'RlstViewController@find')->name('rlst-view.find');
+        Route::post("/bulk-delete", "RlstViewController@bulkDelete");
+        Route::delete('/{id}', 'RlstViewController@delete')->name('rlst-view.delete');
+    });
+
+    //customTable
+    Route::group(['prefix' => 'CustomTable'], function () {
+        Route::controller(\Modules\RealEstate\Http\Controllers\RealestateCustomTableController::class)->group(function () {
+            Route::get('/seeder', 'seeder');
+            Route::get('/', 'all')->name('customTable.index');
+            Route::get('/table-columns/{tableName}', 'getCustomTableFields');
+            Route::get('logs/{id}', 'logs')->name('customTable.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('customTable.create');
+            Route::put('/update', 'update')->name('customTable.update');
+            Route::delete('/{id}', 'delete')->name('customTable.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+
+        });
     });
 
 });

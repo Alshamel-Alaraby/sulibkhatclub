@@ -31,6 +31,11 @@ class BankAccount extends Model implements HasMedia
         return $this->belongsTo(Bank::class);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class,'emp_id');
+    }
+
     public function rlstCustomers()
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstCustomer::class,"bank_account_id");
@@ -40,6 +45,36 @@ class BankAccount extends Model implements HasMedia
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstOwner::class,"bank_account_id");
     }
+
+    // public function hasChildren()
+    // {
+    //     return $this->rlstCustomers()->count() > 0 ||
+    //     $this->rlstOwners()->count() > 0 ;
+    // }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->rlstCustomers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'rlstCustomers',
+                'count' => $this->rlstCustomers()->count(),
+                'ids' => $this->rlstCustomers()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->rlstOwners()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'rlstOwners',
+                'count' => $this->rlstOwners()->count(),
+                'ids' => $this->rlstOwners()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

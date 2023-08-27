@@ -2,6 +2,7 @@
 
 use App\Models\FinancialYear;
 use App\Models\Serial;
+use Carbon\Carbon;
 
 // function generalSerial($model, $type)
 // {
@@ -26,6 +27,7 @@ use App\Models\Serial;
 // }
 function generalSerial($model, $type = "")
 {
+    $date = new Carbon($model->date);
     $data = [];
     if ($model->branch) {
 
@@ -33,32 +35,32 @@ function generalSerial($model, $type = "")
 
         $count = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial->id])->get()->count();
 
+
         if ($count == 1) {
 
             $start_number = (int) $serial->start_no;
-            $data['prefix'] = now()->format('y'). '-' .$model->branch->id . '-' . $model->document_id . '-' . $serial->perfix  . '-' . $start_number;
+            $data['prefix'] = $date->format('y') . '-' . $model->branch->id . '-' . $model->document_id . '-' . $serial->perfix . '-' . $start_number;
             $data['serial_number'] = $start_number;
 
         } else {
 
-            $financial_year = FinancialYear::whereYear('start_date', now()->format('Y'))->first();
+//            $financial_year = FinancialYear::whereYear('start_date', now()->format('Y'))->first();
+//
+//            $end_date = $financial_year->end_date->format('Y');
 
-            $end_date = $financial_year->end_date->format('Y');
-
-            if ($serial->restart_period_id == 5 && $serial->created_at->format('Y') == $end_date) {
+//            if ($serial->restart_period_id == 5) {
 
                 $last_serial_number = $model->where(['document_id' => $model->document_id, 'serial_id' => $serial->id])->latest('id')->skip(1)->first();
-
                 $new_serial_number = (int) $last_serial_number->serial_number + 1;
 
-                $data['prefix'] = now()->format('y'). '-' .$model->branch->id . '-' . $model->document_id . '-' . $serial->perfix  . '-' . $new_serial_number;
+                $data['prefix'] = $date->format('y') . '-' . $model->branch->id . '-' . $model->document_id . '-' . $serial->perfix . '-' . $new_serial_number;
                 $data['serial_number'] = $new_serial_number;
-            } else {
-
-                $start_number = (int) $serial->start_no;
-                $data['prefix'] = now()->format('y'). '-' .$model->branch->id . '-' . $model->document_id . '-' . $serial->perfix  . '-' . $start_number;
-                $data['serial_number'] = $start_number;
-            }
+//            } else {
+//
+//                $start_number = (int) $serial->start_no;
+//                $data['prefix'] = $date->format('y') . '-' . $model->branch->id . '-' . $model->document_id . '-' . $serial->perfix . '-' . $start_number;
+//                $data['serial_number'] = $start_number;
+//            }
 
         }
         return $data;
@@ -106,12 +108,11 @@ function generalSerialWithIdCreate($model, $serial_id)
     return $data;
 }
 
-
 function generalCheckDateModelFinancialYear($date)
 {
-    $FinancialYear = FinancialYear::whereDate('start_date','<=', $date)->whereDate('end_date','>=', $date)->first();
-        if ($FinancialYear):
-            return 'true';
-        endif;
-    return "false" ;
+    $FinancialYear = FinancialYear::whereDate('start_date', '<=', $date)->whereDate('end_date', '>=', $date)->where('is_active', 1)->first();
+    if ($FinancialYear):
+        return 'true';
+    endif;
+    return "false";
 }

@@ -1,6 +1,8 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import permissionGuard from "../../../helper/permission";
+
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
@@ -13,18 +15,16 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-import Templates from "../email/templates.vue";
 
 /**
  * Advanced Table component
@@ -42,7 +42,6 @@ export default {
     Switches,
     ErrorMessage,
     loader,
-    Templates,
   },
   data() {
     return {
@@ -151,18 +150,12 @@ export default {
     this.getSales();
     this.getUnits();
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     if (
-  //       vm.$store.state.auth.work_flow_trees.includes("branch") ||
-  //       vm.$store.state.auth.user.type == "super_admin"
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return vm.$router.push({ name: "home" });
-  //     }
-  //   });
-  // },
+    beforeRouteEnter(to, from, next) {
+          next((vm) => {
+      return permissionGuard(vm, "Admin Report", "all sold_Unit RealState");
+    });
+
+     },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);
@@ -256,7 +249,7 @@ export default {
         this.current_page
       ) {
         this.isLoader = true;
-        
+
         this.from_date = this.from_date ? this.from_date : this.to_date;
         this.to_date = this.to_date ? this.to_date : this.from_date;
         this.from_price = this.from_price ? this.from_price : this.to_price;
@@ -1277,18 +1270,18 @@ export default {
                     <td v-if="setting.salesman">
                       <template v-if="data.salesman">
                         {{
-                          $i18n.locale == "ar"
+                              data.salesman?$i18n.locale == "ar"
                             ? data.salesman.name
-                            : nameata.salesman.name_e
+                            : data.salesman.name_e: ''
                         }}
                       </template>
                     </td>
                     <td v-if="setting.customer">
                       <template v-if="data.customer">
                         {{
-                          $i18n.locale == "ar"
+                              data.customer? $i18n.locale == "ar"
                             ? data.customer.name
-                            : data.customer.name_e
+                            : data.customer.name_e: ''
                         }}
                       </template>
                     </td>
@@ -1305,27 +1298,27 @@ export default {
                     <td v-if="setting.branch">
                       <template v-if="data.branch">
                         {{
-                          $i18n.locale == "ar"
+                          data.branch?$i18n.locale == "ar"
                             ? data.branch.name
-                            : data.branch.name_e
+                            : data.branch.name_e: ''
                         }}
                       </template>
                     </td>
                     <td v-if="setting.document">
                       <template v-if="data.document">
                         {{
-                          $i18n.locale == "ar"
+                         data.document?$i18n.locale == "ar"
                             ? data.document.name
-                            : data.document.name_e
+                            : data.document.name_e: ''
                         }}
                       </template>
                     </td>
                     <td v-if="setting.unit">
                       <template v-if="data.unit">
                         {{
-                          $i18n.locale == "ar"
+                              data.unit?$i18n.locale == "ar"
                             ? data.unit.name
-                            : data.unit.name_e
+                            : data.unit.name_e: ''
                         }}
                       </template>
                     </td>
@@ -1342,9 +1335,9 @@ export default {
                     <td v-if="setting.building">
                       <template v-if="data.building">
                         {{
-                          $i18n.locale == "ar"
+                              data.building ?$i18n.locale == "ar"
                             ? data.building.name
-                            : data.building.name_e
+                            : data.building.name_e: ''
                         }}
                       </template>
                     </td>
@@ -1361,9 +1354,9 @@ export default {
                     <td v-if="setting.city">
                       <template v-if="data.city">
                         {{
-                          $i18n.locale == "ar"
+                              data.city?$i18n.locale == "ar"
                             ? data.city.name
-                            : data.city.name_e
+                            : data.city.name_e: ''
                         }}
                       </template>
                     </td>

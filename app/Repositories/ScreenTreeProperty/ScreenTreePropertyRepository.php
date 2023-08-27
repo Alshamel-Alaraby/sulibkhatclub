@@ -11,7 +11,7 @@ class ScreenTreePropertyRepository implements ScreenTreePropertyRepositoryInterf
     private $model;
     private $setting;
 
-    public function __construct(\App\Models\ScreenTreeProperty$model, UserSettingScreen $setting)
+    public function __construct(\App\Models\ScreenTreeProperty $model, UserSettingScreen $setting)
     {
         $this->model = $model;
         $this->setting = $setting;

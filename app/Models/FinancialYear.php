@@ -23,10 +23,10 @@ class FinancialYear extends Model
         'is_active'
     ];
 
-    protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-    ];
+//    protected $casts = [
+//        'start_date' => 'date',
+//        'end_date' => 'date',
+//    ];
 
     // public function getIsActive()
     // {

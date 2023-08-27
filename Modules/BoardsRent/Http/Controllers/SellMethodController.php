@@ -41,6 +41,7 @@ class SellMethodController extends Controller
 
     public function create(SellMethodRequest $request)
     {
+        checkIsDefaultGeneral($request['is_default'],$this->model);
         $model = $this->model->create($request->validated());
         $model->refresh();
 
@@ -54,7 +55,7 @@ class SellMethodController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
-
+        checkIsDefaultGeneral($request['is_default'],$this->model);
         $model->update($request->validated());
         $model->refresh();
 

@@ -21,8 +21,11 @@ class RequestTypeResource extends JsonResource
             'start_from' => $this->start_from,
             'end_date' => $this->end_date,
             'amount' => $this->amount,
+            'from_hour' => $this->from_hour,
+            'to_hour' => $this->to_hour,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'managers' => $this->employees
 
         ];
     }

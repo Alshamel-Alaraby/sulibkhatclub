@@ -1,18 +1,19 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import outerAxios from "../../../api/outerAxios";
 import { required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
-import Building from "../../../components/create/building";
+import loader from "../../../components/general/loader";
+import Building from "../../../components/create/realEstate/building";
 import Wallet from "../../../components/create/wallet";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -22,25 +23,6 @@ export default {
     title: "Building wallet",
     meta: [{ name: "description", content: "Building wallet" }],
   },
-    beforeRouteEnter(to, from, next) {
-        next((vm) => {
-
-                    if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-            if (vm.$store.state.auth.work_flow_trees.includes('building wallet')  || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
-    },
   mixins: [translation],
   components: {
     Layout,
@@ -51,6 +33,13 @@ export default {
     Building,
     Wallet,
   },
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+      return permissionGuard(vm, "Building Wallet", "all building-wallet RealState");
+    });
+
+
+    },
   data() {
     return {
       per_page: 50,
@@ -143,6 +132,12 @@ export default {
     this.getData();
   },
   methods: {
+      isPermission(item) {
+          if (this.$store.state.auth.type == 'user'){
+              return this.$store.state.auth.permissions.includes(item)
+          }
+          return true;
+      },
     showBuildingModal() {
       if (this.create.building_id == 0) {
         this.$bvModal.show("building-create");
@@ -402,6 +397,7 @@ export default {
           .post(`/real-estate/building-wallet`, {
             ...this.create,
             bu_ty: this.create.bu_ty == "active" ? 1 : 2,
+              company_id: this.$store.getters["auth/company_id"]
           })
           .then((res) => {
             this.getData();
@@ -485,7 +481,9 @@ export default {
         .then((res) => {
           this.isLoader = false;
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+          if(this.isPermission('create building RealState')){
+              l.unshift({ id: 0, name: "اضافة مبنى", name_e: "Add building" });
+          }
           this.buildings = l;
         })
         .catch((err) => {
@@ -504,7 +502,9 @@ export default {
         .then((res) => {
           this.isLoader = false;
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة محفظة", name_e: "Add wallet" });
+            if(this.isPermission('create wallet RealState')){
+                l.unshift({ id: 0, name: "اضافة محفظة", name_e: "Add wallet" });
+            }
           this.wallets = l;
         })
         .catch((err) => {
@@ -658,6 +658,7 @@ export default {
             <div class="row justify-content-between align-items-center mb-2 px-1">
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <b-button
+                    v-if="isPermission('create building-wallet RealState')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -675,14 +676,14 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('update building-wallet RealState')"
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="checkAll.length > 1 && isPermission('delete building-wallet RealState')"
                     @click.prevent="deleteScreenButton(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -691,7 +692,7 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('delete building-wallet RealState')"
                     @click.prevent="deleteScreenButton(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1030,7 +1031,8 @@ export default {
                 <tbody v-if="buildingWallets.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="isPermission('update building-wallet RealState')?
+                    $bvModal.show(`modal-edit-${data.id}`):false"
                     v-for="(data, index) in buildingWallets"
                     :key="data.id"
                     class="body-tr-custom"
@@ -1080,6 +1082,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                              v-if="isPermission('update building-wallet RealState')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -1092,6 +1095,7 @@ export default {
                             </div>
                           </a>
                           <a
+                              v-if="isPermission('delete building-wallet RealState')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteScreenButton(data.id)"

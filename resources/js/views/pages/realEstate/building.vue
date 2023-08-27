@@ -1,26 +1,30 @@
 <script>
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
-  required,
-  minLength,
-  maxLength,
-  integer,
-  decimal,
-  numeric,
+    required,
+    minLength,
+    maxLength,
+    integer,
+    decimal,
+    numeric, requiredIf,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
-import { dynamicSortNumber, dynamicSortString } from "../../../helper/tableSort";
+import loader from "../../../components/general/loader";
+import {
+  dynamicSortNumber,
+  dynamicSortString,
+} from "../../../helper/tableSort";
 import { formatDateOnly } from "../../../helper/startDate";
-import Country from "../../../components/country";
-import Avenue from "../../../components/create/avenue";
-import City from "../../../components/city";
+import Country from "../../../components/create/general/country";
+import Avenue from "../../../components/create/general/avenue";
+import City from "../../../components/create/general/city";
 import Multiselect from "vue-multiselect";
 /**
  * Advanced Table component
@@ -34,28 +38,6 @@ export default {
     meta: [{ name: "description", content: "Buildings" }],
   },
   mixins: [translation],
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("building") ||
-        vm.$store.state.auth.work_flow_trees.includes("real estate") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
-    });
-  },
   components: {
     Layout,
     PageHeader,
@@ -67,8 +49,16 @@ export default {
     Avenue,
     Multiselect,
   },
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+      return permissionGuard(vm, "Building", "all building RealState");
+    });
+
+
+  },
   data() {
     return {
+        fields: [],
       per_page: 50,
       search: "",
       debounce: {},
@@ -83,9 +73,11 @@ export default {
       createVideo: "",
       frameUrl: "",
       idDelete: null,
+      streets: [],
       create: {
         name: "",
         name_e: "",
+        street_id: null,
         description: "",
         description_e: "",
         land_area: 0,
@@ -98,9 +90,9 @@ export default {
         lng: 0,
         lat: 0,
         media: [],
-
       },
       edit: {
+        street_id: null,
         name: "",
         name_e: "",
         description: "",
@@ -170,36 +162,103 @@ export default {
     createVideo: { required },
     create: {
       media: {},
-      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
-      description: { maxLength: maxLength(1000) },
-      description_e: { maxLength: maxLength(1000) },
-      land_area: { numeric, maxLength: maxLength(9) },
-      building_area: { numeric, maxLength: maxLength(9) },
-      construction_year: { integer, minLength: minLength(4), maxLength: maxLength(4) },
-      module: { required },
-      country_id: {},
-      city_id: {},
-      avenue_id: {},
-      lng: { decimal },
-      lat: { decimal },
+      name: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }), minLength: minLength(2), maxLength: maxLength(255) },
+      name_e: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }), minLength: minLength(2), maxLength: maxLength(255) },
+      description: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),maxLength: maxLength(1000) },
+      description_e: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),maxLength: maxLength(1000) },
+      land_area: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),numeric, maxLength: maxLength(9) },
+      building_area: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),numeric, maxLength: maxLength(9) },
+      construction_year: {
+          required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),
+        integer,
+        minLength: minLength(4),
+        maxLength: maxLength(4),
+      },
+      module: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }) },
+      country_id: {required: requiredIf(function (model) {
+              return this.isRequired("name");
+          })},
+      city_id: {required: requiredIf(function (model) {
+              return this.isRequired("name");
+          })},
+      avenue_id: {required: requiredIf(function (model) {
+              return this.isRequired("name");
+          })},
+      street_id: {required: requiredIf(function (model) {
+              return this.isRequired("name");
+          })},
+      lng: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),decimal },
+      lat: { required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),decimal },
     },
     edit: {
-      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
-      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
-      description: { maxLength: maxLength(1000) },
-      description_e: { maxLength: maxLength(1000) },
-      land_area: { decimal, maxLength: maxLength(9) },
-      building_area: { decimal, maxLength: maxLength(9) },
-      construction_year: { integer, minLength: minLength(4), maxLength: maxLength(4) },
-      module: { required },
-      country_id: {},
-      city_id: {},
-      avenue_id: {},
-      lng: { decimal },
-      lat: { decimal },
-      media: {},
-
+        media: {},
+        name: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }), minLength: minLength(2), maxLength: maxLength(255) },
+        name_e: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }), minLength: minLength(2), maxLength: maxLength(255) },
+        description: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),maxLength: maxLength(1000) },
+        description_e: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),maxLength: maxLength(1000) },
+        land_area: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),numeric, maxLength: maxLength(9) },
+        building_area: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),numeric, maxLength: maxLength(9) },
+        construction_year: {
+            required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),
+            integer,
+            minLength: minLength(4),
+            maxLength: maxLength(4),
+        },
+        module: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }) },
+        country_id: {required: requiredIf(function (model) {
+                return this.isRequired("name");
+            })},
+        city_id: {required: requiredIf(function (model) {
+                return this.isRequired("name");
+            })},
+        avenue_id: {required: requiredIf(function (model) {
+                return this.isRequired("name");
+            })},
+        street_id: {required: requiredIf(function (model) {
+                return this.isRequired("name");
+            })},
+        lng: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),decimal },
+        lat: { required: requiredIf(function (model) {
+                return this.isRequired("name");
+            }),decimal },
     },
   },
   watch: {
@@ -234,29 +293,45 @@ export default {
     },
   },
   mounted() {
+    this.getCustomTableFields();
     this.getData();
   },
-  updated() {
-    $(function () {
-      // $(".englishInput").keypress(function (event) {
-      //   var ew = event.which;
-      //   if (ew == 32) return true;
-      //   if (48 <= ew && ew <= 57) return true;
-      //   if (65 <= ew && ew <= 90) return true;
-      //   if (97 <= ew && ew <= 122) return true;
-      //   return false;
-      // });
-      // $(".arabicInput").keypress(function (event) {
-      //   var ew = event.which;
-      //   if (ew == 32) return true;
-      //   if (48 <= ew && ew <= 57) return true;
-      //   if (65 <= ew && ew <= 90) return false;
-      //   if (97 <= ew && ew <= 122) return false;
-      //   return true;
-      // });
-    });
-  },
   methods: {
+      getCustomTableFields() {
+          adminApi
+              .get(`/customTable/table-columns/real-estate/rlst_buildings`)
+              .then((res) => {
+                  this.fields = res.data;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+      isVisible(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      },
+      isRequired(fieldName) {
+          let res = this.fields.filter((field) => {
+              return field.column_name == fieldName;
+          });
+          return res.length > 0 && res[0].is_required == 1 ? true : false;
+      },
+    isPermission(item) {
+      if (this.$store.state.auth.type == "user") {
+        return this.$store.state.auth.permissions.includes(item);
+      }
+      return true;
+    },
     AddVideo(action) {
       let data = action == "create" ? this.create : this.edit;
       this.$v.createVideo.$touch();
@@ -266,7 +341,10 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .put(`/real-estate/buildings/${this.building_id}`, { ...data, video_link: this.createVideo })
+          .put(`/real-estate/buildings/${this.building_id}`, {
+            ...data,
+            video_link: this.createVideo,
+          })
           .then((res) => {
             this.getData();
             this.frameUrl = res.data.data.video_link;
@@ -520,13 +598,15 @@ export default {
      *  hidden Modal (create)
      */
     async resetModal() {
-      await this.getCategory();
+      if(this.isVisible('country_id')) await this.getCategory();
       this.frameUrl = "";
       this.building_id = null;
       this.createVideo = "";
       this.create = {
         name: "",
         name_e: "",
+        street_id: null,
+
         description: "",
         description_e: "",
         land_area: 0,
@@ -552,7 +632,6 @@ export default {
      */
     async resetForm() {
       this.building_id = null;
-      await this.getCategory();
       this.createVideo = "";
       this.frameUrl = "";
       this.create = {
@@ -603,7 +682,7 @@ export default {
         this.errors = {};
 
         adminApi
-          .post(`/real-estate/buildings`, this.create)
+          .post(`/real-estate/buildings`, {...this.create,company_id: this.$store.getters["auth/company_id"]})
           .then((res) => {
             this.building_id = res.data.data.id;
             this.is_disabled = true;
@@ -691,10 +770,11 @@ export default {
      *   show Modal (edit)
      */
     async resetModalEdit(id) {
-      await this.getCategory();
+      if(this.isVisible('country_id')) await this.getCategory();
       let build = this.builds.find((e) => id == e.id);
-      await this.getCityTwe(build.country.id);
-      await this.getAvenueTwe(build.country.id, build.avenue.id);
+      if(this.isVisible('city_id')) await this.getCityTwe(build.country.id);
+      if(this.isVisible('avenue_id'))await this.getAvenueTwe(build.country.id, build.avenue.id);
+      if(this.isVisible('street_id'))await this.getStreets(build.avenue.id);
       this.building_id = build.id;
       this.createVideo = "";
       this.frameUrl = build.video_link;
@@ -707,6 +787,7 @@ export default {
       this.edit.construction_year = build.construction_year ?? "";
       this.edit.module = build.module;
       this.edit.country_id = build.country.id;
+      this.edit.street_id = build.street_id;
       this.edit.city_id = build.city.id;
       this.edit.avenue_id = build.avenue.id;
       this.edit.lng = build.lng;
@@ -745,7 +826,6 @@ export default {
         lat: 0,
       };
       this.b_images = [];
-
     },
     /**
      *  start  dynamicSortString
@@ -782,10 +862,11 @@ export default {
           .then((res) => {
             let l = res.data.data;
             l.forEach((e) => {
-              this.Tooltip += `Created By: ${e.causer_type}; Event: ${e.event
-                }; Description: ${e.description} ;Created At: ${this.formatDate(
-                  e.created_at
-                )} \n`;
+              this.Tooltip += `Created By: ${e.causer_type}; Event: ${
+                e.event
+              }; Description: ${e.description} ;Created At: ${this.formatDate(
+                e.created_at
+              )} \n`;
             });
             $(`#tooltip-${id}`).tooltip();
           })
@@ -812,7 +893,9 @@ export default {
         .get(`/countries?is_active=active`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة دولة", name_e: "Add Country" });
+          if (this.isPermission("create Country")) {
+            l.unshift({ id: 0, name: "اضافة دولة", name_e: "Add Country" });
+          }
           this.countries = l;
         })
         .catch((err) => {
@@ -828,17 +911,22 @@ export default {
         this.$bvModal.show("city-create");
         this.create.city_id = null;
         this.edit.city_id = null;
-      }
-      else {
+      } else {
         this.create.avenue_id = null;
         this.edit.avenue_id = null;
-        let country = this.create.country_id ? this.create.country_id : this.edit.country_id;
-        let city = this.create.city_id ? this.create.city_id : this.edit.city_id;
+        let country = this.create.country_id
+          ? this.create.country_id
+          : this.edit.country_id;
+        let city = this.create.city_id
+          ? this.create.city_id
+          : this.edit.city_id;
         await adminApi
           .get(`/avenues?country_id=${country}&city_id=${city}`)
           .then((res) => {
             let l = res.data.data;
-            l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+            if (this.isPermission("create Avenue")) {
+              l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+            }
             this.avenues = l;
           })
           .catch((err) => {
@@ -859,7 +947,9 @@ export default {
           .get(`/cities?country_id=${id}`)
           .then((res) => {
             let l = res.data.data;
-            l.unshift({ id: 0, name: "اضافة مدينة", name_e: "Add City" });
+            if (this.isPermission("create City")) {
+              l.unshift({ id: 0, name: "اضافة مدينة", name_e: "Add City" });
+            }
             this.cities = l;
           })
           .catch((err) => {
@@ -877,7 +967,9 @@ export default {
           .get(`/cities?country_id=${id}`)
           .then((res) => {
             let l = res.data.data;
-            l.unshift({ id: 0, name: "اضافة مدينة", name_e: "Add City" });
+            if (this.isPermission("create City")) {
+              l.unshift({ id: 0, name: "اضافة مدينة", name_e: "Add City" });
+            }
             this.cities = l;
           })
           .catch((err) => {
@@ -894,18 +986,25 @@ export default {
         this.$bvModal.show("avenue-create");
         this.create.avenue_id = null;
         this.edit.avenue_id = null;
+        return;
       }
+      this.getStreets(this.edit.avenue_id?this.edit.avenue_id:this.create.avenue_id);
+
     },
     async getAvenue() {
       this.create.avenue_id = null;
       this.edit.avenue_id = null;
-      let country = this.create.country_id ? this.create.country_id : this.edit.country_id;
+      let country = this.create.country_id
+        ? this.create.country_id
+        : this.edit.country_id;
       let city = this.create.city_id ? this.create.city_id : this.edit.city_id;
       await adminApi
         .get(`/avenues?country_id=${country}&city_id=${city}`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+          if (this.isPermission("create Avenue")) {
+            l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+          }
           this.avenues = l;
         })
         .catch((err) => {
@@ -921,8 +1020,28 @@ export default {
         .get(`/avenues?country_id=${id}&city_id=${id2}`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+          if (this.isPermission("create Avenue")) {
+            l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+          }
           this.avenues = l;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        });
+    },
+    async getStreets(avenueId) {
+      await adminApi
+        .get(`/streets?avenue_id=${avenueId}`)
+        .then((res) => {
+          let l = res.data.data;
+          // if(this.isPermission('create Avenue')){
+          //     l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });
+          // }
+          this.streets = l;
         })
         .catch((err) => {
           Swal.fire({
@@ -966,7 +1085,9 @@ export default {
     },
     async getLocation() {
       if (navigator.geolocation) {
-        return await navigator.geolocation.getCurrentPosition(this.showPosition);
+        return await navigator.geolocation.getCurrentPosition(
+          this.showPosition
+        );
       }
     },
     showPosition(position) {
@@ -1005,11 +1126,15 @@ export default {
               let new_media = [];
               res.data.data.forEach((e) => new_media.push(e.id));
               adminApi
-                .put(`/real-estate/buildings/${this.building_id}`, { old_media, media: new_media })
+                .put(`/real-estate/buildings/${this.building_id}`, {
+                  old_media,
+                  media: new_media,
+                })
                 .then((res) => {
                   this.b_images = res.data.data.media ?? [];
                   if (this.b_images && this.b_images.length > 0) {
-                    this.b_showPhoto = this.b_images[this.b_images.length - 1].webp;
+                    this.b_showPhoto =
+                      this.b_images[this.b_images.length - 1].webp;
                   } else {
                     this.b_showPhoto = "../../../../../images/img-1.png";
                   }
@@ -1062,11 +1187,15 @@ export default {
                   res.data.data.forEach((e) => new_media.push(e.id));
 
                   adminApi
-                    .put(`/real-estate/buildings/${this.building_id}`, { old_media, media: new_media })
+                    .put(`/real-estate/buildings/${this.building_id}`, {
+                      old_media,
+                      media: new_media,
+                    })
                     .then((res) => {
                       this.b_images = res.data.data.media ?? [];
                       if (this.b_images && this.b_images.length > 0) {
-                        this.b_showPhoto = this.b_images[this.b_images.length - 1].webp;
+                        this.b_showPhoto =
+                          this.b_images[this.b_images.length - 1].webp;
                       } else {
                         this.b_showPhoto = "../../../../../images/img-1.png";
                       }
@@ -1129,7 +1258,6 @@ export default {
      *  end Image ceate
      *
      */
-
   },
 };
 </script>
@@ -1137,10 +1265,23 @@ export default {
 <template>
   <Layout>
     <PageHeader />
-    <Country :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getCategory" />
-    <City :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
-      @created="getCity(create.country_id ? create.country_id : edit.country_id)" />
-    <Avenue :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getAvenue" />
+    <Country
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="getCategory"
+    />
+    <City
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="
+        getCity(create.country_id ? create.country_id : edit.country_id)
+      "
+    />
+    <Avenue
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="getAvenue"
+    />
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -1151,90 +1292,207 @@ export default {
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->
-                  <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
-                    class="btn-block setting-search">
-                    <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">{{
-                      getCompanyKey("building_name_ar")
-                    }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="name_e" class="mb-1">{{
-                      getCompanyKey("building_name_en") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="description" class="mb-1">{{
-                      getCompanyKey("building_description_ar") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="description_e" class="mb-1">{{
-                      getCompanyKey("building_description_en") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="land_area" class="mb-1">{{
-                      getCompanyKey("building_land_area") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="building_area" class="mb-1">{{
-                      getCompanyKey("building_area") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="construction_year" class="mb-1">{{
-                      getCompanyKey("building_construction_year") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting"
-                      :value="$i18n.locale == 'ar' ? 'country.name' : 'country.name_e'" class="mb-1">{{
-                        getCompanyKey("country") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting"
-                      :value="$i18n.locale == 'ar' ? 'country.name' : 'country.name_e'" class="mb-1">{{
-                        getCompanyKey("city") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting"
-                      :value="$i18n.locale == 'ar' ? 'country.name' : 'country.name_e'" class="mb-1">{{
-                        getCompanyKey("avenue") }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="lng" class="mb-1">{{
-                      getCompanyKey("building_longitude")
-                    }}</b-form-checkbox>
-                    <b-form-checkbox v-model="filterSetting" value="lat" class="mb-1">{{
-                      getCompanyKey("building_latitude")
-                    }}</b-form-checkbox>
+                  <b-dropdown
+                    variant="primary"
+                    :text="$t('general.searchSetting')"
+                    ref="dropdown"
+                    class="btn-block setting-search"
+                  >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('name')"
+                      value="name"
+                      class="mb-1"
+                      >{{ getCompanyKey("building_name_ar") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-if="isVisible('name_e')"
+                      v-model="filterSetting"
+                      value="name_e"
+                      class="mb-1"
+                      >{{ getCompanyKey("building_name_en") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-if="isVisible('description')"
+                      v-model="filterSetting"
+                      value="description"
+                      class="mb-1"
+                      >{{
+                        getCompanyKey("building_description_ar")
+                      }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('description_e')"
+                      value="description_e"
+                      class="mb-1"
+                      >{{
+                        getCompanyKey("building_description_en")
+                      }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('land_area')"
+                      value="land_area"
+                      class="mb-1"
+                      >{{
+                        getCompanyKey("building_land_area")
+                      }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('building_area')"
+                      value="building_area"
+                      class="mb-1"
+                      >{{ getCompanyKey("building_area") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-if="isVisible('construction_year')"
+                      v-model="filterSetting"
+                      value="construction_year"
+                      class="mb-1"
+                      >{{
+                        getCompanyKey("building_construction_year")
+                      }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('country_id')"
+                      :value="
+                        $i18n.locale == 'ar' ? 'country.name' : 'country.name_e'
+                      "
+                      class="mb-1"
+                      >{{ getCompanyKey("country") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('city_id')"
+                      :value="
+                        $i18n.locale == 'ar' ? 'city.name' : 'city.name_e'
+                      "
+                      class="mb-1"
+                      >{{ getCompanyKey("city") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-model="filterSetting"
+                      v-if="isVisible('avenue_id')"
+                      :value="
+                        $i18n.locale == 'ar' ? 'avenue.name' : 'avenue.name_e'
+                      "
+                      class="mb-1"
+                      >{{ getCompanyKey("avenue") }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                      v-if="isVisible('lng')"
+                      v-model="filterSetting"
+                      value="lng"
+                      class="mb-1"
+                      >{{
+                        getCompanyKey("building_longitude")
+                      }}</b-form-checkbox
+                    >
+                    <b-form-checkbox
+                        v-if="isVisible('lat')"
+                      v-model="filterSetting"
+                      value="lat"
+                      class="mb-1"
+                      >{{ getCompanyKey("building_latitude") }}</b-form-checkbox
+                    >
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
 
-                <div class="d-inline-block position-relative" style="width: 77%">
-                  <span :class="[
-                    'search-custom position-absolute',
-                    $i18n.locale == 'ar' ? 'search-custom-ar' : '',
-                  ]">
+                <div
+                  class="d-inline-block position-relative"
+                  style="width: 77%"
+                >
+                  <span
+                    :class="[
+                      'search-custom position-absolute',
+                      $i18n.locale == 'ar' ? 'search-custom-ar' : '',
+                    ]"
+                  >
                     <i class="fe-search"></i>
                   </span>
-                  <input class="form-control" style="display: block; width: 93%; padding-top: 3px" type="text"
-                    v-model.trim="search" :placeholder="`${$t('general.Search')}...`" />
+                  <input
+                    class="form-control"
+                    style="display: block; width: 93%; padding-top: 3px"
+                    type="text"
+                    v-model.trim="search"
+                    :placeholder="`${$t('general.Search')}...`"
+                  />
                 </div>
               </div>
             </div>
             <!-- end search -->
 
-            <div class="row justify-content-between align-items-center mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mb-2 px-1"
+            >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
-                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                <b-button
+                  v-b-modal.create
+                  v-if="isPermission('create building RealState')"
+                  variant="primary"
+                  class="btn-sm mx-1 font-weight-bold"
+                >
                   {{ $t("general.Create") }}
                   <i class="fas fa-plus"></i>
                 </b-button>
                 <div class="d-inline-flex">
-                  <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                  <button
+                    @click="ExportExcel('xlsx')"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fas fa-file-download"></i>
                   </button>
-                  <button v-print="'#printBuilding'" class="custom-btn-dowonload">
+                  <button
+                    v-print="'#printBuilding'"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fe-printer"></i>
                   </button>
-                  <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1">
+                  <button
+                    class="custom-btn-dowonload"
+                    @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('update building RealState')
+                    "
+                  >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
-                    @click.prevent="deleteCountry(checkAll)">
+                  <button
+                    class="custom-btn-dowonload"
+                    v-if="
+                      checkAll.length > 1 &&
+                      isPermission('delete building RealState')
+                    "
+                    @click.prevent="deleteCountry(checkAll)"
+                  >
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!-- end mult delete  -->
                   <!--  start one delete  -->
-                  <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
-                    @click.prevent="deleteCountry(checkAll[0])">
+                  <button
+                    class="custom-btn-dowonload"
+                    v-if="
+                      checkAll.length == 1 &&
+                      isPermission('delete building RealState')
+                    "
+                    @click.prevent="deleteCountry(checkAll[0])"
+                  >
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!--  end one delete  -->
                 </div>
                 <!-- end create and printer -->
               </div>
-              <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end">
+              <div
+                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+              >
                 <div class="d-fex">
                   <!-- start filter and setting -->
                   <div class="d-inline-block">
@@ -1247,49 +1505,91 @@ export default {
                       <i class="fe-menu"></i>
                     </b-button>
                     <!-- Basic dropdown -->
-                    <b-dropdown variant="primary" :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
-                      ref="dropdown" class="dropdown-custom-ali dropdown-menu-custom-company">
-                      <b-form-checkbox v-model="setting.name" class="mb-1">{{
+                    <b-dropdown
+                      variant="primary"
+                      :html="`${$t(
+                        'general.setting'
+                      )} <i class='fe-settings'></i>`"
+                      ref="dropdown"
+                      class="dropdown-custom-ali dropdown-menu-custom-company"
+                    >
+                      <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1">{{
                         getCompanyKey("building_name_ar")
                       }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.name_e" class="mb-1">{{
+                      <b-form-checkbox v-if="isVisible('name_e')"  v-model="setting.name_e" class="mb-1">{{
                         getCompanyKey("building_name_en")
                       }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.description" class="mb-1">{{
-                        getCompanyKey("building_description_ar")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.description_e" class="mb-1">{{
-                        getCompanyKey("building_description_en")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.construction_year" class="mb-1">{{
-                        getCompanyKey("building_construction_year")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.building_area" class="mb-1">{{
-                        getCompanyKey("building_area")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.land_area" class="mb-1">{{
-                        getCompanyKey("building_land_area")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.lat" class="mb-1">{{
+                      <b-form-checkbox
+                          v-if="isVisible('description')"
+                          v-model="setting.description"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("building_description_ar")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                          v-if="isVisible('description_e')"
+                          v-model="setting.description_e"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("building_description_en")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                          v-if="isVisible('construction_year')"
+                        v-model="setting.construction_year"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("building_construction_year")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                          v-if="isVisible('building_area')"
+                        v-model="setting.building_area"
+                        class="mb-1"
+                        >{{ getCompanyKey("building_area") }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                          v-if="isVisible('land_area')"
+                        v-model="setting.land_area"
+                        class="mb-1"
+                        >{{
+                          getCompanyKey("building_land_area")
+                        }}</b-form-checkbox
+                      >
+                      <b-form-checkbox v-if="isVisible('lat')" v-model="setting.lat" class="mb-1">{{
                         getCompanyKey("building_latitude")
                       }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.lng" class="mb-1">{{
+                      <b-form-checkbox v-if="isVisible('lng')" v-model="setting.lng" class="mb-1">{{
                         getCompanyKey("building_longitude")
                       }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.module_id" class="mb-1">{{
-                        getCompanyKey("module")
-                      }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.country_id" class="mb-1">{{
-                        getCompanyKey("country")
-                      }}</b-form-checkbox>
+                      <b-form-checkbox
+                          v-if="isVisible('module_id')"
+                        v-model="setting.module_id"
+                        class="mb-1"
+                        >{{ getCompanyKey("module") }}</b-form-checkbox
+                      >
+                      <b-form-checkbox
+                          v-if="isVisible('country_id')"
+                        v-model="setting.country_id"
+                        class="mb-1"
+                        >{{ getCompanyKey("country") }}</b-form-checkbox
+                      >
                       <b-form-checkbox v-model="setting.city_id" class="mb-1">{{
                         getCompanyKey("city")
                       }}</b-form-checkbox>
-                      <b-form-checkbox v-model="setting.avenue_id" class="mb-1">{{
-                        getCompanyKey("avenue")
-                      }}</b-form-checkbox>
+                      <b-form-checkbox
+                          v-if="isVisible('avenue_id')"
+                        v-model="setting.avenue_id"
+                        class="mb-1"
+                        >{{ getCompanyKey("avenue") }}</b-form-checkbox
+                      >
                       <div class="d-flex justify-content-end">
-                        <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
+                        <a
+                          href="javascript:void(0)"
+                          class="btn btn-primary btn-sm"
+                          >Apply</a
+                        >
                       </div>
                     </b-dropdown>
                     <!-- Basic dropdown -->
@@ -1297,26 +1597,45 @@ export default {
                   <!-- end filter and setting -->
 
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 13px">
                       {{ buildsPagination.from }}-{{ buildsPagination.to }} /
                       {{ buildsPagination.total }}
                     </div>
                     <div class="d-inline-block">
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          buildsPagination.current_page == 1 ? 'none' : '',
-                      }" @click.prevent="getData(buildsPagination.current_page - 1)">
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            buildsPagination.current_page == 1 ? 'none' : '',
+                        }"
+                        @click.prevent="
+                          getData(buildsPagination.current_page - 1)
+                        "
+                      >
                         <span>&lt;</span>
                       </a>
-                      <input type="text" @keyup.enter="getDataCurrentPage()" v-model="current_page"
-                        class="pagination-current-page" />
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          buildsPagination.last_page == buildsPagination.current_page
-                            ? 'none'
-                            : '',
-                      }" @click.prevent="getData(buildsPagination.current_page + 1)">
+                      <input
+                        type="text"
+                        @keyup.enter="getDataCurrentPage()"
+                        v-model="current_page"
+                        class="pagination-current-page"
+                      />
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            buildsPagination.last_page ==
+                            buildsPagination.current_page
+                              ? 'none'
+                              : '',
+                        }"
+                        @click.prevent="
+                          getData(buildsPagination.current_page + 1)
+                        "
+                      >
                         <span>&gt;</span>
                       </a>
                     </div>
@@ -1327,17 +1646,38 @@ export default {
             </div>
 
             <!--  create   -->
-            <b-modal id="create" :title="getCompanyKey('building_create_form')" title-class="font-18"
-              dialog-class="modal-full-width" body-class="p-4 " :hide-footer="true" @show="resetModal"
-              @hidden="resetModalHidden">
+            <b-modal
+              id="create"
+              :title="getCompanyKey('building_create_form')"
+              title-class="font-18"
+              dialog-class="modal-full-width"
+              body-class="p-4 "
+              :hide-footer="true"
+              @show="resetModal"
+              @hidden="resetModalHidden"
+            >
               <form>
                 <div class="mb-3 d-flex justify-content-end">
-                  <b-button variant="success" :disabled="!is_disabled" @click.prevent="resetForm" type="button"
-                    :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
+                  <b-button
+                    variant="success"
+                    :disabled="!is_disabled"
+                    @click.prevent="resetForm"
+                    type="button"
+                    :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
+                  >
                     {{ $t("general.AddNewRecord") }}
                   </b-button>
                   <template v-if="!is_disabled">
-                    <b-button variant="success" type="button" class="mx-1" v-if="!isLoader" @click.prevent="AddSubmit">
+                    <b-button
+                      variant="success"
+                      type="button"
+                      class="mx-1"
+                      v-if="!isLoader"
+                      @click.prevent="AddSubmit"
+                    >
                       {{ $t("general.Add") }}
                     </b-button>
                     <b-button variant="success" class="mx-1" disabled v-else>
@@ -1347,116 +1687,165 @@ export default {
                   </template>
                   <!-- Emulate built in modal footer ok and cancel button actions -->
 
-                  <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
+                  <b-button
+                    variant="danger"
+                    type="button"
+                    @click.prevent="resetModalHidden"
+                  >
                     {{ $t("general.Cancel") }}
                   </b-button>
                 </div>
                 <b-tabs nav-class="nav-tabs nav-bordered">
                   <b-tab :title="$t('general.DataEntry')" active>
                     <div class="row">
-                      <div class="col-md-4">
+                      <div v-if="isVisible('name')" class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_name_ar") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('name')" class="text-danger">*</span>
                           </label>
                           <div dir="rtl">
-                            <input @keyup="arabicValue(create.name)" type="text" class="form-control"
-                              v-model="$v.create.name.$model" :class="{
-                                'is-invalid': $v.create.name.$error || errors.name,
-                                'is-valid': !$v.create.name.$invalid && !errors.name,
-                              }" />
+                            <input
+                              @keyup="arabicValue(create.name)"
+                              type="text"
+                              class="form-control"
+                              v-model="$v.create.name.$model"
+                              :class="{
+                                'is-invalid':
+                                  $v.create.name.$error || errors.name,
+                                'is-valid':
+                                  !$v.create.name.$invalid && !errors.name,
+                              }"
+                            />
                           </div>
-                          <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                          <div
+                            v-if="!$v.create.name.minLength"
+                            class="invalid-feedback"
+                          >
                             {{ $t("general.Itmustbeatleast") }}
                             {{ $v.create.name.$params.minLength.min }}
                             {{ $t("general.letters") }}
                           </div>
-                          <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                          <div
+                            v-if="!$v.create.name.maxLength"
+                            class="invalid-feedback"
+                          >
                             {{ $t("general.Itmustbeatmost") }}
                             {{ $v.create.name.$params.maxLength.max }}
                             {{ $t("general.letters") }}
                           </div>
                           <template v-if="errors.name">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.name" :key="index">{{ errorMessage }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.name"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('name_e')" class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_name_en") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
                           </label>
                           <div dir="ltr">
-                            <input @keyup="englishValue(create.name_e)" type="text" class="form-control"
-                              v-model="$v.create.name_e.$model" :class="{
+                            <input
+                              @keyup="englishValue(create.name_e)"
+                              type="text"
+                              class="form-control"
+                              v-model="$v.create.name_e.$model"
+                              :class="{
                                 'is-invalid':
                                   $v.create.name_e.$error || errors.name_e,
                                 'is-valid':
                                   !$v.create.name_e.$invalid && !errors.name_e,
-                              }" />
+                              }"
+                            />
                           </div>
-                          <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                          <div
+                            v-if="!$v.create.name_e.minLength"
+                            class="invalid-feedback"
+                          >
                             {{ $t("general.Itmustbeatleast") }}
                             {{ $v.create.name_e.$params.minLength.min }}
                             {{ $t("general.letters") }}
                           </div>
-                          <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                          <div
+                            v-if="!$v.create.name_e.maxLength"
+                            class="invalid-feedback"
+                          >
                             {{ $t("general.Itmustbeatmost") }}
                             {{ $v.create.name_e.$params.maxLength.max }}
                             {{ $t("general.letters") }}
                           </div>
                           <template v-if="errors.name_e">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.name_e" :key="index">{{ errorMessage }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.name_e"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
                     </div>
-                    <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                    <hr v-if="isVisible('construction_year')||isVisible('building_area')||isVisible('land_area')" style="
+                        margin: 10px 0 !important;
+                        border-top: 1px solid rgb(141 163 159 / 42%);
+                      "/>
                     <div class="row">
-                      <div class="col-md-4">
+                      <div v-if="isVisible('construction_year')" class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ $t("general.construction_year") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('construction_year')" class="text-danger">*</span>
                           </label>
-                          <select class="custom-select mr-sm-2" v-model="$v.create.construction_year.$model" :class="{
-                            'is-invalid':
-                              $v.create.construction_year.$error ||
-                              errors.construction_year,
-                            'is-valid':
-                              !$v.create.construction_year.$invalid &&
-                              !errors.construction_year,
-                          }">
+                          <select
+                            class="custom-select mr-sm-2"
+                            v-model="$v.create.construction_year.$model"
+                            :class="{
+                              'is-invalid':
+                                $v.create.construction_year.$error ||
+                                errors.construction_year,
+                              'is-valid':
+                                !$v.create.construction_year.$invalid &&
+                                !errors.construction_year,
+                            }"
+                          >
                             <option value="" selected>
                               {{ $t("general.Choose") }}...
                             </option>
-                            <option v-for="year in getCurrentYear()" v-if="year >= 2000" :value="year">
+                            <option
+                              v-for="year in getCurrentYear()"
+                              v-if="year >= 2000"
+                              :value="year"
+                            >
                               {{ year }}
                             </option>
                           </select>
                           <template v-if="errors.construction_year">
-                            <ErrorMessage v-for="(
-                                                                                        errorMessage, index
-                                                                                      ) in errors.construction_year"
-                              :key="index">
-                              {{
-                                errorMessage
-                              }}
+                            <ErrorMessage
+                              v-for="(
+                                errorMessage, index
+                              ) in errors.construction_year"
+                              :key="index"
+                            >
+                              {{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('building_area')" class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_area") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('building_area')"  class="text-danger">*</span>
                           </label>
-                          <input type="number" class="form-control" step="0.1" v-model="$v.create.building_area.$model"
+                          <input
+                            type="number"
+                            class="form-control"
+                            step="0.1"
+                            v-model="$v.create.building_area.$model"
                             :class="{
                               'is-invalid':
                                 $v.create.building_area.$error ||
@@ -1464,222 +1853,386 @@ export default {
                               'is-valid':
                                 !$v.create.building_area.$invalid &&
                                 !errors.building_area,
-                            }" />
+                            }"
+                          />
                           <template v-if="errors.building_area">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.building_area" :key="index">{{
-                              errorMessage
-                            }}</ErrorMessage>
+                            <ErrorMessage
+                              v-for="(
+                                errorMessage, index
+                              ) in errors.building_area"
+                              :key="index"
+                              >{{ errorMessage }}</ErrorMessage
+                            >
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('land_area')"  class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_land_area") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('land_area')"  class="text-danger">*</span>
                           </label>
-                          <input type="number" class="form-control" step="0.1" v-model="$v.create.land_area.$model"
+                          <input
+                            type="number"
+                            class="form-control"
+                            step="0.1"
+                            v-model="$v.create.land_area.$model"
                             :class="{
                               'is-invalid':
                                 $v.create.land_area.$error || errors.land_area,
                               'is-valid':
-                                !$v.create.land_area.$invalid && !errors.land_area,
-                            }" />
+                                !$v.create.land_area.$invalid &&
+                                !errors.land_area,
+                            }"
+                          />
                           <template v-if="errors.land_area">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.land_area" :key="index">{{ errorMessage
-                            }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.land_area"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
                     </div>
-                    <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                    <hr v-if="isVisible('country_id')||isVisible('city_id')||isVisible('avenue_id')||isVisible('street_id')||isVisible('lng')||isVisible('lat')" style="
+                        margin: 10px 0 !important;
+                        border-top: 1px solid rgb(141 163 159 / 42%);
+                      "/>
                     <div class="row">
-                      <div class="col-md-4">
+                      <div v-if="isVisible('country_id')" class="col-md-4">
                         <div class="form-group position-relative">
                           <label class="control-label">
                             {{ getCompanyKey("country") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('country_id')" class="text-danger">*</span>
                           </label>
-                          <multiselect @input="showCountryModal" v-model="$v.create.country_id.$model"
-                            :options="countries.map((type) => type.id)" :custom-label="
+                          <multiselect
+                            @input="showCountryModal"
+                            v-model="$v.create.country_id.$model"
+                            :options="countries.map((type) => type.id)"
+                            :custom-label="
                               (opt) => countries.find((x) => x.id == opt).name
-                            ">
+                            "
+                          >
                           </multiselect>
-                          <div v-if="$v.create.country_id.$error || errors.country_id" class="text-danger">
+                          <div
+                            v-if="
+                              $v.create.country_id.$error || errors.country_id
+                            "
+                            class="text-danger"
+                          >
                             {{ $t("general.fieldIsRequired") }}
                           </div>
                           <template v-if="errors.country_id">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.country_id" :key="index">{{ errorMessage
-                            }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.country_id"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('city_id')" class="col-md-4">
                         <div class="form-group position-relative">
                           <label class="control-label">
                             {{ getCompanyKey("city") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('city_id')" class="text-danger">*</span>
                           </label>
-                          <multiselect @input="getCity()" v-model="$v.create.city_id.$model"
-                            :options="cities.map((type) => type.id)" :custom-label="
+                          <multiselect
+                            @input="getCity()"
+                            v-model="$v.create.city_id.$model"
+                            :options="cities.map((type) => type.id)"
+                            :custom-label="
                               (opt) => cities.find((x) => x.id == opt).name
-                            ">
+                            "
+                          >
                           </multiselect>
-                          <div v-if="$v.create.city_id.$error || errors.city_id" class="text-danger">
+                          <div
+                            v-if="$v.create.city_id.$error || errors.city_id"
+                            class="text-danger"
+                          >
                             {{ $t("general.fieldIsRequired") }}
                           </div>
                           <template v-if="errors.city_id">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.city_id" :key="index">{{ errorMessage }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.city_id"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('avenue_id')" class="col-md-4">
                         <div class="form-group position-relative">
                           <label class="control-label">
                             {{ getCompanyKey("avenue") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('avenue_id')" class="text-danger">*</span>
                           </label>
-                          <multiselect @input="showAvenueModal" v-model="$v.create.avenue_id.$model"
-                            :options="avenues.map((type) => type.id)" :custom-label="
+                          <multiselect
+                            @input="showAvenueModal"
+                            v-model="$v.create.avenue_id.$model"
+                            :options="avenues.map((type) => type.id)"
+                            :custom-label="
                               (opt) => avenues.find((x) => x.id == opt).name
-                            ">
+                            "
+                          >
                           </multiselect>
-                          <div v-if="$v.create.avenue_id.$error || errors.avenue_id" class="text-danger">
+                          <div
+                            v-if="
+                              $v.create.avenue_id.$error || errors.avenue_id
+                            "
+                            class="text-danger"
+                          >
                             {{ $t("general.fieldIsRequired") }}
                           </div>
                           <template v-if="errors.city_id">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.avenue_id" :key="index">{{ errorMessage
-                            }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.avenue_id"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('street_id')" class="col-md-4">
+                        <div class="form-group position-relative">
+                          <label class="control-label">
+                            {{ getCompanyKey("building_street") }}
+                            <span v-if="isRequired('street_id')" class="text-danger">*</span>
+                          </label>
+                          <multiselect
+                            v-model="$v.create.street_id.$model"
+                            :options="streets.map((type) => type.id)"
+                            :custom-label="
+                              (opt) => streets.find((x) => x.id == opt).name
+                            "
+                          >
+                          </multiselect>
+                          <div
+                            v-if="
+                              $v.create.street_id.$error || errors.street_id
+                            "
+                            class="text-danger"
+                          >
+                            {{ $t("general.fieldIsRequired") }}
+                          </div>
+                          <template v-if="errors.city_id">
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.street_id"
+                              :key="index"
+                              >{{ errorMessage }}
+                            </ErrorMessage>
+                          </template>
+                        </div>
+                      </div>
+                      <div v-if="isVisible('lng')" class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_longitude") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('lng')" class="text-danger">*</span>
                           </label>
-                          <input type="number" class="form-control" step="0.00000000000001" v-model="$v.create.lng.$model"
+                          <input
+                            type="number"
+                            class="form-control"
+                            step="0.00000000000001"
+                            v-model="$v.create.lng.$model"
                             :class="{
                               'is-invalid': $v.create.lng.$error || errors.lng,
-                              'is-valid': !$v.create.lng.$invalid && !errors.lng,
-                            }" />
+                              'is-valid':
+                                !$v.create.lng.$invalid && !errors.lng,
+                            }"
+                          />
                           <template v-if="errors.lng">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.lng" :key="index">{{ errorMessage }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.lng"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4">
+                      <div v-if="isVisible('lat')" class="col-md-4">
                         <div class="form-group">
                           <label class="control-label">
                             {{ getCompanyKey("building_latitude") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('lat')" class="text-danger">*</span>
                           </label>
-                          <input type="number" class="form-control" data-create="9" step="0.00000000000001"
-                            v-model="$v.create.lat.$model" :class="{
+                          <input
+                            type="number"
+                            class="form-control"
+                            data-create="9"
+                            step="0.00000000000001"
+                            v-model="$v.create.lat.$model"
+                            :class="{
                               'is-invalid': $v.create.lat.$error || errors.lat,
-                              'is-valid': !$v.create.lat.$invalid && !errors.lat,
-                            }" />
+                              'is-valid':
+                                !$v.create.lat.$invalid && !errors.lat,
+                            }"
+                          />
                           <template v-if="errors.lat">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.lat" :key="index">{{ errorMessage }}
+                            <ErrorMessage
+                              v-for="(errorMessage, index) in errors.lat"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4 d-flex align-items-center mt-3">
-                        <button class="btn btn-primary" type="button" @click="getLocation">
-                          {{ $t('general.location') }}
+                      <div v-if="isVisible('lng') || isVisible('lat')" class="col-md-4 d-flex align-items-center mt-3">
+                        <button
+                          class="btn btn-primary"
+                          type="button"
+                          @click="getLocation"
+                        >
+                          {{ $t("general.location") }}
                         </button>
                       </div>
                     </div>
-                    <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                    <hr v-if="isVisible('description')||isVisible('description_e')" style="
+                        margin: 10px 0 !important;
+                        border-top: 1px solid rgb(141 163 159 / 42%);
+                      "/>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div v-if="isVisible('description')" class="col-md-6">
                         <div class="form-group">
-                          <label class="mr-2" for="inlineFormCustomSelectPref">
+                          <label class="mr-2">
                             {{ getCompanyKey("building_description_ar") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('description')" class="text-danger">*</span>
                           </label>
-                          <textarea @input="arabicValueDescription(create.description)"
-                            v-model="$v.create.description.$model" class="form-control" :maxlength="1000"
-                            rows="5"></textarea>
+                          <textarea
+                            @input="arabicValueDescription(create.description)"
+                            v-model="$v.create.description.$model"
+                            class="form-control"
+                            :maxlength="1000"
+                            rows="5"
+                          ></textarea>
                           <template v-if="errors.description">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.description" :key="index">{{ errorMessage
-                            }}
+                            <ErrorMessage
+                              v-for="(
+                                errorMessage, index
+                              ) in errors.description"
+                              :key="index"
+                              >{{ errorMessage }}
                             </ErrorMessage>
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div v-if="isVisible('description_e')" class="col-md-6">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("building_description_en") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('description_e')"  class="text-danger">*</span>
                           </label>
-                          <textarea @input="englishValueDescription(create.description_e)"
-                            v-model="$v.create.description_e.$model" class="form-control" :maxlength="1000"
-                            rows="5"></textarea>
+                          <textarea
+                            @input="
+                              englishValueDescription(create.description_e)
+                            "
+                            v-model="$v.create.description_e.$model"
+                            class="form-control"
+                            :maxlength="1000"
+                            rows="5"
+                          ></textarea>
                           <template v-if="errors.description_e">
-                            <ErrorMessage v-for="(errorMessage, index) in errors.description_e" :key="index">{{
-                              errorMessage
-                            }}</ErrorMessage>
+                            <ErrorMessage
+                              v-for="(
+                                errorMessage, index
+                              ) in errors.description_e"
+                              :key="index"
+                              >{{ errorMessage }}</ErrorMessage
+                            >
                           </template>
                         </div>
                       </div>
                     </div>
                   </b-tab>
-                  <b-tab :disabled="!building_id" :title="$t('general.ImageUploads')">
+                  <b-tab
+                    :disabled="!building_id"
+                    :title="$t('general.ImageUploads')"
+                  >
                     <div class="row">
-                      <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file" id="b_uploadImageCreate"
-                        @change.prevent="b_onImageChanged" class="input-file-upload position-absolute" :class="[
+                      <input
+                        accept="image/png, image/gif, image/jpeg, image/jpg"
+                        type="file"
+                        id="b_uploadImageCreate"
+                        @change.prevent="b_onImageChanged"
+                        class="input-file-upload position-absolute"
+                        :class="[
                           'd-none',
                           {
-                            'is-invalid': $v.create.media.$error || errors.media,
-                            'is-valid': !$v.create.media.$invalid && !errors.media,
+                            'is-invalid':
+                              $v.create.media.$error || errors.media,
+                            'is-valid':
+                              !$v.create.media.$invalid && !errors.media,
                           },
-                        ]" />
+                        ]"
+                      />
                       <div class="col-md-8 my-1">
                         <!-- file upload -->
-                        <div class="row align-content-between" style="width: 100%; height: 100%">
+                        <div
+                          class="row align-content-between"
+                          style="width: 100%; height: 100%"
+                        >
                           <div class="col-12">
                             <div class="d-flex flex-wrap">
-                              <div :class="[
-                                'dropzone-previews col-4 position-relative mb-2',
-                              ]" v-for="(photo, index) in b_images" :key="photo.id">
-                                <div :class="[
-                                  'card mb-0 shadow-none border',
-                                  b_images.length - 1 == index ? 'bg-primary' : '',
-                                ]">
+                              <div
+                                :class="[
+                                  'dropzone-previews col-4 position-relative mb-2',
+                                ]"
+                                v-for="(photo, index) in b_images"
+                                :key="photo.id"
+                              >
+                                <div
+                                  :class="[
+                                    'card mb-0 shadow-none border',
+                                    b_images.length - 1 == index
+                                      ? 'bg-primary'
+                                      : '',
+                                  ]"
+                                >
                                   <div class="p-2">
                                     <div class="row align-items-center">
-                                      <div class="col-auto" @click="b_showPhoto = photo.webp">
-                                        <img data-dz-thumbnail :src="photo.webp" class="avatar-sm rounded bg-light"
-                                          @error="src = '../../../../../images/img-1.png'" />
+                                      <div
+                                        class="col-auto"
+                                        @click="b_showPhoto = photo.webp"
+                                      >
+                                        <img
+                                          data-dz-thumbnail
+                                          :src="photo.webp"
+                                          class="avatar-sm rounded bg-light"
+                                          @error="
+                                            src =
+                                              '../../../../../images/img-1.png'
+                                          "
+                                        />
                                       </div>
                                       <div class="col pl-0">
-                                        <a href="javascript:void(0);" :class="[
-                                          'font-weight-bold',
-                                          b_images.length - 1 == index
-                                            ? 'text-white'
-                                            : 'text-muted',
-                                        ]" data-dz-name>
+                                        <a
+                                          href="javascript:void(0);"
+                                          :class="[
+                                            'font-weight-bold',
+                                            b_images.length - 1 == index
+                                              ? 'text-white'
+                                              : 'text-muted',
+                                          ]"
+                                          data-dz-name
+                                        >
                                           {{ photo.name }}
                                         </a>
                                       </div>
                                       <!-- Button -->
-                                      <a href="javascript:void(0);" :class="[
-                                        'btn-danger dropzone-close',
-                                        $i18n.locale == 'ar'
-                                          ? 'dropzone-close-rtl'
-                                          : '',
-                                      ]" data-dz-remove @click.prevent="
-  deleteImageCreate(photo.id, index)
-">
+                                      <a
+                                        href="javascript:void(0);"
+                                        :class="[
+                                          'btn-danger dropzone-close',
+                                          $i18n.locale == 'ar'
+                                            ? 'dropzone-close-rtl'
+                                            : '',
+                                        ]"
+                                        data-dz-remove
+                                        @click.prevent="
+                                          deleteImageCreate(photo.id, index)
+                                        "
+                                      >
                                         <i class="fe-x"></i>
                                       </a>
                                     </div>
@@ -1689,33 +2242,56 @@ export default {
                             </div>
                           </div>
                           <div class="footer-image col-12">
-                            <b-button @click="b_changePhoto" variant="success" type="button"
-                              class="mx-1 font-weight-bold px-3" v-if="!isLoader">
+                            <b-button
+                              @click="b_changePhoto"
+                              variant="success"
+                              type="button"
+                              class="mx-1 font-weight-bold px-3"
+                              v-if="!isLoader"
+                            >
                               {{ $t("general.Add") }}
                             </b-button>
-                            <b-button variant="success" class="mx-1" disabled v-else>
+                            <b-button
+                              variant="success"
+                              class="mx-1"
+                              disabled
+                              v-else
+                            >
                               <b-spinner small></b-spinner>
-                              <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                              <span class="sr-only"
+                                >{{ $t("login.Loading") }}...</span
+                              >
                             </b-button>
                           </div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="show-dropzone">
-                          <img :src="b_showPhoto" class="img-thumbnail" @error="src = '../../../../../images/img-1.png'" />
+                          <img
+                            :src="b_showPhoto"
+                            class="img-thumbnail"
+                            @error="src = '../../../../../images/img-1.png'"
+                          />
                         </div>
                       </div>
                     </div>
                   </b-tab>
                   <b-tab :disabled="!building_id" :title="$t('general.video')">
                     <div class="d-flex justify-content-end">
-                      <b-button variant="success" type="button" class="mx-1" v-if="!isLoader"
-                        @click.prevent="AddVideo('create')">
+                      <b-button
+                        variant="success"
+                        type="button"
+                        class="mx-1"
+                        v-if="!isLoader"
+                        @click.prevent="AddVideo('create')"
+                      >
                         {{ $t("general.Add") }}
                       </b-button>
                       <b-button variant="success" class="mx-1" disabled v-else>
                         <b-spinner small></b-spinner>
-                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                        <span class="sr-only"
+                          >{{ $t("login.Loading") }}...</span
+                        >
                       </b-button>
                     </div>
                     <div class="row">
@@ -1725,15 +2301,22 @@ export default {
                             {{ $t("general.video") }}
                             <span class="text-danger">*</span>
                           </label>
-                          <input type="text" class="form-control" v-model="$v.createVideo.$model" :class="{
-                            'is-invalid':
-                              $v.createVideo.$error,
-                            'is-valid':
-                              !$v.createVideo.$invalid
-                          }" />
+                          <input
+                            type="text"
+                            class="form-control"
+                            v-model="$v.createVideo.$model"
+                            :class="{
+                              'is-invalid': $v.createVideo.$error,
+                              'is-valid': !$v.createVideo.$invalid,
+                            }"
+                          />
                         </div>
                       </div>
-                      <div v-html="frameUrl" v-if="frameUrl" class="col-md-12"></div>
+                      <div
+                        v-html="frameUrl"
+                        v-if="frameUrl"
+                        class="col-md-12"
+                      ></div>
                     </div>
                   </b-tab>
                 </b-tabs>
@@ -1742,110 +2325,176 @@ export default {
             <!--  /create   -->
 
             <!-- start .table-responsive-->
-            <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
-              id="printBuilding">
+            <div
+              class="table-responsive mb-3 custom-table-theme position-relative"
+              ref="exportable_table"
+              id="printBuilding"
+            >
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
 
-              <table class="table table-borderless table-hover table-centered m-0">
+              <table
+                class="table table-borderless table-hover table-centered m-0"
+              >
                 <thead>
                   <tr>
-                    <th scope="col" style="width: 0" v-if="enabled3" class="do-not-print">
+                    <th
+                      scope="col"
+                      style="width: 0"
+                      v-if="enabled3"
+                      class="do-not-print"
+                    >
                       <div class="form-check custom-control">
-                        <input class="form-check-input" type="checkbox" v-model="isCheckAll"
-                          style="width: 17px; height: 17px" />
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          v-model="isCheckAll"
+                          style="width: 17px; height: 17px"
+                        />
                       </div>
                     </th>
-                    <th v-if="setting.name">
+                    <th v-if="setting.name && isVisible('name')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_name_ar") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(sortString('name'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(sortString('-name'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(sortString('name'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(sortString('-name'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e">
+                    <th v-if="setting.name_e && isVisible('name_e')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_name_en") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(sortString('name_e'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(sortString('-name_e'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(sortString('name_e'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(sortString('-name_e'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.description">
+                    <th v-if="setting.description && isVisible('description')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("building_description_ar") }}</span>
+                        <span>{{
+                          getCompanyKey("building_description_ar")
+                        }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(sortString('description'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(sortString('-description'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(sortString('description'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(sortString('-description'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.description_e">
+                    <th v-if="setting.description_e && isVisible('description_e')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("building_description_en") }}</span>
+                        <span>{{
+                          getCompanyKey("building_description_en")
+                        }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(sortString('description_e'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(sortString('-description_e'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(sortString('description_e'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(sortString('-description_e'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.building_area">
+                    <th v-if="setting.building_area && isVisible('building_area')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_area") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(SortNumber('building_area'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(SortNumber('-building_area'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(SortNumber('building_area'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(SortNumber('-building_area'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.land_area">
+                    <th v-if="setting.land_area && isVisible('land_area')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_land_area") }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(SortNumber('land_area'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(SortNumber('-land_area'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="builds.sort(SortNumber('land_area'))"
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="builds.sort(SortNumber('-land_area'))"
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.construction_year">
+                    <th v-if="setting.construction_year && isVisible('construction_year')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("building_construction_year") }}</span>
+                        <span>{{
+                          getCompanyKey("building_construction_year")
+                        }}</span>
                         <div class="arrow-sort">
-                          <i class="fas fa-arrow-up" @click="builds.sort(SortNumber('construction_year'))"></i>
-                          <i class="fas fa-arrow-down" @click="builds.sort(SortNumber('-construction_year'))"></i>
+                          <i
+                            class="fas fa-arrow-up"
+                            @click="
+                              builds.sort(SortNumber('construction_year'))
+                            "
+                          ></i>
+                          <i
+                            class="fas fa-arrow-down"
+                            @click="
+                              builds.sort(SortNumber('-construction_year'))
+                            "
+                          ></i>
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.module_id">
+                    <th v-if="setting.module_id && isVisible('module_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("module") }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.country_id">
+                    <th v-if="setting.country_id && isVisible('country_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("country") }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.city_id">
+                    <th v-if="setting.city_id && isVisible('city_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("city") }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.avenue_id">
+                    <th v-if="setting.avenue_id && isVisible('avenue_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("avenue") }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.lng">
+                    <th v-if="setting.lng && isVisible('lng')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_longitude") }}</span>
                       </div>
                     </th>
-                    <th v-if="setting.lat">
+                    <th v-if="setting.lat && isVisible('lat')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building_latitude") }}</span>
                       </div>
@@ -1859,71 +2508,114 @@ export default {
                   </tr>
                 </thead>
                 <tbody v-if="builds.length > 0">
-                  <tr @click.capture="checkRow(data.id)" @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
-                    v-for="(data, index) in builds" :key="data.id" class="body-tr-custom">
+                  <tr
+                    @click.capture="checkRow(data.id)"
+                    @dblclick.prevent="
+                      isPermission('update building RealState')
+                        ? $bvModal.show(`modal-edit-${data.id}`)
+                        : false
+                    "
+                    v-for="(data, index) in builds"
+                    :key="data.id"
+                    class="body-tr-custom"
+                  >
                     <td v-if="enabled3" class="do-not-print">
-                      <div class="form-check custom-control" style="min-height: 1.9em">
-                        <input style="width: 17px; height: 17px" class="form-check-input" type="checkbox"
-                          v-model="checkAll" :value="data.id" />
+                      <div
+                        class="form-check custom-control"
+                        style="min-height: 1.9em"
+                      >
+                        <input
+                          style="width: 17px; height: 17px"
+                          class="form-check-input"
+                          type="checkbox"
+                          v-model="checkAll"
+                          :value="data.id"
+                        />
                       </div>
                     </td>
-                    <td v-if="setting.name">
+                    <td v-if="setting.name && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e">
+                    <td v-if="setting.name_e && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
-                    <td v-if="setting.description">{{ data.description }}</td>
-                    <td v-if="setting.description_e">{{ data.description_e }}</td>
-                    <td v-if="setting.building_area">{{ data.building_area }}</td>
-                    <td v-if="setting.land_area">{{ data.land_area }}</td>
-                    <td v-if="setting.construction_year">{{ data.construction_year }}</td>
-                    <td v-if="setting.module_id">{{ data.module }}</td>
-                    <td v-if="setting.country_id">
+                    <td v-if="setting.description && isVisible('description')">{{ data.description }}</td>
+                    <td v-if="setting.description_e && isVisible('description_e')">
+                      {{ data.description_e }}
+                    </td>
+                    <td v-if="setting.building_area && isVisible('building_area')">
+                      {{ data.building_area }}
+                    </td>
+                    <td v-if="setting.land_area && isVisible('land_area')">{{ data.land_area }}</td>
+                    <td v-if="setting.construction_year && isVisible('construction_year')">
+                      {{ data.construction_year }}
+                    </td>
+                    <td v-if="setting.module_id && isVisible('module_id')">{{ data.module }}</td>
+                    <td v-if="setting.country_id && isVisible('country_id')">
                       {{
                         data.country
-                        ? $i18n.locale == "ar"
-                          ? data.country.name
-                          : data.country.name_e
-                        : "-"
+                          ? $i18n.locale == "ar"
+                            ? data.country.name
+                            : data.country.name_e
+                          : "-"
                       }}
                     </td>
-                    <td v-if="setting.city_id">
+                    <td v-if="setting.city_id && isVisible('city_id')">
                       {{
                         data.country
-                        ? $i18n.locale == "ar"
-                          ? data.city.name
-                          : data.city.name_e
-                        : "-"
+                          ? $i18n.locale == "ar"
+                            ? data.city.name
+                            : data.city.name_e
+                          : "-"
                       }}
                     </td>
-                    <td v-if="setting.avenue_id">
+                    <td v-if="setting.avenue_id && isVisible('avenue_id')">
                       {{
                         data.avenue
-                        ? $i18n.locale == "ar"
-                          ? data.avenue.name
-                          : data.avenue.name_e
-                        : "-"
+                          ? $i18n.locale == "ar"
+                            ? data.avenue.name
+                            : data.avenue.name_e
+                          : "-"
                       }}
                     </td>
-                    <td v-if="setting.lng">{{ data.lng }}</td>
-                    <td v-if="setting.lat">{{ data.lat }}</td>
+                    <td v-if="setting.lng && isVisible('lng')">{{ data.lng }}</td>
+                    <td v-if="setting.lat && isVisible('lat')">{{ data.lat }}</td>
                     <td v-if="enabled3" class="do-not-print">
                       <div class="btn-group">
-                        <button type="button" class="btn btn-sm dropdown-toggle dropdown-coustom" data-toggle="dropdown"
-                          aria-expanded="false">
+                        <button
+                          type="button"
+                          class="btn btn-sm dropdown-toggle dropdown-coustom"
+                          data-toggle="dropdown"
+                          aria-expanded="false"
+                        >
                           {{ $t("general.commands") }}
                           <i class="fas fa-angle-down"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
-                          <a class="dropdown-item" href="#" @click="$bvModal.show(`modal-edit-${data.id}`)">
-                            <div class="d-flex justify-content-between align-items-center text-black">
+                          <a
+                            class="dropdown-item"
+                            v-if="isPermission('update building RealState')"
+                            href="#"
+                            @click="$bvModal.show(`modal-edit-${data.id}`)"
+                          >
+                            <div
+                              class="d-flex justify-content-between align-items-center text-black"
+                            >
                               <span>{{ $t("general.edit") }}</span>
-                              <i class="mdi mdi-square-edit-outline text-info"></i>
+                              <i
+                                class="mdi mdi-square-edit-outline text-info"
+                              ></i>
                             </div>
                           </a>
-                          <a class="dropdown-item text-black" href="#" @click.prevent="deleteCountry(data.id)">
-                            <div class="d-flex justify-content-between align-items-center text-black">
+                          <a
+                            class="dropdown-item text-black"
+                            v-if="isPermission('delete building RealState')"
+                            href="#"
+                            @click.prevent="deleteCountry(data.id)"
+                          >
+                            <div
+                              class="d-flex justify-content-between align-items-center text-black"
+                            >
                               <span>{{ $t("general.delete") }}</span>
                               <i class="fas fa-times text-danger"></i>
                             </div>
@@ -1932,302 +2624,553 @@ export default {
                       </div>
 
                       <!--  edit   -->
-                      <b-modal :id="`modal-edit-${data.id}`" :title="getCompanyKey('building_edit_form')"
-                        title-class="font-18" body-class="p-4" dialog-class="modal-full-width" :ref="`edit-${data.id}`"
-                        :hide-footer="true" @show="resetModalEdit(data.id)" @hidden="resetModalHiddenEdit(data.id)">
+                      <b-modal
+                        :id="`modal-edit-${data.id}`"
+                        :title="getCompanyKey('building_edit_form')"
+                        title-class="font-18"
+                        body-class="p-4"
+                        dialog-class="modal-full-width"
+                        :ref="`edit-${data.id}`"
+                        :hide-footer="true"
+                        @show="resetModalEdit(data.id)"
+                        @hidden="resetModalHiddenEdit(data.id)"
+                      >
                         <form>
                           <div class="mb-3 d-flex justify-content-end">
                             <!-- Emulate built in modal footer ok and cancel button actions -->
-                            <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader"
-                              @click.prevent="editSubmit(data.id)">
+                            <b-button
+                              variant="success"
+                              type="submit"
+                              class="mx-1"
+                              v-if="!isLoader"
+                              @click.prevent="editSubmit(data.id)"
+                            >
                               {{ $t("general.Edit") }}
                             </b-button>
 
-                            <b-button variant="success" class="mx-1" disabled v-else>
+                            <b-button
+                              variant="success"
+                              class="mx-1"
+                              disabled
+                              v-else
+                            >
                               <b-spinner small></b-spinner>
-                              <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                              <span class="sr-only"
+                                >{{ $t("login.Loading") }}...</span
+                              >
                             </b-button>
 
-                            <b-button variant="danger" type="button"
-                              @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)">
+                            <b-button
+                              variant="danger"
+                              type="button"
+                              @click.prevent="
+                                $bvModal.hide(`modal-edit-${data.id}`)
+                              "
+                            >
                               {{ $t("general.Cancel") }}
                             </b-button>
                           </div>
                           <b-tabs>
                             <b-tab :title="$t('general.DataEntry')" active>
                               <div class="row">
-                                <div class="col-md-4">
+                                <div v-if="isVisible('name')" class="col-md-4">
                                   <div class="form-group">
                                     <label for="field-1" class="control-label">
                                       {{ getCompanyKey("building_name_ar") }}
-                                      <span class="text-danger">*</span>
+                                      <span  v-if="isRequired('name')" class="text-danger">*</span>
                                     </label>
                                     <div dir="rtl">
-                                      <input @keyup="arabicValue(edit.name)" type="text" class="form-control"
-                                        data-edit="1" v-model="$v.edit.name.$model" :class="{
-                                          'is-invalid': $v.edit.name.$error || errors.name,
-                                          'is-valid': !$v.edit.name.$invalid && !errors.name,
-                                        }" />
+                                      <input
+                                        @keyup="arabicValue(edit.name)"
+                                        type="text"
+                                        class="form-control"
+                                        data-edit="1"
+                                        v-model="$v.edit.name.$model"
+                                        :class="{
+                                          'is-invalid':
+                                            $v.edit.name.$error || errors.name,
+                                          'is-valid':
+                                            !$v.edit.name.$invalid &&
+                                            !errors.name,
+                                        }"
+                                      />
                                     </div>
-                                    <div v-if="!$v.edit.name.minLength" class="invalid-feedback">
+                                    <div
+                                      v-if="!$v.edit.name.minLength"
+                                      class="invalid-feedback"
+                                    >
                                       {{ $t("general.Itmustbeatleast") }}
                                       {{ $v.edit.name.$params.minLength.min }}
                                       {{ $t("general.letters") }}
                                     </div>
-                                    <div v-if="!$v.edit.name.maxLength" class="invalid-feedback">
+                                    <div
+                                      v-if="!$v.edit.name.maxLength"
+                                      class="invalid-feedback"
+                                    >
                                       {{ $t("general.Itmustbeatmost") }}
                                       {{ $v.edit.name.$params.maxLength.max }}
                                       {{ $t("general.letters") }}
                                     </div>
                                     <template v-if="errors.name">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.name" :key="index">{{
-                                        errorMessage
-                                      }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.name"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div v-if="isVisible('name_e')" class="col-md-4">
                                   <div class="form-group">
                                     <label for="field-2" class="control-label">
                                       {{ getCompanyKey("building_name_en") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                     </label>
                                     <div dir="ltr">
-                                      <input @keyup="englishValue(edit.name_e)" type="text" class="form-control"
-                                        data-edit="2" v-model="$v.edit.name_e.$model" :class="{
+                                      <input
+                                        @keyup="englishValue(edit.name_e)"
+                                        type="text"
+                                        class="form-control"
+                                        data-edit="2"
+                                        v-model="$v.edit.name_e.$model"
+                                        :class="{
                                           'is-invalid':
-                                            $v.edit.name_e.$error || errors.name_e,
+                                            $v.edit.name_e.$error ||
+                                            errors.name_e,
                                           'is-valid':
-                                            !$v.edit.name_e.$invalid && !errors.name_e,
-                                        }" />
+                                            !$v.edit.name_e.$invalid &&
+                                            !errors.name_e,
+                                        }"
+                                      />
                                     </div>
-                                    <div v-if="!$v.edit.name_e.minLength" class="invalid-feedback">
+                                    <div
+                                      v-if="!$v.edit.name_e.minLength"
+                                      class="invalid-feedback"
+                                    >
                                       {{ $t("general.Itmustbeatleast") }}
                                       {{ $v.edit.name_e.$params.minLength.min }}
                                       {{ $t("general.letters") }}
                                     </div>
-                                    <div v-if="!$v.edit.name_e.maxLength" class="invalid-feedback">
+                                    <div
+                                      v-if="!$v.edit.name_e.maxLength"
+                                      class="invalid-feedback"
+                                    >
                                       {{ $t("general.Itmustbeatmost") }}
                                       {{ $v.edit.name_e.$params.maxLength.max }}
                                       {{ $t("general.letters") }}
                                     </div>
                                     <template v-if="errors.name_e">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.name_e" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.name_e"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
                               </div>
-                              <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                              <hr v-if="isVisible('construction_year')||isVisible('building_area')||isVisible('land_area')" style="
+                                  margin: 10px 0 !important;
+                                  border-top: 1px solid rgb(141 163 159 / 42%);
+                                "/>
                               <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('construction_year')">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{ $t("general.construction_year") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('construction_year')" class="text-danger">*</span>
                                     </label>
-                                    <select class="custom-select mr-sm-2" data-edit="6"
-                                      v-model="$v.edit.construction_year.$model" :class="{
+                                    <select
+                                      class="custom-select mr-sm-2"
+                                      data-edit="6"
+                                      v-model="$v.edit.construction_year.$model"
+                                      :class="{
                                         'is-invalid':
                                           $v.edit.construction_year.$error ||
                                           errors.construction_year,
                                         'is-valid':
                                           !$v.edit.construction_year.$invalid &&
                                           !errors.construction_year,
-                                      }">
+                                      }"
+                                    >
                                       <option value="" selected>
                                         {{ $t("general.Choose") }}...
                                       </option>
-                                      <option v-for="year in getCurrentYear()" v-if="year >= 2000" :value="year">
+                                      <option
+                                        v-for="year in getCurrentYear()"
+                                        v-if="year >= 2000"
+                                        :value="year"
+                                      >
                                         {{ year }}
                                       </option>
                                     </select>
                                     <template v-if="errors.construction_year">
-                                      <ErrorMessage v-for="(
-                                                                                        errorMessage, index
-                                                                                      ) in errors.construction_year"
-                                        :key="index">
-                                        {{
-                                          errorMessage
-                                        }}
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.construction_year"
+                                        :key="index"
+                                      >
+                                        {{ errorMessage }}
                                       </ErrorMessage>
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('building_area')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{ getCompanyKey("building_area") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('building_area')" class="text-danger">*</span>
                                     </label>
-                                    <input type="number" class="form-control" data-edit="9" step="0.1"
-                                      v-model="$v.edit.building_area.$model" :class="{
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      data-edit="9"
+                                      step="0.1"
+                                      v-model="$v.edit.building_area.$model"
+                                      :class="{
                                         'is-invalid':
                                           $v.edit.building_area.$error ||
                                           errors.building_area,
                                         'is-valid':
                                           !$v.edit.building_area.$invalid &&
                                           !errors.building_area,
-                                      }" />
+                                      }"
+                                    />
                                     <template v-if="errors.building_area">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.building_area" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.building_area"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('land_area')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{ getCompanyKey("building_land_area") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('land_area')" class="text-danger">*</span>
                                     </label>
-                                    <input type="number" class="form-control" data-edit="9" step="0.1"
-                                      v-model="$v.edit.land_area.$model" :class="{
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      data-edit="9"
+                                      step="0.1"
+                                      v-model="$v.edit.land_area.$model"
+                                      :class="{
                                         'is-invalid':
-                                          $v.edit.land_area.$error || errors.land_area,
+                                          $v.edit.land_area.$error ||
+                                          errors.land_area,
                                         'is-valid':
-                                          !$v.edit.land_area.$invalid && !errors.land_area,
-                                      }" />
+                                          !$v.edit.land_area.$invalid &&
+                                          !errors.land_area,
+                                      }"
+                                    />
                                     <template v-if="errors.land_area">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.land_area" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.land_area"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
                               </div>
-                              <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                              <hr v-if="isVisible('country_id')||isVisible('city_id')||isVisible('avenue_id')||isVisible('street_id')||isVisible('lng')||isVisible('lat')" style="
+                                  margin: 10px 0 !important;
+                                  border-top: 1px solid rgb(141 163 159 / 42%);
+                                "/>
                               <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('country_id')">
                                   <div class="form-group position-relative">
                                     <label class="control-label">
                                       {{ getCompanyKey("country") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('country_id')" class="text-danger">*</span>
                                     </label>
-                                    <multiselect @input="showCountryModalEdit" v-model="$v.edit.country_id.$model"
-                                      :options="countries.map((type) => type.id)" :custom-label="
-                                        (opt) => countries.find((x) => x.id == opt).name
-                                      ">
+                                    <multiselect
+                                      @input="showCountryModalEdit"
+                                      v-model="$v.edit.country_id.$model"
+                                      :options="
+                                        countries.map((type) => type.id)
+                                      "
+                                      :custom-label="
+                                        (opt) =>
+                                          countries.find((x) => x.id == opt)
+                                            .name
+                                      "
+                                    >
                                     </multiselect>
-                                    <div v-if="$v.edit.country_id.$error || errors.country_id" class="text-danger">
+                                    <div
+                                      v-if="
+                                        $v.edit.country_id.$error ||
+                                        errors.country_id
+                                      "
+                                      class="text-danger"
+                                    >
                                       {{ $t("general.fieldIsRequired") }}
                                     </div>
                                     <template v-if="errors.country_id">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.country_id" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.country_id"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('city_id')">
                                   <div class="form-group position-relative">
                                     <label class="control-label">
                                       {{ getCompanyKey("city") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('city_id')" class="text-danger">*</span>
                                     </label>
-                                    <multiselect @input="getCity()" v-model="$v.edit.city_id.$model"
-                                      :options="cities.map((type) => type.id)" :custom-label="
-                                        (opt) => cities.find((x) => x.id == opt).name
-                                      ">
+                                    <multiselect
+                                      @input="getCity()"
+                                      v-model="$v.edit.city_id.$model"
+                                      :options="cities.map((type) => type.id)"
+                                      :custom-label="
+                                        (opt) =>
+                                          cities.find((x) => x.id == opt).name
+                                      "
+                                    >
                                     </multiselect>
-                                    <div v-if="$v.edit.city_id.$error || errors.city_id" class="text-danger">
+                                    <div
+                                      v-if="
+                                        $v.edit.city_id.$error || errors.city_id
+                                      "
+                                      class="text-danger"
+                                    >
                                       {{ $t("general.fieldIsRequired") }}
                                     </div>
                                     <template v-if="errors.city_id">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.city_id" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.city_id"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('avenue_id')">
                                   <div class="form-group position-relative">
                                     <label class="control-label">
                                       {{ getCompanyKey("avenue") }}
-                                      <span class="text-danger">*</span>
+                                      <span  v-if="isRequired('avenue_id')" class="text-danger">*</span>
                                     </label>
-                                    <multiselect @input="showAvenueModal" v-model="$v.edit.avenue_id.$model"
-                                      :options="avenues.map((type) => type.id)" :custom-label="
-                                        (opt) => avenues.find((x) => x.id == opt).name
-                                      ">
+                                    <multiselect
+                                      @input="showAvenueModal"
+                                      v-model="$v.edit.avenue_id.$model"
+                                      :options="avenues.map((type) => type.id)"
+                                      :custom-label="
+                                        (opt) =>
+                                          avenues.find((x) => x.id == opt).name
+                                      "
+                                    >
                                     </multiselect>
-                                    <div v-if="$v.edit.avenue_id.$error || errors.avenue_id" class="text-danger">
+                                    <div
+                                      v-if="
+                                        $v.edit.avenue_id.$error ||
+                                        errors.avenue_id
+                                      "
+                                      class="text-danger"
+                                    >
                                       {{ $t("general.fieldIsRequired") }}
                                     </div>
                                     <template v-if="errors.city_id">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.avenue_id" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.avenue_id"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('street_id')">
+                                  <div class="form-group position-relative">
+                                    <label class="control-label">
+                                      {{ getCompanyKey("building_street") }}
+                                      <span v-if="isRequired('street_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                      v-model="$v.edit.street_id.$model"
+                                      :options="streets.map((type) => type.id)"
+                                      :custom-label="
+                                        (opt) =>
+                                          streets.find((x) => x.id == opt).name
+                                      "
+                                    >
+                                    </multiselect>
+                                    <div
+                                      v-if="
+                                        $v.edit.street_id.$error ||
+                                        errors.street_id
+                                      "
+                                      class="text-danger"
+                                    >
+                                      {{ $t("general.fieldIsRequired") }}
+                                    </div>
+                                    <template v-if="errors.street_id">
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.street_id"
+                                        :key="index"
+                                        >{{ errorMessage }}
+                                      </ErrorMessage>
+                                    </template>
+                                  </div>
+                                </div>
+                                <div class="col-md-4"  v-if="isVisible('lng')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{ getCompanyKey("building_longitude") }}
-                                      <span class="text-danger">*</span>
+                                      <span  v-if="isRequired('lng')" class="text-danger">*</span>
                                     </label>
-                                    <input type="number" class="form-control" data-edit="9" step="0.00000000000001"
-                                      v-model="$v.edit.lng.$model" :class="{
-                                        'is-invalid': $v.edit.lng.$error || errors.lng,
-                                        'is-valid': !$v.edit.lng.$invalid && !errors.lng,
-                                      }" />
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      data-edit="9"
+                                      step="0.00000000000001"
+                                      v-model="$v.edit.lng.$model"
+                                      :class="{
+                                        'is-invalid':
+                                          $v.edit.lng.$error || errors.lng,
+                                        'is-valid':
+                                          !$v.edit.lng.$invalid && !errors.lng,
+                                      }"
+                                    />
                                     <template v-if="errors.lng">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.lng" :key="index">{{
-                                        errorMessage
-                                      }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.lng"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="isVisible('lat')">
                                   <div class="form-group">
                                     <label class="control-label">
                                       {{ getCompanyKey("building_latitude") }}
-                                      <span class="text-danger">*</span>
+                                      <span  v-if="isRequired('lat')" class="text-danger">*</span>
                                     </label>
-                                    <input type="number" class="form-control" data-edit="9" step="0.00000000000001"
-                                      v-model="$v.edit.lat.$model" :class="{
-                                        'is-invalid': $v.edit.lat.$error || errors.lat,
-                                        'is-valid': !$v.edit.lat.$invalid && !errors.lat,
-                                      }" />
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      data-edit="9"
+                                      step="0.00000000000001"
+                                      v-model="$v.edit.lat.$model"
+                                      :class="{
+                                        'is-invalid':
+                                          $v.edit.lat.$error || errors.lat,
+                                        'is-valid':
+                                          !$v.edit.lat.$invalid && !errors.lat,
+                                      }"
+                                    />
                                     <template v-if="errors.lat">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.lat" :key="index">{{
-                                        errorMessage
-                                      }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.lat"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4 d-flex align-items-center mt-3">
-                                  <button class="btn btn-primary" type="button" @click="getLocation">
-                                    {{ $t('general.location') }}
+                                <div v-if="isVisible('lat') || isVisible('lng')" class="col-md-4 d-flex align-items-center mt-3">
+                                  <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                    @click="getLocation"
+                                  >
+                                    {{ $t("general.location") }}
                                   </button>
                                 </div>
                               </div>
-                              <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" />
+                              <hr v-if="isVisible('description')||isVisible('description_e')" style="
+                                  margin: 10px 0 !important;
+                                  border-top: 1px solid rgb(141 163 159 / 42%);
+                                "/>
                               <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-6" v-if="isVisible('description')">
                                   <div class="form-group">
-                                    <label class="mr-2" for="inlineFormCustomSelectPref">
-                                      {{ getCompanyKey("building_description_ar") }}
-                                      <span class="text-danger">*</span>
+                                    <label
+                                      class="mr-2"
+                                      for="inlineFormCustomSelectPref"
+                                    >
+                                      {{
+                                        getCompanyKey("building_description_ar")
+                                      }}
+                                      <span v-if="isRequired('description')" class="text-danger">*</span>
                                     </label>
-                                    <textarea @input="arabicValueDescription(edit.description)"
-                                      v-model="$v.edit.description.$model" class="form-control" :maxlength="1000"
-                                      rows="5"></textarea>
+                                    <textarea
+                                      @input="
+                                        arabicValueDescription(edit.description)
+                                      "
+                                      v-model="$v.edit.description.$model"
+                                      class="form-control"
+                                      :maxlength="1000"
+                                      rows="5"
+                                    ></textarea>
                                     <template v-if="errors.description">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.description" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.description"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" v-if="isVisible('description_e')">
                                   <div class="form-group">
-                                    <label class="mr-2" for="inlineFormCustomSelectPref">
-                                      {{ getCompanyKey("building_description_en") }}
-                                      <span class="text-danger">*</span>
+                                    <label
+                                      class="mr-2"
+                                      for="inlineFormCustomSelectPref"
+                                    >
+                                      {{
+                                        getCompanyKey("building_description_en")
+                                      }}
+                                      <span v-if="isRequired('description_e')" class="text-danger">*</span>
                                     </label>
-                                    <textarea @input="englishValueDescription(edit.description_e)"
-                                      v-model="$v.edit.description_e.$model" class="form-control" :maxlength="1000"
-                                      rows="5"></textarea>
+                                    <textarea
+                                      @input="
+                                        englishValueDescription(
+                                          edit.description_e
+                                        )
+                                      "
+                                      v-model="$v.edit.description_e.$model"
+                                      class="form-control"
+                                      :maxlength="1000"
+                                      rows="5"
+                                    ></textarea>
                                     <template v-if="errors.description_e">
-                                      <ErrorMessage v-for="(errorMessage, index) in errors.description_e" :key="index">{{
-                                        errorMessage }}</ErrorMessage>
+                                      <ErrorMessage
+                                        v-for="(
+                                          errorMessage, index
+                                        ) in errors.description_e"
+                                        :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                      >
                                     </template>
                                   </div>
                                 </div>
@@ -2235,13 +3178,25 @@ export default {
                             </b-tab>
                             <b-tab :title="$t('general.video')">
                               <div class="d-flex justify-content-end">
-                                <b-button variant="success" type="button" class="mx-1" v-if="!isLoader"
-                                  @click.prevent="AddVideo('edit')">
+                                <b-button
+                                  variant="success"
+                                  type="button"
+                                  class="mx-1"
+                                  v-if="!isLoader"
+                                  @click.prevent="AddVideo('edit')"
+                                >
                                   {{ $t("general.Add") }}
                                 </b-button>
-                                <b-button variant="success" class="mx-1" disabled v-else>
+                                <b-button
+                                  variant="success"
+                                  class="mx-1"
+                                  disabled
+                                  v-else
+                                >
                                   <b-spinner small></b-spinner>
-                                  <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                  <span class="sr-only"
+                                    >{{ $t("login.Loading") }}...</span
+                                  >
                                 </b-button>
                               </div>
                               <div class="row">
@@ -2251,68 +3206,115 @@ export default {
                                       {{ $t("general.video") }}
                                       <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" v-model="$v.createVideo.$model" :class="{
-                                      'is-invalid':
-                                        $v.createVideo.$error,
-                                      'is-valid':
-                                        !$v.createVideo.$invalid
-                                    }" />
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      v-model="$v.createVideo.$model"
+                                      :class="{
+                                        'is-invalid': $v.createVideo.$error,
+                                        'is-valid': !$v.createVideo.$invalid,
+                                      }"
+                                    />
                                   </div>
                                 </div>
-                                <div v-html="frameUrl" v-if="frameUrl" class="col-md-12"></div>
+                                <div
+                                  v-html="frameUrl"
+                                  v-if="frameUrl"
+                                  class="col-md-12"
+                                ></div>
                               </div>
                             </b-tab>
                             <b-tab :title="$t('general.ImageUploads')">
                               <div class="row">
-                                <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file"
-                                  id="b_uploadImageEdit" @change.prevent="b_onImageChanged"
-                                  class="input-file-upload position-absolute" :class="[
+                                <input
+                                  accept="image/png, image/gif, image/jpeg, image/jpg"
+                                  type="file"
+                                  id="b_uploadImageEdit"
+                                  @change.prevent="b_onImageChanged"
+                                  class="input-file-upload position-absolute"
+                                  :class="[
                                     'd-none',
                                     {
-                                      'is-invalid': $v.edit.media.$error || errors.media,
+                                      'is-invalid':
+                                        $v.edit.media.$error || errors.media,
                                       'is-valid':
-                                        !$v.edit.media.$invalid && !errors.media,
+                                        !$v.edit.media.$invalid &&
+                                        !errors.media,
                                     },
-                                  ]" />
+                                  ]"
+                                />
                                 <div class="col-md-8 my-1">
                                   <!-- file upload -->
-                                  <div class="row align-content-between" style="width: 100%; height: 100%">
+                                  <div
+                                    class="row align-content-between"
+                                    style="width: 100%; height: 100%"
+                                  >
                                     <div class="col-12">
                                       <div class="d-flex flex-wrap">
-                                        <div class="dropzone-previews col-4 position-relative mb-2"
-                                          v-for="(photo, index) in b_images">
-                                          <div :class="[
-                                            'card mb-0 shadow-none border',
-                                            b_images.length - 1 == index
-                                              ? 'bg-primary'
-                                              : '',
-                                          ]">
+                                        <div
+                                          class="dropzone-previews col-4 position-relative mb-2"
+                                          v-for="(photo, index) in b_images"
+                                        >
+                                          <div
+                                            :class="[
+                                              'card mb-0 shadow-none border',
+                                              b_images.length - 1 == index
+                                                ? 'bg-primary'
+                                                : '',
+                                            ]"
+                                          >
                                             <div class="p-2">
-                                              <div class="row align-items-center">
-                                                <div class="col-auto" @click="b_showPhoto = photo.webp">
-                                                  <img data-dz-thumbnail :src="photo.webp"
+                                              <div
+                                                class="row align-items-center"
+                                              >
+                                                <div
+                                                  class="col-auto"
+                                                  @click="
+                                                    b_showPhoto = photo.webp
+                                                  "
+                                                >
+                                                  <img
+                                                    data-dz-thumbnail
+                                                    :src="photo.webp"
                                                     class="avatar-sm rounded bg-light"
-                                                    @error="src = '../../../../../images/img-1.png'" />
+                                                    @error="
+                                                      src =
+                                                        '../../../../../images/img-1.png'
+                                                    "
+                                                  />
                                                 </div>
                                                 <div class="col pl-0">
-                                                  <a href="javascript:void(0);" :class="[
-                                                    'font-weight-bold',
-                                                    b_images.length - 1 == index
-                                                      ? 'text-white'
-                                                      : 'text-muted',
-                                                  ]" data-dz-name>
+                                                  <a
+                                                    href="javascript:void(0);"
+                                                    :class="[
+                                                      'font-weight-bold',
+                                                      b_images.length - 1 ==
+                                                      index
+                                                        ? 'text-white'
+                                                        : 'text-muted',
+                                                    ]"
+                                                    data-dz-name
+                                                  >
                                                     {{ photo.name }}
                                                   </a>
                                                 </div>
                                                 <!-- Button -->
-                                                <a href="javascript:void(0);" :class="[
-                                                  'btn-danger text-muted dropzone-close',
-                                                  $i18n.locale == 'ar'
-                                                    ? 'dropzone-close-rtl'
-                                                    : '',
-                                                ]" data-dz-remove @click.prevent="
-  deleteImageCreate(photo.id, index)
-">
+                                                <a
+                                                  href="javascript:void(0);"
+                                                  :class="[
+                                                    'btn-danger text-muted dropzone-close',
+                                                    $i18n.locale == 'ar'
+                                                      ? 'dropzone-close-rtl'
+                                                      : '',
+                                                  ]"
+                                                  data-dz-remove
+                                                  @click.prevent="
+                                                    deleteImageCreate(
+                                                      photo.id,
+                                                      index
+                                                    )
+                                                  "
+                                                >
                                                   <i class="fe-x"></i>
                                                 </a>
                                               </div>
@@ -2322,21 +3324,38 @@ export default {
                                       </div>
                                     </div>
                                     <div class="footer-image col-12">
-                                      <b-button @click="b_changePhotoEdit" variant="success" type="button"
-                                        class="mx-1 font-weight-bold px-3" v-if="!isLoader">
+                                      <b-button
+                                        @click="b_changePhotoEdit"
+                                        variant="success"
+                                        type="button"
+                                        class="mx-1 font-weight-bold px-3"
+                                        v-if="!isLoader"
+                                      >
                                         {{ $t("general.Add") }}
                                       </b-button>
-                                      <b-button variant="success" class="mx-1" disabled v-else>
+                                      <b-button
+                                        variant="success"
+                                        class="mx-1"
+                                        disabled
+                                        v-else
+                                      >
                                         <b-spinner small></b-spinner>
-                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                        <span class="sr-only"
+                                          >{{ $t("login.Loading") }}...</span
+                                        >
                                       </b-button>
                                     </div>
                                   </div>
                                 </div>
                                 <div class="col-md-4">
                                   <div class="show-dropzone">
-                                    <img :src="b_showPhoto" class="img-thumbnail"
-                                      @error="src = '../../../../../images/img-1.png'" />
+                                    <img
+                                      :src="b_showPhoto"
+                                      class="img-thumbnail"
+                                      @error="
+                                        src = '../../../../../images/img-1.png'
+                                      "
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -2347,9 +3366,17 @@ export default {
                       <!--  /edit   -->
                     </td>
                     <td v-if="enabled3" class="do-not-print">
-                      <button @mousemove="log(data.id)" @mouseover="log(data.id)" type="button" class="btn"
-                        :id="`tooltip-${data.id}`" :data-placement="$i18n.locale == 'en' ? 'left' : 'right'"
-                        :title="Tooltip">
+                      <button
+                        @mousemove="log(data.id)"
+                        @mouseover="log(data.id)"
+                        type="button"
+                        class="btn"
+                        :id="`tooltip-${data.id}`"
+                        :data-placement="
+                          $i18n.locale == 'en' ? 'left' : 'right'
+                        "
+                        :title="Tooltip"
+                      >
                         <i class="fe-info" style="font-size: 22px"></i>
                       </button>
                     </td>
@@ -2378,54 +3405,53 @@ export default {
   height: 300px;
 }
 .modal-dialog .card {
-      margin: 0 !important;
-    }
+  margin: 0 !important;
+}
 
-    .country.modal-body {
-      padding: 0 !important;
-    }
+.country.modal-body {
+  padding: 0 !important;
+}
 
-    .modal-dialog .card-body {
-      padding: 1.5rem 1.5rem 0 1.5rem !important;
-    }
+.modal-dialog .card-body {
+  padding: 1.5rem 1.5rem 0 1.5rem !important;
+}
 
-    .nav-bordered {
-      border: unset !important;
-    }
+.nav-bordered {
+  border: unset !important;
+}
 
-    .nav {
-      background-color: #dff0fe;
-    }
+.nav {
+  background-color: #dff0fe;
+}
 
-    .tab-content {
-      padding: 70px 60px 40px;
-      min-height: 300px;
-      background-color: #f5f5f5;
-      position: relative;
-    }
+.tab-content {
+  padding: 70px 60px 40px;
+  min-height: 300px;
+  background-color: #f5f5f5;
+  position: relative;
+}
 
-    .nav-tabs .nav-link {
-      border: 1px solid #b7b7b7 !important;
-      background-color: #d7e5f2;
-      border-bottom: 0 !important;
-      margin-bottom: 1px;
-    }
+.nav-tabs .nav-link {
+  border: 1px solid #b7b7b7 !important;
+  background-color: #d7e5f2;
+  border-bottom: 0 !important;
+  margin-bottom: 1px;
+}
 
-    .nav-tabs .nav-link.active,
-    .nav-tabs .nav-item.show .nav-link {
-      color: #000;
-      background-color: hsl(0deg 0% 96%);
-      border-bottom: 0 !important;
-    }
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: #000;
+  background-color: hsl(0deg 0% 96%);
+  border-bottom: 0 !important;
+}
 
-    .img-thumbnail {
-      max-height: 400px !important;
-    }
+.img-thumbnail {
+  max-height: 400px !important;
+}
 
-    .title_menu {
-        display: inline-block;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
+.title_menu {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 18px;
+}
 </style>

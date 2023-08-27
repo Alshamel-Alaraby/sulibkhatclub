@@ -27,10 +27,11 @@ class PeriodicMaintenanceRequest extends FormRequest
         return [
             'name' => "required|max:255",
             'name_e' => "required|max:255",
-            'date' => "required|date_format:Y-m-d|after_or_equal:" . date('Y-m-d'),
             'task_id' => "required|exists:general_tasks,id",
             'department_id' => "required|exists:general_departments,id",
-            'is_active' => "nullable|in:true,false",
+            "restart_period_id" => "required|exists:general_restart_period,id",
+            'is_active' => "nullable|in:0,1",
+            "company_id"=>'nullable',
         ];
     }
 }

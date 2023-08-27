@@ -52,6 +52,7 @@ class OrderRequest extends FormRequest
             "details.*.panels" => "required|array",
             "details.*.panels.*" => "exists:boards_rent_panels,id",
             "deleted_details.*" => "nullable|exists:boards_rent_order_details,id",
+            "company_id"=>'nullable',
         ];
     }
 

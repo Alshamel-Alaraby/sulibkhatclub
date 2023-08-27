@@ -16,5 +16,6 @@ interface BankInterface
     public function delete($id);
 
     public function logs($id);
+    public function getName($request);
 
 }

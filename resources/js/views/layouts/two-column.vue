@@ -1,10 +1,10 @@
 <script>
 import { layoutComputed } from "../../state/helpers";
 
-import TwoColumnSidebar from "../../components/Two-column-sidebar";
-import Topbar from "../../components/Topbar";
-import Rightbar from "../../components/Rightbar";
-import Footer from "../../components/Footer";
+import TwoColumnSidebar from "../../components/general/Two-column-sidebar";
+import Topbar from "../../components/general/Topbar";
+import Rightbar from "../../components/general/Rightbar";
+import Footer from "../../components/general/Footer";
 
 /**
  * Two-column layout

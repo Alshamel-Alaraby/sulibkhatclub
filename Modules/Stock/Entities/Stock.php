@@ -15,6 +15,7 @@ class Stock extends Model
         'name_e',
         'stock_market_id',
         'sector_id',
+        'company_id',
         'symbol',
     ];
 

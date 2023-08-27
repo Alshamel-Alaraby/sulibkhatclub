@@ -25,14 +25,15 @@ class CmTransactionResource extends JsonResource
             'branch' => new BranchResource($this->branch),
             'sponsor' => new CmSponserResource($this->sponsor),
             "member" => $this->cm_member_id ? new \Modules\ClubMembers\Transformers\CmMemberResource($this->member) : null,
+
             'year_from' => $this->year_from,
             'year_to' => $this->year_to,
             'type' => $this->type,
             'prefix' => $this->prefix,
             'serial_number' => $this->serial_number,
-            'number_of_years' =>$this->number_of_years,
+            'number_of_years' => $this->number_of_years,
             'created_by' => $this->created_by,
-            'financial_year_id' => $this->financial_year_id
+            'financial_year_id' => $this->financial_year_id,
         ];
     }
 }

@@ -256,12 +256,12 @@
 
 <script>
 import ErrorMessage from "../widgets/errorMessage";
-import loader from "../loader";
+import loader from "../general/loader";
 import Multiselect from "vue-multiselect";
 import adminApi from "../../api/adminAxios";
 import Swal from "sweetalert2";
 import { integer, maxLength, minLength, required, email } from "vuelidate/lib/validators";
-import transMixinComp from "../../helper/translation-comp-mixin";
+import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 export default {
   props: ["currentNode"],
   data() {
@@ -310,7 +310,6 @@ export default {
       });
       this.$bvModal.hide("show-whatup");
     },
-
     getLinkWhastapp() {
       this.$v.watsApp.$touch();
       if (this.$v.watsApp.$invalid) {
@@ -329,7 +328,6 @@ export default {
         window.open(url);
       }
     },
-
     // start email
     resetSendEmail() {
       this.sendEmail = { email: "" };

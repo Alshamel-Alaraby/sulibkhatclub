@@ -30,6 +30,7 @@ class DocumentApprovalDetailRequest extends FormRequest
             'approval_time' => 'required|date_format:H:i:s',
             "employee_id" => "required|exists:general_employees,id",
             "decision_id" => "required|exists:general_document_statuses,id",
+            "company_id"=>'nullable',
         ];
     }
 }

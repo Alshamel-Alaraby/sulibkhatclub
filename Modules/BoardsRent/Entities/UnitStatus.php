@@ -17,6 +17,7 @@ class UnitStatus extends Model
         'name',
         'name_e',
         'status_id',
+        'company_id',
     ];
 
     protected $table = 'boards_rent_unit_statuses';

@@ -11,9 +11,11 @@ use Spatie\Activitylog\LogOptions;
 
 class JobTitle extends Model
 {
-    use HasFactory, LogTrait, SoftDeletes;
+    use HasFactory, LogTrait;
+
 
     protected $fillable = [
+        'id',
         'name',
         'name_e'
     ];
@@ -29,4 +31,9 @@ class JobTitle extends Model
             ->useLogName('Job Title')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
 }

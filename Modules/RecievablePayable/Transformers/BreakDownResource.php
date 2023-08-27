@@ -2,6 +2,7 @@
 
 namespace Modules\RecievablePayable\Transformers;
 
+use App\Http\Resources\DocumentHeader\DocumentHeaderResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 use Modules\RealEstate\Transformers\RlstContractResource;
@@ -38,15 +39,16 @@ class BreakDownResource extends JsonResource
             "terms"=>$this->terms,
             "invoice_id"=>$this->invoice_id,
             "amount_status"=>$this->amount_status,
-//            "document"=>$this->document,
+            "document"=>$this->document,
+            "documentHeader"=>new DocumentHeaderResource($this->documentHeader) ,
 //            "currency"=>$this->currency,
 //            "customer"=>$this->customer,
 //            "installment_status"=>$this->installment_status,
 //            "installment_payment_type"=>$this->installment_payment_type,
 //            "openingBalance"=>$this->openingBalance,
-//            "contract"=> new RlstContractResource($this->contract),
-//            "invoice"=> new RlstInvoiceResource($this->invoice),
-//            "reservation"=>$this->reservation,
+            "contract"=> new RlstContractResource($this->contract),
+            "invoice"=> new RlstInvoiceResource($this->invoice),
+            "reservation"=>$this->reservation,
 //            "children" => BreakDownResource::collection($this->children)
 
 

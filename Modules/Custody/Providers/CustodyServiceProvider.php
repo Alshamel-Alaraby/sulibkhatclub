@@ -4,6 +4,8 @@ namespace Modules\Custody\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Custody\Repositories\CusCustomTable\CusCustomTableInterface;
+use Modules\Custody\Repositories\CusCustomTable\CusCustomTableRepository;
 
 class CustodyServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,8 @@ class CustodyServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->app->bind(CusCustomTableInterface::class, CusCustomTableRepository::class);
+
     }
 
     /**

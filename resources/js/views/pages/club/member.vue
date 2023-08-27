@@ -1,10 +1,10 @@
 <script>
 import DatePicker from "vue2-datepicker";
-import Status from "../../../components/create/status.vue";
+import Status from "../../../components/create/general/status.vue";
 import Sponsor from "../../../components/create/club/sponsor.vue";
 import FinancialStatus from "../../../components/create/club/financialStatus.vue";
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
@@ -15,18 +15,19 @@ import {
   requiredIf,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
+import permissionGuard from "../../../helper/permission";
+
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
-import Branch from "../../../components/create/branch.vue";
+import Branch from "../../../components/create/general/branch.vue";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -52,17 +53,14 @@ export default {
     Multiselect,
     Branch,
   },
-  //   beforeRouteEnter(to, from, next) {
-  //     next((vm) => {
-  //       if (vm.$store.state.auth.work_flow_trees.includes('store') || vm.$store.state.auth.user.type == 'super_admin') {
-  //         return true;
-  //       } else {
-  //         return vm.$router.push({ name: "home" });
-  //       }
-  //     });
-  //   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Member", "all members club");
+    });
+  },
   data() {
     return {
+      transactions: [],
       fields: [],
       per_page: 50,
       search: "",
@@ -140,6 +138,7 @@ export default {
         financial_status_id: true,
       },
       is_disabled: false,
+      fullName: '',
       filterSetting: [
         "first_name",
         "second_name",
@@ -233,6 +232,37 @@ export default {
     this.getData();
   },
   methods: {
+    resetModalTransation(id){
+        let editTable = this.edit;
+        this.fullName = `${editTable.first_name} ${editTable.second_name ? editTable.second_name : ''} ${editTable.third_name? editTable.third_name: ''} ${editTable.last_name? editTable.last_name: ''} ${editTable.family_name ? editTable.family_name : ''}`;
+        this.isLoader = true;
+        this.$bvModal.show(`modal-transaction`)
+        adminApi
+            .get(
+                `/club-members/transactions/member-transaction/${id}`
+            )
+            .then((res) => {
+                let l = res.data;
+                console.log(l.data)
+                this.transactions = l.data;
+            })
+            .catch((err) => {
+                Swal.fire({
+                    icon: "error",
+                    title: `${this.$t("general.Error")}`,
+                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                });
+            })
+            .finally(() => {
+                this.isLoader = false;
+            });
+
+    },
+    resetModalHiddenTransation(){
+        this.transactions = [];
+        this.fullName = '';
+        this.$bvModal.hide(`modal-transaction`);
+    },
     v_dateCreate(e, name) {
       if (e) {
         this.create[name] = formatDateOnly(e);
@@ -874,6 +904,105 @@ export default {
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
 
+                <!--  /start show transaction   -->
+                <b-modal
+                    dialog-class="modal-full-width"
+                    :id="`modal-transaction`"
+                    :title="$t('general.ReceiptVoucherMember') + fullName"
+                    title-class="font-18"
+                    body-class="p-4"
+                    :hide-footer="true"
+                    @hidden="resetModalHiddenTransation"
+                >
+                    <form>
+                        <div class="mb-3 d-flex justify-content-end">
+                            <b-button
+                                variant="danger"
+                                type="button"
+                                @click.prevent="resetModalHiddenTransation"
+                            >
+                                {{ $t("general.Cancel") }}
+                            </b-button>
+                        </div>
+
+                        <!--       start loader       -->
+                        <loader size="large" v-if="isLoader" />
+                        <!--       end loader       -->
+
+                        <div class="table-responsive mb-3 custom-table-theme position-relative">
+                            <table
+                                class="table table-borderless table-hover table-centered m-0"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>#</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.date') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.from') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.to') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.amount') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.serial_number') }}</span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody v-if="members.length > 0">
+                                <tr
+                                    v-for="(data, index) in transactions"
+                                    :key="data.id"
+                                    class="body-tr-custom"
+                                >
+                                    <td>
+                                        {{ index + 1 }}
+                                    </td>
+                                    <td>
+                                        {{ formatDate(data.date) }}
+                                    </td>
+                                    <td>
+                                        {{ data.year_from }}
+                                    </td>
+                                    <td>
+                                        {{ data.year_to }}
+                                    </td>
+                                    <td>
+                                        {{ data.serial_number }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody v-else>
+                                <tr>
+                                    <th class="text-center" colspan="30">
+                                        {{ $t("general.notDataFound") }}
+                                    </th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </b-modal>
+                <!--  /edit show transaction   -->
+
               <table
                 class="table table-borderless table-hover table-centered m-0"
                 ref="exportable_table"
@@ -1005,7 +1134,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                      <th v-if="setting.national_id">
+                    <th v-if="setting.national_id">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_national_id") }}</span>
                         <div class="arrow-sort">
@@ -1140,7 +1269,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    
+
                     <th v-if="setting.job">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_job") }}</span>
@@ -1303,7 +1432,6 @@ export default {
                     <td v-if="setting.national_id">
                       {{ data.national_id }}
                     </td>
-                    
                     <td v-if="setting.birth_date">
                       {{ data.birth_date }}
                     </td>
@@ -1379,8 +1507,15 @@ export default {
                     >
                       <form>
                         <div class="mb-3 d-flex justify-content-end">
-                          <!-- Emulate built in modal footer ok and cancel button actions -->
                           <b-button
+                                variant="info"
+                                type="button"
+                                @click.prevent="resetModalTransation(data.id)"
+                            >
+                                {{ $t("general.ReceiptVoucher") }}
+                            </b-button>
+                          <b-button
+                            class="mx-1 d-flex justify-content-end"
                             variant="danger"
                             type="button"
                             @click.prevent="
@@ -2076,12 +2211,10 @@ export default {
                                 disabled
                                 v-model="edit.sponsor_id"
                                 :options="sponsors.map((type) => type.id)"
-                                :custom-label="
+                                :custom-label=" (opt) => sponsors.find((x) => x.id == opt)?
                                   $i18n.locale == 'ar'
-                                    ? (opt) =>
-                                        sponsors.find((x) => x.id == opt).name
-                                    : (opt) =>
-                                        sponsors.find((x) => x.id == opt).name_e
+                                    ? sponsors.find((x) => x.id == opt).name
+                                    : sponsors.find((x) => x.id == opt).name_e : null
                                 "
                               >
                               </multiselect>
@@ -2164,11 +2297,11 @@ export default {
     border: unset;
   }
 }
-thead th{
-    white-space: nowrap !important;
+thead th {
+  white-space: nowrap !important;
 }
-table td{
-    white-space: nowrap !important;
+table td {
+  white-space: nowrap !important;
 }
 .custom-radio
   .custom-control-input:disabled:checked

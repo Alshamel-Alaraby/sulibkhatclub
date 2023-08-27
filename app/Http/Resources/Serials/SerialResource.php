@@ -28,7 +28,6 @@ class SerialResource extends JsonResource
             'perfix' => $this->perfix,
             'suffix' => $this->suffix,
             'restart_period_id' => $this->restart_period_id,
-            'is_default' => $this->is_default,
             "store" => $this->store,
             "has_child" => $this->has_child,
             "document" => new DocumentResource($this->document),

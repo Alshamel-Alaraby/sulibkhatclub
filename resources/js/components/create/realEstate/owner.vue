@@ -288,14 +288,14 @@ import Switches from "vue-switches";
 import { required, minLength, maxLength, integer, numeric, email } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import { dynamicSortNumber, dynamicSortString } from "../../../helper/tableSort";
 import { formatDateOnly } from "../../../helper/startDate";
-import Country from "../../../components/country";
-import City from "../../../components/city";
-import bankAccount from "../../../components/create/bankAccount";
+import Country from "../general/country";
+import City from "../general/city";
+import bankAccount from "../general/bankAccount";
 import Multiselect from "vue-multiselect";
-import transMixinComp from "../../../helper/translation-mixin";
+import transMixinComp from "../../../helper/mixin/translation-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import axios from "axios";
 // require styles
@@ -489,7 +489,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
 
-                adminApi.post(`/real-estate/owners`, this.create)
+                adminApi.post(`/real-estate/owners`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.is_disabled = true;
                         this.$emit("created");

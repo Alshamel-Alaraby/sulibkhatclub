@@ -1,6 +1,6 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
@@ -10,14 +10,18 @@ import {
   integer,
   requiredIf,
 } from "vuelidate/lib/validators";
+import permissionGuard from "../../../helper/permission";
+
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
-import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import {
+  dynamicSortString,
+  dynamicSortNumber,
+} from "../../../helper/tableSort";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -79,9 +83,9 @@ export default {
   },
   validations: {
     create: {
-      name: {required, minLength: minLength(2), maxLength: maxLength(100)},
-      name_e: {required, minLength: minLength(2), maxLength: maxLength(100)},
-      is_active: {required},
+      name: { required, minLength: minLength(2), maxLength: maxLength(100) },
+      name_e: { required, minLength: minLength(2), maxLength: maxLength(100) },
+      is_active: { required },
     },
     edit: {
       name: {
@@ -94,7 +98,7 @@ export default {
         minLength: minLength(2),
         maxLength: maxLength(100),
       },
-      is_active: { required},
+      is_active: { required },
     },
   },
   watch: {
@@ -132,38 +136,12 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  updated() {
-    // $(function () {
-    //   $(".englishInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return true;
-    //     if (65 <= ew && ew <= 90) return true;
-    //     if (97 <= ew && ew <= 122) return true;
-    //     return false;
-    //   });
-    //   $(".arabicInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return false;
-    //     if (65 <= ew && ew <= 90) return false;
-    //     if (97 <= ew && ew <= 122) return false;
-    //     return true;
-    //   });
-    // });
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Pending Member", "all Pending Member");
+    });
+
   },
-//   beforeRouteEnter(to, from, next) {
-//     next((vm) => {
-//       if (
-//         vm.$store.state.auth.work_flow_trees.includes("pending-member") ||
-//         vm.$store.state.auth.user.type == "super_admin"
-//       ) {
-//         return true;
-//       } else {
-//         return vm.$router.push({ name: "home" });
-//       }
-//     });
-//   },
   methods: {
     formatDate(value) {
       return formatDateOnly(value);
@@ -397,7 +375,7 @@ export default {
       this.$nextTick(() => {
         this.$v.$reset();
       });
-        this.is_disabled = false;
+      this.is_disabled = false;
       this.errors = {};
       this.$bvModal.hide(`create`);
     },
@@ -450,7 +428,10 @@ export default {
           status: this.create.is_active,
         };
         adminApi
-          .post(`/club-members/pending-members`, data)
+          .post(`/club-members/pending-members`, {
+            ...data,
+            company_id: this.$store.getters["auth/company_id"],
+          })
           .then((res) => {
             this.is_disabled = true;
             this.getData();
@@ -619,7 +600,9 @@ export default {
           <div class="card-body">
             <!-- start search -->
             <div class="row justify-content-between align-items-center mb-2">
-              <h4 class="header-title">{{ $t("general.pendingMembersTable") }}</h4>
+              <h4 class="header-title">
+                {{ $t("general.pendingMembersTable") }}
+              </h4>
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->
@@ -633,19 +616,26 @@ export default {
                       v-model="filterSetting"
                       value="name"
                       class="mb-1"
-                      >{{ getCompanyKey("pending_member_name_ar") }}</b-form-checkbox
+                      >{{
+                        getCompanyKey("pending_member_name_ar")
+                      }}</b-form-checkbox
                     >
                     <b-form-checkbox
                       v-model="filterSetting"
                       value="name_e"
                       class="mb-1"
-                      >{{ getCompanyKey("pending_member_name_en") }}</b-form-checkbox
+                      >{{
+                        getCompanyKey("pending_member_name_en")
+                      }}</b-form-checkbox
                     >
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
 
-                <div class="d-inline-block position-relative" style="width: 77%">
+                <div
+                  class="d-inline-block position-relative"
+                  style="width: 77%"
+                >
                   <span
                     :class="[
                       'search-custom position-absolute',
@@ -666,7 +656,9 @@ export default {
             </div>
             <!-- end search -->
 
-            <div class="row justify-content-between align-items-center mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mb-2 px-1"
+            >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
@@ -678,7 +670,10 @@ export default {
                   <i class="fas fa-plus"></i>
                 </b-button>
                 <div class="d-inline-flex">
-                  <button @click="ExportExcel('xlsx')" class="custom-btn-dowonload">
+                  <button
+                    @click="ExportExcel('xlsx')"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fas fa-file-download"></i>
                   </button>
                   <button v-print="'#printData'" class="custom-btn-dowonload">
@@ -729,29 +724,25 @@ export default {
                     <!-- Basic dropdown -->
                     <b-dropdown
                       variant="primary"
-                      :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                      :html="`${$t(
+                        'general.setting'
+                      )} <i class='fe-settings'></i>`"
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
-                      <b-form-checkbox
-                        v-model="setting.name"
-                        class="mb-1"
+                      <b-form-checkbox v-model="setting.name" class="mb-1"
                         >{{ getCompanyKey("pending_member_name_ar") }}
                       </b-form-checkbox>
-                      <b-form-checkbox
-                        v-model="setting.name_e"
-                        class="mb-1"
-                      >
+                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
                         {{ getCompanyKey("pending_member_name_en") }}
                       </b-form-checkbox>
-                      <b-form-checkbox
-                        v-model="setting.is_active"
-                        class="mb-1"
-                      >
+                      <b-form-checkbox v-model="setting.is_active" class="mb-1">
                         {{ getCompanyKey("pending_member_status") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
-                        <a href="javascript:void(0)" class="btn btn-primary btn-sm"
+                        <a
+                          href="javascript:void(0)"
+                          class="btn btn-primary btn-sm"
                           >Apply</a
                         >
                       </div>
@@ -761,9 +752,14 @@ export default {
                   <!-- end filter and setting -->
 
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 13px">
-                      {{ pendingMembersPagination.from }}-{{ pendingMembersPagination.to }} /
+                      {{ pendingMembersPagination.from }}-{{
+                        pendingMembersPagination.to
+                      }}
+                      /
                       {{ pendingMembersPagination.total }}
                     </div>
                     <div class="d-inline-block">
@@ -771,9 +767,13 @@ export default {
                         href="javascript:void(0)"
                         :style="{
                           'pointer-events':
-                            pendingMembersPagination.current_page == 1 ? 'none' : '',
+                            pendingMembersPagination.current_page == 1
+                              ? 'none'
+                              : '',
                         }"
-                        @click.prevent="getData(pendingMembersPagination.current_page - 1)"
+                        @click.prevent="
+                          getData(pendingMembersPagination.current_page - 1)
+                        "
                       >
                         <span>&lt;</span>
                       </a>
@@ -792,7 +792,9 @@ export default {
                               ? 'none'
                               : '',
                         }"
-                        @click.prevent="getData(pendingMembersPagination.current_page + 1)"
+                        @click.prevent="
+                          getData(pendingMembersPagination.current_page + 1)
+                        "
                       >
                         <span>&gt;</span>
                       </a>
@@ -820,7 +822,10 @@ export default {
                     :disabled="!is_disabled"
                     @click.prevent="resetForm"
                     type="button"
-                    :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                    :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
                   >
                     {{ $t("general.AddNewRecord") }}
                   </b-button>
@@ -864,18 +869,25 @@ export default {
                           v-model="$v.create.name.$model"
                           :class="{
                             'is-invalid': $v.create.name.$error || errors.name,
-                            'is-valid': !$v.create.name.$invalid && !errors.name,
+                            'is-valid':
+                              !$v.create.name.$invalid && !errors.name,
                           }"
                           @keyup="arabicValue(create.name)"
                           id="field-1"
                         />
                       </div>
-                      <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name.minLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatleast") }}
                         {{ $v.create.name.$params.minLength.min }}
                         {{ $t("general.letters") }}
                       </div>
-                      <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name.maxLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatmost") }}
                         {{ $v.create.name.$params.maxLength.max }}
                         {{ $t("general.letters") }}
@@ -889,11 +901,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div  class="col-md-12">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label for="field-2" class="control-label">
                         {{ getCompanyKey("pending_member_name_en") }}
-                        <span  class="text-danger">*</span>
+                        <span class="text-danger">*</span>
                       </label>
                       <div dir="ltr">
                         <input
@@ -901,19 +913,27 @@ export default {
                           class="form-control englishInput"
                           v-model="$v.create.name_e.$model"
                           :class="{
-                            'is-invalid': $v.create.name_e.$error || errors.name_e,
-                            'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                            'is-invalid':
+                              $v.create.name_e.$error || errors.name_e,
+                            'is-valid':
+                              !$v.create.name_e.$invalid && !errors.name_e,
                           }"
                           @keyup="englishValue(create.name_e)"
                           id="field-2"
                         />
                       </div>
-                      <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name_e.minLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatleast") }}
                         {{ $v.create.name_e.$params.minLength.min }}
                         {{ $t("general.letters") }}
                       </div>
-                      <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
+                      <div
+                        v-if="!$v.create.name_e.maxLength"
+                        class="invalid-feedback"
+                      >
                         {{ $t("general.Itmustbeatmost") }}
                         {{ $v.create.name_e.$params.maxLength.max }}
                         {{ $t("general.letters") }}
@@ -927,7 +947,7 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div  class="col-md-12">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label class="mr-2">
                         {{ getCompanyKey("pending_member_status") }}
@@ -935,8 +955,10 @@ export default {
                       </label>
                       <b-form-group
                         :class="{
-                          'is-invalid': $v.create.is_active.$error || errors.is_active,
-                          'is-valid': !$v.create.is_active.$invalid && !errors.is_active,
+                          'is-invalid':
+                            $v.create.is_active.$error || errors.is_active,
+                          'is-valid':
+                            !$v.create.is_active.$invalid && !errors.is_active,
                         }"
                       >
                         <b-form-radio
@@ -969,7 +991,9 @@ export default {
             <!--  /create   -->
 
             <!-- start .table-responsive-->
-            <div class="table-responsive mb-3 custom-table-theme position-relative">
+            <div
+              class="table-responsive mb-3 custom-table-theme position-relative"
+            >
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
@@ -980,7 +1004,12 @@ export default {
               >
                 <thead>
                   <tr>
-                    <th v-if="enabled3" class="do-not-print" scope="col" style="width: 0">
+                    <th
+                      v-if="enabled3"
+                      class="do-not-print"
+                      scope="col"
+                      style="width: 0"
+                    >
                       <div class="form-check custom-control">
                         <input
                           class="form-check-input"
@@ -990,9 +1019,11 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name ">
+                    <th v-if="setting.name">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("pending_member_name_ar") }}</span>
+                        <span>{{
+                          getCompanyKey("pending_member_name_ar")
+                        }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -1005,9 +1036,11 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e ">
+                    <th v-if="setting.name_e">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("pending_member_name_en") }}</span>
+                        <span>{{
+                          getCompanyKey("pending_member_name_en")
+                        }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -1022,7 +1055,9 @@ export default {
                     </th>
                     <th v-if="setting.is_active">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("pending_member_status") }}</span>
+                        <span>{{
+                          getCompanyKey("pending_member_status")
+                        }}</span>
                       </div>
                     </th>
                     <th v-if="enabled3" class="do-not-print">
@@ -1042,7 +1077,10 @@ export default {
                     class="body-tr-custom"
                   >
                     <td v-if="enabled3" class="do-not-print">
-                      <div class="form-check custom-control" style="min-height: 1.9em">
+                      <div
+                        class="form-check custom-control"
+                        style="min-height: 1.9em"
+                      >
                         <input
                           style="width: 17px; height: 17px"
                           class="form-check-input"
@@ -1059,14 +1097,18 @@ export default {
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
                     <td v-if="setting.is_active">
-                      <span :class="[
-                        data.status == 'active' ? 'text-success' : 'text-danger',
-                        'badge',
-                      ]">
+                      <span
+                        :class="[
+                          data.status == 'active'
+                            ? 'text-success'
+                            : 'text-danger',
+                          'badge',
+                        ]"
+                      >
                         {{
                           data.status == "active"
-                          ? `${$t("general.pending")}`
-                          : `${$t("general.inpending")}`
+                            ? `${$t("general.pending")}`
+                            : `${$t("general.inpending")}`
                         }}
                       </span>
                     </td>
@@ -1091,7 +1133,9 @@ export default {
                               class="d-flex justify-content-between align-items-center text-black"
                             >
                               <span>{{ $t("general.edit") }}</span>
-                              <i class="mdi mdi-square-edit-outline text-info"></i>
+                              <i
+                                class="mdi mdi-square-edit-outline text-info"
+                              ></i>
                             </div>
                           </a>
                           <a
@@ -1133,21 +1177,30 @@ export default {
                               {{ $t("general.Edit") }}
                             </b-button>
 
-                            <b-button variant="success" class="mx-1" disabled v-else>
+                            <b-button
+                              variant="success"
+                              class="mx-1"
+                              disabled
+                              v-else
+                            >
                               <b-spinner small></b-spinner>
-                              <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                              <span class="sr-only"
+                                >{{ $t("login.Loading") }}...</span
+                              >
                             </b-button>
 
                             <b-button
                               variant="danger"
                               type="button"
-                              @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
+                              @click.prevent="
+                                $bvModal.hide(`modal-edit-${data.id}`)
+                              "
                             >
                               {{ $t("general.Cancel") }}
                             </b-button>
                           </div>
                           <div class="row">
-                            <div  class="col-md-12">
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <label for="edit-1" class="control-label">
                                   {{ getCompanyKey("pending_member_name_ar") }}
@@ -1159,8 +1212,10 @@ export default {
                                     class="form-control arabicInput"
                                     v-model="$v.edit.name.$model"
                                     :class="{
-                                      'is-invalid': $v.edit.name.$error || errors.name,
-                                      'is-valid': !$v.edit.name.$invalid && !errors.name,
+                                      'is-invalid':
+                                        $v.edit.name.$error || errors.name,
+                                      'is-valid':
+                                        !$v.edit.name.$invalid && !errors.name,
                                     }"
                                     @keyup="arabicValue(edit.name)"
                                     id="edit-1"
@@ -1191,7 +1246,7 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div  class="col-md-12">
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <label for="edit-2" class="control-label">
                                   {{ getCompanyKey("pending_member_name_en") }}
@@ -1206,7 +1261,8 @@ export default {
                                       'is-invalid':
                                         $v.edit.name_e.$error || errors.name_e,
                                       'is-valid':
-                                        !$v.edit.name_e.$invalid && !errors.name_e,
+                                        !$v.edit.name_e.$invalid &&
+                                        !errors.name_e,
                                     }"
                                     @keyup="englishValue(edit.name_e)"
                                     id="edit-2"
@@ -1230,14 +1286,16 @@ export default {
                                 </div>
                                 <template v-if="errors.name_e">
                                   <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.name_e"
+                                    v-for="(
+                                      errorMessage, index
+                                    ) in errors.name_e"
                                     :key="index"
                                     >{{ errorMessage }}</ErrorMessage
                                   >
                                 </template>
                               </div>
                             </div>
-                            <div  class="col-md-12">
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <label class="mr-2">
                                   {{ getCompanyKey("pending_member_status") }}
@@ -1246,9 +1304,11 @@ export default {
                                 <b-form-group
                                   :class="{
                                     'is-invalid':
-                                      $v.edit.is_active.$error || errors.is_active,
+                                      $v.edit.is_active.$error ||
+                                      errors.is_active,
                                     'is-valid':
-                                      !$v.edit.is_active.$invalid && !errors.is_active,
+                                      !$v.edit.is_active.$invalid &&
+                                      !errors.is_active,
                                   }"
                                 >
                                   <b-form-radio
@@ -1268,7 +1328,9 @@ export default {
                                 </b-form-group>
                                 <template v-if="errors.is_active">
                                   <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.is_active"
+                                    v-for="(
+                                      errorMessage, index
+                                    ) in errors.is_active"
                                     :key="index"
                                     >{{ errorMessage }}</ErrorMessage
                                   >
@@ -1287,7 +1349,9 @@ export default {
                         type="button"
                         class="btn"
                         data-toggle="tooltip"
-                        :data-placement="$i18n.locale == 'en' ? 'left' : 'right'"
+                        :data-placement="
+                          $i18n.locale == 'en' ? 'left' : 'right'
+                        "
                         :title="Tooltip"
                       >
                         <i class="fe-info" style="font-size: 22px"></i>

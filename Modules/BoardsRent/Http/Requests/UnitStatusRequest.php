@@ -17,6 +17,7 @@ class UnitStatusRequest extends FormRequest
             'name' => 'required|unique:boards_rent_unit_statuses,name,'. ($this->method() == 'PUT' ?  $this->id : ''),
             'name_e' => 'required|unique:boards_rent_unit_statuses,name_e,'. ($this->method() == 'PUT' ?  $this->id : ''),
             "status_id" => "required|exists:general_statuses,id",
+            "company_id"=>'nullable',
         ];
     }
 

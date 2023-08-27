@@ -17,7 +17,10 @@ class Equipment extends Model
         'id',
         'name',
         'name_e',
-        'parent_id'
+        'parent_id',
+        'company_id',
+        'location_id',
+        'periodic_maintenance_id',
     ];
 
     protected $appends = ['haveChildren'];
@@ -28,6 +31,11 @@ class Equipment extends Model
     public function getHaveChildrenAttribute()
     {
         return static::where("parent_id", $this->id)->count() > 0;
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Equipment::class, 'parent_id');
     }
 
     public function children()
@@ -42,7 +50,7 @@ class Equipment extends Model
 
     public function periodicMaintenance()
     {
-        return $this->belongsTo(PeriodicMaintenance::class, 'periodic_maintenance_id‏');
+        return $this->belongsTo(PeriodicMaintenance::class, 'periodic_maintenance_id');
     }
 
     public function location()

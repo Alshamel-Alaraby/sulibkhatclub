@@ -18,6 +18,7 @@ class SalesmenPlan extends Model
         'name_e',
         'salesmen_plans_source_id',
         'restart_period_id',
+        'company_id',
     ];
 
     public function salesmenPlansSource()

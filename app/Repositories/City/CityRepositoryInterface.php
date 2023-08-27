@@ -9,5 +9,6 @@ interface CityRepositoryInterface
     public function getAll($request);
 
     public function logs($id);
+    public function getName($request);
 
 }

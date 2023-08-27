@@ -33,6 +33,7 @@ class RlstReservationRequest extends FormRequest
             "details.*.unit_value" => "nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/",
             "details.*.reservation_value" => "nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/",
             "details.*.installment_payment_plans_id" => "nullable|exists:rp_installment_payment_plans,id",
+            "company_id"=>'nullable',
         ];
     }
 

@@ -4,13 +4,12 @@ import adminApi from "../../api/adminAxios";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../components/widgets/errorMessage";
-import loader from "../../components/loader";
+import loader from "../general/loader";
 import { dynamicSortString } from "../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import ArchDoc from "../../components/create/arch/gen-arch-doc-type";
 import DocField from "../../components/create/arch/doc-field";
-import Templates from "../../views/pages/email/templates";
-import transMixinComp from "../../helper/translation-comp-mixin";
+import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 
 /**
  * Advanced Table component
@@ -30,7 +29,6 @@ export default {
   mixins: [transMixinComp],
 
     components: {
-        Templates,
         Layout,
         ErrorMessage,
         loader,
@@ -415,6 +413,9 @@ export default {
             } else {
                 this.create.map(el => {
                      return el.doc_type_id = this.arch_doc_type_id;
+                });
+                this.create.map(el => {
+                    return el.company_id = this.$store.getters["auth/company_id"];
                 });
                 this.isLoader = true;
                 this.errors = {};

@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerBranch extends Model
 {
     use HasFactory, LogTrait;
+
+    protected $table = "general_customer_branches";
+
+
     protected $fillable = [
         'name',
         'name_e',

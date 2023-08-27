@@ -33,6 +33,7 @@ class RlstBuildingWalletRequest extends FormRequest
                 // ,'exists:rlst_wallets,id,deleted_at,null'
             ],
             'bu_ty' => 'required|in:1,2',
+            "company_id"=>'nullable',
         ];
     }
 

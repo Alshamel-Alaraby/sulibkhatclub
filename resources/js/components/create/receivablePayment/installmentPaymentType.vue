@@ -1,24 +1,21 @@
 <script>
 import adminApi from "../../../api/adminAxios";
-import Switches from "vue-switches";
 import { required, requiredIf, minLength, maxLength, minValue, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
-import { dynamicSortString } from "../../../helper/tableSort";
-import { formatDateOnly } from "../../../helper/startDate";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import loader from "../../general/loader";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import Multiselect from "vue-multiselect";
 import InstallmentCond from "./installmentCondition";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
  */
 export default {
-  mixins: [transMixinComp],
+  mixins: [transMixinComp,successError],
   components: {
-    Switches,
     ErrorMessage,
     loader,
     Multiselect,
@@ -26,9 +23,10 @@ export default {
   },
   data() {
     return {
-      enabled3: false,
+      isCustom: false,
       isLoader: false,
       conditions: [],
+      fields: [],
       create: {
         name: "",
         name_e: "",
@@ -43,65 +41,95 @@ export default {
         is_passed_contract_plan: 0,
       },
       errors: {},
-      dropDownSenders: [],
-      is_disabled: false,
-      isCheckAll: false,
-      checkAll: [],
-      current_page: 1,
+      is_disabled: false
     };
   },
   validations: {
     create: {
-      name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-      name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
-      is_partially: { required },
-      is_passed: { required },
-      is_passed_all: { required },
-      Freq_period: {  },
-      is_conditional: { required },
-      installmentPaymentType_freq: { },
-      is_passed_contract_plan: { required },
-      Condition_id: {
-        required: requiredIf(function (model) {
-          return this.create.is_conditional == 1;
-        }),
-      },
-      auto_freq: { required },
+          name: { required: requiredIf(function (model) {
+                  return this.isRequired("name");
+              }), minLength: minLength(3), maxLength: maxLength(100) },
+          name_e: { required: requiredIf(function (model) {
+                  return this.isRequired("name");
+              }), minLength: minLength(3), maxLength: maxLength(100) },
+          is_partially: { required: requiredIf(function (model) {
+                  return this.isRequired("is_partially");
+              }) },
+          is_passed: { required: requiredIf(function (model) {
+                  return this.isRequired("is_passed");
+              }) },
+          is_passed_all: { required: requiredIf(function (model) {
+                  return this.isRequired("is_passed_all");
+              }) },
+          Freq_period: { required: requiredIf(function (model) {
+                  return this.isRequired("Freq_period");
+              }) },
+          is_conditional: { required: requiredIf(function (model) {
+                  return this.isRequired("is_conditional");
+              }) },
+          installmentPaymentType_freq: {required: requiredIf(function (model) {
+                  return this.isRequired("installmentPaymentType_freq");
+              }) },
+          is_passed_contract_plan: { required: requiredIf(function (model) {
+                  return this.isRequired("is_passed_contract_plan");
+              }) },
+          Condition_id: {
+            required: requiredIf(function (model) {
+              return this.create.is_conditional == 1 && this.isRequired("Condition_id");
+            }),
+          },
+          auto_freq: { required: requiredIf(function (model) {
+                  return this.isRequired("auto_freq");
+          }) },
     },
-
   },
-
-  updated() {
-    // $(function () {
-    //   $(".englishInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return true;
-    //     if (65 <= ew && ew <= 90) return true;
-    //     if (97 <= ew && ew <= 122) return true;
-    //     return false;
-    //   });
-    //   $(".arabicInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return true;
-    //     if (65 <= ew && ew <= 90) return false;
-    //     if (97 <= ew && ew <= 122) return false;
-    //     return true;
-    //   });
-    // });
-  },
-
-  props: ["companyKeys", "defaultsKeys"],
-
+  props: {
+        id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+        isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
+        type: {default: 'create'}, idObjEdit: {default: null},isPermission: {},url: {default: '/recievable-payable/rp_installment_payment_types'}
+    },
   methods: {
+      async getCustomTableFields() {
+          this.isCustom = true;
+          await adminApi
+              .get(`/customTable/table-columns/rp_installment_payment_types`)
+              .then((res) => {
+                  this.fields = res.data;
+              })
+              .catch((err) => {
+                  this.errorFun('Error','Thereisanerrorinthesystem');
+              })
+              .finally(() => {
+                  this.isCustom = false;
+              });
+      },
+      isVisible(fieldName) {
+          if(!this.isPage){
+              let res = this.fields.filter((field) => {
+                  return field.column_name == fieldName;
+              });
+              return res.length > 0 && res[0].is_visible == 1 ? true : false;
+          }else {
+              return this.isVisiblePage(fieldName);
+          }
+      },
+      isRequired(fieldName) {
+          if(!this.isPage) {
+              let res = this.fields.filter((field) => {
+                  return field.column_name == fieldName;
+              });
+              return res.length > 0 && res[0].is_required == 1 ? true : false;
+          }else {
+              return this.isRequiredPage(fieldName);
+          }
+      },
       showConditionModal() {
           if (this.create.Condition_id == 0) {
-              this.$bvModal.show("install_condition_create");
+              this.$bvModal.show("install_condition_create-payment-type");
               this.create.Condition_id = null;
           }
       },
-    getConditions() {
+      getConditions() {
       adminApi
         .get(`/recievable-payable/rp_installment_condation`)
         .then((res) => {
@@ -124,173 +152,205 @@ export default {
           this.isLoader = false;
         });
     },
-    resetModalHidden() {
-      this.create = {
-        name: "",
-        name_e: "",
-        auto_freq: 0,
-        is_partially: 0,
-        is_passed: 0,
-        is_passed_all: 0,
-        Freq_period: 0,
-        is_conditional: 0,
-        Condition_id: null,
-        installmentPaymentType_freq: 0,
-        is_passed_contract_plan: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-        this.is_disabled = false;
-      this.$bvModal.hide(`installment_payment_type_create`);
-    },
-
-    /**
-     *  hidden Modal (create)
-     */
-    resetModal() {
-      this.getConditions();
-
-      this.create = {
-        name: "",
-        name_e: "",
-        auto_freq: 0,
-        is_partially: 0,
-        is_passed: 0,
-        is_passed_all: 0,
-        Freq_period: 0,
-        is_conditional: 0,
-        Condition_id: null,
-        installmentPaymentType_freq: 0,
-        is_passed_contract_plan: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-    },
-    /**
-     *  create module
-     */
-    resetForm() {
-      this.create = {
-        name: "",
-        name_e: "",
-        auto_freq: 0,
-        is_partially: 0,
-        is_passed: 0,
-        is_passed_all: 0,
-        Freq_period: 0,
-        is_conditional: 0,
-        Condition_id: null,
-        installmentPaymentType_freq: 0,
-        is_passed_contract_plan: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.is_disabled = false;
-      this.errors = {};
-    },
-    AddSubmit() {
-      if (!this.create.name) {
-        this.create.name = this.create.name_e;
-      }
-      if (!this.create.name_e) {
-        this.create.name_e = this.create.name;
-      }
-      this.$v.create.$touch();
-
-      if (this.$v.create.$invalid) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        adminApi
-          .post(`/recievable-payable/rp_installment_payment_types`, {
-            ...this.create,
-            installment_payment_type_freq: this.create.installmentPaymentType_freq,
-            freq_period: this.create.Freq_period,
-            installment_condation_id: this.create.Condition_id,
-          })
-          .then((res) => {
-            this.is_disabled = true;
-            this.$emit('created');
-            setTimeout(() => {
-              Swal.fire({
-                icon: "success",
-                text: `${this.$t("general.Addedsuccessfully")}`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }, 500);
-          })
-          .catch((err) => {
-            if (err.response.data) {
-              this.errors = err.response.data.errors;
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
-            }
-          })
-          .finally(() => {
-            this.isLoader = false;
+      defaultData(edit = null){
+          this.create = {
+              name: "",
+              name_e: "",
+              auto_freq: 0,
+              is_partially: 0,
+              is_passed: 0,
+              is_passed_all: 0,
+              Freq_period: 0,
+              is_conditional: 0,
+              Condition_id: null,
+              installmentPaymentType_freq: 0,
+              is_passed_contract_plan: 0,
+          };
+          this.$nextTick(() => {
+              this.$v.$reset();
           });
+          this.errors = {};
+          this.is_disabled = false;
+      },
+      resetModalHidden() {
+          this.defaultData();
+          this.$bvModal.hide(this.id);
+      },
+      resetModal() {
+          this.defaultData();
+          setTimeout( async () => {
+              if(this.type != 'edit'){
+                  if(!this.isPage) await  this.getCustomTableFields();
+                  this.getConditions();
+              }else {
+                  if(this.idObjEdit.dataObj){
+                      let module = this.idObjEdit.dataObj;
+                      this.errors = {};
+                      this.create.name = module.name;
+                      this.create.name_e = module.name_e;
+                      this.create.auto_freq = module.auto_freq;
+                      this.create.is_partially = module.is_partially;
+                      this.create.is_passed = module.is_passed;
+                      this.create.is_passed_all = module.is_passed_all;
+                      this.create.Freq_period = module.freq_period;
+                      this.create.installmentPaymentType_freq = module.installment_payment_type_freq;
+                      this.create.is_passed_contract_plan = module.is_passed_contract_plan;
+                      this.create.is_conditional = module.is_conditional;
+                      this.create.Condition_id = module.installment_condation_id;
+                  }
+              }
+          },50);
+      },
+      resetForm() {
+          this.defaultData();
+      },
+      AddSubmit() {
+          if (!this.create.name) {
+            this.create.name = this.create.name_e;
+          }
+          if (!this.create.name_e) {
+            this.create.name_e = this.create.name;
+          }
+          this.$v.create.$touch();
+
+          if (this.$v.create.$invalid) {
+            return;
+          } else {
+            this.isLoader = true;
+            this.errors = {};
+
+              if(this.type != 'edit'){
+                  adminApi
+                      .post(this.url, {
+                          ...this.create,
+                          company_id: this.company_id,
+                          installment_payment_type_freq: this.create.installmentPaymentType_freq,
+                          freq_period: this.create.Freq_period,
+                          installment_condation_id: this.create.Condition_id,
+                      })
+                      .then((res) => {
+                          this.is_disabled = true;
+                          if(!this.isPage)
+                              this.$emit("created");
+                          else
+                              this.$emit("getDataTable");
+
+                          setTimeout(() => {
+                              this.successFun('Addedsuccessfully');
+                          }, 500);
+                      })
+                      .catch((err) => {
+                          if (err.response.data) {
+                              this.errors = err.response.data.errors;
+                          } else {
+                              this.errorFun('Error','Thereisanerrorinthesystem');
+                          }
+                      })
+                      .finally(() => {
+                          this.isLoader = false;
+                      });
+              }else {
+                  adminApi
+                      .put(`${this.url}/${this.idObjEdit.idEdit}`, {
+                          ...this.create,
+                          company_id: this.$store.getters["auth/company_id"],
+                          installment_payment_type_freq: this.create.installmentPaymentType_freq,
+                          freq_period: this.create.Freq_period,
+                          installment_condation_id: this.create.Condition_id,
+                      })
+                      .then((res) => {
+                          this.$bvModal.hide(this.id);
+                          this.$emit("getDataTable");
+                          setTimeout(() => {
+                              this.successFun('Editsuccessfully');
+                          }, 500);
+                      })
+                      .catch((err) => {
+                          if (err.response.data) {
+                              this.errors = err.response.data.errors;
+                          } else {
+                              this.errorFun('Error','Thereisanerrorinthesystem');
+                          }
+                      })
+                      .finally(() => {
+                          this.isLoader = false;
+                      });
+              }
       }
     },
-    formatDate(value) {
-      return formatDateOnly(value);
-    },
-    arabicValueName(txt) {
-      this.create.name = arabicValue(txt);
-    },
-    englishValueName(txt) {
-      this.create.name_e = englishValue(txt);
-    },
+      arabicValueName(txt) {
+          this.create.name = arabicValue(txt);
+      },
+      englishValueName(txt) {
+          this.create.name_e = englishValue(txt);
+      },
   },
 };
 </script>
 <template><!--  create   -->
     <div>
-        <InstallmentCond
-            :companyKeys="companyKeys"
-            :defaultsKeys="defaultsKeys"
-            @created="getConditions"
+      <InstallmentCond
+            :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'install_condition_create-payment-type'"
+            :isPage="false" type="create" :isPermission="isPermission" @created="getConditions"
         />
-      <b-modal id="installment_payment_type_create" size="lg" :title="getCompanyKey('installment_payment_type_create_form')"
-        title-class="font-18" body-class="p-4 " :hide-footer="true" @show="resetModal" @hidden="resetModalHidden">
+      <b-modal
+          :id="id"
+          size="lg"
+          :title="type != 'edit'? getCompanyKey('installment_payment_type_create_form'):getCompanyKey('installment_payment_type_edit_form')"
+          title-class="font-18"
+          body-class="p-4 "
+          :hide-footer="true"
+          @show="resetModal"
+          @hidden="resetModalHidden"
+      >
         <form>
-          <div class="mb-3 d-flex justify-content-end">
-            <b-button variant="success" :disabled="!is_disabled" @click.prevent="resetForm" type="button"
-              :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
-              {{ $t("general.AddNewRecord") }}
-            </b-button>
-            <template v-if="!is_disabled">
-              <b-button variant="success" type="button" class="mx-1" v-if="!isLoader" @click.prevent="AddSubmit">
-                {{ $t("general.Add") }}
-              </b-button>
+            <loader size="large" v-if="isCustom && !isPage" />
+            <div class="mb-3 d-flex justify-content-end">
+                <b-button
+                    v-if="type != 'edit'"
+                    variant="success"
+                    :disabled="!is_disabled"
+                    @click.prevent="resetForm"
+                    type="button"
+                    :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
+                >
+                    {{ $t("general.AddNewRecord") }}
+                </b-button>
+                <template v-if="!is_disabled">
+                    <b-button
+                        variant="success"
+                        type="button"
+                        class="mx-1"
+                        v-if="!isLoader"
+                        @click.prevent="AddSubmit"
+                    >
+                        {{ type != 'edit'? $t("general.Add"): $t("general.edit") }}
+                    </b-button>
 
-              <b-button variant="success" class="mx-1" disabled v-else>
-                <b-spinner small></b-spinner>
-                <span class="sr-only">{{ $t("login.Loading") }}...</span>
-              </b-button>
-            </template>
-            <!-- Emulate built in modal footer ok and cancel button actions -->
+                    <b-button variant="success" class="mx-1" disabled v-else>
+                        <b-spinner small></b-spinner>
+                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                    </b-button>
+                </template>
+                <!-- Emulate built in modal footer ok and cancel button actions -->
 
-            <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
-              {{ $t("general.Cancel") }}
-            </b-button>
-          </div>
-          <div class="row">
-              <div class="col-md-6">
+                <b-button
+                    variant="danger"
+                    type="button"
+                    @click.prevent="resetModalHidden"
+                >
+                    {{ $t("general.Cancel") }}
+                </b-button>
+            </div>
+            <div class="row">
+              <div class="col-md-6" v-if="isVisible('name')">
                   <div class="form-group">
                       <label class="control-label">
                           {{ getCompanyKey("installment_payment_type_name") }}
-                          <span class="text-danger">*</span>
+                          <span v-if="isRequired('name')" class="text-danger">*</span>
                       </label>
                       <div dir="rtl">
                           <input type="text" class="form-control" data-create="1" @keyup="arabicValueName(create.name)"
@@ -316,11 +376,11 @@ export default {
                       </template>
                   </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6" v-if="isVisible('name_e')">
                   <div class="form-group">
                       <label class="control-label">
                           {{ getCompanyKey("installment_payment_type_name_e") }}
-                          <span class="text-danger">*</span>
+                          <span v-if="isRequired('name_e')" class="text-danger">*</span>
                       </label>
                       <div>
                           <input type="text" class="form-control englishInput" data-create="2"
@@ -345,7 +405,7 @@ export default {
                       </template>
                   </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6" v-if="isVisible('is_conditional')">
                   <div class="form-group">
                       <label class="mr-2">
                           {{ getCompanyKey("is_conditional") }}
@@ -369,19 +429,19 @@ export default {
                       </template>
                   </div>
               </div>
-              <template v-if="create.is_conditional == 1">
+              <template v-if="create.is_conditional == 1 && isVisible('installment_condation_id')">
                   <div class="col-md-6">
                       <div class="form-group">
                           <label class="my-1 mr-2">
                               {{ getCompanyKey("condition") }}
-                              <span class="text-danger">*</span>
+                              <span v-if="isRequired('installment_condation_id')" class="text-danger">*</span>
                           </label>
                           <multiselect @input="showConditionModal" v-model="create.Condition_id"
                                        :options="conditions.map((type) => type.id)" :custom-label="
-                                (opt) =>
+                                (opt) => conditions.find((x) => x.id == opt)?
                                   $i18n.locale == 'ar'
                                     ? conditions.find((x) => x.id == opt).name
-                                    : conditions.find((x) => x.id == opt).name_e
+                                    : conditions.find((x) => x.id == opt).name_e: null
                               " :class="{
                                         'is-invalid':
                                             $v.create.Condition_id.$error || errors.Condition_id,
@@ -402,11 +462,11 @@ export default {
               <template v-else>
                 <div class="col-md-6"></div>
               </template>
-              <div class="col-md-6">
+              <div class="col-md-6" v-if="isVisible('installment_payment_type_freq')">
                   <div class="form-group">
                       <label class="control-label">
                           {{ getCompanyKey("installmentPaymentType_freq") }}
-                          <span class="text-danger">*</span>
+                          <span v-if="isRequired('installment_payment_type_freq')" class="text-danger">*</span>
                       </label>
 
                       <b-form-group
@@ -449,11 +509,11 @@ export default {
                   </div>
               </div>
               <template v-if="create.installmentPaymentType_freq == 1">
-                <div class="col-md-6">
+                <div class="col-md-6" v-if="isVisible('freq_period')">
                   <div class="form-group">
                     <label class="control-label">
                       {{ getCompanyKey("freq_period") }}
-                      <span class="text-danger">*</span>
+                      <span v-if="isRequired('freq_period')" class="text-danger">*</span>
                     </label>
                     <input
                       type="number"
@@ -480,8 +540,7 @@ export default {
               <template v-else>
                 <div class="col-md-6"></div>
               </template>
-
-              <div class="col-md-6">
+              <div class="col-md-6" v-if="isVisible('is_partially')">
                 <div class="form-group">
                   <label class="mr-2">
                     {{ getCompanyKey("installment_payment_is_partially") }}
@@ -521,7 +580,7 @@ export default {
                   </template>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-6" v-if="isVisible('is_passed')">
                 <div class="form-group">
                   <label class="mr-2">
                     {{ getCompanyKey("is_passed") }}
@@ -661,3 +720,9 @@ export default {
     </div>
 <!--  /create   -->
 </template>
+
+<style>
+form {
+    position: relative;
+}
+</style>

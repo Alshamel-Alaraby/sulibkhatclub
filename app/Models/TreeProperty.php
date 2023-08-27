@@ -44,7 +44,8 @@ class TreeProperty extends Model
 
     public function hasChildren()
     {
-        $h = $this->children()->count() > 0;
-        return $h;
+
+        return $this->unitContracts()->count() > 0 ||
+        $this->children()->count() > 0;
     }
 }

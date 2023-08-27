@@ -26,6 +26,8 @@ class DocTypeDepartmentRequest extends FormRequest
         return [
             'arch_doc_type_id' => 'required|integer|exists:arch_doc_types,id',
             'arch_department_id' => 'required|integer|exists:arch_departments,id',
+            "company_id"=>'nullable',
+
         ];
     }
 

@@ -200,8 +200,8 @@ import Multiselect from "vue-multiselect";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
 import { maxLength, minLength, required } from "vuelidate/lib/validators";
-import loader from "../../loader";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import loader from "../../general/loader";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 export default {
@@ -305,6 +305,7 @@ export default {
           .post(`/gen-arch-doc-type`, {
             ...this.create,
             is_valid: this.create.is_valid == "1" ? 1 : 0,
+              company_id: this.$store.getters["auth/company_id"]
           })
           .then((res) => {
             this.$emit("create");

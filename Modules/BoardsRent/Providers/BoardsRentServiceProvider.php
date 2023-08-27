@@ -3,6 +3,8 @@
 namespace Modules\BoardsRent\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\BoardsRent\Repositories\BoardsCustomTable\BoardsCustomTableInterface;
+use Modules\BoardsRent\Repositories\BoardsCustomTable\BoardsCustomTableRepository;
 
 class BoardsRentServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,8 @@ class BoardsRentServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->app->bind(BoardsCustomTableInterface::class, BoardsCustomTableRepository::class);
+
     }
 
     /**

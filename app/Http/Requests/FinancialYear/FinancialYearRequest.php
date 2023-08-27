@@ -26,7 +26,7 @@ class FinancialYearRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255|unique:general_financial_years,name,' . ($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'nullable|string|max:255|unique:general_financial_years,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
-            "start_date" => 'nullable|date_format:Y-m-d|after_or_equal:today|unique:general_financial_years,start_date,' . ($this->method() == 'PUT' ? $this->id : ''),
+            "start_date" => 'nullable|date_format:Y-m-d|unique:general_financial_years,start_date,' . ($this->method() == 'PUT' ? $this->id : ''),
             "end_date" => 'nullable|date_format:Y-m-d|after_or_equal:start_date|unique:general_financial_years,end_date,' . ($this->method() == 'PUT' ? $this->id : ''),
             "is_active" => 'nullable',
         ];

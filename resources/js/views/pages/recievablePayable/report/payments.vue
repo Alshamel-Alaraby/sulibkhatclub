@@ -1,17 +1,18 @@
 <script>
 import Layout from "../../../layouts/main";
-import PageHeader from "../../../../components/Page-header";
+import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
 import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
-import loader from "../../../../components/loader";
+import loader from "../../../../components/general/loader";
 import {dynamicSortString} from "../../../../helper/tableSort";
 import {formatDateOnly} from "../../../../helper/startDate";
-import translation from "../../../../helper/translation-mixin";
+import translation from "../../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -32,21 +33,10 @@ export default {
         Multiselect,
     },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("receivable payable-e")) {
-                Swal.fire({
-                    icon: "error",
-                    title: `${vm.$t("general.Error")}`,
-                    text: `${vm.$t("general.ModuleExpired")}`,
-                });
-                return vm.$router.push({name: "home"});
-            }
-            if (vm.$store.state.auth.work_flow_trees.includes('installment Payment Report') || vm.$store.state.auth.work_flow_trees.includes('receivable payable') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({name: "home"});
-            }
-        });
+            next((vm) => {
+      return permissionGuard(vm, "Payment Report RP", "all paymentReport RP");
+    });
+
     },
     data() {
         return {
@@ -738,12 +728,12 @@ export default {
                                             <span>{{ getCompanyKey("customer") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
                                                         )
                                                     "></i>
                                                 <i class="fas fa-arrow-down" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
                                                         )
                                                     "></i>
@@ -766,12 +756,12 @@ export default {
                                             <span>{{ getCompanyKey("installment_opening_balance_currency") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
                                                         )
                                                     "></i>
                                                 <i class="fas fa-arrow-down" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
                                                         )
                                                     "></i>
@@ -838,12 +828,12 @@ export default {
                                             <span>{{ getCompanyKey("installment_payment_type_id") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
                                                         )
                                                     "></i>
                                                 <i class="fas fa-arrow-down" @click="
-                                                        invoices.sort(
+                                                        installmentStatus.sort(
                                                             sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
                                                         )
                                                     "></i>
@@ -919,7 +909,8 @@ export default {
                                         <h5 class="m-0 font-weight-normal td5">{{ data.total }}</h5>
                                     </td>
                                     <td v-if="setting.break_type">
-                                        <h5 class="m-0 font-weight-normal td5">{{$t(`general.${data.break_type}`)}}</h5>
+                                        <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
+                                        <h5 v-else class="m-0 font-weight-normal">---</h5>
                                     </td>
                                     <td v-if="setting.instalment_type_id">
                                         <h5 class="m-0 font-weight-normal td5">{{ $i18n.locale == "ar" ? data.installment_payment_type.name : data.installment_payment_type.name_e}}</h5>

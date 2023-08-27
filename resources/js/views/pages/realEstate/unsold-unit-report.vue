@@ -1,6 +1,8 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
+import permissionGuard from "../../../helper/permission";
+
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
@@ -13,18 +15,16 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-import Templates from "../email/templates.vue";
 
 /**
  * Advanced Table component
@@ -42,7 +42,6 @@ export default {
     Switches,
     ErrorMessage,
     loader,
-    Templates,
   },
   data() {
     return {
@@ -145,19 +144,13 @@ export default {
     this.getCountries();
     this.getProperties();
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     if (
-  //       vm.$store.state.auth.work_flow_trees.includes("branch") ||
-  //       vm.$store.state.auth.user.type == "super_admin"
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return vm.$router.push({ name: "home" });
-  //     }
-  //   });
-  // },
-  methods: {
+    beforeRouteEnter(to, from, next) {
+          next((vm) => {
+      return permissionGuard(vm, "Unsold Unit Report", "all unSold_Unit RealState");
+    });
+
+    },
+    methods: {
     onOwnerSelected(wallet_id) {
       this.owner_id = null;
       this.building_id = null;
@@ -1067,36 +1060,38 @@ export default {
                     <td v-if="setting.building">
                       <template v-if="data.building">
                         {{
+                              data.building?
                           $i18n.locale == "ar"
                             ? data.building.name
-                            : nameata.building.name_e
+                            : data.building.name_e:''
                         }}
                       </template>
                     </td>
                     <td v-if="setting.unit_status">
                       <template v-if="data.unit_status">
                         {{
+                              data.unit_status?
                           $i18n.locale == "ar"
                             ? data.unit_status.name
-                            : nameata.unit_status.name_e
+                            : data.unit_status.name_e:''
                         }}
                       </template>
                     </td>
                     <td v-if="setting.owner">
                       <template v-if="data.owner">
                         {{
-                          $i18n.locale == "ar"
+                              data.owner?$i18n.locale == "ar"
                             ? data.owner.name
-                            : nameata.owner.name_e
+                            : data.owner.name_e:""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.wallet">
                       <template v-if="data.wallet">
                         {{
-                          $i18n.locale == "ar"
+                              data.wallet?$i18n.locale == "ar"
                             ? data.wallet.name
-                            : nameata.wallet.name_e
+                            : data.wallet.name_e:""
                         }}
                       </template>
                     </td>

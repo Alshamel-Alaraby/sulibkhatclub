@@ -15,6 +15,7 @@ class RlstWallet extends Model
     protected $fillable = [
         'name',
         'name_e',
+        'company_id',
 
     ];
 
@@ -25,7 +26,7 @@ class RlstWallet extends Model
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstOwner::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id');
 
     }
-    
+
     public function walletOwner()
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstWalletOwner::class, 'wallet_id');
@@ -39,6 +40,52 @@ class RlstWallet extends Model
     {
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'rlst_building_wallet', 'wallet_id', 'building_id');
 
+    }
+
+    // public function hasChildren()
+    // {
+
+    //     return $this->owners()->count() > 0 ||
+    //     $this->walletOwner()->count() > 0 ||
+    //     $this->buildingWallet()->count() > 0 ||
+    //     $this->buildings()->count() > 0 ;
+    // }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->owners()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'owners',
+                'count' => $this->owners()->count(),
+                'ids' => $this->owners()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->walletOwner()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'walletOwner',
+                'count' => $this->walletOwner()->count(),
+                'ids' => $this->walletOwner()->pluck('id')->toArray()
+            ];
+        }
+
+        if ($this->buildingWallet()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'buildingWallet',
+                'count' => $this->buildingWallet()->count(),
+                'ids' => $this->buildingWallet()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->buildings()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'buildings',
+                'count' => $this->buildings()->count(),
+                'ids' => $this->buildings()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
 

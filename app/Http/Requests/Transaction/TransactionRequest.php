@@ -24,6 +24,7 @@ class TransactionRequest extends FormRequest
     public function rules()
     {
         return [
+            "company_id"=>'nullable',
             'transactions' => 'required|array',
             'transactions.*.date' => 'required|date',
             'transactions.*.amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
