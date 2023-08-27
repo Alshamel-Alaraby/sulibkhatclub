@@ -12,6 +12,7 @@ import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/translation-mixin";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
+import Templates from "../email/templates";
 
 /**
  * Advanced Table component
@@ -23,6 +24,7 @@ export default {
     },
     mixins: [translation],
     components: {
+        Templates,
         Layout,
         PageHeader,
         Switches,
@@ -51,23 +53,33 @@ export default {
             is_disabled: false,
             isLoader: false,
             create: {
-                day: null,
-                month: null,
                 cm_members_type_id: null,
-                cm_permissions_id: null,
-                cm_financial_status_id: null,
-                membership_period: "",
-                allowed_subscription_date: "",
+                memberships_renewals: [
+                    {
+                        day: null,
+                        month: null,
+                        vote_day: null,
+                        vote_month: null,
+                        cm_permissions_id: null,
+                        cm_financial_status_id: null,
+                        membership_period: "",
+                        allowed_subscription_date: "",
+                        allowed_vote_date: "",
+                    }
+                ]
             },
             company_id: null,
             edit: {
                 day: null,
                 month: null,
+                vote_day: null,
+                vote_month: null,
                 cm_members_type_id: null,
                 cm_permissions_id: null,
                 cm_financial_status_id: null,
                 membership_period: "",
                 allowed_subscription_date: "",
+                allowed_vote_date: "",
             },
             setting: {
                 cm_members_type_id: true,
@@ -75,6 +87,7 @@ export default {
                 cm_financial_status_id: true,
                 membership_period: true,
                 allowed_subscription_date: true,
+                allowed_vote_date: true,
             },
             typs: [],
             permissions: [],
@@ -91,6 +104,7 @@ export default {
                 "cm_financial_status_id",
                 "membership_period",
                 "allowed_subscription_date",
+                "allowed_vote_date",
                 // this.$i18n.locale == "ar" ? "country.name" : "country.name_e",
             ],
             printLoading: true,
@@ -101,22 +115,33 @@ export default {
     },
     validations: {
         create: {
-            day: {required},
-            month: {required},
             cm_members_type_id: {required},
-            cm_permissions_id: {required},
-            cm_financial_status_id: {required},
-            membership_period: {required},
-            allowed_subscription_date: {},
+            memberships_renewals: {
+                required,
+                $each: {
+                    day: {required},
+                    month: {required},
+                    vote_day: {},
+                    vote_month: {},
+                    cm_permissions_id: {required},
+                    cm_financial_status_id: {required},
+                    membership_period: {required},
+                    allowed_subscription_date: {},
+                    allowed_vote_date: {},
+                }
+            }
         },
         edit: {
             day: {required},
             month: {required},
+            vote_day: {},
+            vote_month: {},
             cm_members_type_id: {required},
             cm_permissions_id: {required},
             cm_financial_status_id: {required},
             membership_period: {required},
             allowed_subscription_date: {},
+            allowed_vote_date: {},
         },
     },
     watch: {
@@ -156,15 +181,39 @@ export default {
         this.getData();
     },
     methods: {
-        resetForm() {
-            this.create = {
+        addNewField() {
+            this.create.memberships_renewals.push({
                 day: null,
                 month: null,
-                cm_members_type_id: null,
+                vote_day: null,
+                vote_month: null,
                 cm_permissions_id: null,
                 cm_financial_status_id: null,
                 membership_period: "",
                 allowed_subscription_date: "",
+                allowed_vote_date: "",
+            });
+        },
+        removeNewField(index) {
+            if (this.create.memberships_renewals.length > 1) {
+                this.create.memberships_renewals.splice(index, 1);
+            }
+        },
+        resetForm() {
+            this.create = {
+                memberships_renewals: [
+                    {
+                        day: null,
+                        month: null,
+                        vote_day: null,
+                        vote_month: null,
+                        cm_permissions_id: null,
+                        cm_financial_status_id: null,
+                        membership_period: "",
+                        allowed_subscription_date: "",
+                        allowed_vote_date: "",
+                    }
+                ]
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -348,13 +397,19 @@ export default {
          */
         resetModalHidden() {
             this.create = {
-                day: null,
-                month: null,
-                cm_members_type_id: null,
-                cm_permissions_id: null,
-                cm_financial_status_id: null,
-                membership_period: "",
-                allowed_subscription_date: "",
+                memberships_renewals: [
+                    {
+                        day: null,
+                        month: null,
+                        vote_day: null,
+                        vote_month: null,
+                        cm_permissions_id: null,
+                        cm_financial_status_id: null,
+                        membership_period: "",
+                        allowed_subscription_date: "",
+                        allowed_vote_date: "",
+                    }
+                ]
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -371,13 +426,19 @@ export default {
             await this.getPermissions();
             await this.getStatus();
             this.create = {
-                day: null,
-                month: null,
-                cm_members_type_id: null,
-                cm_permissions_id: null,
-                cm_financial_status_id: null,
-                membership_period: "",
-                allowed_subscription_date: "",
+                memberships_renewals: [
+                    {
+                        day: null,
+                        month: null,
+                        vote_day: null,
+                        vote_month: null,
+                        cm_permissions_id: null,
+                        cm_financial_status_id: null,
+                        membership_period: "",
+                        allowed_subscription_date: "",
+                        allowed_vote_date: "",
+                    }
+                ]
             };
 
             this.$nextTick(() => {
@@ -390,6 +451,11 @@ export default {
          *  create countrie
          */
         AddSubmit() {
+            this.create.memberships_renewals.forEach((el,index) => {
+                this.create.memberships_renewals[index].allowed_subscription_date = `${el.month}-${el.day}`;
+                this.create.memberships_renewals[index].allowed_vote_date = `${el.vote_month}-${el.vote_day}`;
+                this.create.memberships_renewals[index].cm_members_type_id = this.create.cm_members_type_id;
+            });
             this.$v.create.$touch();
             if (this.$v.create.$invalid) {
                 return;
@@ -397,7 +463,6 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 this.is_disabled = false;
-                this.create.allowed_subscription_date = `${this.create.month}-${this.create.day}`
                 adminApi
                     .post(`/club-members/type-permission`, {...this.create, company_id: this.company_id})
                     .then((res) => {
@@ -439,6 +504,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 this.edit.allowed_subscription_date = `${this.edit.month}-${this.edit.day}`
+                this.edit.allowed_vote_date = `${this.edit.vote_month}-${this.edit.vote_day}`
                 adminApi
                     .put(`/club-members/type-permission/${id}`, this.edit)
                     .then((res) => {
@@ -484,6 +550,9 @@ export default {
             this.edit.cm_financial_status_id = setting.financialStatus.id;
             this.edit.membership_period = setting.membership_period;
             this.edit.allowed_subscription_date = setting.allowed_subscription_date;
+            this.edit.vote_day = setting.allowed_vote_date.slice(3) ;
+            this.edit.vote_month = setting.allowed_vote_date.slice(0,2);
+            this.edit.allowed_vote_date = setting.allowed_vote_date;
             this.errors = {};
         },
         /**
@@ -494,11 +563,14 @@ export default {
             this.edit = {
                 day: null,
                 month: null,
+                vote_day: null,
+                vote_month: null,
                 cm_members_type_id: null,
                 cm_permissions_id: null,
                 cm_financial_status_id: null,
                 membership_period: "",
                 allowed_subscription_date: "",
+                allowed_vote_date: "",
             };
             this.typs = [];
         },
@@ -672,9 +744,11 @@ export default {
                                                          class="mb-1"
                                         >{{ getCompanyKey("membership_period") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("allowed_subscription_date") }}
+                                        <b-form-checkbox v-model="filterSetting" value="allowed_subscription_date" class="mb-1">
+                                            {{ getCompanyKey("allowed_subscription_date") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="allowed_vote_date" class="mb-1">
+                                            {{ $t("general.allowed_vote_date") }}
                                         </b-form-checkbox>
                                         <!-- Basic dropdown -->
                                     </b-dropdown>
@@ -779,14 +853,14 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("membership_period") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.allowed_subscription_date"
-                                                             class="mb-1">
+                                            <b-form-checkbox v-model="setting.allowed_subscription_date" class="mb-1">
                                                 {{ getCompanyKey("allowed_subscription_date") }}
                                             </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.allowed_vote_date" class="mb-1">
+                                                {{ $t("general.allowed_vote_date") }}
+                                            </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
-                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
-                                                        $t("general.Apply")
-                                                    }}</a>
+                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{$t("general.Apply")}}</a>
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
@@ -839,7 +913,7 @@ export default {
                             :title="getCompanyKey('settings_create_form')"
                             title-class="font-18"
                             body-class="p-4 "
-                            size="lg"
+                            dialog-class="modal-full-width"
                             :hide-footer="true"
                             @show="resetModal"
                             @hidden="resetModalHidden"
@@ -881,7 +955,7 @@ export default {
                                     </b-button>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_type") }}
@@ -913,15 +987,17 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                </div>
+                                <template v-for="(item, index) in create.memberships_renewals">
+                                    <div class="row" :key="index">
+                                    <div class="col-md-2">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_permission") }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <multiselect
-                                                multiple="true"
-                                                v-model="create.cm_permissions_id"
+                                                v-model="create.memberships_renewals[index].cm_permissions_id"
                                                 :options="permissions.map((type) => type.id)"
                                                 :custom-label="
                                                   (opt) =>
@@ -932,7 +1008,7 @@ export default {
                                             >
                                             </multiselect>
                                             <div
-                                                v-if="$v.create.cm_permissions_id.$error || errors.cm_permissions_id"
+                                                v-if="$v.create.memberships_renewals.$each[index].cm_permissions_id.$error || errors.cm_permissions_id"
                                                 class="text-danger"
                                             >
                                                 {{ $t("general.fieldIsRequired") }}
@@ -946,14 +1022,14 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("financial_status") }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <multiselect
-                                                v-model="create.cm_financial_status_id"
+                                                v-model="create.memberships_renewals[index].cm_financial_status_id"
                                                 :options="status.map((type) => type.id)"
                                                 :custom-label="
                                                   (opt) =>
@@ -964,7 +1040,7 @@ export default {
                                             >
                                             </multiselect>
                                             <div
-                                                v-if="$v.create.cm_financial_status_id.$error || errors.cm_financial_status_id"
+                                                v-if="$v.create.memberships_renewals.$each[index].cm_financial_status_id.$error || errors.cm_financial_status_id"
                                                 class="text-danger"
                                             >
                                                 {{ $t("general.fieldIsRequired") }}
@@ -978,7 +1054,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ getCompanyKey("membership_period") }}
@@ -987,11 +1063,11 @@ export default {
                                             <input
                                                 type="number"
                                                 class="form-control"
-                                                v-model="$v.create.membership_period.$model"
+                                                v-model="$v.create.memberships_renewals.$each[index].membership_period.$model"
                                                 :class="{
-                                                  'is-invalid': $v.create.membership_period.$error || errors.membership_period,
+                                                  'is-invalid': $v.create.memberships_renewals.$each[index].membership_period.$error || errors.membership_period,
                                                   'is-valid':
-                                                    !$v.create.membership_period.$invalid && !errors.membership_period,
+                                                    !$v.create.memberships_renewals.$each[index].membership_period.$invalid && !errors.membership_period,
                                                 }"
                                             />
                                             <template v-if="errors.membership_period">
@@ -1003,7 +1079,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>
                                                 {{ getCompanyKey("allowed_subscription_date") }}
@@ -1013,12 +1089,12 @@ export default {
                                                 <div class="form-group col-6">
                                                     <label>{{ $t("general.day") }}</label>
                                                     <select
-                                                        v-model="$v.create.day.$model"
+                                                        v-model="$v.create.memberships_renewals.$each[index].day.$model"
                                                         class="custom-select"
                                                         :class="{
-                                                        'is-invalid': $v.create.day.$error || errors.day,
+                                                        'is-invalid': $v.create.memberships_renewals.$each[index].day.$error || errors.day,
                                                         'is-valid':
-                                                          !$v.create.day.$invalid && !errors.day,
+                                                          !$v.create.memberships_renewals.$each[index].day.$invalid && !errors.day,
                                                       }"
                                                     >
                                                         <option selected disabled value="">Choose...</option>
@@ -1032,12 +1108,11 @@ export default {
                                                 <div class="form-group col-6">
                                                     <label>{{ $t("general.month") }}</label>
                                                     <select
-                                                        v-model="$v.create.month.$model"
+                                                        v-model="$v.create.memberships_renewals.$each[index].month.$model"
                                                         class="custom-select"
                                                         :class="{
-                                                        'is-invalid': $v.create.month.$error || errors.month,
-                                                        'is-valid':
-                                                          !$v.create.month.$invalid && !errors.month,
+                                                        'is-invalid': $v.create.memberships_renewals.$each[index].month.$error || errors.month,
+                                                        'is-valid': !$v.create.memberships_renewals.$each[index].month.$invalid && !errors.month,
                                                       }"
                                                     >
                                                         <option selected disabled value="">Choose...</option>
@@ -1045,6 +1120,60 @@ export default {
                                                     </select>
                                                     <template v-if="errors.month">
                                                         <ErrorMessage v-for="(errorMessage, index) in errors.month" :key="index">{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            <template v-if="errors.allowed_subscription_date">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.allowed_subscription_date" :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div v-if="create.memberships_renewals[index].cm_permissions_id == 2" class="col-md-2">
+                                        <div class="form-group">
+                                            <label>
+                                                {{ $t("general.allowed_vote_date") }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="d-flex">
+                                                <div class="form-group col-6">
+                                                    <label>{{ $t("general.day") }}</label>
+                                                    <select
+                                                        v-model="$v.create.memberships_renewals.$each[index].vote_day.$model"
+                                                        class="custom-select"
+                                                        :class="{
+                                                        'is-invalid': $v.create.memberships_renewals.$each[index].vote_day.$error || errors.vote_day,
+                                                        'is-valid':
+                                                          !$v.create.memberships_renewals.$each[index].vote_day.$invalid && !errors.vote_day,
+                                                      }"
+                                                    >
+                                                        <option selected disabled value="">Choose...</option>
+                                                        <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
+                                                    </select>
+                                                    <template v-if="errors.vote_day">
+                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_day" :key="index">{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <label>{{ $t("general.month") }}</label>
+                                                    <select
+                                                        v-model="$v.create.memberships_renewals.$each[index].vote_month.$model"
+                                                        class="custom-select"
+                                                        :class="{
+                                                        'is-invalid': $v.create.memberships_renewals.$each[index].vote_month.$error || errors.vote_month,
+                                                        'is-valid':
+                                                          !$v.create.memberships_renewals.$each[index].vote_month.$invalid && !errors.vote_month,
+                                                      }"
+                                                    >
+                                                        <option selected disabled value="">Choose...</option>
+                                                        <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
+                                                    </select>
+                                                    <template v-if="errors.vote_month">
+                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_month" :key="index">{{ errorMessage }}
                                                         </ErrorMessage>
                                                     </template>
                                                 </div>
@@ -1059,7 +1188,18 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-2 p-0 pt-3">
+                                            <button v-if="(create.memberships_renewals.length - 1) == index" type="button" @click.prevent="addNewField"
+                                                    class="custom-btn-dowonload">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button v-if="create.memberships_renewals.length > 1" type="button" @click.prevent="removeNewField(index)"
+                                                    class="custom-btn-dowonload">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
                                 </div>
+                                </template>
                             </form>
                         </b-modal>
                         <!--  /create   -->
@@ -1355,7 +1495,6 @@ export default {
                                                                 <span class="text-danger">*</span>
                                                             </label>
                                                             <multiselect
-                                                                multiple="true"
                                                                 v-model="edit.cm_permissions_id"
                                                                 :options="permissions.map((type) => type.id)"
                                                                 :custom-label="
@@ -1480,6 +1619,62 @@ export default {
                                                                     </select>
                                                                     <template v-if="errors.month">
                                                                         <ErrorMessage v-for="(errorMessage, index) in errors.month" :key="index">{{ errorMessage }}
+                                                                        </ErrorMessage>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+
+                                                            <template v-if="errors.allowed_subscription_date">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.allowed_subscription_date"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="edit.cm_permissions_id == 2" class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label>
+                                                                {{ $t("general.allowed_vote_date") }}
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+                                                            <div class="d-flex">
+                                                                <div class="form-group col-6">
+                                                                    <label>{{ $t("general.day") }}</label>
+                                                                    <select
+                                                                        v-model="$v.edit.vote_day.$model"
+                                                                        class="custom-select"
+                                                                        :class="{
+                                                                            'is-invalid': $v.edit.vote_day.$error || errors.vote_day,
+                                                                            'is-valid':
+                                                                              !$v.edit.vote_day.$invalid && !errors.vote_day,
+                                                                          }"
+                                                                    >
+                                                                        <option selected disabled value="">Choose...</option>
+                                                                        <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
+                                                                    </select>
+                                                                    <template v-if="errors.vote_day">
+                                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_day" :key="index">{{ errorMessage }}
+                                                                        </ErrorMessage>
+                                                                    </template>
+                                                                </div>
+                                                                <div class="form-group col-6">
+                                                                    <label>{{ $t("general.month") }}</label>
+                                                                    <select
+                                                                        v-model="$v.edit.vote_month.$model"
+                                                                        class="custom-select"
+                                                                        :class="{
+                                                                            'is-invalid': $v.edit.vote_month.$error || errors.vote_month,
+                                                                            'is-valid':
+                                                                              !$v.edit.vote_month.$invalid && !errors.vote_month,
+                                                                          }"
+                                                                    >
+                                                                        <option selected disabled value="">Choose...</option>
+                                                                        <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
+                                                                    </select>
+                                                                    <template v-if="errors.vote_month">
+                                                                        <ErrorMessage v-for="(errorMessage, index) in errors.vote_month" :key="index">{{ errorMessage }}
                                                                         </ErrorMessage>
                                                                     </template>
                                                                 </div>

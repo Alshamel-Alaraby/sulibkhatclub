@@ -46,7 +46,7 @@ class CmTypePermissionController extends Controller
     public function create(CmTypePermissionRequest $request)
     {
 
-        foreach ($request->input('data') as $data) {
+        foreach ($request->input('memberships_renewals') as $data) {
             // return $data;
              $this->model->create($data);
         }

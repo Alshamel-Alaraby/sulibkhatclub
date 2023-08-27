@@ -1143,6 +1143,7 @@
         "SelectPanel": "اختار لوحه",
         "TasksCalender": "تقويم المهام",
         "equipmentsTable": "جدول المعدات",
-        "equipments": "المعدات"
+        "equipments": "المعدات",
+        "allowed_vote_date": "اقصى تاريخ لاحقية التصويت"
     }
 }

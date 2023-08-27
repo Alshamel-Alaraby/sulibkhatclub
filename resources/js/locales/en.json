@@ -587,7 +587,7 @@
     "general": {
         "onlineRequestsTable":"Online requests table",
         "onlineRequests":"Online requests",
-        
+
         "options": "Options",
         "payrollHeads": "Payroll heads",
         "payrollHeadsTable": "Payroll heads table",
@@ -1162,6 +1162,7 @@
         "Selected": "Selected",
         "SelectPanel": "Select Panel",
         "equipmentsTable": "Equipments Table",
-        "equipments": "Equipments"
+        "equipments": "Equipments",
+        "allowed_vote_date": "Allowed Vote Date"
     }
 }

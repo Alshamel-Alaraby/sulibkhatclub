@@ -36,14 +36,14 @@ class CmTypePermissionRequest extends FormRequest
         }
 
         return [
-            'data' => 'required|array',
-            'data.*.cm_members_type_id' => 'required|exists:cm_members_types,id',
-            'data.*.cm_permissions_id' => 'required|exists:cm_members_permissions,id',
-            'data.*.cm_financial_status_id' => 'required|exists:cm_financial_status,id',
-            'data.*.membership_period' => 'required|numeric',
-            'data.*.allowed_subscription_date' => 'required',
-            'data.*.allowed_vote_date' => 'nullable',
-            "data.*.company_id" => 'nullable',
+            'memberships_renewals' => 'required|array',
+            'memberships_renewals.*.cm_members_type_id' => 'required|exists:cm_members_types,id',
+            'memberships_renewals.*.cm_permissions_id' => 'required|exists:cm_members_permissions,id',
+            'memberships_renewals.*.cm_financial_status_id' => 'required|exists:cm_financial_status,id',
+            'memberships_renewals.*.membership_period' => 'required|numeric',
+            'memberships_renewals.*.allowed_subscription_date' => 'required',
+            'memberships_renewals.*.allowed_vote_date' => 'nullable',
+            "memberships_renewals.*.company_id" => 'nullable',
         ];
     }
 
