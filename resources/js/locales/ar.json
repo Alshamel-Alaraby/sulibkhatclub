@@ -1399,6 +1399,8 @@
         "memberRejectTable": "جدول شطب العضوية",
         "ReceiptVoucher": "سند قبض",
         "ReceiptVoucherMember": "عرض سندات القبض للعضو :",
-        "PosterReport": "جدول كشف البريد"
+        "PosterReport": "جدول كشف البريد",
+        "DoneSuccessfully": "تم التحديث بنجاح",
+        "updateData": "تحديث البيانات"
     }
 }

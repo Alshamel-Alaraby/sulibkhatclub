@@ -1414,6 +1414,8 @@
         "memberRejectTable": "Member Reject Table",
         "ReceiptVoucher": "Receipt Voucher",
         "ReceiptVoucherMember": "View receipt vouchers for the member : ",
-        "PosterReport": "Poster Report Table"
+        "PosterReport": "Poster Report Table",
+        "DoneSuccessfully": "Update Successfully",
+        "updateData": "Update Data"
     }
 }

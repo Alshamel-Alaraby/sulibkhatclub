@@ -2352,25 +2352,60 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }))();
     },
+    updateAllData: function updateAllData() {
+      var _this15 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _this15.isLoader = true;
+                _context6.next = 3;
+                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/updateCmMember").then(function (res) {
+                  setTimeout(function () {
+                    sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+                      icon: "success",
+                      text: "".concat(_this15.$t("general.DoneSuccessfully")),
+                      showConfirmButton: false,
+                      timer: 1500
+                    });
+                  }, 500);
+                })["catch"](function (err) {
+                  sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+                    icon: "error",
+                    title: "".concat(_this15.$t("general.Error")),
+                    text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+                  });
+                })["finally"](function () {
+                  _this15.isLoader = false;
+                });
+              case 3:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6);
+      }))();
+    },
     formatDate: function formatDate(value) {
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_9__.formatDateOnly)(value);
     },
     log: function log(id) {
-      var _this15 = this;
+      var _this16 = this;
       if (this.mouseEnter != id) {
         this.Tooltip = "";
         this.mouseEnter = id;
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/type-permission/logs/".concat(id)).then(function (res) {
           var l = res.data.data;
           l.forEach(function (e) {
-            _this15.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this15.formatDate(e.created_at), " \n");
+            _this16.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this16.formatDate(e.created_at), " \n");
           });
           $("#tooltip-".concat(id)).tooltip();
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this15.$t("general.Error")),
-            text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this16.$t("general.Error")),
+            text: "".concat(_this16.$t("general.Thereisanerrorinthesystem"))
           });
         });
       }
@@ -2379,10 +2414,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *   Export Excel
      */
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this16 = this;
+      var _this17 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this16.$refs.exportable_table;
+        var elt = _this17.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2395,7 +2430,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         } else {
           XLSX.writeFile(wb, fn || ('settings' + '.' || 0) + (type || 'xlsx'));
         }
-        _this16.enabled3 = true;
+        _this17.enabled3 = true;
       }, 100);
     },
     getDay: function getDay() {
@@ -13282,28 +13317,18 @@ var render = function () {
                                                   staticClass:
                                                     "m-0 font-weight-normal",
                                                 },
-                                                _vm._l(
-                                                  data.permission,
-                                                  function (per, index) {
-                                                    return _c(
-                                                      "span",
-                                                      { key: per.id },
-                                                      [
-                                                        _vm._v(
-                                                          "\n                                             " +
-                                                            _vm._s(
-                                                              _vm.$i18n
-                                                                .locale == "ar"
-                                                                ? per.name
-                                                                : per.name_e
-                                                            ) +
-                                                            " -\n                                        "
-                                                        ),
-                                                      ]
-                                                    )
-                                                  }
-                                                ),
-                                                0
+                                                [
+                                                  _vm._v(
+                                                    "\n                                        " +
+                                                      _vm._s(
+                                                        _vm.$i18n.locale == "ar"
+                                                          ? data.permission.name
+                                                          : data.permission
+                                                              .name_e
+                                                      ) +
+                                                      " -\n                                    "
+                                                  ),
+                                                ]
                                               )
                                             : _vm._e(),
                                         ])
@@ -13553,6 +13578,80 @@ var render = function () {
                                                         "mb-3 d-flex justify-content-end",
                                                     },
                                                     [
+                                                      !_vm.isLoader
+                                                        ? _c(
+                                                            "b-button",
+                                                            {
+                                                              staticClass:
+                                                                "mx-1 font-weight-bold px-3 mr-3 ml-3",
+                                                              attrs: {
+                                                                variant:
+                                                                  "success",
+                                                                type: "button",
+                                                              },
+                                                              on: {
+                                                                click:
+                                                                  function (
+                                                                    $event
+                                                                  ) {
+                                                                    $event.preventDefault()
+                                                                    return _vm.updateAllData.apply(
+                                                                      null,
+                                                                      arguments
+                                                                    )
+                                                                  },
+                                                              },
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                "\n                                                    " +
+                                                                  _vm._s(
+                                                                    _vm.$t(
+                                                                      "general.updateData"
+                                                                    )
+                                                                  ) +
+                                                                  "\n                                                "
+                                                              ),
+                                                            ]
+                                                          )
+                                                        : _c(
+                                                            "b-button",
+                                                            {
+                                                              staticClass:
+                                                                "mx-1 mr-3 ml-3",
+                                                              attrs: {
+                                                                variant:
+                                                                  "success",
+                                                                disabled: "",
+                                                              },
+                                                            },
+                                                            [
+                                                              _c("b-spinner", {
+                                                                attrs: {
+                                                                  small: "",
+                                                                },
+                                                              }),
+                                                              _vm._v(" "),
+                                                              _c(
+                                                                "span",
+                                                                {
+                                                                  staticClass:
+                                                                    "sr-only",
+                                                                },
+                                                                [
+                                                                  _vm._v(
+                                                                    _vm._s(
+                                                                      _vm.$t(
+                                                                        "login.Loading"
+                                                                      )
+                                                                    ) + "..."
+                                                                  ),
+                                                                ]
+                                                              ),
+                                                            ],
+                                                            1
+                                                          ),
+                                                      _vm._v(" "),
                                                       !_vm.isLoader
                                                         ? _c(
                                                             "b-button",
