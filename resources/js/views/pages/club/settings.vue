@@ -1375,7 +1375,7 @@ export default {
                                         </h5>
                                     </td>
                                     <td v-if="setting.cm_permissions_id">
-                                        <h5 class="m-0 font-weight-normal" v-if="data.permission.length > 0">
+                                        <h5 class="m-0 font-weight-normal">
                                             {{  $i18n.locale == "ar" ? data.permission.name : data.permission.name_e }} -
                                         </h5>
                                     </td>

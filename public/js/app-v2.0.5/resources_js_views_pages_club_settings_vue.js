@@ -13310,27 +13310,24 @@ var render = function () {
                                     _vm._v(" "),
                                     _vm.setting.cm_permissions_id
                                       ? _c("td", [
-                                          data.permission.length > 0
-                                            ? _c(
-                                                "h5",
-                                                {
-                                                  staticClass:
-                                                    "m-0 font-weight-normal",
-                                                },
-                                                [
-                                                  _vm._v(
-                                                    "\n                                        " +
-                                                      _vm._s(
-                                                        _vm.$i18n.locale == "ar"
-                                                          ? data.permission.name
-                                                          : data.permission
-                                                              .name_e
-                                                      ) +
-                                                      " -\n                                    "
-                                                  ),
-                                                ]
-                                              )
-                                            : _vm._e(),
+                                          _c(
+                                            "h5",
+                                            {
+                                              staticClass:
+                                                "m-0 font-weight-normal",
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                        " +
+                                                  _vm._s(
+                                                    _vm.$i18n.locale == "ar"
+                                                      ? data.permission.name
+                                                      : data.permission.name_e
+                                                  ) +
+                                                  " -\n                                    "
+                                              ),
+                                            ]
+                                          ),
                                         ])
                                       : _vm._e(),
                                     _vm._v(" "),
