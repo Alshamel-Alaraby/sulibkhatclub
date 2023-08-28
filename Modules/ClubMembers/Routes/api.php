@@ -161,6 +161,9 @@ Route::prefix('club-members')->group(function () {
     });
 
     Route::group(['prefix' => 'transactions'], function () {
+        Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
+            ->name('MemberTransaction.find');
+            
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
         Route::get('/logs/{id}', 'CmTransactionController@logs')->name('transaction.logs');
         Route::get('/{id}', 'CmTransactionController@find')->name('transaction.find');
@@ -169,8 +172,6 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmTransactionController@bulkDelete");
         Route::delete('/{id}', 'CmTransactionController@delete')->name('transaction.delete');
 
-        Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
-            ->name('MemberTransaction.find');
     });
 
 });

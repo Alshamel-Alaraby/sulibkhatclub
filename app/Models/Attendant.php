@@ -14,6 +14,9 @@ class Attendant extends Model
 
     protected $guarded = ['id'];
 
+    protected $with = ['customer'];
+
+
     public function customer()
     {
         return $this->belongsTo(GeneralCustomer::class, 'customer_id');

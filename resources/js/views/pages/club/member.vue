@@ -986,9 +986,13 @@ export default {
                                         {{ data.year_to }}
                                     </td>
                                     <td>
-                                        {{ data.serial_number }}
+                                        {{ data.amount }}
+                                    </td>
+                                    <td>
+                                        {{ `${data.year_from}-${data.branch_id}-${data.document_id}-${data.prefix}-${data.serial_number}` }}
                                     </td>
                                 </tr>
+
                                 </tbody>
                                 <tbody v-else>
                                 <tr>

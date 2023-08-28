@@ -117,14 +117,6 @@ export default [
         component: () => import('../../views/pages/club/change-sponsor'),
     },
     {
-        path: '/dashboard/club/member-reject',
-        name: 'member reject',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/club/member-reject'),
-    },
-    {
         path: '/dashboard/club/postal-report',
         name: 'club-financial-status',
         meta: {

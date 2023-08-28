@@ -259,4 +259,18 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
 
     }
 
+
+    public function getName($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } elseif ($request->limet){
+            return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
+        }else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
 }

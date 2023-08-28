@@ -46,6 +46,8 @@ class ReportMembertResource extends JsonResource
             'member_type' => $this->member_type,
             'notes' => $this->notes,
             'gender' => $this->gender,
+            'auto_member_type_id' => $this->auto_member_type_id,
+            'last_transaction_date' => $this->last_transaction_date,
         ];
     }
 }

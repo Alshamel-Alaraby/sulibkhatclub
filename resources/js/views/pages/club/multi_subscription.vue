@@ -113,11 +113,6 @@ export default {
         };
     },
     beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      return permissionGuard(vm, "MultiSubscription", "all multiSubscription club");
-    });
-  },
-    beforeRouteEnter(to, from, next) {
         next((vm) => {
             return permissionGuard(vm, "Multi Subscription", "all Multi Subscription club");
         });
@@ -954,7 +949,13 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
-        <Branch :id="'create_branch'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBranches"/>
+        <Branch
+            :id="'create_branch'"
+            :isPage="false" type="create" :isPermission="isPermission"
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            @created="getBranches"
+        />
         <Sponsor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getSponsors" />
         <div class="row">
             <div class="col-12">
@@ -1571,30 +1572,28 @@ export default {
                                     </th>
                                     <td v-if="setting.serial_number && isVisible('serial_number')">
                                         <h5 class="m-0 font-weight-normal">
-                                            {{ data.prefix }}
+                                            <h5 class="m-0 font-weight-normal">{{ $t("general.serial_number") }}</h5>
                                         </h5>
                                     </td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <h5 class="m-0 font-weight-normal">
-                                            {{
-                                                data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
-                                            }}
+                                            <h5 class="m-0 font-weight-normal">{{ getCompanyKey("member") }}</h5>
                                         </h5>
                                     </td>
                                     <td v-if="setting.amount && isVisible('amount')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey("subscription_amount") }}</h5>
                                     </td>
                                     <td v-if="setting.type && isVisible('type')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{  getCompanyKey("subscription_type") }}</h5>
                                     </td>
                                     <td v-if="setting.year_from && isVisible('year_from')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{getCompanyKey('year_from')}}</h5>
                                     </td>
                                     <td v-if="setting.year_to && isVisible('year_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey('year_to') }}</h5>
                                     </td>
                                     <td v-if="setting.number_of_years && isVisible('number_of_years')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey("number_of_years") }}</h5>
                                     </td>
                                     <th v-if="setting.sponsor_id && isVisible('sponsor_id')">
                                         <div class="d-flex justify-content-center">
@@ -1633,7 +1632,6 @@ export default {
                                             />
                                         </div>
                                     </td>
-
                                     <td v-if="setting.serial_number && isVisible('serial_number')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{ data.prefix }}

@@ -251,7 +251,7 @@ class CmMemberController extends Controller
     public function getReportCmMember(Request $request){
 
            $models = $this->modelInterface->reportCmMember($request);
-        return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+            return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
 
     }

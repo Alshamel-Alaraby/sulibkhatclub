@@ -5,6 +5,7 @@ namespace App\Http\Controllers\GeneralCustomer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralCustomer\GeneralCustomerRequest;
 use App\Http\Resources\GeneralCustomer\GeneralCustomerResource;
+use App\Http\Resources\GeneralCustomer\GetNameGeneralCustomer;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepositoryInterface;
 use App\Traits\BulkDeleteTrait;
 use App\Traits\CanDeleteTrait;
@@ -114,6 +115,16 @@ class GeneralCustomerController extends Controller
     public function getCheckSupplier(Request $request)
     {
        return  $this->repository->checkSupplier($request);
+    }
+
+
+    public function getName(Request $request)
+    {
+
+        $models = $this->repository->getName($request);
+
+
+        return responseJson(200, 'success', GetNameGeneralCustomer::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

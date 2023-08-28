@@ -453,7 +453,7 @@ export default {
         this.errors = {};
         this.is_disabled = false;
 
-          if(this.type != 'edit'){
+        if(this.type != 'edit'){
               adminApi
                   .post(this.url, { ...this.create, company_id: this.company_id })
                   .then((res) => {
