@@ -649,6 +649,31 @@ export default {
                     this.isLoader = false;
                 });
         },
+        async updateAllData() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/club-members/members/updateCmMember`)
+                .then((res) => {
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.DoneSuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
 
 
         formatDate(value) {
@@ -885,11 +910,11 @@ export default {
                                             <a
                                                 href="javascript:void(0)"
                                                 :style="{
-                          'pointer-events':
-                            settingsPagination.last_page == settingsPagination.current_page
-                              ? 'none'
-                              : '',
-                        }"
+                                                  'pointer-events':
+                                                    settingsPagination.last_page == settingsPagination.current_page
+                                                      ? 'none'
+                                                      : '',
+                                                }"
                                                 @click.prevent="getData(settingsPagination.current_page + 1)"
                                             >
                                                 <span>&gt;</span>
@@ -1420,6 +1445,19 @@ export default {
                                         >
                                             <form>
                                                 <div class="mb-3 d-flex justify-content-end">
+                                                    <b-button
+                                                        variant="success"
+                                                        @click.prevent="updateAllData"
+                                                        type="button"
+                                                        class="mx-1 font-weight-bold px-3 mr-3 ml-3"
+                                                        v-if="!isLoader"
+                                                    >
+                                                        {{ $t("general.updateData") }}
+                                                    </b-button>
+                                                    <b-button variant="success" class="mx-1 mr-3 ml-3" disabled v-else>
+                                                        <b-spinner small></b-spinner>
+                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                    </b-button>
                                                     <!-- Emulate built in modal footer ok and cancel button actions -->
                                                     <b-button
                                                         variant="success"

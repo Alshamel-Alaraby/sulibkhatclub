@@ -688,7 +688,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?limet=10&company_id=${this.company_id}&national_id=${search}`)
+                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
