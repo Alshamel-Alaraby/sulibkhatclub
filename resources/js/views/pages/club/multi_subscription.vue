@@ -1571,29 +1571,25 @@ export default {
                                         </div>
                                     </th>
                                     <td v-if="setting.serial_number && isVisible('serial_number')">
-                                        <h5 class="m-0 font-weight-normal">
-                                            <h5 class="m-0 font-weight-normal">{{ $t("general.serial_number") }}</h5>
-                                        </h5>
+                                         {{ $t("general.serial_number") }}
                                     </td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
-                                        <h5 class="m-0 font-weight-normal">
-                                            <h5 class="m-0 font-weight-normal">{{ getCompanyKey("member") }}</h5>
-                                        </h5>
+                                            {{ getCompanyKey("member") }}
                                     </td>
                                     <td v-if="setting.amount && isVisible('amount')">
-                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey("subscription_amount") }}</h5>
+                                        {{ getCompanyKey("subscription_amount") }}
                                     </td>
                                     <td v-if="setting.type && isVisible('type')">
-                                        <h5 class="m-0 font-weight-normal">{{  getCompanyKey("subscription_type") }}</h5>
+                                        {{  getCompanyKey("subscription_type") }}
                                     </td>
                                     <td v-if="setting.year_from && isVisible('year_from')">
-                                        <h5 class="m-0 font-weight-normal">{{getCompanyKey('year_from')}}</h5>
+                                        {{getCompanyKey('year_from')}}
                                     </td>
                                     <td v-if="setting.year_to && isVisible('year_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey('year_to') }}</h5>
+                                        {{ getCompanyKey('year_to') }}
                                     </td>
                                     <td v-if="setting.number_of_years && isVisible('number_of_years')">
-                                        <h5 class="m-0 font-weight-normal">{{ getCompanyKey("number_of_years") }}</h5>
+                                        {{ getCompanyKey("number_of_years") }}
                                     </td>
                                     <th v-if="setting.sponsor_id && isVisible('sponsor_id')">
                                         <div class="d-flex justify-content-center">
@@ -1613,7 +1609,7 @@ export default {
                                 </tr>
                                 </thead>
                                 <tbody v-if="transactions.length > 0">
-                                <tr
+                                     <tr
                                     @click.capture="checkRow(data.id)"
                                     @dblclick.prevent="isPermission('update multiSubscription club')?
                                     $bvModal.show(`modal-edit-${data.id}`) : false"
