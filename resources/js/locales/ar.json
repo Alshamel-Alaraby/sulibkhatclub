@@ -1402,10 +1402,11 @@
         "PosterReport": "جدول كشف البريد",
         "DoneSuccessfully": "تم التحديث بنجاح",
         "updateData": "تحديث البيانات",
-        "dismissedMemberCount": " الأعضاء المفصولين",
+        "dismissedMemberCount": " الأعضاء المشطوبين",
         "foundingMemberCount": " الأعضاء المؤسسين",
-        "nominateMemberCount": "الاعضاء لهم حق الترشح",
+        "nominateMemberCount": "اعضاء لهم حق الترشح في الانتخابات",
         "normalMemberCount": "الأعضاء العاديين",
-        "voteMemberCount": "الاعضاء لهم حق الترشح"
+        "voteMemberCount": "اعضاء لهم حق التصويت فى الانتخابات",
+        "AttendElections": "اعضاء لهم حق حضور الانتخابات"
     }
 }

@@ -158,6 +158,14 @@ export default {
   <Layout>
     <PageHeader :title="title" :items="items" />
     <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.normalMemberCount"
+                :text="'normalMemberCount'"
+                :chart-color="'#1abc9c'"
+            />
+        </div>
+
       <div class="col-xl-3 col-md-6">
         <WidgetChart
           :number="statices.dismissedMemberCount"
@@ -172,6 +180,29 @@ export default {
               :chart-color="'#f1556c'"
         />
       </div>
+        <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.sponsorsCount"
+                :text="'sponsor'"
+                :chart-color="'#f1556c'"
+            />
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.presenceMemberCount"
+                :text="'AttendElections'"
+                :chart-color="'#1abc9c'"
+            />
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.voteMemberCount"
+                :text="'voteMemberCount'"
+                :chart-color="'#1abc9c'"
+            />
+        </div>
+
       <div class="col-xl-3 col-md-6">
             <WidgetChart
                 :number="statices.nominateMemberCount"
@@ -179,27 +210,8 @@ export default {
                 :chart-color="'#f1556c'"
             />
         </div>
-      <div class="col-xl-3 col-md-6">
-            <WidgetChart
-                :number="statices.normalMemberCount"
-                :text="'normalMemberCount'"
-                :chart-color="'#1abc9c'"
-            />
-        </div>
-      <div class="col-xl-3 col-md-6">
-            <WidgetChart
-                :number="statices.sponsorsCount"
-                :text="'sponsor'"
-                :chart-color="'#f1556c'"
-            />
-        </div>
-      <div class="col-xl-3 col-md-6">
-            <WidgetChart
-                :number="statices.voteMemberCount"
-                :text="'voteMemberCount'"
-                :chart-color="'#1abc9c'"
-            />
-        </div>
+
+
       <!-- end col -->
     </div>
   </Layout>

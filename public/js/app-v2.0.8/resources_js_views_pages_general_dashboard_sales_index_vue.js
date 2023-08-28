@@ -2409,7 +2409,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.content-page {\r\n    padding: 70px 15px 5px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.content-page {\n    padding: 70px 15px 5px !important;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11115,6 +11115,21 @@ var render = function () {
           [
             _c("WidgetChart", {
               attrs: {
+                number: _vm.statices.normalMemberCount,
+                text: "normalMemberCount",
+                "chart-color": "#1abc9c",
+              },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-xl-3 col-md-6" },
+          [
+            _c("WidgetChart", {
+              attrs: {
                 number: _vm.statices.dismissedMemberCount,
                 text: "dismissedMemberCount",
                 "chart-color": "#1abc9c",
@@ -11145,36 +11160,6 @@ var render = function () {
           [
             _c("WidgetChart", {
               attrs: {
-                number: _vm.statices.nominateMemberCount,
-                text: "nominateMemberCount",
-                "chart-color": "#f1556c",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-xl-3 col-md-6" },
-          [
-            _c("WidgetChart", {
-              attrs: {
-                number: _vm.statices.normalMemberCount,
-                text: "normalMemberCount",
-                "chart-color": "#1abc9c",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-xl-3 col-md-6" },
-          [
-            _c("WidgetChart", {
-              attrs: {
                 number: _vm.statices.sponsorsCount,
                 text: "sponsor",
                 "chart-color": "#f1556c",
@@ -11190,9 +11175,39 @@ var render = function () {
           [
             _c("WidgetChart", {
               attrs: {
+                number: _vm.statices.presenceMemberCount,
+                text: "AttendElections",
+                "chart-color": "#1abc9c",
+              },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-xl-3 col-md-6" },
+          [
+            _c("WidgetChart", {
+              attrs: {
                 number: _vm.statices.voteMemberCount,
                 text: "voteMemberCount",
                 "chart-color": "#1abc9c",
+              },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-xl-3 col-md-6" },
+          [
+            _c("WidgetChart", {
+              attrs: {
+                number: _vm.statices.nominateMemberCount,
+                text: "nominateMemberCount",
+                "chart-color": "#f1556c",
               },
             }),
           ],

@@ -1419,8 +1419,9 @@
         "updateData": "Update Data",
         "dismissedMemberCount": "Dismissed Member ",
         "foundingMemberCount": "Founding Member ",
-        "nominateMemberCount": "Nominate Member",
+        "nominateMemberCount": "Candidacy in the elections",
         "normalMemberCount": "Normal Member",
-        "voteMemberCount": "Vote Member Count"
+        "voteMemberCount": "Vote in elections",
+        "AttendElections":"Attend elections"
     }
 }

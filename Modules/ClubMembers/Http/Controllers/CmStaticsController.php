@@ -14,17 +14,11 @@ class CmStaticsController extends Controller
 
         $data = [];
 
-        $data['normalMemberCount'] = CmMember::where(function ($query) {
-            $query->where('member_type_id', 1);
-        })->orWhereRelation('memberType', 'parent_id', 1)->count();
+        $data['normalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->count();
 
-        $data['foundingMemberCount'] = CmMember::where(function ($query) {
-            $query->where('member_type_id', 2);
-        })->orWhereRelation('memberType', 'parent_id', 2)->count();
+        $data['foundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->count();
 
-        $data['dismissedMemberCount'] = CmMember::where(function ($query) {
-            $query->where('member_type_id', 3);
-        })->orWhereRelation('memberType', 'parent_id', 3)->count();
+        $data['dismissedMemberCount'] = CmMember::WhereRelation('member_type_id', 3)->count();
 
         $data['sponsorsCount'] = CmSponser::count();
 
