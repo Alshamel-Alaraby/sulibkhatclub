@@ -22,9 +22,7 @@ class Avenue extends Model
         "company_id",
     ];
 
-    protected $casts = [
-        // 'is_active' => '\App\Enums\IsActive',
-    ];
+    protected $with = ['country', 'governorate', 'city', 'customerBranches', 'streets'];
 
     public function country()
     {
