@@ -2102,8 +2102,9 @@ __webpack_require__.r(__webpack_exports__);
     getStatices: function getStatices() {
       var _this = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/statices").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/club-members/statics/getStatics").then(function (res) {
         var l = res.data.data;
+        console.log(l);
         _this.statices = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
@@ -5686,32 +5687,48 @@ var render = function render() {
     staticClass: "col-xl-3 col-md-6"
   }, [_c("WidgetChart", {
     attrs: {
-      number: _vm.statices.branches,
-      text: "branches",
+      number: _vm.statices.dismissedMemberCount,
+      text: "dismissedMemberCount",
       "chart-color": "#1abc9c"
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6"
   }, [_c("WidgetChart", {
     attrs: {
-      number: _vm.statices.users,
-      text: "users",
+      number: _vm.statices.foundingMemberCount,
+      text: "foundingMemberCount",
       "chart-color": "#f1556c"
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6"
   }, [_c("WidgetChart", {
     attrs: {
-      number: _vm.statices.employees,
-      text: "employees",
+      number: _vm.statices.nominateMemberCount,
+      text: "nominateMemberCount",
       "chart-color": "#f1556c"
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6"
   }, [_c("WidgetChart", {
     attrs: {
-      number: _vm.statices.salesmen,
-      text: "salesmen",
+      number: _vm.statices.normalMemberCount,
+      text: "normalMemberCount",
+      "chart-color": "#1abc9c"
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-xl-3 col-md-6"
+  }, [_c("WidgetChart", {
+    attrs: {
+      number: _vm.statices.nominateMemberCount,
+      text: "nominateMemberCount",
+      "chart-color": "#f1556c"
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-xl-3 col-md-6"
+  }, [_c("WidgetChart", {
+    attrs: {
+      number: _vm.statices.normalMemberCount,
+      text: "normalMemberCount",
       "chart-color": "#1abc9c"
     }
   })], 1)])], 1);

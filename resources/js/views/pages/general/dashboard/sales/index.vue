@@ -133,9 +133,10 @@ export default {
       getStatices() {
           this.isLoader = true;
 
-          adminApi.get(`/statices`)
+          adminApi.get(`/club-members/statics/getStatics`)
               .then((res) => {
                   let l = res.data.data;
+                  console.log(l)
                   this.statices = l;
               })
               .catch((err) => {
@@ -159,29 +160,43 @@ export default {
     <div class="row">
       <div class="col-xl-3 col-md-6">
         <WidgetChart
-          :number="statices.branches"
-          :text="'branches'"
+          :number="statices.dismissedMemberCount"
+          :text="'dismissedMemberCount'"
           :chart-color="'#1abc9c'"
         />
       </div>
       <div class="col-xl-3 col-md-6">
          <WidgetChart
-              :number="statices.users"
-              :text="'users'"
+              :number="statices.foundingMemberCount"
+              :text="'foundingMemberCount'"
               :chart-color="'#f1556c'"
         />
       </div>
       <div class="col-xl-3 col-md-6">
             <WidgetChart
-                :number="statices.employees"
-                :text="'employees'"
+                :number="statices.nominateMemberCount"
+                :text="'nominateMemberCount'"
                 :chart-color="'#f1556c'"
             />
         </div>
       <div class="col-xl-3 col-md-6">
             <WidgetChart
-                :number="statices.salesmen"
-                :text="'salesmen'"
+                :number="statices.normalMemberCount"
+                :text="'normalMemberCount'"
+                :chart-color="'#1abc9c'"
+            />
+        </div>
+      <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.sponsorsCount"
+                :text="'sponsor'"
+                :chart-color="'#f1556c'"
+            />
+        </div>
+      <div class="col-xl-3 col-md-6">
+            <WidgetChart
+                :number="statices.voteMemberCount"
+                :text="'voteMemberCount'"
                 :chart-color="'#1abc9c'"
             />
         </div>

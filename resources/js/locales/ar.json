@@ -1398,6 +1398,11 @@
         "allowed_vote_date": "اقصى تاريخ لاحقية التصويت",
         "ReceiptVoucher": "سند قبض",
         "ReceiptVoucherMember": "عرض سندات القبض للعضو :",
-        "PosterReport": "جدول كشف البريد"
+        "PosterReport": "جدول كشف البريد",
+        "dismissedMemberCount": " الأعضاء المفصولين",
+        "foundingMemberCount": " الأعضاء المؤسسين",
+        "nominateMemberCount": "الاعضاء لهم حق الترشح",
+        "normalMemberCount": "الأعضاء العاديين",
+        "voteMemberCount": "الاعضاء لهم حق الترشح"
     }
 }
