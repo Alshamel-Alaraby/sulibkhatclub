@@ -27,7 +27,8 @@ class LocationRequest extends FormRequest
             'name' => 'required|string|max:255',
             'name_e' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:general_locations,id',
-            'priority_id' => "required|exists:general_priorities,id"
+            'priority_id' => "required|exists:general_priorities,id",
+            "company_id"=>'nullable',
         ];
     }
 }

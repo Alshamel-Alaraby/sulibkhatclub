@@ -1,25 +1,28 @@
 import Cookies from "js-cookie";
 import adminApi from '../../api/adminAxios';
 import router from "../../router/index";
-
+import { selectedParents } from "../../helper/global";
+import routeModules from "../../helper/Rule"
+import allRoute from "../../helper/allRoute"
 // state
 export const state = {
     token: Cookies.get("token") || null,
-    // permission: JSON.parse(localStorage.getItem("permission")) || [],
-    partner: JSON.parse(localStorage.getItem("partner")) || {},
-    companies: JSON.parse(localStorage.getItem("companies")) || [],
-    company_id: JSON.parse(localStorage.getItem("company_id")) || null,
-    work_flow_trees: JSON.parse(localStorage.getItem("work_flow_trees")) || [],
-    allWorkFlow: JSON.parse(localStorage.getItem("allWorkFlow")) || [],
-    user: JSON.parse(localStorage.getItem("user")) || {},
-    type: JSON.parse(localStorage.getItem("type")) || "",
+    permissions: localStorage.getItem("permissions")? JSON.parse(localStorage.getItem("permissions")): [] || [],
+    partner: localStorage.getItem("partner") ? JSON.parse(localStorage.getItem("partner")): []  || {},
+    companies: localStorage.getItem("companies") ? JSON.parse(localStorage.getItem("companies")): []  || [],
+    company_id: localStorage.getItem("company_id") ? JSON.parse(localStorage.getItem("company_id")): []  || null,
+    work_flow_trees: localStorage.getItem("work_flow_trees") ? JSON.parse(localStorage.getItem("work_flow_trees")): []  || [],
+    allWorkFlow: localStorage.getItem("allWorkFlow") ? JSON.parse(localStorage.getItem("allWorkFlow")): []  || [],
+    user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")): []  || {},
+    type: localStorage.getItem("type") ? JSON.parse(localStorage.getItem("type")): []  || "",
+    parentModule: localStorage.getItem("parentModule") ? JSON.parse(localStorage.getItem("parentModule")):[],
     notification: true
 }
 
 // getters
 export const getters = {
     token: state => state.token,
-    permission: state => state.permission,
+    permissions: state => state.permissions,
     loading: state => state.loading,
     partner: state => state.partner,
     companies: state => state.companies,
@@ -28,6 +31,7 @@ export const getters = {
     work_flow_trees: state => state.work_flow_trees,
     user: state => state.user,
     type: state => state.type,
+    parentModule: state => state.parentModule,
 }
 
 // mutations
@@ -36,19 +40,14 @@ export const mutations = {
         state.token = token;
         Cookies.set('token',token,{ expires: 7 });
     },
-    // editPermission(state,permission){
-    //
-    //     let name = [];
-    //     permission.forEach(el => {
-    //         name.push(el.name);
-    //         if(el.role && !name.includes(el.role)){
-    //             name.push(el.role);
-    //         }
-    //     });
-    //
-    //     state.permission = name;
-    //     localStorage.setItem('permission',JSON.stringify(name));
-    // },
+    editPermission(state,permissions){
+        let name = [];
+        permissions.forEach(el => {
+            name.push(el.name);
+        });
+        state.permissions = name;
+        localStorage.setItem('permissions',JSON.stringify(name));
+    },
     editPartner(state,partner){
         state.partner = partner;
         localStorage.setItem('partner',JSON.stringify(partner));
@@ -76,19 +75,28 @@ export const mutations = {
         state.user = {};
         state.companies = [];
         state.work_flow_trees = [];
+        state.permissions = [];
         state.allWorkFlow = [];
         state.company_id = null;
         state.type = '';
+        state.parentModule = [];
+        selectedParents.value=[];
+        allRoute.value=[];
+        routeModules.value=[];
             // state.permission = null;
-        // localStorage.removeItem('permission');
+        Cookies.remove('token');
         localStorage.removeItem('companies');
         localStorage.removeItem('partner');
         localStorage.removeItem('company_id');
         localStorage.removeItem('work_flow_trees');
         localStorage.removeItem('allWorkFlow');
         localStorage.removeItem('user');
+        localStorage.removeItem('permissions');
         localStorage.removeItem('type');
-        Cookies.remove('token')
+        localStorage.removeItem('parentModule');
+        localStorage.removeItem('selectedParents');
+        localStorage.removeItem('routeModules');
+        localStorage.removeItem('allRoutes');
     },
     editErrors(state,errors){
         state.errors = errors;
@@ -105,6 +113,10 @@ export const mutations = {
         state.notification = notification;
         localStorage.setItem('notification',JSON.stringify(notification));
     },
+    editParentModule(state,parentModule){
+        state.parentModule = parentModule;
+        localStorage.setItem('parentModule',JSON.stringify(parentModule));
+    }
 };
 
 // actions

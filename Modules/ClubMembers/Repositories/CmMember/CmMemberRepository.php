@@ -24,6 +24,12 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
         }
+<<<<<<< HEAD
+=======
+        if ($request->financial_status_id) {
+            $models->where('financial_status_id', $request->financial_status_id);
+        }
+>>>>>>> 3bd462ecac1ba22b1ca8382fed02f0912f3d534c
         if ($request->member_type_id) {
             $models->where('member_type_id', $request->member_type_id);
         }
@@ -196,11 +202,19 @@ class CmMemberRepository implements CmMemberInterface
             $models->where('auto_member_type_id', 1);
         }
         if ($request->cm_permissions_id == 2) {
+<<<<<<< HEAD
             $models->where('auto_member_type_id', 2);
         }
 
         if ($request->cm_permissions_id == 3){
             $models->where('auto_member_type_id', 3);
+=======
+            $models->whereIn('auto_member_type_id', [1,2]);
+        }
+
+        if ($request->cm_permissions_id == 3){
+            $models->whereIn('auto_member_type_id', [1,2,3]);
+>>>>>>> 3bd462ecac1ba22b1ca8382fed02f0912f3d534c
         }
         if ($request->cm_permissions_id == "0"){
             $models->where('auto_member_type_id', null);

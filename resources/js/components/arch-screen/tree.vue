@@ -3,7 +3,7 @@
     <!-- (node.children && node.children.length) ||
         (node.arch_documents && node.arch_documents.length) ||
         (node.key && node.key.length) -->
-      
+
     <div class="tree-container" v-for="(node, index) in nodes" :key="index" :style="
       $i18n.locale == 'ar'
         ? 'margin-right:10px; text-align: right;'
@@ -34,7 +34,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import transMixinComp from "../../helper/translation-comp-mixin";
+import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 
 export default {
   name: "TreeBrowser",

@@ -5,14 +5,16 @@ namespace Modules\HR\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\HR\Entities\RequestType;
+use Modules\HR\Entities\RequestTypeEmployee;
 use Modules\HR\Http\Requests\RequestTypeRequest;
 use Modules\HR\Transformers\RequestTypeResource;
 
 class RequestTypeController extends Controller
 {
-    public function __construct(private RequestType $model)
+    public function __construct(private RequestType $model, private RequestTypeEmployee $requestTypeEmployee)
     {
         $this->model = $model;
+        $this->requestTypeEmployee = $requestTypeEmployee;
     }
 
     public function all(Request $request)
@@ -31,6 +33,17 @@ class RequestTypeController extends Controller
     public function create(RequestTypeRequest $request)
     {
         $model = $this->model->create($request->validated());
+        if ($model) {
+            if ($request['managers']) {
+                foreach ($request['managers'] as $employee) {
+                    $this->requestTypeEmployee->create([
+                        'request_type_id' => $model->id,
+                        'employee_id' => $employee,
+                    ]);
+
+                }
+            }
+        }
         return responseJson(200, 'success', new RequestTypeResource($model));
 
     }
@@ -44,6 +57,20 @@ class RequestTypeController extends Controller
 
         $model->update($request->validated());
         $model->refresh();
+
+        if ($model) {
+            $this->requestTypeEmployee->where('request_type_id', $model->id)->delete();
+
+            if ($request['managers']) {
+                foreach ($request['managers'] as $employee) {
+                    $this->requestTypeEmployee->create([
+                        'request_type_id' => $model->id,
+                        'employee_id' => $employee,
+                    ]);
+                }
+            }
+        }
+
         return responseJson(200, 'updated', new RequestTypeResource($model));
     }
 

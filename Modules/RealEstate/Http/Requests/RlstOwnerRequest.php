@@ -30,6 +30,7 @@ class RlstOwnerRequest extends FormRequest
             "whatsapp" => "nullable|string|max:20",
             "categories" => "nullable|array",
             "attachments" => "nullable|array",
+            "company_id"=>'nullable',
         ];
     }
 

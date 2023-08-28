@@ -41,15 +41,19 @@ class PanelResource extends JsonResource
             "street_id" => $this->street_id,
             'unit_status' => new UnitStatusResource($this->unitStatus),
             'category' => new CategoryResource($this->category),
-//            "country" => new CountryResource($this->country),
-//            "governorate" => new GovernorateResource($this->governorate),
-//            'city' => new CityResource($this->city),
+            "country" => new CountryResource($this->country),
+            "governorate" => new GovernorateResource($this->governorate),
+            'city' => new CityResource($this->city),
             'avenue' => new AvenueResource($this->avenue),
             'street' => new StreetResource($this->street),
+            'description' => $this->description,
+            'description_e' => $this->description_e,
             'lat' => $this->lat,
             'lng' => $this->lng,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+//            'created_at' => $this->created_at,
+//            'updated_at' => $this->updated_at,
+            'itemBreakDowns' => $this->itemBreakDowns,
+
 
         ];
     }

@@ -19,7 +19,8 @@ class CreateRpSubContactGroupRequest extends FormRequest
             'name' => 'required|string|max:255|unique:rp_sub_contact_groups,name',
             'name_e' => 'required|string|max:255|unique:rp_sub_contact_groups,name_e',
             'gl_acc_no'=>[],
-            'rp_main_contact_group_id'=>[]
+            'rp_main_contact_group_id'=>[],
+            "company_id"=>'nullable',
         ];
     }
 

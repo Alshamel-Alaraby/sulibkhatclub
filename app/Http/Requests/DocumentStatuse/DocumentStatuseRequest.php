@@ -28,6 +28,7 @@ class DocumentStatuseRequest extends FormRequest
             'name_e' => 'nullable|unique:general_document_statuses,name_e,'. ($this->method() == 'PUT' ?  $this->id : ''),
             'is_active' => 'nullable|in:0,1',
             "is_default" => "nullable|in:0,1",
+            "company_id"=>'nullable',
         ];
     }
 }

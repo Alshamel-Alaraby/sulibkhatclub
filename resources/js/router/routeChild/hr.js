@@ -34,4 +34,46 @@ export default [
         },
         component: () => import('../../views/pages/hr/hr_online_request'),
     },
+    {
+        path: '/dashboard/hr-payroll-statement',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/hr_payroll_statement'),
+    },
+    {
+        path: '/dashboard/hr-vacation-balance',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/hr_vacation_balance'),
+    },
+    {
+        path: '/dashboard/hr-emergency-balance',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/hr_emergency_balance'),
+    },
+    {
+        path: '/dashboard/hr-request',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/hr_request'),
+    },
+    
+    {
+        path: '/dashboard/hr-end-service',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/hr_end_service'),
+    },
+    
 ];

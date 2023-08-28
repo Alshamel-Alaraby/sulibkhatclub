@@ -28,6 +28,7 @@ class SalesmenPlanRequest extends FormRequest
             'name_e' => 'required|string|max:255|unique:general_salesmen_plans,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
             'salesmen_plans_source_id' => 'required',
             'restart_period_id' => 'required',
+            "company_id"=>'nullable',
         ];
     }
 }

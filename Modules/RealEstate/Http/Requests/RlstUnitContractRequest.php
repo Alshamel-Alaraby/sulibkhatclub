@@ -19,6 +19,7 @@ class RlstUnitContractRequest extends FormRequest
                 "required",
                 // "exists:tree_properties,id,deleted_at,null"
             ],
+            "company_id"=>'nullable',
         ];
     }
 

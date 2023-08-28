@@ -20,6 +20,7 @@ class RlstContract extends Model implements HasMedia
     protected $fillable = [
         "salesman_id",
         "customer_id",
+        "company_id",
         "date",
         "branch_id",
         "document_id",
@@ -83,10 +84,33 @@ class RlstContract extends Model implements HasMedia
         return $this->hasMany(RpBreakDown::class, 'break_id');
     }
 
+    // public function hasChildren()
+    // {
+    //     return $this->details()->count() > 0 ||
+    //     $this->breakDowns()->count() > 0;
+
+    // }
+
     public function hasChildren()
     {
-        return $this->details()->count() > 0;
+        $relationsWithChildren = [];
 
+        if ($this->details()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'details',
+                'count' => $this->details()->count(),
+                'ids' => $this->details()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->breakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'breakDowns',
+                'count' => $this->breakDowns()->count(),
+                'ids' => $this->breakDowns()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

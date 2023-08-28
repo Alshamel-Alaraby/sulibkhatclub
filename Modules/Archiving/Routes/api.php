@@ -179,3 +179,20 @@ Route::group(['prefix' => 'arch-archive-files'], function () {
 Route::resource('arch_document_status', 'DocumentStatusController')->except('edit', 'create');
 Route::get('arch_document_status/logs/{id}', 'DocumentStatusController@logs');
 Route::post('arch_document_status/bulk-delete', 'DocumentStatusController@bulkDelete');
+
+
+//customTable
+Route::group(['prefix' => 'ArchivingCustomTable'], function () {
+    Route::controller(\Modules\Archiving\Http\Controllers\ArchivingCustomTableController::class)->group(function () {
+        Route::get('/seeder', 'seeder');
+        Route::get('/', 'all')->name('customTable.index');
+        Route::get('/table-columns/{tableName}', 'getCustomTableFields');
+        Route::get('logs/{id}', 'logs')->name('customTable.logs');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('customTable.create');
+        Route::put('/update', 'update')->name('customTable.update');
+        Route::delete('/{id}', 'delete')->name('customTable.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+
+    });
+});

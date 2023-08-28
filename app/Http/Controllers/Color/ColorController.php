@@ -11,7 +11,7 @@ use Illuminate\Routing\Controller;
 
 class ColorController extends Controller
 {
-    public function __construct(private \App\Repositories\Color\ColorInterface$modelInterface)
+    public function __construct(private \App\Repositories\Color\ColorInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

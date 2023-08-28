@@ -14,7 +14,7 @@ class Document extends Model
     protected $table = 'general_documents';
 
     protected $guarded = [''];
-    
+
 //    public function getRequired()
 //    {
 //        return $this->required == 1 ? 'Yes' : 'No';
@@ -64,6 +64,15 @@ class Document extends Model
     public function orders()
     {
         return $this->hasMany(\Modules\BoardsRent\Entities\Order::class, 'doc_type_id');
+    }
+
+    public function documentHeader()
+    {
+        return $this->hasMany(DocumentHeader::class, 'document_id');
+    }
+    public function documentRelatedHeader()
+    {
+        return $this->hasMany(DocumentHeader::class, 'related_document_id');
     }
 
     public function documentRelateds()

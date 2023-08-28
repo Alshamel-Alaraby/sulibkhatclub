@@ -29,6 +29,7 @@ class CustomerSourceRequest extends FormRequest
                 'name' => 'required|string|max:255|unique:boards_rent_customer_sources,name,' . $this->id,
                 'name_e' => 'required|string|max:255|unique:boards_rent_customer_sources,name_e,' . $this->id,
                 'parent_id' => "nullable|exists:boards_rent_customer_sources,id",
+                "company_id"=>'nullable',
             ];
         }
 
@@ -36,6 +37,7 @@ class CustomerSourceRequest extends FormRequest
             'name' => 'required|string|max:255|unique:boards_rent_customer_sources,name',
             'name_e' => 'required|string|max:255|unique:boards_rent_customer_sources,name_e',
             'parent_id' => "nullable|exists:boards_rent_customer_sources,id",
+            "company_id"=>'nullable',
 
         ];
     }

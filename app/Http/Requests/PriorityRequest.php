@@ -24,11 +24,12 @@ class PriorityRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'name_e' => 'sometimes|string|max:255',
+            'name' => 'required|string|max:255|unique:general_priorities,name,' . ($this->method() == 'PUT' ?  $this->id : '') ,
+            'name_e' => 'required|string|max:255|unique:general_priorities,name_e,' . ($this->method() == 'PUT' ?  $this->id : '') ,
             'parent_id' => 'nullable|exists:general_priorities,id',
-            'is_valid' => "nullable|in:true,false",
-            'is_default' => "nullable|in:true,false"
+            'is_valid' => "nullable|in:0,1",
+            "company_id"=>'nullable',
+            'is_default' => "nullable|in:0,1"
         ];
     }
 }

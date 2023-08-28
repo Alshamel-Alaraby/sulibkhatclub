@@ -41,7 +41,7 @@
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create v-if="isPermission('create invoice RealState')" variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -53,17 +53,17 @@
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
+                                            v-if="checkAll.length == 1 && isPermission('update invoice RealState')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && isPermission('delete invoice RealState')"
                                             @click.prevent="deleteScreenButton(checkAll)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && isPermission('delete invoice RealState')"
                                             @click.prevent="deleteScreenButton(checkAll[0])">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -655,7 +655,7 @@
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#"
+                                                <a class="dropdown-item" href="#" v-if="isPermission('update invoice RealState')"
                                                    @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
@@ -663,7 +663,7 @@
                                                         <i class="mdi mdi-square-edit-outline text-info"></i>
                                                     </div>
                                                 </a>
-                                                <a class="dropdown-item text-black" href="#"
+                                                <a class="dropdown-item text-black" href="#" v-if="isPermission('delete invoice RealState')"
                                                    @click.prevent="deleteScreenButton(data.id)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
@@ -1170,14 +1170,14 @@ import adminApi from "../../api/adminAxios";
 import { minValue, required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../widgets/errorMessage";
-import loader from "../loader";
+import loader from "../general/loader";
 import { dynamicSortString } from "../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../helper/startDate";
-import translation from "../../helper/translation-mixin";
-import Saleman from "./saleman.vue";
-import customerGeneral from "./customerGeneral";
-import Branch from "./branch"
+import translation from "../../helper/mixin/translation-mixin";
+import Saleman from "./general/saleman.vue";
+import customerGeneral from "./general/customerGeneral";
+import Branch from "./general/branch"
 import Item from "../create/realEstate/item.vue";
 import transactionBreak from "../create/receivablePayment/transactionBreak/transactionBreak";
 
@@ -1368,7 +1368,12 @@ export default {
                 this.$bvModal.show("opening-balance-break-create");
             }
         },
-
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         async getCurrencies() {
             this.isLoader = true;
 
@@ -2012,7 +2017,10 @@ export default {
                     }
                 })
                 adminApi
-                    .post(`real-estate/invoices`, { ...this.create, items: items,document_id:4 })
+                    .post(`real-estate/invoices`, {
+                        ...this.create, items: items,document_id:4 ,
+                        company_id: this.$store.getters["auth/company_id"]
+                    })
                     .then((res) => {
                         this.getData();
                         this.invoice_id = res.data.data.id;
@@ -2108,7 +2116,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    if(this.isPermission('create customer')){
+                        l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    }
                     this.customers = l;
                 })
                 .catch((err) => {
@@ -2126,7 +2136,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    if(this.isPermission('create Branch')){
+                        l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -2144,7 +2156,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف صنف", name_e: "Add item" });
+                    if(this.isPermission('create items RealState')){
+                        l.unshift({ id: 0, name: "اضف صنف", name_e: "Add item" });
+                    }
                     this.items = l;
                 })
                 .catch((err) => {
@@ -2162,7 +2176,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    if(this.isPermission('create Sales Man')){
+                        l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    }
                     this.salesmen = l;
                 })
                 .catch((err) => {

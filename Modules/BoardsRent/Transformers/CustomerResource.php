@@ -6,6 +6,7 @@ use App\Http\Resources\Avenue\AvenueResource;
 use App\Http\Resources\City\CityResource;
 use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\Salesman\SalesmanResource;
+use App\Http\Resources\Sector\SectorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\BoardsRent\Entities\CustomerSource;
 use Modules\BoardsRent\Transformers\CustomerSourceResource;
@@ -39,9 +40,12 @@ class CustomerResource extends JsonResource
             'twitter' => $this->twitter,
             'snapchat' => $this->snapchat,
             'website' => $this->website,
+            'customer_main_category_id' => $this->customer_main_category_id,
+            "customer_sub_category_id" => $this->customer_sub_category_id,
             'salesman' => new SalesmanResource($this->salesman),
             "customer_source" => new CustomerSourceResource($this->customerSource),
             "sector" => new SectorResource($this->sector),
+            "sector_id" => $this->sector_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

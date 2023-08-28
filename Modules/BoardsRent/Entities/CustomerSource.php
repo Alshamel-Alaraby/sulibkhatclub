@@ -11,11 +11,13 @@ class CustomerSource extends Model
 {
     use HasFactory, LogTrait;
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        "parent_id",
-    ];
+    protected $guarded = ['id'];
+
+    // protected $fillable = [
+    //     'name',
+    //     'name_e',
+    //     "parent_id",
+    // ];
 
     // protected $with = ['parent', 'children'];
 

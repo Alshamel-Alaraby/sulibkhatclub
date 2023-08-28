@@ -20,13 +20,11 @@ class Priority extends Model
         'name_e',
         'parent_id',
         'is_valid',
+        'company_id',
         'is_default'
     ];
 
-    protected $casts = [
-        'is_valid' => BooleanStatus::class,
-        'is_default' => BooleanStatus::class
-    ];
+
 
     protected $appends = ['haveChildren'];
 
@@ -36,6 +34,11 @@ class Priority extends Model
     public function getHaveChildrenAttribute()
     {
         return static::where("parent_id", $this->id)->count() > 0;
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Priority::class, 'parent_id');
     }
 
     public function children()

@@ -1,13 +1,15 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../helper/permission";
+
 /**
  * Advanced Table component
  */
@@ -24,13 +26,10 @@ export default {
     Multiselect
   },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes('arch document dtls') || vm.$store.state.auth.work_flow_trees.includes('archiving') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
+          next((vm) => {
+      return permissionGuard(vm, "Archiving Document DTL", "all Store");
+    });
+
     },
 
     updated() {
@@ -72,6 +71,7 @@ export default {
         arch_doc_field_id: "",
         field_value: "",
       }, //Edit form
+        company_id:null,
       setting: {
         gen_arch_doc_type_id: true,
         arch_doc_field_id: true,
@@ -129,6 +129,7 @@ export default {
     },
   },
   mounted() {
+    this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
   methods: {
@@ -381,7 +382,8 @@ export default {
         this.is_disabled = false;
         adminApi
           .post(`/arch-document-dtl`, {
-            ...this.create
+            ...this.create,
+              company_id: this.company_id
           })
           .then((res) => {
             this.getData();
@@ -427,6 +429,7 @@ export default {
             gen_arch_doc_type_id,
             arch_doc_field_id,
             field_value,
+            company_id: this.company_id
           })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);

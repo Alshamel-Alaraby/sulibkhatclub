@@ -4,7 +4,6 @@ namespace App\Repositories\Country;
 
 interface CountryInterface
 {
-
     public function all($request);
 
     public function find($id);
@@ -16,5 +15,6 @@ interface CountryInterface
     public function logs($id);
 
     public function delete($id);
+    public function getName($request);
 
 }

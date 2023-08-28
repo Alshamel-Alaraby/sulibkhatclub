@@ -18,7 +18,8 @@ class CreateRpInstallmentStatusRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:rp_installment_statuses,name',
             'name_e' => 'required|string|max:255|unique:rp_installment_statuses,name_e',
-            'is_default'=>[]
+            'is_default'=>[],
+            "company_id"=>'nullable',
         ];
     }
 

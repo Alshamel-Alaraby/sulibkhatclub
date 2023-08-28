@@ -61,10 +61,13 @@ label {
 }
 
 .nav-route-related div ul li a{
-    padding: 10px 20px;
-    background-color: hsl(203deg 95% 93%);
+    padding: 0 !important;
     border-radius: 8px;
     color: hsl(206deg 11% 56%);
+    font-weight: 600;
+    background-color: none !important;
+    color: #343a40 !important;
+    text-align: center;
 }
 
 #sidebar-menu > ul > li > a {
@@ -242,6 +245,10 @@ table tbody tr:nth-child(even) {
     color: #37cde6 !important;
 }
 
+.custom-btn-dowonload:hover i.fa-eye{
+    color: #46c212  !important;
+}
+
 .pagination-custom a span{
     font-size: 22px;
     color: #6c757d;
@@ -257,7 +264,7 @@ table tbody tr:nth-child(even) {
 }
 
 .pagination-custom {
-    margin: 0 10px;
+    margin: 0 25px;
 }
 
 .table th, .table td {

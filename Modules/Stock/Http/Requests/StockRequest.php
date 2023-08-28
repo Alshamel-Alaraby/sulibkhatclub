@@ -31,6 +31,8 @@ class StockRequest extends FormRequest
             'symbol'  => ['required', 'string'],
             'name'  => ['required', 'string', 'max:255'],
             'name_e' => ['required', 'string', 'max:255'],
+            "company_id"=>'nullable',
+
         ];
     }
 

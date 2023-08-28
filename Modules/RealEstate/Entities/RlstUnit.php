@@ -45,6 +45,34 @@ class RlstUnit extends Model implements HasMedia
         return $this->hasMany(RlstItem::class, 'unit_id');
     }
 
+    // public function hasChildren()
+    // {
+    //     // $h = $this->internalSalesman()->exists();
+    //     // return $h;
+
+    //     return $this->items()->count() > 0 ;
+    // }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->items()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'items',
+                'count' => $this->items()->count(),
+                'ids' => $this->items()->pluck('id')->toArray()
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
+
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

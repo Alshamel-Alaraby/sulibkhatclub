@@ -67,13 +67,13 @@ class DepertmentTaskController extends Controller
 
     public function delete($id)
     {
-        $model = $this->modelInterface->find($id);
-        if (!$model) {
-            return responseJson(404, __('message.data not found'));
-        }
-        if ($model->hasChildren()) {
-            return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-        }
+        // $model = $this->modelInterface->find($id);
+        // if (!$model) {
+        //     return responseJson(404, __('message.data not found'));
+        // }
+        // if ($model->hasChildren()) {
+        //     return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
+        // }
         $this->modelInterface->delete($id);
         return responseJson(200, 'success');
     }

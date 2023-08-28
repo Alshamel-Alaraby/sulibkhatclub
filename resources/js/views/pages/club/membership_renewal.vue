@@ -1,6 +1,6 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
@@ -8,14 +8,15 @@ import {
     minLength,
     maxLength,
     integer,
-    numeric, decimal, minValue, between,
+    numeric, decimal, minValue, between, requiredIf,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly, formatDateTime } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -34,27 +35,14 @@ export default {
         loader,
         Multiselect,
     },
-    // beforeRouteEnter(to, from, next) {
-    //     next((vm) => {
-    //
-    //         if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-    //             Swal.fire({
-    //                 icon: "error",
-    //                 title: `${vm.$t("general.Error")}`,
-    //                 text: `${vm.$t("general.ModuleExpired")}`,
-    //             });
-    //             return vm.$router.push({ name: "home" });
-    //         }
-    //
-    //         if (vm.$store.state.auth.work_flow_trees.includes('wallet owner') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-    //             return true;
-    //         } else {
-    //             return vm.$router.push({ name: "home" });
-    //         }
-    //     });
-    // },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "membership renewal", "all membership renewal club");
+        });
+    },
     data() {
         return {
+            fields: [],
             per_page: 50,
             search: "",
             Tooltip: "",
@@ -123,30 +111,70 @@ export default {
             memberships_renewals: {
                 required,
                 $each: {
-                    from: { required },
-                    to: { required },
-                    fromDay: { required },
-                    fromMonth: { required },
-                    toDay: { required },
-                    toMonth: { required },
-                    membership_availability: { required },
-                    membership_cost: { required , decimal, minValue: minValue(0.01)},
-                    renewal_availability: { required },
-                    renewal_cost: { required , decimal, minValue: minValue(0.01)},
+                    from: { required: requiredIf(function (model) {
+                            return this.isRequired("from");
+                        }) },
+                    to: { required: requiredIf(function (model) {
+                            return this.isRequired("to");
+                        }) },
+                    fromDay: { required: requiredIf(function (model) {
+                            return this.isRequired("fromDay");
+                        }) },
+                    fromMonth: { required: requiredIf(function (model) {
+                            return this.isRequired("fromMonth");
+                        }) },
+                    toDay: { required: requiredIf(function (model) {
+                            return this.isRequired("toDay");
+                        }) },
+                    toMonth: { required: requiredIf(function (model) {
+                            return this.isRequired("toMonth");
+                        }) },
+                    membership_availability: { required: requiredIf(function (model) {
+                            return this.isRequired("membership_availability");
+                        }) },
+                    membership_cost: { required: requiredIf(function (model) {
+                            return this.isRequired("membership_cost");
+                        }) , decimal, minValue: minValue(0.01)},
+                    renewal_availability: { required: requiredIf(function (model) {
+                            return this.isRequired("renewal_availability");
+                        }) },
+                    renewal_cost: { required: requiredIf(function (model) {
+                            return this.isRequired("renewal_cost");
+                        }) , decimal, minValue: minValue(0.01)},
                 }
             }
         },
         edit: {
-            from: { required },
-            to: { required },
-            fromDay: { required },
-            fromMonth: { required },
-            toDay: { required },
-            toMonth: { required },
-            membership_availability: { required },
-            membership_cost: { required , decimal, minValue: minValue(0.01)},
-            renewal_availability: { required },
-            renewal_cost: { required , decimal, minValue: minValue(0.01)},
+            from: { required: requiredIf(function (model) {
+                    return this.isRequired("from");
+                }) },
+            to: { required: requiredIf(function (model) {
+                    return this.isRequired("to");
+                }) },
+            fromDay: { required: requiredIf(function (model) {
+                    return this.isRequired("fromDay");
+                }) },
+            fromMonth: { required: requiredIf(function (model) {
+                    return this.isRequired("fromMonth");
+                }) },
+            toDay: { required: requiredIf(function (model) {
+                    return this.isRequired("toDay");
+                }) },
+            toMonth: { required: requiredIf(function (model) {
+                    return this.isRequired("toMonth");
+                }) },
+            membership_availability: { required: requiredIf(function (model) {
+                    return this.isRequired("membership_availability");
+                }) },
+            membership_cost: { required: requiredIf(function (model) {
+                    return this.isRequired("membership_cost");
+                }) , decimal, minValue: minValue(0.01)},
+            renewal_availability: { required: requiredIf(function (model) {
+                    return this.isRequired("renewal_availability");
+                }) },
+            renewal_cost: { required: requiredIf(function (model) {
+                    return this.isRequired("renewal_cost");
+                }) , decimal, minValue: minValue(0.01)},
         }
     },
     watch: {
@@ -181,9 +209,45 @@ export default {
         },
     },
     mounted() {
-         this.getData();
+        this.getCustomTableFields();
+        this.getData();
     },
     methods: {
+        getCustomTableFields() {
+            adminApi
+                .get(`/customTable/table-columns/cm_memberships_renewals`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        isVisible(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_visible == 1 ? true : false;
+        },
+        isRequired(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_required == 1 ? true : false;
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         getDay(){
             let days = [];
             for(let i = 1;i <= 31; ++i){
@@ -487,7 +551,10 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .post(`/club-members/memberships-renewals`, { 'memberships_renewals': this.create.memberships_renewals })
+                    .post(`/club-members/memberships-renewals`, {
+                        'memberships_renewals': this.create.memberships_renewals ,
+                        company_id: this.$store.getters["auth/company_id"],
+                    })
                     .then((res) => {
                         this.is_disabled = true;
                         this.getData();
@@ -671,10 +738,10 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
-                                        <b-form-checkbox v-model="filterSetting" value="membership_cost" class="mb-1">
+                                        <b-form-checkbox v-model="filterSetting" v-if="isVisible('membership_cost')" value="membership_cost" class="mb-1">
                                             {{ getCompanyKey("membership_renewal_renewal_membership_cost") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="renewal_cost" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('renewal_cost')" v-model="filterSetting" value="renewal_cost" class="mb-1">
                                             {{ getCompanyKey("membership_renewal_renewal_renewal_cost") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
@@ -698,7 +765,7 @@ export default {
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create v-if="isPermission('create membershipRenewal club')" variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -710,16 +777,17 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
+                                            v-if="checkAll.length == 1 && isPermission('update membershipRenewal club')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1" @click.prevent="deleteModule(checkAll)">
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && isPermission('delete membershipRenewal club')"
+                                            @click.prevent="deleteModule(checkAll)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && isPermission('delete membershipRenewal club')"
                                             @click.prevent="deleteModule(checkAll[0])">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -742,22 +810,22 @@ export default {
                                         <!-- Basic dropdown -->
                                         <b-dropdown variant="primary" :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.from" class="mb-1">
+                                            <b-form-checkbox v-model="setting.from" v-if="isVisible('from')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_from") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.to" class="mb-1">
+                                            <b-form-checkbox v-model="setting.to" v-if="isVisible('to')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_to") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_availability" class="mb-1">
+                                            <b-form-checkbox v-model="setting.membership_availability" v-if="isVisible('membership_availability')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_membership_availability") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_cost" class="mb-1">
+                                            <b-form-checkbox v-model="setting.membership_cost" v-if="isVisible('membership_cost')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_renewal_membership_cost") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.renewal_availability" class="mb-1">
+                                            <b-form-checkbox v-model="setting.renewal_availability" v-if="isVisible('renewal_availability')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_renewal_availability") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.renewal_cost" class="mb-1">
+                                            <b-form-checkbox v-model="setting.renewal_cost" v-if="isVisible('renewal_cost')" class="mb-1">
                                                 {{ getCompanyKey("membership_renewal_renewal_renewal_cost") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
@@ -911,13 +979,10 @@ export default {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-1" style="padding: 0 !important;">
+                                        <div class="col-md-1" style="padding: 0 !important;" v-if="isVisible('membership_availability')">
                                             <div class="form-group">
                                                 <label class="mr-2">
                                                     {{ getCompanyKey("membership_renewal_membership_availability") }}
-                                                    <span class="text-danger"
-                                                    >*</span
-                                                    >
                                                 </label>
                                                 <b-form-group>
                                                     <b-form-radio
@@ -944,11 +1009,10 @@ export default {
                                                 </template>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2" v-if="isVisible('membership_cost')">
                                             <div class="form-group">
                                                 <label class="control-label">
                                                     {{ getCompanyKey("membership_renewal_renewal_membership_cost") }}
-                                                    <span class="text-danger">*</span>
                                                 </label>
                                                 <input type="number" step="0.01" class="form-control"
                                                        v-model="$v.create.memberships_renewals.$each[index].membership_cost.$model" :class="{
@@ -962,13 +1026,10 @@ export default {
                                                 </template>
                                             </div>
                                         </div>
-                                        <div class="col-md-1" style="padding: 0 !important;">
+                                        <div class="col-md-1" style="padding: 0 !important;" v-if="isVisible('renewal_availability')">
                                             <div class="form-group">
                                                 <label class="mr-2">
                                                     {{ getCompanyKey("membership_renewal_renewal_availability") }}
-                                                    <span class="text-danger"
-                                                    >*</span
-                                                    >
                                                 </label>
                                                 <b-form-group>
                                                     <b-form-radio
@@ -995,11 +1056,10 @@ export default {
                                                 </template>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2" v-if="isVisible('renewal_cost')">
                                             <div class="form-group">
                                                 <label class="control-label">
                                                     {{ getCompanyKey("membership_renewal_renewal_renewal_cost") }}
-                                                    <span class="text-danger">*</span>
                                                 </label>
                                                 <input type="number" step="0.01" class="form-control"
                                                        v-model="$v.create.memberships_renewals.$each[index].renewal_cost.$model" :class="{
@@ -1045,32 +1105,32 @@ export default {
                                                    style="width: 17px; height: 17px" />
                                         </div>
                                     </th>
-                                    <th v-if="setting.from">
+                                    <th v-if="setting.from && isVisible('from')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_from") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.to">
+                                    <th v-if="setting.to && isVisible('to')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_to") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.membership_availability">
+                                    <th v-if="setting.membership_availability && isVisible('membership_availability')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_membership_availability") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.membership_cost">
+                                    <th v-if="setting.membership_cost && isVisible('membership_cost')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_renewal_membership_cost") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.renewal_availability">
+                                    <th v-if="setting.renewal_availability && isVisible('renewal_availability')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_renewal_availability") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.renewal_cost">
+                                    <th v-if="setting.renewal_cost && isVisible('renewal_cost')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("membership_renewal_renewal_renewal_cost") }}</span>
                                         </div>
@@ -1082,7 +1142,9 @@ export default {
                                 </tr>
                                 </thead>
                                 <tbody v-if="membershipRenewals.length > 0">
-                                <tr @click.capture="checkRow(data.id)" @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                <tr @click.capture="checkRow(data.id)"
+                                    @dblclick.prevent="isPermission('update membershipRenewal club')?
+                                    $bvModal.show(`modal-edit-${data.id}`):false"
                                     v-for="(data, index) in membershipRenewals" :key="data.id" class="body-tr-custom">
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="form-check custom-control" style="min-height: 1.9em">
@@ -1090,13 +1152,13 @@ export default {
                                                    v-model="checkAll" />
                                         </div>
                                     </td>
-                                    <td v-if="setting.from">
+                                    <td v-if="setting.from && isVisible('from')">
                                         {{ data.from.slice(3)+'-'+data.from.slice(0,2) }}
                                     </td>
-                                    <td v-if="setting.to">
+                                    <td v-if="setting.to && isVisible('to')">
                                         {{ data.to.slice(3)+'-'+data.to.slice(0,2) }}
                                     </td>
-                                    <td v-if="setting.membership_availability">
+                                    <td v-if="setting.membership_availability && isVisible('membership_availability')">
                                         <span :class="[
                                             data.membership_availability ? 'text-success' : 'text-danger',
                                             'badge',
@@ -1108,10 +1170,10 @@ export default {
                                             }}
                                           </span>
                                     </td>
-                                    <td v-if="setting.membership_cost">
+                                    <td v-if="setting.membership_cost && isVisible('membership_cost')">
                                         {{ data.membership_cost }}
                                     </td>
-                                    <td v-if="setting.renewal_availability">
+                                    <td v-if="setting.renewal_availability && isVisible('renewal_availability')">
                                         <span :class="[
                                             data.renewal_availability ? 'text-success' : 'text-danger',
                                             'badge',
@@ -1123,7 +1185,7 @@ export default {
                                             }}
                                           </span>
                                     </td>
-                                    <td v-if="setting.renewal_cost">
+                                    <td v-if="setting.renewal_cost && isVisible('renewal_cost')">
                                         {{ data.renewal_cost }}
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
@@ -1134,13 +1196,13 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#" @click="$bvModal.show(`modal-edit-${data.id}`)">
+                                                <a class="dropdown-item" v-if="isPermission('update membershipRenewal club')" href="#" @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                     <div class="d-flex justify-content-between align-items-center text-black">
                                                         <span>{{ $t("general.edit") }}</span>
                                                         <i class="mdi mdi-square-edit-outline text-info"></i>
                                                     </div>
                                                 </a>
-                                                <a class="dropdown-item text-black" href="#" @click.prevent="deleteModule(data.id)">
+                                                <a class="dropdown-item text-black" v-if="isPermission('delete membershipRenewal club')" href="#" @click.prevent="deleteModule(data.id)">
                                                     <div class="d-flex justify-content-between align-items-center text-black">
                                                         <span>{{ $t("general.delete") }}</span>
                                                         <i class="fas fa-times text-danger"></i>
@@ -1172,7 +1234,7 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6" >
+                                                    <div class="col-md-6">
                                                         <div class="d-flex">
                                                             <div class="form-group col-6">
                                                                 <label>{{ getCompanyKey("membership_renewal_fromDay") }}</label>
@@ -1214,7 +1276,7 @@ export default {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" >
+                                                    <div class="col-md-6">
                                                         <div class="d-flex">
                                                             <div class="form-group col-6">
                                                                 <label>{{ getCompanyKey("membership_renewal_toDay") }}</label>
@@ -1235,7 +1297,7 @@ export default {
                                                                     </ErrorMessage>
                                                                 </template>
                                                             </div>
-                                                            <div class="form-group col-6">
+                                                            <div class="form-group col-6" v-if="isVisible('toMonth')">
                                                                 <label>{{ getCompanyKey("membership_renewal_toMonth") }}</label>
                                                                 <select
                                                                     v-model="$v.edit.toMonth.$model"
@@ -1256,13 +1318,10 @@ export default {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" >
+                                                    <div class="col-md-6" v-if="isVisible('membership_availability')">
                                                         <div class="form-group">
                                                             <label class="mr-2">
                                                                 {{ getCompanyKey("membership_renewal_membership_availability") }}
-                                                                <span class="text-danger"
-                                                                >*</span
-                                                                >
                                                             </label>
                                                             <b-form-group>
                                                                 <b-form-radio
@@ -1289,11 +1348,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('membership_cost')">
                                                         <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("membership_renewal_renewal_membership_cost") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <input type="number" step="0.01" class="form-control"
                                                                    v-model="$v.edit.membership_cost.$model" :class="{
@@ -1307,13 +1365,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" >
+                                                    <div class="col-md-6" v-if="isVisible('renewal_availability')">
                                                         <div class="form-group">
                                                             <label class="mr-2">
                                                                 {{ getCompanyKey("membership_renewal_renewal_availability") }}
-                                                                <span class="text-danger"
-                                                                >*</span
-                                                                >
                                                             </label>
                                                             <b-form-group>
                                                                 <b-form-radio
@@ -1340,11 +1395,10 @@ export default {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6" v-if="isVisible('renewal_cost')">
                                                         <div class="form-group">
                                                             <label class="control-label">
                                                                 {{ getCompanyKey("membership_renewal_renewal_renewal_cost") }}
-                                                                <span class="text-danger">*</span>
                                                             </label>
                                                             <input type="number" step="0.01" class="form-control"
                                                                    v-model="$v.edit.renewal_cost.$model" :class="{

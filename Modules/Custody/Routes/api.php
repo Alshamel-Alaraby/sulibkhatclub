@@ -40,4 +40,18 @@ Route::group(["prefix" => "cus"], function () {
 
     });
 
+    //customTable
+    Route::group(['prefix' => 'CustomTable'], function () {
+        Route::controller(\Modules\Custody\Http\Controllers\CustodyCustomTableController::class)->group(function () {
+            Route::get('/', 'all')->name('customTable.index');
+            Route::get('/table-columns/{tableName}', 'getCustomTableFields');
+            Route::get('logs/{id}', 'logs')->name('customTable.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('customTable.create');
+            Route::put('/update', 'update')->name('customTable.update');
+            Route::delete('/{id}', 'delete')->name('customTable.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
 });

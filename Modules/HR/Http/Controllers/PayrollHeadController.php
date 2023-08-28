@@ -111,34 +111,65 @@ class PayrollHeadController extends Controller
         });
     }
 
+
     public function processJsonData(Request $request)
     {
         $jsonData = $request->getContent();
         $data = json_decode($jsonData, true);
 
+        $maxId = $this->model->max('id') ?? 0;
+
+        $messages = [];
         foreach ($data['data'] as $item) {
-            switch ($item['op']) {
-                case 'ADD':
-                    $this->model->insert([
-                        'name' => $item['name'],
-                        'name_e' => $item['name_e'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                    break;
-                case 'UPD':
-                    $this->model->where('id', $item['id'])->update([
-                        'name' => $item['name'],
-                        'name_e' => $item['name_e'],
-                        'updated_at' => now(),
-                    ]);
-                    break;
-                case 'DEL':
-                    $this->model->where('id', $item['id'])->delete();
-                    break;
+            try {
+                switch ($item['op']) {
+                    case 'ADD':
+                        $id = $item['id'] ?? ++$maxId;
+                        if ($this->model->where('id', $id)->exists()) {
+                            $messages[] = ['id' => $id, 'status' => 'id already exists'];
+                        } else {
+                            $this->model->insert([
+                                'id' => $id,
+                                'name' => $item['name'],
+                                'name_e' => $item['name_e'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+                            $messages[] = ['id' => $id, 'status' => 'added successfully'];
+                        }
+                        break;
+                    case 'UPD':
+                        $id = $item['id'];
+                        $model = $this->model->find($id);
+
+                        if ($model) {
+                            $this->model->where('id', $id)->update([
+                                'name' => $item['name'],
+                                'name_e' => $item['name_e'],
+                                'updated_at' => now(),
+                            ]);
+                            $messages[] = ['id' => $id, 'status' => 'updated successfully'];
+                        } else {
+                            $messages[] = ['id' => $id, 'status' => 'record not found'];
+                        }
+                        break;
+                    case 'DEL':
+                        $id = $item['id'];
+                        $model = $this->model->find($item['id']);
+                        if ($model) {
+
+                            $model->delete();
+                            $messages[] = ['id' => $id, 'status' => 'deleted successfully'];
+                        } else {
+                            $messages[] = ['id' => $id, 'status' => 'record not found'];
+                        }
+                        break;
+                }
+            } catch (\Exception $e) {
+                $messages[] = ['id' => $item['id'], 'status' => $e->getMessage()];
             }
         }
 
-        return responseJson(200, 'Done');
+        return response()->json($messages);
     }
 }

@@ -26,6 +26,7 @@ class CategoryRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:general_categories,name,' . ($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'required|string|max:255|unique:general_categories,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
+            "company_id"=>'nullable',
         ];
 
     }

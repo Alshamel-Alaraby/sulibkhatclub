@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('priorities', function (Blueprint $table) {
+        Schema::create('general_priorities', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('name_e');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->tinyInteger('is_valid')->default(false);
+            $table->tinyInteger('is_default')->default(true);
             $table->timestamps();
         });
     }
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('priorities');
+        Schema::dropIfExists('general_priorities');
     }
 };

@@ -64,4 +64,27 @@ class RlstBuilding extends Model implements HasMedia
         return $this->belongsTo(Avenue::class);
     }
 
+    // public function hasChildren()
+    // {
+
+    //     return $this->buildingWallet()->count() > 0;
+    // }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->buildingWallet()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'building Wallet',
+                'count' => $this->buildingWallet()->count(),
+                'ids' => $this->buildingWallet()->pluck('id')->toArray()
+            ];
+        }
+       
+
+        return $relationsWithChildren;
+    }
+
 }

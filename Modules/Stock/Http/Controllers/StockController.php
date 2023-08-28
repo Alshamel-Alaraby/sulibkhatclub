@@ -8,8 +8,6 @@ use Modules\Stock\Http\Requests\StockRequest;
 use Modules\Stock\Repositories\StockInterface;
 use Modules\Stock\Transformers\StockResource;
 
-
-
 class StockController extends Controller
 {
     private $modelInterface;

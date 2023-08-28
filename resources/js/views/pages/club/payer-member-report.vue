@@ -1,9 +1,10 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../helper/permission";
 
 import {
   required,
@@ -14,15 +15,14 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -111,18 +111,13 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getStatus();
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     if (
-  //       vm.$store.state.auth.work_flow_trees.includes("branch") ||
-  //       vm.$store.state.auth.user.type == "super_admin"
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return vm.$router.push({ name: "home" });
-  //     }
-  //   });
-  // },
+    beforeRouteEnter(to, from, next) {
+
+    next((vm) => {
+      return permissionGuard(vm, "Payer Member Report", "all payer member club");
+    });
+
+    },
   methods: {
     createBackup() {
       setTimeout(() => {

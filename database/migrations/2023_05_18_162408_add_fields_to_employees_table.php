@@ -16,10 +16,8 @@ return new class extends Migration
         Schema::table('general_employees', function (Blueprint $table) {
             $table->unsignedBigInteger('job_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
-            $table->boolean('manage_others')->default(1);
+            $table->boolean('manage_others')->default(0);
             $table->renameColumn('manger_id', 'manager_id');
-
-
         });
     }
 

@@ -27,8 +27,9 @@ class SalesmenPlansDetailRequest extends FormRequest
             'plan_id' => 'required|exists:general_salesmen_plans,id',
             'amount_from' => 'required|numeric',
             'amount_to' => 'required|numeric',
-            'commission_percent' => 'required|numeric|min:1|max:100',
+            'commission_percent' => 'required|numeric|min:0|max:100',
             'is_default' => 'in:0,1',
+            "company_id"=>'nullable',
         ];
     }
 }

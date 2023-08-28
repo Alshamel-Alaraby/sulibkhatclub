@@ -1,13 +1,16 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import adminApi from "../../../api/adminAxios";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import ItemCategory from "../../../components/create/realEstate/itemCategory.vue"
-import Unit from "../../../components/create/unit.vue"
+import Unit from "../../../components/create/general/unit.vue"
+import permissionGuard from "../../../helper/permission";
+
 import {
     required,
+    requiredIf,
     minLength,
     maxLength,
     integer,
@@ -17,7 +20,7 @@ import {
     minValue,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortNumber, dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
@@ -44,8 +47,15 @@ export default {
         ErrorMessage,
         Multiselect,
     },
+//     beforeRouteEnter(to, from, next) {
+//             next((vm) => {
+//       return permissionGuard(vm, "Items RealState", "all items RealState");
+//     });
+
+//    },
     data() {
         return {
+            fields: [],
             per_page: 50,
             search: "",
             debounce: {},
@@ -107,21 +117,45 @@ export default {
     },
     validations: {
         create: {
-            name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            code_number: { required },
-            price: { required, minValue: minValue(0) },
-            unit_id: { required, minValue: minValue(0) },
-            type: { required },
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                return this.isRequired("name_e");
+            }), minLength: minLength(3), maxLength: maxLength(100) },
+            code_number: { required:requiredIf(function (model) {
+                return this.isRequired("code_number");
+            }) },
+            price: { required:requiredIf(function (model) {
+                return this.isRequired("price");
+            }), minValue: minValue(0) },
+            unit_id: { required:requiredIf(function (model) {
+                return this.isRequired("unit_id");
+            }), minValue: minValue(0) },
+            type: { required:requiredIf(function (model) {
+                return this.isRequired("type");
+            }) },
             media: {}
         },
         edit: {
-            name: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            name_e: { required, minLength: minLength(3), maxLength: maxLength(100) },
-            code_number: { required },
-            price: { required, minValue: minValue(0) },
-            unit_id: { required, minValue: minValue(0) },
-            type: { required },
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
+            name_e: { required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
+            code_number: { required:requiredIf(function (model) {
+                    return this.isRequired("code_number");
+                }) },
+            price: { required:requiredIf(function (model) {
+                    return this.isRequired("price");
+                }), minValue: minValue(0) },
+            unit_id: { required:requiredIf(function (model) {
+                    return this.isRequired("unit_id");
+                }), minValue: minValue(0) },
+            type: { required:requiredIf(function (model) {
+                    return this.isRequired("type");
+                }) },
             media: {}
         },
     },
@@ -157,29 +191,45 @@ export default {
         },
     },
     mounted() {
+        this.getCustomTableFields();
         this.getData();
     },
-    updated() {
-        // $(function () {
-        //   $(".englishInput").keypress(function (event) {
-        //     var ew = event.which;
-        //     if (ew == 32) return true;
-        //     if (48 <= ew && ew <= 57) return true;
-        //     if (65 <= ew && ew <= 90) return true;
-        //     if (97 <= ew && ew <= 122) return true;
-        //     return false;
-        //   });
-        //   $(".arabicInput").keypress(function (event) {
-        //     var ew = event.which;
-        //     if (ew == 32) return true;
-        //     if (48 <= ew && ew <= 57) return false;
-        //     if (65 <= ew && ew <= 90) return false;
-        //     if (97 <= ew && ew <= 122) return false;
-        //     return true;
-        //   });
-        // });
-    },
     methods: {
+        isVisible(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_visible == 1 ? true : false;
+        },
+        isRequired(fieldName) {
+            let res = this.fields.filter((field) => {
+                return field.column_name == fieldName;
+            });
+            return res.length > 0 && res[0].is_required == 1 ? true : false;
+        },
+        getCustomTableFields() {
+            adminApi
+                .get(`/customTable/table-columns/rlst_items`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         showUnitModal() {
             if (this.create.unit_id == 0) {
                 this.$bvModal.show("create-unit");
@@ -192,7 +242,6 @@ export default {
                 this.edit.unit_id = null;
             }
         },
-
         addCategoryToItem(id) {
             if (id == 0) {
                 this.$bvModal.show("category-create");
@@ -267,7 +316,7 @@ export default {
                 });
         },
         async getItemCategories() {
-            
+
             await adminApi
                 .get(`/real-estate/Category-item?item_id=${this.item_id}`)
                 .then((res) => {
@@ -286,7 +335,9 @@ export default {
                 .get(`real-estate/Category-item`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف فئة", name_e: "Add category" });
+                    if(this.isPermission('create category RealState')){
+                        l.unshift({ id: 0, name: "اضف فئة", name_e: "Add category" });
+                    }
                     this.categories = l;
                 })
                 .catch((err) => {
@@ -522,7 +573,7 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await this.getUnits();
+            if(this.isVisible('unit_id')) await this.getUnits();
             await this.getCategories();
             this.create = {
                 code_number: "",
@@ -584,7 +635,7 @@ export default {
                 }
 
                 adminApi
-                    .post(`/real-estate/item`, this.create)
+                    .post(`/real-estate/item`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.item_id = res.data.data.id;
                         this.getData();
@@ -673,7 +724,9 @@ export default {
                 .get(`/units`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف وحدة", name_e: "Add unit" });
+                    if(this.isPermission('create Unit')){
+                        l.unshift({ id: 0, name: "اضف وحدة", name_e: "Add unit" });
+                    }
                     this.units = l;
                 })
                 .catch((err) => {
@@ -689,7 +742,7 @@ export default {
          */
         async resetModalEdit(id) {
             let item = this.items.find((e) => id == e.id);
-            await this.getUnits();
+            if(this.isVisible('unit_id')) await this.getUnits();
             await this.getCategories();
             this.item_id = item.id;
             await this.getItemCategories();
@@ -935,10 +988,10 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                         class="btn-block setting-search dropdown-menu-custom-company">
-                                        <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('name')" v-model="filterSetting" value="name" class="mb-1">
                                             {{ getCompanyKey("item_name_ar") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="name_e" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('name_e')" v-model="filterSetting" value="name_e" class="mb-1">
                                             {{ getCompanyKey("item_name_en") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
@@ -960,7 +1013,7 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-b-modal.create v-if="isPermission('create items RealState')" variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -972,17 +1025,17 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1">
+                                        v-if="checkAll.length == 1 && isPermission('update items RealState')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && isPermission('delete items RealState')"
                                         @click.prevent="deletecompany(checkAll)">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                    <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && isPermission('delete items RealState')"
                                         @click.prevent="deletecompany(checkAll[0])">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -1002,22 +1055,22 @@ export default {
                                     <b-dropdown variant="primary"
                                         :html="`${$t('general.setting')} <i class='fe-settings'></i>`" ref="dropdown"
                                         class="dropdown-custom-ali dropdown-menu-custom-company">
-                                        <b-form-checkbox v-model="setting.code_number" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('code_number')" v-model="setting.code_number" class="mb-1">
                                             {{ getCompanyKey("code_number") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.name" class="mb-1">{{
+                                        <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1">{{
                                             getCompanyKey("item_name_ar") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.name_e" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">
                                             {{ getCompanyKey("item_name_en") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.unit_id" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('unit_id')" v-model="setting.unit_id" class="mb-1">
                                             {{ getCompanyKey("item_unit") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.type" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('type')" v-model="setting.type" class="mb-1">
                                             {{ getCompanyKey("item_type") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.price" class="mb-1">
+                                        <b-form-checkbox v-if="isVisible('price')" v-model="setting.price" class="mb-1">
                                             {{ getCompanyKey("item_price") }}
                                         </b-form-checkbox>
                                         <div class="d-flex justify-content-end">
@@ -1059,6 +1112,7 @@ export default {
                         <b-modal id="create" :title="getCompanyKey('item_create_form')" title-class="font-18"
                             dialog-class="modal-full-width" body-class="paddingUnset" :hide-footer="true" @show="resetModal"
                             @hidden="resetModalHidden">
+
                             <form @submit.stop.prevent="AddSubmit">
                                 <div class="card">
                                     <div class="card-body">
@@ -1090,11 +1144,11 @@ export default {
                                     <b-tabs nav-class="nav-tabs nav-bordered">
                                         <b-tab :title="$t('general.DataEntry')" active>
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" v-if="isVisible('code_number')">
                                                     <div class="form-group">
                                                         <label for="field-5" class="control-label">
                                                             {{ getCompanyKey("code_number") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('code_number')" class="text-danger">*</span>
                                                         </label>
                                                         <input  class="form-control"
                                                             v-model.number="$v.create.code_number.$model" :class="{
@@ -1110,11 +1164,11 @@ export default {
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 direction" dir="rtl">
+                                                <div class="col-md-6 direction" dir="rtl" v-if="isVisible('name')">
                                                     <div class="form-group">
                                                         <label for="field-1" class="control-label">
                                                             {{ getCompanyKey("item_name_ar") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('name')" class="text-danger">*</span>
                                                         </label>
                                                         <input type="text" class="form-control arabicInput"
                                                             v-model.trim="$v.create.name.$model" :class="{
@@ -1137,11 +1191,11 @@ export default {
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 direction-ltr" dir="ltr">
+                                                <div class="col-md-6 direction-ltr" dir="ltr" v-if="isVisible('name_e')">
                                                     <div class="form-group">
                                                         <label for="field-2" class="control-label">
                                                             {{ getCompanyKey("item_name_en") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                                         </label>
                                                         <input type="text" class="form-control englishInput"
                                                             v-model.trim="$v.create.name_e.$model" :class="{
@@ -1166,11 +1220,11 @@ export default {
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" v-if="isVisible('unit_id')">
                                                     <div class="form-group position-relative">
                                                         <label class="control-label">
                                                             {{ getCompanyKey("item_unit") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('unit_id')" class="text-danger">*</span>
                                                         </label>
                                                         <multiselect @input="showUnitModal" v-model="create.unit_id"
                                                             :options="units.map((type) => type.id)" :custom-label="
@@ -1190,11 +1244,11 @@ export default {
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" v-if="isVisible('type')">
                                                     <div class="form-group">
                                                         <label for="field-5" class="control-label">
                                                             {{ getCompanyKey("item_type") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('type')" class="text-danger">*</span>
                                                         </label>
                                                         <select class="form-control" v-model="$v.create.type.$model" :class="{
                                                             'is-invalid':
@@ -1212,11 +1266,11 @@ export default {
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" v-if="isVisible('price')">
                                                     <div class="form-group">
                                                         <label for="field-5" class="control-label">
                                                             {{ getCompanyKey("item_price") }}
-                                                            <span class="text-danger">*</span>
+                                                            <span v-if="isRequired('price')" class="text-danger">*</span>
                                                         </label>
                                                         <input type="number" class="form-control"
                                                             v-model.number="$v.create.price.$model" :class="{
@@ -1412,7 +1466,7 @@ export default {
                                                     style="width: 17px; height: 17px" />
                                             </div>
                                         </th>
-                                        <th v-if="setting.code_number">
+                                        <th v-if="setting.code_number && isVisible('code_number')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("code_number") }}</span>
                                                 <div class="arrow-sort">
@@ -1423,7 +1477,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.name">
+                                        <th v-if="setting.name && isVisible('name')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("item_name_ar") }}</span>
                                                 <div class="arrow-sort">
@@ -1433,7 +1487,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.name_e">
+                                        <th v-if="setting.name_e && isVisible('name_e')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("item_name_en") }}</span>
                                                 <div class="arrow-sort">
@@ -1444,7 +1498,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.unit_id">
+                                        <th v-if="setting.unit_id && isVisible('unit_id')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("item_unit") }}</span>
                                                 <div class="arrow-sort">
@@ -1454,7 +1508,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.type">
+                                        <th v-if="setting.type && isVisible('type')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("item_type") }}</span>
                                                 <div class="arrow-sort">
@@ -1464,7 +1518,7 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-if="setting.price">
+                                        <th v-if="setting.price && isVisible('price')">
                                             <div class="d-flex justify-content-center">
                                                 <span>{{ getCompanyKey("item_price") }}</span>
                                                 <div class="arrow-sort">
@@ -1474,7 +1528,6 @@ export default {
                                                 </div>
                                             </div>
                                         </th>
-
                                         <th v-if="enabled3" class="do-not-print">
                                             {{ $t("general.Action") }}
                                         </th>
@@ -1483,7 +1536,7 @@ export default {
                                 </thead>
                                 <tbody v-if="items.length > 0">
                                     <tr @click.capture="checkRow(data.id)"
-                                        @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                        @dblclick.prevent="isPermission('update items RealState')?$bvModal.show(`modal-edit-${data.id}`):false"
                                         v-for="(data, index) in items" :key="data.id" class="body-tr-custom">
                                         <td class="do-not-print" v-if="enabled3">
                                             <div class="form-check custom-control" style="min-height: 1.9em">
@@ -1491,22 +1544,22 @@ export default {
                                                     type="checkbox" :value="data.id" v-model="checkAll" />
                                             </div>
                                         </td>
-                                        <td v-if="setting.code_number">
+                                        <td v-if="setting.code_number && isVisible('code_number')">
                                             {{ data.code_number }}
                                         </td>
-                                        <td v-if="setting.name">
+                                        <td v-if="setting.name && isVisible('name')">
                                             {{ data.name }}
                                         </td>
-                                        <td v-if="setting.name_e">
+                                        <td v-if="setting.name_e && isVisible('name_e')">
                                             {{ data.name_e }}
                                         </td>
-                                        <td v-if="setting.unit_id">
-                                            {{ $i18n.locale == "ar" ? data.unit.name : data.unit.name_e }}
+                                        <td v-if="setting.unit_id && isVisible('unit_id')">
+                                            {{ data.unit? $i18n.locale == "ar" ? data.unit.name : data.unit.name_e : ''}}
                                         </td>
-                                        <td v-if="setting.type">
+                                        <td v-if="setting.type && isVisible('type')">
                                             {{ data.type }}
                                         </td>
-                                        <td v-if="setting.price">
+                                        <td v-if="setting.price && isVisible('price')">
                                             {{ data.price }}
                                         </td>
                                         <td class="do-not-print" v-if="enabled3">
@@ -1517,7 +1570,7 @@ export default {
                                                     <i class="fas fa-angle-down"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-custom">
-                                                    <a class="dropdown-item" href="#"
+                                                    <a class="dropdown-item" href="#" v-if="isPermission('update items RealState')"
                                                         @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -1525,7 +1578,7 @@ export default {
                                                             <i class="mdi mdi-square-edit-outline text-info"></i>
                                                         </div>
                                                     </a>
-                                                    <a class="dropdown-item text-black" href="#"
+                                                    <a class="dropdown-item text-black" href="#" v-if="isPermission('delete items RealState')"
                                                         @click.prevent="deletecompany(data.id)">
                                                         <div
                                                             class="d-flex justify-content-between align-items-center text-black">
@@ -1568,11 +1621,11 @@ export default {
                                                     <b-tabs nav-class="nav-tabs nav-bordered">
                                                         <b-tab :title="$t('general.DataEntry')" active>
                                                             <div class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6" v-if="isVisible('code_number')">
                                                                     <div class="form-group">
                                                                         <label for="field-5" class="control-label">
                                                                             {{ getCompanyKey("code_number") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('code_number')" class="text-danger">*</span>
                                                                         </label>
                                                                         <input class="form-control"
                                                                             v-model.number="$v.edit.code_number.$model"
@@ -1590,11 +1643,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6 direction" dir="rtl">
+                                                                <div class="col-md-6 direction" v-if="isVisible('name')" dir="rtl">
                                                                     <div class="form-group">
                                                                         <label for="field-1" class="control-label">
                                                                             {{ getCompanyKey("item_name_ar") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('name')" class="text-danger">*</span>
                                                                         </label>
                                                                         <input type="text" class="form-control arabicInput"
                                                                             v-model.trim="$v.edit.name.$model" :class="{
@@ -1622,11 +1675,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6 direction-ltr" dir="ltr">
+                                                                <div class="col-md-6 direction-ltr" v-if="isVisible('name_e')" dir="ltr">
                                                                     <div class="form-group">
                                                                         <label for="field-2" class="control-label">
                                                                             {{ getCompanyKey("item_name_en") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                                                         </label>
                                                                         <input type="text" class="form-control englishInput"
                                                                             v-model.trim="$v.edit.name_e.$model" :class="{
@@ -1656,11 +1709,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6" v-if="isVisible('unit_id')">
                                                                     <div class="form-group position-relative">
                                                                         <label class="control-label">
                                                                             {{ getCompanyKey("item_unit") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('unit_id')" class="text-danger">*</span>
                                                                         </label>
                                                                         <multiselect @input="showUnitModalEdit" v-model="edit.unit_id"
                                                                             :options="units.map((type) => type.id)"
@@ -1684,11 +1737,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6" v-if="isVisible('type')">
                                                                     <div class="form-group">
                                                                         <label for="field-5" class="control-label">
                                                                             {{ getCompanyKey("item_type") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('type')"  class="text-danger">*</span>
                                                                         </label>
                                                                         <select class="form-control"
                                                                             v-model="$v.edit.type.$model" :class="{
@@ -1712,11 +1765,11 @@ export default {
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6" v-if="isVisible('price')">
                                                                     <div class="form-group">
                                                                         <label for="field-5" class="control-label">
                                                                             {{ getCompanyKey("item_price") }}
-                                                                            <span class="text-danger">*</span>
+                                                                            <span v-if="isRequired('price')" class="text-danger">*</span>
                                                                         </label>
                                                                         <input type="number" class="form-control"
                                                                             v-model.number="$v.edit.price.$model" :class="{

@@ -2,7 +2,6 @@
 
 namespace Modules\Archiving\Http\Requests;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class ArchiveFileRequest extends FormRequest
@@ -30,6 +29,7 @@ class ArchiveFileRequest extends FormRequest
             "arch_department_id" => "nullable|exists:arch_departments,id",
             "data_type_value" => "required",
             "user_id" => "nullable|exists:users,id",
+            "company_id"=>'nullable',
             // "media.*" => ["exists:media,id", new \App\Rules\MediaRule()],
             // 'old_media.*' => ['exists:media,id', new \App\Rules\MediaRule("Modules\Archiving\Entities\DocStatus")],
         ];

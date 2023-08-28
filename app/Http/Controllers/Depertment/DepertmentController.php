@@ -98,12 +98,17 @@ class DepertmentController extends Controller
 
     public function processJsonData(Request $request)
     {
-        $jsonData = $request->getContent();
-        $data = json_decode($jsonData, true);
+        $data = $request->getContent();
+        $data = json_decode($data, true);
 
-        $this->modelInterface->processJsonData($data);
-
-        return responseJson(200, __('Done'));
+        try {
+            $messages = $this->modelInterface->processJsonData($data);
+            return response()->json($messages);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 

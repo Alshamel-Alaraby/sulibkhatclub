@@ -26,6 +26,7 @@ class CategoriesItemRequest extends FormRequest
         return [
             'category_item_id' => 'sometimes|exists:rlst_category_item,id',
             'item_id' => 'sometimes|exists:rlst_items,id',
+            "company_id"=>'nullable',
         ];
     }
 

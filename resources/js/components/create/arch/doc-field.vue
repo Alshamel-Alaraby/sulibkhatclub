@@ -309,9 +309,9 @@ import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
 import Multiselect from "vue-multiselect";
 import ErrorMessage from "../../widgets/errorMessage";
-import loader from "../../loader";
-import transMixinComp from "../../../helper/translation-comp-mixin";
-import propertyTree from "../property-tree";
+import loader from "../../general/loader";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
+import propertyTree from "../general/property-tree";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 export default {
@@ -500,6 +500,7 @@ export default {
             data_type_id: this.create.type,
             type: undefined,
             is_reference: this.create.is_reference == "1" ? 1 : 0,
+              company_id: this.$store.getters["auth/company_id"]
           })
           .then((res) => {
             this.$emit("create");

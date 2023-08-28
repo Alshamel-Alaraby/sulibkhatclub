@@ -9,7 +9,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class CountryRepository implements CountryInterface
 {
 
-    public function __construct(private \App\Models\Country$model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
+    public function __construct(private \App\Models\Country $model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
     {
         $this->model = $model;
         $this->media = $media;
@@ -89,7 +89,7 @@ class CountryRepository implements CountryInterface
             if ($request->is_default == 1) {
                 $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
             }
-            $this->forget($id);
+            // $this->forget($id);
         });
     }
 
@@ -100,18 +100,17 @@ class CountryRepository implements CountryInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
+        // $this->forget($id);
         $model->delete();
     }
 
-    private function forget($id)
+    public function getName($request)
     {
-        $keys = [
-            "countries",
-            "countries_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
         }
     }
 }

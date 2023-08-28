@@ -22,6 +22,7 @@ class DepertmentTaskResource extends JsonResource
             "description_e" => $this->description_e,
             "department_id" => $this->department_id,
             "depertment" => $this->depertment,
+            "estimate_task_duration"=>$this->estimate_task_duration
         ];
     }
 }

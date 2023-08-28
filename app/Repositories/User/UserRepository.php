@@ -5,6 +5,7 @@ namespace App\Repositories\User;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Permission\Models\Role;
 
 class UserRepository implements UserInterface
 {
@@ -35,7 +36,10 @@ class UserRepository implements UserInterface
     public function create($request)
     {
         return DB::transaction(function () use ($request) {
-            $model = $this->model->create($request->all());
+            $model = User::create($request->except('role_id'));
+            if($request->role_id){
+                $model->assignRole([$request->role_id]);
+            }
             if ($request->media) {
                 $this->media::where('id', $request->media)->update([
                     'model_id' => $model->id,
@@ -50,8 +54,12 @@ class UserRepository implements UserInterface
     public function update($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
-            $model = $this->model->find($id);
-            $model->update($request->except(["media"]));
+            $model = User::find($id);
+            $model->update($request->except(["media",'role_id']));
+            if($request->role_id){
+                DB::table('model_has_roles')->where('model_id',$model->id)->delete();
+                $model->assignRole([$request->role_id]);
+            }
             if ($request->media && !$request->old_media) { // if there is new media and no old media
                 $model->clearMediaCollection('media');
                 foreach ($request->media as $media) {

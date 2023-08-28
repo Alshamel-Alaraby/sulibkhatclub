@@ -67,7 +67,6 @@ class DocumentHeader extends Model
     {
         return $this->belongsTo(\App\Models\Task::class,'task_id');
     }
-
     public function externalSalesmen()
     {
         return $this->belongsTo(ExternalSalesmen::class,'external_salesmen_id');
@@ -78,8 +77,33 @@ class DocumentHeader extends Model
         return $this->belongsTo(Serial::class,'serial_id');
     }
 
+    public function documentNumber()
+    {
+        return $this->belongsTo(DocumentHeader::class,'related_document_number');
+    }
+
     public function documentHeaderDetails(){
         return $this->hasMany(DocumentHeaderDetail::class,'document_header_id');
+    }
+
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class,'payment_method_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(GeneralCustomer::class,'company_id');
+    }
+
+    public function attendants()
+    {
+        return $this->belongstoMany(Attendant::class,'general_attendant_document_headers','document_header_id','attendant_id');
+    }
+    public function attendantsDocument()
+    {
+        return $this->belongstoMany(Attendant::class,'general_attendant_document_headers','document_header_id','attendant_id');
     }
 
 }

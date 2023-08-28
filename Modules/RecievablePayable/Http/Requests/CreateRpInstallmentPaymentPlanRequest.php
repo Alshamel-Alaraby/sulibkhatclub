@@ -22,6 +22,7 @@ class CreateRpInstallmentPaymentPlanRequest extends FormRequest
             'is_active' => [],
             'description' => [],
             'description_e' => [],
+            "company_id"=>'nullable',
         ];
     }
 

@@ -4,13 +4,12 @@ import Switches from "vue-switches";
 import {numeric, required, minLength, maxLength, integer} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../widgets/errorMessage";
-import loader from "../../../loader";
-import transMixinComp from "../../../../helper/translation-comp-mixin";
+import loader from "../../../general/loader";
+import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import Multiselect from "vue-multiselect";
 import InstallmentPaymentType from "../installmentPaymentType.vue";
 import InstallmentStatus from "../installmentStatus";
 import DatePicker from "vue2-datepicker";
-import Templates from "../../../../views/pages/email/templates";
 
 /**
  * Advanced Table component
@@ -18,7 +17,6 @@ import Templates from "../../../../views/pages/email/templates";
 export default {
     mixins: [transMixinComp],
     components: {
-        Templates,
         Switches,
         ErrorMessage,
         loader,

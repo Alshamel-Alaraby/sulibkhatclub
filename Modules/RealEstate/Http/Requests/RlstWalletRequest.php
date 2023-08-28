@@ -16,6 +16,7 @@ class RlstWalletRequest extends FormRequest
         return [
             'name' => 'required|string|max:100',
             'name_e' => 'required|string|max:100',
+            "company_id"=>'nullable',
 
         ];
     }

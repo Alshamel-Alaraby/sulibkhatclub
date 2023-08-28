@@ -27,10 +27,11 @@ class SellMethodRequest extends FormRequest
         return [
             'name' => 'sometimes|unique:boards_rent_sell_methods,name,' . ($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'sometimes|unique:boards_rent_sell_methods,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
-            "commission_ratio" =>
-            "sometimes|numeric|min:0|max:100",
-            "target_calculation_ratio" =>
-            "sometimes|numeric|min:0|max:100",
+            "commission_ratio" => "sometimes|numeric|min:0|max:100",
+            "target_calculation_ratio" => "sometimes|numeric|min:0|max:100",
+            "is_all_value" => "nullable|in:1,0",
+            "is_default" => "nullable|in:1,0",
+            "company_id"=>'nullable',
         ];
 
     }

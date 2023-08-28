@@ -47,7 +47,7 @@ class CityRepository implements CityRepositoryInterface
     {
         DB::transaction(function () use ($id, $data) {
             $this->model->where("id", $id)->update($data);
-            $this->forget($id);
+            // $this->forget($id);
         });
     }
 
@@ -60,7 +60,7 @@ class CityRepository implements CityRepositoryInterface
     {
         $model = $this->find($id);
         if ($model) {
-            $this->forget($id);
+            // $this->forget($id);
             $model->delete();
         }
     }
@@ -75,5 +75,17 @@ class CityRepository implements CityRepositoryInterface
             cacheForget($key);
         }
 
+    }
+
+    public function getName($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+   
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 }

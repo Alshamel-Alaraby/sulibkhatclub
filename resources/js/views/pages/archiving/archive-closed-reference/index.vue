@@ -1,13 +1,14 @@
 <script>
 import Layout from "../../../layouts/main";
-import PageHeader from "../../../../components/Page-header";
+import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
-import loader from "../../../../components/loader";
+import loader from "../../../../components/general/loader";
 import { dynamicSortString } from "../../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -25,13 +26,10 @@ export default {
     Multiselect,
   },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes('archive closed references')) {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
+          next((vm) => {
+      return permissionGuard(vm, "Archive Closed Reference", "all Store");
+    });
+
     },
     updated() {
     $(".englishInput").keypress(function (event) {
@@ -53,6 +51,7 @@ export default {
   },
   data() {
     return {
+      company_id:null,
       per_page: 50,
       search: "", //Search table column
       debounce: {},
@@ -123,8 +122,8 @@ export default {
     },
   },
   mounted() {
+      this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
-    
   },
   methods: {
     /**
@@ -352,7 +351,8 @@ export default {
         this.is_disabled = false;
         adminApi
           .post(`/archive-closed-reference`, {
-            ...this.create
+            ...this.create,
+              company_id: this.company_id
           })
           .then((res) => {
             this.getData();
@@ -396,7 +396,8 @@ export default {
         adminApi
           .put(`/archive-closed-reference/${id}`, {
             arch_docfields_id,
-            field_value
+            field_value,
+              company_id: this.company_id
           })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);

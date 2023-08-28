@@ -15,6 +15,7 @@ class Type extends Model
     protected $fillable = [
         'name',
         'name_e',
+        'company_id',
     ];
 
     //relations

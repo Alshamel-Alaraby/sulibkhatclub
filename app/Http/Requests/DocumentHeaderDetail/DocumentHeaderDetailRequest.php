@@ -34,6 +34,11 @@ class DocumentHeaderDetailRequest extends FormRequest
             'total' => 'required',
             'unit_type' => 'required|string',
             'is_stripe'  => 'nullable|in:1,0',
+            'rent_days'  => 'nullable|integer',
+            "company_id"=>'nullable',
+
+            "item_id"=>'nullable|integer|exists:general_items,id',
+            "unit_id"=>'nullable|integer|exists:booking_units,id',
         ];
 
     }

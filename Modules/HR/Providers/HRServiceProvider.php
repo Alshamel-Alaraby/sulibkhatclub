@@ -4,6 +4,8 @@ namespace Modules\HR\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\HR\Repositories\HrCustomTable\HrCustomTableInterface;
+use Modules\HR\Repositories\HrCustomTable\HrCustomTableRepository;
 
 class HRServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,8 @@ class HRServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(HrCustomTableInterface::class, HrCustomTableRepository::class);
+
     }
 
     /**

@@ -19,6 +19,7 @@ class RlstInstallmentRequest extends FormRequest
             'amount' => 'required|numeric',
             "currency_id" => "required|integer|exists:general_currencies,id",
             'rest_amount' => 'required|numeric',
+            "company_id"=>'nullable',
 
         ];
     }

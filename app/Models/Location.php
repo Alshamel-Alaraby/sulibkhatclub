@@ -18,7 +18,8 @@ class Location extends Model
         'name',
         'name_e',
         'parent_id',
-        'priority_id'
+        'priority_id',
+        'company_id'
     ];
 
     protected $appends = ['haveChildren'];
@@ -29,6 +30,11 @@ class Location extends Model
     public function getHaveChildrenAttribute()
     {
         return static::where("parent_id", $this->id)->count() > 0;
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Location::class, 'parent_id');
     }
 
     public function children()

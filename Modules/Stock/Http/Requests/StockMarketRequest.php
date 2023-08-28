@@ -28,6 +28,7 @@ class StockMarketRequest extends FormRequest
         return [
             'name'  => ['required', 'string', 'max:255'],
             'name_e' => ['required', 'string', 'max:255'],
+            "company_id"=>'nullable',
         ];
     }
 

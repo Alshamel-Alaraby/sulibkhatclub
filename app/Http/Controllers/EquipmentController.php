@@ -31,6 +31,14 @@ class EquipmentController extends Controller
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if($request->location_id){
+            $this->model->where('location_id',$request->location_id);
+        }
+
+        if($request->equipment_id){
+            $this->model->where('parent_id',$request->equipment_id);
+        }
+
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -99,4 +107,14 @@ class EquipmentController extends Controller
         });
         return responseJson(200, 'deleted');
     }
+
+    public function getRootNodes()
+    {
+        return $this->model->whereNull("parent_id")->get();
+    }
+    public function getChildNodes($parentId)
+    {
+        return $this->model->where("parent_id", $parentId)->get();
+    }
+
 }

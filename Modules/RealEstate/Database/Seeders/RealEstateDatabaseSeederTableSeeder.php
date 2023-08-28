@@ -14,8 +14,10 @@ class RealEstateDatabaseSeederTableSeeder extends Seeder
      */
     public function run()
     {
-        Model::unguard();
+        // Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call([
+            RealestateCustomTableSeederTableSeeder::class,
+        ]);
     }
 }

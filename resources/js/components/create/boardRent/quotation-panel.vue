@@ -132,21 +132,21 @@
 </template>
 
 <script>
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
 import { required } from "vuelidate/lib/validators";
 import Layout from "../../../views/layouts/main";
-import PageHeader from "../../Page-header";
+import PageHeader from "../../general/Page-header";
 import Switches from "vue-switches";
 import ErrorMessage from "../../widgets/errorMessage";
-import loader from "../../loader";
+import loader from "../../general/loader";
 import Multiselect from "vue-multiselect";
-import Governate from "../../governate";
-import Avnue from "../avenue";
-import Street from "../street";
-import City from "../../city";
-import Category from "../category";
+import Governate from "../general/governate";
+import Avnue from "../general/avenue";
+import Street from "../general/street";
+import City from "../general/city";
+import Category from "../general/category";
 
 export default {
     name: "quotation-panel",

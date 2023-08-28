@@ -28,11 +28,13 @@ class DocStatusRequest extends FormRequest
             return [
                 'name' => ['required', 'string', 'max:255',"unique:arch_doc_statuses,name," . $this->id],
                 'name_e' => ['required', 'string', 'max:255',"unique:arch_doc_statuses,name_e," . $this->id],
+                "company_id"=>'nullable',
             ];
         }
         return [
             'name' => ['required', 'string', 'max:255',"unique:arch_doc_statuses,name"],
             'name_e' => ['required', 'string', 'max:255',"unique:arch_doc_statuses,name_e"],
+            "company_id"=>'nullable',
         ];
     }
 

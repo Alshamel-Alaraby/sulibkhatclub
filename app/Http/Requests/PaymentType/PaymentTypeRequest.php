@@ -26,8 +26,8 @@ class PaymentTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:general_payment_types,name,'. ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e' => 'sometimes|string|max:255|unique:general_payment_types,name_e,'. ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name' => 'sometimes|string|max:255|unique:general_payment_types,name'. ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'sometimes|string|max:255|unique:general_payment_types,name_e'. ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'is_default' => 'nullable|in:1,0',
         ];
     }

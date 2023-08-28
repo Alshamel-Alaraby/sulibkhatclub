@@ -24,6 +24,7 @@ class DocumentResource extends JsonResource
             'company_id' => $this->company_id,
             'attributes' => $this->attributes,
             'branche_id' => $this->branche_id,
+            'is_copy' => $this->is_copy,
 //            "contusion" => $this->getContusion(),
             "contusion" => $this->contusion,
             'serial_id' => $this->serial_id,
@@ -34,8 +35,6 @@ class DocumentResource extends JsonResource
 //            'required' => $this->getRequired(),
 //            'need_approve' => $this->getNeedApprove(),
             'document_Relateds' => $this->documentRelateds,
-            'required' => $this->required,
-            'need_approve' => $this->need_approve,
             'document_detail_type' => $this->document_detail_type,
 
             'document_relateds' => $this->documentRelateds,

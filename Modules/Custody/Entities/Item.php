@@ -21,6 +21,7 @@ class Item extends Model
         'default_amount',
         'creation_user_id',
         'last_update_user_id',
+        'company_id',
 
     ];
 

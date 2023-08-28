@@ -14,6 +14,8 @@ interface DocumentHeaderInterface
     public function delete($id);
 
     public function getDateRelatedDocumentId($request);
+    public function allDocumentHeader($request);
+    public function checkBooking();
 
-
+    public function getDocumentsCustomer($id);
 }

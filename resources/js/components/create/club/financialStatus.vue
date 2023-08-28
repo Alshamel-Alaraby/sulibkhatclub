@@ -8,9 +8,9 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -165,6 +165,7 @@ export default {
                 let data = {
                     name: this.create.name,
                     name_e: this.create.name_e,
+                    company_id: this.$store.getters["auth/company_id"],
                 };
                 adminApi
                     .post(`/club-members/financial-status`, data)

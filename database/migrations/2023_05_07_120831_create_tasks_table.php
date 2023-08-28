@@ -15,23 +15,26 @@ return new class extends Migration
     {
         Schema::create('general_tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('contact_person');
-            $table->string('contact_phone');
-            $table->text('task_title');
-            $table->date('execution_date');
-            $table->string('execution_duration');
-            $table->date('execution_end_date');
-            $table->date('notification_date');
+            $table->string('contact_person')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->text('task_title')->nullable();
+            $table->date('execution_date')->nullable();
+            $table->string('execution_duration')->nullable();
+            $table->date('execution_end_date')->nullable();
+            $table->date('notification_date')->nullable();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
-            $table->unsignedBigInteger('department_task_id');
-            $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('department_task_id')->nullable();
+            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->unsignedBigInteger('status_id')->nullable();
             $table->text('note')->nullable();
-            $table->unsignedBigInteger('location_id');
-            $table->unsignedBigInteger('priority_id');
+            $table->unsignedBigInteger('location_id')->nullable();
+            $table->unsignedBigInteger('priority_id')->nullable();
+            $table->tinyInteger('is_closed')->default(0);
+            $table->text('admin_note')->nullable();
+            $table->text('task_requirement')->nullable();
             $table->timestamps();
         });
     }

@@ -30,6 +30,7 @@ class DocTypeFieldRequest extends FormRequest
             // 'field_characters' => ['nullable', 'string'],
             'field_order' => ['required', 'integer'],
             'is_required' => ['required', Rule::in(['1', '0'])],
+            "company_id"=>'nullable',
         ];
     }
 

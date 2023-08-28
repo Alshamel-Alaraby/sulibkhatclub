@@ -1,19 +1,19 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
+import { required, minLength, maxLength, integer, requiredIf } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
-import Templates from "../email/templates.vue";
 import { formatDateOnly } from "../../../helper/startDate";
 import TreeBrowser from "../../../components/create/realEstate/tree.vue";
 import {arabicValue,englishValue} from "../../../helper/langTransform";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -31,43 +31,14 @@ export default {
     ErrorMessage,
     loader,
     Multiselect,
-    Templates,
     TreeBrowser
-  },
-  updated() {
-    // $(".englishInput").keypress(function (event) {
-    //   var ew = event.which;
-    //   if (ew == 32) return true;
-    //   if (48 <= ew && ew <= 57) return true;
-    //   if (65 <= ew && ew <= 90) return true;
-    //   if (97 <= ew && ew <= 122) return true;
-    //   return false;
-    // });
-    // $(".arabicInput").keypress(function (event) {
-    //   var ew = event.which;
-    //   if (ew == 32) return true;
-    //   if (48 <= ew && ew <= 57) return false;
-    //   if (65 <= ew && ew <= 90) return false;
-    //   if (97 <= ew && ew <= 122) return false;
-    //   return true;
-    // });
   },
   beforeRouteEnter(to, from, next) {
         next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-                Swal.fire({
-                    icon: "error",
-                    title: `${vm.$t("general.Error")}`,
-                    text: `${vm.$t("general.ModuleExpired")}`,
-                });
-                return vm.$router.push({ name: "home" });
-            }
-            if (vm.$store.state.auth.work_flow_trees.includes('realEstate-category') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({ name: "home" });
-            }
-        });
+      return permissionGuard(vm, "Category RealState", "all category RealState");
+    });
+
+
     },
   data() {
     return {
@@ -105,6 +76,7 @@ export default {
       is_disabled: false,
       current_page: 1,
         printLoading: true,
+        fields: [],
         printObj: {
             id: "printMe",
         }
@@ -112,17 +84,25 @@ export default {
   },
   validations: {
     create: {
-      name: { required, minLength: minLength(3), maxLength: maxLength(100) },
+      name: { required: requiredIf(function (model) {
+          return this.isRequired("name");
+        }), minLength: minLength(3), maxLength: maxLength(100) },
       name_e: {
-        required,
+        required: requiredIf(function (model) {
+          return this.isRequired("name_e");
+        }),
         minLength: minLength(3),
         maxLength: maxLength(100),
       },
     },
     edit: {
-      name: { required, minLength: minLength(3), maxLength: maxLength(100) },
+      name: { required: requiredIf(function (model) {
+          return this.isRequired("name");
+        }), minLength: minLength(3), maxLength: maxLength(100) },
       name_e: {
-        required,
+        required: requiredIf(function (model) {
+          return this.isRequired("name_e");
+        }),
         minLength: minLength(3),
         maxLength: maxLength(100),
       },
@@ -160,9 +140,45 @@ export default {
     },
   },
   mounted() {
+    this.getCustomTableFields();
     this.getData();
   },
   methods: {
+    isVisible(fieldName) {
+        let res = this.fields.filter((field) => {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      },
+      isRequired(fieldName) {
+        let res = this.fields.filter((field) => {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_required == 1 ? true : false;
+      },
+      getCustomTableFields() {
+          adminApi
+            .get(`/customTable/table-columns/rlst_category_item`)
+            .then((res) => {
+              this.fields = res.data;
+            })
+            .catch((err) => {
+              Swal.fire({
+                icon: "error",
+                title: `${this.$t("general.Error")}`,
+                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+              });
+            })
+            .finally(() => {
+              this.isLoader = false;
+            });
+      },
+    isPermission(item) {
+          if (this.$store.state.auth.type == 'user'){
+              return this.$store.state.auth.permissions.includes(item)
+          }
+          return true;
+    },
     setChildNodes(result) {
       adminApi.get(`real-estate/Category-item/child-nodes/${result.node.id}`).then((res) => {
         this.isLoader = false;
@@ -461,7 +477,7 @@ export default {
           this.create.parent_id = 0;
         }
         adminApi
-          .post(`real-estate/Category-item`, this.create)
+          .post(`real-estate/Category-item`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.getData();
             this.is_disabled = true;
@@ -680,11 +696,12 @@ export default {
                     ref="dropdown"
                     class="btn-block setting-search"
                   >
-                    <b-form-checkbox v-model="filterSetting" value="name" class="mb-1">{{
+                    <b-form-checkbox v-if="isVisible('name')" v-model="filterSetting" value="name" class="mb-1">{{
                       getCompanyKey("category_name_ar")
                     }}</b-form-checkbox>
                     <b-form-checkbox
                       v-model="filterSetting"
+                      v-if="isVisible('name_e')"
                       value="name_e"
                       class="mb-1"
                       >{{ getCompanyKey("category_name_en") }}</b-form-checkbox
@@ -716,6 +733,7 @@ export default {
             <div class="row justify-content-between align-items-center mb-2 px-1">
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <b-button
+                    v-if="isPermission('create category RealState')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -733,14 +751,14 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('update category RealState')"
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="checkAll.length > 1 && isPermission('delete category RealState')"
                     @click.prevent="deleteModule(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -749,7 +767,7 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('delete category RealState')"
                     @click.prevent="deleteModule(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -776,10 +794,10 @@ export default {
                     ref="dropdown"
                     class="dropdown-custom-ali"
                   >
-                    <b-form-checkbox v-model="setting.name" class="mb-1"
+                    <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1"
                       >{{ getCompanyKey("category_name_ar") }}
                     </b-form-checkbox>
-                    <b-form-checkbox v-model="setting.name_e" class="mb-1">
+                    <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">
                       {{ getCompanyKey("category_name_en") }}
                     </b-form-checkbox>
                     <b-form-checkbox v-model="setting.parent_id" class="mb-1">
@@ -883,21 +901,22 @@ export default {
                 <div class="row">
                   <div class="col-8">
                     <TreeBrowser
-                          @deleteClicked="deleteModule($event.id,true)"
-                            :currentNodeId="create.parent_id"
-                            @onClick="setCreateCurrentNode"
-                            @nodeExpanded="setChildNodes"
-                            :nodes="rootNodes"
-                          />
+                        v-if="isVisible('parent_id')"
+                        @deleteClicked="deleteModule($event.id,true)"
+                        :currentNodeId="create.parent_id"
+                        @onClick="setCreateCurrentNode"
+                        @nodeExpanded="setChildNodes"
+                        :nodes="rootNodes"
+                    />
 
                   </div>
                   <div class="col-4">
                     <div class="row">
-                      <div class="col-12 direction" dir="rtl">
+                      <div class="col-12 direction" v-if="isVisible('name')" dir="rtl">
                         <div class="form-group">
                           <label for="field-1" class="control-label">
                             {{ getCompanyKey("category_name_ar") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('name')" class="text-danger">*</span>
                           </label>
                           <input
                             type="text"
@@ -929,11 +948,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-12 direction-ltr" dir="ltr">
+                      <div class="col-12 direction-ltr" v-if="isVisible('name')" dir="ltr">
                         <div class="form-group">
                           <label for="field-2" class="control-label">
                             {{ getCompanyKey("category_name_en") }}
-                            <span class="text-danger">*</span>
+                            <span v-if="isRequired('name')" class="text-danger">*</span>
                           </label>
                           <input
                             type="text"
@@ -971,7 +990,7 @@ export default {
                           </template>
                         </div>
                       </div>
-                     
+
                     </div>
                   </div>
                 </div>
@@ -998,7 +1017,7 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name">
+                    <th v-if="setting.name && isVisible('name')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("category_name_ar") }}</span>
                         <div class="arrow-sort">
@@ -1013,7 +1032,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e">
+                    <th v-if="setting.name_e && isVisible('name_e')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("category_name_en") }}</span>
                         <div class="arrow-sort">
@@ -1028,7 +1047,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.parent_id">
+                    <th v-if="setting.parent_id && isVisible('parent_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("parent") }}</span>
                         <div class="arrow-sort">
@@ -1052,7 +1071,8 @@ export default {
                 <tbody v-if="categories.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="isPermission('update category RealState')?
+                    $bvModal.show(`modal-edit-${data.id}`): ''"
                     v-for="(data, index) in categories"
                     :key="data.id"
                     class="body-tr-custom"
@@ -1068,14 +1088,14 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name">
+                    <td v-if="setting.name && isVisible('name')">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e">
+                    <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
                     <td>
-                      <template v-if="data.parent">
+                      <template v-if="data.parent && isVisible('parent_id')">
                         {{ $i18n.locale == "ar" ? data.parent.name : data.parent.name_e }}
                       </template>
                     </td>
@@ -1092,6 +1112,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                              v-if="isPermission('update category RealState')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -1104,6 +1125,7 @@ export default {
                             </div>
                           </a>
                           <a
+                              v-if="isPermission('delete category RealState')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteModule(data.id)"
@@ -1161,21 +1183,22 @@ export default {
                               class="col-8"
                             >
                               <TreeBrowser
-                          @deleteClicked="deleteModule($event.id,true)"
-                            :currentNodeId="edit.parent_id"
-                            @onClick="setUpdateCurrentNode"
-                            @nodeExpanded="setChildNodes"
-                            :nodes="rootNodes"
-                          />
+                                 v-if="isVisible('parent_id')"
+                                @deleteClicked="deleteModule($event.id,true)"
+                                :currentNodeId="edit.parent_id"
+                                @onClick="setUpdateCurrentNode"
+                                @nodeExpanded="setChildNodes"
+                                :nodes="rootNodes"
+                                />
 
                             </div>
                             <div class="col-4">
                               <div class="row">
-                                <div class="col-12 direction" dir="rtl">
+                                <div class="col-12 direction" v-if="isVisible('name')" dir="rtl">
                                   <div class="form-group">
                                     <label for="field-u-1" class="control-label">
                                       {{ getCompanyKey("category_name_ar") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                     </label>
                                     <input
                                       type="text"
@@ -1215,11 +1238,11 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-12 direction-ltr" dir="ltr">
+                                <div class="col-12 direction-ltr" v-if="isVisible('name_e')" dir="ltr">
                                   <div class="form-group">
                                     <label for="field-u-2" class="control-label">
                                       {{ getCompanyKey("category_name_en") }}
-                                      <span class="text-danger">*</span>
+                                      <span v-if="isRequired('name_e')" class="text-danger">*</span>
                                     </label>
                                     <input
                                       type="text"

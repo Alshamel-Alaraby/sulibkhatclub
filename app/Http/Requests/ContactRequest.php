@@ -32,6 +32,7 @@ class ContactRequest extends FormRequest
             'phones' => 'nullable|array',
             'job_id' => 'required|integer|exists:general_screen_tree_properties,id',
             'priority_id' => 'required|integer|exists:general_screen_tree_properties,id',
+            "company_id"=>'nullable',
         ];
     }
 }

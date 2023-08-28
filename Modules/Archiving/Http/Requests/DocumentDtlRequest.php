@@ -28,6 +28,7 @@ class DocumentDtlRequest extends FormRequest
             'arch_doc_type_id' => ['required'],
             'arch_doc_field_id' => ['required'],
             'field_value' => ['required'],
+            "company_id"=>'nullable',
         ];
     }
 

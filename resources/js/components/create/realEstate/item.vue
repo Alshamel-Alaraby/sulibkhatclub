@@ -1,8 +1,8 @@
 <script>
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../general/Page-header";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import adminApi from "../../../api/adminAxios";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import ItemCategory from "../../../components/create/realEstate/itemCategory.vue"
 import {
     required,
@@ -15,7 +15,7 @@ import {
     minValue,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import { dynamicSortNumber, dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
@@ -311,7 +311,7 @@ export default {
                 }
 
                 adminApi
-                    .post(`/real-estate/item`, this.create)
+                    .post(`/real-estate/item`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.item_id = res.data.data.id;
                         this.$emit("created");

@@ -17,7 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('action');
             $table->longText('message');
-            $table->unsignedBigInteger('task_id');
+            $table->longText('message_e');
+            $table->json('data')->nullable();
+            $table->foreignId('task_id');
+            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }

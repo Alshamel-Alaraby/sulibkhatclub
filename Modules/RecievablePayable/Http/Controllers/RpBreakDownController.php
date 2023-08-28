@@ -5,9 +5,11 @@ namespace Modules\RecievablePayable\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\RecievablePayable\Entities\RpBreakDown;
 use Modules\RecievablePayable\Http\Requests\CreateBreakDownRequest;
 use Modules\RecievablePayable\Transformers\BreakDownResource;
+use Modules\RecievablePayable\Transformers\CustomerStatementResource;
 use Modules\RecievablePayable\Transformers\FilterBreakResource;
 
 class RpBreakDownController extends Controller
@@ -50,6 +52,11 @@ class RpBreakDownController extends Controller
         }
         if ($request->break_id && $request->break_type == "reservation"){
             $models->whereHas('reservation',function ($q) use ($request) {
+                $q->where('id', $request->break_id);
+            })->where('parent_id',null);
+        }
+        if ($request->break_id && $request->break_type == "documentHeader"){
+            $models->whereHas('documentHeader',function ($q) use ($request) {
                 $q->where('id', $request->break_id);
             })->where('parent_id',null);
         }
@@ -123,6 +130,42 @@ class RpBreakDownController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
         return responseJson(200, 'success', FilterBreakResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
+    public function getCustomerStatementOfAccount(Request $request)
+    {
+        $models = $this->model->whereHas('document',function ($q){
+            $q->where('attributes->customer','!=',"0");
+        })->where(function ($q) use ($request) {
+            $q->when($request->start_date && $request->end_date, function ($q) use ($request) {
+                $q->whereDate('instalment_date', ">=", $request->start_date)
+                    ->whereDate('instalment_date', "<=", $request->end_date);
+            });
+        })->doesnthave('children')->where('customer_id',$request->customer_id)->orderBy('instalment_date', 'ASC');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', CustomerStatementResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
+    public function getDocumentWithMoneyDetails(Request $request)
+    {
+        $models = $this->model->whereHas('document',function ($q){
+            $q->where('attributes->customer',"1");
+        })->doesnthave('children')->where('customer_id',$request->customer_id)->orderBy('instalment_date', 'ASC');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', BreakDownResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\ConnTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,11 +39,10 @@ class Company extends Model
     public function hasChildren()
     {
         return $this->stores()->count() > 0 ||
-        $this->serials()->count() > 0
-        ;
+        $this->serials()->count() > 0 ||
+        $this->branches()->count() > 0 ||
+        $this->customTables()->count() > 0 ||
+        $this->documents()->count() > 0;
     }
-
-
-
 
 }

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\GeneralCustomer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralCustomer\GeneralCustomerRequest;
-use App\Http\Requests\GeneralCustomer\EditGeneralCustomerRequest;
 use App\Http\Resources\GeneralCustomer\GeneralCustomerResource;
+use App\Http\Resources\GeneralCustomer\GetNameGeneralCustomer;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepositoryInterface;
 use App\Traits\BulkDeleteTrait;
 use App\Traits\CanDeleteTrait;
@@ -25,17 +25,7 @@ class GeneralCustomerController extends Controller
 
     public function index(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('GeneralCustomer');
 
-        //     if (!$models) {
-        //         $models = $this->repository->all($request);
-        //         cachePut('GeneralCustomer', $models);
-        //     }
-        // } else {
-
-        //     $models = $this->repository->all($request);
-        // }
         $models = $this->repository->all($request);
 
         return responseJson(200, 'success', ($this->resource)::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -44,16 +34,6 @@ class GeneralCustomerController extends Controller
     public function show($id)
     {
 
-        // $model = cacheGet('GeneralCustomer_' . $id);
-
-        // if (!$model) {
-        //     $model = $this->repository->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('GeneralCustomer_' . $id, $model);
-        //     }
-        // }
         $model = $this->repository->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -100,6 +80,51 @@ class GeneralCustomerController extends Controller
         $logs = $this->repository->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
 
+    }
+
+    public function delete($id)
+    {
+        $model = $this->repository->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+            }
+            return responseJson(400, $errorMessages);
+        }
+
+        $this->repository->delete($id);
+
+        return responseJson(200, 'success');
+    }
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
+    }
+
+    public function getCheckSupplier(Request $request)
+    {
+       return  $this->repository->checkSupplier($request);
+    }
+
+
+    public function getName(Request $request)
+    {
+
+        $models = $this->repository->getName($request);
+
+
+        return responseJson(200, 'success', GetNameGeneralCustomer::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

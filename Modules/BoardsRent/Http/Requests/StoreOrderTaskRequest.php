@@ -35,7 +35,7 @@ class StoreOrderTaskRequest extends FormRequest
             "data.*.department_id" => "nullable|exists:general_departments,id",
             "data.*.note" => "nullable|string",
             "data.*.must_completed" => "nullable|in:true,false",
-
+            "company_id"=>'nullable',
 
         ];
     }

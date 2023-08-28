@@ -20,13 +20,23 @@ class TaskResource extends JsonResource
      */
     public function toArray($request)
     {
+        $department_task_name  = $this->departmentTask->name ?? null;
+        $customer_name = $this->customer->name ?? null;
+        $employee_name = $this->employee->name ?? null;
+        $equipment_name =   $this->equipment->name ?? null;
+        $title  =
+            $this->task_title . '|' .
+            $customer_name .
+            $equipment_name . '|' .
+            $employee_name . '|' .
+            $department_task_name;
+
         return [
             'id' => $this->id,
-            'title'  => $this->task_title . '|' .  $this->customer->name . '|' .  $this->employee->name . '|' . $this->departmentTask->name,
+            'title'  => $title,
             'start'  => $this->execution_date,
             'end'   => $this->execution_end_date,
-            'className' =>'bg-warning text-white',
-//            'className' => $this->status->color,
+            'className' => $this->status->color,
             'execution_date'     => $this->execution_date,
             'execution_end_date' => $this->execution_end_date,
             "notification_date"  => $this->notification_date,
@@ -34,6 +44,8 @@ class TaskResource extends JsonResource
             "contact_phone"      => $this->contact_phone,
             "contact_person"     => $this->contact_person,
             "note"               => $this->note,
+            "type"                => $this->type,
+            "equipment"          => $this->equipment,
             "task_title"         => $this->task_title,
             'department_id'      => $this->department_id,
             'employee_id'        => $this->employee_id,
@@ -50,11 +62,15 @@ class TaskResource extends JsonResource
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
             "owners"        => $this->owners,
             "supervisors"   => EmployeeResource::collection($this->supervisors),
-            'attentions' => EmployeeResource::collection($this->attentions),
+            'attentions'    => EmployeeResource::collection($this->attentions),
             "notifications" => $this->notifications,
+            'location_id'   => $this->location_id,
             'location' => new LocationResource($this->location),
+            'priority_id' => $this->priority_id,
             'priority' => new PriorityResource($this->priority),
-
+            'task_requirement' => $this->task_requirement,
+            'is_closed' => $this->is_closed,
+            'admin_note' => $this->admin_note,
         ];
     }
 }

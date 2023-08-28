@@ -261,6 +261,7 @@ class CmMemberController extends Controller
         return   $models = $this->modelInterface->updateCmMember();
     }
 
+
     public function getUpdateFinancialStatusCmMember()
     {
         return $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get()->last();

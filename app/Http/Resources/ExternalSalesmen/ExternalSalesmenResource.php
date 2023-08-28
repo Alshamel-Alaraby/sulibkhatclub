@@ -17,6 +17,8 @@ class ExternalSalesmenResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
+            'name_e' => $this->name_e,
             'phone' => $this->phone,
             'address' => $this->address,
             'rp_code' => $this->rp_code,

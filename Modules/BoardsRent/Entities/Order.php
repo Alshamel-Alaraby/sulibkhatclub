@@ -30,6 +30,7 @@ class Order extends Model implements HasMedia
         "serial_number",
         "is_quotation",
         "quotation_number",
+        "company_id",
     ];
 
 //    protected $casts = [

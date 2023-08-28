@@ -23,8 +23,21 @@ class OnlineRequest extends Model
         'amount',
         'from_hour',
         'to_hour',
+        'status_id',
+        'approved_date',
+        'approved_from_date',
+        'approved_to_date',
+        'approved_from_hour',
+        'approved_to_hour',
+        'approved_amount',
+        'date',
+        'admin_comment',
     ];
 
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
     public function requestType()
     {
         return $this->belongsTo(RequestType::class, 'request_type_id');
@@ -44,4 +57,9 @@ class OnlineRequest extends Model
             ->useLogName('Job Title')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
 }

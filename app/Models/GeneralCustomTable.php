@@ -28,7 +28,7 @@ class GeneralCustomTable extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Avenue')
+            ->useLogName('General Custom Table')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 

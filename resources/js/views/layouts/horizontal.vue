@@ -1,10 +1,10 @@
 <script>
 import { layoutComputed } from "../../state/helpers";
 
-import Topbar from "../../components/Topbar";
-import HorizontalNavbar from "../../components/Horizontal-navbar";
-import Rightbar from "../../components/Rightbar";
-import Footer from "../../components/Footer";
+import Topbar from "../../components/general/Topbar";
+import HorizontalNavbar from "../../components/general/Horizontal-navbar";
+import Rightbar from "../../components/general/Rightbar";
+import Footer from "../../components/general/Footer";
 
 /**
  * Horizontal layout

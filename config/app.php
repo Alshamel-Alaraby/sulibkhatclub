@@ -68,6 +68,7 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
      */
+    // $table->dateTime('request_datetime')->nullable()->default(DB::raw('CONVERT_TZ(NOW(), "UTC", "Your_Timezone_Here")'))->useCurrent();
 
     'timezone' => 'Asia/Kuwait',
 
@@ -195,11 +196,13 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
 
         niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
         //    Barryvdh\DomPDF\ServiceProvider::class,//Add this code
         Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
+
+        //    Spatie Permission
+//        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*

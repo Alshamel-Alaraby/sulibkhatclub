@@ -44,6 +44,30 @@ export default [
         component: () => import('../../views/pages/realEstate/invoice'),
     },
     {
+        path: '/dashboard/realEstate/unit-type',
+        name: 'unit-type',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/unit-type'),
+    },
+    {
+        path: '/dashboard/realEstate/view',
+        name: 'view',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/view'),
+    },
+    {
+        path: '/dashboard/realEstate/finishing',
+        name: 'finishing',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/finishing'),
+    },
+    {
         path: '/dashboard/realEstate/building-wallet',
         name: 'realEstate-building-wallet',
         meta: {

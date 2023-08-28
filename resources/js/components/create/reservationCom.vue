@@ -46,7 +46,10 @@
 
                     <div class="row justify-content-between align-items-center mb-2 px-1">
                         <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                            <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                            <b-button v-b-modal.create
+                                      v-if="isPermission('create reservation RealState') || isPermission('create reservation RP')"
+                                      variant="primary" class="btn-sm mx-1 font-weight-bold"
+                            >
                                 {{ $t("general.Create") }}
                                 <i class="fas fa-plus"></i>
                             </b-button>
@@ -58,17 +61,17 @@
                                     <i class="fe-printer"></i>
                                 </button>
                                 <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1">
+                                        v-if="checkAll.length == 1 && (isPermission('update reservation RealState') || isPermission('update reservation RP'))">
                                     <i class="mdi mdi-square-edit-outline"></i>
                                 </button>
                                 <!-- start mult delete  -->
-                                <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
+                                <button class="custom-btn-dowonload" v-if="checkAll.length > 1 && (isPermission('delete reservation RealState') || isPermission('delete reservation RP'))"
                                         @click.prevent="deleteScreenButton(checkAll)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                                 <!-- end mult delete  -->
                                 <!--  start one delete  -->
-                                <button class="custom-btn-dowonload" v-if="checkAll.length == 1"
+                                <button class="custom-btn-dowonload" v-if="checkAll.length == 1 && (isPermission('delete reservation RealState') || isPermission('delete reservation RP'))"
                                         @click.prevent="deleteScreenButton(checkAll[0])">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
@@ -480,7 +483,7 @@
                                                                 <div class="row mt-3">
                                                                     <div
                                                                         class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                        {{ $t("general.Extra_note") }}
+                                                                        <!-- {{ $t("general.Extra_note") }} -->
                                                                     </div>
 
                                                                     <div
@@ -502,8 +505,10 @@
                                                                 </div>
                                                                 <hr />
                                                                 <div>
-                                                                        <span class="text-secondary-d1 text-105">{{
-                                                                            $t("general.Thank_you") }}</span>
+                                                                        <span class="text-secondary-d1 text-105">
+                                                                            <!-- {{
+                                                                            $t("general.Thank_you") }} -->
+                                                                            </span>
                                                                     <template v-if="total && create.details.length > 0">
                                                                         <b-button v-if="!isLoader" variant="primary"
                                                                                   class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
@@ -731,7 +736,8 @@
                             </thead>
                             <tbody v-if="reservations.length > 0">
                             <tr @click.capture="checkRow(data.id)"
-                                @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                @dblclick.prevent="(isPermission('update reservation RealState') || isPermission('update reservation RP'))?
+                                $bvModal.show(`modal-edit-${data.id}`):false"
                                 v-for="(data, index) in reservations" :key="data.id" class="body-tr-custom">
                                 <td v-if="enabled3" class="do-not-print">
                                     <div class="form-check custom-control" style="min-height: 1.9em">
@@ -775,6 +781,7 @@
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-custom">
                                             <a class="dropdown-item" href="#"
+                                               v-if="isPermission('update reservation RealState') || isPermission('update reservation RP')"
                                                @click="$bvModal.show(`modal-edit-${data.id}`)">
                                                 <div
                                                     class="d-flex justify-content-between align-items-center text-black">
@@ -783,6 +790,7 @@
                                                 </div>
                                             </a>
                                             <a class="dropdown-item text-black" href="#"
+                                               v-if="isPermission('delete reservation RealState') || isPermission('delete reservation RP')"
                                                @click.prevent="deleteScreenButton(data.id)">
                                                 <div
                                                     class="d-flex justify-content-between align-items-center text-black">
@@ -1203,8 +1211,8 @@
                                                                                 <div class="row mt-3">
                                                                                     <div
                                                                                         class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
-                                                                                        {{ $t("general.Extra_note")
-                                                                                        }}
+                                                                                        <!-- {{ $t("general.Extra_note")
+                                                                                        }} -->
                                                                                     </div>
 
                                                                                     <div
@@ -1231,9 +1239,11 @@
                                                                                 <hr />
                                                                                 <div>
                                                                                             <span
-                                                                                                class="text-secondary-d1 text-105">{{
+                                                                                                class="text-secondary-d1 text-105">
+                                                                                                <!-- {{
                                                                                                     $t("general.Thank_you")
-                                                                                                }}</span>
+                                                                                                }} -->
+                                                                                                </span>
                                                                                     <template
                                                                                         v-if="total && edit.details.length > 0 && reservation_id">
                                                                                         <b-button v-if="!isLoader"
@@ -1401,17 +1411,17 @@ import adminApi from "../../api/adminAxios";
 import { minValue, required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../widgets/errorMessage";
-import loader from "../loader";
+import loader from "../general/loader";
 import { dynamicSortString } from "../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import {formatDateOnly, formatDateTime} from "../../helper/startDate";
-import translation from "../../helper/translation-mixin";
-import Saleman from "./saleman.vue";
+import translation from "../../helper/mixin/translation-mixin";
+import Saleman from "./general/saleman.vue";
 import DatePicker from "vue2-datepicker";
-import customerGeneral from "./customerGeneral";
-import Branch from "./branch"
+import customerGeneral from "./general/customerGeneral";
+import Branch from "./general/branch"
 import InstallmentPlan from "./receivablePayment/installmentPlan.vue"
-import Building from "./building"
+import Building from "./realEstate/building"
 import Unit from "./realEstate/unit"
 import TransactionBreak from "./receivablePayment/transactionBreak/transactionBreak";
 
@@ -1614,6 +1624,12 @@ export default {
         this.getData();
     },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         moveEnter(action, index, nextNumberInput) {
             if (nextNumberInput == 6 && action == "create") {
                 if (this.create.details.length == (index + 1)) {
@@ -2394,7 +2410,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    if(this.isPermission('create Customer')){
+                        l.unshift({ id: 0, name: "اضافة زبون", name_e: "Add customer" });
+                    }
                     this.customers = l;
                 })
                 .catch((err) => {
@@ -2412,7 +2430,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    if(this.isPermission('create Branch')){
+                        l.unshift({ id: 0, name: "اضف فرع", name_e: "Add branch" });
+                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -2430,7 +2450,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف خطة تقسيط", name_e: "Add installment plan" });
+                    if(this.isPermission('create paymentPlan RP')){
+                        l.unshift({ id: 0, name: "اضف خطة تقسيط", name_e: "Add installment plan" });
+                    }
                     this.installment_plans = l;
                 })
                 .catch((err) => {
@@ -2448,7 +2470,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف مبنى", name_e: "Add building" });
+                    if(this.isPermission('create building RealState')){
+                        l.unshift({ id: 0, name: "اضف مبنى", name_e: "Add building" });
+                    }
                     this.buildings = l;
                 })
                 .catch((err) => {
@@ -2475,7 +2499,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    if(this.isPermission('create units RealState')){
+                        l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    }
                     this.multUnits[index].units = l;
                 })
                 .catch((err) => {
@@ -2503,7 +2529,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    if(this.isPermission('create units RealState')){
+                        l.unshift({ id: 0, name: "اضف وحدة جديدة", name_e: "Add new unit" });
+                    }
                     this.multUnitsEdit[index].units = l;
                 })
                 .catch((err) => {
@@ -2521,7 +2549,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    if(this.isPermission('create Sales Man')){
+                        l.unshift({ id: 0, name: "اضافة رجل مبيعات", name_e: "Add sale man" });
+                    }
                     this.salesmen = l;
                 })
                 .catch((err) => {

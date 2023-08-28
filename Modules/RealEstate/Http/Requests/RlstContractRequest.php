@@ -33,6 +33,7 @@ class RlstContractRequest extends FormRequest
             "details.*.installment_payment_plans_id" => "required_with:details|exists:rp_installment_payment_plans,id",
             'details.*.reservation_value' => 'numeric|min:0',
             'details.*.unit_value' => 'numeric|min:0',
+            "company_id"=>'nullable',
 
         ];
     }

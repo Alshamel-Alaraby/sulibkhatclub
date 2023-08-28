@@ -20,6 +20,7 @@ class Contact extends Model
         'job_id',
         'priority_id',
         'is_active',
+        'company_id',
     ];
 
     //  get set attributes

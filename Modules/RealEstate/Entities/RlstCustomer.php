@@ -21,6 +21,7 @@ class RlstCustomer extends Model
         'phone',
         'email',
         'country_id',
+        'company_id',
         'city_id',
         'rb_code',
         'nationality_id',

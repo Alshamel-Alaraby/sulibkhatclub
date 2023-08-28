@@ -18,6 +18,7 @@ class CreateRpMainContactGroupRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:rp_main_contact_groups,name',
             'name_e' => 'required|string|max:255|unique:rp_main_contact_groups,name_e',
+            "company_id"=>'nullable',
         ];
     }
 

@@ -1,9 +1,10 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../helper/permission";
 
 import {
   required,
@@ -14,15 +15,14 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 
@@ -76,6 +76,12 @@ export default {
     };
   },
   validations: {},
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+      return permissionGuard(vm, "Permission Member Report", "all Permission member club");
+    });
+
+   },
   watch: {
     /**
      * watch per_page
@@ -111,18 +117,6 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getMemberPermissions();
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     if (
-  //       vm.$store.state.auth.work_flow_trees.includes("branch") ||
-  //       vm.$store.state.auth.user.type == "super_admin"
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return vm.$router.push({ name: "home" });
-  //     }
-  //   });
-  // },
   methods: {
     createBackup() {
       setTimeout(() => {
@@ -166,7 +160,7 @@ export default {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
-        .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+        .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
           params: {
             cm_permission_id: this.cm_permission_id,
           },
@@ -201,7 +195,7 @@ export default {
         }
 
         adminApi
-          .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+          .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
             params: {
               cm_permission_id: this.cm_permission_id,
             },
@@ -352,7 +346,6 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                 <div style="width: 100%">
                   <multiselect
-                    :multiple="true"
                     @select="getData(1)"
                     v-model="cm_permission_id"
                     :options="permissions.map((type) => type.id)"

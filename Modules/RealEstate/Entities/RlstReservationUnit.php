@@ -14,6 +14,7 @@ class RlstReservationUnit extends Model
 
     protected $fillable = [
         'unit_code',
+        'company_id',
 
     ];
 

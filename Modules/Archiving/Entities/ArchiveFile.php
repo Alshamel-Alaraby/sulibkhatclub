@@ -14,17 +14,21 @@ class ArchiveFile extends Model implements HasMedia
 {
     use HasFactory, LogTrait, SoftDeletes, MediaTrait;
     protected $table = 'arch_archive_files';
-    protected $fillable = [
-        'arch_doc_type_id',
-        'data_type_value',
-        'arch_department_id',
-    ];
+
+    protected $guarded = ['id'];
+
+    // protected $fillable = [
+    //     'arch_doc_type_id',
+    //     'data_type_value',
+    //     'arch_department_id',
+    // ];
 
     public function docType()
     {
-        return $this->belongsTo(DocType::class ,'arch_doc_type_id');
+        return $this->belongsTo(DocType::class, 'arch_doc_type_id');
     }
-    public function department(){
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 
@@ -36,7 +40,7 @@ class ArchiveFile extends Model implements HasMedia
     protected function dataTypeValue(): Attribute
     {
         return Attribute::make(
-            set:fn($value) => json_encode($value,JSON_UNESCAPED_UNICODE),
+            set:fn($value) => json_encode($value, JSON_UNESCAPED_UNICODE),
             get:fn($value) => json_decode($value)
         );
     }

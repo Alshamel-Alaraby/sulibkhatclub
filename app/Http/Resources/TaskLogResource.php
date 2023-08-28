@@ -18,6 +18,8 @@ class TaskLogResource extends JsonResource
             'id' => $this->id,
             'action' => $this->action,
             'message' => $this->message,
+            'message_e' => $this->message_e,
+            "data" => $this->data,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

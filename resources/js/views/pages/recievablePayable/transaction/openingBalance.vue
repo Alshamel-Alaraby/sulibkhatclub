@@ -1,20 +1,21 @@
 <script>
 import Layout from "../../../layouts/main";
-import PageHeader from "../../../../components/Page-header";
+import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
 import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
-import loader from "../../../../components/loader";
+import loader from "../../../../components/general/loader";
 import {dynamicSortString} from "../../../../helper/tableSort";
 import {formatDateOnly} from "../../../../helper/startDate";
-import translation from "../../../../helper/translation-mixin";
+import translation from "../../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
-import customerGeneral from "../../../../components/create/customerGeneral";
+import customerGeneral from "../../../../components/create/general/customerGeneral";
 import Multiselect from "vue-multiselect";
-import currency from "../../../../components/create/currency";
+import currency from "../../../../components/create/general/currency";
 import transactionBreak from "../../../../components/create/receivablePayment/transactionBreak/transactionBreak";
+import permissionGuard from "../../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -38,21 +39,10 @@ export default {
         transactionBreak
     },
     beforeRouteEnter(to, from, next) {
-        next((vm) => {
-            if (vm.$store.state.auth.work_flow_trees.includes("receivable payable-e")) {
-                Swal.fire({
-                    icon: "error",
-                    title: `${vm.$t("general.Error")}`,
-                    text: `${vm.$t("general.ModuleExpired")}`,
-                });
-                return vm.$router.push({name: "home"});
-            }
-            if (vm.$store.state.auth.work_flow_trees.includes('installment opening balance') || vm.$store.state.auth.work_flow_trees.includes('receivable payable') || vm.$store.state.auth.user.type == 'super_admin') {
-                return true;
-            } else {
-                return vm.$router.push({name: "home"});
-            }
-        });
+          next((vm) => {
+      return permissionGuard(vm, "Opening Balance RP", "all openingBalance RP");
+    });
+
     },
     data() {
         return {
@@ -159,6 +149,12 @@ export default {
         this.getData();
     },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         onChange(e) {
             let id = e;
             let serverData = this.installmentStatus[0];
@@ -323,7 +319,9 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضافة زبون", name_e: "Add customer"});
+                    if(this.isPermission('create Customer')){
+                        l.unshift({id: 0, name: "اضافة زبون", name_e: "Add customer"});
+                    }
                     this.customers = l;
                 })
                 .catch((err) => {
@@ -346,7 +344,9 @@ export default {
                 )
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({id: 0, name: "اضف عمله جديده  ", name_e: "Add New Currency"});
+                    if(this.isPermission('create Currency')){
+                        l.unshift({id: 0, name: "اضف عمله جديده  ", name_e: "Add New Currency"});
+                    }
                     this.currencies = l;
                 })
                 .catch((err) => {
@@ -894,6 +894,7 @@ export default {
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
                                 <b-button
+                                    v-if="isPermission('create openingBalance RP')"
                                     v-b-modal.create
                                     variant="primary"
                                     class="btn-sm mx-1 font-weight-bold"
@@ -911,7 +912,7 @@ export default {
                                     <button
                                         class="custom-btn-dowonload"
                                         @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1"
+                                        v-if="checkAll.length == 1 && isPermission('edit openingBalance RP')"
                                     >
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
@@ -1418,7 +1419,8 @@ export default {
                                 <tbody v-if="installmentStatus.length > 0">
                                 <tr
                                     @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.date}`)"
+                                    @dblclick.prevent="isPermission('edit openingBalance RP') ?
+                                    $bvModal.show(`modal-edit-${data.date}`):false"
                                     v-for="(data,index) in installmentStatus"
                                     :key="data.id"
                                     class="body-tr-custom"
@@ -1463,6 +1465,7 @@ export default {
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
                                                 <a
+                                                    v-if="isPermission('edit openingBalance RP')"
                                                     class="dropdown-item"
                                                     href="#"
                                                     @click="$bvModal.show(`modal-edit-${data.date}`)"

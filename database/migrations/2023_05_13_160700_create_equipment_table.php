@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name_e');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('location_id');
-            $table->unsignedBigInteger('periodic_maintenance_id‏');
+            $table->unsignedBigInteger('periodic_maintenance_id');
             $table->timestamps();
         });
     }

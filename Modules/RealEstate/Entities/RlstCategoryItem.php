@@ -16,6 +16,7 @@ class RlstCategoryItem extends Model
         'name',
         'name_e',
         'parent_id',
+        'company_id',
 
     ];
 
@@ -44,6 +45,29 @@ class RlstCategoryItem extends Model
     {
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstItem::class, 'rlst_categories_item', 'category_item_id', 'item_id');
 
+    }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->items()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'items',
+                'count' => $this->items()->count(),
+                'ids' => $this->items()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'Category',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('id')->toArray()
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

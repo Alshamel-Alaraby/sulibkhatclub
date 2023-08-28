@@ -20,6 +20,7 @@ class RlstOwner extends Model
         'phone',
         'email',
         'country_id',
+        'company_id',
         'city_id',
         'rb_code',
         'phone_code',
@@ -60,23 +61,37 @@ class RlstOwner extends Model
 
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstWallet::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id')
             ->withPivot('percentage');
-
     }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->wallets()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'wallets',
+                'count' => $this->wallets()->count(),
+                'ids' => $this->wallets()->pluck('id')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
+    }
+
     // attributes
 
     protected function categories(): Attribute
     {
         return Attribute::make(
-            get:fn($value) => json_decode($value),
-            set:fn($value) => json_encode($value),
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
         );
     }
 
     protected function attachments(): Attribute
     {
         return Attribute::make(
-            get:fn($value) => json_decode($value),
-            set:fn($value) => json_encode($value),
+            get: fn ($value) => json_decode($value),
+            set: fn ($value) => json_encode($value),
         );
     }
 
@@ -89,6 +104,11 @@ class RlstOwner extends Model
         return $percentage;
     }
 
+    public function walletOwner()
+    {
+        return $this->hasMany(RlstWalletOwner::class, "owner_id");
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -96,6 +116,6 @@ class RlstOwner extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Real Estate Owners')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

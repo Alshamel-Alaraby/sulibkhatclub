@@ -17,7 +17,8 @@ class DocTypeField extends Model
         'field_order',
         'is_required',
         'field_characters',
-        "parent_id"
+        "parent_id",
+        'company_id'
     ];
 
     // relation

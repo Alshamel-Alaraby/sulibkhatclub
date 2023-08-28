@@ -26,6 +26,7 @@ return new class extends Migration
             $table->unsignedInteger('country_id')->nullable()->default(0);
             $table->unsignedInteger('city_id')->nullable()->default(0);
             $table->unsignedInteger('avenue_id')->nullable()->default(0);
+            $table->unsignedInteger('street_id')->nullable()->default(0);
             $table->double('lng')->nullable()->default(0);
             $table->double('lat')->nullable()->default(0);
             $table->text('properties')->nullable();

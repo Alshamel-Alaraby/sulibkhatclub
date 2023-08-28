@@ -90,14 +90,48 @@ class RpInstallmentPaymentPlanController extends Controller
 
     }
 
+    // public function destroy($id)
+    // {
+    //     $model = $this->modelInterface->find($id);
+    //     if (!$model) {
+    //         return responseJson(404, __('message.data not found'));
+    //     }
+    //     $this->modelInterface->delete($id);
+
+    //     return responseJson(200, 'success');
+    // }
+
+
     public function destroy($id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
+
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+            }
+            return responseJson(400, $errorMessages);
+        }
+
         $this->modelInterface->delete($id);
 
         return responseJson(200, 'success');
+    }
+
+
+
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
     }
 }

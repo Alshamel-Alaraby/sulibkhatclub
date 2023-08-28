@@ -25,7 +25,7 @@ class CreateGeneralSerialsTable extends Migration
             $table->string('is_default')->default(0)->comment('1=Yes, 0=No');
             $table->timestamps();
         });
-    }
+    }   
 
     /**
      * Reverse the migrations.

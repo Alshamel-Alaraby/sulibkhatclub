@@ -16,7 +16,7 @@ class RlstInvoiceRequest extends FormRequest
     {
         return [
             "payment_method_id" => "sometimes|exists:general_payment_methods,id",
-            "branch_id" => ["sometimes", "exists:general_branches,id", new \App\Rules\BranchSerialExistRule()],
+            "branch_id" => ["required", "exists:general_branches,id", new \App\Rules\BranchSerialExistRule()],
             "customer_id" => "sometimes|exists:general_customers,id",
             "salesman_id" => "sometimes|exists:general_salesmen,id",
             "date" => "sometimes|date",
@@ -26,7 +26,7 @@ class RlstInvoiceRequest extends FormRequest
 
             "payment_plan_id" => "nullable|numeric",
             "module_type" => "nullable",
-            "document_id" => "nullable|exists:general_documents,id",
+            "document_id" => "required|exists:general_documents,id",
             "building_id" => "nullable|exists:rlst_buildings,id",
             "unit_id" => "nullable|exists:rlst_units,id",
             "start_date" => "nullable|date",
@@ -47,6 +47,7 @@ class RlstInvoiceRequest extends FormRequest
 
             'transactions.*.break_id' => "nullable|exists:rp_break_downs,id",
             'transactions.*.amount_status' => 'nullable|string|in:Paid_Partially,Paid',
+            "company_id"=>'nullable',
         ];
     }
 

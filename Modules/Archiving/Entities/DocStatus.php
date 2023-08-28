@@ -11,11 +11,11 @@ class DocStatus extends Model
 {
     use HasFactory, LogTrait, SoftDeletes;
     protected $table = 'arch_doc_statuses';
-
-    protected $fillable = [
-        'name',
-        'name_e',
-    ];
+    protected $guarded = ['id'];
+    // protected $fillable = [
+    //     'name',
+    //     'name_e',
+    // ];
 
     // relations
 

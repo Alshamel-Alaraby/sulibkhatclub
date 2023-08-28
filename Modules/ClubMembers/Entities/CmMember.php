@@ -22,7 +22,6 @@ class CmMember extends Model
         'is_accept' => 'App\Enums\IsAccept',
         'is_sponsor' => 'App\Enums\IsSponsor',
         'membership_date' => 'date',
-        'last_transaction_date' => 'date',
     ];
 
     public function status()

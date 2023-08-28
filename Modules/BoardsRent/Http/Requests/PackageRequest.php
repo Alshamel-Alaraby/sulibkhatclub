@@ -14,15 +14,16 @@ class PackageRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:boards_rent_packages,name,' .
+            'name' => 'sometimes|string|max:255|unique:boards_rent_packages,name' .
             ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e' => 'sometimes|string|max:255|unique:boards_rent_packages,name_e,' .
+            'name_e' => 'sometimes|string|max:255|unique:boards_rent_packages,name_e' .
             ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'code' => 'sometimes|string|max:255|unique:boards_rent_packages,code,' .
+            'code' => 'sometimes|string|max:255|unique:boards_rent_packages,code' .
             ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'price' => 'sometimes|regex:/^\d+(\.\d{1,2})?$/',
             "panels" => "sometimes|array",
             "panels.*" => "required_with:panels|exists:boards_rent_panels,id",
+            "company_id"=>'nullable',
         ];
 
     }

@@ -27,6 +27,7 @@ class CreateRpInstallmentPaymentTypeRequest extends FormRequest
             'is_passed_contract_plan' => [],
             'auto_freq' => ['required_if:installment_payment_type_freq.*,>=,1' ],
             'freq_period' => 'nullable',
+            "company_id"=>'nullable',
         ];
     }
 

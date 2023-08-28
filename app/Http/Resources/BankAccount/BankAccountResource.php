@@ -3,6 +3,7 @@
 namespace App\Http\Resources\BankAccount;
 
 use App\Http\Resources\Bank\BankResource;
+use App\Http\Resources\Employee\EmployeeResource;
 use App\Http\Resources\FileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,7 @@ class BankAccountResource extends JsonResource
             'email' => $this->email,
             'emp_id' => $this->emp_id,
             'rp_code' => $this->rp_code,
+            'employee' => new EmployeeResource($this->employee),
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

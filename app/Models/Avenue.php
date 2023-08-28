@@ -50,8 +50,40 @@ class Avenue extends Model
         return $this->hasMany(Street::class);
     }
 
+    // public function hasChildren()
+    // {
+    //     // $h = $this->internalSalesman()->exists();
+    //     // return $h;
 
-    
+    //     return $this->customerBranches()->count() > 0 ||
+    //     $this->streets()->count() > 0;
+    // }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->customerBranches()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customerBranches',
+                'count' => $this->customerBranches()->count(),
+                'ids' => $this->customerBranches()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->streets()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'streets',
+                'count' => $this->streets()->count(),
+                'ids' => $this->streets()->pluck('id')->toArray()
+            ];
+        }
+
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

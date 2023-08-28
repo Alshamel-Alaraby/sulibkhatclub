@@ -1,15 +1,15 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required, requiredIf } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateTime } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import rootData from "./root.json";
 import TreeBrowser from "../../../components/arch-screen/tree";
@@ -17,6 +17,7 @@ import Files from "../../../components/arch-screen/files.vue";
 import Details from "../../../components/arch-screen/details.vue";
 import General from "../../../components/create/general";
 import VueHtml2pdf from "vue-html2pdf";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -40,28 +41,11 @@ export default {
     VueHtml2pdf,
     General,
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     if (vm.$store.state.auth.work_flow_trees.includes("archiving-e")) {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: `${vm.$t("general.Error")}`,
-  //         text: `${vm.$t("general.ModuleExpired")}`,
-  //       });
-  //       return vm.$router.push({ name: "home" });
-  //     }
-
-  //     if (
-  //       vm.$store.state.auth.work_flow_trees.includes("archiving screen") ||
-  //       vm.$store.state.auth.work_flow_trees.includes("archiving") ||
-  //       vm.$store.state.auth.user.type == "super_admin"
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return vm.$router.push({ name: "home" });
-  //     }
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Archiving", "all Store");
+    });
+  },
   data() {
     return {
       printLoading: true,
@@ -135,7 +119,7 @@ export default {
       checkAll: [],
       is_disabled: false,
       current_page: 1,
-      company_id: 48,
+      company_id: null,
       Tooltip: "",
       mouseEnter: null,
       isActiveFile: false,
@@ -192,8 +176,11 @@ export default {
   },
   methods: {
     setChildNodes(result) {
-      adminApi.get(`/arch-archive-files/getKeys?doc_type_id=${result.node.doc_type_id}
-      &arch_department_id=${result.node.arch_department_id}&key_name_e=${result.node.name_e}`)
+      adminApi
+        .get(
+          `/arch-archive-files/getKeys?doc_type_id=${result.node.doc_type_id}
+      &arch_department_id=${result.node.arch_department_id}&key_name_e=${result.node.name_e}`
+        )
         .then((res) => {
           result.node.children = res.data;
           result.expanded.push(result.node);
@@ -209,26 +196,25 @@ export default {
       if (!this.currentNode) {
         this.getData(page);
         return;
-      }else {
-          if(!this.search){
-              if (this.currentNode.parent_doc_type_children) {
-                  //If node selected is key value
-                  this.getArchiveFiles();
-              } else if (this.currentNode.arch_documents) {
-                  //If node selected department
-                  this.getArchiveFilesByDepartmentDocument(this.currentNode.id, null);
-              } else if (this.currentNode.key) {
-                  //If node selected parent document
-                  this.getArchiveFilesByDepartmentDocument(
-                      this.currentNode.arch_department_id,
-                      this.currentNode.id
-                  );
-              }
-          }else {
-              this.getData(page);
+      } else {
+        if (!this.search) {
+          if (this.currentNode.parent_doc_type_children) {
+            //If node selected is key value
+            this.getArchiveFiles();
+          } else if (this.currentNode.arch_documents) {
+            //If node selected department
+            this.getArchiveFilesByDepartmentDocument(this.currentNode.id, null);
+          } else if (this.currentNode.key) {
+            //If node selected parent document
+            this.getArchiveFilesByDepartmentDocument(
+              this.currentNode.arch_department_id,
+              this.currentNode.id
+            );
           }
+        } else {
+          this.getData(page);
+        }
       }
-
     },
     async getArchiveFiles(docId) {
       this.arch_doc_type_id = docId;
@@ -237,10 +223,15 @@ export default {
       }
       await adminApi
         .get(
-          `/arch-archive-files/valueMedia?value=${typeof this.currentNode.name_e === 'object' ? this.currentNode.name_e.name_e : this.currentNode.name_e
+          `/arch-archive-files/valueMedia?value=${
+            typeof this.currentNode.name_e === "object"
+              ? this.currentNode.name_e.name_e
+              : this.currentNode.name_e
           }&department_id=${this.currentNode.archive_file.arch_department_id}
           &parent_arch_doc_type_id=${this.currentNode.parent_doc_id}
-          &arch_doc_type_id=${this.arch_doc_type_id ? this.arch_doc_type_id : ""}
+          &arch_doc_type_id=${
+            this.arch_doc_type_id ? this.arch_doc_type_id : ""
+          }
           &page=${this.current_page}&per_page=${this.per_page}`
         )
         .then((res) => {
@@ -263,8 +254,11 @@ export default {
     async getArchiveFilesByDepartmentDocument(departmentId, parentDocumentId) {
       await adminApi
         .get(
-          `arch-archive-files/files_Department_Doc_Type?arch_department_id=${departmentId}&arch_doc_type_id=${parentDocumentId ? parentDocumentId : ""
-          }&page=${this.current_page}&per_page=${this.per_page}&doc_type_id=${parentDocumentId ? parentDocumentId : ""}&search=${this.search}`
+          `arch-archive-files/files_Department_Doc_Type?arch_department_id=${departmentId}&arch_doc_type_id=${
+            parentDocumentId ? parentDocumentId : ""
+          }&page=${this.current_page}&per_page=${this.per_page}&doc_type_id=${
+            parentDocumentId ? parentDocumentId : ""
+          }&search=${this.search}`
         )
         .then((res) => {
           let l = res.data;
@@ -327,7 +321,9 @@ export default {
       });
       filterRes.forEach((element) => {
         adminApi
-          .get(`tree-properties/child-nodes/${element.doc_field_id.tree_property_id}`)
+          .get(
+            `tree-properties/child-nodes/${element.doc_field_id.tree_property_id}`
+          )
           .then((res) => {
             let l = res.data;
             l.unshift({ id: 0, name: "اضف خاصية", name_e: "Add property" });
@@ -341,21 +337,23 @@ export default {
       this.properties = props;
     },
     updateCurrentPropertyTreeList() {
-      adminApi.get(`tree-properties/child-nodes/${this.treePropId}`).then((res) => {
-        let l = res.data;
-        l.unshift({ id: 0, name: "اضف خاصية", name_e: "Add property" });
-        let currProp = null;
-        let treePropId = this.treePropId;
-        this.properties.forEach((prop) => {
-          if (prop.tree_property_id == treePropId) {
-            currProp = prop;
-            return;
-          }
+      adminApi
+        .get(`tree-properties/child-nodes/${this.treePropId}`)
+        .then((res) => {
+          let l = res.data;
+          l.unshift({ id: 0, name: "اضف خاصية", name_e: "Add property" });
+          let currProp = null;
+          let treePropId = this.treePropId;
+          this.properties.forEach((prop) => {
+            if (prop.tree_property_id == treePropId) {
+              currProp = prop;
+              return;
+            }
+          });
+          currProp.list = l;
+          this.dropListPopup = false;
+          this.treePropId = null;
         });
-        currProp.list = l;
-        this.dropListPopup = false;
-        this.treePropId = null;
-      });
     },
     print() {
       window.print();
@@ -416,7 +414,7 @@ export default {
           });
           this.isLoader = false;
         })
-        .finally(() => { });
+        .finally(() => {});
     },
     showFileModal(file) {
       this.fileFields = file.data_type_value;
@@ -467,7 +465,8 @@ export default {
       if (chose == "Add" || chose == "اضف" || chose == 0) {
         this.lockupTableObject = {
           lookup_table: this.nodeFields[index].doc_field_id.lookup_table,
-          lookup_table_column: this.nodeFields[index].doc_field_id.lookup_table_column,
+          lookup_table_column:
+            this.nodeFields[index].doc_field_id.lookup_table_column,
           name_e: this.nodeFields[index].doc_field_id.name_e,
         };
         if (table == "general_employees") {
@@ -513,12 +512,12 @@ export default {
       this.searchFinished = false;
       this.child_doc_types =
         this.currentNode &&
-          this.currentNode.parent_doc_type_children &&
-          this.currentNode.parent_doc_type_children.length
+        this.currentNode.parent_doc_type_children &&
+        this.currentNode.parent_doc_type_children.length
           ? [
-            { id: 0, name: "الكل", name_e: "All" },
-            ...this.currentNode.parent_doc_type_children,
-          ]
+              { id: 0, name: "الكل", name_e: "All" },
+              ...this.currentNode.parent_doc_type_children,
+            ]
           : [];
       this.arch_doc_type_id = null;
       this.getPaginatedArchFiles(1);
@@ -570,8 +569,7 @@ export default {
       if (!id) return;
       await adminApi
         .get(`/arch-archive-files/pdf/${id}`)
-        .then((res) => {
-        })
+        .then((res) => {})
         .catch((err) => {
           Swal.fire({
             icon: "error",
@@ -600,27 +598,26 @@ export default {
       }
       await adminApi
         .get(
-          `/arch-archive-files?page=${page}&per_page=${this.per_page}&search=${this.search
-          }&favourite=${this.favourite}`,
+          `/arch-archive-files?page=${page}&per_page=${this.per_page}&search=${this.search}&favourite=${this.favourite}`,
           {
             params: this.currentField
               ? {
-                field: {
-                  from:
-                    this.currentField.data_type == "INTEGER"
-                      ? this.from
-                      : this.fromDate,
-                  to:
-                    this.currentField.data_type == "INTEGER"
-                      ? this.to
-                      : this.toDate,
-                  text: this.search,
-                  range: ["INTEGER", "DATE"].includes(
-                    this.currentField.data_type
-                  ),
-                  data_type: this.currentField.data_type,
-                },
-              }
+                  field: {
+                    from:
+                      this.currentField.data_type == "INTEGER"
+                        ? this.from
+                        : this.fromDate,
+                    to:
+                      this.currentField.data_type == "INTEGER"
+                        ? this.to
+                        : this.toDate,
+                    text: this.search,
+                    range: ["INTEGER", "DATE"].includes(
+                      this.currentField.data_type
+                    ),
+                    data_type: this.currentField.data_type,
+                  },
+                }
               : {},
           }
         )
@@ -668,22 +665,25 @@ export default {
             {
               params: this.currentField
                 ? {
-                  field: {
-                    from:
-                      this.currentField.doc_field_id.data_type.name_e == "INTEGER"
-                        ? this.from
-                        : this.fromDate,
-                    to:
-                      this.currentField.doc_field_id.data_type.name_e == "INTEGER"
-                        ? this.to
-                        : this.toDate,
-                    text: this.search,
-                    range: ["INTEGER", "DATE"].includes(
-                      this.currentField.doc_field_id.data_type.name_e
-                    ),
-                    data_type: this.currentField.doc_field_id.data_type.name_e,
-                  },
-                }
+                    field: {
+                      from:
+                        this.currentField.doc_field_id.data_type.name_e ==
+                        "INTEGER"
+                          ? this.from
+                          : this.fromDate,
+                      to:
+                        this.currentField.doc_field_id.data_type.name_e ==
+                        "INTEGER"
+                          ? this.to
+                          : this.toDate,
+                      text: this.search,
+                      range: ["INTEGER", "DATE"].includes(
+                        this.currentField.doc_field_id.data_type.name_e
+                      ),
+                      data_type:
+                        this.currentField.doc_field_id.data_type.name_e,
+                    },
+                  }
                 : {},
             }
           )
@@ -836,7 +836,7 @@ export default {
      */
     async resetModalHidden() {
       // if (this.images.length > 0) {
-        // await this.getPdf(this.archive_id);
+      // await this.getPdf(this.archive_id);
       // }
       await this.getArchiveFiles();
       this.create = {
@@ -901,17 +901,24 @@ export default {
       let dataTypeValue = [];
       this.nodeFields.forEach((field) => {
         dataTypeValue.push({
-          value: typeof field.value === 'object' && field.value.name_e ? field.value.name_e : field.value,
+          value:
+            typeof field.value === "object" && field.value.name_e
+              ? field.value.name_e
+              : field.value,
           name_e: field.doc_field_id.name_e,
           name: field.doc_field_id.name,
           is_reference: field.doc_field_id.is_reference,
           data_type: field.doc_field_id.data_type.name_e,
+          company_id: this.company_id,
         });
       });
       this.$v.nodeFields.$touch();
       let check = false;
       this.nodeFields.forEach((field, index) => {
-        if (field.is_required == 1 && this.$v.nodeFields.$each[index].value.$error) {
+        if (
+          field.is_required == 1 &&
+          this.$v.nodeFields.$each[index].value.$error
+        ) {
           return (check = true);
         }
       });
@@ -927,28 +934,37 @@ export default {
         })
         .then((res) => {
           //Update tree
-          if (this.currentNode && this.currentNode.key && this.currentNode.key.length) {
-            let archFileKeyValue = res.data.data.data_type_value.filter((field) => {
-              return field.name_e == this.currentNode.key[0].name_e;
-            });
-            archFileKeyValue = archFileKeyValue.length > 0 ? archFileKeyValue[0] : null;
+          if (
+            this.currentNode &&
+            this.currentNode.key &&
+            this.currentNode.key.length
+          ) {
+            let archFileKeyValue = res.data.data.data_type_value.filter(
+              (field) => {
+                return field.name_e == this.currentNode.key[0].name_e;
+              }
+            );
+            archFileKeyValue =
+              archFileKeyValue.length > 0 ? archFileKeyValue[0] : null;
             if (archFileKeyValue) {
-              if(this.currentNode.key[0].children){
-                  let check = this.currentNode.key[0].children.filter((element) => {
-                      return archFileKeyValue.value == element.name_e;
-                  });
-                  if (check.length == 0) {
-                      this.currentNode.key[0].children.push({
-                          name: archFileKeyValue.value,
-                          name_e: archFileKeyValue.value,
-                          archive_file: res.data.data,
-                          parent_doc_type_children: this.currentNode.sub_docs,
-                          parent_doc_id: res.data.data.parent_doc_id,
-                      });
-                      let index = this.expanded.findIndex(this.currentNode.key[0]);
-                      this.expanded.splice(2, 1);
-                      this.expanded.push(this.currentNode.key[0]);
+              if (this.currentNode.key[0].children) {
+                let check = this.currentNode.key[0].children.filter(
+                  (element) => {
+                    return archFileKeyValue.value == element.name_e;
                   }
+                );
+                if (check.length == 0) {
+                  this.currentNode.key[0].children.push({
+                    name: archFileKeyValue.value,
+                    name_e: archFileKeyValue.value,
+                    archive_file: res.data.data,
+                    parent_doc_type_children: this.currentNode.sub_docs,
+                    parent_doc_id: res.data.data.parent_doc_id,
+                  });
+                  let index = this.expanded.findIndex(this.currentNode.key[0]);
+                  this.expanded.splice(2, 1);
+                  this.expanded.push(this.currentNode.key[0]);
+                }
               }
             }
           }
@@ -993,7 +1009,10 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .post(`/arch-archive-files/${id}`, this.edit)
+          .post(`/arch-archive-files/${id}`, {
+            ...this.edit,
+            company_id: this.company_id,
+          })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);
             this.getData();
@@ -1120,10 +1139,11 @@ export default {
           .then((res) => {
             let l = res.data.data;
             l.forEach((e) => {
-              this.Tooltip += `Created By: ${e.causer_type}; Event: ${e.event
-                }; Description: ${e.description} ;Created At: ${this.formatDate(
-                  e.created_at
-                )} \n`;
+              this.Tooltip += `Created By: ${e.causer_type}; Event: ${
+                e.event
+              }; Description: ${e.description} ;Created At: ${this.formatDate(
+                e.created_at
+              )} \n`;
             });
             $(`#tooltip-${id}`).tooltip();
           })
@@ -1240,7 +1260,8 @@ export default {
                     .then((res) => {
                       this.images = res.data.data.media ?? [];
                       if (this.images && this.images.length > 0) {
-                        this.showPhoto = this.images[this.images.length - 1].webp;
+                        this.showPhoto =
+                          this.images[this.images.length - 1].webp;
                       } else {
                         this.showPhoto = "/images/img-1.png";
                       }
@@ -1324,112 +1345,185 @@ export default {
 <template>
   <Layout>
     <PageHeader />
-    <General :currentNode="currentNode" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="
-      dropListPopup
-        ? updateCurrentPropertyTreeList()
-        : getLookup(
-          lockupTableObject.lookup_table,
-          lockupTableObject.lookup_table_column,
-          lockupTableObject.name_e
-        )
-    " />
+    <General
+      :currentNode="currentNode"
+      :companyKeys="companyKeys"
+      :defaultsKeys="defaultsKeys"
+      @created="
+        dropListPopup
+          ? updateCurrentPropertyTreeList()
+          : getLookup(
+              lockupTableObject.lookup_table,
+              lockupTableObject.lookup_table_column,
+              lockupTableObject.name_e
+            )
+      "
+    />
     <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="card-body">
             <div class="row justify-content-between align-items-center mb-2">
               <h4 class="header-title">{{ $t("general.archivingTable") }}</h4>
-              <div class="d-flex col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
+              <div
+                class="d-flex col-xs-10 col-md-9 col-lg-7"
+                style="font-weight: 500"
+              >
                 <div class="d-flex">
                   <!-- Basic dropdown -->
-                  <b-dropdown variant="primary" :text="$t('general.workspace')" ref="dropdown"
-                    class="btn-block setting-search m-2">
-                    <b-form-checkbox v-for="node in secondLevelNodes" :key="node.id" v-model="searchDocumentTypeId"
-                      :value="node.id" class="mb-1" @change="getFields">
+                  <b-dropdown
+                    variant="primary"
+                    :text="$t('general.workspace')"
+                    ref="dropdown"
+                    class="btn-block setting-search m-2"
+                  >
+                    <b-form-checkbox
+                      v-for="node in secondLevelNodes"
+                      :key="node.id"
+                      v-model="searchDocumentTypeId"
+                      :value="node.id"
+                      class="mb-1"
+                      @change="getFields"
+                    >
                       {{ $i18n.locale == "ar" ? node.name : node.name_e }}
                     </b-form-checkbox>
                   </b-dropdown>
                   <!-- Basic dropdown -->
                   <!-- Basic dropdown -->
-                  <b-dropdown variant="primary" :text="$t('general.fields')" ref="dropdown"
-                    class="btn-block setting-search m-2">
-                    <b-form-checkbox v-for="field in fields" :key="field.name_e" v-model="searchFieldId"
-                      :value="field.name_e" class="mb-1" @change="getCurrentField">
-                      {{
-                        $i18n.locale == "ar"
-                        ? field.name
-                        : field.name_e
-                      }}
+                  <b-dropdown
+                    variant="primary"
+                    :text="$t('general.fields')"
+                    ref="dropdown"
+                    class="btn-block setting-search m-2"
+                  >
+                    <b-form-checkbox
+                      v-for="field in fields"
+                      :key="field.name_e"
+                      v-model="searchFieldId"
+                      :value="field.name_e"
+                      class="mb-1"
+                      @change="getCurrentField"
+                    >
+                      {{ $i18n.locale == "ar" ? field.name : field.name_e }}
                     </b-form-checkbox>
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
-                <template v-if="
-                  currentField &&
-                  currentField.data_type == 'INTEGER'
-                ">
-                  <div class="d-inline-block position-relative m-2" style="width: 100%">
+                <template
+                  v-if="currentField && currentField.data_type == 'INTEGER'"
+                >
+                  <div
+                    class="d-inline-block position-relative m-2"
+                    style="width: 100%"
+                  >
                     <div class="row">
                       <div class="col-6">
-                        <input class="form-control" style="padding-top: 3px; display: inline-block" type="text"
-                          v-model.trim="from" :placeholder="`${$t('general.from')}`" @keyup="getFieldData()" />
+                        <input
+                          class="form-control"
+                          style="padding-top: 3px; display: inline-block"
+                          type="text"
+                          v-model.trim="from"
+                          :placeholder="`${$t('general.from')}`"
+                          @keyup="getFieldData()"
+                        />
                       </div>
                       <div class="col-6">
-                        <input class="form-control" style="padding-top: 3px; display: inline-block" type="text"
-                          v-model.trim="to" @keyup="getFieldData()" :placeholder="`${$t('general.to')}`" />
+                        <input
+                          class="form-control"
+                          style="padding-top: 3px; display: inline-block"
+                          type="text"
+                          v-model.trim="to"
+                          @keyup="getFieldData()"
+                          :placeholder="`${$t('general.to')}`"
+                        />
                       </div>
                     </div>
                   </div>
                 </template>
-                <template v-else-if="
-                  currentField && currentField.data_type == 'DATE'
-                ">
-                  <div class="d-inline-block position-relative m-2" style="width: 100%">
+                <template
+                  v-else-if="currentField && currentField.data_type == 'DATE'"
+                >
+                  <div
+                    class="d-inline-block position-relative m-2"
+                    style="width: 100%"
+                  >
                     <div class="row">
                       <div class="col-6">
-                        <date-picker @change="getFieldData()" v-model="fromDate" type="date" confirm></date-picker>
+                        <date-picker
+                          @change="getFieldData()"
+                          v-model="fromDate"
+                          type="date"
+                          confirm
+                        ></date-picker>
                       </div>
                       <div class="col-6">
-                        <date-picker @change="getFieldData()" v-model="toDate" type="date" confirm></date-picker>
+                        <date-picker
+                          @change="getFieldData()"
+                          v-model="toDate"
+                          type="date"
+                          confirm
+                        ></date-picker>
                       </div>
                     </div>
                   </div>
                 </template>
                 <template v-else-if="currentField">
-                  <div class="d-inline-block position-relative m-2" style="width: 77%">
-                    <span :class="[
-                      'search-custom position-absolute',
-                      $i18n.locale == 'ar' ? 'search-custom-ar' : '',
-                    ]">
+                  <div
+                    class="d-inline-block position-relative m-2"
+                    style="width: 77%"
+                  >
+                    <span
+                      :class="[
+                        'search-custom position-absolute',
+                        $i18n.locale == 'ar' ? 'search-custom-ar' : '',
+                      ]"
+                    >
                       <i class="fe-search"></i>
                     </span>
-                    <input class="form-control" @input="searchFinished = false"
-                      style="display: block; width: 93%; padding-top: 3px" type="text" v-model.trim="search"
-                      :placeholder="`${$t('general.Search')}...`" />
+                    <input
+                      class="form-control"
+                      @input="searchFinished = false"
+                      style="display: block; width: 93%; padding-top: 3px"
+                      type="text"
+                      v-model.trim="search"
+                      :placeholder="`${$t('general.Search')}...`"
+                    />
                   </div>
                 </template>
               </div>
             </div>
 
-            <div class="row justify-content-between align-items-center mt-3 mb-2 px-1">
+            <div
+              class="row justify-content-between align-items-center mt-3 mb-2 px-1"
+            >
               <div class="col-md-9 d-flex align-items-center mb-1 mb-xl-0">
-                <b-button variant="primary" type="button" class="btn-sm mx-1 font-weight-bold"
-                  @click.prevent="showFavorite">
+                <b-button
+                  variant="primary"
+                  type="button"
+                  class="btn-sm mx-1 font-weight-bold"
+                  @click.prevent="showFavorite"
+                >
                   {{ $t("general.favorite") }}
                   <i v-if="favourite" class="fa fa-star"></i>
                   <i v-else class="far fa-star"></i>
                 </b-button>
-                <div style="width: 60%; position: relative; top: 3px"
-                  v-if="currentNode && currentNode.parent_doc_type_children">
+                <div
+                  style="width: 60%; position: relative; top: 3px"
+                  v-if="currentNode && currentNode.parent_doc_type_children"
+                >
                   <div>
                     <div class="form-group">
-                      <multiselect v-model="arch_doc_type_id" @select="getArchiveFiles"
-                        :options="child_doc_types.map((type) => type.id)" :custom-label="
+                      <multiselect
+                        v-model="arch_doc_type_id"
+                        @select="getArchiveFiles"
+                        :options="child_doc_types.map((type) => type.id)"
+                        :custom-label="
                           (opt) =>
                             $i18n.locale == 'ar'
                               ? child_doc_types.find((x) => x.id == opt).name
                               : child_doc_types.find((x) => x.id == opt).name_e
-                        ">
+                        "
+                      >
                       </multiselect>
                     </div>
                   </div>
@@ -1528,35 +1622,59 @@ export default {
                 <!--                  &lt;!&ndash;  end one delete  &ndash;&gt;-->
                 <!--                </div>-->
               </div>
-              <div class="col-xs-10 col-md-9 col-lg-3 d-flex align-items-center justify-content-end">
+              <div
+                class="col-xs-10 col-md-9 col-lg-3 d-flex align-items-center justify-content-end"
+              >
                 <div>
                   <!-- <b-button class="mx-1 custom-btn-background">
                                                                               {{ $t("general.filter") }}
                                                                               <i class="fas fa-filter"></i>
                                                                             </b-button> -->
                   <!-- start Pagination -->
-                  <div class="d-inline-flex align-items-center pagination-custom">
+                  <div
+                    class="d-inline-flex align-items-center pagination-custom"
+                  >
                     <div class="d-inline-block" style="font-size: 15px">
                       {{ archivesPagination.from }}-{{ archivesPagination.to }}
                       /
                       {{ archivesPagination.total }}
                     </div>
                     <div class="d-inline-block">
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          archivesPagination.current_page == 1 ? 'none' : '',
-                      }" @click.prevent="getPaginatedArchFiles(archivesPagination.current_page - 1)">
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            archivesPagination.current_page == 1 ? 'none' : '',
+                        }"
+                        @click.prevent="
+                          getPaginatedArchFiles(
+                            archivesPagination.current_page - 1
+                          )
+                        "
+                      >
                         <span>&lt;</span>
                       </a>
-                      <input type="text" @keyup.enter="getPaginatedArchFiles()" v-model="current_page"
-                        class="pagination-current-page" />
-                      <a href="javascript:void(0)" :style="{
-                        'pointer-events':
-                          archivesPagination.last_page ==
+                      <input
+                        type="text"
+                        @keyup.enter="getPaginatedArchFiles()"
+                        v-model="current_page"
+                        class="pagination-current-page"
+                      />
+                      <a
+                        href="javascript:void(0)"
+                        :style="{
+                          'pointer-events':
+                            archivesPagination.last_page ==
                             archivesPagination.current_page
-                            ? 'none'
-                            : '',
-                      }" @click.prevent="getPaginatedArchFiles(archivesPagination.current_page + 1)">
+                              ? 'none'
+                              : '',
+                        }"
+                        @click.prevent="
+                          getPaginatedArchFiles(
+                            archivesPagination.current_page + 1
+                          )
+                        "
+                      >
                         <span>&gt;</span>
                       </a>
                     </div>
@@ -1567,24 +1685,49 @@ export default {
             </div>
 
             <!--  create   -->
-            <b-modal dialog-class="modal-full-width" id="create" :title="$t('general.FileUploads')" title-class="font-18"
-              size="lg" body-class="p-4 " :hide-footer="true" @show="resetModal" @hidden="resetModalHidden">
+            <b-modal
+              dialog-class="modal-full-width"
+              id="create"
+              :title="$t('general.FileUploads')"
+              title-class="font-18"
+              size="lg"
+              body-class="p-4 "
+              :hide-footer="true"
+              @show="resetModal"
+              @hidden="resetModalHidden"
+            >
               <form>
                 <div class="card">
                   <div class="card-body">
                     <div class="mb-3 d-flex justify-content-end">
                       <template v-if="!is_disabled">
-                        <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader"
-                          @click.prevent="AddSubmit">
+                        <b-button
+                          variant="success"
+                          type="submit"
+                          class="mx-1"
+                          v-if="!isLoader"
+                          @click.prevent="AddSubmit"
+                        >
                           {{ $t("general.Add") }}
                         </b-button>
-                        <b-button variant="success" class="mx-1" disabled v-else>
+                        <b-button
+                          variant="success"
+                          class="mx-1"
+                          disabled
+                          v-else
+                        >
                           <b-spinner small></b-spinner>
-                          <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                          <span class="sr-only"
+                            >{{ $t("login.Loading") }}...</span
+                          >
                         </b-button>
                       </template>
 
-                      <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`create`)">
+                      <b-button
+                        variant="danger"
+                        type="button"
+                        @click.prevent="$bvModal.hide(`create`)"
+                      >
                         {{ $t("general.Cancel") }}
                       </b-button>
                     </div>
@@ -1594,265 +1737,453 @@ export default {
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <label class="my-1 mr-2">{{ $t("general.document") }}</label>
-                            <multiselect @select="getDocumentFields" v-model="currentDocument"
-                              :options="currentNode ? currentNode.sub_docs : []" :custom-label="
-                                (opt) => ($i18n.locale == 'ar' ? opt.name : opt.name_e)
-                              ">
+                            <label class="my-1 mr-2">{{
+                              $t("general.document")
+                            }}</label>
+                            <multiselect
+                              @select="getDocumentFields"
+                              v-model="currentDocument"
+                              :options="currentNode ? currentNode.sub_docs : []"
+                              :custom-label="
+                                (opt) =>
+                                  $i18n.locale == 'ar' ? opt.name : opt.name_e
+                              "
+                            >
                             </multiselect>
                           </div>
                         </div>
                         <template v-if="currentDocument">
-                          <div v-for="(field, index) in nodeFields" :key="field.id" class="col-lg-6">
-                            <div v-if="field.doc_field_id.data_type.name_e == 'DATE'" class="form-group">
+                          <div
+                            v-for="(field, index) in nodeFields"
+                            :key="field.id"
+                            class="col-lg-6"
+                          >
+                            <div
+                              v-if="
+                                field.doc_field_id.data_type.name_e == 'DATE'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <date-picker v-model="field.value" type="date" confirm></date-picker>
+                              <date-picker
+                                v-model="field.value"
+                                type="date"
+                                confirm
+                              ></date-picker>
                             </div>
-                            <div v-else-if="
-                              field.doc_field_id.data_type.name_e == 'Lookup (table)'
-                            " class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e ==
+                                'Lookup (table)'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
-                                }}</label>
-                              <span v-if="field.is_required == 1" class="text-danger">*</span>
-                              <multiselect v-model="$v.nodeFields.$each[index].value.$model" @input="
-                                showComponentModal(
-                                  $v.nodeFields.$each[index].value.$model,
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
+                                }}</label
+                              >
+                              <span
+                                v-if="field.is_required == 1"
+                                class="text-danger"
+                                >*</span
+                              >
+                              <multiselect
+                                v-model="
+                                  $v.nodeFields.$each[index].value.$model
+                                "
+                                @input="
+                                  showComponentModal(
+                                    $v.nodeFields.$each[index].value.$model,
+                                    lockups.find(
+                                      (e) =>
+                                        field.doc_field_id.name_e ==
+                                        e.field_name
+                                    ).table,
+                                    index
+                                  )
+                                "
+                                :options="
+                                  lockups.length > 0 &&
                                   lockups.find(
-                                    (e) => field.doc_field_id.name_e == e.field_name
-                                  ).table,
-                                  index
-                                )
-                              " :options="
-  lockups.length > 0 &&
-    lockups.find(
-      (e) => field.doc_field_id.name_e == e.field_name
-    )
-    ? lockups
-      .find(
-        (e) => field.doc_field_id.name_e == e.field_name
-      )
-      .field_data.map(
-        (type) =>
-          type[
-          lockups.find(
-            (e) =>
-              field.doc_field_id.name_e ==
-              e.field_name
-          ).column
-          ]
-      )
-    : []
-" :class="{
-  'is-invalid':
-    field.is_required == 1 &&
-    $v.nodeFields.$each[index].value.$error,
-  'is-valid':
-    field.is_required != 1 ||
-    !$v.nodeFields.$each[index].value.$invalid,
-}">
+                                    (e) =>
+                                      field.doc_field_id.name_e == e.field_name
+                                  )
+                                    ? lockups
+                                        .find(
+                                          (e) =>
+                                            field.doc_field_id.name_e ==
+                                            e.field_name
+                                        )
+                                        .field_data.map(
+                                          (type) =>
+                                            type[
+                                              lockups.find(
+                                                (e) =>
+                                                  field.doc_field_id.name_e ==
+                                                  e.field_name
+                                              ).column
+                                            ]
+                                        )
+                                    : []
+                                "
+                                :class="{
+                                  'is-invalid':
+                                    field.is_required == 1 &&
+                                    $v.nodeFields.$each[index].value.$error,
+                                  'is-valid':
+                                    field.is_required != 1 ||
+                                    !$v.nodeFields.$each[index].value.$invalid,
+                                }"
+                              >
                               </multiselect>
                             </div>
-                            <template v-else-if="
-                              field.doc_field_id.data_type.name_e == 'ENUM (droplist)'
-                            ">
+                            <template
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e ==
+                                'ENUM (droplist)'
+                              "
+                            >
                               <div class="form-group">
                                 <label class="control-label">
                                   {{
                                     $i18n.locale == "ar"
-                                    ? field.doc_field_id.name
-                                    : field.doc_field_id.name_e
-                                  }}</label>
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
-                                <multiselect @input="
-                                  showPropertyModal(
-                                    $event,
-                                    field.doc_field_id.tree_property_id
-                                  )
-                                " v-model="$v.nodeFields.$each[index].value.$model" :options="
-  getCurrentTreeProps(
-    field.doc_field_id.tree_property_id
-  )
-" :custom-label="
-  (opt) =>
-    $i18n.locale == 'ar' ? opt.name : opt.name_e
-" :class="{
-  'is-invalid':
-    field.is_required == 1 &&
-    $v.nodeFields.$each[index].value.$error,
-  'is-valid':
-    field.is_required != 1 ||
-    !$v.nodeFields.$each[index].value.$invalid,
-}">
+                                      ? field.doc_field_id.name
+                                      : field.doc_field_id.name_e
+                                  }}</label
+                                >
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
+                                <multiselect
+                                  @input="
+                                    showPropertyModal(
+                                      $event,
+                                      field.doc_field_id.tree_property_id
+                                    )
+                                  "
+                                  v-model="
+                                    $v.nodeFields.$each[index].value.$model
+                                  "
+                                  :options="
+                                    getCurrentTreeProps(
+                                      field.doc_field_id.tree_property_id
+                                    )
+                                  "
+                                  :custom-label="
+                                    (opt) =>
+                                      $i18n.locale == 'ar'
+                                        ? opt.name
+                                        : opt.name_e
+                                  "
+                                  :class="{
+                                    'is-invalid':
+                                      field.is_required == 1 &&
+                                      $v.nodeFields.$each[index].value.$error,
+                                    'is-valid':
+                                      field.is_required != 1 ||
+                                      !$v.nodeFields.$each[index].value
+                                        .$invalid,
+                                  }"
+                                >
                                 </multiselect>
                               </div>
                             </template>
-                            <div v-else-if="field.doc_field_id.data_type.name_e == 'TIME'" class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e == 'TIME'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <b-form-timepicker v-model="field.value"></b-form-timepicker>
+                              <b-form-timepicker
+                                v-model="field.value"
+                              ></b-form-timepicker>
                             </div>
-                            <div v-else-if="
-                              field.doc_field_id.data_type.name_e == 'TIMESTAMP'
-                            " class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e ==
+                                'TIMESTAMP'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <date-picker v-model="field.value" confirm type="datetime"></date-picker>
+                              <date-picker
+                                v-model="field.value"
+                                confirm
+                                type="datetime"
+                              ></date-picker>
                             </div>
-                            <div v-else-if="field.doc_field_id.data_type.name_e == 'INTEGER'" class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e == 'INTEGER'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <input type="number" class="form-control" data-create="9" step="1"
-                                v-model="$v.nodeFields.$each[index].value.$model" :class="{
+                              <input
+                                type="number"
+                                class="form-control"
+                                data-create="9"
+                                step="1"
+                                v-model="
+                                  $v.nodeFields.$each[index].value.$model
+                                "
+                                :class="{
                                   'is-invalid':
                                     field.is_required == 1 &&
                                     $v.nodeFields.$each[index].value.$error,
                                   'is-valid':
                                     field.is_required != 1 ||
                                     !$v.nodeFields.$each[index].value.$invalid,
-                                }" />
+                                }"
+                              />
                             </div>
-                            <div v-else-if="field.doc_field_id.data_type.name_e == 'BOOLEAN'" class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e == 'BOOLEAN'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <select class="form-control" v-model="$v.nodeFields.$each[index].value.$model" :class="{
-                                'is-invalid':
-                                  field.is_required == 1 &&
-                                  $v.nodeFields.$each[index].value.$error,
-                                'is-valid':
-                                  field.is_required != 1 ||
-                                  !$v.nodeFields.$each[index].value.$invalid,
-                              }">
-                                <option value="true">{{ $t("general.true") }}</option>
-                                <option value="false">{{ $t("general.false") }}</option>
+                              <select
+                                class="form-control"
+                                v-model="
+                                  $v.nodeFields.$each[index].value.$model
+                                "
+                                :class="{
+                                  'is-invalid':
+                                    field.is_required == 1 &&
+                                    $v.nodeFields.$each[index].value.$error,
+                                  'is-valid':
+                                    field.is_required != 1 ||
+                                    !$v.nodeFields.$each[index].value.$invalid,
+                                }"
+                              >
+                                <option value="true">
+                                  {{ $t("general.true") }}
+                                </option>
+                                <option value="false">
+                                  {{ $t("general.false") }}
+                                </option>
                               </select>
                             </div>
-                            <div v-else-if="
-                              field.doc_field_id.data_type.name_e == 'FLOAT' ||
-                              field.doc_field_id.data_type.name_e == 'DOUBLE'
-                            " class="form-group">
+                            <div
+                              v-else-if="
+                                field.doc_field_id.data_type.name_e ==
+                                  'FLOAT' ||
+                                field.doc_field_id.data_type.name_e == 'DOUBLE'
+                              "
+                              class="form-group"
+                            >
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <input type="number" class="form-control" data-create="9" step="0.001"
-                                v-model="$v.nodeFields.$each[index].value.$model" :class="{
+                              <input
+                                type="number"
+                                class="form-control"
+                                data-create="9"
+                                step="0.001"
+                                v-model="
+                                  $v.nodeFields.$each[index].value.$model
+                                "
+                                :class="{
                                   'is-invalid':
                                     field.is_required == 1 &&
                                     $v.nodeFields.$each[index].value.$error,
                                   'is-valid':
                                     field.is_required != 1 ||
                                     !$v.nodeFields.$each[index].value.$invalid,
-                                }" />
+                                }"
+                              />
                             </div>
                             <div v-else class="form-group">
                               <label class="control-label">
                                 {{
                                   $i18n.locale == "ar"
-                                  ? field.doc_field_id.name
-                                  : field.doc_field_id.name_e
+                                    ? field.doc_field_id.name
+                                    : field.doc_field_id.name_e
                                 }}
-                                <span v-if="field.is_required == 1" class="text-danger">*</span>
+                                <span
+                                  v-if="field.is_required == 1"
+                                  class="text-danger"
+                                  >*</span
+                                >
                               </label>
-                              <input type="text" class="form-control" data-create="9"
-                                v-model="$v.nodeFields.$each[index].value.$model" :class="{
+                              <input
+                                type="text"
+                                class="form-control"
+                                data-create="9"
+                                v-model="
+                                  $v.nodeFields.$each[index].value.$model
+                                "
+                                :class="{
                                   'is-invalid':
                                     field.is_required == 1 &&
                                     $v.nodeFields.$each[index].value.$error,
                                   'is-valid':
                                     field.is_required != 1 ||
                                     !$v.nodeFields.$each[index].value.$invalid,
-                                }" />
+                                }"
+                              />
                             </div>
                           </div>
                         </template>
                       </div>
                     </b-tab>
-                    <b-tab :disabled="!archive_id" :title="$t('general.Uploads')">
+                    <b-tab
+                      :disabled="!archive_id"
+                      :title="$t('general.Uploads')"
+                    >
                       <div class="row">
-                        <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file" id="uploadImageCreate"
-                          @change.prevent="onImageChanged" class="input-file-upload position-absolute" :class="[
+                        <input
+                          accept="image/png, image/gif, image/jpeg, image/jpg"
+                          type="file"
+                          id="uploadImageCreate"
+                          @change.prevent="onImageChanged"
+                          class="input-file-upload position-absolute"
+                          :class="[
                             'd-none',
                             {
-                              'is-invalid': $v.create.media.$error || errors.media,
-                              'is-valid': !$v.create.media.$invalid && !errors.media,
+                              'is-invalid':
+                                $v.create.media.$error || errors.media,
+                              'is-valid':
+                                !$v.create.media.$invalid && !errors.media,
                             },
-                          ]" />
+                          ]"
+                        />
                         <div class="col-md-8 my-1">
                           <!-- file upload -->
-                          <div class="row align-content-between" style="width: 100%; height: 100%">
+                          <div
+                            class="row align-content-between"
+                            style="width: 100%; height: 100%"
+                          >
                             <div class="col-12">
                               <div class="d-flex flex-wrap">
-                                <div :class="[
-                                  'dropzone-previews col-4 position-relative mb-2',
-                                ]" v-for="(photo, index) in images" :key="photo.id">
-                                  <div :class="[
-                                    'card mb-0 shadow-none border',
-                                    images.length - 1 == index ? 'bg-primary' : '',
-                                  ]">
+                                <div
+                                  :class="[
+                                    'dropzone-previews col-4 position-relative mb-2',
+                                  ]"
+                                  v-for="(photo, index) in images"
+                                  :key="photo.id"
+                                >
+                                  <div
+                                    :class="[
+                                      'card mb-0 shadow-none border',
+                                      images.length - 1 == index
+                                        ? 'bg-primary'
+                                        : '',
+                                    ]"
+                                  >
                                     <div class="p-2">
                                       <div class="row align-items-center">
-                                        <div class="col-auto" @click="showPhoto = photo.webp">
-                                          <img data-dz-thumbnail :src="photo.webp" class="avatar-sm rounded bg-light"
-                                            @error="src = '/images/img-1.png'" />
+                                        <div
+                                          class="col-auto"
+                                          @click="showPhoto = photo.webp"
+                                        >
+                                          <img
+                                            data-dz-thumbnail
+                                            :src="photo.webp"
+                                            class="avatar-sm rounded bg-light"
+                                            @error="src = '/images/img-1.png'"
+                                          />
                                         </div>
                                         <div class="col pl-0">
-                                          <a href="javascript:void(0);" :class="[
-                                            'font-weight-bold',
-                                            images.length - 1 == index
-                                              ? 'text-white'
-                                              : 'text-muted',
-                                          ]" data-dz-name>
+                                          <a
+                                            href="javascript:void(0);"
+                                            :class="[
+                                              'font-weight-bold',
+                                              images.length - 1 == index
+                                                ? 'text-white'
+                                                : 'text-muted',
+                                            ]"
+                                            data-dz-name
+                                          >
                                             {{ photo.name }}
                                           </a>
                                         </div>
                                         <!-- Button -->
-                                        <a href="javascript:void(0);" :class="[
-                                          'btn-danger dropzone-close',
-                                          $i18n.locale == 'ar'
-                                            ? 'dropzone-close-rtl'
-                                            : '',
-                                        ]" data-dz-remove @click.prevent="
-  deleteImageCreate(photo.id, index)
-">
+                                        <a
+                                          href="javascript:void(0);"
+                                          :class="[
+                                            'btn-danger dropzone-close',
+                                            $i18n.locale == 'ar'
+                                              ? 'dropzone-close-rtl'
+                                              : '',
+                                          ]"
+                                          data-dz-remove
+                                          @click.prevent="
+                                            deleteImageCreate(photo.id, index)
+                                          "
+                                        >
                                           <i class="fe-x"></i>
                                         </a>
                                       </div>
@@ -1862,20 +2193,36 @@ export default {
                               </div>
                             </div>
                             <div class="footer-image col-12">
-                              <b-button @click="changePhoto" variant="success" type="button"
-                                class="mx-1 font-weight-bold px-3" v-if="!isLoader">
+                              <b-button
+                                @click="changePhoto"
+                                variant="success"
+                                type="button"
+                                class="mx-1 font-weight-bold px-3"
+                                v-if="!isLoader"
+                              >
                                 {{ $t("general.Add") }}
                               </b-button>
-                              <b-button variant="success" class="mx-1" disabled v-else>
+                              <b-button
+                                variant="success"
+                                class="mx-1"
+                                disabled
+                                v-else
+                              >
                                 <b-spinner small></b-spinner>
-                                <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                <span class="sr-only"
+                                  >{{ $t("login.Loading") }}...</span
+                                >
                               </b-button>
                             </div>
                           </div>
                         </div>
                         <div class="col-md-4">
                           <div class="show-dropzone">
-                            <img :src="showPhoto" class="img-thumbnail" @error="src = '/images/img-1.png'" />
+                            <img
+                              :src="showPhoto"
+                              class="img-thumbnail"
+                              @error="src = '/images/img-1.png'"
+                            />
                           </div>
                         </div>
                       </div>
@@ -1886,49 +2233,98 @@ export default {
             </b-modal>
             <!--show file-->
 
-            <b-modal dialog-class="modal-full-width" id="show-file" :title="$t('general.SHOW_FILE')" title-class="font-18"
-              size="lg" body-class="p-4 " :hide-footer="true" @hidden="showPhoto = '/images/img-1.png'">
+            <b-modal
+              dialog-class="modal-full-width"
+              id="show-file"
+              :title="$t('general.SHOW_FILE')"
+              title-class="font-18"
+              size="lg"
+              body-class="p-4 "
+              :hide-footer="true"
+              @hidden="showPhoto = '/images/img-1.png'"
+            >
               <form>
                 <div class="d-flex justify-content-end">
-                  <button type="button" v-print="'#printDepartment'" class="custom-btn-dowonload">
+                  <button
+                    type="button"
+                    v-print="'#printDepartment'"
+                    class="custom-btn-dowonload"
+                  >
                     <i class="fe-printer"></i>
                   </button>
-                  <a v-if="fileImages.length > 0" class="custom-btn-dowonload"
-                    :href="fileImages[fileImages.length - 1].url" download>
+                  <a
+                    v-if="fileImages.length > 0"
+                    class="custom-btn-dowonload"
+                    :href="fileImages[fileImages.length - 1].url"
+                    download
+                  >
                     <i class="fa fa-file-pdf"></i>
                   </a>
                 </div>
-                <div class="card" id="printDepartment" style="background: none !important">
+                <div
+                  class="card"
+                  id="printDepartment"
+                  style="background: none !important"
+                >
                   <div class="row">
-                    <div v-for="(field, index) in fileFields" :key="index" class="col-lg-6">
+                    <div
+                      v-for="(field, index) in fileFields"
+                      :key="index"
+                      class="col-lg-6"
+                    >
                       <div class="form-group">
                         <label class="control-label">
                           {{ $i18n.locale == "ar" ? field.name : field.name_e }}
                         </label>
-                        <input readonly :value="
-                          typeof field.value === 'object'
-                            ? $i18n.locale == 'ar'
-                              ? field.value.name
-                              : field.value.name_e
-                            : field.value
-                        " type="text" class="form-control" data-create="9" step="0.1" />
+                        <input
+                          readonly
+                          :value="
+                            typeof field.value === 'object'
+                              ? $i18n.locale == 'ar'
+                                ? field.value.name
+                                : field.value.name_e
+                              : field.value
+                          "
+                          type="text"
+                          class="form-control"
+                          data-create="9"
+                          step="0.1"
+                        />
                       </div>
                     </div>
                   </div>
                   <div class="row mt-4">
                     <div class="col-md-8 my-1">
                       <!-- file upload -->
-                      <div class="row align-content-between" style="width: 100%; height: 100%">
+                      <div
+                        class="row align-content-between"
+                        style="width: 100%; height: 100%"
+                      >
                         <div class="col-12">
                           <div class="d-flex flex-wrap">
-                            <div :class="['dropzone-previews col-12 position-relative mb-2']"
-                              v-for="(photo, index) in fileImages" :key="photo.id">
-                              <div v-if="photo.mime_type != 'application/pdf'" :class="['card mb-0 shadow-none border']">
+                            <div
+                              :class="[
+                                'dropzone-previews col-12 position-relative mb-2',
+                              ]"
+                              v-for="(photo, index) in fileImages"
+                              :key="photo.id"
+                            >
+                              <div
+                                v-if="photo.mime_type != 'application/pdf'"
+                                :class="['card mb-0 shadow-none border']"
+                              >
                                 <div class="p-2">
                                   <div class="row align-items-center">
-                                    <div class="col-auto" @click="showPhoto = photo.webp">
-                                      <img data-dz-thumbnail :src="photo.webp" class="avatar-sm rounded bg-light"
-                                        @error="src = '/images/img-1.png'" />
+                                    <div
+                                      class="col-auto"
+                                      @click="showPhoto = photo.webp"
+                                    >
+                                      <img
+                                        data-dz-thumbnail
+                                        :src="photo.webp"
+                                        class="avatar-sm rounded bg-light"
+                                        @error="src = '/images/img-1.png'"
+                                      />
                                     </div>
                                   </div>
                                 </div>
@@ -1940,7 +2336,11 @@ export default {
                     </div>
                     <div class="single-image col-md-4">
                       <div class="show-dropzone">
-                        <img :src="showPhoto" class="img-thumbnail" @error="src = '/images/img-1.png'" />
+                        <img
+                          :src="showPhoto"
+                          class="img-thumbnail"
+                          @error="src = '/images/img-1.png'"
+                        />
                       </div>
                     </div>
                   </div>
@@ -1955,12 +2355,12 @@ export default {
                     {{ $t("general.currentNode") }} :
                     {{
                       $i18n.locale == "ar"
-                      ? typeof this.currentNode.name === "object"
-                        ? $i18n.locale == "ar"
-                          ? this.currentNode.name.name
-                          : this.currentNode.name.name_e
-                        : this.currentNode.name
-                      : typeof this.currentNode.name_e === "object"
+                        ? typeof this.currentNode.name === "object"
+                          ? $i18n.locale == "ar"
+                            ? this.currentNode.name.name
+                            : this.currentNode.name.name_e
+                          : this.currentNode.name
+                        : typeof this.currentNode.name_e === "object"
                         ? $i18n.locale == "ar"
                           ? this.currentNode.name_e.name
                           : this.currentNode.name_e.name_e
@@ -1969,22 +2369,41 @@ export default {
                   </template>
                 </div>
                 <div class="references border">
-                  <TreeBrowser @nodeExpanded="setChildNodes" @onClick="nodeWasClicked" @onDoubleClicked="showModal"
-                    :nodes="root" />
+                  <TreeBrowser
+                    @nodeExpanded="setChildNodes"
+                    @onClick="nodeWasClicked"
+                    @onDoubleClicked="showModal"
+                    :nodes="root"
+                  />
                 </div>
               </div>
               <div class="col-lg-5">
                 <template v-if="archiveFiles.length">
-                  <Files @onDoubleClicked="showFileModal" :archiveFiles="archiveFiles" :isActiveFile="isActiveFile"
-                    :isSearch="isSearch" />
+                  <Files
+                    @onDoubleClicked="showFileModal"
+                    :archiveFiles="archiveFiles"
+                    :isActiveFile="isActiveFile"
+                    :isSearch="isSearch"
+                  />
                 </template>
                 <div v-else-if="searchFinished" class="text-center">
-                  {{ $t("general.NO_FILES_FOUND", { value: from || to ? `${from} - ${to}` : search }) }}
+                  {{
+                    $t("general.NO_FILES_FOUND", {
+                      value: from || to ? `${from} - ${to}` : search,
+                    })
+                  }}
                 </div>
               </div>
-              <div class="col-lg-4" v-if="$store.state.archiving.archiveFile.length > 0">
-                <Details :currentNode="currentNode" @getDataTree="getData" @pdfPopup="generateReport"
-                  @deleteFile="deleteFileComponent" />
+              <div
+                class="col-lg-4"
+                v-if="$store.state.archiving.archiveFile.length > 0"
+              >
+                <Details
+                  :currentNode="currentNode"
+                  @getDataTree="getData"
+                  @pdfPopup="generateReport"
+                  @deleteFile="deleteFileComponent"
+                />
               </div>
             </div>
           </div>

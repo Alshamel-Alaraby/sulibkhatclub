@@ -14,6 +14,7 @@ class JobTitleRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'nullable',
             'name' => 'required|string|max:100|unique:hr_job_title,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'name_e' => 'required|string|max:100|unique:hr_job_title,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
         ];

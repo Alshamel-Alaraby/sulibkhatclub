@@ -39,8 +39,6 @@ class RlstUnitStatuesTableSeeder extends Seeder
                 'name' => 'تحت الصيانه',
                 'name_e' => 'under_maintinance',
             ],
-
-
         ];
 
         foreach ($attributes as $attribute) {

@@ -26,11 +26,14 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'name_e' => 'nullable|string|max:255',
-            'is_active' => 'nullable|in:active,inactive',
+            'is_active' => 'nullable',
+
             // "media" => ["required", "exists:media,id", new \App\Rules\MediaRule()],
             'email' => 'nullable|string|email|max:255|unique:general_users,email',
             'password' => 'nullable|string|min:0',
-            // 'employee_id' => 'nullable|exists:general_employees,id',
+            'employee_id' => 'nullable|exists:general_employees,id',
+            'role_id' => 'nullable|exists:roles,id',
+            'company_id' => 'nullable'
         ];
     }
 
@@ -62,7 +65,6 @@ class StoreUserRequest extends FormRequest
             'password.min' => __('message.field must be more than 8 character'),
             'password.confirmed' => __('message.field must be confirmed'),
             'employee_id.exists' => __('message.field must be exists'),
-            'media.exists' => __('message.field must be exists'),
             'media.media' => __('message.field must be media'),
 
         ];

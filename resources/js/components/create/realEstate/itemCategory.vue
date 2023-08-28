@@ -4,13 +4,13 @@ import Switches from "vue-switches";
 import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
 import TreeBrowser from "./tree";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 
 /**
  * Advanced Table component
@@ -208,7 +208,7 @@ export default {
                     this.create.parent_id = 0;
                 }
                 adminApi
-                    .post(`real-estate/Category-item`, this.create)
+                    .post(`real-estate/Category-item`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
                     .then((res) => {
                         this.$emit("created");
                         this.is_disabled = true;

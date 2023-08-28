@@ -14,6 +14,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
+//use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -54,10 +55,6 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsTo(Employee::class);
     }
 
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class, 'general_role_user', 'user_id', 'role_id');
-    }
 
     public function getActivitylogOptions(): LogOptions
     {

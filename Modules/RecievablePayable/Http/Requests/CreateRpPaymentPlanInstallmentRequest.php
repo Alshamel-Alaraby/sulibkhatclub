@@ -31,6 +31,7 @@ class CreateRpPaymentPlanInstallmentRequest extends FormRequest
             'payment_plan_installments.*.day_month' => [],
             'payment_plan_installments.*.note_a' => 'nullable|string',
             'payment_plan_installments.*.note_e' => 'nullable|string',
+            "company_id"=>'nullable',
         ];
     }
 

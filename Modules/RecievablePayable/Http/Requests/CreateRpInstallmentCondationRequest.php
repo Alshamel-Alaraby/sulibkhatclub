@@ -17,7 +17,8 @@ class CreateRpInstallmentCondationRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:rp_installment_condations,name',
             'name_e' => 'required|string|max:255|unique:rp_installment_condations,name_e',
-            'is_default'=>[]
+            'is_default'=>[],
+            "company_id"=>'nullable',
         ];
     }
 

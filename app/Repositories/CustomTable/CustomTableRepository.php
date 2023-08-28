@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CustomTableRepository implements CustomTableInterface
 {
-    public function __construct(private \App\Models\GeneralCustomTable$model)
+    public function __construct(private \App\Models\GeneralCustomTable $model)
     {
         $this->model = $model;
     }
@@ -26,6 +26,10 @@ class CustomTableRepository implements CustomTableInterface
                 $models->where('company_id',$request->company_id)->orWhere(function ($q) use ($x){
                     $q->where('company_id',0)->whereNotIn('table_name',$x);
                 });
+        }
+
+        if ($request->module){
+            $models->where('type',$request->module);
         }
 
         if ($request->per_page) {

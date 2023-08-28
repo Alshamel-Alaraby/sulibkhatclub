@@ -31,7 +31,8 @@ class DepartmentRequest extends FormRequest
                 "parent_id" => ['nullable', 'integer'],
                 "is_active" => "nullable|in:active,inactive",
                 "is_key"=>[],
-                "key_value"=>[]
+                "key_value"=>[],
+                "company_id"=>'nullable',
             ];
         }
         return [
@@ -40,7 +41,8 @@ class DepartmentRequest extends FormRequest
             "parent_id" => ['nullable', 'integer'],
             "is_active" => "nullable|in:active,inactive",
             "is_key"=>[],
-            "key_value"=>[]
+            "key_value"=>[],
+            "company_id"=>'nullable',
         ];
     }
 

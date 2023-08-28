@@ -27,6 +27,7 @@ class CategoryItemRequest extends FormRequest
             'name'      => 'sometimes|string|max:255|unique:rlst_category_item,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'name_e'    => 'sometimes|string|max:255|unique:rlst_category_item,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
             'parent_id' => ["nullable"],
+            "company_id"=>'nullable',
         ];
     }
 

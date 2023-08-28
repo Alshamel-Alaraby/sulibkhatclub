@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class RestartPeriodTableSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the databse seeds.
      *
      * @return void
      */

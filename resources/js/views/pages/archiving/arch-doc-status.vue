@@ -1,14 +1,15 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -19,26 +20,10 @@ export default {
     meta: [{ name: "description", content: "Arch Doc Status" }],
   },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("archiving-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("arch doc status") ||
-        vm.$store.state.auth.work_flow_trees.includes("archiving") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+      next((vm) => {
+      return permissionGuard(vm, "Archive Document Status", "all Store");
     });
+
   },
   components: {
     Layout,
@@ -47,26 +32,9 @@ export default {
     loader,
     Multiselect,
   },
-  // updated() {
-  //   $(".englishInput").keypress(function (event) {
-  //     var ew = event.which;
-  //     if (ew == 32) return true;
-  //     if (48 <= ew && ew <= 57) return true;
-  //     if (65 <= ew && ew <= 90) return true;
-  //     if (97 <= ew && ew <= 122) return true;
-  //     return false;
-  //   });
-  //   $(".arabicInput").keypress(function (event) {
-  //     var ew = event.which;
-  //     if (ew == 32) return true;
-  //     if (48 <= ew && ew <= 57) return false;
-  //     if (65 <= ew && ew <= 90) return false;
-  //     if (97 <= ew && ew <= 122) return false;
-  //     return true;
-  //   });
-  // },
   data() {
     return {
+        company_id:null,
       per_page: 50,
       search: "", //Search table column
       debounce: {},
@@ -145,6 +113,7 @@ export default {
     },
   },
   mounted() {
+    this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
   methods: {
@@ -362,6 +331,7 @@ export default {
         adminApi
           .post(`/arch-doc-status`, {
             ...this.create,
+              company_id: this.company_id
           })
           .then((res) => {
             this.getData();
@@ -410,6 +380,7 @@ export default {
           .put(`/arch-doc-status/${id}`, {
             name,
             name_e,
+            company_id: this.company_id
           })
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);

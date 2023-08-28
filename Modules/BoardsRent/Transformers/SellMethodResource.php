@@ -15,13 +15,15 @@ class SellMethodResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'name_e' => $this->name_e,
-            'commission_ratio' => $this->commission_ratio,
+            'id'                       => $this->id,
+            'name'                     => $this->name,
+            'name_e'                   => $this->name_e,
+            'commission_ratio'         => $this->commission_ratio,
             'target_calculation_ratio' => $this->target_calculation_ratio,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'is_all_value'             => $this->is_all_value,
+            'is_default'               => $this->is_default,
+            'created_at'               => $this->created_at,
+            'updated_at'               => $this->updated_at,
         ];
     }
 }

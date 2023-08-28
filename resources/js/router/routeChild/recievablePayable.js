@@ -56,7 +56,7 @@ export default [
         meta: {
             middleware: [auth,checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/InstallmentPaymentPlan'),
+        component: () => import('../../views/pages/recievablePayable/installmentPaymentPlan'),
     },
     {
         path: '/dashboard/payment-plan-installments',
@@ -74,17 +74,7 @@ export default [
         },
         component: () => import('../../views/pages/recievablePayable/documentPlans'),
     },
-    {
-        path: '/dashboard/screen-subcontact-group',
-        name: 'screen subcontact group',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/screenSubcontactgroup'),
-    },
-
     //start transaction
-
     {
         path: '/dashboard/receivablePayable/openingBalance',
         name: 'installment opening balance',
@@ -151,5 +141,40 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/report/voucher'),
+    },
+
+    //start document transaction
+
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/openingBalance',
+        name: 'installment opening balance',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/openingBalance'),
+    },
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/voucher',
+        name: 'receipt voucher',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/voucher'),
+    },
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/creditNote',
+        name: 'credit note',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/creditNote'),
+    },
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/debitNote',
+        name: 'debit note',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/debitNote'),
     },
 ];

@@ -20,6 +20,7 @@ class LocationResource extends JsonResource
             'name_e' => $this->name_e,
             'parent' => new LocationResource($this->parent),
             "priority" => new PriorityResource($this->priority),
+            "priority_id" => $this->priority_id,
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

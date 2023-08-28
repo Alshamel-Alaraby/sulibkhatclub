@@ -55,7 +55,7 @@
 import { formatDateOnly } from "../../helper/startDate";
 import adminApi from "../../api/adminAxios";
 import Swal from "sweetalert2";
-import transMixinComp from "../../helper/translation-comp-mixin";
+import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 
 export default {
   props: ["archiveFiles", "isActiveFile", "deleteFileId", "isSearch"],

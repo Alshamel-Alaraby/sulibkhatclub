@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->date('date');
+            $table->unsignedBigInteger('restart_period_id');
             $table->unsignedBigInteger('task_id');
             $table->unsignedBigInteger('department_id');
-            $table->string('is_active')->default('false');
+            $table->tinyInteger('is_active')->default(false);
             $table->timestamps();
         });
     }

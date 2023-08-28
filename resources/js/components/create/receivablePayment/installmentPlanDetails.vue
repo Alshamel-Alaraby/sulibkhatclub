@@ -4,11 +4,11 @@ import Switches from "vue-switches";
 import { required, integer, numeric } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../general/loader";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
 import InstallmentPaymentType from "./installmentPaymentType.vue";
-import transMixinComp from "../../../helper/translation-comp-mixin";
+import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 
 /**
  * Advanced Table component

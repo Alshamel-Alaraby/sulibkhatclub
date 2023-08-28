@@ -2,10 +2,12 @@
 
 namespace Modules\RecievablePayable\Entities;
 
+use App\Models\DocumentHeader;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Modules\RealEstate\Entities\RlstContract;
 use Modules\RealEstate\Entities\RlstInvoice;
 use Modules\RealEstate\Entities\RlstReservation;
@@ -66,6 +68,10 @@ class RpBreakDown extends Model
     {
         return $this->belongsTo(RlstReservation::class,'break_id',);
     }
+    public function documentHeader()
+    {
+        return $this->belongsTo(DocumentHeader::class,'break_id',);
+    }
 
     public function children()
     {
@@ -84,7 +90,6 @@ class RpBreakDown extends Model
 
     public function scopeFilterBreak($query , $request)
     {
-
         return $query->where(function ($q) use ($request){
             $q->where(function ($q) use ($request){
                 $q->when($request->customer_id,function ($q) use ($request){
@@ -126,10 +131,8 @@ class RpBreakDown extends Model
 
     }
 
-
-
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpBreakDownFactory::new();
-    }
+    // protected static function newFactory()
+    // {
+    //     return \Modules\RecievablePayable\Database\factories\RpBreakDownFactory::new();
+    // }
 }

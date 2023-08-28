@@ -26,6 +26,7 @@ class PayrollHeadRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'nullable',
             'name' => 'required|string|max:255',
             'name_e' => 'required|string|max:255',
         ];

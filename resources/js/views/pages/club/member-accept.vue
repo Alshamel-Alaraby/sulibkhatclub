@@ -1,21 +1,22 @@
 <script>
 import DatePicker from "vue2-datepicker";
-import Status from "../../../components/create/status.vue";
+import Status from "../../../components/create/general/status.vue";
 import Sponsor from "../../../components/create/club/sponsor.vue";
 import FinancialStatus from "../../../components/create/club/financialStatus.vue";
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import { required, minLength, maxLength, integer, requiredIf } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
+import permissionGuard from "../../../helper/permission";
+
 import alphaArabic from "../../../helper/alphaArabic";
 import alphaEnglish from "../../../helper/alphaEnglish";
 import { dynamicSortString, dynamicSortNumber } from "../../../helper/tableSort";
-import translation from "../../../helper/translation-mixin";
-import senderHoverHelper from "../../../helper/senderHoverHelper";
+import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
@@ -41,15 +42,6 @@ export default {
         loader,
         Multiselect,
     },
-    //   beforeRouteEnter(to, from, next) {
-    //     next((vm) => {
-    //       if (vm.$store.state.auth.work_flow_trees.includes('store') || vm.$store.state.auth.user.type == 'super_admin') {
-    //         return true;
-    //       } else {
-    //         return vm.$router.push({ name: "home" });
-    //       }
-    //     });
-    //   },
     data() {
         return {
             fields: [],
@@ -122,6 +114,12 @@ export default {
             }
         };
     },
+    beforeRouteEnter(to, from, next) {
+            next((vm) => {
+      return permissionGuard(vm, "Accepted Member", "all acceptedMembers club");
+    });
+
+    },
     validations: {
         create: {
             status_id: { required },
@@ -165,6 +163,12 @@ export default {
         this.getData();
     },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == 'user'){
+                return this.$store.state.auth.permissions.includes(item)
+            }
+            return true;
+        },
         showStatusModal() {
             if (this.create.status_id == 0) {
                 this.$bvModal.show("status-create");
@@ -386,7 +390,9 @@ export default {
                 .get(`/statuses`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });
+                    if(this.isPermission('create Status')){
+                        l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });
+                    }
                     this.statuses = l;
                 })
                 .catch((err) => {
@@ -406,7 +412,9 @@ export default {
                 .get(`/club-members/sponsers`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
+                    if(this.isPermission('create sponsor club')){
+                        l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
+                    }
                     this.sponsors = l;
                 })
                 .catch((err) => {
@@ -426,7 +434,9 @@ export default {
                 .get(`/club-members/financial-status`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف حالة مالية", name_e: "Add financial status" });
+                    if(this.isPermission('create financialStatus club')){
+                        l.unshift({ id: 0, name: "اضف حالة مالية", name_e: "Add financial status" });
+                    }
                     this.financialStatuses = l;
                 })
                 .catch((err) => {
@@ -564,7 +574,7 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-create-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
+                                            v-if="checkAll.length == 1 && isPermission('update acceptedMembers club')">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                 </div>

@@ -1,23 +1,24 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import outerAxios from "../../../api/outerAxios";
 import {required, numeric, integer,maxLength,between,decimal,minValue} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import { dynamicSortNumber } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateTime, formatDateOnly } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
+import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import InstallmentStatus from "../../../components/create/receivablePayment/installmentStatus";
 import InstallmentPlan from "../../../components/create/receivablePayment/installmentPlan.vue";
-import Document from "../../../components/create/document";
+import Document from "../../../components/create/general/document";
 import InstallmentPaymentType from "../../../components/create/receivablePayment/installmentPaymentType.vue";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -41,27 +42,10 @@ export default {
     InstallmentPaymentType
   },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (vm.$store.state.auth.work_flow_trees.includes("receivable payable-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (
-        vm.$store.state.auth.work_flow_trees.includes("payment plan installment") ||
-        vm.$store.state.auth.work_flow_trees.includes("receivable payable") ||
-        vm.$store.state.auth.user.type == "super_admin"
-      ) {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+        next((vm) => {
+      return permissionGuard(vm, "Payment Plan Installment RP", "all paymentPlanInstallment RP");
     });
-  },
+    },
   data() {
     return {
       per_page: 50,
@@ -202,6 +186,12 @@ export default {
     await this.getData();
   },
   methods: {
+      isPermission(item) {
+          if (this.$store.state.auth.type == 'user'){
+              return this.$store.state.auth.permissions.includes(item)
+          }
+          return true;
+      },
     arabicValueNoteCreate(txt,index){
           this.create.payment_plan_installments[index].note_a = arabicValue(txt);
     },
@@ -674,11 +664,13 @@ export default {
         .get(`recievable-payable/rp_installment_p_plan?null_payment_plan_installment=true`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({
-            id: 0,
-            name: "اضف خطة دفع",
-            name_e: "Add installment payment plan",
-          });
+            if(this.isPermission('create paymentPlan RP')){
+                l.unshift({
+                    id: 0,
+                    name: "اضف خطة دفع",
+                    name_e: "Add installment payment plan",
+                });
+            }
           this.installment_payment_plans = l;
         })
         .catch((err) => {
@@ -716,11 +708,13 @@ export default {
         .then((res) => {
           this.isLoader = false;
           let l = res.data.data;
-          l.unshift({
-            id: 0,
-            name: "اضف حالة الدفع",
-            name_e: "Add installment payment status",
-          });
+          if(this.isPermission('create status RP')){
+              l.unshift({
+                  id: 0,
+                  name: "اضف حالة الدفع",
+                  name_e: "Add installment payment status",
+              });
+          }
           this.installment_statuses = l;
         })
         .catch((err) => {
@@ -736,11 +730,6 @@ export default {
         .get(`/document`)
         .then((res) => {
             let l = res.data.data;
-            l.unshift({
-                id: 0,
-                name: "اضف مستند",
-                name_e: "Add Document",
-            });
           this.documentTypes = l;
         })
         .catch((err) => {
@@ -758,11 +747,13 @@ export default {
               .get(`/recievable-payable/rp_installment_payment_types`)
               .then((res) => {
                   let l = res.data.data;
-                  l.unshift({
-                      id: 0,
-                      name: "اضف نوع دفع",
-                      name_e: "Add installment payment type",
-                  });
+                  if(this.isPermission('create paymentType RP')){
+                      l.unshift({
+                          id: 0,
+                          name: "اضف نوع دفع",
+                          name_e: "Add installment payment type",
+                      });
+                  }
                   this.payment_types = l;
               })
               .catch((err) => {
@@ -926,11 +917,6 @@ export default {
       :defaultsKeys="defaultsKeys"
       @created="getInstallPaymentTypes"
     />
-    <Document
-        :companyKeys="companyKeys"
-        :defaultsKeys="defaultsKeys"
-        @created="getDocumentTypes"
-    />
 
     <div class="row">
       <div class="col-12">
@@ -980,6 +966,7 @@ export default {
             <div class="row justify-content-between align-items-center mb-2 px-1">
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <b-button
+                    v-if="isPermission('create paymentPlanInstallment RP')"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -997,14 +984,14 @@ export default {
                   <button
                     class="custom-btn-dowonload"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('update paymentPlanInstallment RP')"
                   >
                     <i class="mdi mdi-square-edit-outline"></i>
                   </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length > 1"
+                    v-if="checkAll.length > 1 && isPermission('delete paymentPlanInstallment RP')"
                     @click.prevent="deleteScreenButton(checkAll)"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1013,7 +1000,7 @@ export default {
                   <!--  start one delete  -->
                   <button
                     class="custom-btn-dowonload"
-                    v-if="checkAll.length == 1"
+                    v-if="checkAll.length == 1 && isPermission('delete paymentPlanInstallment RP')"
                     @click.prevent="deleteScreenButton(checkAll[0])"
                   >
                     <i class="fas fa-trash-alt"></i>
@@ -1457,7 +1444,7 @@ export default {
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label class="control-label">
-                                        {{ getCompanyKey("day_month") }}
+                                        {{ getCompanyKey("day_mounth") }}
                                         <span class="text-danger">*</span>
                                     </label>
                                     <input
@@ -1663,7 +1650,8 @@ export default {
                 <tbody v-if="payment_plan_installments.length > 0">
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="isPermission('update paymentPlanInstallment RP')?
+                    $bvModal.show(`modal-edit-${data.id}`): false"
                     v-for="(data, index) in payment_plan_installments"
                     :key="data.id"
                     class="body-tr-custom"
@@ -1729,6 +1717,7 @@ export default {
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
                           <a
+                            v-if="isPermission('update paymentPlanInstallment RP')"
                             class="dropdown-item"
                             href="#"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
@@ -1741,6 +1730,7 @@ export default {
                             </div>
                           </a>
                           <a
+                            v-if="isPermission('delete paymentPlanInstallment RP')"
                             class="dropdown-item text-black"
                             href="#"
                             @click.prevent="deleteScreenButton(data.id)"
@@ -2088,7 +2078,7 @@ export default {
                                         <div class="col-lg-2">
                                             <div class="form-group">
                                                 <label class="control-label">
-                                                    {{ getCompanyKey("day_month") }}
+                                                    {{ getCompanyKey("day_mounth") }}
                                                     <span class="text-danger">*</span>
                                                 </label>
                                                 <input

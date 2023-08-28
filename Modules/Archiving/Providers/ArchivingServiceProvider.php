@@ -4,6 +4,8 @@ namespace Modules\Archiving\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Archiving\Repositories\ArchCustomTable\ArchCustomTableInterface;
+use Modules\Archiving\Repositories\ArchCustomTable\ArchCustomTableRepository;
 use Modules\Archiving\Repositories\ClosedReferenceInterface;
 use Modules\Archiving\Repositories\ClosedReferenceRepository;
 use Modules\Archiving\Repositories\DepartmentInterface;
@@ -57,6 +59,7 @@ class ArchivingServiceProvider extends ServiceProvider
         $this->app->bind(DocTypeFieldInterface::class, DocTypeFieldRepository::class);
         $this->app->bind(DocumentDtlInterface::class, DocumentDtlRepository::class);
         $this->app->bind(DocumentStatusInterface::class, DocumentStatusRepository::class);
+        $this->app->bind(ArchCustomTableInterface::class, ArchCustomTableRepository::class);
     }
 
     /**

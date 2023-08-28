@@ -3,18 +3,11 @@
 namespace Modules\RecievablePayable\Http\Controllers;
 
 use App\Traits\BulkDeleteTrait;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
-use Modules\RecievablePayable\Entities\RpOpeningBalance;
 use Modules\RecievablePayable\Http\Requests\CreateOpeningBalanceRequest;
-use Modules\RecievablePayable\Http\Requests\CreateRpDocumentPlanRequest;
 use Modules\RecievablePayable\Http\Requests\EditOpeningBalanceRequest;
-use Modules\RecievablePayable\Http\Requests\EditRpDocumentPlanRequest;
-use Modules\RecievablePayable\Repositories\RpDocumentPlanRepositoryInterface;
 use Modules\RecievablePayable\Repositories\RpOpeningBalanceInterface;
-use Modules\RecievablePayable\Repositories\RpOpeningBalanceRepository;
 use Modules\RecievablePayable\Transformers\OpeningBalanceResource;
 
 class OpeningBalanceController extends Controller
@@ -37,7 +30,7 @@ class OpeningBalanceController extends Controller
 
     public function index(Request $request)
     {
-       $models = $this->modelInterface->all($request);
+        $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', OpeningBalanceResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
@@ -59,7 +52,6 @@ class OpeningBalanceController extends Controller
         return responseJson(200, 'success', new OpeningBalanceResource($model));
     }
 
-
     public function setting(Request $request)
     {
         $model = $this->modelInterface->setting($request);
@@ -70,7 +62,7 @@ class OpeningBalanceController extends Controller
     public function getSetting($user_id, $screen_id)
     {
         $model = $this->modelInterface->getSetting($user_id, $screen_id);
-        return responseJson(200, 'success', new \App\Http\Resources\ScreenSetting\ScreenSettingResource($model));
+        return responseJson(200, 'success', new \App\Http\Resources\ScreenSetting\ScreenSettingResource ($model));
     }
     public function logs($id)
     {
@@ -84,17 +76,48 @@ class OpeningBalanceController extends Controller
 
     }
 
+//     public function destroy($id)
+//     {
+//         $model = $this->modelInterface->find($id);
+//         if (!$model) {
+//             return responseJson(404, __('message.data not found'));
+//         }
+// //        if ($model->hisChildren()){
+// //            return responseJson(404, 'some items has relation cant delete');
+// //        }
+//          $this->modelInterface->delete($id);
+
+//         return responseJson(200, 'success');
+//     }
+
     public function destroy($id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-//        if ($model->hisChildren()){
-//            return responseJson(404, 'some items has relation cant delete');
-//        }
-         $this->modelInterface->delete($id);
+
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+            }
+            return responseJson(400, $errorMessages);
+        }
+
+        $this->modelInterface->delete($id);
 
         return responseJson(200, 'success');
+    }
+
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
     }
 }

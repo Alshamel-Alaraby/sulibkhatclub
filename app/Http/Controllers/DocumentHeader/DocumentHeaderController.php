@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DocumentHeader;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentHeader\DocumentHeaderRequest;
 use App\Http\Requests\DocumentStatuse\DocumentStatuseRequest;
+use App\Http\Resources\DocumentHeader\AllDocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\DocumentHeaderResource;
 use App\Http\Resources\DocumentStatuse\DocumentStatuseResource;
 use App\Repositories\DocumentHeader\DocumentHeaderInterface;
@@ -14,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class DocumentHeaderController extends Controller
 {
-    public function __construct(private \App\Repositories\DocumentHeader\DocumentHeaderInterface$modelInterface)
+    public function __construct(private \App\Repositories\DocumentHeader\DocumentHeaderInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
@@ -35,10 +36,18 @@ class DocumentHeaderController extends Controller
         return responseJson(200, 'success', DocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
+    public function allDocumentHeader(Request $request)
+    {
+        $models = $this->modelInterface->allDocumentHeader($request);
+        return responseJson(200, 'success', AllDocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
 
     public function create(DocumentHeaderRequest $request)
     {
         $model = $this->modelInterface->create($request->validated());
+
         if ($model == 'false'){
             return responseJson(400, "Not Found Date in Table Financial Year");
         }
@@ -112,9 +121,7 @@ class DocumentHeaderController extends Controller
 
     public function checkDateModelFinancialYear(Request $request){
         if (generalCheckDateModelFinancialYear($request['date']) == "true"){
-
             return "true";
-
         }
         return "false";
     }
@@ -122,4 +129,18 @@ class DocumentHeaderController extends Controller
         $models = $this->modelInterface->getDateRelatedDocumentId($request);
         return responseJson(200, 'success', DocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
+
+    public function checkBooking()
+    {
+        $models = $this->modelInterface->checkBooking();
+        return $models;
+
+    }
+
+    public function getDocumentsCustomer($id)
+    {
+        $data = $this->modelInterface->getDocumentsCustomer($id);
+        return $data;
+    }
+
 }

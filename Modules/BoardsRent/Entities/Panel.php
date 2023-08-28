@@ -27,6 +27,7 @@ class Panel extends Model implements HasMedia
         'note',
         'face',
         'unit_status_id',
+        'company_id',
         "category_id",
         "country_id",
         "governorate_id",
@@ -98,6 +99,11 @@ class Panel extends Model implements HasMedia
         return $this->belongsToMany(Package::class, 'boards_rent_package_panel', 'panel_id', 'package_id');
     }
 
+    public function itemBreakDowns()
+    {
+        return $this->hasMany(\App\Models\ItemBreakDown::class, 'break_id')->where('module_type','panels');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -159,8 +165,12 @@ class Panel extends Model implements HasMedia
             if ($request->unit_status_id) {
                 $q->where('unit_status_id', $request->unit_status_id);
             }
-            if ($request->face && $request->face) {
+            if ($request->face && $request->face != 'null') {
                 $q->where('face', $request->face);
+            }
+
+            if ($request->code && $request->code != 'null') {
+                $q->where('code', $request->code);
             }
 
             if ($request->search && $request->columns) {

@@ -1,18 +1,19 @@
 <script>
 import Layout from "../../layouts/main";
-import PageHeader from "../../../components/Page-header";
+import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import { required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/loader";
+import loader from "../../../components/general/loader";
 import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
-import translation from "../../../helper/translation-mixin";
-import Saleman from "../../../components/create/saleman.vue";
-import customerGeneral from "../../../components/create/customerGeneral";
+import translation from "../../../helper/mixin/translation-mixin";
+import Saleman from "../../../components/create/general/saleman.vue";
+import customerGeneral from "../../../components/create/general/customerGeneral";
 import Reservation from "../../../components/create/realEstate/reservation";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -23,23 +24,11 @@ export default {
     meta: [{ name: "description", content: "Contract" }],
   },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-
-      if (vm.$store.state.auth.work_flow_trees.includes("real estate-e")) {
-        Swal.fire({
-          icon: "error",
-          title: `${vm.$t("general.Error")}`,
-          text: `${vm.$t("general.ModuleExpired")}`,
-        });
-        return vm.$router.push({ name: "home" });
-      }
-
-      if (vm.$store.state.auth.work_flow_trees.includes('contract') || vm.$store.state.auth.work_flow_trees.includes('real estate') || vm.$store.state.auth.user.type == 'super_admin') {
-        return true;
-      } else {
-        return vm.$router.push({ name: "home" });
-      }
+        next((vm) => {
+      return permissionGuard(vm, "Contract Unit", "all Store");
     });
+
+
   },
   mixins: [translation],
   components: {
@@ -552,7 +541,7 @@ export default {
         this.errors = {};
         this.is_disabled = false;
         adminApi
-          .post(`real-estate/contracts`, this.create)
+          .post(`real-estate/contracts`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.getData();
             this.is_disabled = true;

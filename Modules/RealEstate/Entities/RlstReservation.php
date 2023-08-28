@@ -21,6 +21,7 @@ class RlstReservation extends Model implements HasMedia
     use HasFactory, SoftDeletes, LogTrait, MediaTrait;
 
     protected $fillable = [
+        "company_id",
         "branch_id",
         "document_id",
         "serial_id",
@@ -31,7 +32,7 @@ class RlstReservation extends Model implements HasMedia
         "end_date",
         "module_type",
         "serial_number",
-        "prefix"
+        "prefix",
     ];
 
     // relations
@@ -80,17 +81,59 @@ class RlstReservation extends Model implements HasMedia
         return $this->hasMany(RpBreakDown::class, 'break_id');
     }
 
-    public function hasChildren()
-    {
-        return $this->contracts()->count() > 0  ;
-
-    }
-
 
     public function details()
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstReservationDetail::class,
-            'reservation_id', 'id');
+        'reservation_id', 'id');
+    }
+
+    // public function hasChildren()
+    // {
+    //     return $this->contracts()->count() > 0 ||
+    //     $this->units()->count() > 0 ||
+    //     $this->details()->count() > 0 ||
+    //     $this->breakDowns()->count() > 0 ;
+
+    // }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->contracts()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contracts',
+                'count' => $this->contracts()->count(),
+                'ids' => $this->contracts()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->units()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'units',
+                'count' => $this->units()->count(),
+                'ids' => $this->units()->pluck('id')->toArray()
+            ];
+        }
+
+        if ($this->details()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'details',
+                'count' => $this->details()->count(),
+                'ids' => $this->details()->pluck('id')->toArray()
+            ];
+        }
+        if ($this->breakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'breakDowns',
+                'count' => $this->breakDowns()->count(),
+                'ids' => $this->breakDowns()->pluck('id')->toArray()
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

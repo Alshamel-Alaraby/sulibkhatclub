@@ -35,6 +35,7 @@ class RlstBuildingRequest extends FormRequest
             'country_id' => "sometimes|exists:general_countries,id",
             'city_id' => "sometimes|exists:general_cities,id",
             'avenue_id' => "sometimes|exists:general_avenues,id",
+            'street_id' => "sometimes|exists:general_streets,id",
             'lng' => "numeric|required_with:lat",
             'lat' => "numeric|required_with:lng",
             'properties' => "nullable|array",
@@ -43,6 +44,7 @@ class RlstBuildingRequest extends FormRequest
             "media" => "nullable|array",
             "video_link" =>"nullable|url|active_url|https" ,
             "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
+            "company_id"=>'nullable',
         ];
     }
 
