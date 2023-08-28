@@ -264,7 +264,7 @@ class CmMemberController extends Controller
 
     public function getUpdateFinancialStatusCmMember()
     {
-        return $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get()->last();
+        $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get();
 
         foreach ($members as $member){
              if (now()->format('Y') == $member->last_transaction_date->format('Y')){
@@ -277,7 +277,8 @@ class CmMemberController extends Controller
                 $member->update(['financial_status_id'=>2]);
             }
          }
-     return "yes";
+
+        return "yes";
 
     }
 
