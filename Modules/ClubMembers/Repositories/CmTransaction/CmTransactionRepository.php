@@ -5,6 +5,7 @@ namespace Modules\ClubMembers\Repositories\CmTransaction;
 use App\Models\Serial;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmSponser;
 use Modules\ClubMembers\Entities\CmTransaction;
 use Modules\RealEstate\Entities\RlstCategoriesItem;
@@ -12,9 +13,10 @@ use Modules\RealEstate\Entities\RlstCategoriesItem;
 class CmTransactionRepository implements CmTransactionInterface
 {
 
-    public function __construct(private CmTransaction $model)
+    public function __construct(private CmTransaction $model ,CmMember $modelMember)
     {
-        $this->model = $model;
+        $this->model       = $model;
+        $this->modelMember = $modelMember;
     }
 
     public function all($request)
@@ -55,6 +57,11 @@ class CmTransactionRepository implements CmTransactionInterface
                     $transaction['serial_id'] = $serial ? $serial->id:null;
                 }
                 $model= $this->model->create($transaction);
+                $member =  $this->modelMember->find($transaction['cm_member_id']);
+                if ($member){
+                    $member->update(['last_transaction_date'=>$transaction['date']]);
+                }
+
                 if ($transaction['serial_id'])
                 {
                     $serials = generalSerialWithIdCreate($model,$transaction['serial_id']);
@@ -73,6 +80,14 @@ class CmTransactionRepository implements CmTransactionInterface
     {
         $model = $this->model->find($id);
         $model->update($request);
+        $transaction = $this->model->where('cm_member_id',$model->cm_member_id)->orderBy('id', 'desc')->first();
+
+        if ($transaction->id  == $model->id){
+            $member =  $this->modelMember->find($model->cm_member_id);
+            $member->update(['last_transaction_date'=>$request['date']]);
+
+        }
+
         return $model;
     }
 

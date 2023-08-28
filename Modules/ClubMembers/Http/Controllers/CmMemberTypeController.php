@@ -88,5 +88,11 @@ class CmMemberTypeController extends Controller
         return responseJson(200, __('Done'));
     }
 
+    public function getRejectMemberType(Request $request){
+        $models = $this->modelInterface->rejectMemberType($request);
+        return responseJson(200, 'success', CmMemberTypeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
 
 }

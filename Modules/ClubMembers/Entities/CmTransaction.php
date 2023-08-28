@@ -3,6 +3,7 @@
 namespace Modules\ClubMembers\Entities;
 
 use App\Models\Branch;
+use App\Models\Document;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,16 +16,26 @@ class CmTransaction extends Model
 
     protected $guarded = ['id'];
     protected $table = 'cm_transactions';
+    protected $casts = [
+
+        'date' => 'date',
+    ];
 
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');
 
     }
+    public function document()
+    {
+        return $this->belongsTo(Document::class, 'document_id');
+
+    }
 
     public function member()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
+
 
     }
 

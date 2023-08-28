@@ -17,4 +17,6 @@ interface CmMemberTypeInterface
 
     public function delete($id);
 
+    public function rejectMemberType($request);
+
 }

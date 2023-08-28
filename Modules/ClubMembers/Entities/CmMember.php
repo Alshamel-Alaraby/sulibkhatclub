@@ -3,6 +3,7 @@
 namespace Modules\ClubMembers\Entities;
 
 use App\Traits\LogTrait;
+use Carbon\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Modules\ClubMembers\Entities\Status;
@@ -16,9 +17,12 @@ class CmMember extends Model
     protected $guarded = [];
     protected $table = 'cm_members';
 
+
     protected $casts = [
         'is_accept' => 'App\Enums\IsAccept',
         'is_sponsor' => 'App\Enums\IsSponsor',
+        'membership_date' => 'date',
+        'last_transaction_date' => 'date',
     ];
 
     public function status()
@@ -35,6 +39,13 @@ class CmMember extends Model
     {
         return $this->belongsTo(CmMemberType::class, 'member_type_id');
     }
+
+    public function cmTransaction()
+    {
+        return $this->hasMany(CmTransaction::class, 'cm_member_id');
+
+    }
+
 
     public function financialStatus()
     {

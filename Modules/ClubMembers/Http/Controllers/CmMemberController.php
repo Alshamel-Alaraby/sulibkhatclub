@@ -13,6 +13,7 @@ use Modules\ClubMembers\Http\Requests\CmUpdateAcceptedMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
 use Modules\ClubMembers\Transformers\CmMemberResource;
 use Illuminate\Support\Facades\DB;
+use Modules\ClubMembers\Transformers\ReportMembertResource;
 
 
 class CmMemberController extends Controller
@@ -204,7 +205,7 @@ class CmMemberController extends Controller
         set_time_limit(3600);
         ini_set('memory_limit', -1);
 
-//
+//cm_members.json
         $ttt = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/json_Members.json')));
         foreach ($ttt as $member):
 
@@ -247,6 +248,38 @@ class CmMemberController extends Controller
 
     }
 
-    
+    public function getReportCmMember(Request $request){
+
+           $models = $this->modelInterface->reportCmMember($request);
+            return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+
+    }
+
+    public function getUpdateCmMember(){
+
+        return   $models = $this->modelInterface->updateCmMember();
+    }
+
+    public function getUpdateFinancialStatusCmMember()
+    {
+        return $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get()->last();
+
+        foreach ($members as $member){
+             if (now()->format('Y') == $member->last_transaction_date->format('Y')){
+                 $member->update(['financial_status_id'=>1]);
+             }
+            if ($member->last_transaction_date == null){
+                $member->update(['financial_status_id'=>1]);
+            }
+            if (now()->format('Y') != $member->last_transaction_date->format('Y')){
+                $member->update(['financial_status_id'=>2]);
+            }
+         }
+     return "yes";
+
+    }
+
+
 
 }

@@ -20,11 +20,12 @@ class CmMemberRepository implements CmMemberInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
         }
-        if ($request->national_id) {
-            $models->where('national_id', $request->national_id);
+        if ($request->member_type_id) {
+            $models->where('member_type_id', $request->member_type_id);
         }
 
         if ($request->member_id){
@@ -185,6 +186,75 @@ class CmMemberRepository implements CmMemberInterface
                 }
             }
         });
+    }
+
+    public function reportCmMember($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->cm_permissions_id == 1) {
+            $models->where('auto_member_type_id', 1);
+        }
+        if ($request->cm_permissions_id == 2) {
+            $models->where('auto_member_type_id', 2);
+        }
+
+        if ($request->cm_permissions_id == 3){
+            $models->where('auto_member_type_id', 3);
+        }
+        if ($request->cm_permissions_id == "0"){
+            $models->where('auto_member_type_id', null);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
+    }
+
+    public function updateCmMember()
+    {
+        $All_Members_FatherIdOne = $this->model->whereIn('member_type_id', [4,5,11,12,17,19])->get();
+
+        ///Last_Member_transaction insert in cm_member
+        /*foreach ($All_Members_FatherIdOne as $Member){
+              $Last_Member_transaction  = DB::table('cm_transactions')->where('cm_member_id',$Member->id)->orderBy('date', 'DESC')->first();
+              $this->model->where('id',$Member->id)->update(['last_transaction_date' => $Last_Member_transaction->date]);
+        }*/
+
+        /////type_permissions
+        $permission_one     =   DB::table('cm_type_permissions')->where('id',4)->first();
+        $permission_two     =   DB::table('cm_type_permissions')->where('id',5)->first();
+        $permission_three   =   DB::table('cm_type_permissions')->where('id',6)->first();
+
+        foreach ($All_Members_FatherIdOne as $Member){
+            ///First Condition
+            $dbDate                    = \Carbon\Carbon::parse($Member->membership_date);
+            $diffYears                 = \Carbon\Carbon::now()->diffInYears($dbDate);
+
+            ///Second Condition
+            $Last_Member_transaction  = $Member->last_transaction_date;
+            $Last_date                = \Carbon\Carbon::now()->month($Member->last_transaction_date)->daysInMonth;
+
+            $permission_one_Days      = \Carbon\Carbon::now()->month($permission_one->allowed_subscription_date)->daysInMonth;
+            $permission_two_Days      = \Carbon\Carbon::now()->month($permission_two->allowed_subscription_date)->daysInMonth;
+            $permission_three_Days    = \Carbon\Carbon::now()->month($permission_three->allowed_subscription_date)->daysInMonth;
+
+
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_one_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 1]);
+            }
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_two_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 2]);
+            }
+
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_three_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 3]);
+            }
+
+        }
     }
 
 }
