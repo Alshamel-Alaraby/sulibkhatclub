@@ -20,6 +20,7 @@ class CmMemberRepository implements CmMemberInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
         }
