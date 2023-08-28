@@ -1413,6 +1413,11 @@
         "allowed_vote_date": "Allowed Vote Date",
         "ReceiptVoucher": "Receipt Voucher",
         "ReceiptVoucherMember": "View receipt vouchers for the member : ",
-        "PosterReport": "Poster Report Table"
+        "PosterReport": "Poster Report Table",
+        "dismissedMemberCount": "Dismissed Member ",
+        "foundingMemberCount": "Founding Member ",
+        "nominateMemberCount": "Nominate Member",
+        "normalMemberCount": "Normal Member",
+        "voteMemberCount": "Vote Member Count"
     }
 }
