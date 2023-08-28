@@ -160,7 +160,7 @@ export default {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
-        .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+        .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
           params: {
             cm_permission_id: this.cm_permission_id,
           },
@@ -195,7 +195,7 @@ export default {
         }
 
         adminApi
-          .get(`/club-members/members?page=${page}&per_page=${this.per_page}`, {
+          .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
             params: {
               cm_permission_id: this.cm_permission_id,
             },
@@ -346,7 +346,6 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                 <div style="width: 100%">
                   <multiselect
-                    :multiple="true"
                     @select="getData(1)"
                     v-model="cm_permission_id"
                     :options="permissions.map((type) => type.id)"

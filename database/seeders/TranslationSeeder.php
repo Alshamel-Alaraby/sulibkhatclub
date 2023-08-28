@@ -11322,7 +11322,7 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "receivable payable"
             ],
-
+            
             [
                 "key" => "credit_note_create_form",
                 "default_en" => "Add New Credit Note",
@@ -14086,92 +14086,6 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "items report"
-            ],
-
-        ]);
-
-        //club member reject
-        Translation::insert([
-            [
-                "key" => "member_reject_create_form",
-                "default_en" => "Add new member reject",
-                "default_ar" => "اضف شطب عضوية جديد",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_edit_form",
-                "default_en" => "Edit member reject form",
-                "default_ar" => "تعديل شطب العضوية",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_branch",
-                "default_en" => "Branch",
-                "default_ar" => "الفرع",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_Serial_Number",
-                "default_en" => "Serial Number",
-                "default_ar" => "الرقم التسلسلى",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_member",
-                "default_en" => "Member",
-                "default_ar" => "العضو",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_date",
-                "default_en" => "Date",
-                "default_ar" => "التاريخ",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_session_number",
-                "default_en" => "session number",
-                "default_ar" => "رقم الجلسه",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_reason",
-                "default_en" => "reason",
-                "default_ar" => "السبب",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
-            ],
-            [
-                "key" => "member_reject_note",
-                "default_en" => "note",
-                "default_ar" => "ملاحظات",
-                "new_ar" => "",
-                "new_en" => "",
-                "company_id" => 0,
-                "screen" => "member reject"
             ],
 
         ]);

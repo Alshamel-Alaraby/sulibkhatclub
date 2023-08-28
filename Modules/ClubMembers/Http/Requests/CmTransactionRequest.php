@@ -24,7 +24,7 @@ class CmTransactionRequest extends FormRequest
             'transactions.*.branch_id' => "nullable|exists:general_branches,id",
             'transactions.*.document_id' => "nullable|exists:general_documents,id",
             'transactions.*.serial_id' => "nullable|exists:general_serials,id",
-            'transactions.*.cm_member_id' => "nullable|exists:cm_members,id",
+            'transactions.*.cm_member_id' => "required|exists:cm_members,id",
             'transactions.*.serial_number' => "nullable|string",
             'transactions.*.year_from' => 'required',
             'transactions.*.year_to' => 'required|gte:transactions.*.year_from',

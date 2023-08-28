@@ -61,4 +61,6 @@ class AttendantRepository implements AttendantInterface
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
 
+
+
 }

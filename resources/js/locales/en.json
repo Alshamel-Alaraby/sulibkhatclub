@@ -1411,11 +1411,8 @@
         "DailyAccommodationInvoiceReport": "Daily Accommodation Invoice Report",
         "ItemsReport": "Items Report",
         "allowed_vote_date": "Allowed Vote Date",
-        "memberRejectTable": "Member Reject Table",
         "ReceiptVoucher": "Receipt Voucher",
         "ReceiptVoucherMember": "View receipt vouchers for the member : ",
-        "PosterReport": "Poster Report Table",
-        "DoneSuccessfully": "Update Successfully",
-        "updateData": "Update Data"
+        "PosterReport": "Poster Report Table"
     }
 }

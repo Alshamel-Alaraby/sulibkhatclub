@@ -446,6 +446,7 @@ Route::middleware(['authorize.user'])->group(function () {
     Route::group(['prefix' => 'attendant'], function () {
         Route::controller(\App\Http\Controllers\AttendantController::class)->group(function () {
             Route::get('/', 'all')->name('attendant.index');
+            Route::get('/getName', 'getName')->name('attendant.getName');
             Route::get('logs/{id}', 'logs')->name('attendant.logs');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('attendant.create');
@@ -916,6 +917,7 @@ Route::get('internal-salesman/logs/{id}', [InternalSalesmanController::class, 'l
 Route::post('internal-salesman/bulk-delete', [InternalSalesmanController::class, 'bulkDelete']);
 Route::get('internal-salesman/logs/{id}', [InternalSalesmanController::class, 'logs']);
 
+Route::get('general-customer/getName', [GeneralCustomerController::class, 'getName']);
 Route::resource('general-customer', GeneralCustomerController::class)->except('create', 'edit');
 Route::get('general-customer/logs/{id}', [GeneralCustomerController::class, 'logs']);
 Route::get('check-supplier', [GeneralCustomerController::class, 'getCheckSupplier']);

@@ -20,6 +20,7 @@ class CmMemberRepository implements CmMemberInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
         }
@@ -205,7 +206,7 @@ class CmMemberRepository implements CmMemberInterface
             $models->whereIn('auto_member_type_id', [1,2,3]);
         }
         if ($request->cm_permissions_id == "0"){
-            $models->where('auto_member_type_id', 0);
+            $models->where('auto_member_type_id', null);
         }
 
         if ($request->per_page) {
@@ -218,61 +219,45 @@ class CmMemberRepository implements CmMemberInterface
 
     public function updateCmMember()
     {
-        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
-        set_time_limit(3600);
-        ini_set('memory_limit', -1);
-        $chunks =  collect( $this->model->whereNull('auto_member_type_id')->get())->chunk(1000);
-        foreach ($chunks as $chunk){
-            foreach ($chunk as  $key => $model){
+        $All_Members_FatherIdOne = $this->model->whereIn('member_type_id', [4,5,11,12,17,19])->get();
 
-                if ($model->status_count_3 == 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 == 'yes' ){
-                    $model->update(['auto_member_type_id' => 3]);
-                }
-                if ($model->status_count_3 == 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 == 'yes' ){
-                    $model->update(['auto_member_type_id' => 3]);
-                }
-                if ($model->status_count_3 == 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 != 'yes' ){
-                    $model->update(['auto_member_type_id' => 3]);
-                }
-                if ($model->status_count_3 != 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 == 'yes' ){
-                    $model->update(['auto_member_type_id' => 2]);
-                }
-                if ($model->status_count_3 != 'yes' && $model->status_count_2 == 'yes' && $model->status_count_1 != 'yes' ){
-                    $model->update(['auto_member_type_id' => 2]);
-                }
-                if ($model->status_count_3 != 'yes' && $model->status_count_2 != 'yes' && $model->status_count_1 == 'yes' ){
-                    $model->update(['auto_member_type_id' => 1]);
-                }
+        ///Last_Member_transaction insert in cm_member
+        /*foreach ($All_Members_FatherIdOne as $Member){
+              $Last_Member_transaction  = DB::table('cm_transactions')->where('cm_member_id',$Member->id)->orderBy('date', 'DESC')->first();
+              $this->model->where('id',$Member->id)->update(['last_transaction_date' => $Last_Member_transaction->date]);
+        }*/
 
-                if ($model->status_count_1 != 'yes' &&  $model->status_count_2 != 'yes' && $model->status_count_3 != 'yes' ){
-                    $model->update(['auto_member_type_id' => 0]);
-                }
+        /////type_permissions
+        $permission_one     =   DB::table('cm_type_permissions')->where('id',4)->first();
+        $permission_two     =   DB::table('cm_type_permissions')->where('id',5)->first();
+        $permission_three   =   DB::table('cm_type_permissions')->where('id',6)->first();
+
+        foreach ($All_Members_FatherIdOne as $Member){
+            ///First Condition
+            $dbDate                    = \Carbon\Carbon::parse($Member->membership_date);
+            $diffYears                 = \Carbon\Carbon::now()->diffInYears($dbDate);
+
+            ///Second Condition
+            $Last_Member_transaction  = $Member->last_transaction_date;
+            $Last_date                = \Carbon\Carbon::now()->month($Member->last_transaction_date)->daysInMonth;
+
+            $permission_one_Days      = \Carbon\Carbon::now()->month($permission_one->allowed_subscription_date)->daysInMonth;
+            $permission_two_Days      = \Carbon\Carbon::now()->month($permission_two->allowed_subscription_date)->daysInMonth;
+            $permission_three_Days    = \Carbon\Carbon::now()->month($permission_three->allowed_subscription_date)->daysInMonth;
+
+
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_one_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 1]);
+            }
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_two_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 2]);
+            }
+
+            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_three_Days){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 3]);
             }
 
         }
-        return 'yes';
-
-
-//        $models = $this->model->all();
-//
-//
-//
-//        foreach ($models as $model){
-//            if ($model->status_count_1 == 'yes' ){
-//                $model->update(['test' => 1]);
-//            }
-//            if ($model->status_count_2 == 'yes' ){
-//                $model->update(['test' => 2]);
-//            }
-//            if ($model->status_count_1 == 'yes' ){
-//                $model->update(['test' => 3]);
-//            }
-//            if ($model->status_count_1 != 'yes' &&  $model->status_count_2 != 'yes' && $model->status_count_3 != 'yes' ){
-//                $model->update(['test' => 0]);
-//            }
-//        }
-//
-//        return 'yes';
     }
 
 }

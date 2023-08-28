@@ -12,6 +12,7 @@ use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
 
 use Modules\ClubMembers\Entities\CmTransaction;
+use Modules\ClubMembers\Transformers\CmMemberTransactionsResource;
 
 class CmTransactionController extends Controller
 {
@@ -103,7 +104,7 @@ class CmTransactionController extends Controller
 
         $models = CmTransaction::where("cm_member_id", $member_id)->get();
 
-        return responseJson(200, 'success', CmTransactionResource::collection($models));
+        return responseJson(200, 'success', CmMemberTransactionsResource::collection($models));
 
     }
 

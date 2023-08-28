@@ -1396,11 +1396,8 @@
         "DailyAccommodationInvoiceReport": "تقرير فاتورة الإقامة اليومية",
         "ItemsReport": "تقرير الخدمات",
         "allowed_vote_date": "اقصى تاريخ لاحقية التصويت",
-        "memberRejectTable": "جدول شطب العضوية",
         "ReceiptVoucher": "سند قبض",
         "ReceiptVoucherMember": "عرض سندات القبض للعضو :",
-        "PosterReport": "جدول كشف البريد",
-        "DoneSuccessfully": "تم التحديث بنجاح",
-        "updateData": "تحديث البيانات"
+        "PosterReport": "جدول كشف البريد"
     }
 }

@@ -27,7 +27,7 @@ export default {
     title: "View",
     meta: [{ name: "description", content: "View" }],
   },
-    props: {
+  props: {
         companyKeys: {
             default: [],
         },

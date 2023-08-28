@@ -36,11 +36,6 @@ export default {
         Multiselect,
     },
     beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      return permissionGuard(vm, "Membership Renewal", "all membershipRenewal club");
-    });
-  },
-    beforeRouteEnter(to, from, next) {
         next((vm) => {
             return permissionGuard(vm, "membership renewal", "all membership renewal club");
         });
@@ -902,7 +897,7 @@ export default {
                                     <div class="row" :key="index">
                                         <div class="col-md-2" style="padding: 0 !important;">
                                            <div class="d-flex">
-                                               <div class="form-group col-6" v-if="isVisible('fromDay')">
+                                               <div class="form-group col-6">
                                                    <label>{{ getCompanyKey("membership_renewal_fromDay") }}</label>
                                                    <select
                                                        v-model="$v.create.memberships_renewals.$each[index].fromDay.$model"
@@ -942,9 +937,9 @@ export default {
                                                </div>
                                            </div>
                                         </div>
-                                        <div class="col-md-2" style="padding: 0 !important;" v-if="isVisible('toDay')||isVisible('toMonth')">
+                                        <div class="col-md-2" style="padding: 0 !important;">
                                             <div class="d-flex">
-                                                <div class="form-group col-6" v-if="isVisible('toDay')">
+                                                <div class="form-group col-6">
                                                     <label>{{ getCompanyKey("membership_renewal_toDay") }}</label>
                                                     <select
                                                         v-model="$v.create.memberships_renewals.$each[index].toDay.$model"
@@ -963,7 +958,7 @@ export default {
                                                         </ErrorMessage>
                                                     </template>
                                                 </div>
-                                                <div class="form-group col-6" v-if="isVisible('toMonth')">
+                                                <div class="form-group col-6">
                                                     <label>{{ getCompanyKey("membership_renewal_toMonth") }}</label>
                                                     <select
                                                         v-model="$v.create.memberships_renewals.$each[index].toMonth.$model"
@@ -1239,7 +1234,7 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6" v-if="isVisible('fromDay')">
+                                                    <div class="col-md-6">
                                                         <div class="d-flex">
                                                             <div class="form-group col-6">
                                                                 <label>{{ getCompanyKey("membership_renewal_fromDay") }}</label>
@@ -1281,9 +1276,9 @@ export default {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" v-if="isVisible('toDay')|| isVisible('toMonth')">
+                                                    <div class="col-md-6">
                                                         <div class="d-flex">
-                                                            <div class="form-group col-6" v-if="isVisible('toDay')">
+                                                            <div class="form-group col-6">
                                                                 <label>{{ getCompanyKey("membership_renewal_toDay") }}</label>
                                                                 <select
                                                                     v-model="$v.edit.toDay.$model"

@@ -251,7 +251,7 @@ class CmMemberController extends Controller
     public function getReportCmMember(Request $request){
 
            $models = $this->modelInterface->reportCmMember($request);
-        return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+            return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
 
     }
@@ -259,6 +259,26 @@ class CmMemberController extends Controller
     public function getUpdateCmMember(){
 
         return   $models = $this->modelInterface->updateCmMember();
+    }
+
+
+    public function getUpdateFinancialStatusCmMember()
+    {
+        return $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get()->last();
+
+        foreach ($members as $member){
+             if (now()->format('Y') == $member->last_transaction_date->format('Y')){
+                 $member->update(['financial_status_id'=>1]);
+             }
+            if ($member->last_transaction_date == null){
+                $member->update(['financial_status_id'=>1]);
+            }
+            if (now()->format('Y') != $member->last_transaction_date->format('Y')){
+                $member->update(['financial_status_id'=>2]);
+            }
+         }
+     return "yes";
+
     }
 
 

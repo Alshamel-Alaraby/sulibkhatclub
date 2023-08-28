@@ -34,6 +34,9 @@ class CmTransactionResource extends JsonResource
             'number_of_years' => $this->number_of_years,
             'created_by' => $this->created_by,
             'financial_year_id' => $this->financial_year_id,
+
+
+            // year - branch - document - prefix - serial_number
         ];
     }
 }
