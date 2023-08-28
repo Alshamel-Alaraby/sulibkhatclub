@@ -13324,7 +13324,7 @@ var render = function () {
                                                       ? data.permission.name
                                                       : data.permission.name_e
                                                   ) +
-                                                  " -\n                                    "
+                                                  "\n                                    "
                                               ),
                                             ]
                                           ),
