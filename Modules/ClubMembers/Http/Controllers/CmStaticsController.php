@@ -22,8 +22,8 @@ class CmStaticsController extends Controller
 
         $data['sponsorsCount'] = CmSponser::whereNotNull('parent_id')->count();
 
-        $data['presenceMemberCount'] = CmMember::where('auto_member_type_id',1)->count();
-        $data['voteMemberCount'] = CmMember::where('auto_member_type_id',2)->count();
+        $data['presenceMemberCount'] = CmMember::whereIn('auto_member_type_id',[1,2,3])->count();
+        $data['voteMemberCount'] = CmMember::whereIn('auto_member_type_id',[2,3])->count();
         $data['nominateMemberCount'] = CmMember::where('auto_member_type_id',3)->count();
 
 
