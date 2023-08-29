@@ -238,11 +238,12 @@ class CmMemberRepository implements CmMemberInterface
 
             ///Second Condition
             $Last_Member_transaction  = $Member->last_transaction_date;
-            $Last_date                = \Carbon\Carbon::now()->month($Member->last_transaction_date)->daysInMonth;
+            $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('d');
 
-            $permission_one_Days      = \Carbon\Carbon::now()->month($permission_one->allowed_subscription_date)->daysInMonth;
-            $permission_two_Days      = \Carbon\Carbon::now()->month($permission_two->allowed_subscription_date)->daysInMonth;
-            $permission_three_Days    = \Carbon\Carbon::now()->month($permission_three->allowed_subscription_date)->daysInMonth;
+
+            $permission_one_Days      = \Carbon\Carbon::parse("2023-" . $permission_two->allowed_subscription_date)->format('d');
+            $permission_two_Days      = \Carbon\Carbon::parse("2023-" .$permission_two->allowed_subscription_date)->format('d');
+            $permission_three_Days      = \Carbon\Carbon::parse("2023-" .$permission_three->allowed_subscription_date)->format('d');
 
 
             if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_one_Days){
@@ -257,6 +258,7 @@ class CmMemberRepository implements CmMemberInterface
             }
 
         }
+        return 200;
     }
 
 
