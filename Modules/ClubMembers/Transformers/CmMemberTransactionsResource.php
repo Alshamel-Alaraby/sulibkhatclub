@@ -32,9 +32,6 @@ class CmMemberTransactionsResource extends JsonResource
             'number_of_years' => $this->number_of_years,
             'created_by' => $this->created_by,
             'financial_year_id' => $this->financial_year_id,
-            'branch' => new BranchResource($this->branch),
-
-            'document' => new DocumentResource($this->document),
             'branch_id' => $this->branch_id,
             'sponsor' => new CmSponserResource($this->sponsor),
             'document_id' => $this->document_id
