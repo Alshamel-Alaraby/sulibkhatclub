@@ -71,7 +71,7 @@ class CmMemberRepository implements CmMemberInterface
                 ($request['third_name'] ?? '') . ' ' .
                 ($request['last_name'] ?? '') . ' ' .
                 ($request['family_name'] ?? '') ;
-            return $this->model->create(array_merge($request,['full_name' => $full_name]));
+            return $this->model->create(array_merge($request,['full_name' => $full_name,'member_type_id'=>4]));
         });
     }
 

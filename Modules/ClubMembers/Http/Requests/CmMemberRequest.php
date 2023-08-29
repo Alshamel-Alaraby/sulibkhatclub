@@ -50,7 +50,7 @@ class CmMemberRequest extends FormRequest
             'sponsor_id' => 'nullable|exists:cm_sponsers,id',
             'auto_member_type_id' => 'nullable|exists:cm_members_types,id',
             'financial_status_id' => 'nullable|exists:cm_financial_status,id',
-            'member_type_id' => 'nullable|string|max:255',
+//            'member_type_id' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
             'gender' => 'nullable|in:0,1',
             'financial_year_id' => 'null|exists:general_financial_years,id',
