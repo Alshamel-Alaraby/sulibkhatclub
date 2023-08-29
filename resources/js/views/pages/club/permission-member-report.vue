@@ -346,7 +346,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                 <div style="width: 100%">
                   <multiselect
-                    @select="getData(1)"
+                    @input="getData(1)"
                     v-model="cm_permission_id"
                     :options="permissions.map((type) => type.id)"
                     :custom-label="

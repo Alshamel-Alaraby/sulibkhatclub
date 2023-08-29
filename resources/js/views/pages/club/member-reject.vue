@@ -49,6 +49,7 @@ export default {
             transactions: [],
             serials: [],
             branches: [],
+            membersTypes: [],
             enabled3: true,
             is_disabled: false,
             isLoader: false,
@@ -75,13 +76,12 @@ export default {
             },
             setting: {
                 branch_id: true,
-                serial_number: true,
+                prefix: true,
                 cm_member_id: true,
-                year_from: true,
-                year_to: true,
-                number_of_years:true,
-                type: true,
-                amount: true,
+                cm_member_type_id: true,
+                note: true,
+                session_number: true,
+                date: true,
             },
             members: [],
             Tooltip: "",
@@ -92,10 +92,7 @@ export default {
             current_page: 1,
             filterSetting: [
                 "cm_member_id",
-                "year_from",
-                "year_to",
-                "number_of_years",
-                "amount",
+                "date",
                 "prefix",
             ],
             printLoading: true,
@@ -191,7 +188,7 @@ export default {
     methods: {
         getCustomTableFields() {
             adminApi
-                .get(`/customTable/table-columns/cm_transactions`)
+                .get(`/customTable/table-columns/cm_member_rejects`)
                 .then((res) => {
                     this.fields = res.data;
                 })
@@ -265,7 +262,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/club-members/transactions?module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `/club-members/rejects?module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -297,7 +294,7 @@ export default {
                 }
                 adminApi
                     .get(
-                        `/club-members/transactions?module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `/club-members/rejects?module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -328,6 +325,23 @@ export default {
                         l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
                     }
                     this.branches = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
+        },
+        async getMembersTypes() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/club-members/members-types/reject-member-type`)
+                .then((res) => {
+                    this.isLoader = false;
+                    let l = res.data.data;
+                    this.membersTypes = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -376,7 +390,7 @@ export default {
                     if (result.value) {
                         this.isLoader = true;
                         adminApi
-                            .post(`/club-members/transactions/bulk-delete`, {ids: id})
+                            .post(`/club-members/rejects/bulk-delete`, {ids: id})
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -425,7 +439,7 @@ export default {
                         this.isLoader = true;
 
                         adminApi
-                            .delete(`/club-members/transactions/${id}`)
+                            .delete(`/club-members/rejects/${id}`)
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData();
@@ -491,6 +505,7 @@ export default {
             if(this.isVisible('cm_member_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('serial_id')) await this.getSerials();
+            if(this.isVisible('cm_member_type_id')) await this.getMembersTypes();
             this.create = {
                 branch_id: null,
                 serial_id: null,
@@ -519,11 +534,8 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 this.is_disabled = false;
-                this.create.year_from = new Date(this.create.year_from).getFullYear();
-                this.create.year_to = new Date(this.create.year_to).getFullYear();
-                let transactions = [this.create]
                 adminApi
-                    .post(`/club-members/transactions`, {transactions, company_id: this.company_id})
+                    .post(`/club-members/rejects`, {...this.create, company_id: this.company_id})
                     .then((res) => {
                         this.getData();
                         this.is_disabled = true;
@@ -563,7 +575,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`/club-members/transactions/${id}`, this.edit)
+                    .put(`/club-members/rejects/${id}`, this.edit)
                     .then((res) => {
                         this.$bvModal.hide(`modal-edit-${id}`);
                         this.getData();
@@ -599,6 +611,7 @@ export default {
             if(this.isVisible('cm_member_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('serial_id')) await this.getSerials();
+            if(this.isVisible('cm_member_type_id')) await this.getMembersTypes();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
@@ -662,7 +675,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?limet=10&company_id=${this.company_id}&national_id=${search}`)
+                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -687,7 +700,7 @@ export default {
                 this.Tooltip = "";
                 this.mouseEnter = id;
                 adminApi
-                    .get(`/club-members/transactions/logs/${id}`)
+                    .get(`/club-members/rejects/logs/${id}`)
                     .then((res) => {
                         let l = res.data.data;
                         l.forEach((e) => {
@@ -750,23 +763,15 @@ export default {
                                     >
                                         <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="filterSetting" value="cm_member_id"
                                                          class="mb-1"
-                                        >{{ getCompanyKey("member") }}
+                                        >{{ getCompanyKey("member_reject_member") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("year_from") }}
+                                        <b-form-checkbox v-if="isVisible('date')" v-model="filterSetting"
+                                                         value="date" class="mb-1"
+                                        >{{ getCompanyKey("member_reject_date") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("year_to") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("subscription_amount") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("subscription_type") }}
+                                        <b-form-checkbox v-if="isVisible('prefix')" v-model="filterSetting"
+                                                         value="prefix" class="mb-1"
+                                        >{{ getCompanyKey("member_reject_Serial_Number") }}
                                         </b-form-checkbox>
                                         <!-- Basic dropdown -->
                                     </b-dropdown>
@@ -856,32 +861,32 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-if="isVisible('serial_number')" v-model="setting.serial_number" class="mb-1">
-                                                {{ $t("general.serial_number") }}
+                                            <b-form-checkbox v-if="isVisible('branch_id')" v-model="setting.branch_id"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("member_reject_branch") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('prefix')" v-model="setting.prefix" class="mb-1">
+                                                {{ getCompanyKey("member_reject_Serial_Number") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="setting.cm_member_id"
                                                              class="mb-1"
-                                            >{{ getCompanyKey("member") }}
+                                            >{{ getCompanyKey("member_reject_member") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('amount')" v-model="setting.amount"
+                                            <b-form-checkbox v-if="isVisible('date')" v-model="setting.date"
                                                              class="mb-1">
-                                                {{ getCompanyKey("subscription_amount") }}
+                                                {{ getCompanyKey("member_reject_date") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('type')" v-model="setting.type"
+                                            <b-form-checkbox v-if="isVisible('session_number')" v-model="setting.session_number"
                                                              class="mb-1">
-                                                {{ getCompanyKey("subscription_type") }}
+                                                {{ getCompanyKey("member_reject_session_number") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('year_from')" v-model="setting.year_from"
+                                            <b-form-checkbox v-if="isVisible('cm_member_type_id')" v-model="setting.cm_member_type_id"
                                                              class="mb-1">
-                                                {{ getCompanyKey("year_from") }}
+                                                {{ getCompanyKey("member_reject_reason") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('year_to')" v-model="setting.year_to"
+                                            <b-form-checkbox v-if="isVisible('note')" v-model="setting.note"
                                                              class="mb-1">
-                                                {{ getCompanyKey("year_to") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('number_of_years')" v-model="setting.number_of_years"
-                                                             class="mb-1">
-                                                {{ getCompanyKey("number_of_years") }}
+                                                {{ getCompanyKey("member_reject_note") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
@@ -1087,8 +1092,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-<!--                                    <div class="col-md-6" v-if="isVisible('session_number')">-->
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" v-if="isVisible('session_number')">
                                         <div class="form-group">
                                             <label  class="control-label">
                                                 {{ getCompanyKey("member_reject_session_number") }}
@@ -1113,16 +1117,15 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-<!--                                    <div class="col-md-6" v-if="isVisible('cm_member_type_id')">-->
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" v-if="isVisible('cm_member_type_id')">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("member_reject_reason") }}</label>
                                             <multiselect @input="showBranchModal" v-model="create.cm_member_type_id"
-                                                         :options="serials.map((type) => type.id)" :custom-label="
+                                                         :options="membersTypes.map((type) => type.id)" :custom-label="
                                                     (opt) =>
                                                         $i18n.locale == 'ar'
-                                                            ? serials.find((x) => x.id == opt).name
-                                                            : serials.find((x) => x.id == opt).name_e
+                                                            ? membersTypes.find((x) => x.id == opt).name
+                                                            : membersTypes.find((x) => x.id == opt).name_e
                                                 " :class="{
                                                         'is-invalid':
                                                             $v.create.cm_member_type_id.$error || errors.cm_member_type_id,
@@ -1139,8 +1142,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-<!--                                    <div class="col-md-12" v-if="isVisible('note')">-->
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" v-if="isVisible('note')">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_reject_note") }}
@@ -1189,28 +1191,27 @@ export default {
                                             />
                                         </div>
                                     </th>
-                                    <th v-if="setting.serial_number && isVisible('serial_number')">
+                                    <th v-if="setting.branch_id && isVisible('branch_id')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.serial_number") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_branch") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        transactions.sort(
-                                                            sortString(
-                                                                $i18n.locale == 'ar' ? 'serial_number' : 'serial_number'
-                                                            )
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        transactions.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-serial_number' : '-serial_number')
-                                                        )
-                                                    "></i>
+                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString(($i18n.locale = 'ar' ? 'name' : 'name_e')))"></i>
+                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString(($i18n.locale = 'ar' ? '-name' : '-name_e')))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.prefix && isVisible('prefix')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_reject_Serial_Number") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString($i18n.locale == 'ar' ? 'prefix' : 'prefix'))"></i>
+                                                <i class="fas fa-arrow-down" @click="transactions.sort( sortString($i18n.locale == 'ar' ? '-prefix' : '-prefix'))"></i>
                                             </div>
                                         </div>
                                     </th>
                                     <th v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_member") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
@@ -1231,77 +1232,62 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.amount && isVisible('amount')">
+                                    <th v-if="setting.date && isVisible('date')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("subscription_amount") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_date") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('amount'))"
+                                                    @click="transactions.sort(sortString('date'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-amount'))"
+                                                    @click="transactions.sort(sortString('-date'))"
                                                 ></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.type && isVisible('type')">
+                                    <th v-if="setting.session_number && isVisible('session_number')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("subscription_type") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_session_number") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('type'))"
+                                                    @click="transactions.sort(sortString('session_number'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-type'))"
+                                                    @click="transactions.sort(sortString('-session_number'))"
                                                 ></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.year_from && isVisible('year_from')">
+                                    <th v-if="setting.cm_member_type_id && isVisible('cm_member_type_id')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("year_from") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_reason") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('year_from'))"
+                                                    @click="transactions.sort(sortString('cm_member_type_id'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-year_from'))"
+                                                    @click="transactions.sort(sortString('-cm_member_type_id'))"
                                                 ></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.year_to && isVisible('year_to')">
+                                    <th v-if="setting.note && isVisible('note')">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("year_to") }}</span>
+                                            <span>{{ getCompanyKey("member_reject_note") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('year_to'))"
+                                                    @click="transactions.sort(sortString('note'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-year_to'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.number_of_years && isVisible('number_of_years')">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("number_of_years") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('number_of_years'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-number_of_years'))"
+                                                    @click="transactions.sort(sortString('-note'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -1332,7 +1318,12 @@ export default {
                                             />
                                         </div>
                                     </td>
-                                    <td v-if="setting.serial_number && isVisible('serial_number')">
+                                    <td v-if="setting.branch_id && isVisible('branch_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{data.branch ? $i18n.locale == "ar" ? data.branch.name : data.branch.name_e : ' - '}}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.prefix && isVisible('prefix')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{ data.prefix }}
                                         </h5>
@@ -1344,20 +1335,19 @@ export default {
                                             }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.amount && isVisible('amount')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                    <td v-if="setting.date && isVisible('date')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.date }}</h5>
                                     </td>
-                                    <td v-if="setting.type && isVisible('type')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.type }}</h5>
+                                    <td v-if="setting.session_number && isVisible('session_number')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.session_number }}</h5>
                                     </td>
-                                    <td v-if="setting.year_from && isVisible('year_from')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
+                                    <td v-if="setting.cm_member_type_id && isVisible('cm_member_type_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{data.member_type ? $i18n.locale == "ar" ? data.member_type.name : data.member_type.name_e : ' - '}}
+                                        </h5>
                                     </td>
-                                    <td v-if="setting.year_to && isVisible('year_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
-                                    </td>
-                                    <td v-if="setting.number_of_years && isVisible('number_of_years')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
+                                    <td v-if="setting.note && isVisible('note')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.note }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">
