@@ -14,17 +14,20 @@ class CmStaticsController extends Controller
 
         $data = [];
 
+        //     الأعضاء العادي
         $data['normalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->count();
-
+        // الأعضاء المؤسسين
         $data['foundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->count();
-
-        $data['dismissedMemberCount'] = CmMember::WhereRelation('memberType','parent_id', 3)->count();
-
+        // الأعضاء المفصولين
+        $data['dismissedMemberCount'] = CmMember::whereIn('member_type_id', [6,7,8,9,18])->count();
+        // عدد الرعاة
         $data['sponsorsCount'] = CmSponser::whereNotNull('parent_id')->count();
-
+        // عدد أعضاء حضور الانتخابات
         $data['presenceMemberCount'] = CmMember::whereIn('auto_member_type_id',[1,2,3])->count();
-        $data['voteMemberCount'] = CmMember::whereIn('auto_member_type_id',[2,3])->count();
-        $data['nominateMemberCount'] = CmMember::where('auto_member_type_id',3)->count();
+        // عدد الأعضاء تصويت في الانتخابات
+        $data['voteMemberCount'] = CmMember::where('auto_member_type_id',2)->count();
+        // عدد الأعضاء الترشح في الانتخابات
+        $data['nominateMemberCount'] = CmMember::whereIn('auto_member_type_id',[2,3])->count();
 
 
         $response = [

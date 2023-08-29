@@ -192,15 +192,16 @@ class CmMemberRepository implements CmMemberInterface
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->cm_permissions_id == 1) {
-            $models->where('auto_member_type_id', 1);
+            $models->whereIn('auto_member_type_id', [1,2,3]);
         }
         if ($request->cm_permissions_id == 2) {
             $models->where('auto_member_type_id', 2);
         }
 
         if ($request->cm_permissions_id == 3){
-            $models->where('auto_member_type_id', 3);
+            $models->whereIn('auto_member_type_id', [2,3]);
         }
+
         if ($request->cm_permissions_id == "0"){
             $models->where('auto_member_type_id', null);
         }
