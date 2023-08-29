@@ -36,6 +36,11 @@ class CmTransactionResource extends JsonResource
             'financial_year_id' => $this->financial_year_id,
 
 
+//
+
+
+
+
             // year - branch - document - prefix - serial_number
         ];
     }

@@ -5,6 +5,8 @@ namespace Modules\ClubMembers\Repositories\CmMember;
 use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Entities\CmMemberPermission;
+use Modules\ClubMembers\Entities\CmTypePermission;
 
 class CmMemberRepository implements CmMemberInterface
 {
@@ -256,5 +258,7 @@ class CmMemberRepository implements CmMemberInterface
 
         }
     }
+
+
 
 }

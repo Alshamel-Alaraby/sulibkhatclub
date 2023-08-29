@@ -1407,6 +1407,13 @@
         "nominateMemberCount": "اعضاء لهم حق الترشح في الانتخابات",
         "normalMemberCount": "الأعضاء العاديين",
         "voteMemberCount": "اعضاء لهم حق التصويت فى الانتخابات",
-        "AttendElections": "اعضاء لهم حق حضور الانتخابات"
+        "AttendElections": "اعضاء لهم حق حضور الانتخابات",
+        "beforeDate": "قبل تاريخ",
+        "forYear": "عن سنة",
+        "memberNumber": "رقم العضو",
+        "QueryAboutThePayersBeforeASpecificDate": "الاستعلام عن المسددين قبل تاريخ محدد",
+        "year_from": "تاريخ بداية الاشتراك",
+        "year_to": "تاريخ نهاية الاشتراك",
+        "number_of_years": "عدد السنين"
     }
 }

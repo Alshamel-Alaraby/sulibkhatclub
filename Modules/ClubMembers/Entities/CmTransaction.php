@@ -20,6 +20,7 @@ class CmTransaction extends Model
 
         'date' => 'date',
     ];
+    protected $with =['branch','document','member','sponsor'];
 
     public function branch()
     {
@@ -31,18 +32,15 @@ class CmTransaction extends Model
         return $this->belongsTo(Document::class, 'document_id');
 
     }
-
     public function member()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
-
 
     }
 
     public function sponsor()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponser::class, 'sponsor_id');
-
     }
 
 

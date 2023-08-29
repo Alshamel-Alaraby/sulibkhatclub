@@ -6,9 +6,12 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
+use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Http\Requests\CmTransactionRequest;
 use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingInterface;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
+use Modules\ClubMembers\Transformers\CheckDateMemberTransactionResource;
+use Modules\ClubMembers\Transformers\CmMemberResource;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
 
 use Modules\ClubMembers\Entities\CmTransaction;
@@ -105,6 +108,23 @@ class CmTransactionController extends Controller
         $models = CmTransaction::where("cm_member_id", $member_id)->get();
 
         return responseJson(200, 'success', CmMemberTransactionsResource::collection($models));
+
+    }
+
+    public function checkDateMemberTransaction(Request $request)
+    {
+        $models['data'] = CmTransaction::whereDate('date','<=' ,$request->date)->where('year_to',$request->year)->paginate($request->per_page);
+        $models['paginate'] = true;
+        return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+    public function unpaidMemberTransaction(Request $request)
+    {
+       $transactionArray = CmTransaction::whereDate('date','<=' ,$request->date)->where('year_to',$request->year)->pluck('cm_member_id')->toArray();
+        $models['data'] = CmMember::whereNotIn('id',$transactionArray)->paginate($request->per_page);
+        $models['paginate'] = true;
+
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 

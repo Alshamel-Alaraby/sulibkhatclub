@@ -133,4 +133,22 @@ export default [
         component: () => import('../../views/pages/club/poster-report'),
 
     },
+    {
+        path: '/dashboard/club/paid-member-report',
+        name: 'paid member',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/paid-member-report'),
+
+    },
+    {
+        path: '/dashboard/club/unpaid-member-report',
+        name: 'unpaid member',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/unpaid-member-report'),
+
+    },
 ];
