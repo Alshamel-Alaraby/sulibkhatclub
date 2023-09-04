@@ -79,10 +79,6 @@ class CmMemberController extends Controller
 
     public function declineMember(CmMemberDeclineRequest $request, $id)
     {
-        $model = $this->modelInterface->find($id);
-        if (!$model) {
-            return responseJson(404, __('message.data not found'));
-        }
         $model = $this->modelInterface->updateDecline($request, $id);
 
         return responseJson(200, 'success', new CmMemberResource($model));

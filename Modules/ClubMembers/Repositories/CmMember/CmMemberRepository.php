@@ -129,7 +129,7 @@ class CmMemberRepository implements CmMemberInterface
         DB::transaction(function () use ($id, $request) {
             $this->modelRequest->where("id", $id)->update(array_merge($request->all(), ['acceptance' => 2,'member_type_id'=>16]));
         });
-        $model = $this->model->find($id);
+        $model = $this->modelRequest->find($id);
         return $model;
     }
 
