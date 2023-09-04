@@ -184,7 +184,7 @@ class CmMemberRepository implements CmMemberInterface
 
     public function acceptMembers($request)
     {
-       return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
 
             foreach ($request['accept-members'] as $accept_member) {
                 $max_membership_number = $this->model->max('membership_number');
@@ -192,13 +192,16 @@ class CmMemberRepository implements CmMemberInterface
 
                 $memberRequest  = $this->modelRequest->where('id', $accept_member['id'])->first();
                 if ($memberRequest){
-                     $membercreate = collect($memberRequest)->except(['id','deleted_at','created_at','updated_at']) ;
-                     $model = $this->model->create($membercreate->all());
-                     $accept =  collect($accept_member)->except(['id']);
+                    $membercreate = collect($memberRequest)->except(['id','deleted_at','created_at','updated_at','financial_status_id','member_type_id','status_id']) ;
+                    $model = $this->model->create($membercreate->all());
+                    $accept =  collect($accept_member)->except(['id']);
                     $model->update(array_merge($accept->all(),
                         [
                             'acceptance' => 1,
                             'membership_number' => $max,
+                            'financial_status_id' => 3,
+                            'member_type_id' => 4,
+                            'status_id' => 2,
                         ]));
                     $transaction = $this->modelTransaction->where('member_request_id',$memberRequest->id)->first();
                     if ($transaction){
@@ -211,9 +214,9 @@ class CmMemberRepository implements CmMemberInterface
                     $memberRequest->delete();
                 }
             }
-           return 200;
+            return 200;
 
-       });
+        });
     }
 
     public function reportCmMember($request)
