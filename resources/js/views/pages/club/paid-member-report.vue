@@ -10,10 +10,9 @@ import loader from "../../../components/general/loader";
 import {dynamicSortString} from "../../../helper/tableSort";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
-import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../helper/permission";
-
+import DatePicker from "vue2-datepicker";
 /**
  * Advanced Table component
  */
@@ -27,9 +26,9 @@ export default {
         Layout,
         PageHeader,
         Switches,
+        DatePicker,
         ErrorMessage,
         loader,
-        DatePicker,
         Multiselect,
     },
     beforeRouteEnter(to, from, next) {
@@ -74,8 +73,7 @@ export default {
             },
             filterSetting: [
                 'cm_member_id',
-                'prefix',
-                'member_number',
+                'membership_number',
             ],
             Tooltip: '',
             mouseEnter: null,
@@ -130,17 +128,21 @@ export default {
                 this.isLoader = true;
                 let _filterSetting = [...this.filterSetting];
                 let index = this.filterSetting.indexOf("cm_member_id");
+                let index1 = this.filterSetting.indexOf("membership_number");
                 if (index > -1) {
                     _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+                        this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
+                }
+                if (index1 > -1) {
+                    _filterSetting[index1] =
+                        this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
                 }
                 let filter = '';
                 for (let i = 0; i < _filterSetting.length; ++i) {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
-                let date = '';
-                date = this.create.year +'-'+ this.create.date;
-                adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${date}&year=${this.create.year}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+
+                adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -168,17 +170,21 @@ export default {
                     this.isLoader = true;
                     let _filterSetting = [...this.filterSetting];
                     let index = this.filterSetting.indexOf("cm_member_id");
+                    let index1 = this.filterSetting.indexOf("membership_number");
                     if (index > -1) {
                         _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+                            this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
+                    }
+                    if (index1 > -1) {
+                        _filterSetting[index1] =
+                            this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
                     }
                     let filter = "";
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
-                    let date = '';
-                    date = this.create.year +'-'+ this.create.date;
-                    adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${date}&year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+
+                    adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -226,11 +232,37 @@ export default {
         /**
          *  start  dynamicSortString
          */
+        changeStatus(){
+            adminApi.put(`/club-members/transactions/check-date-member-transaction-update`,{
+                date: this.create.date,
+                year: this.create.date
+            })
+                .then((res) => {
+                    this.installmentStatus = [];
+                    this.installmentStatusPagination = {};
+                    this.current_page = 1;
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.Addedsuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: `${this.$t('general.Error')}`,
+                        text: `${this.$t('general.Thereisanerrorinthesystem')}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         sortString(value) {
             return dynamicSortString(value);
-        },
-        moveInput(tag, c, index) {
-            document.querySelector(`${tag}[data-${c}='${index}']`).focus()
         },
         formatDate(value) {
             return formatDateOnly(value);
@@ -248,9 +280,7 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-
-        dateStatus(date,status)
-        {
+        dateStatus(date,status) {
             if (status == 'Unpaid')
             {
                 let toDay = this.formatDate(new Date());
@@ -268,7 +298,6 @@ export default {
                 return 'completedPayment'
             }
         }
-
     },
 };
 </script>
@@ -291,16 +320,12 @@ export default {
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
                                         <b-form-checkbox v-model="filterSetting"
-                                                         :value="$i18n.locale == 'ar' ? 'member.name' : 'member.name_e'"
+                                                         value="cm_member_id"
                                                          class="mb-1">{{ $t('general.member') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="prefix" class="mb-1">
-                                            {{ $t('general.serial_number') }}
+                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
+                                            {{ getCompanyKey("member_membership_number")  }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="member_number" class="mb-1">
-                                            {{ $t('general.memberNumber') }}
-                                        </b-form-checkbox>
-
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
@@ -343,6 +368,15 @@ export default {
                                     </button>
 
                                 </div>
+                                <b-button
+                                    variant="secondary"
+                                    v-if="installmentStatus.length > 0"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                    @click="changeStatus"
+                                >
+                                    {{ $t('general.changeStatus') }}
+                                    <i class="mdi mdi-square-edit-outline"></i>
+                                </b-button>
                                 <!-- end create and printer -->
                             </div>
                             <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center  justify-content-end">
@@ -461,9 +495,8 @@ export default {
                                                 type="text"
                                                 class="form-control"
                                                 v-model="$v.create.date.$model"
-                                                :class="{
-                                                    'is-invalid':$v.create.date.$error || errors.date,
-                                                    'is-valid': !$v.create.date.$invalid &&!errors.date,
+                                                :class="{ 'is-invalid':  $v.create.date.$error || errors.date,
+                                                    'is-valid':!$v.create.date.$invalid &&!errors.date,
                                                     }"
                                             >
                                             <template v-if="errors.date">
@@ -511,77 +544,29 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
-                                    <th v-if="setting.cm_member_id">
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t('general.member') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                                <i class="fas fa-arrow-down" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
-                                            </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.branch_id">
+                                    <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.branch') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                                <i class="fas fa-arrow-down" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
-                                            </div>
+                                            <span>{{ $t('general.PaymentVoucherNumber') }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.prefix">
+                                    <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.serial_number') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('prefix'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-prefix'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.date">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.date') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('date'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-date'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.year_from">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.year_from') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('year_from'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-year_from'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.year_to">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.year_to') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('year_to'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-year_to'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.number_of_years">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.number_of_years') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('number_of_years'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-number_of_years'))"></i>
-                                            </div>
+                                            <span>{{ $t('general.Historyofthebond') }}</span>
                                         </div>
                                     </th>
                                 </tr>
@@ -592,38 +577,28 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
-
-                                    <td v-if="setting.cm_member_id">
+                                    <td>
+                                        {{ data.member ? data.member.membership_number : '-' }}
+                                    </td>
+                                    <td>
+                                        {{ data.member ?  formatDate(data.member.membership_date)   : '-' }}
+                                    </td>
+                                    <td>
                                         <h5 class="m-0 font-weight-normal td5">
                                             {{ data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:'' }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.branch_id">
-                                        <h5 class="m-0 font-weight-normal td5">
-                                            {{ $i18n.locale == "ar" ? data.branch.name : data.branch.name_e}}
-                                        </h5>
+                                    <td>
+                                        {{ data.serial_number }}
                                     </td>
-                                    <td v-if="setting.prefix">
-                                        <h5 class="m-0 font-weight-normal">{{ data.prefix }}</h5>
+                                    <td>
+                                        {{ formatDate(data.date) }}
                                     </td>
-                                    <td v-if="setting.date">
-                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
-                                    </td>
-                                    <td v-if="setting.year_from">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
-                                    </td>
-                                    <td v-if="setting.year_to">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5>
-                                    </td>
-                                    <td v-if="setting.number_of_years">
-                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5>
-                                    </td>
-
                                 </tr>
                                 </tbody>
                                 <tbody v-else>
                                 <tr>
-                                    <th class="text-center" colspan="7">{{ $t('general.notDataFound') }}</th>
+                                    <th class="text-center" colspan="10">{{ $t('general.notDataFound') }}</th>
                                 </tr>
                                 </tbody>
                             </table>

@@ -9,9 +9,9 @@ use Modules\ClubMembers\Entities\CmTransaction;
 use Modules\ClubMembers\Http\Requests\CmTransactionRequest;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Transformers\CheckDateMemberTransactionResource;
-use Modules\ClubMembers\Transformers\CmMemberResource;
 use Modules\ClubMembers\Transformers\CmMemberTransactionsResource;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
+use Modules\ClubMembers\Transformers\UnPaidMembers;
 
 class CmTransactionController extends Controller
 {
@@ -117,7 +117,7 @@ class CmTransactionController extends Controller
     public function checkDateMemberTransaction(Request $request)
     {
 
-        $models['data'] = CmTransaction::whereDate('date', '<=', $request->date)->where('year_from', $request->year)->paginate($request->per_page);
+        $models['data'] = CmTransaction::whereDate('date', '<=', $request->date)->where('year_to', $request->year)->paginate($request->per_page);
         $models['paginate'] = true;
         return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
@@ -135,15 +135,72 @@ class CmTransactionController extends Controller
 
     }
 
+    // public function unpaidMemberTransaction(Request $request)
+    // {
+    //     $transactionArray = CmTransaction::where('year_to', $request->year)->pluck('cm_member_id')->toArray();
 
+    //     $models['data'] = CmMember::whereNotIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->paginate($request->per_page);
+
+    //     $models['paginate'] = true;
+
+    //     return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    // }
     public function unpaidMemberTransaction(Request $request)
     {
-        $transactionArray = CmTransaction::whereDate('date', '<=', $request->date)->where('year_to', $request->year)->pluck('cm_member_id')->toArray();
-        $models['data'] = CmMember::whereNotIn('id', $transactionArray)->paginate($request->per_page);
-        $models['paginate'] = true;
 
-        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        $transactionMemberIds = CmTransaction::where('year_to', $request->year)
+            ->pluck('cm_member_id')
+            ->toArray();
 
+        // return  $transactionMemberIds;
+        $unpaidMembersQuery = CmMember::where('member_type_id', 1)
+            ->orWhereHas('memberType', function ($query) {
+                $query->where('parent_id', 1);
+            })
+            ->whereNotIn('id', $transactionMemberIds)->with(['cmTransaction' => function ($query) use ($request) {
+            $query->orderBy('year_to', 'desc')->select('*')->first();
+        }])->paginate($request->per_page);
+
+        // return  $unpaidMembersQuery;
+
+        // $unpaidMembers = CmTransaction::whereIn('cm_member_id', $unpaidMembersQuery)->whereHas('member', function ($q) {
+        //     $q->whereHas('cmTransaction', function ($query) {
+        //         $query->latest();
+        //     });
+        // })->get();
+
+        // $unpaidMembers = $unpaidMembersQuery->with(['cmTransaction' => function ($query) use ($request) {
+        //     $query->latest('id')->first()->toArray();
+        // }])->paginate($request->per_page);
+
+        return $unpaidMembersQuery;
+
+        return responseJson(200, 'success', UnPaidMembers::collection($unpaidMembers), getPaginates($unpaidMembers));
     }
+
+    public function updateUnpaidMemberTransaction(Request $request)
+    {
+        $transactionArray = CmTransaction::where('year_to', $request->year)->pluck('cm_member_id')->toArray();
+
+        CmMember::whereNotIn('id', $transactionArray)
+            ->where('member_type_id', 1)
+            ->whereRelation('memberType', 'parent_id', 1)
+            ->update(['financial_status_id' => $request->cm_financial_status_id]);
+
+        return responseJson(200, 'success', 'Updated Successfully');
+    }
+
+    // public function updateUnpaidMemberTransaction(Request $request)
+    // {
+    //     $transactionArray = CmTransaction::where('year_to', $request->year)->pluck('cm_member_id')->toArray();
+
+    //     $models['data'] = CmMember::whereNotIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => $request['cm_financial_status_id']]);
+
+    //     $models['paginate'] = true;
+
+    //     return responseJson(200, 'success', 'Updated Successfully');
+
+    // }
 
 }

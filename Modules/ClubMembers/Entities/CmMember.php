@@ -3,12 +3,11 @@
 namespace Modules\ClubMembers\Entities;
 
 use App\Traits\LogTrait;
-use Carbon\Carbon;
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Model;
-use Modules\ClubMembers\Entities\Status;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\ClubMembers\Entities\Status;
+use Spatie\Activitylog\LogOptions;
 
 class CmMember extends Model
 {
@@ -16,7 +15,6 @@ class CmMember extends Model
 
     protected $guarded = [];
     protected $table = 'cm_members';
-
 
     protected $casts = [
         'is_accept' => 'App\Enums\IsAccept',
@@ -45,7 +43,11 @@ class CmMember extends Model
         return $this->hasMany(CmTransaction::class, 'cm_member_id');
 
     }
+    public function lastCmTransaction()
+    {
+        return $this->hasMany(CmTransaction::class, 'cm_member_id')->limit(1);
 
+    }
 
     public function financialStatus()
     {
@@ -59,9 +61,8 @@ class CmMember extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Sponser')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
 
     public function scopeFilter($query, $request)
     {

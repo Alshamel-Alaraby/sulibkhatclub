@@ -1692,8 +1692,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       payment_types: [],
       isLoader: false,
       create: {
-        date: '',
-        year: ''
+        year_to: '',
+        year_from: ''
       },
       errors: {},
       is_disabled: false,
@@ -1778,9 +1778,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         for (var i = 0; i < _filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
         }
-        var date = '';
-        date = this.create.year + '-' + this.create.date;
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?date=".concat(date, "&year=").concat(this.create.year, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?year=".concat(this.create.year, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
           _this3.installmentStatus = l.data;
           _this3.installmentStatusPagination = l.pagination;
@@ -1814,9 +1812,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           for (var i = 0; i < _filterSetting.length; ++i) {
             filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
           }
-          var date = '';
-          date = this.create.year + '-' + this.create.date;
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?date=".concat(date, "&year=").concat(this.create.year, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?year=".concat(this.create.year, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
             var l = res.data;
             _this4.installmentStatus = l.data;
             _this4.installmentStatusPagination = l.pagination;
@@ -1902,6 +1898,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         _this7.enabled3 = true;
       }, 100);
+    },
+    changeStatus: function changeStatus() {
+      var _this8 = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("/club-members/transactions/check-date-member-transaction").then(function (res) {
+        _this8.installmentStatus = [];
+        _this8.installmentStatusPagination = {};
+        _this8.current_page = 1;
+        setTimeout(function () {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+            icon: "success",
+            text: "".concat(_this8.$t("general.Addedsuccessfully")),
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }, 500);
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+          icon: 'error',
+          title: "".concat(_this8.$t('general.Error')),
+          text: "".concat(_this8.$t('general.Thereisanerrorinthesystem'))
+        });
+      })["finally"](function () {
+        _this8.isLoader = false;
+      });
     },
     dateStatus: function dateStatus(date, status) {
       if (status == 'Unpaid') {
@@ -2363,7 +2383,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11211,6 +11231,27 @@ var render = function () {
                             [_c("i", { staticClass: "fe-printer" })]
                           ),
                         ]),
+                        _vm._v(" "),
+                        _vm.installmentStatus.length > 0
+                          ? _c(
+                              "b-button",
+                              {
+                                staticClass: "btn-sm mx-1 font-weight-bold",
+                                attrs: { variant: "secondary" },
+                                on: { click: _vm.changeStatus },
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(_vm.$t("general.changeStatus")) +
+                                    "\n                                "
+                                ),
+                                _c("i", {
+                                  staticClass: "mdi mdi-square-edit-outline",
+                                }),
+                              ]
+                            )
+                          : _vm._e(),
                       ],
                       1
                     ),
@@ -11546,79 +11587,6 @@ var render = function () {
                               _c("label", { staticClass: "control-label" }, [
                                 _vm._v(
                                   "\n                                            " +
-                                    _vm._s(_vm.$t("general.beforeDate")) +
-                                    "\n                                            "
-                                ),
-                                _c("span", { staticClass: "text-danger" }, [
-                                  _vm._v("*"),
-                                ]),
-                              ]),
-                              _vm._v(" "),
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.$v.create.date.$model,
-                                    expression: "$v.create.date.$model",
-                                  },
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid":
-                                    _vm.$v.create.date.$error ||
-                                    _vm.errors.date,
-                                  "is-valid":
-                                    !_vm.$v.create.date.$invalid &&
-                                    !_vm.errors.date,
-                                },
-                                attrs: { type: "text" },
-                                domProps: { value: _vm.$v.create.date.$model },
-                                on: {
-                                  input: function ($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.$v.create.date,
-                                      "$model",
-                                      $event.target.value
-                                    )
-                                  },
-                                },
-                              }),
-                              _vm._v(" "),
-                              _vm.errors.date
-                                ? _vm._l(
-                                    _vm.errors.date,
-                                    function (errorMessage, index) {
-                                      return _c(
-                                        "ErrorMessage",
-                                        { key: index },
-                                        [
-                                          _vm._v(
-                                            "\n                                                " +
-                                              _vm._s(errorMessage) +
-                                              "\n                                            "
-                                          ),
-                                        ]
-                                      )
-                                    }
-                                  )
-                                : _vm._e(),
-                            ],
-                            2
-                          ),
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-6" }, [
-                          _c(
-                            "div",
-                            { staticClass: "form-group" },
-                            [
-                              _c("label", { staticClass: "control-label" }, [
-                                _vm._v(
-                                  "\n                                            " +
                                     _vm._s(_vm.$t("general.forYear")) +
                                     "\n                                            "
                                 ),
@@ -11710,56 +11678,51 @@ var render = function () {
                       [
                         _c("thead", [
                           _c("tr", [
-                            _vm.setting.cm_member_id
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(_vm.$t("general.member"))
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "first_name"
-                                                    : "first_name"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "-first_name"
-                                                    : "-first_name"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(_vm._s(_vm.$t("general.member"))),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "arrow-sort" }, [
+                                    _c("i", {
+                                      staticClass: "fas fa-arrow-up",
+                                      on: {
+                                        click: function ($event) {
+                                          _vm.installmentStatus.sort(
+                                            _vm.sortString(
+                                              _vm.$i18n.locale == "ar"
+                                                ? "first_name"
+                                                : "first_name"
+                                            )
+                                          )
+                                        },
+                                      },
+                                    }),
+                                    _vm._v(" "),
+                                    _c("i", {
+                                      staticClass: "fas fa-arrow-down",
+                                      on: {
+                                        click: function ($event) {
+                                          _vm.installmentStatus.sort(
+                                            _vm.sortString(
+                                              _vm.$i18n.locale == "ar"
+                                                ? "-first_name"
+                                                : "-first_name"
+                                            )
+                                          )
+                                        },
+                                      },
+                                    }),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                           ]),
                         ]),
                         _vm._v(" "),

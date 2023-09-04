@@ -1626,10 +1626,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_tableSort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../helper/tableSort */ "./resources/js/helper/tableSort.js");
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../helper/startDate */ "./resources/js/helper/startDate.js");
 /* harmony import */ var _helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../helper/mixin/translation-mixin */ "./resources/js/helper/mixin/translation-mixin.js");
-/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/index.esm.js");
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/index.esm.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -1640,7 +1640,6 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 
 
 
@@ -1671,14 +1670,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     Layout: _layouts_main__WEBPACK_IMPORTED_MODULE_0__["default"],
     PageHeader: _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__["default"],
     Switches: vue_switches__WEBPACK_IMPORTED_MODULE_3__["default"],
+    DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_12__["default"],
     ErrorMessage: _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_5__["default"],
     loader: _components_general_loader__WEBPACK_IMPORTED_MODULE_6__["default"],
-    DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_10__["default"],
-    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_11___default())
+    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_10___default())
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_12__["default"])(vm, "paid member", "all paid member");
+      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_11__["default"])(vm, "paid member", "all paid member");
     });
   },
   data: function data() {
@@ -1715,7 +1714,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         year_to: true,
         number_of_years: true
       },
-      filterSetting: ['cm_member_id', 'prefix', 'member_number'],
+      filterSetting: ['cm_member_id', 'membership_number'],
       Tooltip: '',
       mouseEnter: null
     };
@@ -1777,16 +1776,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         this.isLoader = true;
         var _filterSetting = _toConsumableArray(this.filterSetting);
         var index = this.filterSetting.indexOf("cm_member_id");
+        var index1 = this.filterSetting.indexOf("membership_number");
         if (index > -1) {
-          _filterSetting[index] = this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+          _filterSetting[index] = this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
+        }
+        if (index1 > -1) {
+          _filterSetting[index1] = this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
         }
         var filter = '';
         for (var i = 0; i < _filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
         }
-        var date = '';
-        date = this.create.year + '-' + this.create.date;
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/check-date-member-transaction?date=".concat(date, "&year=").concat(this.create.year, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/check-date-member-transaction?date=".concat(this.create.date, "&year=").concat(this.create.year, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
           _this3.installmentStatus = l.data;
           _this3.installmentStatusPagination = l.pagination;
@@ -1813,16 +1814,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           this.isLoader = true;
           var _filterSetting = _toConsumableArray(this.filterSetting);
           var index = this.filterSetting.indexOf("cm_member_id");
+          var index1 = this.filterSetting.indexOf("membership_number");
           if (index > -1) {
-            _filterSetting[index] = this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+            _filterSetting[index] = this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
+          }
+          if (index1 > -1) {
+            _filterSetting[index1] = this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
           }
           var filter = "";
           for (var i = 0; i < _filterSetting.length; ++i) {
             filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
           }
-          var date = '';
-          date = this.create.year + '-' + this.create.date;
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/check-date-member-transaction?date=".concat(date, "&year=").concat(this.create.year, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/check-date-member-transaction?date=".concat(this.create.date, "&year=").concat(this.create.year, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
             var l = res.data;
             _this4.installmentStatus = l.data;
             _this4.installmentStatusPagination = l.pagination;
@@ -1880,20 +1883,44 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     /**
      *  start  dynamicSortString
      */
+    changeStatus: function changeStatus() {
+      var _this7 = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("/club-members/transactions/check-date-member-transaction-update", {
+        date: this.create.date,
+        year: this.create.date
+      }).then(function (res) {
+        _this7.installmentStatus = [];
+        _this7.installmentStatusPagination = {};
+        _this7.current_page = 1;
+        setTimeout(function () {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+            icon: "success",
+            text: "".concat(_this7.$t("general.Addedsuccessfully")),
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }, 500);
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
+          icon: 'error',
+          title: "".concat(_this7.$t('general.Error')),
+          text: "".concat(_this7.$t('general.Thereisanerrorinthesystem'))
+        });
+      })["finally"](function () {
+        _this7.isLoader = false;
+      });
+    },
     sortString: function sortString(value) {
       return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_7__.dynamicSortString)(value);
-    },
-    moveInput: function moveInput(tag, c, index) {
-      document.querySelector("".concat(tag, "[data-").concat(c, "='").concat(index, "']")).focus();
     },
     formatDate: function formatDate(value) {
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this7 = this;
+      var _this8 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this7.$refs.exportable_table;
+        var elt = _this8.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -1906,7 +1933,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } else {
           XLSX.writeFile(wb, fn || ('Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this7.enabled3 = true;
+        _this8.enabled3 = true;
       }, 100);
     },
     dateStatus: function dateStatus(date, status) {
@@ -2369,7 +2396,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11062,12 +11089,7 @@ var render = function () {
                                   "b-form-checkbox",
                                   {
                                     staticClass: "mb-1",
-                                    attrs: {
-                                      value:
-                                        _vm.$i18n.locale == "ar"
-                                          ? "member.name"
-                                          : "member.name_e",
-                                    },
+                                    attrs: { value: "cm_member_id" },
                                     model: {
                                       value: _vm.filterSetting,
                                       callback: function ($$v) {
@@ -11088,7 +11110,7 @@ var render = function () {
                                   "b-form-checkbox",
                                   {
                                     staticClass: "mb-1",
-                                    attrs: { value: "prefix" },
+                                    attrs: { value: "membership_number" },
                                     model: {
                                       value: _vm.filterSetting,
                                       callback: function ($$v) {
@@ -11101,30 +11123,10 @@ var render = function () {
                                     _vm._v(
                                       "\n                                        " +
                                         _vm._s(
-                                          _vm.$t("general.serial_number")
+                                          _vm.getCompanyKey(
+                                            "member_membership_number"
+                                          )
                                         ) +
-                                        "\n                                    "
-                                    ),
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "b-form-checkbox",
-                                  {
-                                    staticClass: "mb-1",
-                                    attrs: { value: "member_number" },
-                                    model: {
-                                      value: _vm.filterSetting,
-                                      callback: function ($$v) {
-                                        _vm.filterSetting = $$v
-                                      },
-                                      expression: "filterSetting",
-                                    },
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(_vm.$t("general.memberNumber")) +
                                         "\n                                    "
                                     ),
                                   ]
@@ -11263,6 +11265,27 @@ var render = function () {
                             [_c("i", { staticClass: "fe-printer" })]
                           ),
                         ]),
+                        _vm._v(" "),
+                        _vm.installmentStatus.length > 0
+                          ? _c(
+                              "b-button",
+                              {
+                                staticClass: "btn-sm mx-1 font-weight-bold",
+                                attrs: { variant: "secondary" },
+                                on: { click: _vm.changeStatus },
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(_vm.$t("general.changeStatus")) +
+                                    "\n                                "
+                                ),
+                                _c("i", {
+                                  staticClass: "mdi mdi-square-edit-outline",
+                                }),
+                              ]
+                            )
+                          : _vm._e(),
                       ],
                       1
                     ),
@@ -11882,328 +11905,93 @@ var render = function () {
                       [
                         _c("thead", [
                           _c("tr", [
-                            _vm.setting.cm_member_id
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(_vm.$t("general.member"))
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "name"
-                                                    : "name_e"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "-name"
-                                                    : "-name_e"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.getCompanyKey(
+                                          "member_membership_number"
+                                        )
+                                      )
+                                    ),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                             _vm._v(" "),
-                            _vm.setting.branch_id
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(_vm.$t("general.branch"))
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "name"
-                                                    : "name_e"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  _vm.$i18n.locale == "ar"
-                                                    ? "-name"
-                                                    : "-name_e"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.getCompanyKey(
+                                          "member_membership_date"
+                                        )
+                                      )
+                                    ),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                             _vm._v(" "),
-                            _vm.setting.prefix
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.$t("general.serial_number")
-                                          )
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("prefix")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("-prefix")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(_vm._s(_vm.$t("general.member"))),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                             _vm._v(" "),
-                            _vm.setting.date
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(_vm._s(_vm.$t("general.date"))),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("date")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("-date")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.$t("general.PaymentVoucherNumber")
+                                      )
+                                    ),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                             _vm._v(" "),
-                            _vm.setting.year_from
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(_vm.$t("general.year_from"))
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("year_from")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("-year_from")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.setting.year_to
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(_vm.$t("general.year_to"))
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("year_to")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString("-year_to")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.setting.number_of_years
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.$t("general.number_of_years")
-                                          )
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  "number_of_years"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.installmentStatus.sort(
-                                                _vm.sortString(
-                                                  "-number_of_years"
-                                                )
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
+                            _c("th", [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "d-flex justify-content-center",
+                                },
+                                [
+                                  _c("span", [
+                                    _vm._v(
+                                      _vm._s(_vm.$t("general.Historyofthebond"))
+                                    ),
+                                  ]),
+                                ]
+                              ),
+                            ]),
                           ]),
                         ]),
                         _vm._v(" "),
@@ -12220,136 +12008,75 @@ var render = function () {
                                       staticClass: "body-tr-custom",
                                     },
                                     [
-                                      _vm.setting.cm_member_id
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal td5",
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                        " +
-                                                    _vm._s(
-                                                      data.member
-                                                        ? data.member
-                                                            .first_name +
-                                                            " " +
-                                                            data.member
-                                                              .second_name +
-                                                            " " +
-                                                            data.member
-                                                              .third_name +
-                                                            " " +
-                                                            data.member
-                                                              .last_name
-                                                        : ""
-                                                    ) +
-                                                    "\n                                    "
-                                                ),
-                                              ]
-                                            ),
-                                          ])
-                                        : _vm._e(),
+                                      _c("td", [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(
+                                              data.member
+                                                ? data.member.membership_number
+                                                : "-"
+                                            ) +
+                                            "\n                                "
+                                        ),
+                                      ]),
                                       _vm._v(" "),
-                                      _vm.setting.branch_id
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal td5",
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "\n                                        " +
-                                                    _vm._s(
-                                                      _vm.$i18n.locale == "ar"
-                                                        ? data.branch.name
-                                                        : data.branch.name_e
-                                                    ) +
-                                                    "\n                                    "
-                                                ),
-                                              ]
-                                            ),
-                                          ])
-                                        : _vm._e(),
-                                      _vm._v(" "),
-                                      _vm.setting.prefix
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal",
-                                              },
-                                              [_vm._v(_vm._s(data.prefix))]
-                                            ),
-                                          ])
-                                        : _vm._e(),
-                                      _vm._v(" "),
-                                      _vm.setting.date
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal",
-                                              },
-                                              [
-                                                _vm._v(
-                                                  _vm._s(
-                                                    _vm.formatDate(data.date)
+                                      _c("td", [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(
+                                              data.member
+                                                ? _vm.formatDate(
+                                                    data.member.membership_date
                                                   )
-                                                ),
-                                              ]
-                                            ),
-                                          ])
-                                        : _vm._e(),
+                                                : "-"
+                                            ) +
+                                            "\n                                "
+                                        ),
+                                      ]),
                                       _vm._v(" "),
-                                      _vm.setting.year_from
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal",
-                                              },
-                                              [_vm._v(_vm._s(data.year_from))]
+                                      _c("td", [
+                                        _c(
+                                          "h5",
+                                          {
+                                            staticClass:
+                                              "m-0 font-weight-normal td5",
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                        " +
+                                                _vm._s(
+                                                  data.member
+                                                    ? data.member.first_name +
+                                                        " " +
+                                                        data.member
+                                                          .second_name +
+                                                        " " +
+                                                        data.member.third_name +
+                                                        " " +
+                                                        data.member.last_name
+                                                    : ""
+                                                ) +
+                                                "\n                                    "
                                             ),
-                                          ])
-                                        : _vm._e(),
+                                          ]
+                                        ),
+                                      ]),
                                       _vm._v(" "),
-                                      _vm.setting.year_to
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal",
-                                              },
-                                              [_vm._v(_vm._s(data.year_to))]
-                                            ),
-                                          ])
-                                        : _vm._e(),
+                                      _c("td", [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(data.serial_number) +
+                                            "\n                                "
+                                        ),
+                                      ]),
                                       _vm._v(" "),
-                                      _vm.setting.number_of_years
-                                        ? _c("td", [
-                                            _c(
-                                              "h5",
-                                              {
-                                                staticClass:
-                                                  "m-0 font-weight-normal",
-                                              },
-                                              [
-                                                _vm._v(
-                                                  _vm._s(data.number_of_years)
-                                                ),
-                                              ]
-                                            ),
-                                          ])
-                                        : _vm._e(),
+                                      _c("td", [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(_vm.formatDate(data.date)) +
+                                            "\n                                "
+                                        ),
+                                      ]),
                                     ]
                                   )
                                 }
@@ -12362,7 +12089,7 @@ var render = function () {
                                   "th",
                                   {
                                     staticClass: "text-center",
-                                    attrs: { colspan: "7" },
+                                    attrs: { colspan: "10" },
                                   },
                                   [
                                     _vm._v(

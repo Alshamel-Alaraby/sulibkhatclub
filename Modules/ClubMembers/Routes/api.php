@@ -176,6 +176,8 @@ Route::prefix('club-members')->group(function () {
     });
 
     Route::group(['prefix' => 'transactions'], function () {
+        Route::get('unpaid-member-transaction', 'CmTransactionController@unpaidMemberTransaction');
+
         Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
             ->name('MemberTransaction.find');
         Route::get('/member-last-transaction/{id}', 'CmTransactionController@findCmMemberLastTransaction');
@@ -185,7 +187,10 @@ Route::prefix('club-members')->group(function () {
 
 
 
-        Route::get('unpaid-member-transaction', 'CmTransactionController@unpaidMemberTransaction');
+        Route::put('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
+
+
+
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
         Route::get('/logs/{id}', 'CmTransactionController@logs')->name('transaction.logs');
         Route::get('/{id}', 'CmTransactionController@find')->name('transaction.find');

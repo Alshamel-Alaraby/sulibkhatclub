@@ -49,8 +49,8 @@ export default {
             payment_types: [],
             isLoader: false,
             create: {
-                date: '',
-                year: '',
+                year_to: '',
+                year_from: '',
             },
             errors: {},
             is_disabled: false,
@@ -130,9 +130,8 @@ export default {
                 for (let i = 0; i < _filterSetting.length; ++i) {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
-                let date = '';
-                date = this.create.year +'-'+ this.create.date;
-                adminApi.get(`/club-members/transactions/unpaid-member-transaction?date=${date}&year=${this.create.year}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+
+                adminApi.get(`/club-members/transactions/unpaid-member-transaction?year=${this.create.year}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -168,9 +167,7 @@ export default {
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
-                    let date = '';
-                    date = this.create.year +'-'+ this.create.date;
-                    adminApi.get(`/club-members/transactions/unpaid-member-transaction?date=${date}&year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    adminApi.get(`/club-members/transactions/unpaid-member-transaction?year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -240,7 +237,32 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-
+        changeStatus(){
+            adminApi.put(`/club-members/transactions/check-date-member-transaction`)
+                .then((res) => {
+                    this.installmentStatus = [];
+                    this.installmentStatusPagination = {};
+                    this.current_page = 1;
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.Addedsuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: `${this.$t('general.Error')}`,
+                        text: `${this.$t('general.Thereisanerrorinthesystem')}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         dateStatus(date,status)
         {
             if (status == 'Unpaid')
@@ -328,6 +350,15 @@ export default {
                                     </button>
 
                                 </div>
+                                <b-button
+                                    variant="secondary"
+                                    @click="changeStatus"
+                                    v-if="installmentStatus.length > 0"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                >
+                                    {{ $t('general.changeStatus') }}
+                                    <i class="mdi mdi-square-edit-outline"></i>
+                                </b-button>
                                 <!-- end create and printer -->
                             </div>
                             <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center  justify-content-end">
@@ -432,29 +463,6 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ $t('general.beforeDate') }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                v-model="$v.create.date.$model"
-                                                :class="{
-                                                    'is-invalid':$v.create.date.$error || errors.date,
-                                                    'is-valid': !$v.create.date.$invalid &&!errors.date,
-                                                    }"
-                                            >
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">
                                                 {{ $t('general.forYear') }}
                                                 <span class="text-danger">*</span>
                                             </label>
@@ -489,7 +497,7 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
-                                    <th v-if="setting.cm_member_id">
+                                    <th>
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t('general.member') }}</span>
                                             <div class="arrow-sort">
