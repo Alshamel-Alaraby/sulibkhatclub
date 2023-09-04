@@ -1433,9 +1433,12 @@
         "PleaseSelectAMember": "Please select a member",
         "ForAYear": "For a year",
         "allSponer": "All Sponsor",
+        "Dateofreceipt": "Date Of Receipt",
+        "changeStatus": "Change Status",
+        "PaymentVoucherNumber": "Payment voucher number",
+        "Historyofthebond": "History of the bond",
         "SubscriptionTable": "Subscription Table",
         "pendingMember": "Pending",
-        "unacceptable": "unacceptable",
-        "Dateofreceipt": "Date Of Receipt"
+        "unacceptable": "unacceptable"
     }
 }

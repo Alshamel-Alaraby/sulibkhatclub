@@ -484,7 +484,7 @@
                 "carousel": "دائري",
                 "dropdowns": "هبوط قطرة",
                 "video": "تضمين الفيديو",
-        "attendantTable":"جدول المرافقين",
+                "attendantTable":"جدول المرافقين",
 
                 "general": "واجهة المستخدم العامة",
                 "grid": "جريد",
@@ -1418,9 +1418,12 @@
         "PleaseSelectAMember": "من فضلك اختر العضو",
         "ForAYear": "عن سنه",
         "allSponer": "جميع الرعاه",
+        "Dateofreceipt": "تاريخ سند القبض",
+        "changeStatus": "تغير الحاله",
+        "PaymentVoucherNumber": "رقم سند السداد",
+        "Historyofthebond": "تاريخ السند ",
         "SubscriptionTable" : "جدول الاشتراكات",
         "pendingMember": "قيد الانتظار",
-        "unacceptable": "مرفوض",
-        "Dateofreceipt": "تاريخ سند القبض"
+        "unacceptable": "مرفوض"
     }
 }
