@@ -371,6 +371,7 @@ export default {
                                 <b-button
                                     variant="secondary"
                                     v-if="installmentStatus.length > 0"
+                                    :disabled="isLoader"
                                     class="btn-sm mx-1 font-weight-bold"
                                     @click="changeStatus"
                                 >

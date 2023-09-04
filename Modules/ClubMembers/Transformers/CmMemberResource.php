@@ -17,6 +17,7 @@ class CmMemberResource extends JsonResource
     {
         return [
 
+
             'id' => $this->id,
             'first_name' => $this->first_name,
             'second_name' => $this->second_name,

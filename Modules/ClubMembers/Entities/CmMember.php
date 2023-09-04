@@ -45,7 +45,7 @@ class CmMember extends Model
     }
     public function lastCmTransaction()
     {
-        return $this->hasMany(CmTransaction::class, 'cm_member_id')->limit(1);
+        return $this->hasOne(CmTransaction::class, 'cm_member_id')->latestOfMany();
 
     }
 
@@ -63,6 +63,14 @@ class CmMember extends Model
             ->useLogName('Sponser')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
+    // public function scopeTransaction($query)
+    // {
+    //     return $query->with(['cmTransaction' => function ($query) {
+    //         return $query->orderBy('year_to', 'desc')->get();
+    //     }]);
+
+    // }
 
     public function scopeFilter($query, $request)
     {

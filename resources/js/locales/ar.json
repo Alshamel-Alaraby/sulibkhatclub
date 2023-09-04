@@ -1424,6 +1424,7 @@
         "Historyofthebond": "تاريخ السند ",
         "SubscriptionTable" : "جدول الاشتراكات",
         "pendingMember": "قيد الانتظار",
-        "unacceptable": "مرفوض"
+        "unacceptable": "مرفوض",
+        "Thequeryisnotpaid": "الاستعلام غير مسددي"
     }
 }

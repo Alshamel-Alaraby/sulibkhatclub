@@ -16,10 +16,20 @@ class UnPaidMembers extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date' => $this->date,
-            'amount' => $this->amount,
-            'year_to' => $this->year_to,
-            'serial_number' => $this->serial_number,
+            'first_name' => $this->first_name,
+            'second_name' => $this->second_name,
+            'third_name' => $this->third_name,
+            'last_name' => $this->last_name,
+            'family_name' => $this->family_name,
+            'full_name' => $this->full_name,
+            'membership_date' => $this->membership_date,
+            'membership_number' => $this->membership_number,
+            'transaction_id' => $this->lastCmTransaction ? $this->lastCmTransaction->id : '',
+            'transaction_date' => $this->lastCmTransaction ? $this->lastCmTransaction->date : '',
+            'transaction_amount' => $this->lastCmTransaction ? $this->lastCmTransaction->amount : '',
+            'transaction_year_to' => $this->lastCmTransaction ? $this->lastCmTransaction->year_to : '',
+            'transaction_serial_number' => $this->lastCmTransaction ? $this->lastCmTransaction->serial_number : ''
         ];
+
     }
 }

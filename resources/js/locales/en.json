@@ -1439,6 +1439,7 @@
         "Historyofthebond": "History of the bond",
         "SubscriptionTable": "Subscription Table",
         "pendingMember": "Pending",
-        "unacceptable": "unacceptable"
+        "unacceptable": "unacceptable",
+        "Thequeryisnotpaid": "The query is not paid"
     }
 }

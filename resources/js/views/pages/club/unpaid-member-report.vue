@@ -34,7 +34,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "paid member", "all paid member");
+            return permissionGuard(vm, "unpaid member", "all paid member");
         });
 
     },
@@ -49,8 +49,7 @@ export default {
             payment_types: [],
             isLoader: false,
             create: {
-                year_to: '',
-                year_from: '',
+                year: '',
             },
             errors: {},
             is_disabled: false,
@@ -75,7 +74,6 @@ export default {
     },
     validations: {
         create: {
-            date: {required},
             year: {required},
         },
     },
@@ -122,9 +120,14 @@ export default {
                 this.isLoader = true;
                 let _filterSetting = [...this.filterSetting];
                 let index = this.filterSetting.indexOf("cm_member_id");
+                let index1 = this.filterSetting.indexOf("membership_number");
                 if (index > -1) {
                     _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+                        this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
+                }
+                if (index1 > -1) {
+                    _filterSetting[index1] =
+                        this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
                 }
                 let filter = '';
                 for (let i = 0; i < _filterSetting.length; ++i) {
@@ -159,11 +162,15 @@ export default {
                     this.isLoader = true;
                     let _filterSetting = [...this.filterSetting];
                     let index = this.filterSetting.indexOf("cm_member_id");
+                    let index1 = this.filterSetting.indexOf("membership_number");
                     if (index > -1) {
                         _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "member.name" : "member.name_e";
+                            this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
                     }
-                    let filter = "";
+                    if (index1 > -1) {
+                        _filterSetting[index1] =
+                            this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
+                    }
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
@@ -218,9 +225,6 @@ export default {
         sortString(value) {
             return dynamicSortString(value);
         },
-        moveInput(tag, c, index) {
-            document.querySelector(`${tag}[data-${c}='${index}']`).focus()
-        },
         formatDate(value) {
             return formatDateOnly(value);
         },
@@ -238,7 +242,10 @@ export default {
             }, 100);
         },
         changeStatus(){
-            adminApi.put(`/club-members/transactions/check-date-member-transaction`)
+            this.isLoader = true;
+            adminApi.put(`/club-members/transactions/unpaid-member-transaction-update`,{
+                year: this.create.year
+            })
                 .then((res) => {
                     this.installmentStatus = [];
                     this.installmentStatusPagination = {};
@@ -263,8 +270,7 @@ export default {
                     this.isLoader = false;
                 });
         },
-        dateStatus(date,status)
-        {
+        dateStatus(date,status) {
             if (status == 'Unpaid')
             {
                 let toDay = this.formatDate(new Date());
@@ -282,7 +288,6 @@ export default {
                 return 'completedPayment'
             }
         }
-
     },
 };
 </script>
@@ -297,7 +302,7 @@ export default {
 
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title"> {{ $t('general.QueryAboutThePayersBeforeASpecificDate') }}</h4>
+                            <h4 class="header-title"> {{ $t('general.Thequeryisnotpaid') }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
 
                                 <div class="d-inline-block" style="width: 22.2%;">
@@ -305,8 +310,11 @@ export default {
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
                                         <b-form-checkbox v-model="filterSetting"
-                                                         :value="$i18n.locale == 'ar' ? 'member.name' : 'member.name_e'"
+                                                         value="cm_member_id"
                                                          class="mb-1">{{ $t('general.member') }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
+                                            {{ getCompanyKey("member_membership_number")  }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
@@ -353,6 +361,7 @@ export default {
                                 <b-button
                                     variant="secondary"
                                     @click="changeStatus"
+                                    :disabled="isLoader"
                                     v-if="installmentStatus.length > 0"
                                     class="btn-sm mx-1 font-weight-bold"
                                 >
@@ -496,17 +505,38 @@ export default {
 
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
-                                <tr>
-                                    <th>
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.member') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? 'first_name' : 'first_name'))"></i>
-                                                <i class="fas fa-arrow-down" @click="installmentStatus.sort(sortString($i18n.locale == 'ar' ? '-first_name' : '-first_name'))"></i>
+                                    <tr>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("member_membership_number") }}</span>
                                             </div>
-                                        </div>
-                                    </th>
-                                </tr>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ getCompanyKey("member_membership_date") }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.member') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.PaymentVoucherNumber') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.Historyofthebond') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.ForAYear') }}</span>
+                                            </div>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody v-if="installmentStatus.length > 0">
                                 <tr
@@ -514,10 +544,25 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
-                                    <td v-if="setting.cm_member_id">
+                                    <td>
+                                        {{ data.membership_number }}
+                                    </td>
+                                    <td>
+                                        {{  formatDate(data.membership_date) }}
+                                    </td>
+                                    <td>
                                         <h5 class="m-0 font-weight-normal td5">
-                                            {{ data.first_name +' '+ data.second_name +' '+ data.third_name +' '+ data.last_name}}
+                                            {{ data.first_name +' '+ data.second_name +' '+ data.third_name +' '+ data.last_name }}
                                         </h5>
+                                    </td>
+                                    <td>
+                                        {{ data.transaction_serial_number }}
+                                    </td>
+                                    <td>
+                                        {{ formatDate(data.transaction_date) }}
+                                    </td>
+                                    <td>
+                                        {{ data.transaction_year_to }}
                                     </td>
                                 </tr>
                                 </tbody>
