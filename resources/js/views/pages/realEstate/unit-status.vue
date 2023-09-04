@@ -64,19 +64,7 @@ export default {
   },
   methods: {
       filterSearch(fields){
-          let indexC = fields.indexOf("country_id"),
-              indexG = fields.indexOf("governorate_id"),
-              indexCty = fields.indexOf("city_id"),
-              filter = '';
-          if (indexC > -1) {
-              fields[indexC] = this.$i18n.locale == "ar" ? "country.name" : "country.name_e";
-          }
-          if (indexG > -1) {
-              fields[indexG] = this.$i18n.locale == "ar" ? "governorate.name" : "governorate.name_e";
-          }
-          if (indexCty > -1) {
-              fields[indexCty] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";
-          }
+          let filter = '';
           for (let i = 0; i < fields.length; ++i) {
               filter += `columns[${i}]=${fields[i]}&`;
           }

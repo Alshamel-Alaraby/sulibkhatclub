@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\PriorityRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\PriorityResource;
 use App\Models\Priority;
 use Illuminate\Http\Request;
@@ -110,5 +111,12 @@ class PriorityController extends Controller
     public function getChildNodes($parentId)
     {
         return $this->model->where("parent_id", $parentId)->get();
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->model->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CustomerGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerGroup\CustomerGroupRequest;
 use App\Http\Requests\DepertmentTask\DepertmentTaskRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\CustomerGroup\CustomerGroupResource;
 use App\Http\Resources\CustomerGroup\GetNameCustomerGroupResource;
 use App\Http\Resources\DepertmentTask\DepertmentTaskResource;
@@ -96,9 +97,11 @@ class CustomerGroupController extends Controller
         return responseJson(200, __('Done'));
     }
 
-    public function getName(Request $request)
+
+    public function getDropDown(Request $request)
     {
+
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameCustomerGroupResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

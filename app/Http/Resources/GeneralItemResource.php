@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Booking\Transformers\Unit\RelationBookingUnitResource;
+use Modules\Booking\Transformers\Unit\RelationUnitResource;
 use Modules\Booking\Transformers\UnitResource;
 
 class GeneralItemResource extends JsonResource
@@ -22,7 +24,7 @@ class GeneralItemResource extends JsonResource
             'price' => $this->price,
             'code_number' => $this->code_number,
             'type' => $this->type,
-            'unit_id' => new UnitResource($this->unit),
+            'unit_id' => new RelationBookingUnitResource($this->unit),
             'company_id' => $this->company_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

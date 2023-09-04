@@ -166,7 +166,7 @@ export default {
   },
   // beforeRouteEnter(to, from, next) {
   //       next((vm) => {
-  //   return permissionGuard(vm, "POS purchase return", "all sold_Unit RealState");
+  //   return permissionGuard(vm, "POS Payment Summary Report", "all sold_Unit RealState");
   // });
 
   //  },

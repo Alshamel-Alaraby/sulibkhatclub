@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Package;
 use Modules\BoardsRent\Http\Requests\PackageRequest;
+use Modules\BoardsRent\Transformers\Package\AllBRentPackageResource;
+use Modules\BoardsRent\Transformers\Package\RelationBRentPackagePanelResourceResource;
 use Modules\BoardsRent\Transformers\PackageResource;
 use Modules\BoardsRent\Transformers\PanelResource;
 
@@ -24,7 +26,14 @@ class PackageController extends Controller
             return responseJson(404, 'not found');
         }
 
-        return responseJson(200, 'success', new PackageResource($model));
+        return responseJson(200, 'success', new AllBRentPackageResource($model));
+    }
+    public function relationPackagePanel($id)
+    {
+        $model = $this->model->find($id);
+
+
+        return responseJson(200, 'success', new RelationBRentPackagePanelResourceResource($model));
     }
 
     public function all(AllRequest $request)
@@ -37,7 +46,7 @@ class PackageController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', PackageResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllBRentPackageResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(PackageRequest $request)
@@ -45,7 +54,7 @@ class PackageController extends Controller
         $model = $this->model->create($request->validated());
         $model->panels()->sync($request->panels);
         $model->refresh();
-        return responseJson(200, 'created', new PackageResource($model));
+        return responseJson(200, 'created', new AllBRentPackageResource($model));
 
     }
 
@@ -61,7 +70,7 @@ class PackageController extends Controller
         if($request->panels){$model->panels()->sync($request->panels);}
         $model->refresh();
 
-        return responseJson(200, 'updated', new PackageResource($model));
+        return responseJson(200, 'updated', new AllBRentPackageResource($model));
     }
 
     public function logs($id)

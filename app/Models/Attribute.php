@@ -15,7 +15,7 @@ class Attribute extends Model
 
     protected $guarded = ['id'];
 
-    protected $with = ['children', 'product_variant'];
+
 
 
     public function children()

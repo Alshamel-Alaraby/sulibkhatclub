@@ -19,6 +19,7 @@ class GeneralCustomerSource extends Model
         'parent_id',
     ];
 
+
     protected $appends = ['haveChildren'];
 
     // relations
@@ -38,24 +39,24 @@ class GeneralCustomerSource extends Model
         return $this->hasMany(GeneralCustomerSource::class, 'parent_id');
     }
 
-     public function hasChildren()
-     {
-         return $this->children()->count() > 0;
-     }
+    //  public function hasChildren()
+    //  {
+    //      return $this->children()->count() > 0;
+    //  }
 
-//    public function hasChildren()
-//    {
-//        $relationsWithChildren = [];
-//
-//        if ($this->children()->count() > 0) {
-//            $relationsWithChildren[] = [
-//                'relation' => 'general customer sources',
-//                'count' => $this->children()->count(),
-//                'ids' => $this->children()->pluck('id')->toArray()
-//            ];
-//        }
-//        return $relationsWithChildren;
-//    }
+   public function hasChildren()
+   {
+       $relationsWithChildren = [];
+
+       if ($this->children()->count() > 0) {
+           $relationsWithChildren[] = [
+               'relation' => 'general customer sources',
+               'count' => $this->children()->count(),
+               'ids' => $this->children()->pluck('id')->toArray()
+           ];
+       }
+       return $relationsWithChildren;
+   }
 
 
 

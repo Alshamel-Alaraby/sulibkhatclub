@@ -169,7 +169,7 @@ export default {
   <div class="navbar-custom">
     <div class="container-fluid">
       <ul class="list-unstyled topnav-menu float-right mb-0">
-        <li class="dropdown d-none d-lg-inline-block">
+        <li class="dropdown d-lg-inline-block">
           <a
             class="nav-link dropdown-toggle arrow-none waves-effect waves-light"
             @click="initFullScreen"
@@ -182,7 +182,7 @@ export default {
 
         <b-nav-item-dropdown
           variant="white"
-          class="d-none d-lg-inline-block"
+          class="d-lg-inline-block"
           right
           toggle-class="header-item"
         >

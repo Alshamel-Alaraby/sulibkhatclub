@@ -14,6 +14,7 @@ interface DepertmentInterface
     public function delete($id);
 
     public function processJsonData(array $data);
+    public function getName($request);
 
 
 }

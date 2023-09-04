@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\LookUp;
 use Modules\BoardsRent\Http\Requests\LookUpRequest;
+use Modules\BoardsRent\Transformers\LookUp\AllBRentLookUpResource;
 use Modules\BoardsRent\Transformers\LookUpResource;
 
 class LookUpController extends Controller
@@ -25,7 +26,7 @@ class LookUpController extends Controller
             return responseJson(404, 'not found');
         }
 
-        return responseJson(200, 'success', new LookUpResource($model));
+        return responseJson(200, 'success', new AllBRentLookUpResource($model));
     }
 
     public function all(AllRequest $request)
@@ -38,7 +39,7 @@ class LookUpController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', LookUpResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllBRentLookUpResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(LookUpRequest $request)
@@ -46,7 +47,7 @@ class LookUpController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new LookUpResource($model));
+        return responseJson(200, 'created', new AllBRentLookUpResource($model));
 
     }
 
@@ -60,7 +61,7 @@ class LookUpController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new LookUpResource($model));
+        return responseJson(200, 'updated', new AllBRentLookUpResource($model));
     }
 
     public function logs($id)

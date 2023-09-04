@@ -20,7 +20,8 @@ class CustomerCategoryResource extends JsonResource
             'name_e' => $this->name_e,
             'parent_id' => $this->parent_id,
             'company_id' => $this->company_id,
-            'parent' => new CustomerCategoryParentResource($this->parent),
+            'parent' => new RelationCustomerCategoryResource($this->whenLoaded('parent')),
+            // 'parent' => new CustomerCategoryParentResource($this->parent),
 //            'children' => CustomerCategoryChildResource::collection($this->children) ,
         ];
     }

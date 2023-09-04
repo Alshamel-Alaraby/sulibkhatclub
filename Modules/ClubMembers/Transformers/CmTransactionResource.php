@@ -25,6 +25,7 @@ class CmTransactionResource extends JsonResource
             'branch' => new BranchResource($this->branch),
             'sponsor' => new CmSponserResource($this->sponsor),
             "member" => $this->cm_member_id ? new \Modules\ClubMembers\Transformers\CmMemberResource($this->member) : null,
+            "member_request" => $this->member_request_id ? $this->memberRequest : null,
 
             'year_from' => $this->year_from,
             'year_to' => $this->year_to,
@@ -34,6 +35,14 @@ class CmTransactionResource extends JsonResource
             'number_of_years' => $this->number_of_years,
             'created_by' => $this->created_by,
             'financial_year_id' => $this->financial_year_id,
+            'year' => $this->year,
+            'date_from' => $this->date_from,
+            'date_to' => $this->date_to,
+
+
+//
+
+
 
 
             // year - branch - document - prefix - serial_number

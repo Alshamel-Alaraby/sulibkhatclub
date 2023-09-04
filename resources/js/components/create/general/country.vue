@@ -561,7 +561,6 @@ export default {
     },
   },
   mounted() {
-    this.getCountrySeeder();
     this.company_id = this.$store.getters["auth/company_id"];
   },
   validations: {
@@ -684,7 +683,7 @@ export default {
           this.isLoader = false;
         });
     },
-      async getCustomTableFields() {
+    async getCustomTableFields() {
       this.isCustom = true;
       await adminApi
         .get(`/customTable/table-columns/general_countries`)
@@ -743,6 +742,7 @@ export default {
      */
     async resetModal() {
       await this.getCustomTableFields();
+      this.getCountrySeeder();
       this.create = {
         name: "",
         name_e: "",

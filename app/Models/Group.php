@@ -18,7 +18,6 @@ class Group extends Model
 
     protected $guarded = ['id'];
 
-    // protected $appends = ['item_sold'];
     protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
 
     public function products()

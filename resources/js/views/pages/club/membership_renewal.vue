@@ -17,6 +17,7 @@ import Multiselect from "vue-multiselect";
 import { formatDateOnly, formatDateTime } from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import permissionGuard from "../../../helper/permission";
+import DatePicker from "vue2-datepicker";
 
 /**
  * Advanced Table component
@@ -34,6 +35,7 @@ export default {
         ErrorMessage,
         loader,
         Multiselect,
+        DatePicker,
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
@@ -55,12 +57,8 @@ export default {
             create: {
                 memberships_renewals: [
                     {
-                        from: '',
-                        to: '',
-                        fromDay: null,
-                        fromMonth: null,
-                        toDay: null,
-                        toMonth: null,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
                         membership_availability: 0,
                         membership_cost: 0,
                         renewal_availability: 0,
@@ -69,12 +67,8 @@ export default {
                 ]
             },
             edit: {
-                from: '',
-                to: '',
-                fromDay: null,
-                fromMonth: null,
-                toDay: null,
-                toMonth: null,
+                from: this.formatDate(new Date()),
+                to: this.formatDate(new Date()),
                 membership_availability: false,
                 membership_cost: 0,
                 renewal_availability: false,
@@ -117,18 +111,6 @@ export default {
                     to: { required: requiredIf(function (model) {
                             return this.isRequired("to");
                         }) },
-                    fromDay: { required: requiredIf(function (model) {
-                            return this.isRequired("fromDay");
-                        }) },
-                    fromMonth: { required: requiredIf(function (model) {
-                            return this.isRequired("fromMonth");
-                        }) },
-                    toDay: { required: requiredIf(function (model) {
-                            return this.isRequired("toDay");
-                        }) },
-                    toMonth: { required: requiredIf(function (model) {
-                            return this.isRequired("toMonth");
-                        }) },
                     membership_availability: { required: requiredIf(function (model) {
                             return this.isRequired("membership_availability");
                         }) },
@@ -150,18 +132,6 @@ export default {
                 }) },
             to: { required: requiredIf(function (model) {
                     return this.isRequired("to");
-                }) },
-            fromDay: { required: requiredIf(function (model) {
-                    return this.isRequired("fromDay");
-                }) },
-            fromMonth: { required: requiredIf(function (model) {
-                    return this.isRequired("fromMonth");
-                }) },
-            toDay: { required: requiredIf(function (model) {
-                    return this.isRequired("toDay");
-                }) },
-            toMonth: { required: requiredIf(function (model) {
-                    return this.isRequired("toMonth");
                 }) },
             membership_availability: { required: requiredIf(function (model) {
                     return this.isRequired("membership_availability");
@@ -264,12 +234,8 @@ export default {
         },
         addNewField() {
             this.create.memberships_renewals.push({
-                from: '',
-                to: '',
-                fromDay: null,
-                fromMonth: null,
-                toDay: null,
-                toMonth: null,
+                from: this.formatDate(new Date()),
+                to: this.formatDate(new Date()),
                 membership_availability: 0,
                 membership_cost: 0,
                 renewal_availability: 0,
@@ -461,12 +427,8 @@ export default {
             this.create = {
                 memberships_renewals: [
                     {
-                        from: '',
-                        to: '',
-                        fromDay: null,
-                        fromMonth: null,
-                        toDay: null,
-                        toMonth: null,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
                         membership_availability: 0,
                         membership_cost: 0,
                         renewal_availability: 0,
@@ -490,12 +452,8 @@ export default {
             this.create = {
                 memberships_renewals: [
                     {
-                        from: '',
-                        to: '',
-                        fromDay: null,
-                        fromMonth: null,
-                        toDay: null,
-                        toMonth: null,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
                         membership_availability: 0,
                         membership_cost: 0,
                         renewal_availability: 0,
@@ -515,12 +473,8 @@ export default {
             this.create = {
                 memberships_renewals: [
                     {
-                        from: '',
-                        to: '',
-                        fromDay: null,
-                        fromMonth: null,
-                        toDay: null,
-                        toMonth: null,
+                        from: this.formatDate(new Date()),
+                        to: this.formatDate(new Date()),
                         membership_availability: 0,
                         membership_cost: 0,
                         renewal_availability: 0,
@@ -537,12 +491,6 @@ export default {
         },
 
         AddSubmit() {
-
-            this.create.memberships_renewals.forEach((el,index) => {
-                this.create.memberships_renewals[index].from = `${el.fromMonth}-${el.fromDay}`;
-                this.create.memberships_renewals[index].to = `${el.toMonth}-${el.toDay}`;
-            });
-
             this.$v.create.$touch();
 
             if (this.$v.create.$invalid) {
@@ -587,9 +535,6 @@ export default {
          *  edit module
          */
         editSubmit(id) {
-            this.edit.from = `${this.edit.fromMonth}-${this.edit.fromDay}`;
-            this.edit.to = `${this.edit.toMonth}-${this.edit.toDay}`;
-
             this.$v.edit.$touch();
 
             if (this.$v.edit.$invalid) {
@@ -632,10 +577,6 @@ export default {
          */
          resetModalEdit(id) {
             let module = this.membershipRenewals.find((e) => id == e.id);
-            this.edit.fromDay = module.from.slice(3) ;
-            this.edit.fromMonth = module.from.slice(0,2);
-            this.edit.toDay = module.to.slice(3);
-            this.edit.toMonth = module.to.slice(0,2);
             this.edit.membership_availability =  module.membership_availability;
             this.edit.membership_cost = module.membership_cost;
             this.edit.renewal_availability = module.renewal_availability;
@@ -644,12 +585,8 @@ export default {
         },
         resetModalHiddenEdit(id) {
             this.edit = {
-                from: '',
-                to: '',
-                fromDay: null,
-                fromMonth: null,
-                toDay: null,
-                toMonth: null,
+                from: this.formatDate(new Date()),
+                to: this.formatDate(new Date()),
                 membership_availability: 0,
                 membership_cost: 0,
                 renewal_availability: 0,
@@ -895,88 +832,42 @@ export default {
                                 </div>
                                 <template v-for="(item, index) in create.memberships_renewals">
                                     <div class="row" :key="index">
-                                        <div class="col-md-2" style="padding: 0 !important;">
-                                           <div class="d-flex">
-                                               <div class="form-group col-6">
-                                                   <label>{{ getCompanyKey("membership_renewal_fromDay") }}</label>
-                                                   <select
-                                                       v-model="$v.create.memberships_renewals.$each[index].fromDay.$model"
-                                                       class="custom-select"
-                                                       :class="{
-                                                    'is-invalid': $v.create.memberships_renewals.$each[index].fromDay.$error || errors.fromDay,
-                                                    'is-valid':
-                                                      !$v.create.memberships_renewals.$each[index].fromDay.$invalid && !errors.fromDay,
-                                                  }"
-                                                   >
-                                                       <option selected disabled value="">Choose...</option>
-                                                       <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                   </select>
-                                                   <template v-if="errors.fromDay">
-                                                       <ErrorMessage v-for="(errorMessage, index) in errors.fromDay" :key="index">{{ errorMessage }}
-                                                       </ErrorMessage>
-                                                   </template>
-                                               </div>
-                                               <div class="form-group col-6">
-                                                   <label>{{ getCompanyKey("membership_renewal_fromMonth") }}</label>
-                                                   <select
-                                                       v-model="$v.create.memberships_renewals.$each[index].fromMonth.$model"
-                                                       class="custom-select"
-                                                       :class="{
-                                                    'is-invalid': $v.create.memberships_renewals.$each[index].fromMonth.$error || errors.fromMonth,
-                                                    'is-valid':
-                                                      !$v.create.memberships_renewals.$each[index].fromMonth.$invalid && !errors.fromMonth,
-                                                  }"
-                                                   >
-                                                       <option selected disabled value="">Choose...</option>
-                                                       <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                   </select>
-                                                   <template v-if="errors.fromDay">
-                                                       <ErrorMessage v-for="(errorMessage, index) in errors.fromMonth" :key="index">{{ errorMessage }}
-                                                       </ErrorMessage>
-                                                   </template>
-                                               </div>
-                                           </div>
+                                        <div class="col-md-2" v-if="isVisible('from')">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    {{ $t("general.from_date") }}
+                                                </label>
+                                                <date-picker
+                                                    type="date"
+                                                    v-model="$v.create.memberships_renewals.$each[index].from.$model"
+                                                    format="YYYY-MM-DD"
+                                                    valueType="format"
+                                                    :confirm="false"
+                                                ></date-picker>
+                                                <template v-if="errors.from">
+                                                    <ErrorMessage v-for="(errorMessage, index) in errors.from" :key="index">
+                                                        {{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2" style="padding: 0 !important;">
-                                            <div class="d-flex">
-                                                <div class="form-group col-6">
-                                                    <label>{{ getCompanyKey("membership_renewal_toDay") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].toDay.$model"
-                                                        class="custom-select"
-                                                        :class="{
-                                                    'is-invalid': $v.create.memberships_renewals.$each[index].toDay.$error || errors.toDay,
-                                                    'is-valid':
-                                                      !$v.create.memberships_renewals.$each[index].toDay.$invalid && !errors.toDay,
-                                                  }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                    </select>
-                                                    <template v-if="errors.toDay">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.toDay" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
-                                                </div>
-                                                <div class="form-group col-6">
-                                                    <label>{{ getCompanyKey("membership_renewal_toMonth") }}</label>
-                                                    <select
-                                                        v-model="$v.create.memberships_renewals.$each[index].toMonth.$model"
-                                                        class="custom-select"
-                                                        :class="{
-                                                    'is-invalid': $v.create.memberships_renewals.$each[index].toMonth.$error || errors.toMonth,
-                                                    'is-valid':
-                                                      !$v.create.memberships_renewals.$each[index].toMonth.$invalid && !errors.toMonth,
-                                                  }"
-                                                    >
-                                                        <option selected disabled value="">Choose...</option>
-                                                        <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                    </select>
-                                                    <template v-if="errors.toMonth">
-                                                        <ErrorMessage v-for="(errorMessage, index) in errors.toMonth" :key="index">{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
-                                                </div>
+                                        <div class="col-md-2" v-if="isVisible('to')">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    {{ $t("general.to_date") }}
+                                                </label>
+                                                <date-picker
+                                                    type="date"
+                                                    v-model="$v.create.memberships_renewals.$each[index].to.$model"
+                                                    format="YYYY-MM-DD"
+                                                    valueType="format"
+                                                    :confirm="false"
+                                                ></date-picker>
+                                                <template v-if="errors.to">
+                                                    <ErrorMessage v-for="(errorMessage, index) in errors.to" :key="index">
+                                                        {{ errorMessage }}
+                                                    </ErrorMessage>
+                                                </template>
                                             </div>
                                         </div>
                                         <div class="col-md-1" style="padding: 0 !important;" v-if="isVisible('membership_availability')">
@@ -1153,37 +1044,23 @@ export default {
                                         </div>
                                     </td>
                                     <td v-if="setting.from && isVisible('from')">
-                                        {{ data.from.slice(3)+'-'+data.from.slice(0,2) }}
+                                        {{ data.from }}
                                     </td>
                                     <td v-if="setting.to && isVisible('to')">
-                                        {{ data.to.slice(3)+'-'+data.to.slice(0,2) }}
+                                        {{ data.to }}
                                     </td>
                                     <td v-if="setting.membership_availability && isVisible('membership_availability')">
-                                        <span :class="[
-                                            data.membership_availability ? 'text-success' : 'text-danger',
-                                            'badge',
-                                          ]">
-                                            {{
-                                                data.membership_availability
-                                                    ? `${$t("general.Active")}`
-                                                    : `${$t("general.Inactive")}`
-                                            }}
-                                          </span>
+                                        <span :class="[ data.membership_availability ? 'text-success' : 'text-danger', 'badge', ]">
+                                            {{data.membership_availability ? `${$t("general.Active")}` : `${$t("general.Inactive")}`}}
+                                        </span>
                                     </td>
                                     <td v-if="setting.membership_cost && isVisible('membership_cost')">
                                         {{ data.membership_cost }}
                                     </td>
                                     <td v-if="setting.renewal_availability && isVisible('renewal_availability')">
-                                        <span :class="[
-                                            data.renewal_availability ? 'text-success' : 'text-danger',
-                                            'badge',
-                                          ]">
-                                            {{
-                                                data.renewal_availability
-                                                    ? `${$t("general.Active")}`
-                                                    : `${$t("general.Inactive")}`
-                                            }}
-                                          </span>
+                                        <span :class="[ data.renewal_availability ? 'text-success' : 'text-danger', 'badge',]">
+                                            {{ data.renewal_availability ? `${$t("general.Active")}` : `${$t("general.Inactive")}`}}
+                                        </span>
                                     </td>
                                     <td v-if="setting.renewal_cost && isVisible('renewal_cost')">
                                         {{ data.renewal_cost }}
@@ -1234,88 +1111,42 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="d-flex">
-                                                            <div class="form-group col-6">
-                                                                <label>{{ getCompanyKey("membership_renewal_fromDay") }}</label>
-                                                                <select
-                                                                    v-model="$v.edit.fromDay.$model"
-                                                                    class="custom-select"
-                                                                    :class="{
-                                                                        'is-invalid': $v.edit.fromDay.$error || errors.fromDay,
-                                                                        'is-valid':
-                                                                          !$v.edit.fromDay.$invalid && !errors.fromDay,
-                                                                      }"
-                                                                >
-                                                                    <option selected disabled value="">Choose...</option>
-                                                                    <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                                </select>
-                                                                <template v-if="errors.fromDay">
-                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.fromDay" :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                            <div class="form-group col-6">
-                                                                <label>{{ getCompanyKey("membership_renewal_fromMonth") }}</label>
-                                                                <select
-                                                                    v-model="$v.edit.fromMonth.$model"
-                                                                    class="custom-select"
-                                                                    :class="{
-                                                    'is-invalid': $v.edit.fromMonth.$error || errors.fromMonth,
-                                                    'is-valid':
-                                                      !$v.edit.fromMonth.$invalid && !errors.fromMonth,
-                                                  }"
-                                                                >
-                                                                    <option selected disabled value="">Choose...</option>
-                                                                    <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                                </select>
-                                                                <template v-if="errors.fromDay">
-                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.fromMonth" :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                    <div class="col-md-6" v-if="isVisible('from')">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ $t("general.from_date") }}
+                                                            </label>
+                                                            <date-picker
+                                                                type="date"
+                                                                v-model="$v.edit.from.$model"
+                                                                format="YYYY-MM-DD"
+                                                                valueType="format"
+                                                                :confirm="false"
+                                                            ></date-picker>
+                                                            <template v-if="errors.from">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.from" :key="index">
+                                                                    {{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <div class="d-flex">
-                                                            <div class="form-group col-6">
-                                                                <label>{{ getCompanyKey("membership_renewal_toDay") }}</label>
-                                                                <select
-                                                                    v-model="$v.edit.toDay.$model"
-                                                                    class="custom-select"
-                                                                    :class="{
-                                                    'is-invalid': $v.edit.toDay.$error || errors.toDay,
-                                                    'is-valid':
-                                                      !$v.edit.toDay.$invalid && !errors.toDay,
-                                                  }"
-                                                                >
-                                                                    <option selected disabled value="">Choose...</option>
-                                                                    <option :value="day" :key="day" v-for="day in getDay()">{{ day }}</option>
-                                                                </select>
-                                                                <template v-if="errors.toDay">
-                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.toDay" :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
-                                                            <div class="form-group col-6" v-if="isVisible('toMonth')">
-                                                                <label>{{ getCompanyKey("membership_renewal_toMonth") }}</label>
-                                                                <select
-                                                                    v-model="$v.edit.toMonth.$model"
-                                                                    class="custom-select"
-                                                                    :class="{
-                                                    'is-invalid': $v.edit.toMonth.$error || errors.toMonth,
-                                                    'is-valid':
-                                                      !$v.edit.toMonth.$invalid && !errors.toMonth,
-                                                  }"
-                                                                >
-                                                                    <option selected disabled value="">Choose...</option>
-                                                                    <option :value="month" :key="month" v-for="month in getMonth()">{{ month }}</option>
-                                                                </select>
-                                                                <template v-if="errors.toMonth">
-                                                                    <ErrorMessage v-for="(errorMessage, index) in errors.toMonth" :key="index">{{ errorMessage }}
-                                                                    </ErrorMessage>
-                                                                </template>
-                                                            </div>
+                                                    <div class="col-md-6" v-if="isVisible('to')">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ $t("general.to_date") }}
+                                                            </label>
+                                                            <date-picker
+                                                                type="date"
+                                                                v-model="$v.edit.to.$model"
+                                                                format="YYYY-MM-DD"
+                                                                valueType="format"
+                                                                :confirm="false"
+                                                            ></date-picker>
+                                                            <template v-if="errors.to">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.to" :key="index">
+                                                                    {{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" v-if="isVisible('membership_availability')">

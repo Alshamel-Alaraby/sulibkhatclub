@@ -12,11 +12,11 @@ class CmSponser extends Model
 {
     use HasFactory, LogTrait, SoftDeletes;
 
-
     protected $fillable = [
         'name',
         'name_e',
         'parent_id',
+        'group_id',
         'company_id',
 
     ];
@@ -40,10 +40,15 @@ class CmSponser extends Model
         return static::where("parent_id", $this->id)->count() > 0;
     }
 
-    public function members(){
+    public function members()
+    {
         return $this->hasMany(\Modules\ClubMembers\Entities\CmMember::class, 'sponsor_id');
     }
 
+    public function sponsorGroup()
+    {
+        return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponsorGroup::class, 'group_id', 'id');
+    }
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

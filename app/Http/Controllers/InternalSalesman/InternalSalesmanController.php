@@ -22,17 +22,7 @@ class InternalSalesmanController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('InternalSalesmen');
 
-        //     if (!$models) {
-        //         $models = $this->repository->getAllInternalSalesmen($request);
-        //         cachePut('InternalSalesmen', $models);
-        //     }
-        // } else {
-
-        //     $models = $this->repository->getAllInternalSalesmen($request);
-        // }
         $models = $this->repository->getAllInternalSalesmen($request);
         return responseJson(200, 'success', InternalSalesmanResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
@@ -40,16 +30,7 @@ class InternalSalesmanController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('InternalSalesman_' . $id);
-
-        // if (!$model) {
-        //     $model = $this->repository->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('InternalSalesman_' . $id, $model);
-        //     }
-        // }
+     
         $model = $this->repository->find($id);
 
         if (!$model) {

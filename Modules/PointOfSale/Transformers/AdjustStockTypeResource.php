@@ -18,6 +18,7 @@ class AdjustStockTypeResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'title_e' => $this->title_e,
+
         ];
     }
 }

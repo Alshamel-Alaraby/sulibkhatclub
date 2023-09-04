@@ -4,8 +4,8 @@ namespace App\Http\Controllers\GeneralCustomer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralCustomer\GeneralCustomerRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\GeneralCustomer\GeneralCustomerResource;
-use App\Http\Resources\GeneralCustomer\GetNameGeneralCustomer;
 use App\Repositories\GeneralCustomer\GeneralCustomerRepositoryInterface;
 use App\Traits\BulkDeleteTrait;
 use App\Traits\CanDeleteTrait;
@@ -118,13 +118,11 @@ class GeneralCustomerController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
         $models = $this->repository->getName($request);
-
-
-        return responseJson(200, 'success', GetNameGeneralCustomer::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

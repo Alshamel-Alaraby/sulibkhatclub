@@ -97,8 +97,8 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'countries'], function () {
         Route::controller(\App\Http\Controllers\Country\CountryController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('countries.getDropDown');
             Route::get('/', 'all')->name('countries.index');
-            Route::get('/getName', 'getName')->name('countries.getName');
             Route::get('seeder', 'getCountrySeeder');
             Route::get('logs/{id}', 'logs')->name('countries.logs');
             Route::get('/{id}', 'find');
@@ -113,6 +113,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'governorates'], function () {
         Route::controller(\App\Http\Controllers\Governorate\GovernorateController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('governorates.getDropDown');
             Route::get('/', 'all')->name('governorates.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('governorates.create');
@@ -125,6 +126,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'streets'], function () {
         Route::controller(\App\Http\Controllers\StreetController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('streets.getDropDown');
             Route::get('/', 'all')->name('streets.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('streets.create');
@@ -163,7 +165,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'employees'], function () {
         Route::controller(\App\Http\Controllers\Employee\EmployeeController::class)->group(function () {
-            Route::get('/getName', 'getName')->name('employees.getName');
+            Route::get('/get-drop-down', 'getDropDown')->name('employees.getDropDown');
             Route::get('logs/{id}', 'logs')->name('employees.logs');
             Route::get('/', 'all')->name('employees.index');
             Route::get('/{id}', 'find');
@@ -205,6 +207,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'depertments'], function () {
         Route::controller(\App\Http\Controllers\Depertment\DepertmentController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('depertments.getDropDown');
             Route::get('/', 'all')->name('depertments.index');
             Route::get('logs/{id}', 'logs')->name('depertments.logs');
             Route::get('/{id}', 'find');
@@ -270,6 +273,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'equipments'], function () {
         Route::controller(\App\Http\Controllers\EquipmentController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('equipments.getDropDown');
             Route::get('root-nodes', 'getRootNodes');
             Route::get('/child-nodes/{parentId}', 'getChildNodes');
             Route::get('/', 'all')->name('equipments.index');
@@ -284,6 +288,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'priorities'], function () {
         Route::controller(\App\Http\Controllers\PriorityController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('priorities.getDropDown');
             Route::get('root-nodes', 'getRootNodes');
             Route::get('/child-nodes/{parentId}', 'getChildNodes');
             Route::get('/', 'all')->name('priorities.index');
@@ -298,6 +303,8 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'periodic-maintenances'], function () {
         Route::controller(\App\Http\Controllers\PeriodicMaintenanceController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('periodic-maintenances.getDropDown');
+
             Route::get('/', 'all')->name('periodic-maintenances.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('periodic-maintenances.create');
@@ -310,6 +317,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'locations'], function () {
         Route::controller(\App\Http\Controllers\LocationController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('equipments.getDropDown');
             Route::get('root-nodes', 'getRootNodes');
             Route::get('/child-nodes/{parentId}', 'getChildNodes');
             Route::get('/', 'all')->name('locations.index');
@@ -373,6 +381,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'avenues'], function () {
         Route::controller(\App\Http\Controllers\Avenue\AvenueController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('avenues.getDropDown');
             Route::get('/', 'all')->name('avenues.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('avenues.create');
@@ -397,6 +406,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'salesmen-types'], function () {
         Route::controller(\App\Http\Controllers\SalesmenType\SalesmenTypeController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('salesmen-types.getDropDown');
             Route::get('/', 'all')->name('salesmen-types.index');
             Route::get('logs/{id}', 'logs')->name('salesmen-types.logs');
             Route::get('/{id}', 'find');
@@ -446,7 +456,7 @@ Route::middleware(['authorize.user'])->group(function () {
     Route::group(['prefix' => 'attendant'], function () {
         Route::controller(\App\Http\Controllers\AttendantController::class)->group(function () {
             Route::get('/', 'all')->name('attendant.index');
-            Route::get('/getName', 'getName')->name('attendant.getName');
+            Route::get('/get-drop-down', 'getDropDown')->name('attendant.getDropDown');
             Route::get('logs/{id}', 'logs')->name('attendant.logs');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('attendant.create');
@@ -484,7 +494,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'banks'], function () {
         Route::controller(\App\Http\Controllers\Bank\BankController::class)->group(function () {
-            Route::get('/getName', 'getName')->name('banks.getName');
+            Route::get('/get-drop-down', 'getDropDown')->name('banks.getDropDown');
             Route::get('/', 'all')->name('banks.index');
             Route::get('logs/{id}', 'logs')->name('banks.logs');
             Route::get('/{id}', 'find');
@@ -557,7 +567,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'salesmen'], function () {
         Route::controller(\App\Http\Controllers\Salesman\SalesmanController::class)->group(function () {
-            Route::get('/getName', 'getName')->name('salesmen.getName');
+            Route::get('/get-drop-down', 'getDropDown')->name('salesmen.getDropDown');
             Route::get('/', 'all')->name('salesmen.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('salesmen.create');
@@ -608,6 +618,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'branches'], function () {
         Route::controller(BranchController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('branches.getDropDown');
             Route::get('logs/{id}', 'logs')->name('branches.logs');
             Route::post("bulk-delete", "bulkDelete");
             Route::post('/hr-branches', 'processJsonData');
@@ -630,6 +641,8 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'restart-period'], function () {
         Route::controller(\App\Http\Controllers\RestartPeriod\RestartPeriodController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('restart-period.getDropDown');
+
             Route::get('/get-Restart-period-data', 'getRestartPeriodData');
             Route::get('/get-Restart-period-in-serial', 'getRestartPeriodInSerial');
             Route::get('logs/{id}', 'logs')->name('restart-period.logs');
@@ -644,6 +657,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'salesmen-plans'], function () {
         Route::controller(\App\Http\Controllers\SalesmenPlanController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('salesmen-plans.getDropDown');
             Route::get('logs/{id}', 'logs')->name('salesmen-plans.logs');
             Route::get('/', 'all')->name('salesmen-plans.index');
             Route::get('/{id}', 'find');
@@ -753,7 +767,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
 Route::group(['prefix' => 'sectors'], function () {
     Route::controller(\App\Http\Controllers\Sector\SectorController::class)->group(function () {
-        Route::get('/getName', 'getName')->name('sectors.getName');
+        Route::get('/get-drop-down', 'getDropDown')->name('sectors.getDropDown');
         Route::get('logs/{id}', 'logs')->name('sectors.logs');
         Route::get('/', 'all')->name('sectors.index');
         Route::get('/{id}', 'find');
@@ -766,9 +780,9 @@ Route::group(['prefix' => 'sectors'], function () {
 
 Route::group(['prefix' => 'customers-categories'], function () {
     Route::controller(\App\Http\Controllers\CustomerCategory\CustomerCategoryController::class)->group(function () {
-        Route::get('/getName', 'getName')->name('customers-categories.getName');
-        Route::get('logs/{id}', 'logs')->name('customers-categories.logs');
+        Route::get('/get-drop-down', 'getDropDown')->name('customers-categories.getDropDown');
         Route::get('/', 'all')->name('customers-categories.index');
+        Route::get('logs/{id}', 'logs')->name('customers-categories.logs');
         Route::get('/{id}', 'find');
         Route::post('/', 'create')->name('customers-categories.create');
         Route::put('/{id}', 'update')->name('customers-categories.update');
@@ -779,7 +793,7 @@ Route::group(['prefix' => 'customers-categories'], function () {
 
 Route::group(['prefix' => 'customer-sources'], function () {
     Route::controller(\App\Http\Controllers\CustomerSource\CustomerSourceController::class)->group(function () {
-        Route::get('/getName', 'getName')->name('customer-sources.getName');
+        Route::get('/get-drop-down', 'getDropDown')->name('customer-sources.getDropDown');
         Route::get('logs/{id}', 'logs')->name('customer-sources.logs');
         Route::get('/', 'all')->name('customer-sources.index');
         Route::get('/{id}', 'find');
@@ -804,7 +818,7 @@ Route::group(['prefix' => 'voucher-headers'], function () {
 
 Route::group(['prefix' => 'customer-groups'], function () {
     Route::controller(\App\Http\Controllers\CustomerGroup\CustomerGroupController::class)->group(function () {
-        Route::get('/getName', 'getName')->name('customer-groups.getName');
+        Route::get('/get-drop-down', 'getDropDown')->name('customer-groups.getDropDown');
         Route::get('logs/{id}', 'logs')->name('customer-groups.logs');
         Route::get('/', 'all')->name('customer-groups.index');
         Route::get('/{id}', 'find');
@@ -889,7 +903,7 @@ Route::resource('branches', BranchController::class)->except('create', 'edit');
 Route::resource('serials', SerialController::class)->except('create', 'edit');
 Route::resource('cities', CityController::class)->except('create', 'edit');
 Route::get('cities/logs/{id}', [CityController::class, 'logs']);
-Route::get('cities/getName', [CityController::class, 'getName']);
+Route::get('cities/get-drop-down', [CityController::class, 'getDropDown']);
 Route::post('cities/bulk-delete', [CityController::class, 'bulkDelete']);
 Route::resource('currencies', CurrencyController::class)->except('create', 'edit');
 Route::get('currencies/logs/{id}', [CurrencyController::class, 'logs']);
@@ -917,7 +931,7 @@ Route::get('internal-salesman/logs/{id}', [InternalSalesmanController::class, 'l
 Route::post('internal-salesman/bulk-delete', [InternalSalesmanController::class, 'bulkDelete']);
 Route::get('internal-salesman/logs/{id}', [InternalSalesmanController::class, 'logs']);
 
-Route::get('general-customer/getName', [GeneralCustomerController::class, 'getName']);
+Route::get('general-customer/get-drop-down', [GeneralCustomerController::class, 'getDropDown']);
 Route::resource('general-customer', GeneralCustomerController::class)->except('create', 'edit');
 Route::get('general-customer/logs/{id}', [GeneralCustomerController::class, 'logs']);
 Route::get('check-supplier', [GeneralCustomerController::class, 'getCheckSupplier']);

@@ -2,13 +2,16 @@
 
 namespace App\Http\Resources\GeneralCustomer;
 
-use App\Http\Resources\BankAccount\BankAccountResource;
-use App\Http\Resources\City\CityResource;
-use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\CustomerGroup\CustomerGroupResource;
-use App\Http\Resources\Employee\EmployeeResource;
+use App\Http\Resources\BankAccount\RelationBankAccountResource;
+use App\Http\Resources\City\RelationCityResource;
+use App\Http\Resources\Country\RelationCountryResource;
+use App\Http\Resources\CustomerCategory\RelationCustomerCategoryResource;
+use App\Http\Resources\CustomerGroup\RelationCustomerGroupResource;
+use App\Http\Resources\CustomerSource\RelationCustomerSourceResource;
+use App\Http\Resources\Employee\RelationEmployeeResource;
 use App\Http\Resources\FileResource;
-use App\Http\Resources\Salesman\SalesmanResource;
+use App\Http\Resources\Salesman\RelationSalesmanResource;
+use App\Http\Resources\Sector\RelationSectorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GeneralCustomerResource extends JsonResource
@@ -63,17 +66,16 @@ class GeneralCustomerResource extends JsonResource
             'visa_no' => $this->visa_no,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
 
-            'sector' => collect($this->whenLoaded('sector'))->only(['id', 'name', 'name_e']),
-            'customer_source' => collect($this->whenLoaded('customerSource'))->only(['id', 'name', 'name_e']),
-            'salesmen' => collect($this->whenLoaded('salesmen'))->only(['id', 'name', 'name_e']),
-            'employee' => collect($this->whenLoaded('employee'))->only(['id', 'name', 'name_e']),
-            'country' => collect($this->whenLoaded('country'))->only(['id', 'name', 'name_e']),
-            'city' => collect($this->whenLoaded('city'))->only(['id', 'name', 'name_e']),
-            'bankAccount' => collect($this->whenLoaded('bankAccount'))->only(['id', 'name', 'name_e']),
-            'customerGroup' => collect($this->whenLoaded('customerGroup'))->only(['id', 'name', 'name_e']),
-            'customer_main_category' => collect($this->whenLoaded('customer_main_category'))->only(['id', 'name', 'name_e']),
-            'customer_sub_category' => collect($this->whenLoaded('customer_sub_category'))->only(['id', 'name', 'name_e']),
-
+            'sector' => new RelationSectorResource($this->sector),
+            'customer_source' => new RelationCustomerSourceResource($this->customerSource),
+            'salesmen' => new RelationSalesmanResource($this->salesmen),
+            'employee' => new RelationEmployeeResource($this->employee),
+            'country' => new RelationCountryResource($this->country),
+            'city' => new RelationCityResource($this->city),
+            'bankAccount' => new RelationBankAccountResource($this->bankAccount),
+            'customerGroup' => new RelationCustomerGroupResource($this->customerGroup),
+            'customer_main_category' => new RelationCustomerCategoryResource($this->customer_main_category),
+            'customer_sub_category' => new RelationCustomerCategoryResource($this->customer_sub_category),
 
             // "salesmen" => new SalesmanResource($this->salesmen),
             // "employee" => new EmployeeResource($this->employee),
@@ -83,7 +85,6 @@ class GeneralCustomerResource extends JsonResource
             // "customerGroup" => new CustomerGroupResource($this->customerGroup),
             // 'customer_main_category' => $this->customer_main_category,
             // 'customer_sub_category' => $this->customer_sub_category,
-
 
 //            'company_id'=>$this->company_id,
 //            'facebook'=>$this->facebook,

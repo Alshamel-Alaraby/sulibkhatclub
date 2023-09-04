@@ -17,4 +17,6 @@ interface RestartPeriodInterface
 
     public function delete($id);
 
+    public function getName($request);
+
 }

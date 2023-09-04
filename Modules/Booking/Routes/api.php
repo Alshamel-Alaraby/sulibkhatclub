@@ -16,6 +16,7 @@ Route::prefix('booking')->group(function () {
 
     Route::group(['prefix' => 'units'], function () {
         Route::controller(\Modules\Booking\Http\Controllers\UnitController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('units.getDropDown');
             Route::get('/', 'all')->name('units.index');
             Route::get('/{id}', 'find')->name('units.find');
             Route::post('/', 'create')->name('units.create');

@@ -22,7 +22,6 @@ class Avenue extends Model
         "company_id",
     ];
 
-    protected $with = ['country', 'governorate', 'city', 'customerBranches', 'streets'];
 
     public function country()
     {

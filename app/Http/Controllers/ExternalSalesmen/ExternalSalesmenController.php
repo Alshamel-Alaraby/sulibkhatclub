@@ -10,22 +10,14 @@ use Illuminate\Routing\Controller;
 
 class ExternalSalesmenController extends Controller
 {
-    public function __construct(private \App\Repositories\ExternalSalesmen\ExternalSalesmenInterface$modelInterface)
+    public function __construct(private \App\Repositories\ExternalSalesmen\ExternalSalesmenInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
 
     public function find($id)
     {
-        // $model = cacheGet('external_salesmen_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('external_salesmen_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -35,15 +27,7 @@ class ExternalSalesmenController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('external_salesmen');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('external_salesmen', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
+
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', ExternalSalesmenResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);

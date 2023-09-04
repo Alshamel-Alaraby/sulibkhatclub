@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Country;
 
 use App\Http\Requests\CountryRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\Country\GetNameCountryResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -18,15 +18,6 @@ class CountryController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('countries_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('countries_' . $id, $model);
-        //     }
-        // }
 
         $model = $this->modelInterface->find($id);
         if (!$model) {
@@ -38,15 +29,7 @@ class CountryController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('countries');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('countries', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
+
 
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', CountryResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -81,37 +64,7 @@ class CountryController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-    // public function delete($id)
-    // {
-    //     $model = $this->modelInterface->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, __('message.data not found'));
-    //     }
-    //     if ($model->hasChildren()) {
-    //         return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-    //     }
 
-    //     $this->modelInterface->delete($id);
-
-    //     return responseJson(200, 'success');
-    // }
-
-    // public function bulkDelete(Request $request)
-    // {
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->modelInterface->find($id);
-    //         $arr = [];
-    //         if ($model->hasChildren()) {
-    //             $arr[] = $id;
-    //             continue;
-    //         }
-    //         $this->modelInterface->delete($id);
-    //     }
-    //     if (count($arr) > 0) {
-    //         return responseJson(400, __('some items has relation cant delete'));
-    //     }
-    //     return responseJson(200, __('Done'));
-    // }
 
     public function delete($id)
     {
@@ -193,10 +146,10 @@ class CountryController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameCountryResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

@@ -22,6 +22,7 @@ class UnitStatus extends Model
 
     protected $table = 'boards_rent_unit_statuses';
 
+
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');

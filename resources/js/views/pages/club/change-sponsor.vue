@@ -41,7 +41,6 @@ export default {
     ErrorMessage,
     loader,
     Multiselect,
-    Sponsor,
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -56,6 +55,13 @@ export default {
         old_sponsor_id: null,
         sponsor_id: null,
       },
+      members: [],
+      enabled3: true,
+      memberIds: [],
+      isCheckAll: false,
+      checkAll: [],
+      membersPagination: {},
+      current_page: 1
     };
   },
   validations: {
@@ -67,7 +73,24 @@ export default {
   mounted() {
     this.getSponsors();
   },
+  watch: {
+      isCheckAll(after, befour) {
+          if (after) {
+              this.checkAll = this.memberIds;
+          } else {
+              this.checkAll = [];
+          }
+      },
+  },
   methods: {
+    checkRow(id) {
+          if (!this.checkAll.includes(id)) {
+              this.checkAll.push(id);
+          } else {
+              let index = this.checkAll.indexOf(id);
+              this.checkAll.splice(index, 1);
+          }
+    },
     isPermission(item) {
       if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
@@ -90,12 +113,15 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .put(`/club-members/members/sponsor/${this.create.old_sponsor_id}`, {
+          .put(`/club-members/members/update-sponsor-members`, {
             sponsor_id: this.create.sponsor_id,
+            member_ids: this.checkAll
           })
           .then((res) => {
             this.create.sponsor_id = null;
             this.create.old_sponsor_id = null;
+            this.members = [];
+            this.memberIds = [];
             setTimeout(() => {
               Swal.fire({
                 icon: "success",
@@ -121,24 +147,16 @@ export default {
       }
     },
     showSponsorModalOld() {
-      if (this.create.old_sponsor_id == 0) {
-        this.$bvModal.show("create-sponsor");
-        this.create.old_sponsor_id = null;
+      if (this.create.old_sponsor_id > 0) {
+          this.getData();
       }
     },
-    showSponsorModal() {
-      if (this.create.sponsor_id == 0) {
-        this.$bvModal.show("create-sponsor");
-        this.create.sponsor_id = null;
-      }
-    },
-    async getSponsors() {
+    getSponsors() {
       this.isLoader = true;
-      await adminApi
+      adminApi
         .get(`/club-members/sponsers`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
           this.sponsors = l;
         })
         .catch((err) => {
@@ -152,6 +170,61 @@ export default {
           this.isLoader = false;
         });
     },
+    getData(page = 1) {
+          this.isLoader = true;
+
+          adminApi
+              .get(
+                  `/club-members/members/get-sponsors?page=${page}&per_page=40&sponsor_id=${this.create.old_sponsor_id}&memberNumber=1`
+              )
+              .then((res) => {
+                  let l = res.data.data;
+                  this.members = l.data;
+                  this.membersPagination = l['0'];
+                  this.current_page = l['0'].current_page;
+                  this.memberIds = l.memberIds;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+    getDataCurrentPage(page = 1) {
+          if (
+              this.current_page <= this.membersPagination.last_page &&
+              this.current_page != this.membersPagination.current_page &&
+              this.current_page
+          ) {
+              this.isLoader = true;
+
+              adminApi
+                  .get(
+                      `/club-members/members/get-sponsors?sponsor_id=${this.create.old_sponsor_id}&page=${this.current_page}&per_page=40`
+                  )
+                  .then((res) => {
+                      let l = res.data.data;
+                      this.members = l.data;
+                      this.membersPagination = l['0'];
+                      this.current_page = l['0'].current_page;
+                  })
+                  .catch((err) => {
+                      Swal.fire({
+                          icon: "error",
+                          title: `${this.$t("general.Error")}`,
+                          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                      });
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }
+      },
   },
 };
 </script>
@@ -159,11 +232,6 @@ export default {
 <template>
   <Layout>
     <PageHeader />
-    <Sponsor
-      :companyKeys="companyKeys"
-      :defaultsKeys="defaultsKeys"
-      @created="getSponsors"
-    />
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -185,10 +253,10 @@ export default {
                         v-model="create.old_sponsor_id"
                         :options="sponsors.map((type) => type.id)"
                         :custom-label="
-                          (opt) =>
+                          (opt) => sponsors.find((x) => x.id == opt)?
                             $i18n.locale == 'ar'
                               ? sponsors.find((x) => x.id == opt).name
-                              : sponsors.find((x) => x.id == opt).name_e
+                              : sponsors.find((x) => x.id == opt).name_e: null
                         "
                       >
                       </multiselect>
@@ -201,14 +269,13 @@ export default {
                         <span class="text-danger">*</span>
                       </label>
                       <multiselect
-                        @input="showSponsorModal"
                         v-model="create.sponsor_id"
                         :options="sponsors.map((type) => type.id)"
                         :custom-label="
-                          (opt) =>
+                          (opt) => sponsors.find((x) => x.id == opt)?
                             $i18n.locale == 'ar'
                               ? sponsors.find((x) => x.id == opt).name
-                              : sponsors.find((x) => x.id == opt).name_e
+                              : sponsors.find((x) => x.id == opt).name_e: null
                         "
                       >
                       </multiselect>
@@ -219,6 +286,7 @@ export default {
                       style="margin-top: 33px"
                       variant="success"
                       type="button"
+                      :disabled="create.sponsor_id == create.old_sponsor_id"
                       class="mx-1"
                       v-if="
                         !isLoader && isPermission('create changeSpenser club')
@@ -242,6 +310,186 @@ export default {
                 </div>
               </div>
             </div>
+
+            <!-- paginate -->
+            <div
+                  v-if="members.length > 0"
+                  class="row justify-content-between align-items-center mb-2 px-1"
+              >
+                  <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0"></div>
+                  <div
+                      class="col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                  >
+                      <div class="d-fex">
+                          <!-- start filter and setting -->
+                          <div class="d-inline-block"></div>
+                          <!-- end filter and setting -->
+
+                          <!-- start Pagination -->
+                          <div
+                              class="d-inline-flex align-items-center pagination-custom"
+                          >
+                              <div class="d-inline-block" style="font-size: 13px">
+                                  {{ membersPagination.from }}-{{ membersPagination.to }} /
+                                  {{ membersPagination.total }}
+                              </div>
+                              <div class="d-inline-block">
+                                  <a
+                                      href="javascript:void(0)"
+                                      :style="{
+                          'pointer-events':
+                            membersPagination.current_page == 1 ? 'none' : '',
+                        }"
+                                      @click.prevent="
+                          getData(membersPagination.current_page - 1)
+                        "
+                                  >
+                                      <span>&lt;</span>
+                                  </a>
+                                  <input
+                                      type="text"
+                                      @keyup.enter="getDataCurrentPage()"
+                                      v-model="current_page"
+                                      class="pagination-current-page"
+                                  />
+                                  <a
+                                      href="javascript:void(0)"
+                                      :style="{
+                          'pointer-events':
+                            membersPagination.last_page ==
+                            membersPagination.current_page
+                              ? 'none'
+                              : '',
+                        }"
+                                      @click.prevent="
+                          getData(membersPagination.current_page + 1)
+                        "
+                                  >
+                                      <span>&gt;</span>
+                                  </a>
+                              </div>
+                          </div>
+                          <!-- end Pagination -->
+                      </div>
+                  </div>
+              </div>
+
+            <!-- start .table-responsive-->
+            <div
+                  v-if="members.length > 0"
+                  class="table-responsive mb-3 custom-table-theme position-relative"
+              >
+                  <!--       start loader       -->
+                  <loader size="large" v-if="isLoader" />
+                  <!--       end loader       -->
+
+                  <table
+                      class="table table-borderless table-hover table-centered m-0"
+                      ref="exportable_table"
+                      id="printData"
+                  >
+                      <thead>
+                          <tr>
+                              <th
+                                  v-if="enabled3"
+                                  class="do-not-print"
+                                  scope="col"
+                                  style="width: 0"
+                              >
+                                  <div class="form-check custom-control">
+                                      <input
+                                          class="form-check-input"
+                                          type="checkbox"
+                                          v-model="isCheckAll"
+                                          style="width: 17px; height: 17px"
+                                      />
+                                  </div>
+                              </th>
+                              <th >
+                                  <div class="d-flex justify-content-center">
+                                    <span>
+                                        {{
+                                            getCompanyKey("member_membership_number")
+                                        }}
+                                    </span>
+                                  </div>
+                              </th>
+                              <th>
+                                  <div class="d-flex justify-content-center">
+                                      <span>{{ $t("general.name") }}</span>
+                                  </div>
+                              </th>
+                              <th>
+                                  <div class="d-flex justify-content-center">
+                                      <span>{{ getCompanyKey("member_national_id") }}</span>
+                                  </div>
+                              </th>
+                              <th>
+                                  <div class="d-flex justify-content-center">
+                            <span>{{
+                                    getCompanyKey("member_nationality_number")
+                                }}</span>
+                                  </div>
+                              </th>
+                              <th>
+                                  <div class="d-flex justify-content-center">
+                                      <span>{{ getCompanyKey("member_home_phone") }}</span>
+                                  </div>
+                              </th>
+                          </tr>
+                      </thead>
+                      <tbody
+                          v-if="members.length > 0"
+                      >
+                      <tr
+                          @click.capture="checkRow(data.id)"
+                          v-for="(data, index) in members"
+                          :key="data.id"
+                          class="body-tr-custom"
+                      >
+                          <td v-if="enabled3" class="do-not-print">
+                              <div
+                                  class="form-check custom-control"
+                                  style="min-height: 1.9em"
+                              >
+                                  <input
+                                      style="width: 17px; height: 17px"
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      :value="data.id"
+                                      v-model="checkAll"
+                                  />
+                              </div>
+                          </td>
+                          <td>
+                              {{ data.membership_number }}
+                          </td>
+                          <td>
+                              {{
+                                  `${data.first_name} ${data.second_name} ${data.third_name} ${data.last_name} ${data.family_name}`
+                              }}
+                          </td>
+                          <td>
+                              {{ data.national_id }}
+                          </td>
+                          <td>
+                              {{ data.nationality_number }}
+                          </td>
+                          <td>
+                              {{ data.home_phone }}
+                          </td>
+                      </tr>
+                      </tbody>
+                      <tbody v-else>
+                      <tr>
+                          <th class="text-center" colspan="30">
+                              {{ $t("general.notDataFound") }}
+                          </th>
+                      </tr>
+                      </tbody>
+                  </table>
+              </div>
+            <!-- end .table-responsive-->
           </div>
         </div>
       </div>

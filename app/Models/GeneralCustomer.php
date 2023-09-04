@@ -24,7 +24,6 @@ class GeneralCustomer extends Model implements HasMedia
 
 
 
-    protected $with = ['opening_balances','country','city','bankAccount','sector','customer_main_category','customer_sub_category','salesmen','customerGroup','employee','supplier','customerSource','orders'];
 
     public function opening_balances()
     {

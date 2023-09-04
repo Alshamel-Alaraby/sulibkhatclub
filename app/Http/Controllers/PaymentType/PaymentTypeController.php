@@ -17,15 +17,7 @@ class PaymentTypeController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('payment_types_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('payment_types_' . $id, $model);
-        //     }
-        // }
+    
         $model = $this->modelInterface->find($id);
         if ($model) {
             return responseJson(200, 'success', new PaymentTypeResource($model));

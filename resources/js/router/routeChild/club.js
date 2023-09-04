@@ -133,4 +133,40 @@ export default [
         component: () => import('../../views/pages/club/poster-report'),
 
     },
+    {
+        path: '/dashboard/club/paid-member-report',
+        name: 'paid member',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/paid-member-report'),
+
+    },
+    {
+        path: '/dashboard/club/unpaid-member-report',
+        name: 'unpaid member',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/unpaid-member-report'),
+
+    },
+    {
+        path: '/dashboard/club/group',
+        name: 'Group Club',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/group'),
+
+    },
+    {
+        path: '/dashboard/club/new-subscription',
+        name: 'New Subscription',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/new-subscription'),
+
+    },
 ];

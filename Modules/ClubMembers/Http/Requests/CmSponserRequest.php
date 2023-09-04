@@ -23,12 +23,15 @@ class CmSponserRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            'name'      => 'sometimes|string|max:255|unique:cm_sponsers,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e'    => 'sometimes|string|max:255|unique:cm_sponsers,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
-            'parent_id' => ["nullable"],
-            "company_id"=>'nullable',
+            'name' => 'sometimes|string|max:255|unique:cm_sponsers,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'sometimes|string|max:255|unique:cm_sponsers,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'parent_id' => 'nullable',
+            "company_id" => 'nullable',
+            'group_id' => 'nullable|exists:cm_sponsors_group,id',
         ];
+
     }
 
     public function messages()
@@ -39,7 +42,5 @@ class CmSponserRequest extends FormRequest
             'parent_id.exists' => __('message.parent not found'),
         ];
     }
-
-
 
 }

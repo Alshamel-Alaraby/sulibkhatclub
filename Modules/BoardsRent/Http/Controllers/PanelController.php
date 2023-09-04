@@ -3,12 +3,15 @@
 namespace Modules\BoardsRent\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Client\Events\RequestSending;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Panel;
 use Modules\BoardsRent\Http\Requests\PanelRequest;
+use Modules\BoardsRent\Transformers\Panel\AllBRentPanelResource;
 use Modules\BoardsRent\Transformers\PanelResource;
+use Modules\BoardsRent\Transformers\Panel\RelationBRentPanelResource;
 
 class PanelController extends Controller
 {
@@ -24,7 +27,7 @@ class PanelController extends Controller
             return responseJson(404, 'not found');
         }
 
-        return responseJson(200, 'success', new PanelResource($model));
+        return responseJson(200, 'success', new AllBRentPanelResource($model));
     }
 
     public function all(AllRequest $request)
@@ -37,7 +40,18 @@ class PanelController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', PanelResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllBRentPanelResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+    public function searchDropDown(AllRequest $request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', RelationBRentPanelResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(PanelRequest $request)
@@ -45,7 +59,7 @@ class PanelController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new PanelResource($model));
+        return responseJson(200, 'created', new AllBRentPanelResource($model));
 
     }
 
@@ -59,7 +73,7 @@ class PanelController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new PanelResource($model));
+        return responseJson(200, 'updated', new AllBRentPanelResource($model));
     }
 
     public function logs($id)
@@ -131,5 +145,12 @@ class PanelController extends Controller
         return $models;
 //        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->model->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

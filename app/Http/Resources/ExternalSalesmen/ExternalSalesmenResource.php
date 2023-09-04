@@ -3,6 +3,7 @@
 namespace App\Http\Resources\ExternalSalesmen;
 
 use App\Http\Resources\Country\CountryResource;
+use App\Http\Resources\Country\RelationCountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExternalSalesmenResource extends JsonResource
@@ -25,7 +26,7 @@ class ExternalSalesmenResource extends JsonResource
             'email' => $this->email,
             'is_active' => $this->is_active,
             'national_id' => $this->national_id,
-            'country' => new CountryResource($this->country),
+            'country' => new RelationCountryResource($this->country),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -2,6 +2,7 @@
 
 namespace Modules\BoardsRent\Transformers;
 
+use App\Http\Resources\Status\RelationStatusResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UnitStatusResource extends JsonResource
@@ -15,11 +16,11 @@ class UnitStatusResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'name_e' => $this->name_e,
-            'status_id' => $this->status_id,
-            'status'    => $this->status,
+            'id'         => $this->id,
+            'name'       => $this->name,
+            'name_e'     => $this->name_e,
+            'status_id'  => $this->status_id,
+            'status'     => new RelationStatusResource($this->status),
         ];
 
     }

@@ -15,6 +15,7 @@ class DepertmentTask extends Model
 
     protected $guarded = ['id'];
 
+
     public function depertment()
     {
         return $this->belongsTo(Depertment::class, 'department_id');

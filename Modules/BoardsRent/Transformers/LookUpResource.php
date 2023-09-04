@@ -3,6 +3,7 @@
 namespace Modules\BoardsRent\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\BoardsRent\Transformers\LookUp\ChildrenLookUpResource;
 
 class LookUpResource extends JsonResource
 {
@@ -16,16 +17,15 @@ class LookUpResource extends JsonResource
     {
         return [
 
-            "id" => $this->id,
-            "name" => $this->name,
-            "name_e" => $this->name_e,
-            "type" => $this->type,
-
-            "children" => LookUpResource::collection($this->children),
-            'is_parent' => $this->is_parent,
+            "id"          => $this->id,
+            "name"        => $this->name,
+            "name_e"      => $this->name_e,
+            "type"        => $this->type,
+            'is_parent'   => $this->is_parent,
             "is_children" => $this->is_children,
+            "parent_id"   => $this->parent_id,
+            "children"    => ChildrenLookUpResource::collection($this->children),
 
-            "parent_id" => $this->parent_id,
         ];
     }
 }

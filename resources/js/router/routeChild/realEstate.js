@@ -26,7 +26,7 @@ export default [
         },
         component: () => import('../../views/pages/realEstate/unsold-unit-report'),
     },
-    
+
     {
         path: '/dashboard/realEstate/contract',
         name: 'realEstate-contract',
@@ -106,14 +106,6 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/realEstate/wallet'),
-    },
-    {
-        path: '/dashboard/realEstate/wallet-owner',
-        name: 'realEstate-wallet-owner',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/realEstate/walletOwner'),
     },
     {
         path: '/dashboard/realEstate/unit',

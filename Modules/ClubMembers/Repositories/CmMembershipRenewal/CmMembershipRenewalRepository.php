@@ -14,33 +14,12 @@ class CmMembershipRenewalRepository implements CmMembershipRenewalInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->where(function ($q) use ($request) {
-            if ($request->from && !$request->to) {
-                $from = $request->from;
-                $from = explode('-', $from);
-                $from = $from[1] . '-' . $from[2];
-                $q->where('from', $from);
-            }
-            if ($request->to && !$request->from) {
-                $to = $request->to;
-                $to = explode('-', $to);
-                $to = $to[1] . '-' . $to[2];
-                $q->where('to', $to);
-            }
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-            if ($request->from && $request->to) {
-                $from = $request->from;
-                $from = explode('-', $from);
-                $from = $from[1] . '-' . $from[2];
-
-                $to = $request->to;
-                $to = explode('-', $to);
-                $to = $to[1] . '-' . $to[2];
-
-                $q->where('from', $from);
-                $q->where('to', $to);
-            }
-        })->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if ($request->date_search) {
+            $models->whereDate('from', "<=", $request->date_search);
+            $models->whereDate('to', ">=", $request->date_search);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

@@ -20,9 +20,9 @@ class CmMemberRejectResource extends JsonResource
             'note' => $this->note,
             'session_number' => $this->session_number,
             'prefix' => $this->prefix,
-            'member' => collect($this->whenLoaded('member'))->only(['id','first_name','second_name','third_name','last_name','family_name']),
-            'branch' => collect($this->whenLoaded('branch'))->only(['id','name','name_e']),
-            'member_type' => collect($this->whenLoaded('memberType'))->only(['id','name','name_e']),
+            'member' => collect($this->member)->only(['id','first_name','second_name','third_name','last_name','family_name']),
+            'branch' => collect($this->branch)->only(['id','name','name_e']),
+            'member_type' => collect($this->memberType)->only(['id','name','name_e']),
 
 
         ];

@@ -26,6 +26,7 @@ class CustomerBranch extends Model
         'longitude',
     ];
 
+
     public function country()
     {
         return $this->belongsTo(Country::class);

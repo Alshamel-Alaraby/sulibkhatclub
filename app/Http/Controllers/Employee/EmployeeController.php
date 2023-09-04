@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Requests\EmployeeRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Employee\EmployeeResource;
 use App\Http\Resources\Employee\GetNameEmployeeResource;
 use App\Repositories\Employee\EmployeeInterface;
@@ -152,11 +153,11 @@ class EmployeeController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameEmployeeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

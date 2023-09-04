@@ -8,7 +8,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class BankAccountRepository implements BankAccountInterface
 {
 
-    public function __construct(private \App\Models\BankAccount$model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
+    public function __construct(private \App\Models\BankAccount $model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
     {
         $this->model = $model;
         $this->media = $media;

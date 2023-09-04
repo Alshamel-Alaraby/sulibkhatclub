@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Employee;
 
-use App\Http\Resources\Depertment\DepertmentResource;
-use App\Http\Resources\SalesmenPlanResource;
-use App\Http\Resources\SalesmenType\SalesmenTypeResource;
+use App\Http\Resources\Branch\RelationBranchResource;
+use App\Http\Resources\Depertment\RelationDepertmentResource;
+use App\Http\Resources\SalesmenPlansSource\RelationSalesmenPlansSourceResource;
+use App\Http\Resources\SalesmenType\RelationSalesmenTypeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\HR\Transformers\JobTitle\RelationJobTitleResource;
 
 class EmployeeResource extends JsonResource
 {
@@ -36,18 +38,15 @@ class EmployeeResource extends JsonResource
             'manage_others' => $this->manage_others,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'job_title' => $this->jobTitle,
+            'job_title' => new RelationJobTitleResource($this->jobTitle),
             'branch_id' => $this->branch_id,
-            'branch' => $this->branch,
-            'manager' => $this->manager,
-            'salesman_type' => $this->salesmanType,
-            'department' => $this->depertment,
-            'plans' => $this->plans,
+            'branch' => new RelationBranchResource($this->branch),
+            'manager' => new RelationEmployeeResource($this->manager),
+            'salesman_type' => new RelationSalesmenTypeResource($this->salesmanType) ,
+            'department' => new RelationDepertmentResource($this->depertment) ,
+            'plans' =>new RelationSalesmenPlansSourceResource($this->plans),
 
-            // 'manager' => new EmployeeResource($this->manager),
-            // 'salesman_type' => new SalesmenTypeResource($this->salesmanType),
-            // 'department' => new DepertmentResource($this->depertment),
-            // 'plans' => SalesmenPlanResource::collection($this->plans),
+
         ];
     }
 }

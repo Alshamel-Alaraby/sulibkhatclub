@@ -22,8 +22,6 @@ class SellMethodResource extends JsonResource
             'target_calculation_ratio' => $this->target_calculation_ratio,
             'is_all_value'             => $this->is_all_value,
             'is_default'               => $this->is_default,
-            'created_at'               => $this->created_at,
-            'updated_at'               => $this->updated_at,
         ];
     }
 }

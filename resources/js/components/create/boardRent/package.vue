@@ -835,6 +835,24 @@ export default {
             else
                 this.typeCom = 'edit'
         },
+        getPanelUpdate(id) {
+            adminApi
+                .get(`/boards-rent/packages/relation-package-panel/${id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    if(l.panels && l.panels.length > 0){
+                        this.allPanelPackages = l.panels;
+                        this.allPanelPackages.forEach((el,index) => {
+                            this.CheckAllPanel.push(el.id);
+                        });
+                        this.paginate();
+                        this.changeValuePanel();
+                    }
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                });
+        },
         resetModalHidden() {
             this.defaultData();
             this.$bvModal.hide(this.id);
@@ -852,6 +870,7 @@ export default {
                         this.cities = [];this.avenues = [];this.streets = [];this.pans = [];
                         this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null,code: ''};
                         this.is_panel = false;
+                        this.CheckAllPanel = [];
                         this.current_page_pans_pack = 1;
                         let pack = this.idObjEdit.dataObj;
                         this.package_id = pack.id;
@@ -859,21 +878,7 @@ export default {
                         this.create.name_e = pack.name_e;
                         this.create.code = pack.code;
                         this.create.price = pack.price;
-                        if(pack.panels && pack.panels.length > 0){
-                            this.allPanelPackages = pack.panels;
-                            this.allPanelPackages.forEach((el,index) => {
-                                this.CheckAllPanel.push(el.id);
-                            });
-                            this.paginate();
-                            this.changeValuePanel();
-                        }else{
-                            this.cities = [];
-                            this.avenues = [];
-                            this.streets = [];
-                            this.pans = [];
-                            this.location= {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null,code: ''};
-                            this.CheckAllPanel = [];
-                        }
+                        this.getPanelUpdate(pack.id);
                         this.getGovernorate();
                         this.getCategory();
 
@@ -972,7 +977,7 @@ export default {
 
              adminApi
                 .get(
-                    `/boards-rent/panels?page=${1}&per_page=${20}&packages=1${filter}`
+                    `/boards-rent/panels/search-drop-down?page=${1}&per_page=${20}&packages=1${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -1007,7 +1012,7 @@ export default {
 
                  adminApi
                     .get(
-                        `/boards-rent/panels?page=${20}&per_page=${7}&packages=1${filter}`
+                        `/boards-rent/panels/search-drop-down?page=${20}&per_page=${7}&packages=1${filter}`
                     )
                     .then((res) => {
                         let l = res.data;

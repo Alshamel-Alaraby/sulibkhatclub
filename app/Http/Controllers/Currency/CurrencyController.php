@@ -24,20 +24,6 @@ class CurrencyController extends Controller
     public function index(Request $request)
     {
 
-        // if (count($_GET) > 0) {
-        //     cacheForget('currencies');
-        // }
-
-        // $data = cacheGet('currencies');
-        // if ($request->search || $request->is_active) {
-        //     cacheForget('currencies');
-        //     $data = $this->repository->getAll($request);
-        // }
-        // if (!$data) {
-        //     $data = $this->repository->getAll($request);
-        //     cachePut('currencies', $data);
-        // }
-
         $data = $this->repository->getAll($request);
         return responseJson(200, 'success', ($this->resource)::collection($data['data']), $data['paginate'] ? getPaginates($data['data']) : null);
     }

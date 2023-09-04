@@ -29,8 +29,8 @@ class CmMembershipRenewalRequest extends FormRequest
 
         return [
             'memberships_renewals' => 'required|array',
-            'memberships_renewals.*.from' => 'required|date_format:m-d|unique:cm_memberships_renewals,from',
-            'memberships_renewals.*.to' => 'required|date_format:m-d|after:from|unique:cm_memberships_renewals,to',
+            'memberships_renewals.*.from' => 'required|unique:cm_memberships_renewals,from',
+            'memberships_renewals.*.to' => 'required|after:from|unique:cm_memberships_renewals,to',
             'memberships_renewals.*.membership_availability' => 'required|in:0,1',
             'memberships_renewals.*.membership_cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
 

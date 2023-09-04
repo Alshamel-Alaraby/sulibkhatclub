@@ -26,3 +26,4 @@ class DepertmentResource extends JsonResource
         ];
     }
 }
+

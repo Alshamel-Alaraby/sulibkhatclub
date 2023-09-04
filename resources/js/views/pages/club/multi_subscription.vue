@@ -57,9 +57,9 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                year_from: new Date().toISOString().slice(0, 10),
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 amount: "",
                 module_type:"club",
@@ -70,11 +70,12 @@ export default {
             edit: {
                 sponsor_id: null,
                 branch_id: null,
+                serial_id: null,
                 cm_member_id: null,
                 document_id: 8,
-                year_from: new Date().toISOString().slice(0, 10),
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 amount: "",
                 module_type:"club",
@@ -85,10 +86,9 @@ export default {
                 sponsor_id: true,
                 serial_number: true,
                 cm_member_id: true,
-                year_from: true,
-                year_to: true,
-                number_of_years:true,
-                type: true,
+                date_from: true,
+                date_to: true,
+                year: true,
                 amount: true,
             },
             members: [],
@@ -101,8 +101,8 @@ export default {
             total:0,
             filterSetting: [
                 "cm_member_id",
-                "year_from",
-                "year_to",
+                "date_from",
+                "date_to",
                 "amount",
                 "prefix",
             ],
@@ -128,14 +128,14 @@ export default {
             cm_member_id: {required: requiredIf(function (model) {
                     return this.isRequired("cm_member_id");
                 })},
-            year_from: {required: requiredIf(function (model) {
-                    return this.isRequired("year_from");
+            date_from: {required: requiredIf(function (model) {
+                    return this.isRequired("date_from");
                 })},
-            year_to: {required: requiredIf(function (model) {
-                    return this.isRequired("year_to");
+            date_to: {required: requiredIf(function (model) {
+                    return this.isRequired("date_to");
                 })},
-            number_of_years: {required: requiredIf(function (model) {
-                    return this.isRequired("number_of_years");
+            year: {required: requiredIf(function (model) {
+                    return this.isRequired("year");
                 })},
             amount: {required: requiredIf(function (model) {
                     return this.isRequired("amount");
@@ -157,14 +157,14 @@ export default {
                     cm_member_id: {required: requiredIf(function (model) {
                             return this.isRequired("cm_member_id");
                         })},
-                    year_from: {required: requiredIf(function (model) {
-                            return this.isRequired("year_from");
+                    date_from: {required: requiredIf(function (model) {
+                            return this.isRequired("date_from");
                         })},
-                    year_to: {required: requiredIf(function (model) {
-                            return this.isRequired("year_to");
+                    date_to: {required: requiredIf(function (model) {
+                            return this.isRequired("date_to");
                         })},
-                    number_of_years: {required: requiredIf(function (model) {
-                            return this.isRequired("number_of_years");
+                    year: {required: requiredIf(function (model) {
+                            return this.isRequired("year");
                         })},
                     amount: {required: requiredIf(function (model) {
                             return this.isRequired("amount");
@@ -185,14 +185,14 @@ export default {
             cm_member_id: {required: requiredIf(function (model) {
                     return this.isRequired("cm_member_id");
                 })},
-            year_from: {required: requiredIf(function (model) {
-                    return this.isRequired("year_from");
+            date_from: {required: requiredIf(function (model) {
+                    return this.isRequired("date_from");
                 })},
-            year_to: {required: requiredIf(function (model) {
-                    return this.isRequired("year_to");
+            date_to: {required: requiredIf(function (model) {
+                    return this.isRequired("date_to");
                 })},
-            number_of_years: {required: requiredIf(function (model) {
-                    return this.isRequired("number_of_years");
+            year: {required: requiredIf(function (model) {
+                    return this.isRequired("year");
                 })},
             amount: {required: requiredIf(function (model) {
                     return this.isRequired("amount");
@@ -291,10 +291,12 @@ export default {
                 this.edit.branch_id = null;
             }
         },
-        showSponsorModal() {
+        async showSponsorModal() {
             if (this.create.sponsor_id == 0) {
                 this.$bvModal.show("create-sponsor");
                 this.create.sponsor_id = null;
+            }else{
+               await this.getMember()
             }
         },
         showSponsorModalEdit() {
@@ -310,11 +312,11 @@ export default {
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
-                year_from: new Date().toISOString().slice(0, 10),
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 document_id: 8,
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
                 amount: "",
                 module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
@@ -395,9 +397,6 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    if(this.isPermission('create Branch')){
-                        l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
-                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -414,9 +413,6 @@ export default {
                 .get(`/club-members/sponsers`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create sponsor club')){
-                        l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
-                    }
                     this.sponsors = l;
                 })
                 .catch((err) => {
@@ -562,19 +558,19 @@ export default {
         resetModalHidden() {
             this.total = 0;
             this.create = {
+                sponsor_id: null,
                 branch_id: null,
                 serial_id: null,
-                sponsor_id: null,
                 cm_member_id: null,
-                year_from: new Date().toISOString().slice(0, 10),
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 document_id: 8,
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
                 amount: "",
+                module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
-                module_type:"club"
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -587,27 +583,26 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            if(this.isVisible('cm_member_id')) await this.getMember();
+            // if(this.isVisible('cm_member_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('sponsor_id')) await this.getSponsors();
-            if(this.isVisible('serial_id')) await this.getSerials();
             this.total = 0;
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
-                year_from: new Date().toISOString().slice(0, 10),
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 document_id: 8,
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
                 amount: "",
+                module_type:"club",
                 date:new Date().toISOString().slice(0, 10),
                 transactions:[],
-                module_type:"club"
             };
-
+            await this.getRenewal();
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -618,43 +613,38 @@ export default {
          *  create countrie
          */
         AddSubmit() {
-            this.$v.create.$touch();
-            if (this.$v.create.$invalid) {
-                return;
-            } else {
-                this.isLoader = true;
-                this.errors = {};
-                this.is_disabled = false;
-                let transactions = this.create.transactions
-                adminApi
-                    .post(`/club-members/transactions`, {transactions, company_id: this.company_id})
-                    .then((res) => {
-                        this.getData();
-                        this.is_disabled = true;
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: "success",
-                                text: `${this.$t("general.Addedsuccessfully")}`,
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }, 500);
-                    })
-                    .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        }
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
-            }
+            this.isLoader = true;
+            this.errors = {};
+            this.is_disabled = false;
+            let transactions = this.create.transactions
+            adminApi
+                .post(`/club-members/transactions`, {transactions, company_id: this.company_id})
+                .then((res) => {
+                    this.getData();
+                    this.is_disabled = true;
+                    setTimeout(() => {
+                        Swal.fire({
+                            icon: "success",
+                            text: `${this.$t("general.Addedsuccessfully")}`,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }, 500);
+                })
+                .catch((err) => {
+                    if (err.response.data) {
+                        this.errors = err.response.data.errors;
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    }
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  edit countrie
@@ -704,17 +694,20 @@ export default {
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('sponsor_id')) await this.getSponsors();
             let setting = this.transactions.find((e) => id == e.id);
-            this.edit.cm_member_id = setting.member.id;
             this.edit.sponsor_id = setting.sponsor.id;
+            this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
+            this.edit.date_from = setting.date_from;
+            this.edit.date_to = setting.date_to;
+            this.edit.year = setting.year;
             this.edit.year_from = setting.year_from;
             this.edit.type = setting.type;
             this.edit.document_id = setting.document_id;
             this.edit.year_to = setting.year_to;
-            this.edit.number_of_years = setting.number_of_years;
             this.edit.amount = setting.amount;
             this.edit.module_type = "club";
             this.edit.date = new Date().toISOString().slice(0, 10);
+            if(this.isVisible('serial_id')) await this.getSerials();
             this.errors = {};
         },
         /**
@@ -723,14 +716,14 @@ export default {
         resetModalHiddenEdit(id) {
             this.errors = {};
             this.edit = {
-                branch_id: null,
                 sponsor_id: null,
+                branch_id: null,
                 cm_member_id: null,
-                year_from: new Date().toISOString().slice(0, 10),
+                date_from: '',
+                date_to: '',
+                year: '',
                 type: "renew",
                 document_id: 8,
-                year_to: new Date().toISOString().slice(0, 10),
-                number_of_years:1,
                 amount: "",
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
@@ -772,7 +765,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
+                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -819,33 +812,18 @@ export default {
             }
         },
 
-        async renewalDataCreate ()
-        {
-            if(this.create.year_from && this.create.year_to)
-            {
-                this.dateDifference();
-                await this.getRenewal();
-            }
-        },
-
-        dateDifference()
-        {
-            let year_from = new Date(this.create.year_from).getFullYear();
-            let year_to = new Date(this.create.year_to).getFullYear();
-            if (year_from < year_to)
-            {
-                let number_of_years = year_to - year_from;
-                this.create.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
-            }
-        },
-
         async getRenewal()
         {
             await adminApi
-                .get(`/club-members/memberships-renewals?from=${this.create.year_from}&to=${this.create.year_to}`)
+                .get(`/club-members/memberships-renewals?date_search=${this.create.date}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
+                    if (this.renewal.length > 0)
+                    {
+                        this.create.date_from = this.renewal[0].from;
+                        this.create.date_to = this.renewal[0].to;
+                    }
                     if (this.create.type)
                     {
                         this.renewalAmount();
@@ -855,7 +833,7 @@ export default {
                     Swal.fire({
                         icon: "error",
                         title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        text: `${this.$t("general.PleaseSelectAMember")}`,
                     });
                 })
                 .finally(() => {
@@ -869,21 +847,10 @@ export default {
             {
                 if (this.create.type == "subscribe")
                 {
-                    this.create.amount = this.renewal[0].membership_cost * this.create.number_of_years;
+                    this.create.amount = this.renewal[0].membership_cost;
                 }else {
-                    this.create.amount = this.renewal[0].renewal_cost * this.create.number_of_years;
+                    this.create.amount = this.renewal[0].renewal_cost;
                 }
-            }
-        },
-
-        dateDifferenceEdit()
-        {
-            let year_from = new Date(this.edit.year_from).getFullYear();
-            let year_to = new Date(this.edit.year_to).getFullYear();
-            if (year_from < year_to)
-            {
-                let number_of_years = year_to - year_from;
-                this.edit.number_of_years = number_of_years > 1 ? number_of_years : 1 ;
             }
         },
 
@@ -920,9 +887,11 @@ export default {
                     serial_id: data.serial_id,
                     cm_member_id: data.cm_member_id,
                     document_id: 8,
-                    year_from: new Date(data.year_from).getFullYear(),
-                    year_to: new Date(data.year_to).getFullYear(),
-                    number_of_years: data.number_of_years,
+                    year_from: new Date(data.date_from).getFullYear(),
+                    year_to: new Date(data.date_to).getFullYear(),
+                    date_from: data.date_from,
+                    date_to: data.date_to,
+                    year: data.year,
                     type: data.type,
                     amount: data.amount,
                     member_name: member_name,
@@ -942,6 +911,31 @@ export default {
                 this.total += parseFloat(el.amount);
             });
         },
+        getMemberTransaction(){
+            this.isLoader = true;
+            adminApi
+                .get(`/club-members/transactions/member-last-transaction/${this.create.cm_member_id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    if (l.year)
+                    {
+                        this.create.year = `${parseInt(l.year) + 1}`
+                    }else{
+                        this.create.year = `${parseInt(l.year_from) + 1}`
+                    }
+                    this.getRenewal();
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        }
     },
 };
 </script>
@@ -949,14 +943,6 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
-        <Branch
-            :id="'create_branch'"
-            :isPage="false" type="create" :isPermission="isPermission"
-            :companyKeys="companyKeys"
-            :defaultsKeys="defaultsKeys"
-            @created="getBranches"
-        />
-        <Sponsor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getSponsors" />
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -973,27 +959,26 @@ export default {
                                         ref="dropdown"
                                         class="btn-block setting-search"
                                     >
-                                        <b-form-checkbox v-model="filterSetting" value="sponsor_id" class="mb-1">{{
-                                                getCompanyKey("sponsor") }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="sponsor_id" class="mb-1">{{ getCompanyKey("sponsor") }}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="filterSetting" value="cm_member_id"
                                                          class="mb-1"
                                         >{{ getCompanyKey("member") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
+                                        <b-form-checkbox v-if="isVisible('date_from')" v-model="filterSetting"
+                                                         value="date_from" class="mb-1"
                                         >{{ getCompanyKey("year_from") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
+                                        <b-form-checkbox v-if="isVisible('date_to')" v-model="filterSetting"
                                                          value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("year_to") }}
+                                        >{{ getCompanyKey("date_to") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
+                                        <b-form-checkbox v-if="isVisible('amount')" v-model="filterSetting"
+                                                         value="amount" class="mb-1"
                                         >{{ getCompanyKey("subscription_amount") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('allowed_subscription_date')" v-model="filterSetting"
-                                                         value="allowed_subscription_date" class="mb-1"
-                                        >{{ getCompanyKey("subscription_type") }}
+                                        <b-form-checkbox v-if="isVisible('year')" v-model="filterSetting"
+                                                         value="year" class="mb-1"
+                                        >{{ $t("general.ForAYear") }}
                                         </b-form-checkbox>
                                         <!-- Basic dropdown -->
                                     </b-dropdown>
@@ -1034,13 +1019,13 @@ export default {
                                     <button v-print="'#printData'" class="custom-btn-dowonload">
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <button
-                                        class="custom-btn-dowonload"
-                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                        v-if="checkAll.length == 1 && isPermission('update multiSubscription club')"
-                                    >
-                                        <i class="mdi mdi-square-edit-outline"></i>
-                                    </button>
+<!--                                    <button-->
+<!--                                        class="custom-btn-dowonload"-->
+<!--                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
+<!--                                        v-if="checkAll.length == 1 && isPermission('update multiSubscription club')"-->
+<!--                                    >-->
+<!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
+<!--                                    </button>-->
                                     <!-- start mult delete  -->
                                     <button
                                         class="custom-btn-dowonload"
@@ -1097,21 +1082,17 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("subscription_amount") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('type')" v-model="setting.type"
+                                            <b-form-checkbox v-if="isVisible('year')" v-model="setting.year"
                                                              class="mb-1">
-                                                {{ getCompanyKey("subscription_type") }}
+                                                {{ $t("general.ForAYear") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('year_from')" v-model="setting.year_from"
+                                            <b-form-checkbox v-if="isVisible('date_from')" v-model="setting.date_from"
                                                              class="mb-1">
                                                 {{ getCompanyKey("year_from") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('year_to')" v-model="setting.year_to"
+                                            <b-form-checkbox v-if="isVisible('date_to')" v-model="setting.date_to"
                                                              class="mb-1">
                                                 {{ getCompanyKey("year_to") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('number_of_years')" v-model="setting.number_of_years"
-                                                             class="mb-1">
-                                                {{ getCompanyKey("number_of_years") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
@@ -1177,7 +1158,7 @@ export default {
                         >
                             <form>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label class="control-label">
@@ -1193,7 +1174,27 @@ export default {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3 d-flex justify-content-end">
+                                    <div v-if="isVisible('sponsor_id')" class="col-md-4">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("sponsor") }}
+                                            </label>
+                                            <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
+                                                         :options="sponsors.map((type) => type.id)"
+                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
+                                            </multiselect>
+                                            <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
+                                                 class="text-danger">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                            <template v-if="errors.sponsor_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3 d-flex justify-content-end">
                                         <b-button
                                             variant="success"
                                             :disabled="!is_disabled"
@@ -1231,6 +1232,26 @@ export default {
                                 </div>
 
                                 <div class="row">
+                                    <div class="col-md-3" v-if="isVisible('date')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t("general.date") }}
+                                            </label>
+                                            <date-picker
+                                                @input="getRenewal"
+                                                type="date"
+                                                v-model="create.date"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                            ></date-picker>
+                                            <template v-if="errors.date">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-3" v-if="isVisible('branch_id')">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("branch") }}</label>
@@ -1281,84 +1302,6 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div v-if="isVisible('year_from')" class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey('year_from') }}
-                                            </label>
-                                            <date-picker
-                                                type="date"
-                                                @input="renewalDataCreate"
-                                                v-model="$v.create.year_from.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.year_from.$error ||
-                                                        errors.year_from,
-                                                    'is-valid':
-                                                        !$v.create.year_from
-                                                            .$invalid &&
-                                                        !errors.year_from,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.year_from">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_from"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div v-if="isVisible('year_to')" class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ getCompanyKey('year_to') }}
-                                            </label>
-                                            <date-picker
-                                                type="date"
-                                                v-model="$v.create.year_to.$model"
-                                                @input="renewalDataCreate"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.year_to.$error ||
-                                                        errors.year_to,
-                                                    'is-valid':
-                                                        !$v.create.year_to
-                                                            .$invalid &&
-                                                        !errors.year_to,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.year_to">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_to"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div v-if="isVisible('sponsor_id')" class="col-md-3">
-                                        <div class="form-group position-relative">
-                                            <label class="control-label">
-                                                {{ getCompanyKey("sponsor") }}
-                                            </label>
-                                            <multiselect @input="showSponsorModal" v-model="create.sponsor_id"
-                                                         :options="sponsors.map((type) => type.id)"
-                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                            </multiselect>
-                                            <div v-if="$v.create.sponsor_id.$error || errors.sponsor_id"
-                                                 class="text-danger">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.sponsor_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.sponsor_id"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
                                     <div v-if="isVisible('cm_member_id')" class="col-md-3">
                                         <div class="form-group position-relative">
                                             <label class="control-label">
@@ -1366,6 +1309,7 @@ export default {
                                             </label>
                                             <multiselect
                                                 :internalSearch="false"
+                                                @input="getMemberTransaction"
                                                 @search-change="searchMember"
                                                 v-model="create.cm_member_id"
                                                 :options="members.map((type) => type.id)"
@@ -1413,6 +1357,93 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div class="col-md-3" v-if="isVisible('year')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.ForAYear') }}
+                                                <span v-if="isRequired('year')" class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="year"
+                                                v-model="$v.create.year.$model"
+                                                format="YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.year.$error ||
+                                                        errors.year,
+                                                    'is-valid':
+                                                        !$v.create.year
+                                                            .$invalid &&
+                                                        !errors.year,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.year">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.year"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" v-if="isVisible('date_from')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.from_date') }}
+                                                <span v-if="isRequired('date_from')" class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date_from.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_from.$error ||
+                                                        errors.date_from,
+                                                    'is-valid':
+                                                        !$v.create.date_from
+                                                            .$invalid &&
+                                                        !errors.date_from,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_from">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" v-if="isVisible('date_to')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.to_date') }}
+                                                <span v-if="isRequired('date_to')" class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date_to.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.date_to.$error ||
+                                                        errors.date_to,
+                                                    'is-valid':
+                                                        !$v.create.date_to
+                                                            .$invalid &&
+                                                        !errors.date_to,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.date_to">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div v-if="isVisible('amount')"class="col-md-3">
                                         <div class="form-group">
                                             <label  class="control-label">
@@ -1432,32 +1463,6 @@ export default {
                                             <template v-if="errors.amount">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.amount"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div v-if="isVisible('number_of_years')" class="col-md-3">
-                                        <div class="form-group">
-                                            <label  class="control-label">
-                                                {{ getCompanyKey("number_of_years") }}
-                                            </label>
-                                            <input
-                                                disabled
-                                                type="number"
-                                                step="any"
-                                                class="form-control"
-                                                v-model="$v.create.number_of_years.$model"
-                                                :class="{
-                                                  'is-invalid': $v.create.number_of_years.$error || errors.number_of_years,
-                                                  'is-valid':
-                                                    !$v.create.number_of_years.$invalid && !errors.number_of_years,
-                                                }"
-                                            />
-                                            <template v-if="errors.number_of_years">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.number_of_years"
                                                     :key="index"
                                                 >{{ errorMessage }}
                                                 </ErrorMessage>
@@ -1494,10 +1499,9 @@ export default {
                                                         <th>{{ $t("general.serial_number") }}</th>
                                                         <th>{{ getCompanyKey("member") }}</th>
                                                         <th v-if="isVisible('amount')">{{ getCompanyKey("subscription_amount") }}</th>
-                                                        <th v-if="isVisible('type')">{{ getCompanyKey("subscription_type") }}</th>
-                                                        <th v-if="isVisible('year_from')">{{ getCompanyKey("year_from") }}</th>
-                                                        <th v-if="isVisible('year_to')">{{ getCompanyKey("year_to") }}</th>
-                                                        <th v-if="isVisible('membership_number')">{{ getCompanyKey("number_of_years") }}</th>
+                                                        <th v-if="isVisible('year')">{{ $t("general.ForAYear") }}</th>
+                                                        <th v-if="isVisible('date_from')">{{ getCompanyKey("year_from") }}</th>
+                                                        <th v-if="isVisible('date_to')">{{ getCompanyKey("year_to") }}</th>
                                                         <th>{{ $t("general.Action") }}</th>
                                                     </tr>
                                                     </thead>
@@ -1518,12 +1522,11 @@ export default {
                                                         <td v-if="isVisible('amount')">
                                                             <h5 class="m-0 font-weight-normal">{{data.amount}}</h5>
                                                         </td>
-                                                        <td v-if="isVisible('type')"> <h5 class="m-0 font-weight-normal"> {{ data.type }}</h5></td>
-                                                        <td v-if="isVisible('year_from')">
-                                                            <h5 class="m-0 font-weight-normal">{{ data.year_from }}</h5>
+                                                        <td v-if="isVisible('year')"> <h5 class="m-0 font-weight-normal"> {{ data.year }}</h5></td>
+                                                        <td v-if="isVisible('date_from')">
+                                                            <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
                                                         </td>
-                                                        <td v-if="isVisible('year_to')"><h5 class="m-0 font-weight-normal">{{ data.year_to }}</h5></td>
-                                                        <td v-if="isVisible('number_of_years')"><h5 class="m-0 font-weight-normal">{{ data.number_of_years }}</h5></td>
+                                                        <td v-if="isVisible('date_to')"><h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5></td>
                                                         <td>
                                                             <button  type="button"
                                                                      @click.prevent="removeNewField(index)"
@@ -1611,8 +1614,6 @@ export default {
                                 <tbody v-if="transactions.length > 0">
                                      <tr
                                     @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="isPermission('update multiSubscription club')?
-                                    $bvModal.show(`modal-edit-${data.id}`) : false"
                                     v-for="(data, index) in transactions"
                                     :key="data.id"
                                     class="body-tr-custom"
@@ -1673,19 +1674,19 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a
-                                                    v-if="isPermission('update multiSubscription club')"
-                                                    class="dropdown-item"
-                                                    href="#"
-                                                    @click="$bvModal.show(`modal-edit-${data.id}`)"
-                                                >
-                                                    <div
-                                                        class="d-flex justify-content-between align-items-center text-black"
-                                                    >
-                                                        <span>{{ $t("general.edit") }}</span>
-                                                        <i class="mdi mdi-square-edit-outline text-info"></i>
-                                                    </div>
-                                                </a>
+<!--                                                <a-->
+<!--                                                    v-if="isPermission('update multiSubscription club')"-->
+<!--                                                    class="dropdown-item"-->
+<!--                                                    href="#"-->
+<!--                                                    @click="$bvModal.show(`modal-edit-${data.id}`)"-->
+<!--                                                >-->
+<!--                                                    <div-->
+<!--                                                        class="d-flex justify-content-between align-items-center text-black"-->
+<!--                                                    >-->
+<!--                                                        <span>{{ $t("general.edit") }}</span>-->
+<!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
+<!--                                                    </div>-->
+<!--                                                </a>-->
                                                 <a
                                                     v-if="isPermission('delete multiSubscription club')"
                                                     class="dropdown-item text-black"
@@ -1703,258 +1704,258 @@ export default {
                                         </div>
 
                                         <!--  edit   -->
-                                        <b-modal
-                                            :id="`modal-edit-${data.id}`"
-                                            :title="getCompanyKey('subscription_edit_form')"
-                                            title-class="font-18"
-                                            body-class="p-4"
-                                            size="lg"
-                                            :ref="`edit-${data.id}`"
-                                            :hide-footer="true"
-                                            @show="resetModalEdit(data.id)"
-                                            @hidden="resetModalHiddenEdit(data.id)"
-                                        >
-                                            <form>
-                                                <div class="mb-3 d-flex justify-content-end">
-                                                    <!-- Emulate built in modal footer ok and cancel button actions -->
-                                                    <b-button
-                                                        variant="success"
-                                                        @click.prevent="editSubmit(data.id)"
-                                                        type="button"
-                                                        class="mx-1 font-weight-bold px-3"
-                                                        v-if="!isLoader"
-                                                    >
-                                                        {{ $t("general.Edit") }}
-                                                    </b-button>
+<!--                                        <b-modal-->
+<!--                                            :id="`modal-edit-${data.id}`"-->
+<!--                                            :title="getCompanyKey('subscription_edit_form')"-->
+<!--                                            title-class="font-18"-->
+<!--                                            body-class="p-4"-->
+<!--                                            size="lg"-->
+<!--                                            :ref="`edit-${data.id}`"-->
+<!--                                            :hide-footer="true"-->
+<!--                                            @show="resetModalEdit(data.id)"-->
+<!--                                            @hidden="resetModalHiddenEdit(data.id)"-->
+<!--                                        >-->
+<!--                                            <form>-->
+<!--                                                <div class="mb-3 d-flex justify-content-end">-->
+<!--                                                    &lt;!&ndash; Emulate built in modal footer ok and cancel button actions &ndash;&gt;-->
+<!--                                                    <b-button-->
+<!--                                                        variant="success"-->
+<!--                                                        @click.prevent="editSubmit(data.id)"-->
+<!--                                                        type="button"-->
+<!--                                                        class="mx-1 font-weight-bold px-3"-->
+<!--                                                        v-if="!isLoader"-->
+<!--                                                    >-->
+<!--                                                        {{ $t("general.Edit") }}-->
+<!--                                                    </b-button>-->
 
-                                                    <b-button variant="success" class="mx-1" disabled v-else>
-                                                        <b-spinner small></b-spinner>
-                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                                    </b-button>
+<!--                                                    <b-button variant="success" class="mx-1" disabled v-else>-->
+<!--                                                        <b-spinner small></b-spinner>-->
+<!--                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>-->
+<!--                                                    </b-button>-->
 
-                                                    <b-button
-                                                        variant="danger"
-                                                        class="font-weight-bold"
-                                                        type="button"
-                                                        @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"
-                                                    >
-                                                        {{ $t("general.Cancel") }}
-                                                    </b-button>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6" v-if="isVisible('branch_id')">
-                                                        <div class="form-group">
-                                                            <label>{{ getCompanyKey("branch") }}</label>
-                                                            <multiselect @input="showBranchModalEdit"
-                                                                         v-model="edit.branch_id"
-                                                                         :options="branches.map((type) => type.id)"
-                                                                         :custom-label="
-                                                                        (opt) =>$i18n.locale == 'ar'
-                                                                                ? branches.find((x) => x.id == opt).name
-                                                                                : branches.find((x) => x.id == opt).name_e"
-                                                                         :class="{
-                                                                            'is-invalid':$v.edit.branch_id.$error || errors.branch_id,
-                                                                        }">
-                                                            </multiselect>
-                                                            <div v-if="!$v.edit.branch_id.required"
-                                                                 class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
+<!--                                                    <b-button-->
+<!--                                                        variant="danger"-->
+<!--                                                        class="font-weight-bold"-->
+<!--                                                        type="button"-->
+<!--                                                        @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)"-->
+<!--                                                    >-->
+<!--                                                        {{ $t("general.Cancel") }}-->
+<!--                                                    </b-button>-->
+<!--                                                </div>-->
+<!--                                                <div class="row">-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('branch_id')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label>{{ getCompanyKey("branch") }}</label>-->
+<!--                                                            <multiselect @input="showBranchModalEdit"-->
+<!--                                                                         v-model="edit.branch_id"-->
+<!--                                                                         :options="branches.map((type) => type.id)"-->
+<!--                                                                         :custom-label="-->
+<!--                                                                        (opt) =>$i18n.locale == 'ar'-->
+<!--                                                                                ? branches.find((x) => x.id == opt).name-->
+<!--                                                                                : branches.find((x) => x.id == opt).name_e"-->
+<!--                                                                         :class="{-->
+<!--                                                                            'is-invalid':$v.edit.branch_id.$error || errors.branch_id,-->
+<!--                                                                        }">-->
+<!--                                                            </multiselect>-->
+<!--                                                            <div v-if="!$v.edit.branch_id.required"-->
+<!--                                                                 class="invalid-feedback">-->
+<!--                                                                {{ $t("general.fieldIsRequired") }}-->
+<!--                                                            </div>-->
 
-                                                            <template v-if="errors.branch_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.branch_id"
-                                                                    :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('cm_member_id')">
-                                                        <div class="form-group position-relative">
-                                                            <label class="control-label">
-                                                                {{ getCompanyKey("member") }}
-                                                            </label>
-                                                            <multiselect
-                                                                v-model="edit.cm_member_id"
-                                                                :options="members.map((type) => type.id)"
-                                                                :custom-label="
-                                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
-                                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
-                                                                "
-                                                            >
-                                                            </multiselect>
-                                                            <div
-                                                                v-if="$v.edit.cm_member_id.$error || errors.cm_member_id"
-                                                                class="text-danger"
-                                                            >
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.cm_member_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.cm_member_id"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('year_from')">
-                                                        <div class="form-group">
-                                                            <label class="control-label">
-                                                                {{ getCompanyKey('year_from') }}
-                                                            </label>
-                                                            <date-picker
-                                                                type="date"
-                                                                v-model="$v.edit.year_from.$model"
-                                                                @input="dateDifferenceEdit"
-                                                                format="YYYY-MM-DD"
-                                                                valueType="format"
-                                                                :confirm="false"
-                                                                :class="{ 'is-invalid':
-                                                                        $v.edit.year_from.$error ||
-                                                                        errors.year_from,
-                                                                    'is-valid':
-                                                                        !$v.edit.year_from
-                                                                            .$invalid &&
-                                                                        !errors.year_from,
-                                                                }"
-                                                            ></date-picker>
-                                                            <template v-if="errors.year_from">
-                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_from"
-                                                                              :key="index">
-                                                                    {{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('year_to')">
-                                                        <div class="form-group">
-                                                            <label class="control-label">
-                                                                {{ getCompanyKey('year_to') }}
-                                                            </label>
-                                                            <date-picker
-                                                                type="date"
-                                                                v-model="$v.edit.year_to.$model"
-                                                                @input="dateDifferenceEdit"
-                                                                format="YYYY-MM-DD"
-                                                                valueType="format"
-                                                                :confirm="false"
-                                                                :class="{ 'is-invalid':
-                                                                        $v.edit.year_to.$error ||
-                                                                        errors.year_to,
-                                                                    'is-valid':
-                                                                        !$v.edit.year_to
-                                                                            .$invalid &&
-                                                                        !errors.year_to,
-                                                                }"
-                                                            ></date-picker>
-                                                            <template v-if="errors.year_to">
-                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_to"
-                                                                              :key="index">
-                                                                    {{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('type')">
-                                                        <div class="form-group">
-                                                            <label  class="control-label">
-                                                                {{ getCompanyKey("subscription_type") }}
-                                                            </label>
-                                                            <select disabled class="form-control"  v-model="$v.edit.type.$model" :class="{
-                                                                  'is-invalid': $v.edit.type.$error || errors.amount,
-                                                                  'is-valid':
-                                                                    !$v.edit.type.$invalid && !errors.amount,
-                                                                }">
-                                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
-                                                                <option value="renew">{{$t('general.renew')}}</option>
-                                                            </select>
+<!--                                                            <template v-if="errors.branch_id">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.branch_id"-->
+<!--                                                                    :key="index">{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('cm_member_id')">-->
+<!--                                                        <div class="form-group position-relative">-->
+<!--                                                            <label class="control-label">-->
+<!--                                                                {{ getCompanyKey("member") }}-->
+<!--                                                            </label>-->
+<!--                                                            <multiselect-->
+<!--                                                                v-model="edit.cm_member_id"-->
+<!--                                                                :options="members.map((type) => type.id)"-->
+<!--                                                                :custom-label="-->
+<!--                                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name-->
+<!--                                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name-->
+<!--                                                                "-->
+<!--                                                            >-->
+<!--                                                            </multiselect>-->
+<!--                                                            <div-->
+<!--                                                                v-if="$v.edit.cm_member_id.$error || errors.cm_member_id"-->
+<!--                                                                class="text-danger"-->
+<!--                                                            >-->
+<!--                                                                {{ $t("general.fieldIsRequired") }}-->
+<!--                                                            </div>-->
+<!--                                                            <template v-if="errors.cm_member_id">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.cm_member_id"-->
+<!--                                                                    :key="index"-->
+<!--                                                                >{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('year_from')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label class="control-label">-->
+<!--                                                                {{ getCompanyKey('year_from') }}-->
+<!--                                                            </label>-->
+<!--                                                            <date-picker-->
+<!--                                                                type="date"-->
+<!--                                                                v-model="$v.edit.year_from.$model"-->
+<!--                                                                @input="dateDifferenceEdit"-->
+<!--                                                                format="YYYY-MM-DD"-->
+<!--                                                                valueType="format"-->
+<!--                                                                :confirm="false"-->
+<!--                                                                :class="{ 'is-invalid':-->
+<!--                                                                        $v.edit.year_from.$error ||-->
+<!--                                                                        errors.year_from,-->
+<!--                                                                    'is-valid':-->
+<!--                                                                        !$v.edit.year_from-->
+<!--                                                                            .$invalid &&-->
+<!--                                                                        !errors.year_from,-->
+<!--                                                                }"-->
+<!--                                                            ></date-picker>-->
+<!--                                                            <template v-if="errors.year_from">-->
+<!--                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_from"-->
+<!--                                                                              :key="index">-->
+<!--                                                                    {{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('year_to')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label class="control-label">-->
+<!--                                                                {{ getCompanyKey('year_to') }}-->
+<!--                                                            </label>-->
+<!--                                                            <date-picker-->
+<!--                                                                type="date"-->
+<!--                                                                v-model="$v.edit.year_to.$model"-->
+<!--                                                                @input="dateDifferenceEdit"-->
+<!--                                                                format="YYYY-MM-DD"-->
+<!--                                                                valueType="format"-->
+<!--                                                                :confirm="false"-->
+<!--                                                                :class="{ 'is-invalid':-->
+<!--                                                                        $v.edit.year_to.$error ||-->
+<!--                                                                        errors.year_to,-->
+<!--                                                                    'is-valid':-->
+<!--                                                                        !$v.edit.year_to-->
+<!--                                                                            .$invalid &&-->
+<!--                                                                        !errors.year_to,-->
+<!--                                                                }"-->
+<!--                                                            ></date-picker>-->
+<!--                                                            <template v-if="errors.year_to">-->
+<!--                                                                <ErrorMessage v-for="(errorMessage,index) in errors.year_to"-->
+<!--                                                                              :key="index">-->
+<!--                                                                    {{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('type')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label  class="control-label">-->
+<!--                                                                {{ getCompanyKey("subscription_type") }}-->
+<!--                                                            </label>-->
+<!--                                                            <select disabled class="form-control"  v-model="$v.edit.type.$model" :class="{-->
+<!--                                                                  'is-invalid': $v.edit.type.$error || errors.amount,-->
+<!--                                                                  'is-valid':-->
+<!--                                                                    !$v.edit.type.$invalid && !errors.amount,-->
+<!--                                                                }">-->
+<!--                                                                <option value="subscribe">{{$t('general.subscribe')}}</option>-->
+<!--                                                                <option value="renew">{{$t('general.renew')}}</option>-->
+<!--                                                            </select>-->
 
-                                                            <template v-if="errors.type">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.type"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('amount')">
-                                                        <div class="form-group">
-                                                            <label  class="control-label">
-                                                                {{ getCompanyKey("subscription_amount") }}
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                step="any"
-                                                                class="form-control"
-                                                                v-model="$v.edit.amount.$model"
-                                                                :class="{
-                                                                  'is-invalid': $v.edit.amount.$error || errors.amount,
-                                                                  'is-valid':
-                                                                    !$v.edit.amount.$invalid && !errors.amount,
-                                                                }"
-                                                            />
-                                                            <template v-if="errors.amount">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.amount"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('number_of_years')">
-                                                        <div class="form-group">
-                                                            <label  class="control-label">
-                                                                {{ getCompanyKey("number_of_years") }}
-                                                            </label>
-                                                            <input
-                                                                disabled
-                                                                type="number"
-                                                                step="any"
-                                                                class="form-control"
-                                                                v-model="$v.edit.number_of_years.$model"
-                                                                :class="{
-                                                                  'is-invalid': $v.edit.number_of_years.$error || errors.number_of_years,
-                                                                  'is-valid':
-                                                                    !$v.edit.number_of_years.$invalid && !errors.number_of_years,
-                                                                }"
-                                                            />
-                                                            <template v-if="errors.number_of_years">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.number_of_years"
-                                                                    :key="index"
-                                                                >{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6" v-if="isVisible('sponsor_id')">
-                                                        <div class="form-group position-relative">
-                                                            <label class="control-label">
-                                                                {{ getCompanyKey("sponsor") }}
-                                                            </label>
-                                                            <multiselect @input="showSponsorModalEdit"
-                                                                         v-model="edit.sponsor_id"
-                                                                         :options="sponsors.map((type) => type.id)"
-                                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">
-                                                            </multiselect>
-                                                            <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"
-                                                                 class="text-danger">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.sponsor_id">
-                                                                <ErrorMessage
-                                                                    v-for="(errorMessage, index) in errors.sponsor_id"
-                                                                    :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </b-modal>
+<!--                                                            <template v-if="errors.type">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.type"-->
+<!--                                                                    :key="index"-->
+<!--                                                                >{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('amount')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label  class="control-label">-->
+<!--                                                                {{ getCompanyKey("subscription_amount") }}-->
+<!--                                                            </label>-->
+<!--                                                            <input-->
+<!--                                                                type="number"-->
+<!--                                                                step="any"-->
+<!--                                                                class="form-control"-->
+<!--                                                                v-model="$v.edit.amount.$model"-->
+<!--                                                                :class="{-->
+<!--                                                                  'is-invalid': $v.edit.amount.$error || errors.amount,-->
+<!--                                                                  'is-valid':-->
+<!--                                                                    !$v.edit.amount.$invalid && !errors.amount,-->
+<!--                                                                }"-->
+<!--                                                            />-->
+<!--                                                            <template v-if="errors.amount">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.amount"-->
+<!--                                                                    :key="index"-->
+<!--                                                                >{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('number_of_years')">-->
+<!--                                                        <div class="form-group">-->
+<!--                                                            <label  class="control-label">-->
+<!--                                                                {{ getCompanyKey("number_of_years") }}-->
+<!--                                                            </label>-->
+<!--                                                            <input-->
+<!--                                                                disabled-->
+<!--                                                                type="number"-->
+<!--                                                                step="any"-->
+<!--                                                                class="form-control"-->
+<!--                                                                v-model="$v.edit.number_of_years.$model"-->
+<!--                                                                :class="{-->
+<!--                                                                  'is-invalid': $v.edit.number_of_years.$error || errors.number_of_years,-->
+<!--                                                                  'is-valid':-->
+<!--                                                                    !$v.edit.number_of_years.$invalid && !errors.number_of_years,-->
+<!--                                                                }"-->
+<!--                                                            />-->
+<!--                                                            <template v-if="errors.number_of_years">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.number_of_years"-->
+<!--                                                                    :key="index"-->
+<!--                                                                >{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md-6" v-if="isVisible('sponsor_id')">-->
+<!--                                                        <div class="form-group position-relative">-->
+<!--                                                            <label class="control-label">-->
+<!--                                                                {{ getCompanyKey("sponsor") }}-->
+<!--                                                            </label>-->
+<!--                                                            <multiselect @input="showSponsorModalEdit"-->
+<!--                                                                         v-model="edit.sponsor_id"-->
+<!--                                                                         :options="sponsors.map((type) => type.id)"-->
+<!--                                                                         :custom-label="$i18n.locale == 'ar' ? (opt) => sponsors.find((x) => x.id == opt).name : (opt) => sponsors.find((x) => x.id == opt).name_e">-->
+<!--                                                            </multiselect>-->
+<!--                                                            <div v-if="$v.edit.sponsor_id.$error || errors.sponsor_id"-->
+<!--                                                                 class="text-danger">-->
+<!--                                                                {{ $t("general.fieldIsRequired") }}-->
+<!--                                                            </div>-->
+<!--                                                            <template v-if="errors.sponsor_id">-->
+<!--                                                                <ErrorMessage-->
+<!--                                                                    v-for="(errorMessage, index) in errors.sponsor_id"-->
+<!--                                                                    :key="index">{{ errorMessage }}-->
+<!--                                                                </ErrorMessage>-->
+<!--                                                            </template>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </form>-->
+<!--                                        </b-modal>-->
                                         <!--  /edit   -->
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">

@@ -38,6 +38,7 @@ class Employee extends Model
         'code_country',
 
     ];
+ 
 
     public function jobTitle()
     {
@@ -117,7 +118,6 @@ class Employee extends Model
         return $this->belongsToMany(RequestType::class, 'hr_request_types_employees', 'employee_id', 'request_type_id');
     }
 
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -126,14 +126,14 @@ class Employee extends Model
             $relationsWithChildren[] = [
                 'relation' => 'user',
                 'count' => $this->user()->count(),
-                'ids' => $this->user()->pluck('id')->toArray()
+                'ids' => $this->user()->pluck('id')->toArray(),
             ];
         }
         if ($this->internalSalesman()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'internalSalesman',
                 'count' => $this->internalSalesman()->count(),
-                'ids' => $this->internalSalesman()->pluck('id')->toArray()
+                'ids' => $this->internalSalesman()->pluck('id')->toArray(),
             ];
         }
 
@@ -141,28 +141,28 @@ class Employee extends Model
             $relationsWithChildren[] = [
                 'relation' => 'plans',
                 'count' => $this->plans()->count(),
-                'ids' => $this->plans()->pluck('id')->toArray()
+                'ids' => $this->plans()->pluck('id')->toArray(),
             ];
         }
         if ($this->documents()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'documents',
                 'count' => $this->documents()->count(),
-                'ids' => $this->documents()->pluck('id')->toArray()
+                'ids' => $this->documents()->pluck('id')->toArray(),
             ];
         }
         if ($this->children()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'Employees',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray()
+                'ids' => $this->children()->pluck('id')->toArray(),
             ];
         }
         if ($this->request_types()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'request_types',
                 'count' => $this->request_types()->count(),
-                'ids' => $this->request_types()->pluck('id')->toArray()
+                'ids' => $this->request_types()->pluck('id')->toArray(),
             ];
         }
 

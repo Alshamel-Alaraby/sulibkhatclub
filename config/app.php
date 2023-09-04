@@ -202,7 +202,7 @@ return [
         Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
 
         //    Spatie Permission
-//        Spatie\Permission\PermissionServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*

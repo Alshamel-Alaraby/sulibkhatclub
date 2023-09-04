@@ -19,7 +19,6 @@ class CustomerSource extends Model
     //     "parent_id",
     // ];
 
-    // protected $with = ['parent', 'children'];
 
     protected $table = "boards_rent_customer_sources";
     // relations

@@ -37,6 +37,8 @@ Route::prefix('club-members')->group(function () {
 
     // sponsers routes
     Route::group(['prefix' => 'sponsers'], function () {
+        Route::get('get-sponsors/{group_id}', 'CmSponserController@getSponsors')->name('cm-sponser.getSponsors');
+        Route::get('get-sponsors-with-null-group', 'CmSponserController@getSponsorsNullGroup')->name('cm-sponser.getSponsorsNullGroup');
         Route::get('/root-nodes', 'CmSponserController@getRootNodes')->name('modules.root-nodes');
         Route::get('/child-nodes/{parentId}', 'CmSponserController@getChildNodes')->name('modules.child-nodes');
         Route::get('/', 'CmSponserController@all')->name('cm-sponser.all');
@@ -50,27 +52,26 @@ Route::prefix('club-members')->group(function () {
 
     // members routes
     Route::group(['prefix' => 'members'], function () {
+        Route::get('get-sponsors', 'CmMemberController@getSponsors')->name('cm-members.getSponsors');
         Route::get('/report-cm-member', 'CmMemberController@getReportCmMember');
         Route::get('/updateCmMember', 'CmMemberController@getUpdateCmMember');
         Route::get('/update-financial-status-cm-member', 'CmMemberController@getUpdateFinancialStatusCmMember');
-
         Route::get('/test-transfer', 'CmMemberController@TestTransfer');
         Route::get('/dataMemberTable', 'CmMemberController@dataMemberTable');
         Route::get('/dataMemberFildFullNameTable', 'CmMemberController@dataMemberFildFullNameTable');
-
         Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
-
         Route::get('/Acceptance', 'CmMemberController@allAcceptance')->name('cm-members.allAcceptance');
-
         Route::get('/', 'CmMemberController@all')->name('cm-members.all');
         Route::get('/logs/{id}', 'CmMemberController@logs')->name('cm-members.logs');
         Route::get('/{id}', 'CmMemberController@find')->name('cm-members.find');
+
+
+        Route::put('/update-sponsor-members', 'CmMemberController@updateSponsorID');
 
         Route::post('/', 'CmMemberController@create')->name('cm-members.create');
         Route::put('/{id}', 'CmMemberController@update')->name('cm-members.update');
         Route::post("/bulk-delete", "CmMemberController@bulkDelete");
         Route::delete('/{id}', 'CmMemberController@delete')->name('cm-members.delete');
-
         Route::put('/accept-member/{id}', 'CmMemberController@acceptMember')->name('cm-members.acceptMember');
         Route::put('/decline-member/{id}', 'CmMemberController@declineMember')->name('cm-members.declineMember');
 
@@ -78,6 +79,18 @@ Route::prefix('club-members')->group(function () {
 
         Route::post('/bulk-update', "CmMemberController@acceptMembers");
         Route::put('/update-accepted-members/{id}', 'CmMemberController@updateAcceptedMembers')->name('cm-members.updateAcceptedMembers');
+
+    });
+    // member-requests routes
+    Route::group(['prefix' => 'member-requests'], function () {
+
+        Route::get('/', 'CmMemberRequestController@all')->name('cm-members.all');
+        Route::get('/logs/{id}', 'CmMemberRequestController@logs')->name('cm-member-requests.logs');
+        Route::get('/{id}', 'CmMemberRequestController@find')->name('cm-member-requests.find');
+        Route::post('/', 'CmMemberRequestController@create')->name('cm-member-requests.create');
+        Route::put('/{id}', 'CmMemberRequestController@update')->name('cm-member-requests.update');
+        Route::post("/bulk-delete", "CmMemberRequestController@bulkDelete");
+        Route::delete('/{id}', 'CmMemberRequestController@delete')->name('cm-member-requests.delete');
 
     });
 
@@ -165,7 +178,14 @@ Route::prefix('club-members')->group(function () {
     Route::group(['prefix' => 'transactions'], function () {
         Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
             ->name('MemberTransaction.find');
+        Route::get('/member-last-transaction/{id}', 'CmTransactionController@findCmMemberLastTransaction');
 
+        Route::get('check-date-member-transaction', 'CmTransactionController@checkDateMemberTransaction');
+        Route::put('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
+
+
+
+        Route::get('unpaid-member-transaction', 'CmTransactionController@unpaidMemberTransaction');
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
         Route::get('/logs/{id}', 'CmTransactionController@logs')->name('transaction.logs');
         Route::get('/{id}', 'CmTransactionController@find')->name('transaction.find');
@@ -187,6 +207,20 @@ Route::prefix('club-members')->group(function () {
         Route::post('/', 'CmMemberRejectController@create')->name('reject.create');
         Route::get('/logs/{id}', 'CmMemberRejectController@logs')->name('reject.logs');
 
+    });
+
+
+
+      // financial status routes
+      Route::group(['prefix' => 'sponsor-group'], function () {
+
+        Route::get('/', 'CmSponsorGroupController@all')->name('sponsor-group.all');
+        Route::get('/logs/{id}', 'CmSponsorGroupController@logs')->name('cm-sponsor-group.logs');
+        Route::get('/{id}', 'CmSponsorGroupController@find')->name('cm-sponsor-group.find');
+        Route::post('/', 'CmSponsorGroupController@create')->name('cm-sponsor-group.create');
+        Route::put('/{id}', 'CmSponsorGroupController@update')->name('cm-sponsor-group.update');
+        Route::post("/bulk-delete", "CmSponsorGroupController@bulkDelete");
+        Route::delete('/{id}', 'CmSponsorGroupController@delete')->name('cm-sponsor-group.delete');
     });
 
 });

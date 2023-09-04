@@ -3,6 +3,7 @@
 namespace App\Http\Resources\InternalSalesman;
 
 use App\Http\Resources\Employee\EmployeeResource;
+use App\Http\Resources\Employee\RelationEmployeeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class InternalSalesmanResource extends JsonResource
@@ -17,7 +18,7 @@ class InternalSalesmanResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "employee" => new EmployeeResource($this->employee),
+            "employee" => new RelationEmployeeResource($this->employee),
             "is_active" => $this->is_active,
             "created_at" => $this->created_at,
             "update_at" => $this->update_at,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\RestartPeriod;
 
 use App\Http\Requests\RestartPeriodRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\RestartPeriodResource;
 use App\Models\RestartPeriod;
 use App\Repositories\RestartPeriod\RestartPeriodInterface;
@@ -99,5 +100,10 @@ class RestartPeriodController extends Controller
         return responseJson(200, $periods);
     }
 
+    public function getDropDown(Request $request)
+    {
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
 
 }

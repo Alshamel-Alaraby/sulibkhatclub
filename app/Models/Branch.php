@@ -25,14 +25,16 @@ class Branch extends Model
     //     return $this->is_active == 1 ? 'Active' : 'Non Active';
     // }
 
+  
+
     public function stores()
     {
-        return $this->hasMany(Store::class);
+        return $this->hasMany(Store::class,'branch_id');
     }
 
     public function serials()
     {
-        return $this->hasMany(Serial::class);
+        return $this->hasMany(Serial::class,'branch_id');
     }
 
     public function children()
@@ -55,8 +57,6 @@ class Branch extends Model
         return $this->hasMany(Order::class);
     }
 
-
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -65,14 +65,14 @@ class Branch extends Model
             $relationsWithChildren[] = [
                 'relation' => 'stores',
                 'count' => $this->stores()->count(),
-                'ids' => $this->stores()->pluck('id')->toArray()
+                'ids' => $this->stores()->pluck('id')->toArray(),
             ];
         }
         if ($this->serials()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'serials',
                 'count' => $this->serials()->count(),
-                'ids' => $this->serials()->pluck('id')->toArray()
+                'ids' => $this->serials()->pluck('id')->toArray(),
             ];
         }
 
@@ -80,28 +80,26 @@ class Branch extends Model
             $relationsWithChildren[] = [
                 'relation' => 'branches',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray()
+                'ids' => $this->children()->pluck('id')->toArray(),
             ];
         }
         if ($this->products()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'products',
                 'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray()
+                'ids' => $this->products()->pluck('id')->toArray(),
             ];
         }
         if ($this->orders()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'orders',
                 'count' => $this->orders()->count(),
-                'ids' => $this->orders()->pluck('id')->toArray()
+                'ids' => $this->orders()->pluck('id')->toArray(),
             ];
         }
 
-
         return $relationsWithChildren;
     }
-
 
     public function company()
     {

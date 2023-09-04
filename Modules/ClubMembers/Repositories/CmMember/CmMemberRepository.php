@@ -5,14 +5,20 @@ namespace Modules\ClubMembers\Repositories\CmMember;
 use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Entities\CmMemberPermission;
+use Modules\ClubMembers\Entities\CmMemberRequest;
+use Modules\ClubMembers\Entities\CmTransaction;
+use Modules\ClubMembers\Entities\CmTypePermission;
 
 class CmMemberRepository implements CmMemberInterface
 {
 
-    public function __construct(private CmMember $model, private CmHistoryTransform $modelCmHistoryTransform)
+    public function __construct(private CmMember $model, private CmHistoryTransform $modelCmHistoryTransform, CmMemberRequest $modelRequest ,CmTransaction $modelTransaction )
     {
         $this->model = $model;
+        $this->modelRequest = $modelRequest;
         $this->modelCmHistoryTransform = $modelCmHistoryTransform;
+        $this->modelTransaction = $modelTransaction;
 
     }
 
@@ -30,6 +36,12 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->member_id){
             $models->where('id', $request->member_id);
         }
+        if ($request->hasTransaction){
+            $models->whereHas('cmTransaction');
+        }
+        if ($request->sponsor_id) {
+            $models->where('sponsor_id', $request->sponsor_id);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -39,6 +51,8 @@ class CmMemberRepository implements CmMemberInterface
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
+
+
 
     public function find($id)
     {
@@ -69,7 +83,7 @@ class CmMemberRepository implements CmMemberInterface
                 ($request['third_name'] ?? '') . ' ' .
                 ($request['last_name'] ?? '') . ' ' .
                 ($request['family_name'] ?? '') ;
-            return $this->model->create(array_merge($request,['full_name' => $full_name]));
+            return $this->model->create(array_merge($request,['full_name' => $full_name,'member_type_id'=>4]));
         });
     }
 
@@ -113,9 +127,8 @@ class CmMemberRepository implements CmMemberInterface
     public function updateDecline($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
-            $this->model->where("id", $id)->update(array_merge($request->all(), ['acceptance' => 2]));
+            $this->modelRequest->where("id", $id)->update(array_merge($request->all(), ['acceptance' => 2,'member_type_id'=>16]));
         });
-
         $model = $this->model->find($id);
         return $model;
     }
@@ -168,23 +181,36 @@ class CmMemberRepository implements CmMemberInterface
 
     public function acceptMembers($request)
     {
-        DB::transaction(function () use ($request) {
+       return DB::transaction(function () use ($request) {
 
             foreach ($request['accept-members'] as $accept_member) {
                 $max_membership_number = $this->model->max('membership_number');
                 $max = $max_membership_number + 1;
 
-                $member = $this->model->where('id', $accept_member['id'])->first();
-                if ($member) {
-
-                    $member->update(array_merge($accept_member,
+                $memberRequest  = $this->modelRequest->where('id', $accept_member['id'])->first();
+                if ($memberRequest){
+                     $membercreate = collect($memberRequest)->except(['id','deleted_at','created_at','updated_at']) ;
+                     $model = $this->model->create($membercreate->all());
+                     $accept =  collect($accept_member)->except(['id']);
+                    $model->update(array_merge($accept->all(),
                         [
                             'acceptance' => 1,
                             'membership_number' => $max,
                         ]));
+                    $transaction = $this->modelTransaction->where('member_request_id',$memberRequest->id)->first();
+                    if ($transaction){
+                        $transaction->update([
+                            'cm_member_id' => $model->id,
+                            'member_request_id' => null,
+
+                        ]);
+                    }
+                    $memberRequest->delete();
                 }
             }
-        });
+           return 200;
+
+       });
     }
 
     public function reportCmMember($request)
@@ -236,11 +262,12 @@ class CmMemberRepository implements CmMemberInterface
 
             ///Second Condition
             $Last_Member_transaction  = $Member->last_transaction_date;
-            $Last_date                = \Carbon\Carbon::now()->month($Member->last_transaction_date)->daysInMonth;
+            $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('d');
 
-            $permission_one_Days      = \Carbon\Carbon::now()->month($permission_one->allowed_subscription_date)->daysInMonth;
-            $permission_two_Days      = \Carbon\Carbon::now()->month($permission_two->allowed_subscription_date)->daysInMonth;
-            $permission_three_Days    = \Carbon\Carbon::now()->month($permission_three->allowed_subscription_date)->daysInMonth;
+
+            $permission_one_Days      = \Carbon\Carbon::parse("2023-" . $permission_two->allowed_subscription_date)->format('d');
+            $permission_two_Days      = \Carbon\Carbon::parse("2023-" .$permission_two->allowed_subscription_date)->format('d');
+            $permission_three_Days      = \Carbon\Carbon::parse("2023-" .$permission_three->allowed_subscription_date)->format('d');
 
 
             if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_one_Days){
@@ -255,6 +282,30 @@ class CmMemberRepository implements CmMemberInterface
             }
 
         }
+        return 200;
     }
+
+    public function getSponsors($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->sponsor_id) {
+            $models->where('sponsor_id', $request->sponsor_id);
+        }
+
+        if($request->memberNumber){
+            $memberIds = $this->model->where('sponsor_id', $request->sponsor_id)->pluck('id');
+        }
+        // return $memberIds;
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true , 'memberIds' => $memberIds];
+        } elseif ($request->limet){
+            return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
+        }else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
 
 }

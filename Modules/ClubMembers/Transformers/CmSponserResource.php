@@ -21,6 +21,8 @@ class CmSponserResource extends JsonResource
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'group_id' => $this->group_id,
+            'group' =>$this->sponsorGroup,
             "parent"=>$this->parent,
         ];
     }

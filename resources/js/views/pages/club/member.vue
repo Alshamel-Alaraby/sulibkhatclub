@@ -947,12 +947,17 @@ export default {
                                         </th>
                                         <th>
                                             <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.from') }}</span>
+                                                <span>{{ $t('general.type') }}</span>
                                             </div>
                                         </th>
                                         <th>
                                             <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.to') }}</span>
+                                                <span>{{ $t('general.year_from') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.year_to') }}</span>
                                             </div>
                                         </th>
                                         <th>
@@ -980,10 +985,13 @@ export default {
                                         {{ formatDate(data.date) }}
                                     </td>
                                     <td>
-                                        {{ data.year_from }}
+                                        {{ data.type  ? data.type == 'subscribe' ? $t('general.subscribe'):$t('general.renew'): '-' }}
                                     </td>
                                     <td>
-                                        {{ data.year_to }}
+                                        {{ data.date_from }}
+                                    </td>
+                                    <td>
+                                        {{ data.date_to }}
                                     </td>
                                     <td>
                                         {{ data.amount }}

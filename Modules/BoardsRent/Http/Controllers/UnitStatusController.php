@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\Package;
 use Modules\BoardsRent\Entities\UnitStatus;
 use Modules\BoardsRent\Http\Requests\UnitStatusRequest;
-use Modules\BoardsRent\Transformers\UnitStatusResource;
+use Modules\BoardsRent\Transformers\UnitStatus\AllBRentUnitStatusResource;
 
 class UnitStatusController extends Controller
 {
@@ -26,7 +26,7 @@ class UnitStatusController extends Controller
             return responseJson(404, 'not found');
         }
 
-        return responseJson(200, 'success', new UnitStatusResource($model));
+        return responseJson(200, 'success', new AllBRentUnitStatusResource($model));
     }
 
     public function all(AllRequest $request)
@@ -39,7 +39,7 @@ class UnitStatusController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', UnitStatusResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllBRentUnitStatusResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(UnitStatusRequest $request)
@@ -47,7 +47,7 @@ class UnitStatusController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new UnitStatusResource($model));
+        return responseJson(200, 'created', new AllBRentUnitStatusResource($model));
 
     }
 
@@ -60,7 +60,7 @@ class UnitStatusController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new UnitStatusResource($model));
+        return responseJson(200, 'updated', new AllBRentUnitStatusResource($model));
     }
 
     public function logs($id)

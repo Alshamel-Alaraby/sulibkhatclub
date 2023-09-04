@@ -31,18 +31,20 @@ class CmTransaction extends Model
         return $this->belongsTo(Document::class, 'document_id');
 
     }
-
     public function member()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id');
-
 
     }
 
     public function sponsor()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponser::class, 'sponsor_id');
+    }
 
+    public function memberRequest()
+    {
+        return $this->belongsTo(CmMemberRequest::class, 'member_request_id');
     }
 
 

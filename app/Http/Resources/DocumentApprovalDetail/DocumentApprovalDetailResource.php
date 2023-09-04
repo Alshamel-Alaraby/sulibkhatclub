@@ -23,8 +23,8 @@ class DocumentApprovalDetailResource extends JsonResource
             'approval_time'          => $this->approval_time,
             "employee_id"            => $this->employee_id,
             "decision_id"            => $this->decision_id,
-            "documentStatuse"        => $this->documentStatuse,
-            "employee"               => new EmployeeResource($this->employee)
+            "documentStatuse"        =>  collect($this->whenLoaded('documentStatuse'))->only(['id', 'name','name_e']),
+            "employee"               => collect($this->whenLoaded('employee'))->only(['id', 'name','name_e']),
         ];
     }
 }

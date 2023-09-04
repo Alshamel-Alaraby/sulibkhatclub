@@ -52,7 +52,7 @@ class CmMembershipRenewalController extends Controller
         }
         $model = $this->modelInterface->update($request->validated(), $id);
 
-        return responseJson(200, 'success', new CmMembershipRenewalResource($model));
+        return responseJson(200, 'success', $model);
     }
 
     public function delete($id)

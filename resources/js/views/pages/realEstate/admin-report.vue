@@ -6,29 +6,16 @@ import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
-import {
-  required,
-  minLength,
-  maxLength,
-  integer,
-  requiredIf,
-} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
-import alphaArabic from "../../../helper/alphaArabic";
-import alphaEnglish from "../../../helper/alphaEnglish";
 import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
-import { arabicValue, englishValue } from "../../../helper/langTransform";
 
-/**
- * Advanced Table component
- */
 export default {
   page: {
     title: "Admin report",

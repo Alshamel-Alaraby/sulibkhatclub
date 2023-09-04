@@ -65,6 +65,7 @@ Route::prefix('boards-rent')->group(function () {
 
     // Package
     Route::group(['prefix' => 'packages'], function () {
+        Route::get('/relation-package-panel/{id}', 'PackageController@relationPackagePanel');
         Route::get('/panels/{id}', 'PackageController@panels')->name('boards-rent.packages.panels');
         Route::patch('/panels/toggle/{panel_id}/{package_id}', 'PackageController@toggle')->name('boards-rent.package.panels');
         Route::get('/', 'PackageController@all')->name('boards-rent.packages.all');
@@ -89,8 +90,11 @@ Route::prefix('boards-rent')->group(function () {
 
     //Panels
     Route::group(['prefix' => 'panels'], function () {
+        Route::get('/get-drop-down', 'PanelController@getDropDown')->name('boards-rent.getDropDown');
+
         Route::get('/filter-panel', 'PanelController@getFilterPanel');
         Route::get('/report-panel', 'PanelController@getReportPanel');
+        Route::get('/search-drop-down', 'PanelController@searchDropDown');
         Route::get('/', 'PanelController@all')->name('boards-rent.panels.all');
         Route::post('/', 'PanelController@create')->name('boards-rent.panels.create');
         Route::put('/{id}', 'PanelController@update')->name('boards-rent.panels.update');

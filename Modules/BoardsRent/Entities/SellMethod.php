@@ -22,6 +22,7 @@ class SellMethod extends Model
     ];
     protected $table = "boards_rent_sell_methods";
 
+
     // relations
 
     public function orders()

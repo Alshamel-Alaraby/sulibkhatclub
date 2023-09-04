@@ -14,5 +14,6 @@ interface BranchRepositoryInterface
 
     public function logs($id);
     public function processJsonData(array $data);
+    public function getName($request);
 
 }

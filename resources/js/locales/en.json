@@ -1153,7 +1153,7 @@
         "male": "Male",
         "female": "Female",
         "memberRequest": "Members Requests",
-        "subscriptionTable": "Subscription Table",
+        "MembershipRenewalTable": "Membership renewal Table",
         "subscription": "Subscription",
         "multiSubscription": "Multi Subscription",
         "changeSpenser": "Change Spenser",
@@ -1422,6 +1422,20 @@
         "nominateMemberCount": "Candidacy in the elections",
         "normalMemberCount": "Normal Member",
         "voteMemberCount": "Vote in elections",
-        "AttendElections":"Attend elections"
+        "AttendElections":"Attend elections",
+        "beforeDate": "Before Date",
+        "forYear": "For Year",
+        "memberNumber": "Member Number",
+        "QueryAboutThePayersBeforeASpecificDate": "Query about the payers before a specific date",
+        "year_from": "From Year",
+        "year_to": "To Year",
+        "number_of_years": "Number Of Years",
+        "PleaseSelectAMember": "Please select a member",
+        "ForAYear": "For a year",
+        "allSponer": "All Sponsor",
+        "SubscriptionTable": "Subscription Table",
+        "pendingMember": "Pending",
+        "unacceptable": "unacceptable",
+        "Dateofreceipt": "Date Of Receipt"
     }
 }

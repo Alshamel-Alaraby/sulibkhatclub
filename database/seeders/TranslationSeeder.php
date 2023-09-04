@@ -10294,6 +10294,15 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "club"
+            ],
+            [
+                "key" => "sponsor_group",
+                "default_en" => "Group",
+                "default_ar" => "جروب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
             ]
         ]);
         //Member
@@ -10684,6 +10693,15 @@ class TranslationSeeder extends Seeder
                 "key" => "member_is_sponsor",
                 "default_en" => "Is Sponsor",
                 "default_ar" => " هل  راعي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "Subscription_receipt_number",
+                "default_en" => "Subscription receipt number",
+                "default_ar" => "رقم ايصال الاشتراك",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11225,12 +11243,12 @@ class TranslationSeeder extends Seeder
                 "screen" => "club"
             ]
         ]);
-        //club subscription
+        //club Membership renewal
         Translation::insert([
             [
                 "key" => "subscription_create_form",
-                "default_en" => "Add new subscription",
-                "default_ar" => "اضف اشتراك جديد",
+                "default_en" => "Add Membership renewal",
+                "default_ar" => "اضافة تجديد عضوية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11238,8 +11256,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "subscription_edit_form",
-                "default_en" => "Edit subscription form",
-                "default_ar" => "تعديل الاشتراك",
+                "default_en" => "Edit Membership renewal form",
+                "default_ar" => "تعديل تجديد العضوية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -14172,6 +14190,127 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "member reject"
+            ],
+
+        ]);
+
+        // club group
+        Translation::insert([
+            [
+                "key" => "club_group_create_form",
+                "default_en" => "Add New Group",
+                "default_ar" => "اضف مجموعة جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+            ],
+            [
+                "key" => "club_group_edit_form",
+                "default_en" => "Edit Group form",
+                "default_ar" => "تعديل المجموعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "club_group_name_ar",
+                "default_en" => "Group Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "club_group_name_en",
+                "default_en" => "Group Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ]
+
+        ]);
+
+        //club subscription
+        Translation::insert([
+            [
+                "key" => "new_subscription_create_form",
+                "default_en" => "Add Subscription",
+                "default_ar" => "اضافة اشتراك لعضو جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_edit_form",
+                "default_en" => "Edit Subscription form",
+                "default_ar" => "تعديل اشتراك لعضو جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_member",
+                "default_en" => "Member",
+                "default_ar" => "العضو",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_year_from",
+                "default_en" => "From Year",
+                "default_ar" => "تاريخ بداية الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_year_to",
+                "default_en" => "To Year",
+                "default_ar" => "تاريخ نهاية الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_type",
+                "default_en" => "Type",
+                "default_ar" => "نوع الدفع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_amount",
+                "default_en" => "Subscription Amount",
+                "default_ar" => "قيمة الاشتراك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
+            ],
+            [
+                "key" => "new_subscription_number_of_years",
+                "default_en" => "Number Of Years",
+                "default_ar" => "عدد السنين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "New Subscription"
             ],
 
         ]);

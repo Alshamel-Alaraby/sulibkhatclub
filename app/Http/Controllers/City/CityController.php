@@ -4,6 +4,7 @@ namespace App\Http\Controllers\City;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CityRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\City\CityResource;
 use App\Http\Resources\City\GetNameCityResource;
 use App\Repositories\City\CityRepositoryInterface;
@@ -29,18 +30,7 @@ class CityController extends Controller
     public function index(Request $request)
     {
 
-        // if (count($_GET) > 0) {
-        //     cacheForget('cities');
-        // }
-        // $data = cacheGet('cities');
-        // if ($request->search || $request->is_active) {
-        //     cacheForget('cities');
-        //     $data = $this->repository->getAll($request);
-        // }
-        // if (!$data) {
-        //     $data = $this->repository->getAll($request);
-        //     cachePut('cities', $data);
-        // }
+
         $data = $this->repository->getAll($request);
         return responseJson(200, 'success', ($this->resource)::collection($data['data']), $data['paginate'] ? getPaginates($data['data']) : null);
     }
@@ -115,35 +105,6 @@ class CityController extends Controller
 
     }
 
-    // public function destroy($id)
-    // {
-    //     $model = $this->repository->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, __('not found'));
-    //     }
-    //     if ($model->hasChildren()) {
-    //         return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-    //     }
-    //     $this->repository->delete($id);
-    //     return responseJson(200, __('deleted'));
-    // }
-
-    // public function bulkDelete(Request $request)
-    // {
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->repository->find($id);
-    //         $arr = [];
-    //         if ($model->hasChildren()) {
-    //             $arr[] = $id;
-    //             continue;
-    //         }
-    //         $this->repository->delete($id);
-    //     }
-    //     if (count($arr) > 0) {
-    //         return responseJson(400, __('some items has relation cant delete'));
-    //     }
-    //     return responseJson(200, __('Done'));
-    // }
 
     public function destroy($id)
     {
@@ -230,10 +191,10 @@ class CityController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
         $models = $this->repository->getName($request);
-        return responseJson(200, 'success', GetNameCityResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

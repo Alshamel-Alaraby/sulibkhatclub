@@ -16,5 +16,6 @@ interface SalesmenTypeInterface
     public function logs($id);
 
     public function delete($id);
+    public function getName($request);
 
 }

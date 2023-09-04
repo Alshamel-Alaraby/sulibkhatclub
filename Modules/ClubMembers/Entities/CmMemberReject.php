@@ -16,7 +16,6 @@ class CmMemberReject extends Model
 
     protected $table = 'cm_member_rejects';
 
-    protected $with = ['member','branch','memberType'];
 
     public function member()
     {

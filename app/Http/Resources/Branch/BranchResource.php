@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Branch;
 
+use App\Http\Resources\Serials\RelationSerialResource;
+use App\Http\Resources\Store\RelationStoreResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BranchResource extends JsonResource
@@ -14,17 +16,18 @@ class BranchResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'company' => $this->company_id,
-            'name'     => $this->name,
-            'name_e'   => $this->name_e,
+            'name' => $this->name,
+            'name_e' => $this->name_e,
             'is_active' => $this->is_active,
             'parent_id' => $this->parent_id,
-            "parent"   => $this->parent,
-            "children" => $this->children,
-            "serials"  => $this->serials,
-            "stores"   => $this->stores,
+            "parent" => new RelationBranchResource($this->parent),
+            "children" =>  RelationBranchResource::collection($this->children),
+            "serials" =>  RelationSerialResource::collection($this->serials),
+            "stores" => RelationStoreResource::collection($this->stores),
         ];
     }
 }

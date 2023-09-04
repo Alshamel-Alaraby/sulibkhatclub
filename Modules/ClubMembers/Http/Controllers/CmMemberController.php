@@ -12,9 +12,8 @@ use Modules\ClubMembers\Http\Requests\CmMemberRequest;
 use Modules\ClubMembers\Http\Requests\CmUpdateAcceptedMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
 use Modules\ClubMembers\Transformers\CmMemberResource;
-use Illuminate\Support\Facades\DB;
+use Modules\ClubMembers\Transformers\GetSponsorMembersResource;
 use Modules\ClubMembers\Transformers\ReportMembertResource;
-
 
 class CmMemberController extends Controller
 {
@@ -31,9 +30,10 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
+
+
     public function find($id)
     {
-
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -76,7 +76,6 @@ class CmMemberController extends Controller
 
         return responseJson(200, 'success', new CmMemberResource($model));
     }
-
 
     public function declineMember(CmMemberDeclineRequest $request, $id)
     {
@@ -160,7 +159,6 @@ class CmMemberController extends Controller
 
     }
 
-
     public function updateAcceptedMembers(CmUpdateAcceptedMemberRequest $request, $id)
     {
         $model = $this->modelInterface->find($id);
@@ -173,10 +171,9 @@ class CmMemberController extends Controller
     }
 
 
-
     public function TestTransfer()
     {
-        $members = CmMember::where('full_name',1)->count();
+        $members = CmMember::where('full_name', 1)->count();
 //        $members = CmMember::find(1);
         return $members;
     }
@@ -186,11 +183,11 @@ class CmMemberController extends Controller
         set_time_limit(3600);
         ini_set('memory_limit', -1);
 
-        $members =  CmMember::get()->chunk(1000);
+        $members = CmMember::get()->chunk(1000);
         foreach ($members as $index => $member):
-            foreach ($member as   $full_name ):
+            foreach ($member as $full_name):
                 $names = "$full_name->first_name $full_name->second_name $full_name->third_name $full_name->last_name $full_name->family_name";
-                $full_name->update(['full_name'=>$names]);
+                $full_name->update(['full_name' => $names]);
 
             endforeach;
         endforeach;
@@ -199,7 +196,6 @@ class CmMemberController extends Controller
     }
     public function dataMemberTable()
     {
-
 
         ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
         set_time_limit(3600);
@@ -213,8 +209,7 @@ class CmMemberController extends Controller
                 ($member->SNAME ?? '') . ' ' .
                 ($member->TNAME ?? '') . ' ' .
                 ($member->FORNAME ?? '') . ' ' .
-                ($member->ZFAM_NAME ?? '') ;
-
+                ($member->ZFAM_NAME ?? '');
 
             CmMember::create([
                 "applying_number" => $member->ORDER_NO,
@@ -238,43 +233,42 @@ class CmMemberController extends Controller
                 "status_id" => $member->ZSTATUS,
                 "session_date" => $member->MeetingDate,
                 "session_number" => $member->MeetingNumber,
-                "full_name" =>$full_name,
-             ]);
+                "full_name" => $full_name,
+            ]);
 
         endforeach;
 
         return "Successfully Data F Table CmMember  ";
 
+    }
+
+    public function getReportCmMember(Request $request)
+    {
+
+        $models = $this->modelInterface->reportCmMember($request);
+        return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 
-    public function getReportCmMember(Request $request){
+    public function getUpdateCmMember()
+    {
 
-           $models = $this->modelInterface->reportCmMember($request);
-            return responseJson(200, 'success', ReportMembertResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
-
-
-    }
-
-    public function getUpdateCmMember(){
-
-        return   $models = $this->modelInterface->updateCmMember();
+        return $models = $this->modelInterface->updateCmMember();
     }
 
     public function getUpdateFinancialStatusCmMember()
     {
-         $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id',[10,13])->get();
+        $members = CmMember::whereNotNull('last_transaction_date')->orWhereIn('member_type_id', [10, 13])->get();
 
-
-        foreach ($members as $member){
-            if (now()->format('Y') == $member->last_transaction_date->format('Y')){
-                $member->update(['financial_status_id'=>1]);
+        foreach ($members as $member) {
+            if (now()->format('Y') == $member->last_transaction_date->format('Y')) {
+                $member->update(['financial_status_id' => 1]);
             }
-            if ($member->last_transaction_date == null){
-                $member->update(['financial_status_id'=>1]);
+            if ($member->last_transaction_date == null) {
+                $member->update(['financial_status_id' => 1]);
             }
-            if (now()->format('Y') != $member->last_transaction_date->format('Y')){
-                $member->update(['financial_status_id'=>2]);
+            if (now()->format('Y') != $member->last_transaction_date->format('Y')) {
+                $member->update(['financial_status_id' => 2]);
             }
         }
 
@@ -282,6 +276,31 @@ class CmMemberController extends Controller
 
     }
 
+    public function getSponsors(Request $request)
+    {
+        $models = $this->modelInterface->getSponsors($request);
+        // return $models;
 
+        return responseJson(200,
+            'success',
+            ['data' => GetSponsorMembersResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null
+                , 'memberIds' => $models['memberIds'],
+            ]);
+    }
+
+    public function updateSponsorID(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'member_ids' => 'required|array',
+            'sponsor_id' => 'required|integer|exists:cm_sponsers,id',
+        ]);
+
+        CmMember::whereIn('id', $request->input('member_ids'))
+            ->update(['sponsor_id' => $request->input('sponsor_id')]);
+
+        return responseJson(200, 'success', 'Sponsor updated successfully');
+
+    }
 
 }

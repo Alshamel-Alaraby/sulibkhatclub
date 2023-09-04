@@ -4,10 +4,11 @@ namespace Modules\ClubMembers\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\ClubMembers\Entities\CmSponser;
 use Modules\ClubMembers\Http\Requests\CmSponserRequest;
 use Modules\ClubMembers\Repositories\CmSponser\CmSponserInterface;
 use Modules\ClubMembers\Transformers\CmSponserResource;
-use Modules\RealEstate\Http\Requests\CategoriesItemRequest;
+use Modules\ClubMembers\Transformers\CmSponsorDataResource;
 
 class CmSponserController extends Controller
 {
@@ -59,7 +60,6 @@ class CmSponserController extends Controller
 
         return responseJson(200, 'success', new CmSponserResource($model));
     }
-
 
     public function delete($id)
     {
@@ -114,4 +114,14 @@ class CmSponserController extends Controller
         return responseJson(200, __('Done'));
     }
 
+    public function getSponsors($group_id)
+    {
+        $models = CmSponser::where('group_id', $group_id)->get();
+        return responseJson(200, 'success', CmSponsorDataResource::collection($models));
+    }
+    public function getSponsorsNullGroup()
+    {
+        $models = CmSponser::whereNull('group_id')->get();
+        return responseJson(200, 'success', CmSponsorDataResource::collection($models));
+    }
 }

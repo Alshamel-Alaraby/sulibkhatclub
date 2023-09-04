@@ -115,12 +115,12 @@ export default {
     methods: {
         filterSearch(fields){
             let _filterSetting = [...fields];
-            let unit_status = this.filterSetting.indexOf("unit_status_id");
-            let category = this.filterSetting.indexOf("category_id");
-            let city = this.filterSetting.indexOf("city_id");
-            let governorate = this.filterSetting.indexOf("governorate_id");
-            let avenue = this.filterSetting.indexOf("avenue_id");
-            let street = this.filterSetting.indexOf("street_id");
+            let unit_status = _filterSetting.indexOf("unit_status_id");
+            let category = _filterSetting.indexOf("category_id");
+            let city = _filterSetting.indexOf("city_id");
+            let governorate = _filterSetting.indexOf("governorate_id");
+            let avenue = _filterSetting.indexOf("avenue_id");
+            let street = _filterSetting.indexOf("street_id");
             if (unit_status > -1) {_filterSetting[unit_status] = this.$i18n.locale == "ar" ? "unitStatus.name" : "unitStatus.name_e";}
             if (category > -1) {_filterSetting[category] = this.$i18n.locale == "ar" ? "category.name" : "category.name_e";}
             if (city > -1) {_filterSetting[city] = this.$i18n.locale == "ar" ? "city.name" : "city.name_e";}

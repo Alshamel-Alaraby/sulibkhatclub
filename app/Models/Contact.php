@@ -23,6 +23,7 @@ class Contact extends Model
         'company_id',
     ];
 
+
     //  get set attributes
 
     public function getSocialsAttribute($value)

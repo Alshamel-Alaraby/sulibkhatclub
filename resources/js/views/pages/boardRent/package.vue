@@ -31,19 +31,19 @@ export default {
             searchMain: '',
             tableSetting: [
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_unitStatus_name_ar",isV: 'name',
+                    isFilter: true,isSet: true,trans:"boardRent_package_name_ar",isV: 'name',
                     type: 'string',sort: true,setting: {"name":true},isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_unitStatus_name_en",isV: 'name_e',
+                    isFilter: true,isSet: true,trans:"boardRent_package_name_en",isV: 'name_e',
                     type: 'string',sort: true,setting: {"name_e":true},isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_unitStatus_name_ar",isV: 'code',
+                    isFilter: true,isSet: true,trans:"boardRent_package_code",isV: 'code',
                     type: 'string',sort: true,setting: {"code":true},isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_unitStatus_name_en",isV: 'price',
+                    isFilter: true,isSet: true,trans:"boardRent_package_price",isV: 'price',
                     type: 'string',sort: true,setting: {"price":true},isSetting: true
                 }
             ],

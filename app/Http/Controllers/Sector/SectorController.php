@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sector;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sector\SectorRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Sector\GetNameSectorResource;
 use App\Http\Resources\Sector\SectorResource;
 use App\Repositories\Sector\SectorInterface;
@@ -135,10 +136,9 @@ class SectorController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
         $models = $this->modelInterface->getName($request);
-
-        return responseJson(200, 'success', GetNameSectorResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

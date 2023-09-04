@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Salesman;
 
 use App\Http\Requests\Salesman\SalesmanRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Salesman\GetNameSalesmanResource;
 use App\Http\Resources\Salesman\SalesmanResource;
 use Illuminate\Http\Request;
@@ -17,15 +18,7 @@ class SalesmanController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('salesmen_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('salesmen_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -35,15 +28,6 @@ class SalesmanController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('salesmen');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('salesmen', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
 
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', SalesmanResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -97,12 +81,11 @@ class SalesmanController extends Controller
     }
 
 
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
-
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameSalesmanResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

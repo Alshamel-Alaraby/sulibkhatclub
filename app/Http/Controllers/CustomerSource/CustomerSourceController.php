@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CustomerSource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerCategory\CustomerCategoryRequest;
 use App\Http\Requests\CustomerSource\CustomerSourceRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\CustomerCategory\CustomerCategoryResource;
 use App\Http\Resources\CustomerSource\CustomerSourceResource;
 use App\Http\Resources\CustomerSource\GetNameCustomerSourceResource;
@@ -112,11 +113,10 @@ class CustomerSourceController extends Controller
         }
     }
 
-
-    public function getName(Request $request)
+    public function getDropDown(Request $request)
     {
 
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameCustomerSourceResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

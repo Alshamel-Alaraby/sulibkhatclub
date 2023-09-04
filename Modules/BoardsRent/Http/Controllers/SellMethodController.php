@@ -6,7 +6,7 @@ use App\Http\Requests\AllRequest;
 use Illuminate\Routing\Controller;
 use Modules\BoardsRent\Entities\SellMethod;
 use Modules\BoardsRent\Http\Requests\SellMethodRequest;
-use Modules\BoardsRent\Transformers\SellMethodResource;
+use Modules\BoardsRent\Transformers\SellMethod\AllBRentSellMethodResource;
 
 class SellMethodController extends Controller
 {
@@ -23,7 +23,7 @@ class SellMethodController extends Controller
             return responseJson(404, 'not found');
         }
 
-        return responseJson(200, 'success', new SellMethodResource($model));
+        return responseJson(200, 'success', new AllBRentSellMethodResource($model));
     }
 
     public function all(AllRequest $request)
@@ -36,7 +36,7 @@ class SellMethodController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', SellMethodResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllBRentSellMethodResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(SellMethodRequest $request)
@@ -45,7 +45,7 @@ class SellMethodController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new SellMethodResource($model));
+        return responseJson(200, 'created', new AllBRentSellMethodResource($model));
 
     }
 
@@ -59,7 +59,7 @@ class SellMethodController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new SellMethodResource($model));
+        return responseJson(200, 'updated', new AllBRentSellMethodResource($model));
     }
 
     public function logs($id)

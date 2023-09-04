@@ -2,17 +2,16 @@
 
 namespace Modules\ClubMembers\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
-use Modules\ClubMembers\Http\Requests\CmTransactionRequest;
-use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingInterface;
-use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
-use Modules\ClubMembers\Transformers\CmTransactionResource;
-
+use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmTransaction;
+use Modules\ClubMembers\Http\Requests\CmTransactionRequest;
+use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
+use Modules\ClubMembers\Transformers\CheckDateMemberTransactionResource;
+use Modules\ClubMembers\Transformers\CmMemberResource;
 use Modules\ClubMembers\Transformers\CmMemberTransactionsResource;
+use Modules\ClubMembers\Transformers\CmTransactionResource;
 
 class CmTransactionController extends Controller
 {
@@ -38,6 +37,15 @@ class CmTransactionController extends Controller
         return responseJson(200, 'success', new CmTransactionResource($model));
     }
 
+    public function findCmMemberLastTransaction($id)
+    {
+        $model = $this->modelInterface->findCmMemberLastTransaction($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        return responseJson(200, 'success', new CmTransactionResource($model));
+    }
+
     public function create(CmTransactionRequest $request)
     {
         $model = $this->modelInterface->create($request);
@@ -55,7 +63,6 @@ class CmTransactionController extends Controller
 
         return responseJson(200, 'success', new CmTransactionResource($model));
     }
-
 
     public function delete($id)
     {
@@ -98,7 +105,6 @@ class CmTransactionController extends Controller
         return responseJson(200, __('Done'));
     }
 
-
     public function MemberTransactions($member_id)
     {
 
@@ -108,28 +114,36 @@ class CmTransactionController extends Controller
 
     }
 
-    // public function financialStatusCheck()
-    // {
+    public function checkDateMemberTransaction(Request $request)
+    {
 
-    //     $paidMembers = CmTransaction::where('date', '>', '2022-12-31')->value('cm_member_id')->get();
+        $models['data'] = CmTransaction::whereDate('date', '<=', $request->date)->where('year_from', $request->year)->paginate($request->per_page);
+        $models['paginate'] = true;
+        return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
-    //     foreach($paidMembers as $member_id)
-    //     {
+    }
 
-    //         CmMember::where('id', $member_id)->value('')
+    public function UpdateMemberTransactionPaid(Request $request)
+    {
+
+        $transactionArray = CmTransaction::whereDate('date', '<=', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
+
+        $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => $request['cm_financial_status_id']]);
+
+        $models['paginate'] = true;
+        return responseJson(200, 'success', 'Updated Successfully');
+
+    }
 
 
+    public function unpaidMemberTransaction(Request $request)
+    {
+        $transactionArray = CmTransaction::whereDate('date', '<=', $request->date)->where('year_to', $request->year)->pluck('cm_member_id')->toArray();
+        $models['data'] = CmMember::whereNotIn('id', $transactionArray)->paginate($request->per_page);
+        $models['paginate'] = true;
 
-    //     }
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
-
-
-
-
-
-
-
-    // }
-
+    }
 
 }

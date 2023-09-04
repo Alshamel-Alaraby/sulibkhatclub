@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Governorate;
 
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\Governorate\GovernorateRequest;
+use App\Http\Resources\AllDropListResource;
+use App\Http\Resources\Governorate\GetNameGovernorateResource;
 use App\Http\Resources\Governorate\GovernorateResource;
 use App\Repositories\Governorate\GovernorateInterface;
 use Illuminate\Http\Request;
@@ -18,15 +20,7 @@ class GovernorateController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('governorates_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('governorates_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -173,5 +167,13 @@ class GovernorateController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

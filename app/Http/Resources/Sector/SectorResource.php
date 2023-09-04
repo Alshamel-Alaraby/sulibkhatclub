@@ -18,7 +18,7 @@ class SectorResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'parent' => new SectorResource($this->parent),
+            'parent' => new RelationSectorResource($this->parent),
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at,
             "updated_at" => $this->updated_at

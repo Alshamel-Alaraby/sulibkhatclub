@@ -1,24 +1,11 @@
 <script>
 import adminApi from "../../../api/adminAxios";
-import Switches from "vue-switches";
-import {
-  required,
-  minLength,
-  maxLength,
-} from "vuelidate/lib/validators";
-import Swal from "sweetalert2";
+import {required, minLength, maxLength, requiredIf,} from "vuelidate/lib/validators";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../general/loader";
-
-import {
-  dynamicSortString,
-  dynamicSortNumber,
-} from "../../../helper/tableSort";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
-
-import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
-import Multiselect from "vue-multiselect";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -28,113 +15,119 @@ export default {
     title: "View",
     meta: [{ name: "description", content: "View" }],
   },
-    props: {
-        companyKeys: {
-            default: [],
-        },
-        defaultsKeys: {
-            default: [],
-        },
-    },
-  mixins: [transMixinComp],
+  mixins: [transMixinComp,successError],
+  props: {
+        id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+        isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
+        type: {default: 'create'}, idObjEdit: {default: null},isPermission: {}
+        ,url: {default: '/real-estate/view'}
+  },
+  mounted() {
+        this.company_id = this.$store.getters["auth/company_id"];
+  },
   components: {
-    Switches,
     ErrorMessage,
-    Multiselect,
     loader,
   },
   data() {
     return {
-      per_page: 50,
-      search: "",
-      debounce: {},
-      enabled3: true,
-      viewsPagination: {},
-      views: [],
       isLoader: false,
-      Tooltip: "",
-      mouseEnter: "",
       fields: [],
       create: {
         name: "",
         name_e: "",
       },
-      edit: {
-        name: "",
-        name_e: "",
-      },
       company_id: null,
       errors: {},
-      isCheckAll: false,
-      checkAll: [],
-      current_page: 1,
-      setting: {
-        name: true,
-        name_e: true,
-      },
       is_disabled: false,
-      filterSetting: ["name", "name_e"],
-      printLoading: true,
-      printObj: {
-        id: "printData",
-      },
+      isCustom: false
     };
   },
   validations: {
     create: {
       name: {
-        required,
+          required: requiredIf(function (model) {
+              return this.isRequired("name");
+          }),
         minLength: minLength(2),
         maxLength: maxLength(100),
       },
       name_e: {
-        required,
+          required: requiredIf(function (model) {
+              return this.isRequired("name_e");
+          }),
         minLength: minLength(2),
         maxLength: maxLength(100),
       },
     },
   },
-
   methods: {
-
-
+    async getCustomTableFields() {
+          this.isCustom = true;
+          await adminApi
+              .get(`/customTable/table-columns/rlst_views`)
+              .then((res) => {
+                  this.fields = res.data;
+              })
+              .catch((err) => {
+                  this.errorFun('Error','Thereisanerrorinthesystem');
+              })
+              .finally(() => {
+                  this.isCustom = false;
+              });
+    },
+    isVisible(fieldName) {
+          if(!this.isPage){
+              let res = this.fields.filter((field) => {
+                  return field.column_name == fieldName;
+              });
+              return res.length > 0 && res[0].is_visible == 1 ? true : false;
+          }else {
+              return this.isVisiblePage(fieldName);
+          }
+      },
+    isRequired(fieldName) {
+          if(!this.isPage) {
+              let res = this.fields.filter((field) => {
+                  return field.column_name == fieldName;
+              });
+              return res.length > 0 && res[0].is_required == 1 ? true : false;
+          }else {
+              return this.isRequiredPage(fieldName);
+          }
+      },
+    defaultData(edit = null){
+          this.create = {
+              name: "",
+              name_e: "",
+          };
+          this.$nextTick(() => {
+              this.$v.$reset();
+          });
+          this.errors = {};
+          this.is_disabled = false;
+      },
     resetModalHidden() {
-      this.create = {
-        name: "",
-        name_e: "",
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-      this.$bvModal.hide(`create_view`);
+      this.defaultData();
+      this.$bvModal.hide(this.id);
     },
-    /**
-     *  hidden Modal (create)
-     */
     resetModal() {
-      this.create = {
-        name: "",
-        name_e: "",
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
+        this.defaultData();
+        setTimeout( async () => {
+            if(this.type != 'edit'){
+                if(!this.isPage) await this.getCustomTableFields();
+            }else {
+                if(this.idObjEdit.dataObj){
+                    let unitStatus = this.idObjEdit.dataObj;
+                    this.errors = {};
+                    this.create.name = unitStatus.name;
+                    this.create.name_e = unitStatus.name_e;
+                }
+            }
+        },50);
     },
-    /**
-     *  create countrie
-     */
     resetForm() {
-      this.create = {
-        name: "",
-        name_e: "",
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
-      this.is_disabled = false;
+        this.defaultData();
     },
     AddSubmit() {
       if (!this.create.name) {
@@ -150,100 +143,61 @@ export default {
       } else {
         this.isLoader = true;
         this.errors = {};
-        adminApi
-          .post(`/real-estate/view`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
-          .then((res) => {
-            this.is_disabled = true;
-            this.$emit("created");
-            setTimeout(() => {
-              Swal.fire({
-                icon: "success",
-                text: `${this.$t("general.Addedsuccessfully")}`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }, 500);
-          })
-          .catch((err) => {
-            if (err.response.data) {
-              this.errors = err.response.data.errors;
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
-            }
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
-      }
-    },
-    /**
-     *  edit countrie
-     */
+          if(this.type != 'edit'){
+              adminApi
+                  .post(this.url, { ...this.create, company_id: this.company_id })
+                  .then((res) => {
+                      this.is_disabled = true;
+                      if(!this.isPage)
+                          this.$emit("created");
+                      else
+                          this.$emit("getDataTable");
 
-    /**
-     *   show Modal (edit)
-     */
-    /**
-     *  hidden Modal (edit)
-     */
-
-    /*
-     *  start  dynamicSortString
-     */
-    sortString(value) {
-      return dynamicSortString(value);
-    },
-    SortNumber(value) {
-      return dynamicSortNumber(value);
-    },
-    /**
-     *  start  ckeckRow
-     */
-    checkRow(id) {
-      if (!this.checkAll.includes(id)) {
-        this.checkAll.push(id);
-      } else {
-        let index = this.checkAll.indexOf(id);
-        this.checkAll.splice(index, 1);
+                      setTimeout(() => {
+                          this.successFun('Addedsuccessfully');
+                      }, 500);
+                  })
+                  .catch((err) => {
+                      if (err.response.data) {
+                          this.errors = err.response.data.errors;
+                      } else {
+                          this.errorFun('Error','Thereisanerrorinthesystem');
+                      }
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }else {
+              adminApi
+                  .put(`${this.url}/${this.idObjEdit.idEdit}`, {
+                      ...this.create,
+                      company_id: this.$store.getters["auth/company_id"],
+                  })
+                  .then((res) => {
+                      this.$bvModal.hide(this.id);
+                      this.$emit("getDataTable");
+                      setTimeout(() => {
+                          this.successFun('Editsuccessfully');
+                      }, 500);
+                  })
+                  .catch((err) => {
+                      if (err.response.data) {
+                          this.errors = err.response.data.errors;
+                      } else {
+                          this.errorFun('Error','Thereisanerrorinthesystem');
+                      }
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }
       }
-    },
-    /**
-     *  end  ckeckRow
-     */
-    moveInput(tag, c, index) {
-      document.querySelector(`${tag}[data-${c}='${index}']`).focus();
-    },
-    /**
-     *   Export Excel
-     */
-    ExportExcel(type, fn, dl) {
-      this.enabled3 = false;
-      setTimeout(() => {
-        let elt = this.$refs.exportable_table;
-        let wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
-        if (dl) {
-          XLSX.write(wb, { bookType: type, bookSST: true, type: "base64" });
-        } else {
-          XLSX.writeFile(
-            wb,
-            fn || ("Branch" + "." || "SheetJSTableExport.") + (type || "xlsx")
-          );
-        }
-        this.enabled3 = true;
-      }, 100);
     },
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
-      this.edit.name = arabicValue(txt);
     },
-
     englishValue(txt) {
       this.create.name_e = englishValue(txt);
-      this.edit.name_e = englishValue(txt);
     },
   },
 };
@@ -252,57 +206,57 @@ export default {
 <template>
   <!--  create   -->
   <b-modal
-    id="create_view"
-    :title="getCompanyKey('view_create_form')"
-    title-class="font-18"
-    body-class="p-4 "
-    :hide-footer="true"
-    @show="resetModal"
-    @hidden="resetModalHidden"
+      :id="id"
+      :title="type != 'edit'?getCompanyKey('view_create_form'):getCompanyKey('view_edit_form')"
+      title-class="font-18"
+      body-class="p-4 "
+      :hide-footer="true"
+      @show="resetModal"
+      @hidden="resetModalHidden"
   >
     <form>
-      <div class="mb-3 d-flex justify-content-end">
-        <b-button
-          variant="success"
-          :disabled="!is_disabled"
-          @click.prevent="resetForm"
-          type="button"
-          :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
-        >
-          {{ $t("general.AddNewRecord") }}
-        </b-button>
-        <template v-if="!is_disabled">
-          <b-button
-            variant="success"
-            type="button"
-            class="mx-1"
-            v-if="!isLoader"
-            @click.prevent="AddSubmit"
-          >
-            {{ $t("general.Add") }}
-          </b-button>
+        <loader size="large" v-if="isCustom && !isPage" />
+        <div class="mb-3 d-flex justify-content-end">
+            <b-button
+                v-if="type != 'edit'"
+                variant="success"
+                :disabled="!is_disabled"
+                @click.prevent="resetForm"
+                type="button"
+                :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+            >
+                {{ $t("general.AddNewRecord") }}
+            </b-button>
+            <template v-if="!is_disabled">
+                <b-button
+                    variant="success"
+                    type="submit"
+                    class="mx-1"
+                    v-if="!isLoader"
+                    @click.prevent="AddSubmit"
+                >
+                    {{ type != 'edit'? $t("general.Add"): $t("general.edit") }}
+                </b-button>
 
-          <b-button variant="success" class="mx-1" disabled v-else>
-            <b-spinner small></b-spinner>
-            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-          </b-button>
-        </template>
-        <!-- Emulate built in modal footer ok and cancel button actions -->
-
-        <b-button
-          variant="danger"
-          type="button"
-          @click.prevent="resetModalHidden"
-        >
-          {{ $t("general.Cancel") }}
-        </b-button>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+                <b-button variant="success" class="mx-1" disabled v-else>
+                    <b-spinner small></b-spinner>
+                    <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                </b-button>
+            </template>
+            <b-button
+                @click.prevent="resetModalHidden"
+                variant="danger"
+                type="button"
+            >
+                {{ $t("general.Cancel") }}
+            </b-button>
+        </div>
+        <div class="row">
+          <div class="col-md-12" v-if="isVisible('name')">
           <div class="form-group">
             <label for="field-1" class="control-label">
               {{ getCompanyKey("view_name_ar") }}
-              <span class="text-danger">*</span>
+              <span v-if="isRequired('name')" class="text-danger">*</span>
             </label>
             <div dir="rtl">
               <input
@@ -336,11 +290,11 @@ export default {
             </template>
           </div>
         </div>
-        <div class="col-md-12">
+          <div class="col-md-12" v-if="isVisible('name')">
           <div class="form-group">
             <label for="field-2" class="control-label">
               {{ getCompanyKey("view_name_en") }}
-              <span class="text-danger">*</span>
+              <span v-if="isRequired('name')" class="text-danger">*</span>
             </label>
             <div dir="ltr">
               <input
@@ -381,12 +335,7 @@ export default {
 </template>
 
 <style scoped>
-@media print {
-  .do-not-print {
-    display: none;
-  }
-  .arrow-sort {
-    display: none;
-  }
+form {
+    position: relative;
 }
 </style>

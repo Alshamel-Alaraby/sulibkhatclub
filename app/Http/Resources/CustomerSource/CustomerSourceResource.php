@@ -19,7 +19,8 @@ class CustomerSourceResource extends JsonResource
             'name' => $this->name,
             'name_e' => $this->name_e,
             'parent_id' => $this->parent_id,
-            'parent' => new CustomerSourceParentResource($this->parent),
+            'parent' => new RelationCustomerSourceResource($this->parent),
+
         ];
     }
 }

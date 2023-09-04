@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SalesmenType;
 
 use App\Http\Requests\SalesmenType\SalesmenTypeRequest;
 use App\Http\Requests\SalesmenType\UpdateSalesmenTypeRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\SalesmenType\SalesmenTypeResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -17,15 +18,7 @@ class SalesmenTypeController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('salesmen_types_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('salesmen_types_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -35,15 +28,7 @@ class SalesmenTypeController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('salesmen_types');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('salesmen_types', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
+
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', SalesmenTypeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
@@ -113,6 +98,12 @@ class SalesmenTypeController extends Controller
         $this->modelInterface->delete($id);
 
         return responseJson(200, 'success');
+    }
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

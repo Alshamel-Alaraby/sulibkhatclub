@@ -64,4 +64,23 @@ class RestartPeriodRepository implements RestartPeriodInterface
         $model->delete();
     }
 
+
+
+    public function getName($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        $ids = [5, 6];
+
+        if ($request->serial) {
+            $models->whereIn('id', $ids);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
 }

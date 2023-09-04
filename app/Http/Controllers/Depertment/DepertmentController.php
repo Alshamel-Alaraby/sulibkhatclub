@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DepertmentRequest;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\FromAdminDocumentRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Depertment\DepertmentResource;
+use App\Http\Resources\Depertment\GetNameDepertmentResource;
 use App\Http\Resources\Document\DocumentResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -109,6 +111,14 @@ class DepertmentController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 

@@ -14,7 +14,6 @@ class City extends Model
 
     protected $guarded = ['id'];
 
-    protected $with = ['governorate','country'];
 
     public function governorate()
     {
@@ -45,15 +44,6 @@ class City extends Model
         return $this->hasMany(Panel::class,'city_id');
     }
 
-
-    // public function hasChildren()
-    // {
-    //     return $this->avenues()->count() > 0 ||
-    //     $this->customerBranches()->count() > 0 ||
-    //     $this->rlstOwners()->count() > 0 ||
-    //      $this->Panels()->count() > 0;
-
-    // }
 
     public function hasChildren()
     {

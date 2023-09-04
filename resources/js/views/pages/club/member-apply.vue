@@ -78,6 +78,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       },
       edit: {
         applying_date: this.formatDate(new Date()),
@@ -99,6 +100,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       },
       company_id: null,
       errors: {},
@@ -107,6 +109,8 @@ export default {
       current_page: 1,
       setting: {
         gender: true,
+          member_type_id: true,
+          Subscription_receipt_number: true,
         first_name: true,
         second_name: true,
         third_name: true,
@@ -132,7 +136,6 @@ export default {
         "family_name",
         "birth_date",
         "national_id",
-        "nationality_number",
         "home_phone",
         "work_phone",
         "home_address",
@@ -167,6 +170,11 @@ export default {
       gender: {
         required: requiredIf(function (model) {
           return this.isRequired("gender");
+        }),
+      },
+        member_type_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("member_type_id");
         }),
       },
       third_name: {
@@ -254,6 +262,11 @@ export default {
       gender: {
         required: requiredIf(function (model) {
           return this.isRequired("gender");
+        }),
+      },
+        member_type_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("member_type_id");
         }),
       },
       third_name: {
@@ -368,7 +381,7 @@ export default {
   methods: {
     getCustomTableFields() {
       adminApi
-        .get(`/customTable/table-columns/cm_members`)
+        .get(`/customTable/table-columns/cm_member_requests`)
         .then((res) => {
           this.fields = res.data;
         })
@@ -423,7 +436,7 @@ export default {
         this.Tooltip = "";
         this.mouseEnter = id;
         adminApi
-          .get(`/club-members/members/logs/${id}`)
+          .get(`/club-members/member-requests/logs/${id}`)
           .then((res) => {
             let l = res.data.data;
             l.forEach((e) => {
@@ -455,7 +468,7 @@ export default {
       }
       adminApi
         .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
+          `/club-members/member-requests?member_types=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
         )
         .then((res) => {
           let l = res.data;
@@ -488,7 +501,7 @@ export default {
 
         adminApi
           .get(
-            `/club-members/members?page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&company_id=${this.company_id}`
+            `/club-members/member-requests?member_types=1&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&company_id=${this.company_id}`
           )
           .then((res) => {
             let l = res.data;
@@ -530,7 +543,7 @@ export default {
           if (result.value) {
             this.isLoader = true;
             adminApi
-              .post(`/club-members/members/bulk-delete`, { ids: id })
+              .post(`/club-members/member-requests/bulk-delete`, { ids: id })
               .then((res) => {
                 this.checkAll = [];
                 this.getData();
@@ -579,7 +592,7 @@ export default {
             this.isLoader = true;
 
             adminApi
-              .delete(`/club-members/members/${id}`)
+              .delete(`/club-members/member-requests/${id}`)
               .then((res) => {
                 this.checkAll = [];
                 this.getData();
@@ -643,6 +656,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -677,6 +691,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -710,6 +725,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -728,7 +744,7 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .post(`/club-members/members`, {
+          .post(`/club-members/member-requests`, {
             ...this.create,
             company_id: this.$store.getters["auth/company_id"],
           })
@@ -771,7 +787,7 @@ export default {
         this.isLoader = true;
         this.errors = {};
         adminApi
-          .put(`/club-members/members/${id}`, this.edit)
+          .put(`/club-members/member-requests/${id}`, this.edit)
           .then((res) => {
             this.$bvModal.hide(`modal-edit-${id}`);
             this.getData();
@@ -825,6 +841,7 @@ export default {
       this.edit.job = member.job;
       this.edit.degree = member.degree;
       this.edit.gender = member.gender;
+      this.edit.member_type_id = member.member_type_id;
       this.errors = {};
     },
     /**
@@ -854,6 +871,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
+          member_type_id: 15,
       };
     },
     /*
@@ -1189,6 +1207,17 @@ export default {
                         class="mb-1"
                         >{{ getCompanyKey("member_type") }}
                       </b-form-checkbox>
+                        <b-form-checkbox
+                        v-if="isVisible('member_type_id')"
+                        v-model="setting.member_type_id"
+                        class="mb-1"
+                        >{{ $t("general.status") }}
+                      </b-form-checkbox>
+                        <b-form-checkbox
+                        v-model="setting.Subscription_receipt_number"
+                        class="mb-1"
+                        >{{ getCompanyKey("Subscription_receipt_number") }}
+                      </b-form-checkbox>
                       <b-form-checkbox
                         v-if="isVisible('national_id')"
                         v-model="setting.national_id"
@@ -1220,13 +1249,13 @@ export default {
                         >{{ getCompanyKey("member_home_address") }}
                       </b-form-checkbox>
                       <b-form-checkbox
-                        v-if="isVisible('job')"
+                        v-if="isVisible('work_address')"
                         v-model="setting.work_address"
                         class="mb-1"
                         >{{ getCompanyKey("member_work_address") }}
                       </b-form-checkbox>
                       <b-form-checkbox
-                        v-if="isVisible('first_name')"
+                        v-if="isVisible('job')"
                         v-model="setting.job"
                         class="mb-1"
                         >{{ getCompanyKey("member_job") }}
@@ -1773,7 +1802,7 @@ export default {
                     margin: 10px 0 !important;
                     border-top: 1px solid rgb(141 163 159 / 42%);
                   "
-                  v-if="isVisible('job') || isVisible('degree')"
+                  v-if="isVisible('job') || isVisible('degree') || isVisible('member_type_id')"
                 />
                 <div class="row">
                   <div class="col-md-3" v-if="isVisible('job')">
@@ -1820,6 +1849,30 @@ export default {
                       </template>
                     </div>
                   </div>
+                    <div class="col-md-3" v-if="isVisible('member_type_id')">
+                        <div class="form-group">
+                            <label  class="control-label">
+                                {{ $t("general.status") }}
+                                <span  v-if="isRequired('type')" class="text-danger">*</span>
+                            </label>
+                            <select :disabled="true"  class="form-control" v-model="create.member_type_id" :class="{
+                                                  'is-invalid': $v.create.member_type_id.$error || errors.member_type_id,
+                                                  'is-valid':
+                                                    !$v.create.member_type_id.$invalid && !errors.member_type_id,
+                                                }">
+                                <option value="15">{{$t('general.pendingMember')}}</option>
+                                <option value="16">{{$t('general.unacceptable')}}</option>
+                            </select>
+
+                            <template v-if="errors.member_type_id">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.member_type_id"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
                 </div>
               </form>
             </b-modal>
@@ -1950,6 +2003,16 @@ export default {
                         <span>{{ getCompanyKey("member_gender") }}</span>
                       </div>
                     </th>
+                      <th v-if="setting.member_type_id && isVisible('member_type_id')">
+                      <div class="d-flex justify-content-center">
+                        <span>{{ $t("general.status") }}</span>
+                      </div>
+                    </th>
+                      <th v-if="setting.Subscription_receipt_number">
+                      <div class="d-flex justify-content-center">
+                        <span>{{ getCompanyKey("Subscription_receipt_number") }}</span>
+                      </div>
+                    </th>
                     <th v-if="setting.national_id && isVisible('national_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_national_id") }}</span>
@@ -2021,9 +2084,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th
-                      v-if="setting.home_address && isVisible('home_address')"
-                    >
+                    <th v-if="setting.home_address && isVisible('home_address')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_home_address") }}</span>
                         <div class="arrow-sort">
@@ -2038,9 +2099,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th
-                      v-if="setting.work_address && isVisible('work_address')"
-                    >
+                    <th v-if="setting.work_address && isVisible('work_address')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_work_address") }}</span>
                         <div class="arrow-sort">
@@ -2158,6 +2217,12 @@ export default {
                           ? $t("general.male")
                           : $t("general.female")
                       }}
+                    </td>
+                    <td v-if="setting.member_type_id && isVisible('member_type_id')">
+                      {{data.membersType ? $i18n.locale == "ar"? data.membersType.name: data.membersType.name_e: "---"}}
+                    </td>
+                    <td v-if="setting.Subscription_receipt_number">
+                      {{data.transaction ? data.transaction.prefix: "---"}}
                     </td>
                     <td v-if="setting.national_id && isVisible('national_id')">
                       {{ data.national_id }}
@@ -2807,7 +2872,7 @@ export default {
                               margin: 10px 0 !important;
                               border-top: 1px solid rgb(141 163 159 / 42%);
                             "
-                            v-if="isVisible('job') || isVisible('degree')"
+                            v-if="isVisible('job') || isVisible('degree') || isVisible('member_type_id')"
                           />
                           <div class="row">
                             <div v-if="isVisible('job')" class="col-md-3">
@@ -2861,6 +2926,30 @@ export default {
                                 </template>
                               </div>
                             </div>
+                              <div class="col-md-3" v-if="isVisible('member_type_id')">
+                                  <div class="form-group">
+                                      <label  class="control-label">
+                                          {{ $t("general.status") }}
+                                          <span  v-if="isRequired('type')" class="text-danger">*</span>
+                                      </label>
+                                      <select :disabled="true"  class="form-control" v-model="edit.member_type_id" :class="{
+                                                  'is-invalid': $v.edit.member_type_id.$error || errors.member_type_id,
+                                                  'is-valid':
+                                                    !$v.edit.member_type_id.$invalid && !errors.member_type_id,
+                                                }">
+                                          <option value="15">{{$t('general.pendingMember')}}</option>
+                                          <option value="16">{{$t('general.unacceptable')}}</option>
+                                      </select>
+
+                                      <template v-if="errors.member_type_id">
+                                          <ErrorMessage
+                                              v-for="(errorMessage, index) in errors.member_type_id"
+                                              :key="index"
+                                          >{{ errorMessage }}
+                                          </ErrorMessage>
+                                      </template>
+                                  </div>
+                              </div>
                           </div>
                         </form>
                       </b-modal>

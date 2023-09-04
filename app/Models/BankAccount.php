@@ -26,6 +26,7 @@ class BankAccount extends Model implements HasMedia
         "company_id",
     ];
 
+
     public function bank()
     {
         return $this->belongsTo(Bank::class);

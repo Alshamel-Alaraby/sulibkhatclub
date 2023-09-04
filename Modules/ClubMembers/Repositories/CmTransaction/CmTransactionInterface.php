@@ -16,6 +16,9 @@ interface CmTransactionInterface
 
     public function delete($id);
 
+    public function findCmMemberLastTransaction($id);
+
+
 
 
 }

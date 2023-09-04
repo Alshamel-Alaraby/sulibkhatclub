@@ -17,10 +17,7 @@ class PaymentMethod extends Model
 
     protected $guarded = ['id'];
 
-    // protected $casts = [
-    //     'is_default' => '\App\Enums\IsDefault',
-    // ];
-
+  
     public function payments()
     {
         return $this->hasMany(Payment::class, 'payment_method_id');

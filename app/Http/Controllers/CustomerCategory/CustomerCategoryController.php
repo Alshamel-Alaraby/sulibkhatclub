@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerCategory\CustomerCategoryRequest;
 use App\Http\Requests\CustomerGroup\CustomerGroupRequest;
 use App\Http\Requests\DepertmentRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\CustomerCategory\CustomerCategoryResource;
 use App\Http\Resources\CustomerCategory\GetNameCustomerCategoryResource;
 use App\Http\Resources\Depertment\DepertmentResource;
@@ -113,10 +114,12 @@ class CustomerCategoryController extends Controller
         }
     }
 
-    public function getName(Request $request)
+
+    public function getDropDown(Request $request)
     {
+
         $models = $this->modelInterface->getName($request);
-        return responseJson(200, 'success', GetNameCustomerCategoryResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

@@ -43,7 +43,7 @@ class SalesmenTypeRepository implements SalesmenTypeInterface
             $model = $this->model->find($id);
             $model->update($request->except(["media"]));
 
-            $this->forget($id);
+            // $this->forget($id);
 
         });
 
@@ -55,7 +55,7 @@ class SalesmenTypeRepository implements SalesmenTypeInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
+        // $this->forget($id);
         $model->delete();
     }
 
@@ -69,6 +69,17 @@ class SalesmenTypeRepository implements SalesmenTypeInterface
             cacheForget($key);
         }
 
+    }
+
+    public function getName($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 
 }

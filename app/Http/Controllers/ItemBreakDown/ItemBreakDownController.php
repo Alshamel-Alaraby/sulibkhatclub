@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ItemBreakDownController extends Controller
 {
-    public function __construct(private \App\Repositories\ItemBreakDown\ItemBreakDownInterface$modelInterface)
+    public function __construct(private \App\Repositories\ItemBreakDown\ItemBreakDownInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

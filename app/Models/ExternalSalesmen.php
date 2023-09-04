@@ -26,6 +26,7 @@ class ExternalSalesmen extends Model
         "name_e"
     ];
 
+
     public function country()
     {
         return $this->belongsTo(Country::class);

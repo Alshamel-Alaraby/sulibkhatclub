@@ -28,6 +28,7 @@ Route::prefix('hr')->group(function () {
 
     Route::group(['prefix' => 'job-title'], function () {
         Route::controller(\Modules\HR\Http\Controllers\JobTitleController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('job-title.getDropDown');
             Route::get('/', 'all')->name('job-title.index');
             Route::get('/{id}', 'find')->name('job-title.find');
             Route::post('/', 'create')->name('job-title.create');

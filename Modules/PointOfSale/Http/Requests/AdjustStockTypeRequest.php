@@ -13,6 +13,8 @@ class AdjustStockTypeRequest extends FormRequest
      */
     public function rules()
     {
+
+
         return [
             'title' => 'nullable|unique:pos_adjust_stock_types,title,' . ($this->method() == 'PUT' ? $this->id : ''),
             'title_e' => 'nullable|unique:pos_adjust_stock_types,title_e,' . ($this->method() == 'PUT' ? $this->id : ''),

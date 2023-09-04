@@ -6,6 +6,7 @@ use App\Models\Serial;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Entities\CmMemberRequest;
 use Modules\ClubMembers\Entities\CmSponser;
 use Modules\ClubMembers\Entities\CmTransaction;
 use Modules\RealEstate\Entities\RlstCategoriesItem;
@@ -13,10 +14,11 @@ use Modules\RealEstate\Entities\RlstCategoriesItem;
 class CmTransactionRepository implements CmTransactionInterface
 {
 
-    public function __construct(private CmTransaction $model ,CmMember $modelMember)
+    public function __construct(private CmTransaction $model , private CmMember $modelMember ,private CmMemberRequest $modelMemberRequest)
     {
         $this->model       = $model;
         $this->modelMember = $modelMember;
+        $this->modelMemberRequest = $modelMemberRequest;
     }
 
     public function all($request)
@@ -33,6 +35,12 @@ class CmTransactionRepository implements CmTransactionInterface
         {
             $models->whereNotNull('sponsor_id');
         }
+
+        if ($request->document_id)
+        {
+            $models->where('document_id',$request->document_id);
+        }
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -47,6 +55,12 @@ class CmTransactionRepository implements CmTransactionInterface
         return $data;
     }
 
+    public function findCmMemberLastTransaction($id)
+    {
+        $data = $this->model->where('cm_member_id',$id)->latest()->first();
+        return $data;
+    }
+
     public function create($request)
     {
         DB::transaction(function () use ($request) {
@@ -57,9 +71,18 @@ class CmTransactionRepository implements CmTransactionInterface
                     $transaction['serial_id'] = $serial ? $serial->id:null;
                 }
                 $model= $this->model->create($transaction);
-                $member =  $this->modelMember->find($transaction['cm_member_id']);
-                if ($member){
-                    $member->update(['last_transaction_date'=>$transaction['date']]);
+                if (isset($transaction['cm_member_id']))
+                {
+                    $member =  $this->modelMember->find($transaction['cm_member_id']);
+                    if ($member){
+                        $member->update(['last_transaction_date'=>$transaction['date']]);
+                    }
+                }
+                if ( isset($transaction['member_request_id']) ){
+                    $memberRequest =  $this->modelMemberRequest->find($transaction['member_request_id']);
+                    if ($memberRequest){
+                        $memberRequest->update(['last_transaction_date'=>$transaction['date']]);
+                    }
                 }
 
                 if ($transaction['serial_id'])

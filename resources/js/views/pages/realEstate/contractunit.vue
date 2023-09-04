@@ -23,13 +23,13 @@ export default {
     title: "Contract",
     meta: [{ name: "description", content: "Contract" }],
   },
-  beforeRouteEnter(to, from, next) {
-        next((vm) => {
-      return permissionGuard(vm, "Contract Unit", "all Store");
-    });
+  // beforeRouteEnter(to, from, next) {
+  //       next((vm) => {
+  //     return permissionGuard(vm, "Contract Unit", "all Store");
+  //   });
 
 
-  },
+  // },
   mixins: [translation],
   components: {
     Saleman,

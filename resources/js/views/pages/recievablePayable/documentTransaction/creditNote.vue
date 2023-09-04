@@ -16,7 +16,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
     next((vm) => {
-      return permissionGuard(vm, "Crediot Note RP", "all creditNote RP");
+      return permissionGuard(vm, "Credit Note RP", "all creditNote RP");
     });
 
 

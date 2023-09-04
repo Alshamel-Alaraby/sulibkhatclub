@@ -447,6 +447,7 @@ export default {
         return this.isRequiredPage(fieldName);
       }
     },
+    
     showCityModal() {
       if (this.create.city_id == 0) {
         this.$bvModal.show("city-create-avenue");
@@ -578,6 +579,7 @@ export default {
               this.isLoader = false;
             });
         }
+
       }
     },
     getCategory() {

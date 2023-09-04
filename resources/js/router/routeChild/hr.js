@@ -27,14 +27,6 @@ export default [
         component: () => import('../../views/pages/hr/hr_request_type'),
     },
     {
-        path: '/dashboard/hr-online-request',
-        name: 'hr',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/hr/hr_online_request'),
-    },
-    {
         path: '/dashboard/hr-payroll-statement',
         name: 'hr',
         meta: {
@@ -66,7 +58,7 @@ export default [
         },
         component: () => import('../../views/pages/hr/hr_request'),
     },
-    
+
     {
         path: '/dashboard/hr-end-service',
         name: 'hr',
@@ -75,5 +67,5 @@ export default [
         },
         component: () => import('../../views/pages/hr/hr_end_service'),
     },
-    
+
 ];

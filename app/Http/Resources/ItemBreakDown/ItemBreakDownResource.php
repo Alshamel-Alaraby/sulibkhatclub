@@ -3,6 +3,7 @@
 namespace App\Http\Resources\ItemBreakDown;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\BoardsRent\Transformers\Panel\RelationBRentPanelResource;
 use Modules\BoardsRent\Transformers\PanelResource;
 
 class ItemBreakDownResource extends JsonResource
@@ -22,7 +23,7 @@ class ItemBreakDownResource extends JsonResource
             "break_id"=> $this->break_id,
             "module_type"=> $this->module_type,
             "serial_number"=> $this->serial_number,
-            "panel"=> new PanelResource($this->panel)
+            "panel"=> new RelationBRentPanelResource($this->panel)
 
         ];
     }

@@ -23,9 +23,6 @@ class CustomerGroup extends Model
         return $this->generalCustomers()->count() > 0 ;
     }
 
-
-
-
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

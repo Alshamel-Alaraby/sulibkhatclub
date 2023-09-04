@@ -14,10 +14,7 @@ class Governorate extends Model
     protected $table = 'general_governorates';
     protected $guarded = ['id'];
 
-    protected $casts = [
-        // 'is_active' => '\App\Enums\IsActive',
-        // 'is_default' => '\App\Enums\IsDefault',
-    ];
+
 
     public function country()
     {

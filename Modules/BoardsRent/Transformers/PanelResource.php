@@ -2,15 +2,13 @@
 
 namespace Modules\BoardsRent\Transformers;
 
-use App\Http\Resources\Avenue\AvenueResource;
-use App\Http\Resources\CategoryResource;
-use App\Http\Resources\City\CityResource;
-use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\Governorate\GovernorateResource;
-use App\Http\Resources\StreetResource;
+use App\Http\Resources\Avenue\RelationAvenueResource;
+use App\Http\Resources\Category\RelationCategoryResource;
+use App\Http\Resources\City\RelationCityResource;
+use App\Http\Resources\Country\RelationCountryResource;
+use App\Http\Resources\Governorate\RelationGovernorateResource;
+use App\Http\Resources\Street\RelationStreetResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Archiving\Transformers\DepartmentResource;
-use Modules\BoardsRent\Transformers\UnitStatusResource;
 
 class PanelResource extends JsonResource
 {
@@ -46,15 +44,15 @@ class PanelResource extends JsonResource
             'city' => new CityResource($this->city),
             'avenue' => new AvenueResource($this->avenue),
             'street' => new StreetResource($this->street),
-            'description' => $this->description,
-            'description_e' => $this->description_e,
-            'lat' => $this->lat,
-            'lng' => $this->lng,
+//            'lat' => $this->lat,
+//            'lng' => $this->lng,
 //            'created_at' => $this->created_at,
 //            'updated_at' => $this->updated_at,
-            'itemBreakDowns' => $this->itemBreakDowns,
+//            'itemBreakDowns' => $this->itemBreakDowns,
 
 
         ];
     }
+
 }
+

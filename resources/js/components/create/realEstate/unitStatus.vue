@@ -277,10 +277,10 @@ export default {
                     if(this.idObjEdit.dataObj){
                         let unitStatus = this.idObjEdit.dataObj;
                         this.errors = {};
-                        this.edit.name = unitStatus.name;
-                        this.edit.name_e = unitStatus.name_e;
-                        this.edit.is_active = unitStatus.is_active;
-                        this.edit.is_default = unitStatus.is_default;
+                        this.create.name = unitStatus.name;
+                        this.create.name_e = unitStatus.name_e;
+                        this.create.is_active = unitStatus.is_active;
+                        this.create.is_default = unitStatus.is_default;
                     }
                 }
             },50);

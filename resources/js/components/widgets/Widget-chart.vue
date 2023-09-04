@@ -66,14 +66,14 @@ export default {
 <template>
 <div class="card">
     <div class="card-body">
-<!--        <div class="float-left" dir="ltr">-->
-<!--            <div>-->
-<!--                <apexchart type="line" width="140" height="54" :series="series" :options="chartOptions"></apexchart>-->
-<!--            </div>-->
-<!--        </div>-->
-        <div class="text-center">
+        <div class="float-left" dir="ltr">
+            <div>
+                <apexchart type="line" width="140" height="54" :series="series" :options="chartOptions"></apexchart>
+            </div>
+        </div>
+        <div class="text-right">
             <h3 class="mb-1">{{ number }}</h3>
-            <h5 class="text-muted mb-1">{{ $t(`general.${text}`) }}</h5>
+            <p class="text-muted mb-1">{{ $t(`general.${text}`) }}</p>
         </div>
     </div>
 </div>

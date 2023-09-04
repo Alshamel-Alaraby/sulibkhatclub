@@ -11,22 +11,14 @@ use Illuminate\Routing\Controller;
 
 class ModuleController extends Controller
 {
-    public function __construct(private \App\Repositories\Module\ModuleInterface$modelInterface)
+    public function __construct(private \App\Repositories\Module\ModuleInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }
 
     public function find($id)
     {
-        // $model = cacheGet('modules_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('modules_' . $id, $model);
-        //     }
-        // }
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -37,15 +29,7 @@ class ModuleController extends Controller
 
     public function all(AllRequest $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('modules');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('modules', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
+       
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', ModuleResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
