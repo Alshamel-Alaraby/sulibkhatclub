@@ -194,7 +194,7 @@ class CmMemberRepository implements CmMemberInterface
                 if ($memberRequest){
                     $membercreate = collect($memberRequest)->except(['id','deleted_at','created_at','updated_at','financial_status_id','member_type_id','status_id']) ;
                     $model = $this->model->create($membercreate->all());
-                    $accept =  collect($accept_member)->except(['id']);
+                    $accept =  collect($accept_member)->except(['id','financial_status_id','member_type_id','status_id']);
                     $model->update(array_merge($accept->all(),
                         [
                             'acceptance' => 1,
