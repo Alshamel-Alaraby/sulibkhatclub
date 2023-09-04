@@ -117,6 +117,9 @@ class CmMemberRepository implements CmMemberInterface
                     'acceptance' => 1,
                     'membership_number' => $new_member_number,
                     'applying_number' => $new_applying_number,
+                    'financial_status_id' => 3,
+                    'member_type_id' => 4,
+                    'status_id' => 2,
                 ]));
         });
 
