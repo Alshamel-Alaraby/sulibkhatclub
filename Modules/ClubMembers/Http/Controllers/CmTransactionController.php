@@ -128,7 +128,7 @@ class CmTransactionController extends Controller
 
         $transactionArray = CmTransaction::whereDate('date', '<=', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
 
-        $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 1]);
+        $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 3]);
 
         // $request['cm_financial_status_id']
 
@@ -175,6 +175,33 @@ class CmTransactionController extends Controller
             return 'error';
         }
     }
+
+
+
+
+    public function memberTransactionPaidAfterDate(Request $request)
+    {
+
+        $models['data'] = CmTransaction::whereDate('date', '>', $request->date)->where('year_to', $request->year)->paginate($request->per_page);
+        $models['paginate'] = true;
+        return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
+    public function UpdateMemberTransactionPaidAfterDate(Request $request)
+    {
+
+        $transactionArray = CmTransaction::whereDate('date', '>', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
+
+        $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 4]);
+
+
+        $models['paginate'] = true;
+        return responseJson(200, 'success', 'Updated Successfully');
+
+    }
+
+
 
 
 

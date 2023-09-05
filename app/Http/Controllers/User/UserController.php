@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\User\UserLoginResource;
 use App\Http\Resources\User\UserResource;
 use App\Repositories\User\UserInterface;
@@ -100,6 +101,14 @@ class UserController extends Controller
             $this->modelInterface->delete($id);
         }
         return responseJson(200, __('Done'));
+    }
+
+
+    public function getDropDown(AllRequest $request)
+    {
+
+        $models = $this->modelInterface->all($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\RoleRequest;
+use App\Http\Resources\AllDropListResource;
 use Illuminate\Routing\Controller;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\RoleResource;
@@ -112,5 +113,19 @@ class RoleController extends Controller
             }
         })->get();
         return responseJson(200, 'success', PermissionsResource::collection($permissions));
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->model->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

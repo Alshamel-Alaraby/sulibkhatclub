@@ -1425,6 +1425,7 @@
         "SubscriptionTable" : "جدول الاشتراكات",
         "pendingMember": "قيد الانتظار",
         "unacceptable": "مرفوض",
-        "Thequeryisnotpaid": "الاستعلام غير مسددي"
+        "Thequeryisnotpaid": "اعضاء غير مسددين",
+        "QueryAboutThePayersAfterASpecificDate": "الاستعلام عن المسددين بعد تاريخ محدد"
     }
 }

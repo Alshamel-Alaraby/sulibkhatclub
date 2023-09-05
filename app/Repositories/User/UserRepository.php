@@ -88,7 +88,6 @@ class UserRepository implements UserInterface
             if (!$request->old_media && !$request->media) { // if this is no old media and new media
                 $model->clearMediaCollection('media');
             }
-            $this->forget($id);
         });
 
     }
@@ -101,20 +100,18 @@ class UserRepository implements UserInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
         $model->delete();
     }
 
-    private function forget($id)
+    public function getDropDown($request)
     {
-        $keys = [
-            "users",
-            "users_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 
 }

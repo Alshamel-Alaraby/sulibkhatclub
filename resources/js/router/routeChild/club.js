@@ -170,12 +170,19 @@ export default [
 
     },
     {
+        path: '/dashboard/club/paid-member-report-after',
+        name: 'Paid After A Specific Date',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/paid-member-report-after'),
+    },
+    {
         path: '/dashboard/club/status',
         name: 'club status',
         meta: {
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/status'),
-
     },
 ];

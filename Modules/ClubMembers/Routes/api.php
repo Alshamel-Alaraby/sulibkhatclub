@@ -183,12 +183,9 @@ Route::prefix('club-members')->group(function () {
         Route::get('/member-last-transaction/{id}', 'CmTransactionController@findCmMemberLastTransaction');
 
         Route::get('check-date-member-transaction', 'CmTransactionController@checkDateMemberTransaction');
-        Route::put('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
 
 
-
-        Route::put('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
-
+        Route::get('member-transaction-paid-after-date', 'CmTransactionController@memberTransactionPaidAfterDate');
 
 
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
@@ -198,6 +195,10 @@ Route::prefix('club-members')->group(function () {
         Route::put('/{id}', 'CmTransactionController@update')->name('transactionupdate');
         Route::post("/bulk-delete", "CmTransactionController@bulkDelete");
         Route::delete('/{id}', 'CmTransactionController@delete')->name('transaction.delete');
+        Route::put('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
+        Route::put('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
+        Route::put('member-transaction-paid-after-date-update', 'CmTransactionController@UpdateMemberTransactionPaidAfterDate');
+
 
     });
 

@@ -468,6 +468,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'users'], function () {
         Route::controller(\App\Http\Controllers\User\UserController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('users.getDropDown');
             Route::get('/profile', 'profile');
             Route::get('/', 'all')->name('users.index');
             Route::get('logs/{id}', 'logs')->name('users.logs');
@@ -604,6 +605,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'roles'], function () {
         Route::controller(\App\Http\Controllers\RoleController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('roles.getDropDown');
             Route::get('/', 'all')->name('roles.index');
             Route::get("/permissions", 'permissions');
             Route::get('/{id}', 'find');
