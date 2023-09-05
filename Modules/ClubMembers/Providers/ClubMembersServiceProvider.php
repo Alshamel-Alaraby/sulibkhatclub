@@ -15,6 +15,8 @@ use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingInterface;
 use Modules\ClubMembers\Repositories\CmMemberSetting\CmMemberSettingRepository;
 use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalInterface;
 use Modules\ClubMembers\Repositories\CmMembershipRenewal\CmMembershipRenewalRepository;
+use Modules\ClubMembers\Repositories\CmMemberStatus\CmMemberStatusInterface;
+use Modules\ClubMembers\Repositories\CmMemberStatus\CmMemberStatusRepository;
 use Modules\ClubMembers\Repositories\CmMemberType\CmMemberTypeInterface;
 use Modules\ClubMembers\Repositories\CmMemberType\CmMemberTypeRepository;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
@@ -74,6 +76,7 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmTransactionInterface::class, CmTransactionRepository::class);
         $this->app->bind(CmCustomTableInterface::class, CmCustomTableRepository::class);
         $this->app->bind(CmMemberRequestInterface::class, CmMemberRequestRepository::class);
+        $this->app->bind(CmMemberStatusInterface::class, CmMemberStatusRepository::class);
 
 
         $this->commands([

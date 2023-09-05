@@ -14314,5 +14314,56 @@ class TranslationSeeder extends Seeder
             ],
 
         ]);
+        //club statuses
+        Translation::insert([
+            [
+                "key" => "club_statuses_create_form",
+                "default_en" => "Add new status",
+                "default_ar" => "اضف حاله جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+            ],
+            [
+                "key" => "club_statuses_edit_form",
+                "default_en" => "Edit status form",
+                "default_ar" => "نموذج تعديل الحاله",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+
+            ],
+            [
+                "key" => "club_statuses_name_ar",
+                "default_en" => "status name (arabic)",
+                "default_ar" => "اسم الحاله (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+
+            ],
+            [
+                "key" => "club_statuses_name_en",
+                "default_en" => "status name (english)",
+                "default_ar" => "اسم الحاله (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "units"
+
+            ],
+            [
+                "key" => "club_statuses_member_type",
+                "default_en" => "Member Type",
+                "default_ar" => "نوع العضوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+        ]);
     }
 }

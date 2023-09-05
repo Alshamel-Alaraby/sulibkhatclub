@@ -169,4 +169,13 @@ export default [
         component: () => import('../../views/pages/club/new-subscription'),
 
     },
+    {
+        path: '/dashboard/club/status',
+        name: 'club status',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/status'),
+
+    },
 ];

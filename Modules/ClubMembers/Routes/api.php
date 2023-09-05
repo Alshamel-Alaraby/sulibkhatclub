@@ -228,4 +228,16 @@ Route::prefix('club-members')->group(function () {
         Route::delete('/{id}', 'CmSponsorGroupController@delete')->name('cm-sponsor-group.delete');
     });
 
+    // status routes
+    Route::group(['prefix' => 'cm-status'], function () {
+
+        Route::get('/', 'CmMemberStatusController@all')->name('cm-status.all');
+        Route::get('/logs/{id}', 'CmMemberStatusController@logs')->name('cm-status.logs');
+        Route::get('/{id}', 'CmMemberStatusController@find')->name('cm-status.find');
+        Route::post('/', 'CmMemberStatusController@create')->name('cm-status.create');
+        Route::put('/{id}', 'CmMemberStatusController@update')->name('cm-status.update');
+        Route::post("/bulk-delete", "CmMemberStatusController@bulkDelete");
+        Route::delete('/{id}', 'CmMemberStatusController@delete')->name('cm-status.delete');
+    });
+
 });
