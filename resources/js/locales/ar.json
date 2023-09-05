@@ -1427,9 +1427,10 @@
         "unacceptable": "مرفوض",
         "Thequeryisnotpaid": "اعضاء غير مسددين",
         "QueryAboutThePayersAfterASpecificDate": "الاستعلام عن المسددين بعد تاريخ محدد",
+        "yearsOfMembership": "عدد سنوات العضويه",
+        "Changeofmemberrights": "تغير حقوق الاعضاء",
         "ReportToMembers": "تقرير الاستعلام عن الاعضاء",
         "whichYearHeStarted": "بدا من سنه",
-        "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
-        "yearsOfMembership": "عدد سنوات العضويه"
+        "NumberOfSubscriptionYears": "عدد سنوات الاشتراك"
     }
 }

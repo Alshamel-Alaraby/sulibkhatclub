@@ -335,7 +335,7 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->year_number)
         {
             $membership_year =  $request->year - $request->year_number;
-            $models->whereYear('membership_date',$membership_year);
+            $models->whereYear('membership_date','<=',$membership_year);
         }
 
         if ($request->per_page) {

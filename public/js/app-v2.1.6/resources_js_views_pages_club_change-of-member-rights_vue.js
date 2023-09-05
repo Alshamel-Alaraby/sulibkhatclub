@@ -1778,6 +1778,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     this.getFinancialStatus();
     this.getStatus();
+    this.getMemberType();
   },
   methods: {
     /**
@@ -1855,7 +1856,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getStatus: function getStatus() {
       var _this6 = this;
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/cm-status?member_type_id=1").then(function (res) {
         var l = res.data;
         _this6.statuses = l.data;
@@ -1869,7 +1869,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getMemberType: function getMemberType() {
       var _this7 = this;
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members-types?normal_member=1").then(function (res) {
         var l = res.data;
         _this7.memberTypes = l.data;
@@ -1932,6 +1931,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           _this10.installmentStatus = [];
           _this10.installmentStatusPagination = {};
           _this10.current_page = 1;
+          _this10.create = {
+            membership_numbers: '',
+            year: '',
+            financial_status_id: null
+          };
+          _this10.edit = {
+            member_type_id: null,
+            status_id: null
+          };
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: "success",
@@ -2437,7 +2445,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11092,12 +11100,7 @@ var render = function () {
                   [
                     _c("h4", { staticClass: "header-title" }, [
                       _vm._v(
-                        " " +
-                          _vm._s(
-                            _vm.$t(
-                              "general.QueryAboutThePayersAfterASpecificDate"
-                            )
-                          )
+                        " " + _vm._s(_vm.$t("general.Changeofmemberrights"))
                       ),
                     ]),
                     _vm._v(" "),
@@ -11656,6 +11659,19 @@ var render = function () {
                           "div",
                           { staticClass: "col-md-6" },
                           [
+                            _c("label", { staticClass: "control-label" }, [
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(
+                                    _vm.getCompanyKey("financial_status")
+                                  ) +
+                                  "\n                                        "
+                              ),
+                              _c("span", { staticClass: "text-danger" }, [
+                                _vm._v("*"),
+                              ]),
+                            ]),
+                            _vm._v(" "),
                             _c("multiselect", {
                               attrs: {
                                 options: _vm.financialStatuses.map(function (
@@ -11897,7 +11913,6 @@ var render = function () {
                       size: "lg",
                       "hide-footer": true,
                     },
-                    on: { show: _vm.resetModal, hidden: _vm.resetModalHidden },
                   },
                   [
                     _c("form", [
@@ -11991,6 +12006,17 @@ var render = function () {
                           "div",
                           { staticClass: "col-md-6" },
                           [
+                            _c("label", { staticClass: "control-label" }, [
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(_vm.getCompanyKey("member_type_id")) +
+                                  "\n                                        "
+                              ),
+                              _c("span", { staticClass: "text-danger" }, [
+                                _vm._v("*"),
+                              ]),
+                            ]),
+                            _vm._v(" "),
                             _c("multiselect", {
                               attrs: {
                                 options: _vm.memberTypes.map(function (type) {
@@ -12058,6 +12084,17 @@ var render = function () {
                           "div",
                           { staticClass: "col-md-6" },
                           [
+                            _c("label", { staticClass: "control-label" }, [
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(_vm.getCompanyKey("status")) +
+                                  "\n                                        "
+                              ),
+                              _c("span", { staticClass: "text-danger" }, [
+                                _vm._v("*"),
+                              ]),
+                            ]),
+                            _vm._v(" "),
                             _c("multiselect", {
                               attrs: {
                                 options: _vm.statuses.map(function (type) {

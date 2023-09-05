@@ -1442,9 +1442,10 @@
         "unacceptable": "unacceptable",
         "Thequeryisnotpaid": "The query is not paid",
         "QueryAboutThePayersAfterASpecificDate": "Query about the payers after a specific date",
+        "yearsOfMembership": "Years Of Membership",
+        "Changeofmemberrights": "Change of member rights",
         "ReportToMembers": "Report To Members",
         "whichYearHeStarted": "which year he started",
-        "NumberOfSubscriptionYears": "Number of subscription years",
-        "yearsOfMembership": "Years Of Membership"
+        "NumberOfSubscriptionYears": "Number of subscription years"
     }
 }

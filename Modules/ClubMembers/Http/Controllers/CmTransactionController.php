@@ -199,7 +199,7 @@ class CmTransactionController extends Controller
     {
 
         $models['data'] = CmMember::where('financial_status_id', $request->financial_status_id)->whereHas('cmTransaction', function ($query) use ($request) {
-            $query->where('year_to', '<=', $request->year - $request->membership_numbers);
+            $query->where('membership_date', '<=', $request->year - $request->membership_numbers);
         })->paginate($request->per_page);
 
         $models['paginate'] = true;

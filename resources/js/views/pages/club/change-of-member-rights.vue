@@ -131,6 +131,7 @@ export default {
     mounted(){
         this.getFinancialStatus();
         this.getStatus();
+        this.getMemberType();
     },
     methods: {
         /**
@@ -215,7 +216,7 @@ export default {
                 })
 
         },
-        getStatus(page = 1) {
+        getStatus() {
 
             adminApi
                 .get(
@@ -234,7 +235,7 @@ export default {
                 })
 
         },
-        getMemberType(page = 1) {
+        getMemberType() {
 
             adminApi
                 .get(
@@ -291,6 +292,15 @@ export default {
                         this.installmentStatus = [];
                         this.installmentStatusPagination = {};
                         this.current_page = 1;
+                        this.create = {
+                                membership_numbers: '',
+                                year: '',
+                                financial_status_id: null
+                        };
+                        this.edit = {
+                                member_type_id: null,
+                                status_id: null
+                        };
                         setTimeout(() => {
                             Swal.fire({
                                 icon: "success",
@@ -363,7 +373,7 @@ export default {
 
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title"> {{ $t('general.QueryAboutThePayersAfterASpecificDate') }}</h4>
+                            <h4 class="header-title"> {{ $t('general.Changeofmemberrights') }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500"></div>
                         </div>
                         <!-- end search -->
@@ -507,6 +517,10 @@ export default {
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("financial_status") }}
+                                            <span class="text-danger">*</span>
+                                        </label>
                                         <multiselect
                                             v-model="$v.create.financial_status_id.$model"
                                             :options="financialStatuses.map((type) => type.id)"
@@ -590,8 +604,6 @@ export default {
                             body-class="p-4"
                             size="lg"
                             :hide-footer="true"
-                            @show="resetModal"
-                            @hidden="resetModalHidden"
                         >
                             <form>
                                 <div class="mb-3 d-flex justify-content-end">
@@ -618,6 +630,10 @@ export default {
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("member_type_id") }}
+                                            <span class="text-danger">*</span>
+                                        </label>
                                         <multiselect
                                             v-model="$v.edit.member_type_id.$model"
                                             :options="memberTypes.map((type) => type.id)"
@@ -645,6 +661,10 @@ export default {
                                         </template>
                                     </div>
                                     <div class="col-md-6">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("status") }}
+                                            <span class="text-danger">*</span>
+                                        </label>
                                         <multiselect
                                             v-model="$v.edit.status_id.$model"
                                             :options="statuses.map((type) => type.id)"
