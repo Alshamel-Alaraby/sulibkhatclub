@@ -545,9 +545,9 @@ export default {
           this.isLoader = false;
         });
     },
-    async getMemberTypes() {
+    getMemberTypes() {
       this.isLoader = true;
-      await adminApi
+      adminApi
         .get(`/club-members/members-types`)
         .then((res) => {
           this.memberTypes = res.data.data;
@@ -2012,12 +2012,12 @@ export default {
                                 v-model="edit.member_type_id"
                                 :options="memberTypes.map((type) => type.id)"
                                 :custom-label="
-                                  (opt) =>
+                                  (opt) => memberTypes.find((x) => x.id == opt)?
                                     $i18n.locale == 'ar'
                                       ? memberTypes.find((x) => x.id == opt)
                                           .name
                                       : memberTypes.find((x) => x.id == opt)
-                                          .name_e
+                                          .name_e: null
                                 "
                               >
                               </multiselect>

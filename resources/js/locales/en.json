@@ -1441,6 +1441,10 @@
         "pendingMember": "Pending",
         "unacceptable": "unacceptable",
         "Thequeryisnotpaid": "The query is not paid",
-        "QueryAboutThePayersAfterASpecificDate": "Query about the payers after a specific date"
+        "QueryAboutThePayersAfterASpecificDate": "Query about the payers after a specific date",
+        "ReportToMembers": "Report To Members",
+        "whichYearHeStarted": "which year he started",
+        "NumberOfSubscriptionYears": "Number of subscription years",
+        "yearsOfMembership": "Years Of Membership"
     }
 }

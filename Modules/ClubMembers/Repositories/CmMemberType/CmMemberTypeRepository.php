@@ -16,8 +16,13 @@ class CmMemberTypeRepository implements CmMemberTypeInterface
     public function all($request)
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
         if ($request->parent){
             $models->WhereRelation('parent', 'parent_id', $request->parent);
+        }
+
+        if ($request->normal_member){
+            $models->Where( 'parent_id', $request->normal_member);
         }
 
         if ($request->per_page) {

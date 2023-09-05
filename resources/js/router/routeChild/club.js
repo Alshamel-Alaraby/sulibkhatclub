@@ -185,4 +185,20 @@ export default [
         },
         component: () => import('../../views/pages/club/status'),
     },
+    {
+        path: '/dashboard/club/report/report-to-members',
+        name: 'report to members',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/report-to-members'),
+    },
+    {
+        path: '/dashboard/club/change-of-member-rights',
+        name: 'Change of member rights',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/change-of-member-rights'),
+    },
 ];

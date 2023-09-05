@@ -11,6 +11,7 @@ use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Transformers\CheckDateMemberTransactionResource;
 use Modules\ClubMembers\Transformers\CmMemberTransactionsResource;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
+use Modules\ClubMembers\Transformers\GetMemberVotingResource;
 use Modules\ClubMembers\Transformers\UnPaidMembers;
 
 class CmTransactionController extends Controller
@@ -176,9 +177,6 @@ class CmTransactionController extends Controller
         }
     }
 
-
-
-
     public function memberTransactionPaidAfterDate(Request $request)
     {
 
@@ -190,19 +188,40 @@ class CmTransactionController extends Controller
 
     public function UpdateMemberTransactionPaidAfterDate(Request $request)
     {
-
         $transactionArray = CmTransaction::whereDate('date', '>', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
-
         $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 4]);
-
 
         $models['paginate'] = true;
         return responseJson(200, 'success', 'Updated Successfully');
+    }
+
+    public function getMemberVoting(Request $request)
+    {
+
+        $models['data'] = CmMember::where('financial_status_id', $request->financial_status_id)->whereHas('cmTransaction', function ($query) use ($request) {
+            $query->where('year_to', '<=', $request->year - $request->membership_numbers);
+        })->paginate($request->per_page);
+
+        $models['paginate'] = true;
+        return responseJson(200, 'success', GetMemberVotingResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 
+    public function updateMemberVoting(Request $request)
+    {
+
+        $models= CmMember::where('financial_status_id', $request->financial_status_id)->whereHas('cmTransaction', function ($query) use ($request) {
+            $query->where('year_to', '<=', $request->year - $request->membership_numbers);
+        })->update(
+            [
+                'status_id' => $request['status_id'],
+                'member_type_id' => $request['member_type_id'],
+            ]
+        );
 
 
+        return responseJson(200, 'success', 'Updated Successfully');
 
+    }
 
 }

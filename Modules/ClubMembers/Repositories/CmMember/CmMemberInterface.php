@@ -34,4 +34,6 @@ interface CmMemberInterface
 
     public function getSponsors($request);
 
+    public function reportToMembers($request);
+
 }

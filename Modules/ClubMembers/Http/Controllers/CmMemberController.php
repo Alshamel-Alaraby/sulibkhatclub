@@ -299,4 +299,10 @@ class CmMemberController extends Controller
 
     }
 
+    public function reportToMembers(Request $request)
+    {
+        $models = $this->modelInterface->reportToMembers($request);
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
 }

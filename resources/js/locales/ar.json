@@ -1426,6 +1426,10 @@
         "pendingMember": "قيد الانتظار",
         "unacceptable": "مرفوض",
         "Thequeryisnotpaid": "اعضاء غير مسددين",
-        "QueryAboutThePayersAfterASpecificDate": "الاستعلام عن المسددين بعد تاريخ محدد"
+        "QueryAboutThePayersAfterASpecificDate": "الاستعلام عن المسددين بعد تاريخ محدد",
+        "ReportToMembers": "تقرير الاستعلام عن الاعضاء",
+        "whichYearHeStarted": "بدا من سنه",
+        "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
+        "yearsOfMembership": "عدد سنوات العضويه"
     }
 }

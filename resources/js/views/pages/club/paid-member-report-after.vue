@@ -235,7 +235,7 @@ export default {
         changeStatus(){
             adminApi.put(`/club-members/transactions/member-transaction-paid-after-date-update`,{
                 date: this.create.date,
-                year: this.create.date
+                year: this.create.year
             })
                 .then((res) => {
                     this.installmentStatus = [];
@@ -312,7 +312,7 @@ export default {
 
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title"> {{ $t('general.QueryAboutThePayersBeforeASpecificDate') }}</h4>
+                            <h4 class="header-title"> {{ $t('general.QueryAboutThePayersAfterASpecificDate') }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
 
                                 <div class="d-inline-block" style="width: 22.2%;">

@@ -52,6 +52,7 @@ Route::prefix('club-members')->group(function () {
 
     // members routes
     Route::group(['prefix' => 'members'], function () {
+        Route::get('/report-to-members', 'CmMemberController@reportToMembers')->name('cm-members.report-to-members');
         Route::get('get-sponsors', 'CmMemberController@getSponsors')->name('cm-members.getSponsors');
         Route::get('/report-cm-member', 'CmMemberController@getReportCmMember');
         Route::get('/updateCmMember', 'CmMemberController@getUpdateCmMember');
@@ -177,15 +178,14 @@ Route::prefix('club-members')->group(function () {
 
     Route::group(['prefix' => 'transactions'], function () {
         Route::get('unpaid-member-transaction', 'CmTransactionController@unpaidMemberTransaction');
-
         Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
             ->name('MemberTransaction.find');
         Route::get('/member-last-transaction/{id}', 'CmTransactionController@findCmMemberLastTransaction');
-
         Route::get('check-date-member-transaction', 'CmTransactionController@checkDateMemberTransaction');
-
-
         Route::get('member-transaction-paid-after-date', 'CmTransactionController@memberTransactionPaidAfterDate');
+        Route::get('get-member-voting', 'CmTransactionController@getMemberVoting');
+
+
 
 
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
@@ -198,7 +198,7 @@ Route::prefix('club-members')->group(function () {
         Route::put('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
         Route::put('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
         Route::put('member-transaction-paid-after-date-update', 'CmTransactionController@UpdateMemberTransactionPaidAfterDate');
-
+        Route::put('update-member-voting', 'CmTransactionController@updateMemberVoting');
 
     });
 

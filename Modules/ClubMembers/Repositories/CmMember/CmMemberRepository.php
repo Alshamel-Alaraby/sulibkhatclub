@@ -313,5 +313,37 @@ class CmMemberRepository implements CmMemberInterface
         }
     }
 
+    public function reportToMembers($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->financial_status_id)
+        {
+            $models->where('financial_status_id',$request->financial_status_id);
+        }
+
+        if ($request->member_type_id)
+        {
+            $models->where('member_type_id',$request->member_type_id);
+        }
+
+        if ($request->status_id)
+        {
+            $models->where('status_id',$request->status_id);
+        }
+
+        if ($request->year_number)
+        {
+            $membership_year =  $request->year - $request->year_number;
+            $models->whereYear('membership_date',$membership_year);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
 
 }
