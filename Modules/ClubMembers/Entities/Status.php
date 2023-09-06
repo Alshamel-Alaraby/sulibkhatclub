@@ -12,13 +12,14 @@ class Status extends Model
 {
     use HasFactory, LogTrait, SoftDeletes;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
     protected $table = 'cm_statues';
 
     public function members()
     {
         return $this->hasMany(\Modules\ClubMembers\Entities\CmMember::class, 'status_id');
     }
+
 
     public function memberType()
     {
@@ -31,9 +32,11 @@ class Status extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
+
             ->useLogName('CmStatues')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($q) use ($request) {

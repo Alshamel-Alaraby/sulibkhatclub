@@ -165,35 +165,33 @@ export default {
   },
   validations: {
     edit: {
-      first_name: { required },
-      second_name: { required },
-      gender: { required },
-      third_name: { required },
-      last_name: { required },
-      family_name: { required },
-      status_id: { required },
-      birth_date: { required },
-      membership_number: { required },
-      national_id: { required },
-      nationality_number: { required },
-      home_phone: { required },
-      work_phone: { required },
-      home_address: { required },
-      work_address: { required },
-      job: { required },
-      degree: { required },
-      sponsor: { required },
-      acceptance: { required },
-      session_number: { required },
-      session_date: { required },
-      sponsor_id: {
-        required,
-      },
+      first_name: {  },
+      second_name: {  },
+      gender: {  },
+      third_name: {  },
+      last_name: {  },
+      family_name: {  },
+      status_id: {  },
+      birth_date: {  },
+      membership_number: {  },
+      national_id: {  },
+      nationality_number: {  },
+      home_phone: {  },
+      work_phone: {  },
+      home_address: {  },
+      work_address: {  },
+      job: {  },
+      degree: {  },
+      sponsor: {  },
+      acceptance: {  },
+      session_number: {  },
+      session_date: {  },
+      sponsor_id: {},
       member_type: {},
-      member_type_id: { required },
-      financial_status_id: { required },
-      applying_date: { required },
-      applying_number: { required },
+      member_type_id: {  },
+      financial_status_id: {  },
+      applying_date: {  },
+      applying_number: {  },
     },
   },
   watch: {
@@ -424,7 +422,7 @@ export default {
       this.edit.first_name = member.first_name;
       this.edit.phone_code = member.phone_code;
       this.edit.second_name = member.second_name;
-      this.edit.member_type_id = member.member_type_id;
+      this.edit.member_type_id = member.member_type_id ? member.member_type_id.id : null;
       this.edit.financial_status_id = member.financial_status_id ?? null;
       this.edit.member_type = member.member_type;
       this.edit.third_name = member.third_name;
@@ -508,10 +506,9 @@ export default {
       this.isLoader = true;
 
       await adminApi
-        .get(`/statuses`)
+        .get(`/club-members/cm-status`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });
           this.statuses = l;
         })
         .catch((err) => {
@@ -548,7 +545,7 @@ export default {
     getMemberTypes() {
       this.isLoader = true;
       adminApi
-        .get(`/club-members/members-types`)
+        .get(`/club-members/members-types?children_relation=1`)
         .then((res) => {
           this.memberTypes = res.data.data;
         })
@@ -569,11 +566,6 @@ export default {
         .get(`/club-members/financial-status`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({
-            id: 0,
-            name: "اضف حالة مالية",
-            name_e: "Add financial status",
-          });
           this.financialStatuses = l;
         })
         .catch((err) => {
@@ -618,6 +610,47 @@ export default {
     updatePhoneEdit(e) {
       this.edit.phone_code = e.countryCallingCode;
     },
+      /**
+       *  edit
+       */
+      editSubmit(id) {
+          this.$v.edit.$touch();
+
+          if (this.$v.edit.$invalid) {
+              return;
+          } else {
+              this.isLoader = true;
+              this.errors = {};
+              adminApi
+                  .put(`/club-members/members/${id}`, this.edit)
+                  .then((res) => {
+                      this.$bvModal.hide(`modal-edit-${id}`);
+                      this.getData();
+                      setTimeout(() => {
+                          Swal.fire({
+                              icon: "success",
+                              text: `${this.$t("general.Editsuccessfully")}`,
+                              showConfirmButton: false,
+                              timer: 1500,
+                          });
+                      }, 500);
+                  })
+                  .catch((err) => {
+                      if (err.response.data) {
+                          this.errors = err.response.data.errors;
+                      } else {
+                          Swal.fire({
+                              icon: "error",
+                              title: `${this.$t("general.Error")}`,
+                              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                          });
+                      }
+                  })
+                  .finally(() => {
+                      this.isLoader = false;
+                  });
+          }
+      },
   },
 };
 </script>
@@ -1526,6 +1559,27 @@ export default {
                             >
                                 {{ $t("general.ReceiptVoucher") }}
                             </b-button>
+                            <b-button
+                                variant="success"
+                                type="submit"
+                                class="mx-1"
+                                v-if="!isLoader"
+                                @click.prevent="editSubmit(data.id)"
+                            >
+                                {{ $t("general.Edit") }}
+                            </b-button>
+
+                            <b-button
+                                variant="success"
+                                class="mx-1"
+                                disabled
+                                v-else
+                            >
+                                <b-spinner small></b-spinner>
+                                <span class="sr-only"
+                                >{{ $t("login.Loading") }}...</span
+                                >
+                            </b-button>
                           <b-button
                             class="mx-1 d-flex justify-content-end"
                             variant="danger"
@@ -1952,7 +2006,6 @@ export default {
                                 {{ getCompanyKey("status") }}
                               </label>
                               <multiselect
-                                disabled
                                 v-model="edit.status_id"
                                 :options="statuses.map((type) => type.id)"
                                 :custom-label="
@@ -1982,33 +2035,31 @@ export default {
                               </template>
                             </div>
                           </div>
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <label>{{ getCompanyKey("member_type") }}</label>
-                              <input
-                                v-model="$v.edit.member_type.$model"
-                                disabled
-                                class="form-control"
-                                type="text"
-                              />
-                              <template v-if="errors.member_type">
-                                <ErrorMessage
-                                  v-for="(
-                                    errorMessage, index
-                                  ) in errors.member_type"
-                                  :key="index"
-                                  >{{ errorMessage }}
-                                </ErrorMessage>
-                              </template>
-                            </div>
-                          </div>
+<!--                          <div class="col-md-3">-->
+<!--                            <div class="form-group">-->
+<!--                              <label>{{ getCompanyKey("member_type") }}</label>-->
+<!--                              <input-->
+<!--                                v-model="$v.edit.member_type.$model"-->
+<!--                                class="form-control"-->
+<!--                                type="text"-->
+<!--                              />-->
+<!--                              <template v-if="errors.member_type">-->
+<!--                                <ErrorMessage-->
+<!--                                  v-for="(-->
+<!--                                    errorMessage, index-->
+<!--                                  ) in errors.member_type"-->
+<!--                                  :key="index"-->
+<!--                                  >{{ errorMessage }}-->
+<!--                                </ErrorMessage>-->
+<!--                              </template>-->
+<!--                            </div>-->
+<!--                          </div>-->
                           <div class="col-md-3">
                             <div class="form-group position-relative">
                               <label class="control-label">
                                 {{ getCompanyKey("member_type_id") }}
                               </label>
                               <multiselect
-                                disabled
                                 v-model="edit.member_type_id"
                                 :options="memberTypes.map((type) => type.id)"
                                 :custom-label="
@@ -2047,7 +2098,7 @@ export default {
                                 {{ getCompanyKey("financial_status") }}
                               </label>
                               <multiselect
-                                disabled
+                                  :disabled="true"
                                 v-model="edit.financial_status_id"
                                 :options="
                                   financialStatuses.map((type) => type.id)
@@ -2135,29 +2186,32 @@ export default {
                               </label>
                               <b-form-group>
                                 <b-form-radio
+                                    disabled
                                   class="d-inline-block"
                                   v-model="$v.edit.acceptance.$model"
-                                  disabled
                                   name="edit_acceptance"
                                   value="0"
-                                  >{{ $t("general.pending") }}</b-form-radio
-                                >
+                                  >
+                                    {{ $t("general.pending") }}
+                                </b-form-radio>
                                 <b-form-radio
+                                    disabled
                                   class="d-inline-block m-1"
                                   v-model="$v.edit.acceptance.$model"
-                                  disabled
                                   name="edit_acceptance"
                                   value="1"
-                                  >{{ $t("general.accepted") }}</b-form-radio
-                                >
+                                  >
+                                    {{ $t("general.accepted") }}
+                                </b-form-radio>
                                 <b-form-radio
+                                    disabled
                                   class="d-inline-block m-1"
                                   v-model="$v.edit.acceptance.$model"
-                                  disabled
                                   name="edit_acceptance"
                                   value="2"
-                                  >{{ $t("general.declined") }}</b-form-radio
-                                >
+                                  >
+                                    {{ $t("general.declined") }}
+                                </b-form-radio>
                               </b-form-group>
                               <template v-if="errors.acceptance">
                                 <ErrorMessage

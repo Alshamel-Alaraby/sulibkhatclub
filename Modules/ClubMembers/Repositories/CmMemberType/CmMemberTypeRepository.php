@@ -21,6 +21,14 @@ class CmMemberTypeRepository implements CmMemberTypeInterface
             $models->WhereRelation('parent', 'parent_id', $request->parent);
         }
 
+        if ($request->parent_relation){
+            $models->whereNull('parent_id');
+        }
+        if ($request->children_relation){
+            $models->whereNotNull('parent_id');
+        }
+
+
         if ($request->normal_member){
             $models->Where( 'parent_id', $request->normal_member);
         }

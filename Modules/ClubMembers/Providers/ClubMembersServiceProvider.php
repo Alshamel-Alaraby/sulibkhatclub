@@ -25,6 +25,8 @@ use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberInterface;
 use Modules\ClubMembers\Repositories\CmPendingMember\CmPendingMemberRepository;
 use Modules\ClubMembers\Repositories\CmSponser\CmSponserInterface;
 use Modules\ClubMembers\Repositories\CmSponser\CmSponserRepository;
+use Modules\ClubMembers\Repositories\CmStatus\CmStatusInterface;
+use Modules\ClubMembers\Repositories\CmStatus\CmStatusRepository;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionRepository;
 
@@ -76,7 +78,9 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmTransactionInterface::class, CmTransactionRepository::class);
         $this->app->bind(CmCustomTableInterface::class, CmCustomTableRepository::class);
         $this->app->bind(CmMemberRequestInterface::class, CmMemberRequestRepository::class);
-        $this->app->bind(CmMemberStatusInterface::class, CmMemberStatusRepository::class);
+        $this->app->bind(CmStatusInterface::class, CmStatusRepository::class);
+
+
 
 
         $this->commands([

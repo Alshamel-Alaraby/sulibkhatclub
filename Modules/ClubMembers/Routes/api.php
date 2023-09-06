@@ -66,7 +66,6 @@ Route::prefix('club-members')->group(function () {
         Route::get('/logs/{id}', 'CmMemberController@logs')->name('cm-members.logs');
         Route::get('/{id}', 'CmMemberController@find')->name('cm-members.find');
 
-
         Route::put('/update-sponsor-members', 'CmMemberController@updateSponsorID');
 
         Route::post('/', 'CmMemberController@create')->name('cm-members.create');
@@ -185,9 +184,6 @@ Route::prefix('club-members')->group(function () {
         Route::get('member-transaction-paid-after-date', 'CmTransactionController@memberTransactionPaidAfterDate');
         Route::get('get-member-voting', 'CmTransactionController@getMemberVoting');
 
-
-
-
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');
         Route::get('/logs/{id}', 'CmTransactionController@logs')->name('transaction.logs');
         Route::get('/{id}', 'CmTransactionController@find')->name('transaction.find');
@@ -202,11 +198,23 @@ Route::prefix('club-members')->group(function () {
 
     });
 
-
     Route::group(['prefix' => 'statics'], function () {
         Route::get('/getStatics', 'CmStaticsController@getStatics')
-            ->name('getStatics.find');
-        });
+            ->name('statics.getStatics');
+
+        // Route::get('/get-normal-members-percentage', 'CmStaticsController@getNormalMembersPercentage')
+        //     ->name('statics.getNormalMembersPercentage');
+
+        // Route::get('/get-founding-members-percentage', 'CmStaticsController@getFoundingMembersPercentage')
+        //     ->name('statics.getFoundingMembersPercentage');
+
+        // Route::get('/get-dismissed-members-percentage', 'CmStaticsController@getDismissedMembersPercentage')
+        //     ->name('statics.getDismissedMembersPercentage');
+
+
+        // Route::get('/get-sponsor-group-members-percentage', 'CmStaticsController@getSponsorGroupPercentage')
+        //     ->name('statics.getSponsorGroupPercentage');
+    });
 
     Route::group(['prefix' => 'rejects'], function () {
         Route::get('/', 'CmMemberRejectController@index')->name('reject.all');
@@ -215,10 +223,8 @@ Route::prefix('club-members')->group(function () {
 
     });
 
-
-
-      // financial status routes
-      Route::group(['prefix' => 'sponsor-group'], function () {
+    // financial status routes
+    Route::group(['prefix' => 'sponsor-group'], function () {
 
         Route::get('/', 'CmSponsorGroupController@all')->name('sponsor-group.all');
         Route::get('/logs/{id}', 'CmSponsorGroupController@logs')->name('cm-sponsor-group.logs');
