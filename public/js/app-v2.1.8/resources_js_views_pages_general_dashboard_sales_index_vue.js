@@ -10326,7 +10326,6 @@ var render = function () {
               return [
                 _c("p", { staticClass: "mb-0 text-muted" }, [
                   _c("span", { staticClass: "text-success mr-2" }, [
-                    _c("span", { staticClass: "mdi mdi-arrow-up-bold" }),
                     _vm._v(
                       "\n                        " +
                         _vm._s(data.value) +

@@ -34,7 +34,6 @@ export default {
                     <template v-for="data in detail">
                         <p class="mb-0 text-muted">
                         <span class="text-success mr-2">
-                            <span class="mdi mdi-arrow-up-bold"></span>
                             {{ data.value }}
                         </span>
                             <span class="text-nowrap">{{$t('general.'+data.name)}}</span>
