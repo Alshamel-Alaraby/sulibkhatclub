@@ -1477,8 +1477,86 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      series: [44, 55, 41, 15],
-      chartOptions: {
+      series1: [30, 40, 20, 10],
+      chartOptions1: {
+        legend: {
+          show: true,
+          position: "bottom",
+          horizontalAlign: "center",
+          verticalAlign: "middle",
+          floating: false,
+          fontSize: "14px",
+          offsetX: 0,
+          offsetY: 7
+        },
+        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        responsive: [{
+          breakpoint: 600,
+          options: {
+            chart: {
+              height: 240
+            },
+            legend: {
+              show: false
+            }
+          }
+        }]
+      },
+      series2: [30, 40, 20, 10],
+      chartOptions2: {
+        legend: {
+          show: true,
+          position: "bottom",
+          horizontalAlign: "center",
+          verticalAlign: "middle",
+          floating: false,
+          fontSize: "14px",
+          offsetX: 0,
+          offsetY: 7
+        },
+        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        responsive: [{
+          breakpoint: 600,
+          options: {
+            chart: {
+              height: 240
+            },
+            legend: {
+              show: false
+            }
+          }
+        }]
+      },
+      series3: [30, 40, 20, 10],
+      chartOptions3: {
+        legend: {
+          show: true,
+          position: "bottom",
+          horizontalAlign: "center",
+          verticalAlign: "middle",
+          floating: false,
+          fontSize: "14px",
+          offsetX: 0,
+          offsetY: 7
+        },
+        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        responsive: [{
+          breakpoint: 600,
+          options: {
+            chart: {
+              height: 240
+            },
+            legend: {
+              show: false
+            }
+          }
+        }]
+      },
+      series4: [30, 40, 20, 10],
+      chartOptions4: {
         legend: {
           show: true,
           position: "bottom",
@@ -1504,7 +1582,8 @@ __webpack_require__.r(__webpack_exports__);
         }]
       }
     };
-  }
+  },
+  props: ['statices']
 });
 
 /***/ }),
@@ -10565,71 +10644,269 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card" }, [
-    _c(
-      "div",
-      { staticClass: "card-body" },
-      [
-        _c(
-          "b-dropdown",
-          {
-            staticClass: "float-right",
-            attrs: {
-              variant: "black",
-              "toggle-class": "arrow-none card-drop",
-              right: "",
-            },
-            scopedSlots: _vm._u([
-              {
-                key: "button-content",
-                fn: function () {
-                  return [_c("i", { staticClass: "mdi mdi-dots-horizontal" })]
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-xl-4" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h4", { staticClass: "header-title" }, [
+            _vm._v(_vm._s(_vm.$t("general.Ordinarymembers"))),
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
+            [
+              _c("apexchart", {
+                staticClass: "apex-charts",
+                attrs: {
+                  type: "donut",
+                  options: _vm.chartOptions1,
+                  height: "312",
+                  series: _vm.series1,
                 },
-                proxy: true,
-              },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "row mt-3" }, [
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
+              ),
+              _vm._v(" "),
+              _c("h4", [_vm._v("$8712")]),
             ]),
-          },
-          [
             _vm._v(" "),
-            _c("b-dropdown-item", [_vm._v("Settings")]),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
+              ),
+              _vm._v(" "),
+              _vm._m(0),
+            ]),
             _vm._v(" "),
-            _c("b-dropdown-item", [_vm._v("Download")]),
-            _vm._v(" "),
-            _c("b-dropdown-item", [_vm._v("Upload")]),
-            _vm._v(" "),
-            _c("b-dropdown-item", [_vm._v("Action")]),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("h4", { staticClass: "header-title" }, [
-          _vm._v("Projections Vs Actuals"),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
+              ),
+              _vm._v(" "),
+              _vm._m(1),
+            ]),
+          ]),
         ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
-          [
-            _c("apexchart", {
-              staticClass: "apex-charts",
-              attrs: {
-                type: "donut",
-                options: _vm.chartOptions,
-                height: "312",
-                series: _vm.series,
-              },
-            }),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-xl-4" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h4", { staticClass: "header-title" }, [
+            _vm._v(_vm._s(_vm.$t("general.Foundingmembers"))),
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
+            [
+              _c("apexchart", {
+                staticClass: "apex-charts",
+                attrs: {
+                  type: "donut",
+                  options: _vm.chartOptions2,
+                  height: "312",
+                  series: _vm.series2,
+                },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "row mt-3" }, [
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
+              ),
+              _vm._v(" "),
+              _c("h4", [_vm._v("$8712")]),
+            ]),
             _vm._v(" "),
-            _vm._m(0),
-          ],
-          1
-        ),
-      ],
-      1
-    ),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
+              ),
+              _vm._v(" "),
+              _vm._m(2),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
+              ),
+              _vm._v(" "),
+              _vm._m(3),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-xl-4" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h4", { staticClass: "header-title" }, [
+            _vm._v(_vm._s(_vm.$t("general.dismissedMemberCount"))),
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
+            [
+              _c("apexchart", {
+                staticClass: "apex-charts",
+                attrs: {
+                  type: "donut",
+                  options: _vm.chartOptions4,
+                  height: "312",
+                  series: _vm.series4,
+                },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "row mt-3" }, [
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
+              ),
+              _vm._v(" "),
+              _c("h4", [_vm._v("$8712")]),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
+              ),
+              _vm._v(" "),
+              _vm._m(4),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-4" }, [
+              _c(
+                "p",
+                { staticClass: "text-muted font-15 mb-1 text-truncate" },
+                [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
+              ),
+              _vm._v(" "),
+              _vm._m(5),
+            ]),
+          ]),
+        ]),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-xl-4" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h4", { staticClass: "header-title" }, [
+            _vm._v(_vm._s(_vm.$t("general.allSponer"))),
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
+            [
+              _c("apexchart", {
+                staticClass: "apex-charts",
+                attrs: {
+                  type: "donut",
+                  options: _vm.chartOptions4,
+                  height: "312",
+                  series: _vm.series4,
+                },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm._m(6),
+        ]),
+      ]),
+    ]),
   ])
 }
 var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-up text-success" }),
+      _vm._v(" $523"),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-down text-danger" }),
+      _vm._v(" $965"),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-up text-success" }),
+      _vm._v(" $523"),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-down text-danger" }),
+      _vm._v(" $965"),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-up text-success" }),
+      _vm._v(" $523"),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h4", [
+      _c("i", { staticClass: "fe-arrow-down text-danger" }),
+      _vm._v(" $965"),
+    ])
+  },
   function () {
     var _vm = this
     var _h = _vm.$createElement
@@ -11457,6 +11734,8 @@ var render = function () {
           1
         ),
       ]),
+      _vm._v(" "),
+      _c("Projections", { attrs: { statices: _vm.statices } }),
     ],
     1
   )

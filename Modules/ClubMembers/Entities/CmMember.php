@@ -23,6 +23,14 @@ class CmMember extends Model
         'last_transaction_date' => 'date',
     ];
 
+    public function getLastNameAttribute()
+    {
+        if (!$this->last_name)
+        {
+            return '';
+        }
+    }
+
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');

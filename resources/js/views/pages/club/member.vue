@@ -2098,7 +2098,6 @@ export default {
                                 {{ getCompanyKey("financial_status") }}
                               </label>
                               <multiselect
-                                  :disabled="true"
                                 v-model="edit.financial_status_id"
                                 :options="
                                   financialStatuses.map((type) => type.id)

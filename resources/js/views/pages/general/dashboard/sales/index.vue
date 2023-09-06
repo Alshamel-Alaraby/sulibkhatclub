@@ -12,7 +12,6 @@ import Projections from "../../../../../components/widgets/Projections"
 import adminApi from "../../../../../api/adminAxios";
 import CrmWidget from "../../../../../components/widgets/Crm-widget";
 
-
 /**
  * Sales-Dashboard component
  */
@@ -219,6 +218,9 @@ export default {
             <!-- end col -->
         </div>
         <!-- end row -->
+
+        <Projections :statices="statices"  />
+
     </Layout>
 </template>
 
