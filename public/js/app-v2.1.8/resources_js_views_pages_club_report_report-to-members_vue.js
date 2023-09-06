@@ -13658,7 +13658,7 @@ var render = function () {
                                   "th",
                                   {
                                     staticClass: "text-center",
-                                    attrs: { colspan: "15" },
+                                    attrs: { colspan: "18" },
                                   },
                                   [
                                     _vm._v(

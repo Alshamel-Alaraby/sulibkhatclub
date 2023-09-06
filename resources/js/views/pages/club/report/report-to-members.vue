@@ -968,7 +968,7 @@ export default {
                                 </tbody>
                                 <tbody v-else>
                                 <tr>
-                                    <th class="text-center" colspan="15">{{ $t('general.notDataFound') }}</th>
+                                    <th class="text-center" colspan="18">{{ $t('general.notDataFound') }}</th>
                                 </tr>
                                 </tbody>
                             </table>
