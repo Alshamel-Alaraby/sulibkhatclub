@@ -11388,6 +11388,21 @@ var render = function () {
           [
             _c("CrmWidget", {
               attrs: {
+                title: "pendingMember",
+                icon: "ri-hand-heart-line",
+                value: _vm.statices.RequestMembersPendingCount,
+              },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "col-xl-3 col-md-6" },
+          [
+            _c("CrmWidget", {
+              attrs: {
                 title: "sponsor",
                 icon: "ri-money-dollar-box-line",
                 value: _vm.statices.sponsorsCount,

@@ -183,6 +183,13 @@ export default {
             </div>
             <div class="col-xl-3 col-md-6">
                 <CrmWidget
+                    :title="'pendingMember'"
+                    :icon="'ri-hand-heart-line'"
+                    :value="statices.RequestMembersPendingCount"
+                />
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <CrmWidget
                     :title="'sponsor'"
                     :icon="'ri-money-dollar-box-line'"
                     :value="statices.sponsorsCount"

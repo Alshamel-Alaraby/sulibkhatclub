@@ -108,8 +108,10 @@ class CmStaticsController extends Controller
 
         // ///////////////////////////// طلبات العضوية ////////////////////////////////////////////////////////
         $data['allRequestMembersCount'] = CmMemberRequest::count();
-        $data['RequestMembersPendingCount'] = CmMemberRequest::WhereRelation('memberType', 'id', 15)->count();
-        $data['RequestMembersRejectedCount'] = CmMemberRequest::WhereRelation('memberType', 'id', 16)->count();
+        $pending_member_request = CmMemberRequest::where('member_type_id', 15)->count();
+        $pending_member = CmMember::where('member_type_id', 15)->count();
+        $data['RequestMembersPendingCount'] = $pending_member_request + $pending_member ;
+        $data['RequestMembersRejectedCount'] = CmMemberRequest::where('member_type_id', 16)->count();
 
         $data['RequestMembersPendingPercentage'] =  ($data['allRequestMembersCount'] != 0) ? round($data['RequestMembersPendingCount'] / $data['allRequestMembersCount'] * 100, 2):0;
         $data['RequestMembersRejectedPercentage'] =  ($data['allRequestMembersCount'] != 0) ?  round($data['RequestMembersRejectedCount'] / $data['allRequestMembersCount'] * 100, 2) :0;
