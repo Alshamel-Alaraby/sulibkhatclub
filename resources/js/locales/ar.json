@@ -1431,6 +1431,8 @@
         "Changeofmemberrights": "تغير حقوق الاعضاء",
         "ReportToMembers": "تقرير الاستعلام عن الاعضاء",
         "whichYearHeStarted": "بدا من سنه",
-        "NumberOfSubscriptionYears": "عدد سنوات الاشتراك"
+        "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
+        "Ordinarymembers": "الاعضاء العاديين",
+        "Foundingmembers": "الاعضاء المؤسسين"
     }
 }

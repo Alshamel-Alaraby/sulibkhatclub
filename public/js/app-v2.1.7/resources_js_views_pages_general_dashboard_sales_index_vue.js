@@ -1242,6 +1242,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     value: {
       required: true
+    },
+    detail: {
+      "default": []
     }
   },
   data: function data() {
@@ -1477,7 +1480,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      series1: [30, 40, 20, 10],
+      series1: [],
       chartOptions1: {
         legend: {
           show: true,
@@ -1489,8 +1492,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        labels: [this.$t('general.voteMemberCount'), this.$t('general.AttendElections'), this.$t('general.nominateMemberCount')],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1503,7 +1506,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }]
       },
-      series2: [30, 40, 20, 10],
+      series2: [],
       chartOptions2: {
         legend: {
           show: true,
@@ -1515,8 +1518,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        labels: [this.$t('general.voteMemberCount'), this.$t('general.AttendElections'), this.$t('general.nominateMemberCount')],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1529,7 +1532,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }]
       },
-      series3: [30, 40, 20, 10],
+      series3: [],
       chartOptions3: {
         legend: {
           show: true,
@@ -1541,8 +1544,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        labels: [this.$t('general.voteMemberCount'), this.$t('general.AttendElections'), this.$t('general.nominateMemberCount')],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1555,7 +1558,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         }]
       },
-      series4: [30, 40, 20, 10],
+      series4: [],
       chartOptions4: {
         legend: {
           show: true,
@@ -1567,8 +1570,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: ["Direct", "Affilliate", "Sponsored", "E-mail"],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#f672a7"],
+        labels: ["Direct", "Affilliate", "Sponsored"],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1583,7 +1586,14 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  props: ['statices']
+  props: ['statices'],
+  watch: {
+    statices: function statices(newDa, old) {
+      this.series1 = [newDa.voteNormalMemberPercentage, newDa.presenceNormalMemberCount, newDa.nominateNormalMemberPercentage];
+      this.series2 = [newDa.voteFoundingMemberPercentage, newDa.presenceFoundingMemberPercentage, newDa.nominateFoundingMemberPercentage];
+      this.series3 = [newDa.voteDismissedMemberPercentage, newDa.presenceDismissedMemberPercentage, newDa.nominateDismissedMemberPercentage];
+    }
+  }
 });
 
 /***/ }),
@@ -2274,7 +2284,8 @@ __webpack_require__.r(__webpack_exports__);
         productid: 200250
       }],
       isLoader: false,
-      statices: {}
+      statices: {},
+      normalDetails: []
     };
   },
   mounted: function mounted() {
@@ -2286,8 +2297,8 @@ __webpack_require__.r(__webpack_exports__);
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/club-members/statics/getStatics").then(function (res) {
         var l = res.data.data;
-        console.log(l);
         _this.statices = l;
+        _this.staticesHandel();
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
           icon: 'error',
@@ -2297,6 +2308,11 @@ __webpack_require__.r(__webpack_exports__);
       })["finally"](function () {
         _this.isLoader = false;
       });
+    },
+    staticesHandel: function staticesHandel() {
+      this.normalDetails = [{
+        'name': ""
+      }];
     }
   }
 });
@@ -10247,22 +10263,45 @@ var render = function () {
   return _c("div", { staticClass: "card" }, [
     _c("div", { staticClass: "card-body" }, [
       _c("div", { staticClass: "d-flex justify-content-between" }, [
-        _c("div", [
-          _c(
-            "h5",
-            {
-              staticClass: "text-muted font-weight-normal mt-0 text-truncate",
-              attrs: { title: "Campaign Sent" },
-            },
-            [_vm._v(_vm._s(_vm.$t("general." + _vm.title)))]
-          ),
-          _vm._v(" "),
-          _c("h3", { staticClass: "my-2 py-1" }, [
-            _c("span", { attrs: { "data-plugin": "counterup" } }, [
-              _vm._v(_vm._s(_vm.value)),
+        _c(
+          "div",
+          [
+            _c(
+              "h5",
+              {
+                staticClass: "text-muted font-weight-normal mt-0 text-truncate",
+                attrs: { title: "Campaign Sent" },
+              },
+              [_vm._v(_vm._s(_vm.$t("general." + _vm.title)))]
+            ),
+            _vm._v(" "),
+            _c("h3", { staticClass: "my-2 py-1" }, [
+              _c("span", { attrs: { "data-plugin": "counterup" } }, [
+                _vm._v(_vm._s(_vm.value)),
+              ]),
             ]),
-          ]),
-        ]),
+            _vm._v(" "),
+            _vm._l(_vm.detail, function (data) {
+              return [
+                _c("p", { staticClass: "mb-0 text-muted" }, [
+                  _c("span", { staticClass: "text-success mr-2" }, [
+                    _c("span", { staticClass: "mdi mdi-arrow-up-bold" }),
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(data.value) +
+                        "\n                    "
+                    ),
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "text-nowrap" }, [
+                    _vm._v(_vm._s(_vm.$t("general." + data.name))),
+                  ]),
+                ]),
+              ]
+            }),
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "avatar-sm" }, [
           _c("span", { staticClass: "avatar-title bg-soft-primary rounded" }, [
@@ -10677,7 +10716,7 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
               ),
               _vm._v(" "),
-              _c("h4", [_vm._v("$8712")]),
+              _c("h4", [_vm._v(_vm._s(_vm.statices.voteNormalMemberCount))]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10687,7 +10726,10 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
               ),
               _vm._v(" "),
-              _vm._m(0),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-up text-success" }),
+                _vm._v(" " + _vm._s(_vm.statices.AttendElections)),
+              ]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10697,7 +10739,10 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
               ),
               _vm._v(" "),
-              _vm._m(1),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-down text-danger" }),
+                _vm._v(" " + _vm._s(_vm.statices.nominateMemberCount)),
+              ]),
             ]),
           ]),
         ]),
@@ -10733,10 +10778,10 @@ var render = function () {
               _c(
                 "p",
                 { staticClass: "text-muted font-15 mb-1 text-truncate" },
-                [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
+                [_vm._v(_vm._s(_vm.$t("general.voteFoundingMemberCount")))]
               ),
               _vm._v(" "),
-              _c("h4", [_vm._v("$8712")]),
+              _c("h4", [_vm._v(_vm._s(_vm.statices.voteNormalMemberCount))]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10746,7 +10791,10 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
               ),
               _vm._v(" "),
-              _vm._m(2),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-up text-success" }),
+                _vm._v(" " + _vm._s(_vm.statices.presenceFoundingMemberCount)),
+              ]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10756,7 +10804,10 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
               ),
               _vm._v(" "),
-              _vm._m(3),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-down text-danger" }),
+                _vm._v(" " + _vm._s(_vm.statices.nominateFoundingMemberCount)),
+              ]),
             ]),
           ]),
         ]),
@@ -10778,9 +10829,9 @@ var render = function () {
                 staticClass: "apex-charts",
                 attrs: {
                   type: "donut",
-                  options: _vm.chartOptions4,
+                  options: _vm.chartOptions3,
                   height: "312",
-                  series: _vm.series4,
+                  series: _vm.series3,
                 },
               }),
             ],
@@ -10792,10 +10843,10 @@ var render = function () {
               _c(
                 "p",
                 { staticClass: "text-muted font-15 mb-1 text-truncate" },
-                [_vm._v(_vm._s(_vm.$t("general.voteMemberCount")))]
+                [_vm._v(_vm._s(_vm.$t("general.voteDismissedMemberCount")))]
               ),
               _vm._v(" "),
-              _c("h4", [_vm._v("$8712")]),
+              _c("h4", [_vm._v(_vm._s(_vm.statices.voteNormalMemberCount))]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10805,7 +10856,10 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.AttendElections")))]
               ),
               _vm._v(" "),
-              _vm._m(4),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-up text-success" }),
+                _vm._v(" " + _vm._s(_vm.statices.presenceDismissedMemberCount)),
+              ]),
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-4" }, [
@@ -10815,135 +10869,18 @@ var render = function () {
                 [_vm._v(_vm._s(_vm.$t("general.nominateMemberCount")))]
               ),
               _vm._v(" "),
-              _vm._m(5),
+              _c("h4", [
+                _c("i", { staticClass: "fe-arrow-down text-danger" }),
+                _vm._v(" " + _vm._s(_vm.statices.nominateDismissedMemberCount)),
+              ]),
             ]),
           ]),
         ]),
       ]),
     ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-xl-4" }, [
-      _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c("h4", { staticClass: "header-title" }, [
-            _vm._v(_vm._s(_vm.$t("general.allSponer"))),
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "mt-3 text-center", attrs: { dir: "ltr" } },
-            [
-              _c("apexchart", {
-                staticClass: "apex-charts",
-                attrs: {
-                  type: "donut",
-                  options: _vm.chartOptions4,
-                  height: "312",
-                  series: _vm.series4,
-                },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _vm._m(6),
-        ]),
-      ]),
-    ]),
   ])
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-up text-success" }),
-      _vm._v(" $523"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-down text-danger" }),
-      _vm._v(" $965"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-up text-success" }),
-      _vm._v(" $523"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-down text-danger" }),
-      _vm._v(" $965"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-up text-success" }),
-      _vm._v(" $523"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h4", [
-      _c("i", { staticClass: "fe-arrow-down text-danger" }),
-      _vm._v(" $965"),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row mt-3" }, [
-      _c("div", { staticClass: "col-4" }, [
-        _c("p", { staticClass: "text-muted font-15 mb-1 text-truncate" }, [
-          _vm._v("Target"),
-        ]),
-        _vm._v(" "),
-        _c("h4", [_vm._v("$8712")]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-4" }, [
-        _c("p", { staticClass: "text-muted font-15 mb-1 text-truncate" }, [
-          _vm._v("Last week"),
-        ]),
-        _vm._v(" "),
-        _c("h4", [
-          _c("i", { staticClass: "fe-arrow-up text-success" }),
-          _vm._v(" $523"),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-4" }, [
-        _c("p", { staticClass: "text-muted font-15 mb-1 text-truncate" }, [
-          _vm._v("Last Month"),
-        ]),
-        _vm._v(" "),
-        _c("h4", [
-          _c("i", { staticClass: "fe-arrow-down text-danger" }),
-          _vm._v(" $965"),
-        ]),
-      ]),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -11734,8 +11671,6 @@ var render = function () {
           1
         ),
       ]),
-      _vm._v(" "),
-      _c("Projections", { attrs: { statices: _vm.statices } }),
     ],
     1
   )

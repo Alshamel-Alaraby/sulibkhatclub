@@ -1291,6 +1291,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     value: {
       required: true
+    },
+    detail: {
+      "default": []
     }
   },
   data: function data() {
@@ -9883,22 +9886,45 @@ var render = function () {
   return _c("div", { staticClass: "card" }, [
     _c("div", { staticClass: "card-body" }, [
       _c("div", { staticClass: "d-flex justify-content-between" }, [
-        _c("div", [
-          _c(
-            "h5",
-            {
-              staticClass: "text-muted font-weight-normal mt-0 text-truncate",
-              attrs: { title: "Campaign Sent" },
-            },
-            [_vm._v(_vm._s(_vm.$t("general." + _vm.title)))]
-          ),
-          _vm._v(" "),
-          _c("h3", { staticClass: "my-2 py-1" }, [
-            _c("span", { attrs: { "data-plugin": "counterup" } }, [
-              _vm._v(_vm._s(_vm.value)),
+        _c(
+          "div",
+          [
+            _c(
+              "h5",
+              {
+                staticClass: "text-muted font-weight-normal mt-0 text-truncate",
+                attrs: { title: "Campaign Sent" },
+              },
+              [_vm._v(_vm._s(_vm.$t("general." + _vm.title)))]
+            ),
+            _vm._v(" "),
+            _c("h3", { staticClass: "my-2 py-1" }, [
+              _c("span", { attrs: { "data-plugin": "counterup" } }, [
+                _vm._v(_vm._s(_vm.value)),
+              ]),
             ]),
-          ]),
-        ]),
+            _vm._v(" "),
+            _vm._l(_vm.detail, function (data) {
+              return [
+                _c("p", { staticClass: "mb-0 text-muted" }, [
+                  _c("span", { staticClass: "text-success mr-2" }, [
+                    _c("span", { staticClass: "mdi mdi-arrow-up-bold" }),
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(data.value) +
+                        "\n                    "
+                    ),
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "text-nowrap" }, [
+                    _vm._v(_vm._s(_vm.$t("general." + data.name))),
+                  ]),
+                ]),
+              ]
+            }),
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "avatar-sm" }, [
           _c("span", { staticClass: "avatar-title bg-soft-primary rounded" }, [

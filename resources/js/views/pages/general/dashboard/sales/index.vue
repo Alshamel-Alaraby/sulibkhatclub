@@ -123,7 +123,8 @@ export default {
                 },
             ],
             isLoader : false,
-            statices: {}
+            statices: {},
+            normalDetails:[],
         };
     },
     mounted() {
@@ -137,8 +138,8 @@ export default {
             adminApi.get(`/club-members/statics/getStatics`)
                 .then((res) => {
                     let l = res.data.data;
-                    console.log(l)
                     this.statices = l;
+                    this.staticesHandel();
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -151,6 +152,15 @@ export default {
                     this.isLoader = false;
                 });
         },
+
+        staticesHandel()
+        {
+            this.normalDetails = [
+                {
+                    'name':""
+                }
+            ];
+        }
     }
 };
 </script>
@@ -219,7 +229,7 @@ export default {
         </div>
         <!-- end row -->
 
-        <Projections :statices="statices"  />
+<!--        <Projections :statices="statices"  />-->
 
     </Layout>
 </template>

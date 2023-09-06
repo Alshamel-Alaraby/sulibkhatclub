@@ -3591,7 +3591,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       is_disabled: false,
       fullName: '',
-      filterSetting: ["first_name", "second_name", "third_name", "last_name", "family_name", "status_id", "birth_date", "national_id", "nationality_number", "home_phone", "work_phone", "home_address", "work_address", "job", "degree", "sponsor_id"],
+      filterSetting: ["first_name", "second_name", "third_name", "last_name", "family_name", "status_id", "birth_date", "national_id", "nationality_number", "home_phone", "work_phone", "home_address", "work_address", "job", "degree", "sponsor_id", "membership_number"],
       printLoading: true,
       printObj: {
         id: "printData"
@@ -19962,6 +19962,30 @@ var render = function () {
                               },
                             },
                             [
+                              _c(
+                                "b-form-checkbox",
+                                {
+                                  staticClass: "mb-1",
+                                  attrs: { value: "membership_number" },
+                                  model: {
+                                    value: _vm.filterSetting,
+                                    callback: function ($$v) {
+                                      _vm.filterSetting = $$v
+                                    },
+                                    expression: "filterSetting",
+                                  },
+                                },
+                                [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm.getCompanyKey(
+                                        "member_membership_number"
+                                      )
+                                    ) + "\n                      "
+                                  ),
+                                ]
+                              ),
+                              _vm._v(" "),
                               _c(
                                 "b-form-checkbox",
                                 {

@@ -31,42 +31,60 @@ class CmStaticsController extends Controller
         $data['nominateMemberCount'] = CmMember::whereIn('auto_member_type_id', [2, 3])->count();
         ////////////////////////////////////// بيانات الاعضاء العاديين //////////////////////////////////////
 
-        // // عدد أعضاء حضور الانتخابات
-        $data['presenceNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [1, 2, 3])->count();
+        // // في لائحة الاعضاء
+        $data['InTheListOfMembers'] = CmMember::where('member_type_id', 4)->count();
 
-        // // عدد الأعضاء تصويت في الانتخابات
-        $data['voteNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->where('auto_member_type_id', 2)->count();
+        // // موقوف
+        $data['stopped'] = CmMember::where('member_type_id', 5)->count();
 
-        // // عدد الأعضاء الترشح في الانتخابات
-        $data['nominateNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [2, 3])->count();
+        // // له حق الترشح
+        $data['HeHasTheRightToRun'] = CmMember::where('member_type_id', 11)->count();
 
-        // نسبة أعضاء حضور الانتخابات
-        $data['presenceNormalMemberPercentage'] = round($data['presenceNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+        // // له حق التصويت
+        $data['HeHasTheRightToVote'] = CmMember::where('member_type_id', 12)->count();
 
-        // نسبة الأعضاء تصويت في الانتخابات
-        $data['voteNormalMemberPercentage'] = round($data['voteNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+        // // ليس له حق التصويت
+        $data['HeHasNoRightToVote'] = CmMember::where('member_type_id', 17)->count();
 
-        // نسبة الأعضاء الترشح في الانتخابات
-        $data['nominateNormalMemberPercentage'] = round($data['nominateNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+        // // مسدد ليس له حق الحضور
+        $data['PaidPersonHasNoRightToAttend'] = CmMember::where('member_type_id', 19)->count();
 
-        // //////////////////////////////////////////    المؤسسين    ////////////////////////////////////////////////////////////////
-        // // // عدد أعضاء حضور الانتخابات
-        $data['presenceFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [1, 2, 3])->count();
-
-        // // عدد الأعضاء تصويت في الانتخابات
-        $data['voteFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->where('auto_member_type_id', 2)->count();
-
-        // // عدد الأعضاء الترشح في الانتخابات
-        $data['nominateFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [2, 3])->count();
-
-        // نسبة أعضاء حضور الانتخابات
-        $data['presenceFoundingMemberPercentage'] = ($data['foundingMemberCount'] != 0) ? round($data['presenceFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2) : 0;
-
-        // نسبة الأعضاء تصويت في الانتخابات
-        $data['voteFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['voteFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
-
-        // نسبة الأعضاء الترشح في الانتخابات
-        $data['nominateFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['nominateFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
+//        // // عدد أعضاء حضور الانتخابات
+//        $data['presenceNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [1, 2, 3])->count();
+//
+//        // // عدد الأعضاء تصويت في الانتخابات
+//        $data['voteNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->where('auto_member_type_id', 2)->count();
+//
+//        // // عدد الأعضاء الترشح في الانتخابات
+//        $data['nominateNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [2, 3])->count();
+//
+//        // نسبة أعضاء حضور الانتخابات
+//        $data['presenceNormalMemberPercentage'] = round($data['presenceNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+//
+//        // نسبة الأعضاء تصويت في الانتخابات
+//        $data['voteNormalMemberPercentage'] = round($data['voteNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+//
+//        // نسبة الأعضاء الترشح في الانتخابات
+//        $data['nominateNormalMemberPercentage'] = round($data['nominateNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
+//
+//        // //////////////////////////////////////////    المؤسسين    ////////////////////////////////////////////////////////////////
+//        // // // عدد أعضاء حضور الانتخابات
+//        $data['presenceFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [1, 2, 3])->count();
+//
+//        // // عدد الأعضاء تصويت في الانتخابات
+//        $data['voteFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->where('auto_member_type_id', 2)->count();
+//
+//        // // عدد الأعضاء الترشح في الانتخابات
+//        $data['nominateFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [2, 3])->count();
+//
+//        // نسبة أعضاء حضور الانتخابات
+//        $data['presenceFoundingMemberPercentage'] = ($data['foundingMemberCount'] != 0) ? round($data['presenceFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2) : 0;
+//
+//        // نسبة الأعضاء تصويت في الانتخابات
+//        $data['voteFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['voteFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
+//
+//        // نسبة الأعضاء الترشح في الانتخابات
+//        $data['nominateFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['nominateFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
 
         // //////////////////////////////////////////    المشطوبين    //////////////////////////////////////////////////////////
 

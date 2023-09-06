@@ -156,6 +156,7 @@ export default {
         "job",
         "degree",
         "sponsor_id",
+        "membership_number",
       ],
       printLoading: true,
       printObj: {
@@ -674,6 +675,12 @@ export default {
                     ref="dropdown"
                     class="btn-block setting-search"
                   >
+                      <b-form-checkbox
+                          v-model="filterSetting"
+                          value="membership_number"
+                          class="mb-1"
+                      >{{ getCompanyKey("member_membership_number") }}
+                      </b-form-checkbox>
                     <b-form-checkbox
                       v-model="filterSetting"
                       value="status_id"
