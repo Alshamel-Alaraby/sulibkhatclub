@@ -23,10 +23,12 @@ class CmMember extends Model
         'last_transaction_date' => 'date',
     ];
 
-    public function getLastNameAttribute($key)
+    public function getLastNameAttribute($value)
     {
-        if (!$this->$key)
+        if ($value)
         {
+            return $value;
+        }else{
             return '';
         }
     }

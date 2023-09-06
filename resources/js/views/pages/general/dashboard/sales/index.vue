@@ -125,6 +125,8 @@ export default {
             isLoader : false,
             statices: {},
             normalDetails:[],
+            dismissedDetails:[],
+            foundingDetails:[],
         };
     },
     mounted() {
@@ -157,8 +159,61 @@ export default {
         {
             this.normalDetails = [
                 {
-                    'name':""
-                }
+                    "name":'InTheListOfMembers',
+                    "value":this.statices.InTheListOfMembers
+                },
+                {
+                    "name":'stopped',
+                    "value":this.statices.stopped
+                },
+                {
+                    "name":'HeHasTheRightToRun',
+                    "value":this.statices.HeHasTheRightToRun
+                },
+                {
+                    "name":'HeHasTheRightToVote',
+                    "value":this.statices.HeHasTheRightToVote
+                },
+                {
+                    "name":'HeHasNoRightToVote',
+                    "value":this.statices.HeHasNoRightToVote
+                },
+                {
+                    "name":'PaidPersonHasNoRightToAttend',
+                    "value":this.statices.PaidPersonHasNoRightToAttend
+                },
+            ];
+            this.dismissedDetails = [
+                {
+                    "name":'DeletedAtHisRequest',
+                    "value":this.statices.DeletedAtHisRequest
+                },
+                {
+                    "name":'CancellationDueToDeath',
+                    "value":this.statices.CancellationDueToDeath
+                },
+                {
+                    "name":'CancellationPursuantToMinisterialDecision',
+                    "value":this.statices.CancellationPursuantToMinisterialDecision
+                },
+                {
+                    "name":'CancellationAccordingToTheAuthoritySLetter',
+                    "value":this.statices.CancellationAccordingToTheAuthoritySLetter
+                },
+                {
+                    "name":'WriteOffForNonPayment',
+                    "value":this.statices.WriteOffForNonPayment
+                },
+            ];
+            this.foundingDetails = [
+                {
+                    "name":'FoundingMemberDetail',
+                    "value":this.statices.FoundingMemberDetail
+                },
+                {
+                    "name":'HeHasTheRightToRunAndVoteDetail',
+                    "value":this.statices.HeHasTheRightToRunAndVoteDetail
+                },
             ];
         }
     }
@@ -174,6 +229,7 @@ export default {
                     :title="'normalMemberCount'"
                     :icon="'ri-stack-line'"
                     :value="statices.normalMemberCount"
+                    :detail="normalDetails"
                 />
             </div>
             <div class="col-xl-3 col-md-6">
@@ -181,6 +237,7 @@ export default {
                     :title="'dismissedMemberCount'"
                     :icon="'ri-slideshow-2-line'"
                     :value="statices.dismissedMemberCount"
+                    :detail="dismissedDetails"
                 />
             </div>
             <div class="col-xl-3 col-md-6">
@@ -188,6 +245,7 @@ export default {
                     :title="'foundingMemberCount'"
                     :icon="'ri-hand-heart-line'"
                     :value="statices.foundingMemberCount"
+                    :detail="foundingDetails"
                 />
             </div>
             <div class="col-xl-3 col-md-6">

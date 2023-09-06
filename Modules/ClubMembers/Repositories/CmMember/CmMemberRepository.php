@@ -319,17 +319,17 @@ class CmMemberRepository implements CmMemberInterface
 
         if ($request->financial_status_id)
         {
-            $models->where('financial_status_id',$request->financial_status_id);
+            $models->whereIn('financial_status_id',explode(",", $request->financial_status_id));
         }
 
         if ($request->member_type_id)
         {
-            $models->where('member_type_id',$request->member_type_id);
+            $models->whereIn('member_type_id',explode(",", $request->member_type_id));
         }
 
         if ($request->status_id)
         {
-            $models->where('status_id',$request->status_id);
+            $models->whereIn('status_id',explode(",", $request->status_id));
         }
 
         if ($request->year_number)

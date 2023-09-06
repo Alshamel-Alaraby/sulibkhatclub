@@ -37,7 +37,7 @@ export default {
                             <span class="mdi mdi-arrow-up-bold"></span>
                             {{ data.value }}
                         </span>
-                            <span class="text-nowrap">{{$t('general.' + data.name)}}</span>
+                            <span class="text-nowrap">{{$t('general.'+data.name)}}</span>
                         </p>
                     </template>
                 </div>

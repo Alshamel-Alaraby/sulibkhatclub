@@ -1433,6 +1433,20 @@
         "whichYearHeStarted": "بدا من سنه",
         "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
         "Ordinarymembers": "الاعضاء العاديين",
-        "Foundingmembers": "الاعضاء المؤسسين"
+        "Foundingmembers": "الاعضاء المؤسسين",
+        "InTheListOfMembers": "في لائحة الاعضاء",
+        "stopped": "موقوف",
+        "HeHasTheRightToRun": "له حق الترشح",
+        "HeHasTheRightToVote": "له حق التصويت",
+        "HeHasNoRightToVote": "ليس له حق التصويت",
+        "PaidPersonHasNoRightToAttend": "مسدد ليس له حق الحضور",
+        "DeletedAtHisRequest": "شطب بناءا علي طلبه",
+        "CancellationDueToDeath": "شطب للوفاة",
+        "CancellationPursuantToMinisterialDecision": "شطب بموجب القرار الوزاري",
+        "CancellationAccordingToTheAuthoritySLetter": "شطب بموجب كتاب الهيئة",
+        "WriteOffForNonPayment": "شطب لعدم السداد",
+        "FoundingMemberDetail": "عضو مؤسس",
+        "HeHasTheRightToRunAndVoteDetail": "له حق الترشح و التصويت",
+        "choseAll": "اختر الكل"
     }
 }

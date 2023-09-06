@@ -49,62 +49,31 @@ class CmStaticsController extends Controller
         // // مسدد ليس له حق الحضور
         $data['PaidPersonHasNoRightToAttend'] = CmMember::where('member_type_id', 19)->count();
 
-//        // // عدد أعضاء حضور الانتخابات
-//        $data['presenceNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [1, 2, 3])->count();
-//
-//        // // عدد الأعضاء تصويت في الانتخابات
-//        $data['voteNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->where('auto_member_type_id', 2)->count();
-//
-//        // // عدد الأعضاء الترشح في الانتخابات
-//        $data['nominateNormalMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [2, 3])->count();
-//
-//        // نسبة أعضاء حضور الانتخابات
-//        $data['presenceNormalMemberPercentage'] = round($data['presenceNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
-//
-//        // نسبة الأعضاء تصويت في الانتخابات
-//        $data['voteNormalMemberPercentage'] = round($data['voteNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
-//
-//        // نسبة الأعضاء الترشح في الانتخابات
-//        $data['nominateNormalMemberPercentage'] = round($data['nominateNormalMemberCount'] / $data['normalMemberCount'] * 100, 2);
-//
-//        // //////////////////////////////////////////    المؤسسين    ////////////////////////////////////////////////////////////////
-//        // // // عدد أعضاء حضور الانتخابات
-//        $data['presenceFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [1, 2, 3])->count();
-//
-//        // // عدد الأعضاء تصويت في الانتخابات
-//        $data['voteFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->where('auto_member_type_id', 2)->count();
-//
-//        // // عدد الأعضاء الترشح في الانتخابات
-//        $data['nominateFoundingMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [2, 3])->count();
-//
-//        // نسبة أعضاء حضور الانتخابات
-//        $data['presenceFoundingMemberPercentage'] = ($data['foundingMemberCount'] != 0) ? round($data['presenceFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2) : 0;
-//
-//        // نسبة الأعضاء تصويت في الانتخابات
-//        $data['voteFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['voteFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
-//
-//        // نسبة الأعضاء الترشح في الانتخابات
-//        $data['nominateFoundingMemberPercentage'] =  ($data['foundingMemberCount'] != 0) ? round($data['nominateFoundingMemberCount'] / $data['foundingMemberCount'] * 100, 2):0;
-
         // //////////////////////////////////////////    المشطوبين    //////////////////////////////////////////////////////////
 
-        // // // عدد أعضاء حضور الانتخابات
-        $data['presenceDismissedMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->whereIn('auto_member_type_id', [1, 2, 3])->count();
+        // // شطب بناءا علي طلبه
+        $data['DeletedAtHisRequest'] = CmMember::where('member_type_id', 6)->count();
 
-        // // عدد الأعضاء تصويت في الانتخابات
-        $data['voteDismissedMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->where('auto_member_type_id', 2)->count();
+        // // شطب للوفاة
+        $data['CancellationDueToDeath'] = CmMember::where('member_type_id', 7)->count();
 
-        // // عدد الأعضاء الترشح في الانتخابات
-        $data['nominateDismissedMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->whereIn('auto_member_type_id', [2, 3])->count();
+        // // شطب بموجب القرار الوزاري
+        $data['CancellationPursuantToMinisterialDecision'] = CmMember::where('member_type_id', 8)->count();
 
-        // نسبة أعضاء حضور الانتخابات
-        $data['presenceDismissedMemberPercentage'] = round($data['presenceDismissedMemberCount'] / $data['dismissedMemberCount'] * 100, 2);
+        // // شطب بموجب كتاب الهيئة
+        $data['CancellationAccordingToTheAuthoritySLetter'] = CmMember::where('member_type_id', 9)->count();
 
-        // نسبة الأعضاء تصويت في الانتخابات
-        $data['voteDismissedMemberPercentage'] = round($data['voteDismissedMemberCount'] / $data['dismissedMemberCount'] * 100, 2);
+        // // شطب لعدم السداد
+        $data['WriteOffForNonPayment'] = CmMember::where('member_type_id', 18)->count();
 
-        // نسبة الأعضاء الترشح في الانتخابات
-        $data['nominateDismissedMemberPercentage'] = round($data['nominateDismissedMemberCount'] / $data['dismissedMemberCount'] * 100, 2);
+        // //////////////////////////////////////////    الأعضاء المؤسسين    //////////////////////////////////////////////////////////
+
+        // // عضو مؤسس
+        $data['FoundingMemberDetail'] = CmMember::where('member_type_id', 10)->count();
+
+        // // له حق الترشح و التصويت
+        $data['HeHasTheRightToRunAndVoteDetail'] = CmMember::where('member_type_id', 13)->count();
+
 
         ///////////////////////// الرعاه ////////////////////////////////////////////////////////////////////////////////
         $data['sponsors'] = CmSponser::whereNotNull('group_id')->count();
