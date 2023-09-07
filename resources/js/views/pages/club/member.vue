@@ -140,6 +140,7 @@ export default {
       is_disabled: false,
       fullName: '',
       filterSetting: [
+        "full_name",
         "first_name",
         "second_name",
         "third_name",
@@ -1028,16 +1029,19 @@ export default {
                                         {{ data.type  ? data.type == 'subscribe' ? $t('general.subscribe'):$t('general.renew'): '-' }}
                                     </td>
                                     <td>
-                                        {{ data.date_from }}
+                                        {{ data.date_from ? data.date_from: data.year_from }}
                                     </td>
                                     <td>
-                                        {{ data.date_to }}
+                                        {{ data.date_to ? data.date_to: data.year_to }}
                                     </td>
                                     <td>
                                         {{ data.amount }}
                                     </td>
-                                    <td>
+                                    <td v-if="data.prefix == 'old'">
                                         {{ `${data.year_from}-${data.branch_id}-${data.document_id}-${data.prefix}-${data.serial_number}` }}
+                                    </td>
+                                    <td v-else>
+                                        {{data.prefix}}
                                     </td>
                                 </tr>
 

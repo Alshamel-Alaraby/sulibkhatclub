@@ -233,7 +233,7 @@ export default {
          *  start  dynamicSortString
          */
         changeStatus(){
-            adminApi.put(`/club-members/transactions/member-transaction-paid-after-date-update`,{
+            adminApi.post(`/club-members/transactions/member-transaction-paid-after-date-update`,{
                 date: this.create.date,
                 year: this.create.year
             })

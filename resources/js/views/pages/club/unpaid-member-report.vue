@@ -243,7 +243,7 @@ export default {
         },
         changeStatus(){
             this.isLoader = true;
-            adminApi.put(`/club-members/transactions/unpaid-member-transaction-update`,{
+            adminApi.post(`/club-members/transactions/unpaid-member-transaction-update`,{
                 year: this.create.year
             })
                 .then((res) => {

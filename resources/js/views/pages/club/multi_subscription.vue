@@ -393,7 +393,7 @@ export default {
         async getBranches() {
             this.isLoader = true;
             await adminApi
-                .get(`/branches`)
+                .get(`/branches?document_id=${this.create.document_id}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -765,7 +765,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
+                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number&columns[7]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;

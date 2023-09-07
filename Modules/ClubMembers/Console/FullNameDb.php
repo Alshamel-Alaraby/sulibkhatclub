@@ -45,8 +45,8 @@ class FullNameDb extends Command
         $members =  CmMember::get()->chunk(1000);
         foreach ($members as  $member):
             foreach ($member as   $full_name ):
-//                $names = "$full_name->first_name $full_name->second_name $full_name->third_name $full_name->last_name $full_name->family_name";
-                $full_name->update(['full_name'=>1]);
+                $names = "$full_name->first_name $full_name->second_name $full_name->third_name $full_name->last_name $full_name->family_name";
+                $full_name->update(['full_name'=>$names]);
             endforeach;
         endforeach;
         $this->info('Successfully Data Full Name In Table CmMember ');

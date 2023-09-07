@@ -191,9 +191,9 @@ Route::prefix('club-members')->group(function () {
         Route::put('/{id}', 'CmTransactionController@update')->name('transactionupdate');
         Route::post("/bulk-delete", "CmTransactionController@bulkDelete");
         Route::delete('/{id}', 'CmTransactionController@delete')->name('transaction.delete');
-        Route::put('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
-        Route::put('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
-        Route::put('member-transaction-paid-after-date-update', 'CmTransactionController@UpdateMemberTransactionPaidAfterDate');
+        Route::post('check-date-member-transaction-update', 'CmTransactionController@UpdateMemberTransactionPaid');
+        Route::post('unpaid-member-transaction-update', 'CmTransactionController@updateUnpaidMemberTransaction');
+        Route::post('member-transaction-paid-after-date-update', 'CmTransactionController@UpdateMemberTransactionPaidAfterDate');
         Route::put('update-member-voting', 'CmTransactionController@updateMemberVoting');
 
     });

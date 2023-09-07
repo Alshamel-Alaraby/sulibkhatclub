@@ -12,7 +12,6 @@ import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
-import Branch from "../../../components/create/general/branch";
 import permissionGuard from "../../../helper/permission";
 
 /**
@@ -25,7 +24,6 @@ export default {
     },
     mixins: [translation],
     components: {
-        Branch,
         Layout,
         PageHeader,
         Switches,
@@ -317,13 +315,10 @@ export default {
         async getBranches() {
             this.isLoader = true;
             await adminApi
-                .get(`/branches`)
+                .get(`/branches?document_id=${this.create.document_id}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
-                    if(this.isPermission('create Branch')){
-                        l.unshift({id: 0, name: "اضف فرع", name_e: "Add branch"});
-                    }
                     this.branches = l;
                 })
                 .catch((err) => {
@@ -675,7 +670,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
+                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number&columns[7]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -744,7 +739,6 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
-        <Branch :isPage="false" type="create" :isPermission="isPermission" :id="'create_branch'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getBranches"/>
         <div class="row">
             <div class="col-12">
                 <div class="card">

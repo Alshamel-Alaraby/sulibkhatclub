@@ -682,7 +682,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?hasTransaction=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number`)
+                .get(`/club-members/members?hasTransaction=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=first_name&columns[1]=second_name&columns[2]=third_name&columns[3]=last_name&columns[4]=family_name&columns[5]=national_id&columns[6]=membership_number&columns[7]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -1471,13 +1471,13 @@ export default {
                                         <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
                                     </td>
                                     <td v-if="setting.year && isVisible('year')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ data.year ? data.year : data.year_to}}</h5>
                                     </td>
                                     <td v-if="setting.date_from && isVisible('date_from')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ data.date_from ? data.date_from: data.year_from }}</h5>
                                     </td>
                                     <td v-if="setting.date_to && isVisible('date_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ data.date_to ? data.date_to: data.year_to }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">

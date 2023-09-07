@@ -72,6 +72,7 @@ export default {
         name: true,
         name_e: true,
         parent_id: true,
+        group_id: true,
       },
       filterSetting: ["name", "name_e",this.$i18n.locale == 'ar'?'sponsorGroup.name':'sponsorGroup.name_e'],
       errors: {},
@@ -97,9 +98,10 @@ export default {
         minLength: minLength(3),
         maxLength: maxLength(100),
       },
-      group_id: {
-            required
-        },
+      group_id: {required: requiredIf(function (model) {
+              return this.isRequired("group_id");
+          })
+      },
     },
     edit: {
       name: { required: requiredIf(function (model) {
@@ -112,8 +114,9 @@ export default {
         minLength: minLength(3),
         maxLength: maxLength(100),
       },
-        group_id: {
-            required
+        group_id: {required: requiredIf(function (model) {
+                return this.isRequired("group_id");
+            })
         },
     },
   },
@@ -919,10 +922,11 @@ export default {
                               </template>
                           </div>
                       </div>
-                      <div class="col-12">
+                      <div class="col-12" v-if="isVisible('group_id')">
                           <div class="form-group position-relative">
                               <label class="control-label">
                                   {{ getCompanyKey("sponsor_group") }}
+                                  <span v-if="isRequired('group_id')" class="text-danger">*</span>
                               </label>
                               <multiselect
                                   v-model="create.group_id"
@@ -1011,7 +1015,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th>
+                    <th v-if="setting.group_id && isVisible('group_id')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("sponsor_group") }}</span>
                         <div class="arrow-sort">
@@ -1058,7 +1062,7 @@ export default {
                     <td v-if="setting.name_e && isVisible('name_e')">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
-                    <td>
+                    <td v-if="setting.group_id && isVisible('group_id')">
                       <template v-if="data.group">
                         {{ $i18n.locale == "ar" ? data.group.name : data.group.name_e }}
                       </template>
@@ -1231,10 +1235,11 @@ export default {
                                         </template>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" v-if="isVisible('group_id')">
                                     <div class="form-group position-relative">
                                         <label class="control-label">
                                             {{ getCompanyKey("sponsor_group") }}
+                                            <span v-if="isRequired('group_id')" class="text-danger">*</span>
                                         </label>
                                         <multiselect
                                             v-model="edit.group_id"
