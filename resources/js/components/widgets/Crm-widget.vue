@@ -12,6 +12,9 @@ export default {
         value: {
             required: true,
         },
+        // detail: {
+        //     default:[],
+        // }
     },
     data() {
         return {};
@@ -28,6 +31,14 @@ export default {
                     <h3 class="my-2 py-1">
                         <span data-plugin="counterup">{{ value }}</span>
                     </h3>
+<!--                    <template v-for="data in detail">-->
+<!--                        <p class="mb-0 text-muted">-->
+<!--                        <span class="text-success mr-2">-->
+<!--                            {{ data.value }}-->
+<!--                        </span>-->
+<!--                            <span class="text-nowrap">{{$t('general.'+data.name)}}</span>-->
+<!--                        </p>-->
+<!--                    </template>-->
                 </div>
                 <div class="avatar-sm">
                 <span class="avatar-title bg-soft-primary rounded">

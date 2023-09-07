@@ -69,13 +69,14 @@ export default {
             openingBreak:'',
             setting: {
                 gender: true,
-                member_type_id: true,
                 Subscription_receipt_number: true,
                 first_name: true,
                 second_name: true,
                 third_name: true,
                 last_name: true,
                 family_name: true,
+                financial_status_id: true,
+                member_type_id: true,
                 status_id: true,
                 birth_date: true,
                 national_id: true,
@@ -242,7 +243,7 @@ export default {
          */
         async getType() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/members-types`)
+           await adminApi.get(`/club-members/members-types?children_relation=1`)
                 .then((res) => {
                     let l = res.data.data;
                     this.typs = l;
@@ -329,6 +330,15 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
+        choseAllFinancialStatus(){
+           this.create.financial_status_id = this.financial_status.map((obj) => obj.id);
+        },
+        choseAllTypes(){
+           this.create.member_type_id = this.typs.map((obj) => obj.id);
+        },
+        choseAllStatus(){
+           this.create.status_id = this.status.map((obj) => obj.id);
+        }
 
     },
 };
@@ -460,7 +470,9 @@ export default {
                                             <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.member_type_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ $t("general.financial_status") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.member_type_id" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
@@ -551,7 +563,11 @@ export default {
                                             <label class="control-label">
                                                 {{ $t("general.financial_status") }}
                                             </label>
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllFinancialStatus">
+                                                {{ $t('general.choseAll') }}
+                                            </b-button>
                                             <multiselect
+                                                :multiple="true"
                                                 v-model="create.financial_status_id"
                                                 :options="financial_status.map((type) => type.id)"
                                                 :custom-label="
@@ -569,7 +585,11 @@ export default {
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_type") }}
                                             </label>
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllTypes">
+                                                {{ $t('general.choseAll') }}
+                                            </b-button>
                                             <multiselect
+                                                :multiple="true"
                                                 v-model="create.member_type_id"
                                                 :options="typs.map((type) => type.id)"
                                                 :custom-label="
@@ -587,7 +607,11 @@ export default {
                                             <label class="control-label">
                                                 {{ $t("general.status") }}
                                             </label>
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllStatus">
+                                                {{ $t('general.choseAll') }}
+                                            </b-button>
                                             <multiselect
+                                                :multiple="true"
                                                 v-model="create.status_id"
                                                 :options="status.map((type) => type.id)"
                                                 :custom-label="
@@ -756,11 +780,22 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.financial_status_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.financial_status") }}</span>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.member_type_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_type") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.status_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.status") }}</span>
                                         </div>
                                     </th>
+
                                     <th v-if="setting.national_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_national_id") }}</span>
@@ -899,8 +934,14 @@ export default {
                                     <td v-if="setting.membership_date">
                                         {{ formatDate(data.membership_date) }}
                                     </td>
+                                    <td v-if="setting.financial_status_id">
+                                        {{data.financial_status ? $i18n.locale == "ar"? data.financial_status.name: data.financial_status.name_e: "---"}}
+                                    </td>
                                     <td v-if="setting.member_type_id">
                                         {{data.membersType ? $i18n.locale == "ar"? data.membersType.name: data.membersType.name_e: "---"}}
+                                    </td>
+                                    <td v-if="setting.status_id">
+                                        {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
                                     </td>
                                     <td v-if="setting.national_id">
                                         {{ data.national_id }}
@@ -927,7 +968,7 @@ export default {
                                 </tbody>
                                 <tbody v-else>
                                 <tr>
-                                    <th class="text-center" colspan="15">{{ $t('general.notDataFound') }}</th>
+                                    <th class="text-center" colspan="18">{{ $t('general.notDataFound') }}</th>
                                 </tr>
                                 </tbody>
                             </table>

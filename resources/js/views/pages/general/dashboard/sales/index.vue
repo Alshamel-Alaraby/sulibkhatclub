@@ -12,7 +12,6 @@ import Projections from "../../../../../components/widgets/Projections"
 import adminApi from "../../../../../api/adminAxios";
 import CrmWidget from "../../../../../components/widgets/Crm-widget";
 
-
 /**
  * Sales-Dashboard component
  */
@@ -124,7 +123,10 @@ export default {
                 },
             ],
             isLoader : false,
-            statices: {}
+            statices: {},
+            normalDetails:[],
+            dismissedDetails:[],
+            foundingDetails:[],
         };
     },
     mounted() {
@@ -138,8 +140,8 @@ export default {
             adminApi.get(`/club-members/statics/getStatics`)
                 .then((res) => {
                     let l = res.data.data;
-                    console.log(l)
                     this.statices = l;
+                    this.staticesHandel();
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -152,6 +154,68 @@ export default {
                     this.isLoader = false;
                 });
         },
+        staticesHandel() {
+            this.normalDetails = [
+                {
+                    "name":'InTheListOfMembers',
+                    "value":this.statices.InTheListOfMembers
+                },
+                {
+                    "name":'stopped',
+                    "value":this.statices.stopped
+                },
+                {
+                    "name":'HeHasTheRightToRun',
+                    "value":this.statices.HeHasTheRightToRun
+                },
+                {
+                    "name":'HeHasTheRightToVote',
+                    "value":this.statices.HeHasTheRightToVote
+                },
+                {
+                    "name":'HeHasNoRightToVote',
+                    "value":this.statices.HeHasNoRightToVote
+                },
+                {
+                    "name":'PaidPersonHasNoRightToAttend',
+                    "value":this.statices.PaidPersonHasNoRightToAttend
+                },
+            ];
+
+            this.dismissedDetails = [
+                {
+                    "name":'DeletedAtHisRequest',
+                    "value":this.statices.DeletedAtHisRequest
+                },
+                {
+                    "name":'CancellationDueToDeath',
+                    "value":this.statices.CancellationDueToDeath
+                },
+                {
+                    "name":'CancellationPursuantToMinisterialDecision',
+                    "value":this.statices.CancellationPursuantToMinisterialDecision
+                },
+                {
+                    "name":'CancellationAccordingToTheAuthoritySLetter',
+                    "value":this.statices.CancellationAccordingToTheAuthoritySLetter
+                },
+                {
+                    "name":'WriteOffForNonPayment',
+                    "value":this.statices.WriteOffForNonPayment
+                },
+            ];
+
+            this.foundingDetails = [
+                {
+                    "name":'FoundingMemberDetail',
+                    "value":this.statices.FoundingMemberDetail
+                },
+                {
+                    "name":'HeHasTheRightToRunAndVoteDetail',
+                    "value":this.statices.HeHasTheRightToRunAndVoteDetail
+                },
+            ];
+        }
     }
 };
 </script>
@@ -159,64 +223,80 @@ export default {
 <template>
     <Layout>
         <PageHeader :title="title" :items="items" />
-        <div class="row mt-2">
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'normalMemberCount'"
-                    :icon="'ri-stack-line'"
-                    :value="statices.normalMemberCount"
-                />
+
+        <div class="dashboard-fluid">
+            <div class="row mt-2">
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'normalMemberCount'"
+                        :icon="'ri-stack-line'"
+                        :value="statices.normalMemberCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'dismissedMemberCount'"
+                        :icon="'ri-slideshow-2-line'"
+                        :value="statices.dismissedMemberCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'foundingMemberCount'"
+                        :icon="'ri-hand-heart-line'"
+                        :value="statices.foundingMemberCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'pendingMember'"
+                        :icon="'ri-hand-heart-line'"
+                        :value="statices.RequestMembersPendingCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'sponsor'"
+                        :icon="'ri-money-dollar-box-line'"
+                        :value="statices.sponsorsCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'AttendElections'"
+                        :icon="'ri-money-dollar-box-line'"
+                        :value="statices.presenceMemberCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'voteMemberCount'"
+                        :icon="'ri-hand-heart-line'"
+                        :value="statices.voteMemberCount"
+                    />
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <CrmWidget
+                        :title="'nominateMemberCount'"
+                        :icon="'ri-stack-line'"
+                        :value="statices.nominateMemberCount"
+                    />
+                </div>
+                <!-- end col -->
             </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'dismissedMemberCount'"
-                    :icon="'ri-slideshow-2-line'"
-                    :value="statices.dismissedMemberCount"
-                />
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'foundingMemberCount'"
-                    :icon="'ri-hand-heart-line'"
-                    :value="statices.foundingMemberCount"
-                />
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'sponsor'"
-                    :icon="'ri-money-dollar-box-line'"
-                    :value="statices.sponsorsCount"
-                />
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'AttendElections'"
-                    :icon="'ri-money-dollar-box-line'"
-                    :value="statices.presenceMemberCount"
-                />
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'voteMemberCount'"
-                    :icon="'ri-hand-heart-line'"
-                    :value="statices.voteMemberCount"
-                />
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <CrmWidget
-                    :title="'nominateMemberCount'"
-                    :icon="'ri-stack-line'"
-                    :value="statices.nominateMemberCount"
-                />
-            </div>
-            <!-- end col -->
+            <!-- end row -->
+
+            <Projections :statices="statices"  />
         </div>
-        <!-- end row -->
+
     </Layout>
 </template>
 
 <style scoped>
 .content-page {
     padding: 70px 15px 5px !important;
+}
+.dashboard-fluid {
+    padding: 0 10px !important;
 }
 </style>

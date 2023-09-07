@@ -38,11 +38,6 @@ class CmMemberRequest extends Model
     }
 
 
-    protected static function newFactory()
-    {
-        return \Modules\ClubMembers\Database\factories\CmMemberRequestFactory::new();
-    }
-
     public function memberType()
     {
         return $this->belongsTo(CmMemberType::class, 'member_type_id');

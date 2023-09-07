@@ -14,6 +14,11 @@ class CmSponsorGroup extends Model
     protected $guarded = [];
     protected $table = 'cm_sponsors_group';
 
+    public function sponsors()
+    {
+        return $this->hasMany(CmSponser::class, 'group_id', 'id');
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

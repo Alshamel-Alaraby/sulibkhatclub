@@ -1446,6 +1446,22 @@
         "Changeofmemberrights": "Change of member rights",
         "ReportToMembers": "Report To Members",
         "whichYearHeStarted": "which year he started",
-        "NumberOfSubscriptionYears": "Number of subscription years"
+        "NumberOfSubscriptionYears": "Number of subscription years",
+        "Ordinarymembers": "Ordinary Members",
+        "Foundingmembers": "Founding Members",
+        "InTheListOfMembers": "In The List Of Members",
+        "stopped":"stopped",
+        "HeHasTheRightToRun": "He Has The Right To Run",
+        "HeHasTheRightToVote": "He Has The Right To Vote",
+        "HeHasNoRightToVote": "He Has No Right To Vote",
+        "PaidPersonHasNoRightToAttend": "Paid Person Has No Right To Attend",
+        "DeletedAtHisRequest": "Deleted At His Request",
+        "CancellationDueToDeath": "Cancellation Due To Death",
+        "CancellationPursuantToMinisterialDecision": "Cancellation Pursuant To Ministerial Decision",
+        "CancellationAccordingToTheAuthoritySLetter": "Cancellation According To The Authority S Letter",
+        "WriteOffForNonPayment": "WriteOffForNonPayment",
+        "FoundingMemberDetail": "Founding Member",
+        "HeHasTheRightToRunAndVoteDetail": "He Has The Right To Run And Vote",
+        "choseAll": "Chose All"
     }
 }
