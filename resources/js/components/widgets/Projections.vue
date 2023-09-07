@@ -300,4 +300,8 @@ export default {
 .card-body {
     background-color: #bee3fe !important;
 }
+
+.card-body {
+    color: #000 !important;
+}
 </style>
