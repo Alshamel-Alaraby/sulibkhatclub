@@ -3,7 +3,9 @@
 namespace App\Http\Resources\Serials;
 
 use App\Http\Resources\Branch\BranchResource;
+use App\Http\Resources\Branch\RelationBranchResource;
 use App\Http\Resources\Document\DocumentResource;
+use App\Http\Resources\RestartPeriod\RelationRestartPeriodResource;
 use App\Http\Resources\RestartPeriodResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,8 +33,8 @@ class SerialResource extends JsonResource
             "store" => $this->store,
             "has_child" => $this->has_child,
             "document" => new DocumentResource($this->document),
-            "branch" => new BranchResource($this->branch),
-            'restart_period' => new RestartPeriodResource($this->restartPeriod),
+            "branch" => new RelationBranchResource($this->branch),
+            'restart_period' => new RelationRestartPeriodResource($this->restartPeriod),
         ];
     }
 }

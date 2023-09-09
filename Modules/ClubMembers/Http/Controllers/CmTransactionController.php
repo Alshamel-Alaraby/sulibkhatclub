@@ -126,7 +126,6 @@ class CmTransactionController extends Controller
 
     public function UpdateMemberTransactionPaid(Request $request)
     {
-
         $transactionArray = CmTransaction::whereDate('date', '<=', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
 
         $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 3]);

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Salesman;
 
 use App\Http\Resources\Roles\RoleResource;
+use App\Http\Resources\SalesmenType\RelationSalesmenTypeResource;
 use App\Http\Resources\SalesmenType\SalesmenTypeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +21,7 @@ class SalesmanResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "name_e" => $this->name_e,
-            "salesmanType" => new SalesmenTypeResource($this->salesmanType),
+            "salesmanType" => new RelationSalesmenTypeResource($this->salesmanType),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

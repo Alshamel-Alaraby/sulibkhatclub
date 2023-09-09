@@ -19,15 +19,6 @@ class ScreenTreePropertyController extends Controller
 
     public function show($id)
     {
-        // $model = cacheGet('ScreenTreeProperty_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('ScreenTreeProperty_' . $id, $model);
-        //     }
-        // }
 
         $model = $this->modelInterface->find($id);
         if (!$model) {
@@ -38,15 +29,7 @@ class ScreenTreePropertyController extends Controller
 
     public function index(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('ScreenTreeProperty');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('ScreenTreeProperty', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
+
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', ScreenTreePropertyResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);

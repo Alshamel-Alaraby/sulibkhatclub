@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Transaction;
 
 use App\Http\Resources\Branch\BranchResource;
+use App\Http\Resources\Branch\RelationBranchResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\ClubMembers\Transformers\CmSponserResource;
 use Modules\RecievablePayable\Transformers\BreakDownResource;
@@ -27,7 +28,7 @@ class TransactionResource extends JsonResource
             'break_id' => $this->break_id,
 //            'invoice' =>  new RlstInvoiceResource($this->invoice),
             'break_down' => new BreakDownResource($this->breakDown),
-            'branch' => new BranchResource($this->branch),
+            'branch' => new RelationBranchResource($this->branch),
             'sponsor' => new CmSponserResource($this->sponsor),
             "member" => $this->cm_member_id ? new \Modules\ClubMembers\Transformers\CmMemberResource($this->member) : null,
             'date_from' => $this->date_from,

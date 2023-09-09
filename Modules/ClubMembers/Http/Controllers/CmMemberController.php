@@ -193,44 +193,19 @@ class CmMemberController extends Controller
     public function dataMemberTable()
     {
 
-        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
-        set_time_limit(3600);
-        ini_set('memory_limit', -1);
+//        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
+//        set_time_limit(3600);
+//        ini_set('memory_limit', -1);
 
-//cm_members.json
-        $ttt = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/json_Members.json')));
+        $ttt = CmMember::all() ;
         foreach ($ttt as $member):
 
-            $full_name = ($member->FNAME ?? '') . ' ' .
-                ($member->SNAME ?? '') . ' ' .
-                ($member->TNAME ?? '') . ' ' .
-                ($member->FORNAME ?? '') . ' ' .
-                ($member->ZFAM_NAME ?? '');
-
-            CmMember::create([
-                "applying_number" => $member->ORDER_NO,
-                "membership_number" => $member->MemberNo,
-                "home_address" => $member->HouseAddress,
-                "membership_date" => $member->ORDER_DATE,
-                "nationality_class" => $member->NationalNo,
-                "national_id" => $member->Cvlid,
-                "first_name" => $member->FNAME,
-                "second_name" => $member->SNAME,
-                "third_name" => $member->TNAME,
-                "last_name" => (string) $member->FORNAME,
-                "family_name" => $member->ZFAM_NAME,
-                "birth_date" => $member->BIRTH_DATE,
-                "acceptance" => $member->ACCEPTED,
-                "degree" => $member->StudyDegree,
-                "job" => $member->employee,
-                "work_phone" => $member->JobTel,
-                "work_address" => $member->JobAddress,
-                "home_phone" => $member->HouseTel,
-                "status_id" => $member->ZSTATUS,
-                "session_date" => $member->MeetingDate,
-                "session_number" => $member->MeetingNumber,
-                "full_name" => $full_name,
-            ]);
+            $full_name = ($member->first_name ?? '') . ' ' .
+                ($member->second_name ?? '') . ' ' .
+                ($member->third_name ?? '') . ' ' .
+                ($member->last_name ?? '') . ' ' .
+                ($member->family_name ?? '');
+            $member->update(['family_name'=>$full_name]);
 
         endforeach;
 
@@ -250,6 +225,12 @@ class CmMemberController extends Controller
     {
 
         return $models = $this->modelInterface->updateCmMember();
+    }
+
+    public function updateLastTransactionDate()
+    {
+
+        return $models = $this->modelInterface->updateLastTransactionDate();
     }
 
     public function getUpdateFinancialStatusCmMember()

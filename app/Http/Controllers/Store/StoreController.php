@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 
 class StoreController extends Controller
 {
-    public function __construct(private \App\Repositories\Store\StoreInterface$modelInterface)
+    public function __construct(private \App\Repositories\Store\StoreInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
     }

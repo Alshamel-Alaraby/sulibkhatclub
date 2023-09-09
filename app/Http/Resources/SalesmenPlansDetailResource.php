@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\SalesmenPlan\RelationSalesmenPlanResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SalesmenPlansDetailResource extends JsonResource
@@ -16,7 +17,7 @@ class SalesmenPlansDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'plan' => new SalesmenPlanResource($this->plan),
+            'plan' => new RelationSalesmenPlanResource($this->plan),
             'amount_from' => $this->amount_from,
             'amount_to' => $this->amount_to,
             'commission_percent' => $this->commission_percent,

@@ -17,4 +17,6 @@ interface SalesmenPlansSourceInterface
 
     public function delete($id);
 
+    public function getName($request);
+
 }

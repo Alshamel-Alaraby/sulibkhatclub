@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PaymentMethod;
 
 use App\Http\Requests\PaymentMethod\PaymentMethodRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\PaymentMethod\PaymentMethodResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -135,6 +136,14 @@ class PaymentMethodController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

@@ -248,6 +248,8 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'statuses'], function () {
         Route::controller(\App\Http\Controllers\Status\StatusController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('statuses.getDropDown');
+
             Route::get('/', 'all')->name('statuses.index');
             Route::get('logs/{id}', 'logs')->name('statuses.logs');
             Route::get('/{id}', 'find');
@@ -442,6 +444,7 @@ Route::middleware(['authorize.user'])->group(function () {
     });
     Route::group(['prefix' => 'payment-methods'], function () {
         Route::controller(\App\Http\Controllers\PaymentMethod\PaymentMethodController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('payment-methods.getDropDown');
             Route::get('/', 'all')->name('payment-methods.index');
             Route::get('logs/{id}', 'logs')->name('payment-methods.logs');
             Route::get('/{id}', 'find');
@@ -593,6 +596,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'department-tasks'], function () {
         Route::controller(\App\Http\Controllers\DepertmentTask\DepertmentTaskController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('department-task.getDropDown');
             Route::get('/', 'all')->name('department-task.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('department-task.create');
@@ -644,7 +648,6 @@ Route::middleware(['authorize.user'])->group(function () {
     Route::group(['prefix' => 'restart-period'], function () {
         Route::controller(\App\Http\Controllers\RestartPeriod\RestartPeriodController::class)->group(function () {
             Route::get('/get-drop-down', 'getDropDown')->name('restart-period.getDropDown');
-
             Route::get('/get-Restart-period-data', 'getRestartPeriodData');
             Route::get('/get-Restart-period-in-serial', 'getRestartPeriodInSerial');
             Route::get('logs/{id}', 'logs')->name('restart-period.logs');
@@ -671,6 +674,7 @@ Route::middleware(['authorize.user'])->group(function () {
     });
     Route::group(['prefix' => 'salesmen-plans-source'], function () {
         Route::controller(\App\Http\Controllers\SalesmenPlansSource\SalesmenPlansSourceController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('salesmen-plans-source.getDropDown');
             Route::get('logs/{id}', 'logs')->name('salesmen-plans-source.logs');
             Route::get('/', 'all')->name('salesmen-plans-source.index');
             Route::get('/{id}', 'find');

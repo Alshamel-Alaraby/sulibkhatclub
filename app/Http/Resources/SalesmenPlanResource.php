@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\RestartPeriod\RelationRestartPeriodResource;
+use App\Http\Resources\SalesmenPlansSource\RelationSalesmenPlansSourceResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SalesmenPlanResource extends JsonResource
@@ -18,8 +20,8 @@ class SalesmenPlanResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            "salesmen_plans_source" => new SalesmenPlansSourceResource($this->salesmenPlansSource),
-            'restart_period' => new RestartPeriodResource($this->restartPeriod),
+            "salesmen_plans_source" => new RelationSalesmenPlansSourceResource($this->salesmenPlansSource),
+            'restart_period' => new RelationRestartPeriodResource($this->restartPeriod),
         ];
     }
 }

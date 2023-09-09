@@ -99,7 +99,12 @@ class CmMember extends Model
                             $q->where($column[1], 'like', '%' . $request->search . '%');
                         });
                     } else {
-                        $q->orWhere($column, 'like', '%' . $request->search . '%');
+                        if ($column == 'membership_number')
+                        {
+                            $q->orWhere($column, $request->search);
+                        }else{
+                            $q->orWhere($column, 'like', '%' . $request->search . '%');
+                        }
                     }
                 }
             }

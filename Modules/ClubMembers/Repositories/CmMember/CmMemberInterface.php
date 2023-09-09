@@ -36,4 +36,7 @@ interface CmMemberInterface
 
     public function reportToMembers($request);
 
+
+    public function updateLastTransactionDate();
+
 }

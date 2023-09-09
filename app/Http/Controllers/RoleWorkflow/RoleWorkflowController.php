@@ -24,11 +24,7 @@ class RoleWorkflowController extends Controller
     public function index(Request $request)
     {
 
-        // $data = cacheGet('RoleWorkflow');
-        // if (!$data) {
-        //     $data = $this->repository->getAll($request);
-        //     cachePut('RoleWorkflow', $data);
-        // }
+   
         $data = $this->repository->getAll($request);
         return responseJson(200, 'success', RoleWorkflowResource::collection($data['data']), $data['paginate'] ? getPaginates($data['data']) : null);
     }

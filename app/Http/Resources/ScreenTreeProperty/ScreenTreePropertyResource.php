@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\ScreenTreeProperty;
 
+use App\Http\Resources\Priority\RelationPriorityResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ScreenTreePropertyResource extends JsonResource
@@ -18,7 +19,7 @@ class ScreenTreePropertyResource extends JsonResource
             'id' => $this->id,
             'screen_id' => $this->screen_id,
             'property_id' => $this->property_id,
-            "tree_property" => $this->property
+            "tree_property" => new RelationPriorityResource($this->property)
         ];
     }
 }

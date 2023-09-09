@@ -78,24 +78,49 @@ class CmMemberRepository implements CmMemberInterface
     {
 
         return DB::transaction(function () use ($request) {
-            $full_name = ($request['first_name'] ?? '') . ' ' .
-                ($request['second_name'] ?? '') . ' ' .
-                ($request['third_name'] ?? '') . ' ' .
-                ($request['last_name'] ?? '') . ' ' .
-                ($request['family_name'] ?? '') ;
-            return $this->model->create(array_merge($request,['full_name' => $full_name,'member_type_id'=>4]));
+            if ($request['first_name']){
+                $full_name['first_name']  = $request['first_name'];
+            }
+            if ($request['second_name']){
+                $full_name['second_name'] = $request['second_name'];
+            }
+            if ($request['third_name']){
+                $full_name['third_name']  = $request['third_name'];
+            }
+            if ($request['last_name']){
+                $full_name['last_name']  = $request['last_name'];
+            }
+            if ($request['family_name']){
+                $full_name['family_name']  = $request['family_name'];
+            }
+
+            $array = implode(' ', $full_name);
+
+            return $this->model->create(array_merge($request,['full_name' => $array,'member_type_id'=>4]));
         });
     }
 
     public function update($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
-            $full_name = ($request['first_name'] ?? '') . ' ' .
-                ($request['second_name'] ?? '') . ' ' .
-                ($request['third_name'] ?? '') . ' ' .
-                ($request['last_name'] ?? '') . ' ' .
-                ($request['family_name'] ?? '') ;
-            $this->model->where("id", $id)->update(array_merge($request,['full_name' => $full_name]));
+            if ($request['first_name']){
+                $full_name['first_name']  = $request['first_name'];
+            }
+            if ($request['second_name']){
+                $full_name['second_name'] = $request['second_name'];
+            }
+            if ($request['third_name']){
+                $full_name['third_name']  = $request['third_name'];
+            }
+            if ($request['last_name']){
+                $full_name['last_name']  = $request['last_name'];
+            }
+            if ($request['family_name']){
+                $full_name['family_name']  = $request['family_name'];
+            }
+
+            $array = implode(' ', $full_name);
+            $this->model->where("id", $id)->update(array_merge($request,['full_name' => $array]));
         });
         $model = $this->model->find($id);
         return $model;
@@ -246,20 +271,29 @@ class CmMemberRepository implements CmMemberInterface
 
     }
 
+    public function updateLastTransactionDate()
+    {
+        $All_Members = $this->model->with('lastCmTransaction')->whereIn('member_type_id', [4,5,11,12,17,19])->get();
+        foreach ($All_Members as $member):
+
+            $Last_date        = \Carbon\Carbon::parse($member->lastCmTransaction['date'])->format('d-m-Y');
+            $member->update(['last_transaction_date'=>$Last_date]);
+        endforeach;
+        return 200;
+
+    }
+
     public function updateCmMember()
     {
         $All_Members_FatherIdOne = $this->model->whereIn('member_type_id', [4,5,11,12,17,19])->get();
 
-        ///Last_Member_transaction insert in cm_member
-        /*foreach ($All_Members_FatherIdOne as $Member){
-              $Last_Member_transaction  = DB::table('cm_transactions')->where('cm_member_id',$Member->id)->orderBy('date', 'DESC')->first();
-              $this->model->where('id',$Member->id)->update(['last_transaction_date' => $Last_Member_transaction->date]);
-        }*/
+
 
         /////type_permissions
         $permission_one     =   DB::table('cm_type_permissions')->where('id',4)->first();
         $permission_two     =   DB::table('cm_type_permissions')->where('id',5)->first();
         $permission_three   =   DB::table('cm_type_permissions')->where('id',6)->first();
+
 
         foreach ($All_Members_FatherIdOne as $Member){
             ///First Condition
@@ -268,23 +302,23 @@ class CmMemberRepository implements CmMemberInterface
 
             ///Second Condition
             $Last_Member_transaction  = $Member->last_transaction_date;
-            $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('d');
+            $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('d-m');
+
+            $permission_one_Days      = \Carbon\Carbon::parse(now()->format('Y').$permission_two->allowed_subscription_date)->format('d-m');
+            $permission_two_Days      = \Carbon\Carbon::parse(now()->format('Y').$permission_two->allowed_subscription_date)->format('d-m');
+            $permission_three_Days    = \Carbon\Carbon::parse(now()->format('Y').$permission_three->allowed_subscription_date)->format('d-m');
 
 
-            $permission_one_Days      = \Carbon\Carbon::parse("2023-" . $permission_two->allowed_subscription_date)->format('d');
-            $permission_two_Days      = \Carbon\Carbon::parse("2023-" .$permission_two->allowed_subscription_date)->format('d');
-            $permission_three_Days      = \Carbon\Carbon::parse("2023-" .$permission_three->allowed_subscription_date)->format('d');
 
-
-            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_one_Days){
-                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 1]);
+            if($diffYears >= $permission_one->membership_period && $permission_one_Days  <= $Last_date ){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 1, 'financial_status_id' => $permission_one->cm_financial_status_id]);
             }
-            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_two_Days){
-                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 2]);
+            if($diffYears >= $permission_two->membership_period && $permission_two_Days  <= $Last_date   ){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 2, 'financial_status_id' => $permission_two->cm_financial_status_id]);
             }
 
-            if($permission_one->membership_period >= $diffYears && $Last_date >= $permission_three_Days){
-                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 3]);
+            if($diffYears >= $permission_three->membership_period && $permission_three_Days <= $Last_date  ){
+                $this->model->where('id',$Member->id)->update(['auto_member_type_id' => 3, 'financial_status_id' =>  $permission_three->cm_financial_status_id]);
             }
 
         }

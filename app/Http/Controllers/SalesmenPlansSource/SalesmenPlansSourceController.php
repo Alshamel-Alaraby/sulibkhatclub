@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SalesmenPlansSource;
 
 use App\Http\Requests\SalesmenPlansSource\SalesmenPlansSourceRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\SalesmenPlansSource\SalesmenPlansSourceResource;
 use App\Repositories\SalesmenPlansSource\SalesmenPlansSourceInterface;
 use Illuminate\Http\Request;
@@ -79,5 +80,11 @@ class SalesmenPlansSourceController extends Controller
         return responseJson(200, __('Done'));
     }
 
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
 
 }

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('', function (Blueprint $table) {
+        Schema::table('cm_transactions', function (Blueprint $table) {
             $table->unsignedInteger('member_request_id')->nullable();
             $table->unsignedInteger('cm_member_id')->nullable()->change();
         });

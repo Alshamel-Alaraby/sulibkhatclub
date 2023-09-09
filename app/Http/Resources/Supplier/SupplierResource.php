@@ -3,11 +3,17 @@
 namespace App\Http\Resources\Supplier;
 
 use App\Http\Resources\BankAccount\BankAccountResource;
+use App\Http\Resources\BankAccount\RelationBankAccountResource;
 use App\Http\Resources\City\CityResource;
+use App\Http\Resources\City\RelationCityResource;
 use App\Http\Resources\Country\CountryResource;
+use App\Http\Resources\Country\RelationCountryResource;
 use App\Http\Resources\CustomerGroup\CustomerGroupResource;
+use App\Http\Resources\CustomerGroup\RelationCustomerGroupResource;
 use App\Http\Resources\Employee\EmployeeResource;
+use App\Http\Resources\Employee\RelationEmployeeResource;
 use App\Http\Resources\FileResource;
+use App\Http\Resources\Salesman\RelationSalesmanResource;
 use App\Http\Resources\Salesman\SalesmanResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -52,12 +58,12 @@ class SupplierResource extends JsonResource
             'customer_group_id'=>$this->customer_group_id,
             'sector_id'=>$this->sector_id,
             'customer_id'=>$this->customer_id,
-            "salesmen" => new SalesmanResource($this->salesmen),
-            "employee" => new EmployeeResource($this->employee),
-            "country" => new CountryResource($this->country),
-            "city" => new CityResource($this->city),
-            "bankAccount" => new BankAccountResource($this->bankAccount),
-            "customerGroup" => new CustomerGroupResource($this->customerGroup),
+            "salesmen" => new RelationSalesmanResource($this->salesmen),
+            "employee" => new RelationEmployeeResource($this->employee),
+            "country" => new RelationCountryResource($this->country),
+            "city" => new RelationCityResource($this->city),
+            "bankAccount" => new RelationBankAccountResource($this->bankAccount),
+            "customerGroup" => new RelationCustomerGroupResource($this->customerGroup),
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
 //            'customer_main_category'=>$this->customer_main_category,
 //            'customer_sub_category'=>$this->customer_sub_category,

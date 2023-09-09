@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Status;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Status\StatusResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -87,6 +88,13 @@ class StatusController extends Controller
             return responseJson(400, __('some items has relation cant delete'));
         }
         return responseJson(200, __('Done'));
+    }
+
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

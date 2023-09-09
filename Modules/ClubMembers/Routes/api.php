@@ -56,6 +56,7 @@ Route::prefix('club-members')->group(function () {
         Route::get('get-sponsors', 'CmMemberController@getSponsors')->name('cm-members.getSponsors');
         Route::get('/report-cm-member', 'CmMemberController@getReportCmMember');
         Route::get('/updateCmMember', 'CmMemberController@getUpdateCmMember');
+        Route::get('/updateLastTransactionDate', 'CmMemberController@updateLastTransactionDate');
         Route::get('/update-financial-status-cm-member', 'CmMemberController@getUpdateFinancialStatusCmMember');
         Route::get('/test-transfer', 'CmMemberController@TestTransfer');
         Route::get('/dataMemberTable', 'CmMemberController@dataMemberTable');
@@ -199,9 +200,12 @@ Route::prefix('club-members')->group(function () {
     });
 
     Route::group(['prefix' => 'statics'], function () {
+
         Route::get('/getStatics', 'CmStaticsController@getStatics')
             ->name('statics.getStatics');
 
+        Route::get('/get-members-percentage', 'CmStaticsController@getMembersPercentage')
+            ->name('statics.getMembersPercentage');
         // Route::get('/get-normal-members-percentage', 'CmStaticsController@getNormalMembersPercentage')
         //     ->name('statics.getNormalMembersPercentage');
 

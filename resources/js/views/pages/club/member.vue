@@ -141,22 +141,7 @@ export default {
       fullName: '',
       filterSetting: [
         "full_name",
-        "first_name",
-        "second_name",
-        "third_name",
-        "last_name",
-        "family_name",
-        "status_id",
-        "birth_date",
         "national_id",
-        "nationality_number",
-        "home_phone",
-        "work_phone",
-        "home_address",
-        "work_address",
-        "job",
-        "degree",
-        "sponsor_id",
         "membership_number",
       ],
       printLoading: true,
@@ -684,64 +669,16 @@ export default {
                       </b-form-checkbox>
                     <b-form-checkbox
                       v-model="filterSetting"
-                      value="status_id"
-                      class="mb-1"
-                      >{{ getCompanyKey("status") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
                       value="national_id"
                       class="mb-1"
                       >{{ getCompanyKey("member_national_id") }}
                     </b-form-checkbox>
                     <b-form-checkbox
                       v-model="filterSetting"
-                      value="nationality_number"
+                      value="full_name"
                       class="mb-1"
-                      >{{ getCompanyKey("member_nationality_number") }}
+                      >{{ $t("general.name") }}
                     </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="home_phone"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_home_phone") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="work_phone"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_work_phone") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="home_address"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_home_address") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="work_address"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_work_address") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="job"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_job") }}</b-form-checkbox
-                    >
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="degree"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_degree") }}</b-form-checkbox
-                    >
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="sponsor_id"
-                      class="mb-1"
-                      >{{ getCompanyKey("sponsor") }}</b-form-checkbox
-                    >
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>

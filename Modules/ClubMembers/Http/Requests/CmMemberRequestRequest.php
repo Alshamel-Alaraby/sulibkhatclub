@@ -35,21 +35,12 @@ class CmMemberRequestRequest extends FormRequest
             'session_date' => 'nullable|date',
             'session_number' => 'nullable|string|max:255',
             'applying_date' => 'nullable|date',
-<<<<<<< HEAD
-            'applying_number' => 'nullable|string|max:255|unique:cm_members,applying_number' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'member_type_id'      => 'nullable|exists:cm_members_types,id',
-            'status_id'           => 'nullable|exists:cm_statues,id',
-            'sponsor_id' => 'nullable|exists:cm_sponsers,id',
-            'auto_member_type_id' => 'nullable|exists:cm_members_types,id',
-            'financial_status_id' => 'nullable|exists:cm_financial_status,id',
-=======
             'applying_number' => 'nullable|unique:cm_member_requests,applying_number' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
             'status_id' => 'nullable|exists:general_statuses,id',
             'sponsor_id' => 'nullable|exists:cm_sponsers,id',
             'auto_member_type_id' => 'nullable|exists:cm_members_types,id',
             'financial_status_id' => 'nullable|exists:cm_financial_status,id',
             'member_type_id' => 'nullable|exists:cm_members_types,id',
->>>>>>> dev-test
             'notes' => 'nullable|string|max:255',
             'gender' => 'nullable|in:0,1',
             'financial_year_id' => 'nullable|exists:general_financial_years,id',

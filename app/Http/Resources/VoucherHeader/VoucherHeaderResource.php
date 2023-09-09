@@ -2,14 +2,13 @@
 
 namespace App\Http\Resources\VoucherHeader;
 
-use App\Http\Resources\Branch\BranchResource;
+use App\Http\Resources\Branch\RelationBranchResource;
 use App\Http\Resources\Document\DocumentResource;
-use App\Http\Resources\Employee\EmployeeResource;
-use App\Http\Resources\GeneralCustomer\GeneralCustomerResource;
-use App\Http\Resources\PaymentMethod\PaymentMethodResource;
-use App\Http\Resources\Serials\SerialResource;
+use App\Http\Resources\Employee\RelationEmployeeResource;
+use App\Http\Resources\GeneralCustomer\RelationGeneralCustomerResource;
+use App\Http\Resources\PaymentMethod\RelationPaymentMethodResource;
+use App\Http\Resources\Serials\RelationSerialResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\BoardsRent\Transformers\CustomerResource;
 
 class VoucherHeaderResource extends JsonResource
 {
@@ -22,23 +21,23 @@ class VoucherHeaderResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                       => $this->id,
-            'document_id'              => $this->document_id,
-            'branch_id'                => $this->branch_id,
-            'date'                     => $this->date,
-            'serial_id'                => $this->serial_id,
-            'salesmen_id'              => $this->salesmen_id,
-            'customer_id'              => $this->customer_id,
-            'payment_method_id'        => $this->payment_method_id,
-            'amount'                   => $this->amount,
-            'serial_number'            => $this->serial_number,
-            'prefix'                   => $this->prefix,
-            'branch'                   => new BranchResource($this->branch),
-            'document'                 => new DocumentResource($this->document),
-            'salesmen'                 => new EmployeeResource($this->salesmen),
-            'customer'                 => new GeneralCustomerResource($this->customer),
-            'serial'                   => new SerialResource($this->serial),
-            'paymentMethod'            => new PaymentMethodResource($this->paymentMethod),
+            'id' => $this->id,
+            'document_id' => $this->document_id,
+            'branch_id' => $this->branch_id,
+            'date' => $this->date,
+            'serial_id' => $this->serial_id,
+            'salesmen_id' => $this->salesmen_id,
+            'customer_id' => $this->customer_id,
+            'payment_method_id' => $this->payment_method_id,
+            'amount' => $this->amount,
+            'serial_number' => $this->serial_number,
+            'prefix' => $this->prefix,
+            'branch' => new RelationBranchResource($this->branch),
+            'document' => new DocumentResource($this->document),
+            'salesmen' => new RelationEmployeeResource($this->salesmen),
+            'customer' => new RelationGeneralCustomerResource($this->customer),
+            'serial' => new RelationSerialResource($this->serial),
+            'paymentMethod' => new RelationPaymentMethodResource($this->paymentMethod),
 
         ];
     }

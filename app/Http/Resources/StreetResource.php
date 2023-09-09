@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Http\Resources\Avenue\AvenueResource;
+use App\Http\Resources\Avenue\RelationAvenueResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StreetResource extends JsonResource
@@ -19,7 +20,7 @@ class StreetResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'avenue' => collect($this->whenLoaded('avenue'))->only(['id', 'name', 'name_e']),
+            'avenue' => new RelationAvenueResource($this->avenue),
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

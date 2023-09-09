@@ -7,6 +7,7 @@ namespace App\Repositories\Status;
 interface StatusInterface
 {
     public function all($request);
+    public function getName($request);
     public function find($id);
     public function create($request);
     public function update($request,$id);

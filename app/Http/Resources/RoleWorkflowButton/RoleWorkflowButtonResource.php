@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\RoleWorkflowButton;
 
-use App\Http\Resources\Roles\RoleResource;
+use App\Http\Resources\Roles\RelationRoleResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoleWorkflowButtonResource extends JsonResource
@@ -17,9 +17,9 @@ class RoleWorkflowButtonResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            "role" => new RoleResource($this->role),
-             "workflow_id" => $this->workflow_id,
-             "button_id" => $this->button_id,
+            "role" => new RelationRoleResource($this->role),
+            "workflow_id" => $this->workflow_id,
+            "button_id" => $this->button_id,
         ];
     }
 }
