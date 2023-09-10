@@ -46,20 +46,20 @@ class FullNameDb extends Command
         $members =  CmMember::get()->chunk(1000);
         foreach ($members as  $member):
             foreach ($member as   $full_name ):
-
-                if ($full_name->first_name != null){
+                $names = [];
+                if ($full_name->first_name){
                     $names['first_name']  = $full_name->first_name;
                 }
-                if ($full_name->second_name != null){
+                if ($full_name->second_name){
                     $names['second_name'] = $full_name->second_name;
                 }
-                if ($full_name->third_name != null){
+                if ($full_name->third_name){
                     $names['third_name']  = $full_name->third_name;
                 }
-                if ($full_name->last_name != null){
+                if ($full_name->last_name){
                     $names['last_name']  = $full_name->last_name;
                 }
-                if ($full_name->family_name != null){
+                if ($full_name->family_name){
                     $names['family_name']  = $full_name->family_name;
                 }
 

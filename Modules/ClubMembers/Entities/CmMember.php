@@ -102,6 +102,10 @@ class CmMember extends Model
                         if ($column == 'membership_number')
                         {
                             $q->orWhere($column, $request->search);
+                        }elseif($column == 'full_name'){
+                            $q->orWhere($column, 'like', $request->search . '%');
+                        }elseif($column == 'national_id'){
+                            $q->orWhere($column, $request->search);
                         }else{
                             $q->orWhere($column, 'like', '%' . $request->search . '%');
                         }
