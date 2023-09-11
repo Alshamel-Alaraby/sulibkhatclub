@@ -1548,9 +1548,30 @@ __webpack_require__.r(__webpack_exports__);
   props: ['statices'],
   watch: {
     statices: function statices(newDa, old) {
-      this.series1 = [];
-      this.series3 = [];
-      this.series2 = [];
+      var _this = this;
+      newDa.member_types_data.forEach(function (el, index) {
+        _this.series1.push(el.percentage);
+        _this.chartOptions1.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
+        _this.chartOptions1.colors.push(_this.colors[index]);
+      });
+      newDa.financial_statuses_data.forEach(function (el, index) {
+        _this.series3.push(el.percentage);
+        _this.chartOptions3.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
+        _this.chartOptions3.colors.push(_this.colors[index]);
+      });
+      newDa.member_permissions_data.forEach(function (el, index) {
+        _this.series2.push(el.percentage);
+        _this.chartOptions2.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
+        _this.chartOptions2.colors.push(_this.colors[index]);
+      });
+      newDa.member_types.forEach(function (el, index) {
+        _this.series4.push(el.percentage);
+        _this.chartOptions4.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
+        _this.chartOptions4.colors.push(_this.colors[index]);
+      });
+      this.series5 = [newDa.Percentage_6, newDa.Percentage_7, newDa.Percentage_8, newDa.Percentage_9, newDa.Percentage_18];
+      this.chartOptions5.labels = [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')];
+      this.chartOptions5.colors = ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"];
     }
   }
 });
@@ -2256,10 +2277,9 @@ __webpack_require__.r(__webpack_exports__);
     getStatices: function getStatices() {
       var _this = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/club-members/statics/getStatics").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/club-members/statics/get-members-valid").then(function (res) {
         var l = res.data.data;
         _this.statices = l;
-        consol.log(l);
         _this.staticesHandel();
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
@@ -5455,11 +5475,13 @@ var render = function render() {
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_c("p", {
-    staticClass: "font-15 mb-1 text-truncate"
-  }, [_vm._v(_vm._s(_vm.$t("general.InTheListOfMembers")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.InTheListOfMembers))])])])])])]), _vm._v(" "), _c("div", {
+  }, _vm._l(_vm.statices.member_types_data, function (item) {
+    return _c("div", {
+      staticClass: "col-4"
+    }, [_c("p", {
+      staticClass: "font-15 mb-1 text-truncate"
+    }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
+  }), 0)])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-6"
   }, [_c("div", {
     staticClass: "card"
@@ -5482,11 +5504,13 @@ var render = function render() {
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_c("p", {
-    staticClass: "font-15 mb-1 text-truncate"
-  }, [_vm._v(_vm._s(_vm.$t("general.DeletedAtHisRequest")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.DeletedAtHisRequest))])])])])])]), _vm._v(" "), _c("div", {
+  }, _vm._l(_vm.statices.financial_statuses_data, function (item) {
+    return _c("div", {
+      staticClass: "col-4"
+    }, [_c("p", {
+      staticClass: "font-15 mb-1 text-truncate"
+    }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
+  }), 0)])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-6"
   }, [_c("div", {
     staticClass: "card"
@@ -5509,11 +5533,13 @@ var render = function render() {
     }
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_c("p", {
-    staticClass: "font-15 mb-1 text-truncate"
-  }, [_vm._v(_vm._s(_vm.$t("general.FoundingMemberDetail")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.FoundingMemberDetail))])])])])])]), _vm._v(" "), _c("div", {
+  }, _vm._l(_vm.statices.member_permissions_data, function (item) {
+    return _c("div", {
+      staticClass: "col-4"
+    }, [_c("p", {
+      staticClass: "font-15 mb-1 text-truncate"
+    }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
+  }), 0)])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-6"
   }, [_c("div", {
     staticClass: "card"
@@ -5534,7 +5560,15 @@ var render = function render() {
       height: "312",
       series: _vm.series4
     }
-  })], 1), _vm._v(" "), _vm._m(0)])])]), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "row mt-3"
+  }, _vm._l(_vm.statices.member_types, function (item) {
+    return _c("div", {
+      staticClass: "col-4"
+    }, [_c("p", {
+      staticClass: "font-15 mb-1 text-truncate"
+    }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
+  }), 0)])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-6"
   }, [_c("div", {
     staticClass: "card"
@@ -5551,33 +5585,35 @@ var render = function render() {
     staticClass: "apex-charts",
     attrs: {
       type: "donut",
-      options: _vm.chartOptions4,
+      options: _vm.chartOptions5,
       height: "312",
-      series: _vm.series4
+      series: _vm.series5
     }
-  })], 1), _vm._v(" "), _vm._m(1)])])])]);
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "row mt-3"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "text-muted font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.Deletedathisrequest")))]), _vm._v(" "), _c("h4", [_vm._v(" " + _vm._s(_vm.statices.count_6) + " ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "text-muted font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.Cancellationduetodeath")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_7))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "text-muted font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.Cancellationaccordingtotheministerialdecision")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_8))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "text-muted font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.WrittenoffaccordingtotheAuthorityletter")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_9))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "text-muted font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.Writtenofffornonpayment")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_18))])])])])])])]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "row mt-3"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_c("p", {
-    staticClass: "text-muted font-15 mb-1 text-truncate"
-  }, [_vm._v("Target")]), _vm._v(" "), _c("h4", [_vm._v("$8712")])])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "row mt-3"
-  }, [_c("div", {
-    staticClass: "col-4"
-  }, [_c("p", {
-    staticClass: "text-muted font-15 mb-1 text-truncate"
-  }, [_vm._v("Target")]), _vm._v(" "), _c("h4", [_vm._v("$8712")])])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 

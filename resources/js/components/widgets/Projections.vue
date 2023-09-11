@@ -141,10 +141,33 @@ export default {
     props: ['statices'],
     watch:{
         statices(newDa,old){
-            this.series1 = [];
-            this.series3 = [];
-            this.series2 = [];
-
+            newDa.member_types_data.forEach((el,index) => {
+                this.series1.push(el.percentage);
+                this.chartOptions1.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
+                this.chartOptions1.colors.push(this.colors[index]);
+            });
+            newDa.financial_statuses_data.forEach((el,index) => {
+                this.series3.push(el.percentage);
+                this.chartOptions3.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
+                this.chartOptions3.colors.push(this.colors[index]);
+            });
+            newDa.member_permissions_data.forEach((el,index) => {
+                this.series2.push(el.percentage);
+                this.chartOptions2.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
+                this.chartOptions2.colors.push(this.colors[index]);
+            });
+            newDa.member_types.forEach((el,index) => {
+                this.series4.push(el.percentage);
+                this.chartOptions4.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
+                this.chartOptions4.colors.push(this.colors[index]);
+            });
+            this.series5 = [newDa.Percentage_6,newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
+            this.chartOptions5.labels = [
+                this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
+                this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
+                this.$t('general.Writtenofffornonpayment')
+            ];
+            this.chartOptions5.colors = ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"];
         }
     }
 };
@@ -171,9 +194,9 @@ export default {
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-4">
-                            <p class="font-15 mb-1 text-truncate">{{ $t('general.InTheListOfMembers') }}</p>
-                            <h4>{{ statices.InTheListOfMembers }}</h4>
+                        <div class="col-4" v-for="item in statices.member_types_data">
+                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                            <h4>{{ item.count }}</h4>
                         </div>
                     </div>
 
@@ -201,9 +224,9 @@ export default {
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-4">
-                            <p class="font-15 mb-1 text-truncate">{{ $t('general.DeletedAtHisRequest') }}</p>
-                            <h4>{{ statices.DeletedAtHisRequest }}</h4>
+                        <div class="col-4" v-for="item in statices.financial_statuses_data">
+                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                            <h4>{{ item.count }}</h4>
                         </div>
                     </div>
                 </div>
@@ -230,9 +253,9 @@ export default {
                     </div>
 
                     <div class="row mt-3">
-                        <div class="col-4">
-                            <p class="font-15 mb-1 text-truncate">{{ $t('general.FoundingMemberDetail') }}</p>
-                            <h4>{{ statices.FoundingMemberDetail }}</h4>
+                        <div class="col-4" v-for="item in statices.member_permissions_data">
+                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                            <h4>{{ item.count }}</h4>
                         </div>
                     </div>
 
@@ -260,9 +283,9 @@ export default {
                             </div>
 
                             <div class="row mt-3">
-                                <div class="col-4">
-                                    <p class="text-muted font-15 mb-1 text-truncate">Target</p>
-                                    <h4>$8712</h4>
+                                <div class="col-4" v-for="item in statices.member_types">
+                                    <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                    <h4>{{ item.count }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -281,17 +304,33 @@ export default {
                         <apexchart
                             class="apex-charts"
                             type="donut"
-                            :options="chartOptions4"
+                            :options="chartOptions5"
                             height="312"
-                            :series="series4"
+                            :series="series5"
                         >
                         </apexchart>
                     </div>
 
                     <div class="row mt-3">
                         <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">Target</p>
-                            <h4>$8712</h4>
+                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Deletedathisrequest')}}</p>
+                            <h4> {{ statices.count_6 }} </h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationduetodeath')}}</p>
+                            <h4>{{ statices.count_7 }}</h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationaccordingtotheministerialdecision')}}</p>
+                            <h4>{{ statices.count_8 }}</h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.WrittenoffaccordingtotheAuthorityletter')}}</p>
+                            <h4>{{ statices.count_9 }}</h4>
+                        </div>
+                        <div class="col-4">
+                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Writtenofffornonpayment')}}</p>
+                            <h4>{{ statices.count_18 }}</h4>
                         </div>
                     </div>
                 </div>

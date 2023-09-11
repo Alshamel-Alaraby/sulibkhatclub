@@ -137,11 +137,10 @@ export default {
         getStatices() {
             this.isLoader = true;
 
-            adminApi.get(`/club-members/statics/getStatics`)
+            adminApi.get(`/club-members/statics/get-members-valid`)
                 .then((res) => {
                     let l = res.data.data;
                     this.statices = l;
-                    consol.log(l);
                     this.staticesHandel();
                 })
                 .catch((err) => {

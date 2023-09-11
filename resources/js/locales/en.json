@@ -1465,6 +1465,11 @@
         "choseAll": "Chose All",
         "Typesofpayment": "Types Of Payment",
         "Memberrights": "Member Rights",
-        "Reasonsfordeletion": "Reasons for deletion"
+        "Reasonsfordeletion": "Reasons for deletion",
+        "Deletedathisrequest": "Deleted At His Request",
+        "Cancellationduetodeath": "Cancellation due to death",
+        "Cancellationaccordingtotheministerialdecision": "Cancellation according to the ministerial decision",
+        "WrittenoffaccordingtotheAuthorityletter": "Written off according to the Authority’s letter",
+        "Writtenofffornonpayment": "Written off for non-payment"
     }
 }

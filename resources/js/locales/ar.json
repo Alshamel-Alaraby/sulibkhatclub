@@ -1450,6 +1450,11 @@
         "choseAll": "اختر الكل",
         "Typesofpayment": "انواع السداد",
         "Memberrights": "حقوق الاعضاء",
-        "Reasonsfordeletion": "اسباب الشطب"
+        "Reasonsfordeletion": "اسباب الشطب",
+        "Deletedathisrequest": "شطب بناءا علي طلبه",
+        "Cancellationduetodeath": "شطب للوفاة",
+        "Cancellationaccordingtotheministerialdecision": "شطب بموجب القرار الوزاري",
+        "WrittenoffaccordingtotheAuthorityletter": "شطب بموجب كتاب الهيئة",
+        "Writtenofffornonpayment": "شطب لعدم السداد"
     }
 }
