@@ -112,176 +112,116 @@ class CmStaticsController extends Controller
         return response()->json($response);
     }
 
-    // public function getNormalMembersPercentage()
-    // {
-    //     //////////////////////////////////////////    اعداد    //////////////////////////////////////////////////////////
+    public function validMembers()
+    {
+        $data = [];
 
-    //     $data = [];
-    //     // //عدد الاعضاء كلهم
-    //     $data['allMembers'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->count();
+        $data['validMembersCount'] = CmMember::where('member_status_id', 1)->count(); //6193
 
-    //     // // عدد أعضاء حضور الانتخابات
-    //     $data['presenceMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [1, 2, 3])->count();
+        $member_types = CmMemberType::get();
 
-    //     // // عدد الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->where('auto_member_type_id', 2)->count();
+        foreach ($member_types as $member_type) {
 
-    //     // // عدد الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 1)->whereIn('auto_member_type_id', [2, 3])->count();
+            $member_types_count = CmMember::where('member_status_id', 1)->whereIn('member_kind_id', $member_type)->count();
+            $percentage = $data['validMembersCount'] != 0 ? round(($member_types_count / $data['validMembersCount']) * 100, 2) : 0;
 
-    //     //////////////////////////////////////////    نسب    //////////////////////////////////////////////////////////
+            $data['member_types'][$member_type->name] = [
+                'count' => $member_types_count,
+                'percentage' => $percentage,
+            ];
 
-    //     // نسبة أعضاء حضور الانتخابات
-    //     $data['presenceMemberPercentage'] = round($data['presenceMemberCount'] / $data['allMembers'] * 100, 2);
+            $data['member_types'][$member_type->name_e] = [
+                'count' => $member_types_count,
+                'percentage' => $percentage,
+            ];
 
-    //     // نسبة الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberPercentage'] = round($data['voteMemberCount'] / $data['allMembers'] * 100, 2);
+            // $data['member_types'][$member_type->name] = $member_types_count;
+            // $data['member_types'][$member_type->name_e] = $member_types_count;
 
-    //     // نسبة الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberPercentage'] = round($data['nominateMemberCount'] / $data['allMembers'] * 100, 2);
+        }
 
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
+        $financial_statuses = CmFinancialStatus::get();
+        foreach ($financial_statuses as $financial_status) {
+            $financial_statuses_count = CmMember::where('member_status_id', 1)->whereIn('financial_status_id', $financial_status)->count();
+            $percentage = $data['validMembersCount'] != 0 ? round(($financial_statuses_count / $data['validMembersCount']) * 100, 2) : 0;
 
-    //     return response()->json($response);
-    // }
-    // public function getFoundingMembersPercentage()
-    // {
-    //     //////////////////////////////////////////    المؤسسين    //////////////////////////////////////////////////////////
+            $data['financial_statuses'][$financial_status->name] = [
+                'count' => $financial_statuses_count,
+                'percentage' => $percentage,
+            ];
 
-    //     $data = [];
-    //     // //عدد الاعضاء كلهم
+            $data['financial_statuses'][$financial_status->name_e] = [
+                'count' => $financial_statuses_count,
+                'percentage' => $percentage,
+            ];
+        }
 
-    //     $data['allMembers'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->count();
+        // foreach ($financial_statuses as $financial_status) {
 
-    //     // // عدد أعضاء حضور الانتخابات
-    //     $data['presenceMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [1, 2, 3])->count();
+        //     $financial_statuses_count = CmMember::where('member_status_id', 1)->whereIn('financial_status_id', $financial_status)->count();
+        //     $data['financial_statuses'][$financial_status->name] = $financial_statuses_count;
+        //     $data['financial_statuses'][$financial_status->name_e] = $financial_statuses_count;
 
-    //     // // عدد الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->where('auto_member_type_id', 2)->count();
+        // }
 
-    //     // // عدد الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberCount'] = CmMember::WhereRelation('memberType', 'parent_id', 2)->whereIn('auto_member_type_id', [2, 3])->count();
+        $member_permissions = CmMemberPermission::get();
+        foreach ($member_permissions as $member_permission) {
+            $member_permissions_count = CmMember::where('member_status_id', 1)->whereIn('members_permissions_id', $member_permission)->count();
+            $percentage = $data['validMembersCount'] != 0 ? round(($member_permissions_count / $data['validMembersCount']) * 100, 2) : 0;
 
-    //     //////////////////////////////////////////    نسب    //////////////////////////////////////////////////////////
+            $data['member_permissions'][$member_permission->name] = [
+                'count' => $member_permissions_count,
+                'percentage' => $percentage,
+            ];
 
-    //     // نسبة أعضاء حضور الانتخابات
-    //     $data['presenceMemberPercentage'] = round($data['presenceMemberCount'] / $data['allMembers'] * 100, 2);
+            $data['member_permissions'][$member_permission->name_e] = [
+                'count' => $member_permissions_count,
+                'percentage' => $percentage,
+            ];
+        }
 
-    //     // نسبة الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberPercentage'] = round($data['voteMemberCount'] / $data['allMembers'] * 100, 2);
+        // foreach ($member_permissions as $member_permission) {
+        //     $member_permissions_count = CmMember::where('member_status_id', 1)->whereIn('members_permissions_id', $member_permission)->count();
+        //     $data['member_permissions'][$member_permission->name] = $member_permissions_count;
+        //     $data['member_permissions'][$member_permission->name_e] = $member_permissions_count;
+        // }
 
-    //     // نسبة الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberPercentage'] = round($data['nominateMemberCount'] / $data['allMembers'] * 100, 2);
+        $data['DeletedMember'] = CmMember::where('member_status_id', 2)->count();
 
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
+        // // الأعضاء المشطوبين شطب بناءا علي طلبه
+        $data['count_6'] = CmMember::where('member_status_id', 2)->where('discharge_reson_id', 6)->count();
+        $data['Percentage_6'] = $data['DeletedMember'] != 0 ? round(($data['count_6'] / $data['DeletedMember']) * 100, 2) : 0;
 
-    //     return response()->json($response);
-    // }
+        // // الأعضاء المشطوبين شطب للوفاة
+        $data['count_7'] = CmMember::where('member_status_id', 2)->where('discharge_reson_id', 7)->count();
+        $data['Percentage_7'] = $data['DeletedMember'] != 0 ? round(($data['count_7'] / $data['DeletedMember']) * 100, 2) : 0;
 
-    // public function getDismissedMembersPercentage()
-    // {
-    //     //////////////////////////////////////////    المشطوبين    //////////////////////////////////////////////////////////
+        // // الأعضاء المشطوبين شطب بموجب القرار الوزاري
+        $data['count_8'] = CmMember::where('member_status_id', 2)->where('discharge_reson_id', 8)->count();
+        $data['Percentage_8'] = $data['DeletedMember'] != 0 ? round(($data['count_8'] / $data['DeletedMember']) * 100, 2) : 0;
 
-    //     $data = [];
-    //     // //عدد الاعضاء كلهم
+        // // الأعضاء المشطوبين شطب بموجب كتاب الهيئة
+        $data['count_9'] = CmMember::where('member_status_id', 2)->where('discharge_reson_id', 9)->count();
+        $data['Percentage_9'] = $data['DeletedMember'] != 0 ? round(($data['count_9'] / $data['DeletedMember']) * 100, 2) : 0;
 
-    //     $data['allMembers'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->count();
+        // // الأعضاء المشطوبين شطب لعدم السداد
+        $data['count_18'] = CmMember::where('member_status_id', 2)->where('discharge_reson_id', 18)->count();
+        $data['Percentage_18'] = $data['DeletedMember'] != 0 ? round(($data['count_18'] / $data['DeletedMember']) * 100, 2) : 0;
 
-    //     // // عدد أعضاء حضور الانتخابات
-    //     $data['presenceMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->whereIn('auto_member_type_id', [1, 2, 3])->count();
+        $count_date = [];
 
-    //     // // عدد الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->where('auto_member_type_id', 2)->count();
+        $CmMemberTypes = CmMemberType::all();
+        foreach ($CmMemberTypes as $index => $CmMemberType) {
+            $data[$CmMemberType->name] = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
+        }
 
-    //     // // عدد الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberCount'] = CmMember::whereIn('member_type_id', [6, 7, 8, 9, 18])->whereIn('auto_member_type_id', [2, 3])->count();
+        $response = [
+            'message' => 'success',
+            'data' => $data,
+        ];
 
-    //     //////////////////////////////////////////    نسب    //////////////////////////////////////////////////////////
+        return response()->json($response);
 
-    //     // نسبة أعضاء حضور الانتخابات
-    //     $data['presenceMemberPercentage'] = round($data['presenceMemberCount'] / $data['allMembers'] * 100, 2);
-
-    //     // نسبة الأعضاء تصويت في الانتخابات
-    //     $data['voteMemberPercentage'] = round($data['voteMemberCount'] / $data['allMembers'] * 100, 2);
-
-    //     // نسبة الأعضاء الترشح في الانتخابات
-    //     $data['nominateMemberPercentage'] = round($data['nominateMemberCount'] / $data['allMembers'] * 100, 2);
-
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
-
-    //     return response()->json($response);
-    // }
-
-    // public function getSponsorGroupPercentage()
-    // {
-    //     $data = [];
-
-    //     $data['sponsors'] = CmSponser::whereNotNull('group_id')->count();
-    //     $data['group'] = CmSponsorGroup::count();
-
-    //     $groupIds = CmSponser::whereNotNull('group_id')->pluck('group_id')->unique();
-
-    //     foreach ($groupIds as $groupId) {
-    //         $count = CmSponser::where('group_id', $groupId)->count();
-    //         $percentage = ($count / $data['sponsors']) * 100;
-    //         $data["group_id $groupId "] = [
-    //             'count' => $count,
-    //             'percentage' => round($percentage, 2),
-    //         ];
-    //     }
-
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
-    //     return response()->json($response);
-    // }
-
-    // public function getMemberRequestPercentage()
-    // {
-    //     $data = [];
-    //     ///////////////// اعداد /////////////////////////////////
-    //     $data['allRequestMembersCount'] = CmMemberRequest::count();
-    //     $data['RequestMembersPendingCount'] = CmMember::WhereRelation('memberType', 'id', 15)->count();
-    //     $data['RequestMembersRejectedCount'] = CmMember::WhereRelation('memberType', 'id', 16)->count();
-    //     ///////////////// نسب /////////////////////////////////
-    //     $data['RequestMembersPendingPercentage'] = round($data['RequestMembersPendingCount'] / $data['allRequestMembersCount'] * 100, 2);
-    //     $data['RequestMembersRejectedPercentage'] = round($data['RequestMembersRejectedCount'] / $data['allRequestMembersCount'] * 100, 2);
-
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
-    //     return response()->json($response);
-    // }
-
-    // public function getMembersWhereHasTransactionNextYearCount()
-    // {
-    //     $data = [];
-    //     ///////////////// اعداد /////////////////////////////////
-    //     $data['allMembersCount'] = CmMember::count();
-
-    //     $data['allMembersWhereHasTransactionNextYearCount'] = CmMember::whereHas('cmTransaction', function ($q) {
-    //         $q->where('year_to', date('Y') + 1);
-    //     })->count();
-
-    //     ///////////////// نسب /////////////////////////////////
-    //     $data['allMembersWhereHasTransactionNextYearPercentage'] = round($data['allMembersWhereHasTransactionNextYearCount'] / $data['allMembersCount'] * 100, 2);
-
-    //     $response = [
-    //         'message' => 'success',
-    //         'data' => $data,
-    //     ];
-    //     return response()->json($response);
-    // }
+    }
 
 }

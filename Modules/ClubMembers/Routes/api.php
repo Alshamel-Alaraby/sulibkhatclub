@@ -206,6 +206,10 @@ Route::prefix('club-members')->group(function () {
 
         Route::get('/get-members-percentage', 'CmStaticsController@getMembersPercentage')
             ->name('statics.getMembersPercentage');
+
+
+        Route::get('/get-members-valid', 'CmStaticsController@validMembers')
+        ->name('statics.validMembers');
         // Route::get('/get-normal-members-percentage', 'CmStaticsController@getNormalMembersPercentage')
         //     ->name('statics.getNormalMembersPercentage');
 
