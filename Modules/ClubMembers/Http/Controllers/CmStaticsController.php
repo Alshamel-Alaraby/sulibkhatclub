@@ -241,11 +241,13 @@ class CmStaticsController extends Controller
         }
 
 
-        //المجموعات
-        $data['groups'] = CmSponsorGroup::count();
-        //الرعاه
-                $data['sponsors'] = CmSponser::count();
-        /////////////// count of sponsor for each group /////////////////////
+
+
+//المجموعات
+$data['groups'] = CmSponsorGroup::count();
+//الرعاه
+        $data['sponsors'] = CmSponser::count();
+/////////////// count of sponsor for each group /////////////////////
         $sponsorsGroups = CmSponsorGroup::select('id', 'name', 'name_e')
             ->withCount('sponsors')
             ->get();
@@ -383,7 +385,9 @@ class CmStaticsController extends Controller
                 'count' => $count,
                 'percentage' => round($percentage, 2),
             ];
-        });
+        })->filter(function ($sponsor) {
+            return $sponsor['count'] > 0;
+        })->values();
 ////////// count of members for each sponsor where (member_status_id) == 1  and for every permission ///////////
 
         $totalMembersPermissions = CmMember::where('member_status_id', 1)->count();
