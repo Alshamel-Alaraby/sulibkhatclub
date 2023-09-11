@@ -1455,6 +1455,7 @@
         "Cancellationduetodeath": "شطب للوفاة",
         "Cancellationaccordingtotheministerialdecision": "شطب بموجب القرار الوزاري",
         "WrittenoffaccordingtotheAuthorityletter": "شطب بموجب كتاب الهيئة",
-        "Writtenofffornonpayment": "شطب لعدم السداد"
+        "Writtenofffornonpayment": "شطب لعدم السداد",
+        "memberType": "انواع الاعضاء"
     }
 }

@@ -1529,8 +1529,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: [],
-        colors: [],
+        labels: [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')],
+        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1569,9 +1569,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.chartOptions4.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
         _this.chartOptions4.colors.push(_this.colors[index]);
       });
-      this.series5 = [newDa.Percentage_6, newDa.Percentage_7, newDa.Percentage_8, newDa.Percentage_9, newDa.Percentage_18];
-      this.chartOptions5.labels = [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')];
-      this.chartOptions5.colors = ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"];
+      this.series5 = [newDa.Percentage_6 + .01, newDa.Percentage_7, newDa.Percentage_8, newDa.Percentage_9, newDa.Percentage_18];
     }
   }
 });
@@ -5450,17 +5448,19 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
+  return _c("div", [_c("h1", {
+    staticClass: "header-title text-center mb-2"
+  }, [_vm._v(_vm._s(_vm.$t("general.Ordinarymembers")))]), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
-    staticClass: "col-xl-6"
+    staticClass: "col-xl-4"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-body"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v(_vm._s(_vm.$t("general.Ordinarymembers")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.memberType")))]), _vm._v(" "), _c("div", {
     staticClass: "mt-3 text-center",
     attrs: {
       dir: "ltr"
@@ -5482,7 +5482,7 @@ var render = function render() {
       staticClass: "font-15 mb-1 text-truncate"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
   }), 0)])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-6"
+    staticClass: "col-xl-4"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
@@ -5511,7 +5511,7 @@ var render = function render() {
       staticClass: "font-15 mb-1 text-truncate"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
   }), 0)])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-6"
+    staticClass: "col-xl-4"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
@@ -5539,15 +5539,19 @@ var render = function render() {
     }, [_c("p", {
       staticClass: "font-15 mb-1 text-truncate"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
-  }), 0)])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-6"
+  }), 0)])])])]), _vm._v(" "), _c("h1", {
+    staticClass: "header-title text-center my-2"
+  }, [_vm._v(_vm._s(_vm.$t("general.dismissedMemberCount")))]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-xl-4"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-body"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v(_vm._s(_vm.$t("general.dismissedMemberCount")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.memberType")))]), _vm._v(" "), _c("div", {
     staticClass: "mt-3 text-center",
     attrs: {
       dir: "ltr"
@@ -5569,7 +5573,7 @@ var render = function render() {
       staticClass: "font-15 mb-1 text-truncate"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
   }), 0)])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-6"
+    staticClass: "col-xl-4"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
@@ -5611,7 +5615,7 @@ var render = function render() {
     staticClass: "col-4"
   }, [_c("p", {
     staticClass: "text-muted font-15 mb-1 text-truncate"
-  }, [_vm._v(_vm._s(_vm.$t("general.Writtenofffornonpayment")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_18))])])])])])])]);
+  }, [_vm._v(_vm._s(_vm.$t("general.Writtenofffornonpayment")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_18))])])])])])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -6051,7 +6055,7 @@ var render = function render() {
       items: _vm.items
     }
   }), _vm._v(" "), _c("div", {
-    staticClass: "dashboard-fluid"
+    staticClass: "dashboard-fluid mb-3"
   }, [_c("Projections", {
     attrs: {
       statices: _vm.statices

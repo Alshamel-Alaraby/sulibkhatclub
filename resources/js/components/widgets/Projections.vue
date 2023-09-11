@@ -122,8 +122,12 @@ export default {
                     offsetX: 0,
                     offsetY: 7
                 },
-                labels: [],
-                colors: [],
+                labels: [
+                    this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
+                    this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
+                    this.$t('general.Writtenofffornonpayment')
+                ],
+                colors: ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"],
                 responsive: [{
                     breakpoint: 600,
                     options: {
@@ -161,183 +165,215 @@ export default {
                 this.chartOptions4.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
                 this.chartOptions4.colors.push(this.colors[index]);
             });
-            this.series5 = [newDa.Percentage_6,newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
-            this.chartOptions5.labels = [
-                this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
-                this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
-                this.$t('general.Writtenofffornonpayment')
-            ];
-            this.chartOptions5.colors = ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"];
+            this.series5 = [(newDa.Percentage_6 + .01),newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
         }
     }
 };
 </script>
 
 <template>
-    <div class="row">
-        <!-- end col -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
+    <div>
+        <h1 class="header-title text-center my-3">{{ $t('general.Ordinarymembers') }}</h1>
+        <div class="row">
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
 
-                    <h4 class="header-title">{{ $t('general.Ordinarymembers') }}</h4>
+                        <h4 class="header-title">{{ $t('general.memberType') }}</h4>
 
-                    <div class="mt-3 text-center" dir="ltr">
-                        <apexchart
-                            class="apex-charts"
-                            type="donut"
-                            :options="chartOptions1"
-                            height="312"
-                            :series="series1"
-                        >
-                        </apexchart>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-4" v-for="item in statices.member_types_data">
-                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                            <h4>{{ item.count }}</h4>
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions1"
+                                height="312"
+                                :series="series1"
+                            >
+                            </apexchart>
                         </div>
-                    </div>
 
-                </div>
-            </div>
-        </div>
-        <!-- end col -->
-
-        <!-- end col -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
-
-                    <h4 class="header-title">{{ $t('general.Typesofpayment') }}</h4>
-
-                    <div class="mt-3 text-center" dir="ltr">
-                        <apexchart
-                            class="apex-charts"
-                            type="donut"
-                            :options="chartOptions3"
-                            height="312"
-                            :series="series3"
-                        >
-                        </apexchart>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-4" v-for="item in statices.financial_statuses_data">
-                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                            <h4>{{ item.count }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end col -->
-
-        <!-- end col -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
-
-                    <h4 class="header-title">{{ $t('general.Memberrights') }}</h4>
-
-                    <div class="mt-3 text-center" dir="ltr">
-                        <apexchart
-                            class="apex-charts"
-                            type="donut"
-                            :options="chartOptions2"
-                            height="312"
-                            :series="series2"
-                        >
-                        </apexchart>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-4" v-for="item in statices.member_permissions_data">
-                            <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                            <h4>{{ item.count }}</h4>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <!-- end col -->
-
-        <!-- end col -->
-         <div class="col-xl-6">
-                    <div class="card">
-                        <div class="card-body">
-
-                            <h4 class="header-title">{{ $t('general.dismissedMemberCount') }}</h4>
-
-                            <div class="mt-3 text-center" dir="ltr">
-                                <apexchart
-                                    class="apex-charts"
-                                    type="donut"
-                                    :options="chartOptions4"
-                                    height="312"
-                                    :series="series4"
-                                >
-                                </apexchart>
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.member_types_data">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
                             </div>
+                        </div>
 
-                            <div class="row mt-3">
-                                <div class="col-4" v-for="item in statices.member_types">
-                                    <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                                    <h4>{{ item.count }}</h4>
-                                </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.Typesofpayment') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions3"
+                                height="312"
+                                :series="series3"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.financial_statuses_data">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
-        <!-- end col -->
+            </div>
+            <!-- end col -->
 
-        <!-- end col -->
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-body">
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
 
-                    <h4 class="header-title">{{ $t('general.Reasonsfordeletion') }}</h4>
+                        <h4 class="header-title">{{ $t('general.Memberrights') }}</h4>
 
-                    <div class="mt-3 text-center" dir="ltr">
-                        <apexchart
-                            class="apex-charts"
-                            type="donut"
-                            :options="chartOptions5"
-                            height="312"
-                            :series="series5"
-                        >
-                        </apexchart>
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions2"
+                                height="312"
+                                :series="series2"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.member_permissions_data">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
+                            </div>
+                        </div>
+
                     </div>
+                </div>
+            </div>
+            <!-- end col -->
 
-                    <div class="row mt-3">
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Deletedathisrequest')}}</p>
-                            <h4> {{ statices.count_6 }} </h4>
+        </div>
+
+        <h1 class="header-title text-center my-3">{{ $t('general.dismissedMemberCount') }}</h1>
+        <div class="row">
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.memberType') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions4"
+                                height="312"
+                                :series="series4"
+                            >
+                            </apexchart>
                         </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationduetodeath')}}</p>
-                            <h4>{{ statices.count_7 }}</h4>
-                        </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationaccordingtotheministerialdecision')}}</p>
-                            <h4>{{ statices.count_8 }}</h4>
-                        </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.WrittenoffaccordingtotheAuthorityletter')}}</p>
-                            <h4>{{ statices.count_9 }}</h4>
-                        </div>
-                        <div class="col-4">
-                            <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Writtenofffornonpayment')}}</p>
-                            <h4>{{ statices.count_18 }}</h4>
+
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.member_types">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- end col -->
+            <!-- end col -->
 
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.Reasonsfordeletion') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions5"
+                                height="312"
+                                :series="series5"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4">
+                                <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Deletedathisrequest')}}</p>
+                                <h4> {{ statices.count_6 }} </h4>
+                            </div>
+                            <div class="col-4">
+                                <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationduetodeath')}}</p>
+                                <h4>{{ statices.count_7 }}</h4>
+                            </div>
+                            <div class="col-4">
+                                <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Cancellationaccordingtotheministerialdecision')}}</p>
+                                <h4>{{ statices.count_8 }}</h4>
+                            </div>
+                            <div class="col-4">
+                                <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.WrittenoffaccordingtotheAuthorityletter')}}</p>
+                                <h4>{{ statices.count_9 }}</h4>
+                            </div>
+                            <div class="col-4">
+                                <p class="text-muted font-15 mb-1 text-truncate">{{$t('general.Writtenofffornonpayment')}}</p>
+                                <h4>{{ statices.count_18 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+
+        <h1 class="header-title text-center my-3">{{ $t('general.sponsor') }}</h1>
+        <div class="row">
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.memberType') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions4"
+                                height="312"
+                                :series="series4"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.member_types">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
     </div>
     <!-- end row -->
     <!-- end card-box -->
@@ -346,6 +382,10 @@ export default {
 <style scoped>
 .card-body {
     background-color: #bee3fe !important;
+}
+
+h1 {
+    font-size: 30px;
 }
 
 .card-body {

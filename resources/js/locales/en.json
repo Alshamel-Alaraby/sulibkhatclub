@@ -1470,6 +1470,7 @@
         "Cancellationduetodeath": "Cancellation due to death",
         "Cancellationaccordingtotheministerialdecision": "Cancellation according to the ministerial decision",
         "WrittenoffaccordingtotheAuthorityletter": "Written off according to the Authority’s letter",
-        "Writtenofffornonpayment": "Written off for non-payment"
+        "Writtenofffornonpayment": "Written off for non-payment",
+        "memberType": "Member Of Types"
     }
 }

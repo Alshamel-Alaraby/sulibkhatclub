@@ -224,7 +224,7 @@ export default {
     <Layout>
         <PageHeader :title="title" :items="items" />
 
-        <div class="dashboard-fluid">
+        <div class="dashboard-fluid mb-3">
 <!--            <div class="row mt-2">-->
 <!--                <div class="col-xl-3 col-md-6">-->
 <!--                    <CrmWidget-->
