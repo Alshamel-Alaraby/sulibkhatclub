@@ -4,7 +4,10 @@ namespace Modules\ClubMembers\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Entities\CmMemberType;
 use Modules\ClubMembers\Entities\CmMemberRequest;
+use Modules\ClubMembers\Entities\CmFinancialStatus;
+use Modules\ClubMembers\Entities\CmMemberPermission;
 use Modules\ClubMembers\Entities\CmSponser;
 use Modules\ClubMembers\Entities\CmSponsorGroup;
 

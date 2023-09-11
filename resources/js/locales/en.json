@@ -1447,7 +1447,7 @@
         "ReportToMembers": "Report To Members",
         "whichYearHeStarted": "which year he started",
         "NumberOfSubscriptionYears": "Number of subscription years",
-        "Ordinarymembers": "Ordinary Members",
+        "Ordinarymembers": "Valid members",
         "Foundingmembers": "Founding Members",
         "InTheListOfMembers": "In The List Of Members",
         "stopped":"stopped",
@@ -1462,6 +1462,9 @@
         "WriteOffForNonPayment": "WriteOffForNonPayment",
         "FoundingMemberDetail": "Founding Member",
         "HeHasTheRightToRunAndVoteDetail": "He Has The Right To Run And Vote",
-        "choseAll": "Chose All"
+        "choseAll": "Chose All",
+        "Typesofpayment": "Types Of Payment",
+        "Memberrights": "Member Rights",
+        "Reasonsfordeletion": "Reasons for deletion"
     }
 }

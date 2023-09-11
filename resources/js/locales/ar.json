@@ -1432,7 +1432,7 @@
         "ReportToMembers": "تقرير الاستعلام عن الاعضاء",
         "whichYearHeStarted": "بدا من سنه",
         "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
-        "Ordinarymembers": "الاعضاء العاديين",
+        "Ordinarymembers": "الاعضاء الساريين",
         "Foundingmembers": "الاعضاء المؤسسين",
         "InTheListOfMembers": "في لائحة الاعضاء",
         "stopped": "موقوف",
@@ -1447,6 +1447,9 @@
         "WriteOffForNonPayment": "شطب لعدم السداد",
         "FoundingMemberDetail": "عضو مؤسس",
         "HeHasTheRightToRunAndVoteDetail": "له حق الترشح و التصويت",
-        "choseAll": "اختر الكل"
+        "choseAll": "اختر الكل",
+        "Typesofpayment": "انواع السداد",
+        "Memberrights": "حقوق الاعضاء",
+        "Reasonsfordeletion": "اسباب الشطب"
     }
 }
