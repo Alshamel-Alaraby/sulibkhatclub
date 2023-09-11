@@ -236,10 +236,14 @@ class CmStaticsController extends Controller
             // $data[$CmMemberType->name] = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
             $memberTypeCount = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
 
+            $percentage = $data['DeletedMember'] != 0 ? round(($memberTypeCount / $data['DeletedMember']) * 100, 2) : 0;
+
             $data['member_types'][] = [
                 'name' => $CmMemberType->name,
                 'name_e' => $CmMemberType->name_e,
                 'count' => $memberTypeCount,
+                'percentage' => $percentage,
+
             ];
         }
 
