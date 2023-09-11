@@ -121,73 +121,94 @@ class CmStaticsController extends Controller
 
         $data['validMembersCount'] = CmMember::where('member_status_id', 1)->count(); //6193
 
+
         $member_types = CmMemberType::get();
+
+        $data['member_types_data'] = [];
 
         foreach ($member_types as $member_type) {
 
             $member_types_count = CmMember::where('member_status_id', 1)->whereIn('member_kind_id', $member_type)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($member_types_count / $data['validMembersCount']) * 100, 2) : 0;
 
-            $data['member_types'][$member_type->name] = [
+            $data['member_types_data'][] = [
+                'name' => $member_type->name,
+                'name_e' => $member_type->name_e,
                 'count' => $member_types_count,
                 'percentage' => $percentage,
             ];
 
-            $data['member_types'][$member_type->name_e] = [
-                'count' => $member_types_count,
-                'percentage' => $percentage,
-            ];
+            // $data['member_types'][$member_type->name] = [
+            //     'count' => $member_types_count,
+            //     'percentage' => $percentage,
+            // ];
 
-            // $data['member_types'][$member_type->name] = $member_types_count;
-            // $data['member_types'][$member_type->name_e] = $member_types_count;
+            // $data['member_types'][$member_type->name_e] = [
+            //     'count' => $member_types_count,
+            //     'percentage' => $percentage,
+            // ];
+
+
 
         }
 
         $financial_statuses = CmFinancialStatus::get();
+        $data['financial_statuses_data'] = [];
+
+
         foreach ($financial_statuses as $financial_status) {
             $financial_statuses_count = CmMember::where('member_status_id', 1)->whereIn('financial_status_id', $financial_status)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($financial_statuses_count / $data['validMembersCount']) * 100, 2) : 0;
 
-            $data['financial_statuses'][$financial_status->name] = [
+            $data['financial_statuses_data'][] = [
+                'name' => $financial_status->name,
+                'name_e' => $financial_status->name_e,
                 'count' => $financial_statuses_count,
                 'percentage' => $percentage,
             ];
 
-            $data['financial_statuses'][$financial_status->name_e] = [
-                'count' => $financial_statuses_count,
-                'percentage' => $percentage,
-            ];
+            // $data['financial_statuses'][$financial_status->name] = [
+            //     'count' => $financial_statuses_count,
+            //     'percentage' => $percentage,
+            // ];
+
+            // $data['financial_statuses'][$financial_status->name_e] = [
+            //     'count' => $financial_statuses_count,
+            //     'percentage' => $percentage,
+            // ];
         }
 
-        // foreach ($financial_statuses as $financial_status) {
 
-        //     $financial_statuses_count = CmMember::where('member_status_id', 1)->whereIn('financial_status_id', $financial_status)->count();
-        //     $data['financial_statuses'][$financial_status->name] = $financial_statuses_count;
-        //     $data['financial_statuses'][$financial_status->name_e] = $financial_statuses_count;
 
-        // }
 
         $member_permissions = CmMemberPermission::get();
+        $data['member_permissions_data'] = [];
+
+
         foreach ($member_permissions as $member_permission) {
             $member_permissions_count = CmMember::where('member_status_id', 1)->whereIn('members_permissions_id', $member_permission)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($member_permissions_count / $data['validMembersCount']) * 100, 2) : 0;
 
-            $data['member_permissions'][$member_permission->name] = [
+
+            $data['member_permissions_data'][] = [
+                'name' => $member_permission->name,
+                'name_e' => $member_permission->name_e,
                 'count' => $member_permissions_count,
                 'percentage' => $percentage,
             ];
 
-            $data['member_permissions'][$member_permission->name_e] = [
-                'count' => $member_permissions_count,
-                'percentage' => $percentage,
-            ];
+            // $data['member_permissions'][$member_permission->name] = [
+            //     'count' => $member_permissions_count,
+            //     'percentage' => $percentage,
+            // ];
+
+            // $data['member_permissions'][$member_permission->name_e] = [
+            //     'count' => $member_permissions_count,
+            //     'percentage' => $percentage,
+            // ];
         }
 
-        // foreach ($member_permissions as $member_permission) {
-        //     $member_permissions_count = CmMember::where('member_status_id', 1)->whereIn('members_permissions_id', $member_permission)->count();
-        //     $data['member_permissions'][$member_permission->name] = $member_permissions_count;
-        //     $data['member_permissions'][$member_permission->name_e] = $member_permissions_count;
-        // }
+
 
         $data['DeletedMember'] = CmMember::where('member_status_id', 2)->count();
 
@@ -215,13 +236,22 @@ class CmStaticsController extends Controller
 
         $CmMemberTypes = CmMemberType::all();
         foreach ($CmMemberTypes as $index => $CmMemberType) {
-            $data[$CmMemberType->name] = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
+            // $data[$CmMemberType->name] = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
+            $memberTypeCount = CmMember::where('member_status_id', 2)->where('member_kind_id', $CmMemberType->id)->count();
+
+            $data['member_types'][] = [
+                'name' => $CmMemberType->name,
+                'name_e' => $CmMemberType->name_e,
+                'count' => $memberTypeCount,
+            ];
         }
 
         $response = [
             'message' => 'success',
             'data' => $data,
         ];
+
+
 
         return response()->json($response);
 
