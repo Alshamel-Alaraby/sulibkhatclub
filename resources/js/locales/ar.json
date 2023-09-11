@@ -1456,6 +1456,7 @@
         "Cancellationaccordingtotheministerialdecision": "شطب بموجب القرار الوزاري",
         "WrittenoffaccordingtotheAuthorityletter": "شطب بموجب كتاب الهيئة",
         "Writtenofffornonpayment": "شطب لعدم السداد",
-        "memberType": "انواع الاعضاء"
+        "memberType": "انواع الاعضاء",
+        "groupSponer": "مجموعه الرعاه"
     }
 }

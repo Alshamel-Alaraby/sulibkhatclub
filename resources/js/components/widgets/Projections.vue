@@ -285,6 +285,11 @@ export default {
                 this.chartOptions4.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
                 this.chartOptions4.colors.push(this.colors[index]);
             });
+            newDa.sponsors_group.forEach((el,index) => {
+                this.series6.push(el.percentage);
+                this.chartOptions6.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
+                this.chartOptions6.colors.push(this.colors[index]);
+            });
             this.series5 = [(newDa.Percentage_6 + .01),newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
         }
     }
@@ -470,7 +475,7 @@ export default {
                 <div class="card">
                     <div class="card-body">
 
-                        <h4 class="header-title">{{ $t('general.group') }}</h4>
+                        <h4 class="header-title">{{ $t('general.groupSponer') }}</h4>
 
                         <div class="mt-3 text-center" dir="ltr">
                             <apexchart
@@ -484,7 +489,7 @@ export default {
                         </div>
 
                         <div class="row mt-3">
-                            <div class="col-4" v-for="item in statices.member_types">
+                            <div class="col-4" v-for="item in statices.sponsors_group">
                                 <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
                                 <h4>{{ item.count }}</h4>
                             </div>
