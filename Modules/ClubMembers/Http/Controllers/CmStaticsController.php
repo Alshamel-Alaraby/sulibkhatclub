@@ -242,109 +242,8 @@ class CmStaticsController extends Controller
 
 
 
-
 //المجموعات
 $data['groups'] = CmSponsorGroup::count();
-//الرعاه
-        $data['sponsors'] = CmSponser::count();
-/////////////// count of sponsor for each group /////////////////////
-        $sponsorsGroups = CmSponsorGroup::select('id', 'name', 'name_e')
-            ->withCount('sponsors')
-            ->get();
-        $totalSponsors = $sponsorsGroups->sum('sponsors_count');
-
-        $data['sponsors_group'] = $sponsorsGroups->map(function ($group) use ($totalSponsors) {
-            $percentage = ($group->sponsors_count / $totalSponsors) * 100;
-
-            return [
-                'name' => $group->name,
-                'name_e' => $group->name_e,
-                'count' => $group->sponsors_count,
-                'percentage' => round($percentage, 2),
-            ];
-        });
-
-        $memberCounts = CmSponser::select('id', 'name', 'name_e')
-            ->withCount(['members' => function ($query) {
-                $query->where('member_status_id', 1);
-            }])
-            ->get();
-
-        /////////////// count of members for each sponsor where (member_status_id) == 1 /////////////////////
-
-        $totalMembers = $memberCounts->sum('members_count');
-
-        $data['sponsors_members'] = $memberCounts->map(function ($sponsor) use ($totalMembers) {
-            $count = $sponsor->members_count;
-            $percentage = ($count / $totalMembers) * 100;
-
-            return [
-                'id' => $sponsor->id,
-                'name' => $sponsor->name,
-                'name_e' => $sponsor->name_e,
-                'count' => $count,
-                'percentage' => round($percentage, 2),
-            ];
-        });
-////////// count of members for each sponsor where (member_status_id) == 1  and for every permission ///////////
-
-        $totalMembersPermissions = CmMember::where('member_status_id', 1)->count();
-
-        $memberCountsPermissions = CmSponser::select('id', 'name', 'name_e')
-            ->withCount(['members' => function ($query) {
-                $query->where('member_status_id', 1);
-            }])
-            ->get();
-
-        $data['sponsors_members_permissions'] = $memberCountsPermissions->map(function ($sponsor) use ($totalMembersPermissions) {
-            $permissions = CmMemberPermission::all();
-
-            $counts = [];
-
-            foreach ($permissions as $permission) {
-                $count = $sponsor->members()
-                    ->where('member_status_id', 1)
-                    ->where('members_permissions_id', $permission->id)
-                    ->count();
-
-                $percentage = ($count / $totalMembersPermissions) * 100;
-
-                $counts[] = [
-                    'id' => $permission->id,
-                    'name' => $permission->name,
-                    'name_e' => $permission->name_e,
-                    'count' => $count,
-                    'percentage' => round($percentage, 2),
-                ];
-            }
-
-            return [
-                'id' => $sponsor->id,
-                'name' => $sponsor->name,
-                'name_e' => $sponsor->name_e,
-                'count' => $sponsor->members_count,
-                'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
-                'permissions_counts' => $counts,
-            ];
-        });
-
-
-        $response = [
-            'message' => 'success',
-            'data' => $data,
-        ];
-
-        return response()->json($response);
-
-    }
-
-    public function sponsorStatics()
-    {
-        $data = [];
-
-
-//المجموعات
-        $data['groups'] = CmSponsorGroup::count();
 //الرعاه
         $data['sponsors'] = CmSponser::count();
 /////////////// count of sponsor for each group /////////////////////
@@ -430,6 +329,8 @@ $data['groups'] = CmSponsorGroup::count();
             ];
         });
 
+
+
         $response = [
             'message' => 'success',
             'data' => $data,
@@ -438,5 +339,106 @@ $data['groups'] = CmSponsorGroup::count();
         return response()->json($response);
 
     }
+
+//     public function sponsorStatics()
+//     {
+//         $data = [];
+
+
+// //المجموعات
+//         $data['groups'] = CmSponsorGroup::count();
+// //الرعاه
+//         $data['sponsors'] = CmSponser::count();
+// /////////////// count of sponsor for each group /////////////////////
+//         $sponsorsGroups = CmSponsorGroup::select('id', 'name', 'name_e')
+//             ->withCount('sponsors')
+//             ->get();
+//         $totalSponsors = $sponsorsGroups->sum('sponsors_count');
+
+//         $data['sponsors_group'] = $sponsorsGroups->map(function ($group) use ($totalSponsors) {
+//             $percentage = ($group->sponsors_count / $totalSponsors) * 100;
+
+//             return [
+//                 'name' => $group->name,
+//                 'name_e' => $group->name_e,
+//                 'count' => $group->sponsors_count,
+//                 'percentage' => round($percentage, 2),
+//             ];
+//         });
+
+//         $memberCounts = CmSponser::select('id', 'name', 'name_e')
+//             ->withCount(['members' => function ($query) {
+//                 $query->where('member_status_id', 1);
+//             }])
+//             ->get();
+
+//         /////////////// count of members for each sponsor where (member_status_id) == 1 /////////////////////
+
+//         $totalMembers = $memberCounts->sum('members_count');
+
+//         $data['sponsors_members'] = $memberCounts->map(function ($sponsor) use ($totalMembers) {
+//             $count = $sponsor->members_count;
+//             $percentage = ($count / $totalMembers) * 100;
+
+//             return [
+//                 'id' => $sponsor->id,
+//                 'name' => $sponsor->name,
+//                 'name_e' => $sponsor->name_e,
+//                 'count' => $count,
+//                 'percentage' => round($percentage, 2),
+//             ];
+//         })->filter(function ($sponsor) {
+//             return $sponsor['count'] > 0;
+//         })->values();
+// ////////// count of members for each sponsor where (member_status_id) == 1  and for every permission ///////////
+
+//         $totalMembersPermissions = CmMember::where('member_status_id', 1)->count();
+
+//         $memberCountsPermissions = CmSponser::select('id', 'name', 'name_e')
+//             ->withCount(['members' => function ($query) {
+//                 $query->where('member_status_id', 1);
+//             }])
+//             ->get();
+
+//         $data['sponsors_members_permissions'] = $memberCountsPermissions->map(function ($sponsor) use ($totalMembersPermissions) {
+//             $permissions = CmMemberPermission::all();
+
+//             $counts = [];
+
+//             foreach ($permissions as $permission) {
+//                 $count = $sponsor->members()
+//                     ->where('member_status_id', 1)
+//                     ->where('members_permissions_id', $permission->id)
+//                     ->count();
+
+//                 $percentage = ($count / $totalMembersPermissions) * 100;
+
+//                 $counts[] = [
+//                     'id' => $permission->id,
+//                     'name' => $permission->name,
+//                     'name_e' => $permission->name_e,
+//                     'count' => $count,
+//                     'percentage' => round($percentage, 2),
+//                 ];
+//             }
+
+//             return [
+//                 'id' => $sponsor->id,
+//                 'name' => $sponsor->name,
+//                 'name_e' => $sponsor->name_e,
+//                 'count' => $sponsor->members_count,
+//                 'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
+//                 'permissions_counts' => $counts,
+//             ];
+//         });
+
+//         $response = [
+//             'message' => 'success',
+//             'data' => $data,
+//         ];
+
+//         return response()->json($response);
+
+//     }
 
 }
