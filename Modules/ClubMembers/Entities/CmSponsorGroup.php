@@ -19,6 +19,10 @@ class CmSponsorGroup extends Model
         return $this->hasMany(CmSponser::class, 'group_id', 'id');
     }
 
+    public function totalSponsors()
+{
+    return $this->sponsors()->count();
+}
 
     public function getActivitylogOptions(): LogOptions
     {

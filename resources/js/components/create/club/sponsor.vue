@@ -1,247 +1,150 @@
 <script>
 import adminApi from "../../../api/adminAxios";
-import Switches from "vue-switches";
-import { required, minLength, maxLength, integer } from "vuelidate/lib/validators";
-import Swal from "sweetalert2";
+import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import ErrorMessage from "../../widgets/errorMessage";
 import loader from "../../general/loader";
-import { dynamicSortString } from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
-import TreeBrowser from "../../create/realEstate/tree.vue";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
  */
 export default {
-    mixins: [transMixinComp],
+    mixins: [transMixinComp,successError],
     components: {
-        Switches,
         ErrorMessage,
         loader,
-        Multiselect,
-        TreeBrowser
+        Multiselect
     },
     props: {
-        companyKeys: {
-            default: [],
-        },
-        defaultsKeys: {
-            default: [],
-        },
+        id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+        isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
+        type: {default: 'create'}, idObjEdit: {default: null},isPermission: {},url: {default: '/club-members/sponsers'}
     },
     data() {
         return {
-            search: "",
-            debounce: {},
-            sponsorsPagination: {},
-            sponsors: [],
-            enabled3: true,
+            groups: [],
+            fields: [],
+            isCustom : false,
             isLoader: false,
-            rootNodes: [],
-            childNodes: [],
-            Tooltip: "",
-            mouseEnter: "",
-            current_id: null,
             create: {
                 name: "",
                 name_e: "",
                 parent_id: null,
             },
-            setting: {
-                name: true,
-                name_e: true,
-                parent_id: true,
-            },
             errors: {},
-            isCheckAll: false,
-            checkAll: [],
-            is_disabled: false,
-            printLoading: true,
-            printObj: {
-                id: "printMe",
-            }
+            is_disabled: false
         };
     },
     validations: {
         create: {
-            name: { required, minLength: minLength(3), maxLength: maxLength(100) },
+            name: { required: requiredIf(function (model) {
+                    return this.isRequired("name");
+                }), minLength: minLength(3), maxLength: maxLength(100) },
             name_e: {
-                required,
+                required: requiredIf(function (model) {
+                    return this.isRequired("name_e");
+                }),
                 minLength: minLength(3),
                 maxLength: maxLength(100),
+            },
+            group_id: {required: requiredIf(function (model) {
+                    return this.isRequired("group_id");
+                })
             },
         },
     },
     methods: {
-        setChildNodes(result) {
-            adminApi.get(`club-members/sponsers/child-nodes/${result.node.id}`).then((res) => {
-                this.isLoader = false;
-                result.node.children = res.data.map(el => {
-                    return {
-                        ...el,
-                        parent: result.node
-                    }
+        async getCustomTableFields() {
+            this.isCustom = true;
+            await adminApi
+                .get(`/customTable/table-columns/cm_sponsers`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                })
+                .finally(() => {
+                    this.isCustom = false;
                 });
-                result.expanded.push(result.node);
-            });
         },
-        setCreateCurrentNode(node) {
-            if (this.create.parent_id != node.id) {
-                this.create.parent_id = node.id;
-            } else {
-                this.create.parent_id = null;
+        getGroup(id) {
+            this.isLoader = true;
+
+            adminApi
+                .get(
+                    `/club-members/sponsor-group`
+                )
+                .then((res) => {
+                    let l = res.data.data;
+                    this.groups = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        isVisible(fieldName) {
+            if(!this.isPage){
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_visible == 1 ? true : false;
+            }else {
+                return this.isVisiblePage(fieldName);
             }
         },
-        setParentsIds(node, parents) {
-            if (node.parent) {
-                parents.push(node.parent.id);
-                this.setParentsIds(node.parent, parents);
+        isRequired(fieldName) {
+            if(!this.isPage) {
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_required == 1 ? true : false;
+            }else {
+                return this.isRequiredPage(fieldName);
             }
         },
         formatDate(value) {
             return formatDateOnly(value);
         },
-
-        /**
-         *  delete module
-         */
-        deleteModule(id, tree = false) {
-            if (Array.isArray(id)) {
-                Swal.fire({
-                    title: `${this.$t("general.Areyousure")}`,
-                    text: `${this.$t("general.Youwontbeabletoreverthis")}`,
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
-                    cancelButtonText: `${this.$t("general.Nocancel")}`,
-                    confirmButtonClass: "btn btn-success mt-2",
-                    cancelButtonClass: "btn btn-danger ml-2 mt-2",
-                    buttonsStyling: false,
-                }).then((result) => {
-                    if (result.value) {
-                        this.isLoader = true;
-                        adminApi
-                            .post(`club-members/sponsers/bulk-delete`, { ids: id })
-                            .then((res) => {
-                                this.checkAll = [];
-                                Swal.fire({
-                                    icon: "success",
-                                    title: `${this.$t("general.Deleted")}`,
-                                    text: `${this.$t("general.Yourrowhasbeendeleted")}`,
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                });
-                            })
-                            .catch((err) => {
-                                if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                    });
-                                }
-                            })
-                            .finally(() => {
-                                this.isLoader = false;
-                            });
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: `${this.$t("general.Areyousure")}`,
-                    text: `${this.$t("general.Youwontbeabletoreverthis")}`,
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
-                    cancelButtonText: `${this.$t("general.Nocancel")}`,
-                    confirmButtonClass: "btn btn-success mt-2",
-                    cancelButtonClass: "btn btn-danger ml-2 mt-2",
-                    buttonsStyling: false,
-                }).then((result) => {
-                    if (result.value) {
-                        this.isLoader = true;
-
-                        adminApi
-                            .delete(`club-members/sponsers/${id}`)
-                            .then((res) => {
-                                this.checkAll = [];
-                                if (tree) {
-                                    this.$emit("created");
-                                    this.getRootNodes();
-                                }
-                                Swal.fire({
-                                    icon: "success",
-                                    title: `${this.$t("general.Deleted")}`,
-                                    text: `${this.$t("general.Yourrowhasbeendeleted")}`,
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                });
-                            })
-
-                            .catch((err) => {
-                                if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                                    });
-                                }
-                            })
-                            .finally(() => {
-                                this.isLoader = false;
-                            });
-                    }
-                });
-            }
+        defaultData(edit = null){
+            this.create = { name: "", name_e: "", group_id : null };
+            this.$nextTick(() => {
+                this.$v.$reset();
+            });
+            this.errors = {};
+            this.is_disabled = false;
         },
-        /**
-         *  reset Modal (create)
-         */
         resetModalHidden() {
-            this.create = { name: "", name_e: "", parent_id: null };
-            this.$nextTick(() => {
-                this.$v.$reset();
-            });
-            this.errors = {};
-            this.is_disabled = false;
-            this.rootNodes = [];
+            this.defaultData();
+            this.$bvModal.hide(this.id);
         },
-        /**
-         *  hidden Modal (create)
-         */
-        async resetModal() {
-            await this.getRootNodes();
-            this.create = { name: "", name_e: "", parent_id: null };
-            this.is_disabled = false;
-            this.$nextTick(() => {
-                this.$v.$reset();
-            });
-            this.errors = {};
+        resetModal() {
+            this.defaultData();
+            setTimeout( async () => {
+                if(this.type != 'edit'){
+                    if(!this.isPage) await  this.getCustomTableFields();
+                    if (this.isVisible("group_id")) this.getGroup();
+                }else {
+                    if(this.idObjEdit.dataObj){
+                        if (this.isVisible("group_id")) this.getGroup();
+                        let module = this.idObjEdit.dataObj;
+                        this.errors = {};
+                        this.create.name = module.name;
+                        this.create.name_e = module.name_e;
+                        this.create.group_id = module.group_id;
+                    }
+                }
+            },50);
         },
-        /**
-         *  create module
-         */
         resetForm() {
-            this.create = { name: "", name_e: "", parent_id: null };
-            this.is_disabled = false;
-            this.$nextTick(() => {
-                this.$v.$reset();
-            });
+            this.defaultData();
         },
         AddSubmit() {
             if (this.create.name || this.create.name_e) {
@@ -255,115 +158,58 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 this.is_disabled = false;
-                if (this.create.parent_id == null) {
-                    this.create.parent_id = 0;
-                }
-                adminApi
-                    .post(`club-members/sponsers`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
-                    .then((res) => {
-                        this.$emit("created");
-                        this.is_disabled = true;
-                        this.getRootNodes();
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: "success",
-                                text: `${this.$t("general.Addedsuccessfully")}`,
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }, 500);
-                    })
-                    .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        }
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
-            }
-        },
+                if(this.type != 'edit') {
+                    adminApi
+                        .post(this.url, { ...this.create, company_id: this.company_id })
+                        .then((res) => {
+                            this.is_disabled = true;
+                            if (!this.isPage)
+                                this.$emit("created");
+                            else
+                                this.$emit("getDataTable");
 
-        async getRootNodes() {
-            await adminApi
-                .get(`club-members/sponsers/root-nodes`)
-                .then((res) => {
-                    console.log(this.rootNodes);
-                    this.rootNodes = res.data;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-
-        getUpdatedRootNodes(parentNode, children) {
-            let rootNodes = [...this.rootNodes];
-            rootNodes.forEach((node, index) => {
-                if (node.id == parentNode.id) {
-                    if (parentNode.collapsed) {
-                        rootNodes[index].children = [];
-                        rootNodes[index].collapsed = false;
-                    } else {
-                        rootNodes[index].children = children;
-                        rootNodes[index].collapsed = true;
-                    }
-                    return;
-                }
-            });
-            return rootNodes;
-        },
-        getRootNodesAfterCollapse(parentNode, secondParentNode, children) {
-            let rootNodes = [...this.rootNodes];
-            rootNodes.forEach((_parentNode, parentIndex) => {
-                if (_parentNode.id == parentNode.id) {
-                    if (_parentNode.children && _parentNode.children.length) {
-                        _parentNode.children.forEach((child, index) => {
-                            if (child.id == secondParentNode.id) {
-                                if (secondParentNode.collapsed) {
-                                    rootNodes[parentIndex].children[index].children = [];
-                                    rootNodes[parentIndex].children[index].collapsed = false;
-                                } else {
-                                    rootNodes[parentIndex].children[index].children = children;
-                                    rootNodes[parentIndex].children[index].collapsed = true;
-                                }
-                                return;
+                            setTimeout(() => {
+                                this.successFun('Addedsuccessfully');
+                            }, 500);
+                        })
+                        .catch((err) => {
+                            if (err.response.data) {
+                                this.errors = err.response.data.errors;
+                            } else {
+                                this.errorFun('Error', 'Thereisanerrorinthesystem');
                             }
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
                         });
-                        return;
-                    }
+                }else {
+                    adminApi
+                        .put(`${this.url}/${this.idObjEdit.idEdit}`, {
+                            ...this.create,
+                        })
+                        .then((res) => {
+                            this.$bvModal.hide(this.id);
+                            this.$emit("getDataTable");
+                            setTimeout(() => {
+                                this.successFun('Editsuccessfully');
+                            }, 500);
+                        })
+                        .catch((err) => {
+                            if (err.response.data) {
+                                this.errors = err.response.data.errors;
+                            } else {
+                                this.errorFun('Error','Thereisanerrorinthesystem');
+                            }
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
                 }
-            });
-            return rootNodes;
-        },
-        /**
-         *  start  dynamicSortString
-         */
-        sortString(value) {
-            return dynamicSortString(value);
-        },
-        checkRow(id) {
-            if (!this.checkAll.includes(id)) {
-                this.checkAll.push(id);
-            } else {
-                let index = this.checkAll.indexOf(id);
-                this.checkAll.splice(index, 1);
             }
         },
-
         arabicValue(txt) {
             this.create.name = arabicValue(txt);
         },
-
         englishValue(txt) {
             this.create.name_e = englishValue(txt);
         }
@@ -373,17 +219,40 @@ export default {
 
 <template>
     <!--  create   -->
-    <b-modal id="create-sponsor" :title="getCompanyKey('sponsor_create_form')" title-class="font-18" body-class="p-4 "
-        :hide-footer="true" size="lg" @show="resetModal" @hidden="resetModalHidden">
+    <b-modal
+        :id="id"
+        :title="type != 'edit'? getCompanyKey('sponsor_create_form'):getCompanyKey('sponsor_edit_form')"
+        title-class="font-18"
+        body-class="p-4 "
+        :hide-footer="true"
+        @show="resetModal"
+        @hidden="resetModalHidden"
+    >
         <form>
+            <loader size="large" v-if="isCustom && !isPage" />
             <div class="mb-3 d-flex justify-content-end">
-                <b-button variant="success" :disabled="!is_disabled" @click.prevent="resetForm" type="button"
-                    :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
+                <b-button
+                    v-if="type != 'edit'"
+                    variant="success"
+                    :disabled="!is_disabled"
+                    @click.prevent="resetForm"
+                    type="button"
+                    :class="[
+                      'font-weight-bold px-2',
+                      is_disabled ? 'mx-2' : '',
+                    ]"
+                >
                     {{ $t("general.AddNewRecord") }}
                 </b-button>
                 <template v-if="!is_disabled">
-                    <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader" @click.prevent="AddSubmit">
-                        {{ $t("general.Add") }}
+                    <b-button
+                        variant="success"
+                        type="button"
+                        class="mx-1"
+                        v-if="!isLoader"
+                        @click.prevent="AddSubmit"
+                    >
+                        {{ type != 'edit'? $t("general.Add"): $t("general.edit") }}
                     </b-button>
 
                     <b-button variant="success" class="mx-1" disabled v-else>
@@ -391,72 +260,132 @@ export default {
                         <span class="sr-only">{{ $t("login.Loading") }}...</span>
                     </b-button>
                 </template>
-                <b-button @click.prevent="$bvModal.hide(`create-sponsor`)" variant="danger" type="button">
+                <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                <b-button
+                    variant="danger"
+                    type="button"
+                    @click.prevent="resetModalHidden"
+                >
                     {{ $t("general.Cancel") }}
                 </b-button>
             </div>
             <div class="row">
-                <div class="col-8">
-                    <TreeBrowser @deleteClicked="deleteModule($event.id, true)" :currentNodeId="create.parent_id"
-                        @onClick="setCreateCurrentNode" @nodeExpanded="setChildNodes" :nodes="rootNodes" />
-
+                <div class="col-12 direction" v-if="isVisible('name')" dir="rtl">
+                    <div class="form-group">
+                        <label for="field-1" class="control-label">
+                            {{ getCompanyKey("sponsor_name_ar") }}
+                            <span v-if="isRequired('name')"  class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control arabicInput"
+                            v-model="$v.create.name.$model"
+                            :class="{
+                              'is-invalid': $v.create.name.$error || errors.name,
+                              'is-valid': !$v.create.name.$invalid && !errors.name,
+                            }"
+                            @keyup="arabicValue(create.name)"
+                            id="field-1"
+                        />
+                        <div v-if="!$v.create.name.minLength" class="invalid-feedback">
+                            {{ $t("general.Itmustbeatleast") }}
+                            {{ $v.create.name.$params.minLength.min }}
+                            {{ $t("general.letters") }}
+                        </div>
+                        <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
+                            {{ $t("general.Itmustbeatmost") }}
+                            {{ $v.create.name.$params.maxLength.max }}
+                            {{ $t("general.letters") }}
+                        </div>
+                        <template v-if="errors.name">
+                            <ErrorMessage
+                                v-for="(errorMessage, index) in errors.name"
+                                :key="index"
+                            >{{ $t(errorMessage) }}</ErrorMessage
+                            >
+                        </template>
+                    </div>
                 </div>
-                <div class="col-4">
-                    <div class="row">
-                        <div class="col-12 direction" dir="rtl">
-                            <div class="form-group">
-                                <label for="field-1" class="control-label">
-                                    {{ getCompanyKey("sponsor_name_ar") }}
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control arabicInput" v-model="$v.create.name.$model" :class="{
-                                    'is-invalid': $v.create.name.$error || errors.name,
-                                    'is-valid': !$v.create.name.$invalid && !errors.name,
-                                }" @keyup="arabicValue(create.name)" id="field-1" />
-                                <div v-if="!$v.create.name.minLength" class="invalid-feedback">
-                                    {{ $t("general.Itmustbeatleast") }}
-                                    {{ $v.create.name.$params.minLength.min }}
-                                    {{ $t("general.letters") }}
-                                </div>
-                                <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
-                                    {{ $t("general.Itmustbeatmost") }}
-                                    {{ $v.create.name.$params.maxLength.max }}
-                                    {{ $t("general.letters") }}
-                                </div>
-                                <template v-if="errors.name">
-                                    <ErrorMessage v-for="(errorMessage, index) in errors.name" :key="index">{{
-                                        $t(errorMessage) }}</ErrorMessage>
-                                </template>
-                            </div>
+                <div class="col-12 direction-ltr" v-if="isVisible('name_e')" dir="ltr">
+                    <div class="form-group">
+                        <label for="field-2" class="control-label">
+                            {{ getCompanyKey("sponsor_name_en") }}
+                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control englishInput"
+                            v-model="$v.create.name_e.$model"
+                            :class="{
+                              'is-invalid': $v.create.name_e.$error || errors.name_e,
+                              'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
+                            }"
+                            @keyup="englishValue(create.name_e)"
+                            id="field-2"
+                        />
+                        <div
+                            v-if="!$v.create.name_e.minLength"
+                            class="invalid-feedback"
+                        >
+                            {{ $t("general.Itmustbeatleast") }}
+                            {{ $v.create.name_e.$params.minLength.min }}
+                            {{ $t("general.letters") }}
                         </div>
-                        <div class="col-12 direction-ltr" dir="ltr">
-                            <div class="form-group">
-                                <label for="field-2" class="control-label">
-                                    {{ getCompanyKey("sponsor_name_en") }}
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control englishInput" v-model="$v.create.name_e.$model"
-                                    :class="{
-                                        'is-invalid': $v.create.name_e.$error || errors.name_e,
-                                        'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
-                                    }" @keyup="englishValue(create.name_e)" id="field-2" />
-                                <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
-                                    {{ $t("general.Itmustbeatleast") }}
-                                    {{ $v.create.name_e.$params.minLength.min }}
-                                    {{ $t("general.letters") }}
-                                </div>
-                                <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
-                                    {{ $t("general.Itmustbeatmost") }}
-                                    {{ $v.create.name_e.$params.maxLength.max }}
-                                    {{ $t("general.letters") }}
-                                </div>
-                                <template v-if="errors.name_e">
-                                    <ErrorMessage v-for="(errorMessage, index) in errors.name_e" :key="index">{{
-                                        $t(errorMessage) }}</ErrorMessage>
-                                </template>
-                            </div>
+                        <div
+                            v-if="!$v.create.name_e.maxLength"
+                            class="invalid-feedback"
+                        >
+                            {{ $t("general.Itmustbeatmost") }}
+                            {{ $v.create.name_e.$params.maxLength.max }}
+                            {{ $t("general.letters") }}
                         </div>
-
+                        <template v-if="errors.name_e">
+                            <ErrorMessage
+                                v-for="(errorMessage, index) in errors.name_e"
+                                :key="index"
+                            >{{ $t(errorMessage) }}</ErrorMessage
+                            >
+                        </template>
+                    </div>
+                </div>
+                <div class="col-12" v-if="isVisible('group_id')">
+                    <div class="form-group position-relative">
+                        <label class="control-label">
+                            {{ getCompanyKey("sponsor_group") }}
+                            <span v-if="isRequired('group_id')" class="text-danger">*</span>
+                        </label>
+                        <multiselect
+                            v-model="create.group_id"
+                            :options="groups.map((type) => type.id)"
+                            :custom-label="
+                                  (opt) => groups.find((x) => x.id == opt)?
+                                    groups.locale == 'ar'
+                                      ? groups.find((x) => x.id == opt)
+                                          .name
+                                      : groups.find((x) => x.id == opt)
+                                          .name_e: null
+                                "
+                        >
+                        </multiselect>
+                        <div
+                            v-if="
+                                  $v.edit.group_id.$error ||
+                                  errors.group_id
+                                "
+                            class="text-danger"
+                        >
+                            {{ $t("general.fieldIsRequired") }}
+                        </div>
+                        <template v-if="errors.group_id">
+                            <ErrorMessage
+                                v-for="(
+                                    errorMessage, index
+                                  ) in errors.group_id"
+                                :key="index"
+                            >{{ errorMessage }}
+                            </ErrorMessage>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -465,90 +394,7 @@ export default {
     <!--  /create   -->
 </template>
 <style scoped lang="scss">
-ul,
-#myUL {
-    list-style-type: none;
-
-    .delete-node {
-        i {
-            font-size: 18px;
-            margin: 0 5px;
-        }
-    }
-}
-
-#myUL {
-    margin: 0;
-    padding: 0;
-
-    span {
-        i {
-            font-size: 20px;
-            position: relative;
-            top: 3px;
-            color: black;
-        }
-
-        span:hover,
-        i:hover {
-            cursor: pointer;
-        }
-    }
-}
-
-.nested {
-    display: block;
-}
-
-.active {
-    color: #1abc9c;
-}
-
-.rtl {
-    #myUL {
-        .without-children {
-            padding-right: 10px;
-        }
-
-        .nested {
-            padding-right: 40px;
-        }
-    }
-}
-
-.ltr {
-    #myUL {
-        .without-children {
-            padding-left: 10px;
-        }
-    }
-}
-
-@media print {
-    .do-not-print {
-        display: none;
-    }
-
-    .arrow-sort {
-        display: none;
-    }
-
-    .bg-soft-success {
-        background-color: unset;
-        color: #000000 !important;
-        border: unset;
-    }
-
-    .bg-soft-danger {
-        background-color: unset;
-        color: #000000 !important;
-        border: unset;
-    }
-}
-
-.tooltip-inner {
-    max-width: 750px !important;
-    background-color: #eed900;
-    color: black;
+form {
+    position: relative;
 }
 </style>

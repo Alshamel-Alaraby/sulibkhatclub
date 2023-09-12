@@ -80,14 +80,13 @@ class ClubMembersServiceProvider extends ServiceProvider
         $this->app->bind(CmMemberRequestInterface::class, CmMemberRequestRepository::class);
         $this->app->bind(CmStatusInterface::class, CmStatusRepository::class);
 
-
-
-
         $this->commands([
             \Modules\ClubMembers\Console\TransactionDb::class,
             \Modules\ClubMembers\Console\MemberDb::class,
             \Modules\ClubMembers\Console\PrefixDb::class,
             \Modules\ClubMembers\Console\FullNameDb::class,
+            \Modules\ClubMembers\Console\CreateMembersDb::class,
+            \Modules\ClubMembers\Console\MemberTypeIdDb::class,
         ]);
 
     }

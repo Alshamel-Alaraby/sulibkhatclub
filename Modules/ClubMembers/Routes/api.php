@@ -199,36 +199,32 @@ Route::prefix('club-members')->group(function () {
 
     });
 
+    Route::group(['prefix' => 'discharge-resons'], function () {
+
+        Route::get('/', 'CmDischargeResonController@index');
+
+    });
+
+    Route::group(['prefix' => 'member-status'], function () {
+
+        Route::get('/', 'CmNewMemberStatusController@index');
+
+    });
+
     Route::group(['prefix' => 'statics'], function () {
 
         Route::get('/getStatics', 'CmStaticsController@getStatics')
             ->name('statics.getStatics');
 
-        Route::get('/get-members-percentage', 'CmStaticsController@getMembersPercentage')
-            ->name('statics.getMembersPercentage');
-
 
         Route::get('/get-members-valid', 'CmStaticsController@validMembers')
-        ->name('statics.validMembers');
-
+            ->name('statics.validMembers');
 
 
         Route::get('/get-sponsor-statics', 'CmStaticsController@sponsorStatics')
-        ->name('statics.sponsorStatics');
-
-        
-        // Route::get('/get-normal-members-percentage', 'CmStaticsController@getNormalMembersPercentage')
-        //     ->name('statics.getNormalMembersPercentage');
-
-        // Route::get('/get-founding-members-percentage', 'CmStaticsController@getFoundingMembersPercentage')
-        //     ->name('statics.getFoundingMembersPercentage');
-
-        // Route::get('/get-dismissed-members-percentage', 'CmStaticsController@getDismissedMembersPercentage')
-        //     ->name('statics.getDismissedMembersPercentage');
+            ->name('statics.sponsorStatics');
 
 
-        // Route::get('/get-sponsor-group-members-percentage', 'CmStaticsController@getSponsorGroupPercentage')
-        //     ->name('statics.getSponsorGroupPercentage');
     });
 
     Route::group(['prefix' => 'rejects'], function () {
@@ -260,6 +256,14 @@ Route::prefix('club-members')->group(function () {
         Route::put('/{id}', 'CmMemberStatusController@update')->name('cm-status.update');
         Route::post("/bulk-delete", "CmMemberStatusController@bulkDelete");
         Route::delete('/{id}', 'CmMemberStatusController@delete')->name('cm-status.delete');
+    });
+
+
+    Route::group(['prefix' => 'member-requests'], function () {
+
+        Route::get('/', 'CmMemberRequestController@all')->name('cm-members.all');
+
+
     });
 
 });

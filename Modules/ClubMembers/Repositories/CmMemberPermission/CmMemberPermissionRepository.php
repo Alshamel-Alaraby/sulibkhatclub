@@ -17,6 +17,11 @@ class CmMemberPermissionRepository implements CmMemberPermissionInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if ($request->members_permissions_id) {
+            $models->where('members_permissions_id', $request->members_permissions_id);
+        }
+
+      
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

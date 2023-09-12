@@ -58,6 +58,7 @@ export default {
       mouseEnter: "",
       applying_date: new Date(),
       birth_date: new Date(),
+        transaction:"",
       create: {
         applying_date: this.formatDate(new Date()),
         applying_number: "",
@@ -78,7 +79,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       },
       edit: {
         applying_date: this.formatDate(new Date()),
@@ -100,7 +101,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       },
       company_id: null,
       errors: {},
@@ -656,7 +657,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -691,7 +692,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -725,7 +726,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -842,6 +843,7 @@ export default {
       this.edit.degree = member.degree;
       this.edit.gender = member.gender;
       this.edit.member_type_id = member.member_type_id;
+      this.transaction = member.transaction;
       this.errors = {};
     },
     /**
@@ -851,6 +853,7 @@ export default {
       this.birth_date = new Date();
       this.applying_date = new Date();
       this.errors = {};
+        this.transaction = "";
       this.edit = {
         applying_date: this.formatDate(new Date()),
         applying_number: "",
@@ -871,7 +874,7 @@ export default {
         degree: "",
         acceptance: "0",
         gender: 1,
-          member_type_id: 15,
+          member_type_id: 1,
       };
     },
     /*
@@ -1860,8 +1863,8 @@ export default {
                                                   'is-valid':
                                                     !$v.create.member_type_id.$invalid && !errors.member_type_id,
                                                 }">
-                                <option value="15">{{$t('general.pendingMember')}}</option>
-                                <option value="16">{{$t('general.unacceptable')}}</option>
+                                <option value="1">{{$t('general.pendingMember')}}</option>
+                                <option value="2">{{$t('general.unacceptable')}}</option>
                             </select>
 
                             <template v-if="errors.member_type_id">
@@ -2219,7 +2222,7 @@ export default {
                       }}
                     </td>
                     <td v-if="setting.member_type_id && isVisible('member_type_id')">
-                      {{data.membersType ? $i18n.locale == "ar"? data.membersType.name: data.membersType.name_e: "---"}}
+                        {{parseInt(data.member_type_id) == 1 ? $t('general.pendingMember') : $t('general.unacceptable')}}
                     </td>
                     <td v-if="setting.Subscription_receipt_number">
                       {{data.transaction ? data.transaction.prefix: "---"}}
@@ -2937,8 +2940,8 @@ export default {
                                                   'is-valid':
                                                     !$v.edit.member_type_id.$invalid && !errors.member_type_id,
                                                 }">
-                                          <option value="15">{{$t('general.pendingMember')}}</option>
-                                          <option value="16">{{$t('general.unacceptable')}}</option>
+                                          <option value="1">{{$t('general.pendingMember')}}</option>
+                                          <option value="2">{{$t('general.unacceptable')}}</option>
                                       </select>
 
                                       <template v-if="errors.member_type_id">
@@ -2951,6 +2954,48 @@ export default {
                                   </div>
                               </div>
                           </div>
+                            <hr
+                                style="
+                              margin: 10px 0 !important;
+                              border-top: 1px solid rgb(141 163 159 / 42%);
+                            "
+                                v-if="transaction"
+                            />
+                            <div v-if="transaction" class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ getCompanyKey("Subscription_receipt_number") }}</label>
+                                        <input
+                                            disabled
+                                            v-model="transaction.prefix"
+                                            class="form-control"
+                                            type="text"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ $t("general.forYear") }}</label>
+                                        <input
+                                            disabled
+                                            v-model="transaction.year"
+                                            class="form-control"
+                                            type="text"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ $t("general.amount") }}</label>
+                                        <input
+                                            disabled
+                                            v-model="transaction.amount"
+                                            class="form-control"
+                                            type="text"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                       </b-modal>
                       <!--  /edit   -->

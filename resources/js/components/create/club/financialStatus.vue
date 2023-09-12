@@ -65,38 +65,6 @@ export default {
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
     },
-    updated() {
-        // $(function () {
-        //   $(".englishInput").keypress(function (event) {
-        //     var ew = event.which;
-        //     if (ew == 32) return true;
-        //     if (48 <= ew && ew <= 57) return true;
-        //     if (65 <= ew && ew <= 90) return true;
-        //     if (97 <= ew && ew <= 122) return true;
-        //     return false;
-        //   });
-        //   $(".arabicInput").keypress(function (event) {
-        //     var ew = event.which;
-        //     if (ew == 32) return true;
-        //     if (48 <= ew && ew <= 57) return false;
-        //     if (65 <= ew && ew <= 90) return false;
-        //     if (97 <= ew && ew <= 122) return false;
-        //     return true;
-        //   });
-        // });
-    },
-    //   beforeRouteEnter(to, from, next) {
-    //     next((vm) => {
-    //       if (
-    //         vm.$store.state.auth.work_flow_trees.includes("pending-member") ||
-    //         vm.$store.state.auth.user.type == "super_admin"
-    //       ) {
-    //         return true;
-    //       } else {
-    //         return vm.$router.push({ name: "home" });
-    //       }
-    //     });
-    //   },
     methods: {
         formatDate(value) {
             return formatDateOnly(value);

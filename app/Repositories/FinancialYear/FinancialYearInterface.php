@@ -19,5 +19,7 @@ interface FinancialYearInterface
 
     public function setting($request);
 
+    public function DataOfModelFinancialYear($request);
+
     public function getSetting($user_id, $screen_id);
 }

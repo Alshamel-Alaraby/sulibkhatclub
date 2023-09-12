@@ -65,7 +65,7 @@
                 </div>
             </td>
             <template v-for="item in tableSetting">
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'string'">
+                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'string' && !item.columnCustom">
                     <h5 class="m-0 font-weight-normal">
                         {{ data[item.isV] }}
                     </h5>
@@ -115,6 +115,9 @@
                 </td>
                 <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'date'">
                       {{ formatDate(data[item.isV]) }}
+                </td>
+                <td v-if="item.isSetting && isVisible(item.isV) && item.columnCustom == 'allowed_subscription_date'">
+                    <h5 class="m-0 font-weight-normal">{{ data[item.isV].slice(3) + '-' + data[item.isV].slice(0,2) }}</h5>
                 </td>
             </template>
             <td v-if="enabled3 && isAction"  class="do-not-print">

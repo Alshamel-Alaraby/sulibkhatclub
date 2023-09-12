@@ -1085,7 +1085,7 @@ export default {
                                         {{ data.gender == 1 ? $t("general.male") : $t("general.female")}}
                                     </td>
                                     <td v-if="setting.member_type_id">
-                                        {{data.membersType ? $i18n.locale == "ar"? data.membersType.name: data.membersType.name_e: "---"}}
+                                        {{parseInt(data.member_type_id) == 1 ? $t('general.pendingMember') : $t('general.unacceptable')}}
                                     </td>
                                     <td v-if="setting.national_id">
                                         {{ data.national_id }}

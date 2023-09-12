@@ -35,7 +35,7 @@ class CmMember extends Model
 
     public function status()
     {
-        return $this->belongsTo(Status::class, 'status_id');
+        return $this->belongsTo(CmMemberStatus::class, 'member_status_id');
     }
 
     public function sponsors()
@@ -45,7 +45,7 @@ class CmMember extends Model
 
     public function memberType()
     {
-        return $this->belongsTo(CmMemberType::class, 'member_type_id');
+        return $this->belongsTo(CmMemberType::class, 'member_kind_id');
     }
 
     public function cmTransaction()

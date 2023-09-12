@@ -347,6 +347,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'financial-years'], function () {
         Route::controller(\App\Http\Controllers\FinancialYear\FinancialYearController::class)->group(function () {
+            Route::get('DataOfModelFinancialYear', 'DataOfModelFinancialYear');
             Route::get('/', 'all')->name('financial-years.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('financial-years.create');

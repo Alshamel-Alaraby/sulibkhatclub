@@ -22,6 +22,7 @@ class FinancialYearResource extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'is_active'=>$this->is_active,
+            'year'=>$this->year,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

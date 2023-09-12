@@ -149,6 +149,30 @@
                         </template>
                     </div>
                 </div>
+                <div class="col-md-12" v-if="isVisible('year')">
+                    <div class="form-group">
+                        <label class="control-label">
+                            {{ getCompanyKey("financial_year_year") }}
+                            <span v-if="isRequired('year')" class="text-danger">*</span>
+                        </label>
+                        <date-picker
+                            type="year"
+                            v-model="create.year"
+                            format="YYYY"
+                            valueType="format"
+                            :confirm="false"
+                            :class="{ 'is-invalid': $v.create.year.$error || errors.year,
+                                       'is-valid':!$v.create.year.$invalid && !errors.year,
+                            }"
+                        ></date-picker>
+                        <template v-if="errors.year">
+                            <ErrorMessage v-for="(errorMessage,index) in errors.year"
+                                          :key="index">
+                                {{ errorMessage }}
+                            </ErrorMessage>
+                        </template>
+                    </div>
+                </div>
                 <div class="col-md-12" v-if="isVisible('start_date')">
                     <div class="form-group">
                         <label class="control-label">
@@ -209,6 +233,33 @@
                         </template>
                     </div>
                 </div>
+                <div class="col-md-12" v-if="isVisible('is_active')">
+                    <div class="form-group">
+                        <label class="mr-2">
+                            {{ getCompanyKey("financial_year_default") }}
+                            <span v-if="isRequired('is_active')" class="text-danger">*</span>
+                        </label>
+                        <b-form-group
+                            :class="{ 'is-invalid': $v.create.is_active.$error || errors.is_active,'is-valid': !$v.create.is_active.$invalid && !errors.is_active,}"
+                        >
+                            <b-form-radio class="d-inline-block"
+                                          v-model="$v.create.is_active.$model"
+                                          name="create_def_some-radios" value="1">
+                                {{ $t("general.Yes") }}
+                            </b-form-radio>
+                            <b-form-radio class="d-inline-block m-1"
+                                          v-model="$v.create.is_active.$model"
+                                          name="create_def_some-radios" value="0">
+                                {{ $t("general.No") }}
+                            </b-form-radio>
+                        </b-form-group>
+                        <template v-if="errors.is_active">
+                            <ErrorMessage v-for="(errorMessage, index) in errors.is_active"
+                                          :key="index">{{ errorMessage }}
+                            </ErrorMessage>
+                        </template>
+                    </div>
+                </div>
             </div>
         </form>
     </b-modal>
@@ -250,6 +301,8 @@ export default {
                 end_date: null,
                 custom_date_start: this.formatDate(new Date()),
                 custom_date_end: null,
+                is_active: 0,
+                year: '',
             },
             errors: {},
             is_disabled: false,
@@ -281,6 +334,16 @@ export default {
                 required: requiredIf(function (model) {
                     return this.isRequired("name");
                 }),
+            },
+            is_active: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("is_active");
+                })
+            },
+            year: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("year");
+                })
             },
         },
     },
@@ -330,6 +393,8 @@ export default {
                 end_date: null,
                 custom_date_start: this.formatDate(new Date()),
                 custom_date_end: null,
+                is_active: 0,
+                year: '',
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -356,6 +421,8 @@ export default {
                         this.create.custom_date_end = financialYear.end_date;
                         this.create.start_date = financialYear.start_date;
                         this.create.end_date = financialYear.end_date;
+                        this.create.is_active = financialYear.is_active;
+                        this.create.year = financialYear.year;
                     }
                 }
             },50);
@@ -377,12 +444,13 @@ export default {
             } else {
                 this.isLoader = true;
                 this.errors = {};
-                const { name, name_e, start_date, end_date } = this.create;
+                const { name, name_e, start_date, end_date,is_active,year } = this.create;
                 if(this.type != 'edit') {
                     adminApi
                         .post(this.url, {
                             name, name_e,
                             start_date, end_date,
+                            is_active,year,
                             company_id: this.company_id,
                         })
                         .then((res) => {
@@ -411,6 +479,7 @@ export default {
                         .put(`${this.url}/${this.idObjEdit.idEdit}`, {
                             name, name_e,
                             start_date, end_date,
+                            is_active,year
                         })
                         .then((res) => {
                             this.$bvModal.hide(this.id);

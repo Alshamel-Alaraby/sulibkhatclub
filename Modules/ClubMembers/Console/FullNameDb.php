@@ -47,24 +47,24 @@ class FullNameDb extends Command
         foreach ($members as  $member):
             foreach ($member as   $full_name ):
                 $names = [];
-                if ($full_name->first_name){
+                if ($full_name->first_name != null){
                     $names['first_name']  = $full_name->first_name;
                 }
-                if ($full_name->second_name){
+                if ($full_name->second_name != null){
                     $names['second_name'] = $full_name->second_name;
                 }
-                if ($full_name->third_name){
+                if ($full_name->third_name != null){
                     $names['third_name']  = $full_name->third_name;
                 }
-                if ($full_name->last_name){
+                if ($full_name->last_name != null){
                     $names['last_name']  = $full_name->last_name;
                 }
-                if ($full_name->family_name){
+                if ($full_name->family_name != null){
                     $names['family_name']  = $full_name->family_name;
                 }
 
+                   $array = implode(' ', $names);
 
-                $array = implode(' ', $names);
 
                 $full_name->update(['full_name'=>$array]);
             endforeach;

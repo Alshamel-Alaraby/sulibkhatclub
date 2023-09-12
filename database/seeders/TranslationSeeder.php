@@ -2837,6 +2837,26 @@ class TranslationSeeder extends Seeder
                 "screen" => "financial Year"
 
             ],
+            [
+                "key" => "financial_year_default",
+                "default_en" => "Is active",
+                "default_ar" => "تفعيل ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "financial Year"
+
+            ],
+            [
+                "key" => "financial_year_year",
+                "default_en" => "For Year",
+                "default_ar" => "عن سنه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "financial Year"
+
+            ],
         ]);
         //Units
         Translation::insert([
@@ -11088,7 +11108,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "member_type",
                 "default_en" => "Member Type",
-                "default_ar" => "نواع العضوية",
+                "default_ar" => "انواع العضوية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11301,8 +11321,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "subscription_amount",
-                "default_en" => "Subscription Amount",
-                "default_ar" => "قيمة الاشتراك",
+                "default_en" => "Amount Membership renewal",
+                "default_ar" => "قيمة تجديد العضوية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
