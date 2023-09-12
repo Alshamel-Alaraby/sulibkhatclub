@@ -137,7 +137,7 @@ export default {
         getStatices() {
             this.isLoader = true;
 
-            adminApi.get(`/club-members/statics/getStatics`)
+            adminApi.get(`/club-members/statics/get-members-valid`)
                 .then((res) => {
                     let l = res.data.data;
                     this.statices = l;
@@ -224,66 +224,66 @@ export default {
     <Layout>
         <PageHeader :title="title" :items="items" />
 
-        <div class="dashboard-fluid">
-            <div class="row mt-2">
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'normalMemberCount'"
-                        :icon="'ri-stack-line'"
-                        :value="statices.normalMemberCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'dismissedMemberCount'"
-                        :icon="'ri-slideshow-2-line'"
-                        :value="statices.dismissedMemberCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'foundingMemberCount'"
-                        :icon="'ri-hand-heart-line'"
-                        :value="statices.foundingMemberCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'pendingMember'"
-                        :icon="'ri-hand-heart-line'"
-                        :value="statices.RequestMembersPendingCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'sponsor'"
-                        :icon="'ri-money-dollar-box-line'"
-                        :value="statices.sponsorsCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'AttendElections'"
-                        :icon="'ri-money-dollar-box-line'"
-                        :value="statices.presenceMemberCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'voteMemberCount'"
-                        :icon="'ri-hand-heart-line'"
-                        :value="statices.voteMemberCount"
-                    />
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <CrmWidget
-                        :title="'nominateMemberCount'"
-                        :icon="'ri-stack-line'"
-                        :value="statices.nominateMemberCount"
-                    />
-                </div>
-                <!-- end col -->
-            </div>
+        <div class="dashboard-fluid mb-3">
+<!--            <div class="row mt-2">-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'normalMemberCount'"-->
+<!--                        :icon="'ri-stack-line'"-->
+<!--                        :value="statices.normalMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'dismissedMemberCount'"-->
+<!--                        :icon="'ri-slideshow-2-line'"-->
+<!--                        :value="statices.dismissedMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'foundingMemberCount'"-->
+<!--                        :icon="'ri-hand-heart-line'"-->
+<!--                        :value="statices.foundingMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'pendingMember'"-->
+<!--                        :icon="'ri-hand-heart-line'"-->
+<!--                        :value="statices.RequestMembersPendingCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'sponsor'"-->
+<!--                        :icon="'ri-money-dollar-box-line'"-->
+<!--                        :value="statices.sponsorsCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'AttendElections'"-->
+<!--                        :icon="'ri-money-dollar-box-line'"-->
+<!--                        :value="statices.presenceMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'voteMemberCount'"-->
+<!--                        :icon="'ri-hand-heart-line'"-->
+<!--                        :value="statices.voteMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                <div class="col-xl-3 col-md-6">-->
+<!--                    <CrmWidget-->
+<!--                        :title="'nominateMemberCount'"-->
+<!--                        :icon="'ri-stack-line'"-->
+<!--                        :value="statices.nominateMemberCount"-->
+<!--                    />-->
+<!--                </div>-->
+<!--                &lt;!&ndash; end col &ndash;&gt;-->
+<!--            </div>-->
             <!-- end row -->
 
             <Projections :statices="statices"  />
