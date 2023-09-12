@@ -306,7 +306,7 @@ $data['groups'] = CmSponsorGroup::count();
                 $count = $sponsor->members()
                     ->where('member_status_id', 1)
                     ->where('members_permissions_id', $permission->id)
-                    ->count();
+                     ->count();
 
                 $percentage = ($count / $totalMembersPermissions) * 100;
 

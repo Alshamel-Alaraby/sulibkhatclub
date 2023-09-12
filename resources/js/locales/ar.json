@@ -1457,6 +1457,14 @@
         "WrittenoffaccordingtotheAuthorityletter": "شطب بموجب كتاب الهيئة",
         "Writtenofffornonpayment": "شطب لعدم السداد",
         "memberType": "انواع الاعضاء",
-        "groupSponer": "مجموعه الرعاه"
+        "groupSponer": "مجموعه الرعاه",
+        "percentage": "النسبه",
+        "count": "العدد",
+        "NoRightToAttend": " ليس له حق الحضور",
+        "RightToAttend": "  له حق الحضور",
+        "RightToAttendAndVote": "  له حق الحضور و التصويت",
+        "RightToAttendAndVoteAndRun": "  له حق الحضور و التصويت",
+        "Sponsormembersbyrights": "اعضاء الرعاه حسب الحقوق",
+        "Thenumberofmemberswithineachsponsor": "عدد الاعضاء عند كل راعي"
     }
 }

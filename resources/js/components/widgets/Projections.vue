@@ -1,4 +1,5 @@
 <script>
+import Portlet from "./Portlet";
 /**
  * Projections component
  */
@@ -152,11 +153,7 @@ export default {
                     offsetX: 0,
                     offsetY: 7
                 },
-                labels: [
-                    this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
-                    this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
-                    this.$t('general.Writtenofffornonpayment')
-                ],
+                labels: [],
                 colors: ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"],
                 responsive: [{
                     breakpoint: 600,
@@ -169,7 +166,7 @@ export default {
                         }
                     }
                 }]
-            }
+            },
             series7: [],
             chartOptions7: {
                 legend: {
@@ -199,7 +196,7 @@ export default {
                         }
                     }
                 }]
-            }
+            },
             series8: [],
             chartOptions8: {
                 legend: {
@@ -229,7 +226,7 @@ export default {
                         }
                     }
                 }]
-            }
+            },
             series9: [],
             chartOptions9: {
                 legend: {
@@ -290,8 +287,11 @@ export default {
                 this.chartOptions6.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
                 this.chartOptions6.colors.push(this.colors[index]);
             });
-            this.series5 = [(newDa.Percentage_6 + .01),newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
+            this.series5 = [(newDa.Percentage_6),newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
         }
+    },
+    components:{
+        Portlet
     }
 };
 </script>
@@ -300,35 +300,6 @@ export default {
     <div>
         <h1 class="header-title text-center my-3">{{ $t('general.Ordinarymembers') }}</h1>
         <div class="row">
-            <!-- end col -->
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h4 class="header-title">{{ $t('general.memberType') }}</h4>
-
-                        <div class="mt-3 text-center" dir="ltr">
-                            <apexchart
-                                class="apex-charts"
-                                type="donut"
-                                :options="chartOptions1"
-                                height="312"
-                                :series="series1"
-                            >
-                            </apexchart>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-4" v-for="item in statices.member_types_data">
-                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                                <h4>{{ item.count }}</h4>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
 
             <!-- end col -->
             <div class="col-xl-6">
@@ -379,6 +350,36 @@ export default {
 
                         <div class="row mt-3">
                             <div class="col-4" v-for="item in statices.member_permissions_data">
+                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
+                                <h4>{{ item.count }}</h4>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.memberType') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions1"
+                                height="312"
+                                :series="series1"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4" v-for="item in statices.member_types_data">
                                 <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
                                 <h4>{{ item.count }}</h4>
                             </div>
@@ -498,93 +499,64 @@ export default {
                 </div>
             </div>
             <!-- end col -->
-
-            <!-- end col -->
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h4 class="header-title">{{ $t('general.group') }}</h4>
-
-                        <div class="mt-3 text-center" dir="ltr">
-                            <apexchart
-                                class="apex-charts"
-                                type="donut"
-                                :options="chartOptions7"
-                                height="312"
-                                :series="series7"
-                            >
-                            </apexchart>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-4" v-for="item in statices.member_types">
-                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                                <h4>{{ item.count }}</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end col -->
-
-            <!-- end col -->
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h4 class="header-title">{{ $t('general.group') }}</h4>
-
-                        <div class="mt-3 text-center" dir="ltr">
-                            <apexchart
-                                class="apex-charts"
-                                type="donut"
-                                :options="chartOptions8"
-                                height="312"
-                                :series="series8"
-                            >
-                            </apexchart>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-4" v-for="item in statices.member_types">
-                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                                <h4>{{ item.count }}</h4>
-                            </div>
+        </div>
+        <div class="row mt-1">
+            <!-- Table -->
+            <div class="col-xl-12">
+                <Portlet :headertitle="'Sponsormembersbyrights'">
+                    <div class="card-body pt-0">
+                        <div class="table-responsive mb-0">
+                            <table class="table table-hover table-centered mb-0">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">{{ $t('general.name') }}</th>
+                                    <th class="text-center">{{ $t('general.NoRightToAttend') }}</th>
+                                    <th class="text-center">{{ $t('general.RightToAttend') }}</th>
+                                    <th class="text-center">{{ $t('general.RightToAttendAndVote') }}</th>
+                                    <th class="text-center">{{ $t('general.RightToAttendAndVoteAndRun') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="sellingData in statices.sponsors_members_permissions" :key="sellingData.id">
+                                    <td>{{ sellingData.name }}</td>
+                                    <td>{{ sellingData.permissions_counts[0].count }}</td>
+                                    <td>{{ sellingData.permissions_counts[1].count }}</td>
+                                    <td>{{ sellingData.permissions_counts[2].count }}</td>
+                                    <td>{{ sellingData.permissions_counts[3].count }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                </Portlet>
             </div>
-            <!-- end col -->
-
-            <!-- end col -->
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h4 class="header-title">{{ $t('general.group') }}</h4>
-
-                        <div class="mt-3 text-center" dir="ltr">
-                            <apexchart
-                                class="apex-charts"
-                                type="donut"
-                                :options="chartOptions9"
-                                height="312"
-                                :series="series9"
-                            >
-                            </apexchart>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-4" v-for="item in statices.member_types">
-                                <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
-                                <h4>{{ item.count }}</h4>
-                            </div>
+        </div>
+        <div class="row mt-1">
+            <!-- Table -->
+            <div class="col-xl-12">
+                <Portlet :headertitle="'Thenumberofmemberswithineachsponsor'">
+                    <div class="card-body pt-0">
+                        <div class="table-responsive mb-0">
+                            <table class="table table-hover table-centered mb-0">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">{{ $t('general.name') }}</th>
+                                    <th class="text-center">{{ $t('general.count') }}</th>
+                                    <th class="text-center">{{ $t('general.percentage') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="sellingData in statices.sponsors_members" :key="sellingData.id">
+                                    <td>{{ sellingData.name }}</td>
+                                    <td>{{ sellingData.count }}</td>
+                                    <td>{{ sellingData.percentage }} %</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                </Portlet>
             </div>
-            <!-- end col -->
         </div>
     </div>
     <!-- end row -->

@@ -1472,6 +1472,10 @@
         "WrittenoffaccordingtotheAuthorityletter": "Written off according to the Authority’s letter",
         "Writtenofffornonpayment": "Written off for non-payment",
         "memberType": "Member Of Types",
-        "groupSponer": "Group Sponer"
+        "groupSponer": "Group Sponer",
+        "percentage": "Percentage",
+        "count": "Count",
+        "Sponsormembersbyrights": "Sponsor members by rights",
+        "Thenumberofmemberswithineachsponsor": "The number of members within each sponsor"
     }
 }
