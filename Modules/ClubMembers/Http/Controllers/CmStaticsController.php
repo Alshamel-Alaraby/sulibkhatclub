@@ -300,18 +300,15 @@ class CmStaticsController extends Controller
                         ->where('members_permissions_id', $permission->id)
                         ->count();
 
-                    // Only add entries with a non-zero count.
-                    if ($count > 0) {
-                        $percentage = ($count / $totalMembersPermissions) * 100;
+                    $percentage = ($count / $totalMembersPermissions) * 100;
 
-                        $counts[] = [
-                            'id' => $permission->id,
-                            'name' => $permission->name,
-                            'name_e' => $permission->name_e,
-                            'count' => $count,
-                            'percentage' => round($percentage, 2),
-                        ];
-                    }
+                    $counts[] = [
+                        'id' => $permission->id,
+                        'name' => $permission->name,
+                        'name_e' => $permission->name_e,
+                        'count' => $count,
+                        'percentage' => round($percentage, 2),
+                    ];
                 }
 
                 $result = [
@@ -323,13 +320,8 @@ class CmStaticsController extends Controller
                     'permissions_counts' => $counts,
                 ];
 
-
-                if ($result['count'] > 0 && count($counts) > 0) {
-                    return $result;
-                }
-
-                return null;
-            })->filter()->values()->all();
+                return $result;
+            })->values()->all();
 
 
         $response = [
