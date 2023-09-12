@@ -1407,8 +1407,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Portlet__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Portlet */ "./resources/js/components/widgets/Portlet.vue");
-/* harmony import */ var _helper_tableSort__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../helper/tableSort */ "./resources/js/helper/tableSort.js");
-
 
 /**
  * Projections component
@@ -1687,14 +1685,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     Portlet: _Portlet__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  methods: {
-    sortString: function sortString(value) {
-      return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_1__.dynamicSortString)(value);
-    },
-    sortNumber: function sortNumber(value) {
-      return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_1__.dynamicSortNumber)(value);
-    }
   }
 });
 
@@ -5779,95 +5769,15 @@ var render = function render() {
     staticClass: "table table-hover table-centered mb-0"
   }, [_c("thead", [_c("tr", [_c("th", {
     staticClass: "text-center"
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.name")) + "\n                                    "), _vm.statices.permissions_counts ? _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortString("name"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortString("-name"));
-      }
-    }
-  })]) : _vm._e()]), _vm._v(" "), _c("th", {
+  }, [_vm._v(_vm._s(_vm.$t("general.name")))]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.NoRightToAttend")) + "\n                                    "), _vm.statices ? _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("name"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("-name"));
-      }
-    }
-  })]) : _vm._e()]), _vm._v(" "), _c("th", {
+  }, [_vm._v(_vm._s(_vm.$t("general.NoRightToAttend")))]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.RightToAttend")) + "\n                                    "), _vm.statices ? _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("name"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("-name"));
-      }
-    }
-  })]) : _vm._e()]), _vm._v(" "), _c("th", {
+  }, [_vm._v(_vm._s(_vm.$t("general.RightToAttend")))]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.RightToAttendAndVote")) + "\n                                    "), _vm.statices ? _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("name"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("-name"));
-      }
-    }
-  })]) : _vm._e()]), _vm._v(" "), _c("th", {
+  }, [_vm._v(_vm._s(_vm.$t("general.RightToAttendAndVote")))]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.RightToAttendAndVoteAndRun")) + "\n                                    "), _vm.statices ? _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("name"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.statices.permissions_counts.sort(_vm.sortNumber("-name"));
-      }
-    }
-  })]) : _vm._e()])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.statices.sponsors_members_permissions, function (sellingData) {
+  }, [_vm._v(_vm._s(_vm.$t("general.RightToAttendAndVoteAndRun")))])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.statices.sponsors_members_permissions, function (sellingData) {
     return _c("tr", {
       key: sellingData.id
     }, [_c("td", [_vm._v(_vm._s(sellingData.name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(sellingData.permissions_counts[0].count))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(sellingData.permissions_counts[1].count))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(sellingData.permissions_counts[2].count))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(sellingData.permissions_counts[3].count))])]);
@@ -6345,65 +6255,6 @@ var render = function render() {
 var staticRenderFns = [];
 render._withStripped = true;
 
-
-/***/ }),
-
-/***/ "./resources/js/helper/tableSort.js":
-/*!******************************************!*\
-  !*** ./resources/js/helper/tableSort.js ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "dynamicSortDate": () => (/* binding */ dynamicSortDate),
-/* harmony export */   "dynamicSortNumber": () => (/* binding */ dynamicSortNumber),
-/* harmony export */   "dynamicSortString": () => (/* binding */ dynamicSortString)
-/* harmony export */ });
-function dynamicSortString(property) {
-  var sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-    property = property.substr(1);
-  }
-  return function (a, b) {
-    /* next line works with strings and numbers,
-     * and you may want to customize it to your needs
-     */
-    var result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
-}
-;
-function dynamicSortNumber(property) {
-  var sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-  }
-  return function (a, b) {
-    /* next line works with strings and numbers,
-     * and you may want to customize it to your needs
-     */
-    var result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
-}
-;
-function dynamicSortDate(property) {
-  var sortOrder = 1;
-  if (property[0] === "-") {
-    sortOrder = -1;
-  }
-  return function (a, b) {
-    /* next line works with strings and numbers,
-     * and you may want to customize it to your needs
-     */
-    var result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
-    return result * sortOrder;
-  };
-}
-;
 
 /***/ }),
 

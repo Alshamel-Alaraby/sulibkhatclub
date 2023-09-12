@@ -289,45 +289,51 @@ $data['groups'] = CmSponsorGroup::count();
         })->values();
 ////////// count of members for each sponsor where (member_status_id) == 1  and for every permission ///////////
 
-        $totalMembersPermissions = CmMember::where('member_status_id', 1)->count();
+$totalMembersPermissions = CmMember::where('member_status_id', 1)->count();
 
-        $memberCountsPermissions = CmSponser::select('id', 'name', 'name_e')
-            ->withCount(['members' => function ($query) {
-                $query->where('member_status_id', 1);
-            }])
-            ->get();
+$memberCountsPermissions = CmSponser::select('id', 'name', 'name_e')
+    ->withCount(['members' => function ($query) {
+        $query->where('member_status_id', 1);
+    }])
+    ->get();
 
-        $data['sponsors_members_permissions'] = $memberCountsPermissions->map(function ($sponsor) use ($totalMembersPermissions) {
-            $permissions = CmMemberPermission::all();
+$data['sponsors_members_permissions'] = $memberCountsPermissions->map(function ($sponsor) use ($totalMembersPermissions) {
+    $permissions = CmMemberPermission::all();
 
-            $counts = [];
+    $counts = [];
 
-            foreach ($permissions as $permission) {
-                $count = $sponsor->members()
-                    ->where('member_status_id', 1)
-                    ->where('members_permissions_id', $permission->id)
-                     ->count();
+    foreach ($permissions as $permission) {
+        $count = $sponsor->members()
+            ->where('member_status_id', 1)
+            ->where('members_permissions_id', $permission->id)
+            ->count();
 
-                $percentage = ($count / $totalMembersPermissions) * 100;
+        $percentage = ($count / $totalMembersPermissions) * 100;
 
-                $counts[] = [
-                    'id' => $permission->id,
-                    'name' => $permission->name,
-                    'name_e' => $permission->name_e,
-                    'count' => $count,
-                    'percentage' => round($percentage, 2),
-                ];
-            }
-
-            return [
-                'id' => $sponsor->id,
-                'name' => $sponsor->name,
-                'name_e' => $sponsor->name_e,
-                'count' => $sponsor->members_count,
-                'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
-                'permissions_counts' => $counts,
+        if ($count > 0) {
+            $counts[] = [
+                'id' => $permission->id,
+                'name' => $permission->name,
+                'name_e' => $permission->name_e,
+                'count' => $count,
+                'percentage' => round($percentage, 2),
             ];
-        });
+        }
+    }
+
+    if ($sponsor->members_count > 0) {
+        return [
+            'id' => $sponsor->id,
+            'name' => $sponsor->name,
+            'name_e' => $sponsor->name_e,
+            'count' => $sponsor->members_count,
+            'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
+            'permissions_counts' => $counts,
+        ];
+    }
+    return null;
+})->filter();
+
 
 
 
@@ -413,24 +419,29 @@ $data['groups'] = CmSponsorGroup::count();
 
 //                 $percentage = ($count / $totalMembersPermissions) * 100;
 
-//                 $counts[] = [
-//                     'id' => $permission->id,
-//                     'name' => $permission->name,
-//                     'name_e' => $permission->name_e,
-//                     'count' => $count,
-//                     'percentage' => round($percentage, 2),
-//                 ];
+//                 if ($count > 0) {
+//                     $counts[] = [
+//                         'id' => $permission->id,
+//                         'name' => $permission->name,
+//                         'name_e' => $permission->name_e,
+//                         'count' => $count,
+//                         'percentage' => round($percentage, 2),
+//                     ];
+//                 }
 //             }
 
-//             return [
-//                 'id' => $sponsor->id,
-//                 'name' => $sponsor->name,
-//                 'name_e' => $sponsor->name_e,
-//                 'count' => $sponsor->members_count,
-//                 'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
-//                 'permissions_counts' => $counts,
-//             ];
-//         });
+//             if ($sponsor->members_count > 0) {
+//                 return [
+//                     'id' => $sponsor->id,
+//                     'name' => $sponsor->name,
+//                     'name_e' => $sponsor->name_e,
+//                     'count' => $sponsor->members_count,
+//                     'percentage' => round(($sponsor->members_count / $totalMembersPermissions) * 100, 2),
+//                     'permissions_counts' => $counts,
+//                 ];
+//             }
+//             return null;
+//         })->filter();
 
 //         $response = [
 //             'message' => 'success',
