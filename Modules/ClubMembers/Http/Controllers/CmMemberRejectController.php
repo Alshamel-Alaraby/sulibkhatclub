@@ -2,6 +2,7 @@
 
 namespace Modules\ClubMembers\Http\Controllers;
 
+use App\Models\Serial;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -50,7 +51,10 @@ class CmMemberRejectController extends Controller
         }
         $model = $this->model->create($request->validated());
         $member = $this->modelMember->find($request->validated()['cm_member_id']);
-        $member->update(['discharge_reson_id'=>$request['discharge_reson_id']]);
+        $member->update([
+            'discharge_reson_id'=>$request['discharge_reson_id'],
+            'member_status_id'=>2
+            ]);
         if ($request['serial_id'])
         {
             $serials = generalSerialWithIdCreate($model,$request['serial_id']);

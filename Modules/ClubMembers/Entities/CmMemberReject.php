@@ -25,10 +25,9 @@ class CmMemberReject extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
-
-    public function memberType()
+    public function dischargeReson()
     {
-        return $this->belongsTo(CmMemberType::class, 'cm_member_type_id');
+        return $this->belongsTo(CmDischargeReson::class, 'discharge_reson_id');
     }
 
 

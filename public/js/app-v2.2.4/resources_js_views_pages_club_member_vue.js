@@ -3277,7 +3277,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+        member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -3295,7 +3295,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+        member_kind_id: null,
         financial_status_id: null
       },
       company_id: null,
@@ -3308,7 +3308,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       setting: {
         gender: true,
         name: true,
-        status_id: true,
+        member_status_id: true,
         auto_status_sun: true,
         birth_date: true,
         national_id: true,
@@ -3342,7 +3342,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       third_name: {},
       last_name: {},
       family_name: {},
-      status_id: {},
+      member_status_id: {},
       birth_date: {},
       membership_number: {},
       national_id: {},
@@ -3359,7 +3359,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       session_date: {},
       sponsor_id: {},
       member_type: {},
-      member_type_id: {},
+      member_kind_id: {},
       financial_status_id: {},
       applying_date: {},
       applying_number: {}
@@ -3476,7 +3476,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (index > -1) {
         _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
       }
-      index = this.filterSetting.indexOf("status_id");
+      index = this.filterSetting.indexOf("member_status_id");
       if (index > -1) {
         _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
       }
@@ -3509,7 +3509,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         if (index > -1) {
           _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
         }
-        index = this.filterSetting.indexOf("status_id");
+        index = this.filterSetting.indexOf("member_status_id");
         if (index > -1) {
           _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
         }
@@ -3545,7 +3545,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     resetModalEdit: function resetModalEdit(id) {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var _member$financial_sta, _member$status_id, _member$sponsor_id;
+        var _member$member_kind_i, _member$financial_sta, _member$member_status, _member$sponsor_id;
         var member;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
@@ -3576,13 +3576,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 _this7.edit.first_name = member.first_name;
                 _this7.edit.phone_code = member.phone_code;
                 _this7.edit.second_name = member.second_name;
-                _this7.edit.member_type_id = member.member_type_id ? member.member_type_id.id : null;
+                _this7.edit.member_kind_id = (_member$member_kind_i = member.member_kind_id) !== null && _member$member_kind_i !== void 0 ? _member$member_kind_i : null;
                 _this7.edit.financial_status_id = (_member$financial_sta = member.financial_status_id) !== null && _member$financial_sta !== void 0 ? _member$financial_sta : null;
                 _this7.edit.member_type = member.member_type;
                 _this7.edit.third_name = member.third_name;
                 _this7.edit.last_name = member.last_name;
                 _this7.edit.family_name = member.family_name;
-                _this7.edit.status_id = (_member$status_id = member.status_id) !== null && _member$status_id !== void 0 ? _member$status_id : null;
+                _this7.edit.member_status_id = (_member$member_status = member.member_status_id) !== null && _member$member_status !== void 0 ? _member$member_status : null;
                 _this7.edit.birth_date = member.birth_date;
                 _this7.edit.national_id = member.national_id;
                 _this7.edit.nationality_number = member.nationality_number;
@@ -3622,7 +3622,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+        member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -3635,7 +3635,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+        member_kind_id: null,
         financial_status_id: null
       };
     },
@@ -3728,7 +3728,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     getMemberTypes: function getMemberTypes() {
       var _this10 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/club-members/members-types?children_relation=1").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/club-members/members-types").then(function (res) {
         _this10.memberTypes = res.data.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_8___default().fire({
@@ -4630,7 +4630,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\r\n    display: none;\n}\n.arrow-sort {\r\n    display: none;\n}\n.text-success {\r\n    background-color: unset;\r\n    color: #6c757d !important;\r\n    border: unset;\n}\n.text-danger {\r\n    background-color: unset;\r\n    color: #6c757d !important;\r\n    border: unset;\n}\n}\nthead th {\r\n  white-space: nowrap !important;\n}\ntable td {\r\n  white-space: nowrap !important;\n}\n.custom-radio\r\n  .custom-control-input:disabled:checked\r\n  ~ .custom-control-label::before {\r\n  background-color: #2494be;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\n    display: none;\n}\n.arrow-sort {\n    display: none;\n}\n.text-success {\n    background-color: unset;\n    color: #6c757d !important;\n    border: unset;\n}\n.text-danger {\n    background-color: unset;\n    color: #6c757d !important;\n    border: unset;\n}\n}\nthead th {\n  white-space: nowrap !important;\n}\ntable td {\n  white-space: nowrap !important;\n}\n.custom-radio\n  .custom-control-input:disabled:checked\n  ~ .custom-control-label::before {\n  background-color: #2494be;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -16109,11 +16109,15 @@ var render = function () {
                                   {
                                     staticClass: "mb-1",
                                     model: {
-                                      value: _vm.setting.status_id,
+                                      value: _vm.setting.member_status_id,
                                       callback: function ($$v) {
-                                        _vm.$set(_vm.setting, "status_id", $$v)
+                                        _vm.$set(
+                                          _vm.setting,
+                                          "member_status_id",
+                                          $$v
+                                        )
                                       },
-                                      expression: "setting.status_id",
+                                      expression: "setting.member_status_id",
                                     },
                                   },
                                   [
@@ -17139,7 +17143,7 @@ var render = function () {
                               ])
                             : _vm._e(),
                           _vm._v(" "),
-                          _vm.setting.status_id
+                          _vm.setting.member_status_id
                             ? _c("th", [
                                 _c(
                                   "div",
@@ -18066,7 +18070,7 @@ var render = function () {
                                       ])
                                     : _vm._e(),
                                   _vm._v(" "),
-                                  _vm.setting.status_id
+                                  _vm.setting.member_status_id
                                     ? _c("td", [
                                         _vm._v(
                                           "\n                      " +
@@ -20028,22 +20032,24 @@ var render = function () {
                                                       },
                                                     },
                                                     model: {
-                                                      value: _vm.edit.status_id,
+                                                      value:
+                                                        _vm.edit
+                                                          .member_status_id,
                                                       callback: function ($$v) {
                                                         _vm.$set(
                                                           _vm.edit,
-                                                          "status_id",
+                                                          "member_status_id",
                                                           $$v
                                                         )
                                                       },
                                                       expression:
-                                                        "edit.status_id",
+                                                        "edit.member_status_id",
                                                     },
                                                   }),
                                                   _vm._v(" "),
-                                                  _vm.$v.edit.status_id
+                                                  _vm.$v.edit.member_status_id
                                                     .$error ||
-                                                  _vm.errors.status_id
+                                                  _vm.errors.member_status_id
                                                     ? _c(
                                                         "div",
                                                         {
@@ -20064,9 +20070,10 @@ var render = function () {
                                                       )
                                                     : _vm._e(),
                                                   _vm._v(" "),
-                                                  _vm.errors.status_id
+                                                  _vm.errors.member_status_id
                                                     ? _vm._l(
-                                                        _vm.errors.status_id,
+                                                        _vm.errors
+                                                          .member_status_id,
                                                         function (
                                                           errorMessage,
                                                           index
@@ -20159,22 +20166,22 @@ var render = function () {
                                                     },
                                                     model: {
                                                       value:
-                                                        _vm.edit.member_type_id,
+                                                        _vm.edit.member_kind_id,
                                                       callback: function ($$v) {
                                                         _vm.$set(
                                                           _vm.edit,
-                                                          "member_type_id",
+                                                          "member_kind_id",
                                                           $$v
                                                         )
                                                       },
                                                       expression:
-                                                        "edit.member_type_id",
+                                                        "edit.member_kind_id",
                                                     },
                                                   }),
                                                   _vm._v(" "),
-                                                  _vm.$v.edit.member_type_id
+                                                  _vm.$v.edit.member_kind_id
                                                     .$error ||
-                                                  _vm.errors.member_type_id
+                                                  _vm.errors.member_kind_id
                                                     ? _c(
                                                         "div",
                                                         {
@@ -20195,10 +20202,10 @@ var render = function () {
                                                       )
                                                     : _vm._e(),
                                                   _vm._v(" "),
-                                                  _vm.errors.member_type_id
+                                                  _vm.errors.member_kind_id
                                                     ? _vm._l(
                                                         _vm.errors
-                                                          .member_type_id,
+                                                          .member_kind_id,
                                                         function (
                                                           errorMessage,
                                                           index
@@ -20256,6 +20263,7 @@ var render = function () {
                                                   _vm._v(" "),
                                                   _c("multiselect", {
                                                     attrs: {
+                                                      disabled: true,
                                                       options:
                                                         _vm.financialStatuses.map(
                                                           function (type) {
@@ -20503,190 +20511,6 @@ var render = function () {
                                                     ? _vm._l(
                                                         _vm.errors
                                                           .membership_number,
-                                                        function (
-                                                          errorMessage,
-                                                          index
-                                                        ) {
-                                                          return _c(
-                                                            "ErrorMessage",
-                                                            { key: index },
-                                                            [
-                                                              _vm._v(
-                                                                _vm._s(
-                                                                  errorMessage
-                                                                ) +
-                                                                  "\n                                "
-                                                              ),
-                                                            ]
-                                                          )
-                                                        }
-                                                      )
-                                                    : _vm._e(),
-                                                ],
-                                                2
-                                              ),
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            { staticClass: "col-md-3" },
-                                            [
-                                              _c(
-                                                "div",
-                                                { staticClass: "form-group" },
-                                                [
-                                                  _c(
-                                                    "label",
-                                                    { staticClass: "mr-2" },
-                                                    [
-                                                      _vm._v(
-                                                        "\n                                " +
-                                                          _vm._s(
-                                                            _vm.getCompanyKey(
-                                                              "member_acceptance"
-                                                            )
-                                                          ) +
-                                                          "\n                              "
-                                                      ),
-                                                    ]
-                                                  ),
-                                                  _vm._v(" "),
-                                                  _c(
-                                                    "b-form-group",
-                                                    [
-                                                      _c(
-                                                        "b-form-radio",
-                                                        {
-                                                          staticClass:
-                                                            "d-inline-block",
-                                                          attrs: {
-                                                            disabled: "",
-                                                            name: "edit_acceptance",
-                                                            value: "0",
-                                                          },
-                                                          model: {
-                                                            value:
-                                                              _vm.$v.edit
-                                                                .acceptance
-                                                                .$model,
-                                                            callback: function (
-                                                              $$v
-                                                            ) {
-                                                              _vm.$set(
-                                                                _vm.$v.edit
-                                                                  .acceptance,
-                                                                "$model",
-                                                                $$v
-                                                              )
-                                                            },
-                                                            expression:
-                                                              "$v.edit.acceptance.$model",
-                                                          },
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            "\n                                    " +
-                                                              _vm._s(
-                                                                _vm.$t(
-                                                                  "general.pending"
-                                                                )
-                                                              ) +
-                                                              "\n                                "
-                                                          ),
-                                                        ]
-                                                      ),
-                                                      _vm._v(" "),
-                                                      _c(
-                                                        "b-form-radio",
-                                                        {
-                                                          staticClass:
-                                                            "d-inline-block m-1",
-                                                          attrs: {
-                                                            disabled: "",
-                                                            name: "edit_acceptance",
-                                                            value: "1",
-                                                          },
-                                                          model: {
-                                                            value:
-                                                              _vm.$v.edit
-                                                                .acceptance
-                                                                .$model,
-                                                            callback: function (
-                                                              $$v
-                                                            ) {
-                                                              _vm.$set(
-                                                                _vm.$v.edit
-                                                                  .acceptance,
-                                                                "$model",
-                                                                $$v
-                                                              )
-                                                            },
-                                                            expression:
-                                                              "$v.edit.acceptance.$model",
-                                                          },
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            "\n                                    " +
-                                                              _vm._s(
-                                                                _vm.$t(
-                                                                  "general.accepted"
-                                                                )
-                                                              ) +
-                                                              "\n                                "
-                                                          ),
-                                                        ]
-                                                      ),
-                                                      _vm._v(" "),
-                                                      _c(
-                                                        "b-form-radio",
-                                                        {
-                                                          staticClass:
-                                                            "d-inline-block m-1",
-                                                          attrs: {
-                                                            disabled: "",
-                                                            name: "edit_acceptance",
-                                                            value: "2",
-                                                          },
-                                                          model: {
-                                                            value:
-                                                              _vm.$v.edit
-                                                                .acceptance
-                                                                .$model,
-                                                            callback: function (
-                                                              $$v
-                                                            ) {
-                                                              _vm.$set(
-                                                                _vm.$v.edit
-                                                                  .acceptance,
-                                                                "$model",
-                                                                $$v
-                                                              )
-                                                            },
-                                                            expression:
-                                                              "$v.edit.acceptance.$model",
-                                                          },
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            "\n                                    " +
-                                                              _vm._s(
-                                                                _vm.$t(
-                                                                  "general.declined"
-                                                                )
-                                                              ) +
-                                                              "\n                                "
-                                                          ),
-                                                        ]
-                                                      ),
-                                                    ],
-                                                    1
-                                                  ),
-                                                  _vm._v(" "),
-                                                  _vm.errors.acceptance
-                                                    ? _vm._l(
-                                                        _vm.errors.acceptance,
                                                         function (
                                                           errorMessage,
                                                           index

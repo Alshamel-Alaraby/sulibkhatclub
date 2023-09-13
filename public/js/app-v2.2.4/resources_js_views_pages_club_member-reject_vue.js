@@ -2462,7 +2462,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
                 _this18.isLoader = true;
                 _context8.next = 4;
-                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?limet=10&company_id=".concat(_this18.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
+                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?member_status_id=1&limet=10&company_id=".concat(_this18.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
                   var l = res.data.data;
                   _this18.members = l;
                 })["catch"](function (err) {
@@ -11801,40 +11801,6 @@ var render = function () {
                             },
                             [_c("i", { staticClass: "fe-printer" })]
                           ),
-                          _vm._v(" "),
-                          _vm.checkAll.length > 1 &&
-                          _vm.isPermission("delete subscription club")
-                            ? _c(
-                                "button",
-                                {
-                                  staticClass: "custom-btn-dowonload",
-                                  on: {
-                                    click: function ($event) {
-                                      $event.preventDefault()
-                                      return _vm.deleteBranch(_vm.checkAll)
-                                    },
-                                  },
-                                },
-                                [_c("i", { staticClass: "fas fa-trash-alt" })]
-                              )
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _vm.checkAll.length == 1 &&
-                          _vm.isPermission("delete subscription club")
-                            ? _c(
-                                "button",
-                                {
-                                  staticClass: "custom-btn-dowonload",
-                                  on: {
-                                    click: function ($event) {
-                                      $event.preventDefault()
-                                      return _vm.deleteBranch(_vm.checkAll[0])
-                                    },
-                                  },
-                                },
-                                [_c("i", { staticClass: "fas fa-trash-alt" })]
-                              )
-                            : _vm._e(),
                         ]),
                       ],
                       1
@@ -13699,10 +13665,11 @@ var render = function () {
                                               _vm._v(
                                                 "\n                                            " +
                                                   _vm._s(
-                                                    data.member_type
+                                                    data.discharge_reson
                                                       ? _vm.$i18n.locale == "ar"
-                                                        ? data.member_type.name
-                                                        : data.member_type
+                                                        ? data.discharge_reson
+                                                            .name
+                                                        : data.discharge_reson
                                                             .name_e
                                                       : " - "
                                                   ) +
@@ -13763,64 +13730,10 @@ var render = function () {
                                                   ]
                                                 ),
                                                 _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    staticClass:
-                                                      "dropdown-menu dropdown-menu-custom",
-                                                  },
-                                                  [
-                                                    _vm.isPermission(
-                                                      "delete subscription club"
-                                                    )
-                                                      ? _c(
-                                                          "a",
-                                                          {
-                                                            staticClass:
-                                                              "dropdown-item text-black",
-                                                            attrs: {
-                                                              href: "#",
-                                                            },
-                                                            on: {
-                                                              click: function (
-                                                                $event
-                                                              ) {
-                                                                $event.preventDefault()
-                                                                return _vm.deleteBranch(
-                                                                  data.id
-                                                                )
-                                                              },
-                                                            },
-                                                          },
-                                                          [
-                                                            _c(
-                                                              "div",
-                                                              {
-                                                                staticClass:
-                                                                  "d-flex justify-content-between align-items-center text-black",
-                                                              },
-                                                              [
-                                                                _c("span", [
-                                                                  _vm._v(
-                                                                    _vm._s(
-                                                                      _vm.$t(
-                                                                        "general.delete"
-                                                                      )
-                                                                    )
-                                                                  ),
-                                                                ]),
-                                                                _vm._v(" "),
-                                                                _c("i", {
-                                                                  staticClass:
-                                                                    "fas fa-times text-danger",
-                                                                }),
-                                                              ]
-                                                            ),
-                                                          ]
-                                                        )
-                                                      : _vm._e(),
-                                                  ]
-                                                ),
+                                                _c("div", {
+                                                  staticClass:
+                                                    "dropdown-menu dropdown-menu-custom",
+                                                }),
                                               ]
                                             ),
                                           ]

@@ -2740,7 +2740,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card-body[data-v-65966c02]{\n    background: #bee3fe !important;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card-body[data-v-65966c02]{\r\n    background: #bee3fe !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2764,7 +2764,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card-body[data-v-37818889] {\n    background-color: #bee3fe !important;\n}\nh1[data-v-37818889] {\n    font-size: 30px;\n}\n.card-body[data-v-37818889] {\n    color: #000 !important;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card-body[data-v-37818889] {\r\n    background-color: #bee3fe !important;\n}\nh1[data-v-37818889] {\r\n    font-size: 30px;\n}\n.card-body[data-v-37818889] {\r\n    color: #000 !important;\n}\n.ordinaryMember[data-v-37818889]{\r\n    min-height: 522px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10789,15 +10789,6 @@ var render = function () {
                 },
                 on: { click: _vm.collapse },
               }),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  attrs: { href: "javascript: void(0);" },
-                  on: { click: _vm.remove },
-                },
-                [_c("i", { staticClass: "mdi mdi-close" })]
-              ),
             ]),
             _vm._v(" "),
             _c(
@@ -10992,7 +10983,11 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("h1", { staticClass: "header-title text-center my-3" }, [
-      _vm._v(_vm._s(_vm.$t("general.Ordinarymembers"))),
+      _vm._v(
+        _vm._s(_vm.$t("general.fffmembers")) +
+          " : " +
+          _vm._s(_vm.statices.validMembersCount)
+      ),
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
@@ -11130,13 +11125,17 @@ var render = function () {
     ]),
     _vm._v(" "),
     _c("h1", { staticClass: "header-title text-center my-3" }, [
-      _vm._v(_vm._s(_vm.$t("general.dismissedMemberCount"))),
+      _vm._v(
+        _vm._s(_vm.$t("general.dismissedMemberCount")) +
+          ": " +
+          _vm._s(_vm.statices.DeletedMember)
+      ),
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-xl-6" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "card-body ordinaryMember" }, [
             _c("h4", { staticClass: "header-title" }, [
               _vm._v(_vm._s(_vm.$t("general.memberType"))),
             ]),
@@ -11275,7 +11274,11 @@ var render = function () {
     ]),
     _vm._v(" "),
     _c("h1", { staticClass: "header-title text-center my-3" }, [
-      _vm._v(_vm._s(_vm.$t("general.sponsor"))),
+      _vm._v(
+        _vm._s(_vm.$t("general.sponsors")) +
+          ": " +
+          _vm._s(_vm.statices.sponsors)
+      ),
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [

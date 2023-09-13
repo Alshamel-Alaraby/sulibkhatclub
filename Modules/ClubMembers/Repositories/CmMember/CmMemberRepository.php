@@ -42,6 +42,10 @@ class CmMemberRepository implements CmMemberInterface
             $models->where('sponsor_id', $request->sponsor_id);
         }
 
+        if ($request->member_status_id) {
+            $models->where('member_status_id', $request->member_status_id);
+        }
+
 
         if ($request->postal_report) {
             $models->Where('member_kind_id', $request->postal_report)->where('member_status_id', 1);
@@ -266,7 +270,7 @@ class CmMemberRepository implements CmMemberInterface
         }
 
         if ($request->members_permissions_id) {
-            $models->where('members_permissions_id', $request->members_permissions_id);
+            $models->where('members_permissions_id', $request->members_permissions_id)->where('member_status_id',1);
         }
 
         if ($request->per_page) {
