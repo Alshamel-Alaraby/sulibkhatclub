@@ -1476,6 +1476,8 @@
         "percentage": "Percentage",
         "count": "Count",
         "Sponsormembersbyrights": "Sponsor members by rights",
-        "Thenumberofmemberswithineachsponsor": "The number of members within each sponsor"
+        "Thenumberofmemberswithineachsponsor": "The number of members within each sponsor",
+        "fffmembers": "Valid members",
+        "sponsors": "Sponsors"
     }
 }

@@ -9,7 +9,7 @@ import crudHelper from "../../../helper/mixin/crudHelper";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";
-import Group from "../../../components/create/club/group";
+import Sponsor from "../../../components/create/club/sponsor";
 
 /**
  * Advanced Table component
@@ -131,7 +131,7 @@ export default {
               <!-- end setting -->
 
               <!--  create or edit   -->
-              <Group
+              <Sponsor
                   :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url"
                   :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired"
                   :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
