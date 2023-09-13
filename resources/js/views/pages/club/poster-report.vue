@@ -128,7 +128,7 @@ export default {
       }
       adminApi
         .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&member_type_id=${this.member_type_id}`
+          `/club-members/members?page=${page}&per_page=${this.per_page}&postal_report=${this.member_type_id}`
         )
         .then((res) => {
           let l = res.data;
@@ -161,7 +161,7 @@ export default {
 
         adminApi
           .get(
-            `/club-members/members/?page=${this.current_page}&per_page=${this.per_page}&member_type_id=${this.member_type_id}`
+            `/club-members/members/?page=${this.current_page}&per_page=${this.per_page}&postal_report=${this.member_type_id}`
           )
           .then((res) => {
             let l = res.data;

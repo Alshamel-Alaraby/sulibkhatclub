@@ -49,6 +49,19 @@ class CmSponser extends Model
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponsorGroup::class, 'group_id', 'id');
     }
+
+    public function totalMembers()
+{
+    return $this->members()->where('member_status_id', 1)->count();
+}
+
+public function totalMembersPermissions($permissions)
+{
+    return $this->members()
+        ->where('member_status_id', 1)
+        ->whereIn('members_permissions_id', $permissions->pluck('id'))
+        ->count();
+}
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

@@ -20,6 +20,7 @@ class FinancialYear extends Model
         'start_date',
         'end_date',
         "company_id",
+        "year",
         'is_active'
     ];
 

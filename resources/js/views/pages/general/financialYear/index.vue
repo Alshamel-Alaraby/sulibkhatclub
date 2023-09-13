@@ -45,6 +45,14 @@ export default {
                 isFilter: false,isSet: true,trans:"financial_year_end_date",isV: 'end_date',
                 type: 'date',sort: true,setting: {"end_date":true},isSetting: true
             },
+            {
+                isFilter: false,isSet: true,trans:"financial_year_default",isV: 'is_active',
+                type: 'boolean',setting: {"is_active":true},isSetting: true
+            },
+            {
+                isFilter: true,isSet: true,trans:"financial_year_year",isV: 'year',
+                type: 'string',sort: true,setting: {"year":true},isSetting: true
+            },
         ],
         sendSetting: {},
         searchField: [],

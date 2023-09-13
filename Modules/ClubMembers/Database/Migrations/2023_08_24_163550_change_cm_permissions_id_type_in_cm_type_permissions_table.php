@@ -14,9 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cm_type_permissions', function (Blueprint $table) {
-            $table->dropColumn('cm_permissions_id');
-            $table->unsignedBigInteger('cm_permissions_id');
-
+            $table->unsignedBigInteger('cm_permissions_id')->change();
         });
     }
 
@@ -28,8 +26,6 @@ return new class extends Migration
     public function down()
     {
         Schema::table('cm_type_permissions', function (Blueprint $table) {
-            $table->dropColumn('cm_permissions_id');
-
             $table->json('cm_permissions_id');
         });
     }

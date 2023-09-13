@@ -15,7 +15,7 @@ class CmMemberType extends Model
 
     protected $guarded = [];
     protected $table = 'cm_members_types';
-
+    
     public function memberPermissions()
     {
         return $this->belongsToMany(CmMemberPermission::class, 'cm_type_permissions', 'cm_members_type_id', 'cm_permissions_id');

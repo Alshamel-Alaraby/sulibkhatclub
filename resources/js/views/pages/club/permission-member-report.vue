@@ -160,9 +160,9 @@ export default {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
-        .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
+        .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&per_page=20`, {
           params: {
-            cm_permission_id: this.cm_permission_id,
+              members_permissions_id: this.cm_permission_id,
           },
         })
         .then((res) => {
@@ -195,9 +195,9 @@ export default {
         }
 
         adminApi
-          .get(`/club-members/members/report-cm-member?cm_permissions_id=${this.cm_permission_id}&per_page=20`, {
+          .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&per_page=20`, {
             params: {
-              cm_permission_id: this.cm_permission_id,
+                members_permissions_id: this.cm_permission_id,
             },
           })
           .then((res) => {

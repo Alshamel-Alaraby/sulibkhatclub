@@ -243,7 +243,7 @@ export default {
          */
         async getType() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/members-types?children_relation=1`)
+           await adminApi.get(`/club-members/members-types`)
                 .then((res) => {
                     let l = res.data.data;
                     this.typs = l;
@@ -264,7 +264,7 @@ export default {
          */
         async getStatus() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/cm-status`)
+           await adminApi.get(`/club-members/member-status`)
                 .then((res) => {
                     let l = res.data.data;
                     this.status = l;

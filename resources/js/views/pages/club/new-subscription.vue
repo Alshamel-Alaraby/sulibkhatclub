@@ -51,6 +51,7 @@ export default {
             enabled3: true,
             is_disabled: false,
             isLoader: false,
+            financial_years_validate:true,
             create: {
                 branch_id: null,
                 serial_id: null,
@@ -247,6 +248,7 @@ export default {
             }
         },
         resetForm() {
+            this.financial_years_validate = true;
             this.create = {
                 branch_id: null,
                 serial_id: null,
@@ -475,6 +477,7 @@ export default {
          *  reset Modal (create)
          */
         resetModalHidden() {
+            this.financial_years_validate = true;
             this.create = {
                 branch_id: null,
                 serial_id: null,
@@ -501,6 +504,7 @@ export default {
         async resetModal() {
             if(this.isVisible('member_request_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
+            this.financial_years_validate = true;
             this.create = {
                 branch_id: null,
                 serial_id: null,
@@ -514,7 +518,7 @@ export default {
                 date:new Date().toISOString().slice(0, 10),
                 module_type:"club"
             };
-            await this.getRenewal();
+            await this.handelDateCheck();
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -528,7 +532,7 @@ export default {
             this.create.year_from = new Date(this.create.date_from).getFullYear();
             this.create.year_to = new Date(this.create.date_to).getFullYear();
             this.$v.create.$touch();
-            if (this.$v.create.$invalid) {
+            if (this.$v.create.$invalid || !this.financial_years_validate) {
                 return;
             } else {
                 this.isLoader = true;
@@ -570,7 +574,7 @@ export default {
          */
         editSubmit(id) {
             this.$v.edit.$touch();
-            if (this.$v.edit.$invalid) {
+            if (this.$v.edit.$invalid || !this.financial_years_validate) {
                 return;
             } else {
                 this.isLoader = true;
@@ -626,6 +630,7 @@ export default {
             this.edit.date = new Date().toISOString().slice(0, 10);
             if(this.isVisible('serial_id')) await this.getSerials();
             this.errors = {};
+            this.financial_years_validate = true;
         },
         /**
          *  hidden Modal (edit)
@@ -645,6 +650,7 @@ export default {
                 module_type:"club"
             };
             this.members = [];
+            this.financial_years_validate = true;
         },
         /*
          *  start  dynamicSortString
@@ -787,6 +793,64 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
+        async checkFinancialYears() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/document-headers/check-date?date=${this.create.date}`)
+                .then((res) => {
+                    let l = res.data;
+                    if(!l)
+                    {
+                        this.financial_years_validate= false;
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.The date is outside the permitted fiscal year")}`,
+                        });
+                    }else{
+                        this.financial_years_validate= true;
+                        this.DataOfModelFinancialYear();
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async DataOfModelFinancialYear() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/financial-years/DataOfModelFinancialYear?date=${this.create.date}`)
+                .then((res) => {
+                    let l = res.data;
+                    if(l)
+                    {
+                        this.create.year = l.data.year+'';
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+
+        async handelDateCheck()
+        {
+            await this.checkFinancialYears();
+            await this.getRenewal();
+        }
     },
 };
 </script>
@@ -1043,7 +1107,7 @@ export default {
                                                 {{ $t("general.date") }}
                                             </label>
                                             <date-picker
-                                                @input="getRenewal"
+                                                @input="handelDateCheck"
                                                 type="date"
                                                 v-model="create.date"
                                                 format="YYYY-MM-DD"

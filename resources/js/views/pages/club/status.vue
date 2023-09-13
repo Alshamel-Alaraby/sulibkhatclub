@@ -61,7 +61,11 @@ export default {
   },
   methods: {
       filterSearch(fields){
-          let filter = '';
+          let indexC = fields.indexOf("member_type_id"),
+              filter = '';
+          if (indexC > -1) {
+              fields[indexC] = this.$i18n.locale == "ar" ? "member_type.name" : "member_type.name_e";
+          }
 
           for (let i = 0; i < fields.length; ++i) {
               filter += `columns[${i}]=${fields[i]}&`;

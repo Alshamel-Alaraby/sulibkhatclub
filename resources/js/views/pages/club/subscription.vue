@@ -1165,30 +1165,30 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" v-if="isVisible('type')">
-                                        <div class="form-group">
-                                            <label  class="control-label">
-                                                {{ getCompanyKey("subscription_type") }}
-                                                <span  v-if="isRequired('type')" class="text-danger">*</span>
-                                            </label>
-                                            <select :disabled="true"  class="form-control" v-model="create.type" :class="{
-                                                  'is-invalid': $v.create.type.$error || errors.type,
-                                                  'is-valid':
-                                                    !$v.create.type.$invalid && !errors.type,
-                                                }">
-                                                <option value="subscribe">{{$t('general.subscribe')}}</option>
-                                                <option value="renew">{{$t('general.renew')}}</option>
-                                            </select>
+<!--                                    <div class="col-md-6" v-if="isVisible('type')">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label  class="control-label">-->
+<!--                                                {{ getCompanyKey("subscription_type") }}-->
+<!--                                                <span  v-if="isRequired('type')" class="text-danger">*</span>-->
+<!--                                            </label>-->
+<!--                                            <select :disabled="true"  class="form-control" v-model="create.type" :class="{-->
+<!--                                                  'is-invalid': $v.create.type.$error || errors.type,-->
+<!--                                                  'is-valid':-->
+<!--                                                    !$v.create.type.$invalid && !errors.type,-->
+<!--                                                }">-->
+<!--                                                <option value="subscribe">{{$t('general.subscribe')}}</option>-->
+<!--                                                <option value="renew">{{$t('general.renew')}}</option>-->
+<!--                                            </select>-->
 
-                                            <template v-if="errors.type">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.type"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
+<!--                                            <template v-if="errors.type">-->
+<!--                                                <ErrorMessage-->
+<!--                                                    v-for="(errorMessage, index) in errors.type"-->
+<!--                                                    :key="index"-->
+<!--                                                >{{ errorMessage }}-->
+<!--                                                </ErrorMessage>-->
+<!--                                            </template>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="col-md-6" v-if="isVisible('year') && create.cm_member_id">
                                         <div class="form-group">
                                             <label class="control-label">
@@ -1225,6 +1225,7 @@ export default {
                                                 <span v-if="isRequired('date_from')" class="text-danger">*</span>
                                             </label>
                                             <date-picker
+                                                :disabled="true"
                                                 type="date"
                                                 v-model="$v.create.date_from.$model"
                                                 format="YYYY-MM-DD"
@@ -1254,6 +1255,7 @@ export default {
                                                 <span v-if="isRequired('date_to')" class="text-danger">*</span>
                                             </label>
                                             <date-picker
+                                                :disabled="true"
                                                 type="date"
                                                 v-model="$v.create.date_to.$model"
                                                 format="YYYY-MM-DD"
@@ -1283,6 +1285,7 @@ export default {
                                                 <span v-if="isRequired('amount')" class="text-danger">*</span>
                                             </label>
                                             <input
+                                                :disabled="true"
                                                 type="number"
                                                 step="any"
                                                 class="form-control"

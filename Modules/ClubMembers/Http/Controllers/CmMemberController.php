@@ -192,19 +192,36 @@ class CmMemberController extends Controller
     }
     public function dataMemberTable()
     {
+        $members = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.json')));
+        foreach ($members[2]->data as $data ){
+            return          \Carbon\Carbon::parse($data->DOC_DATE)->format('Y-m-d');
+
+        }
 
 //        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
 //        set_time_limit(3600);
 //        ini_set('memory_limit', -1);
 
         $ttt = CmMember::all() ;
-        foreach ($ttt as $member):
+        $full_name = [];
+        foreach ($ttt as $index => $member):
+            if ($member->first_name != null){
+                $full_name['first_name']  = $member->first_name;
+            }
+            if ($member->second_name != null){
+                $full_name['second_name'] = $member->second_name;
+            }
+            if ($member->third_name != null){
+                $full_name['third_name']  = $member->third_name;
+            }
+            if ($member->last_name != null){
+                $full_name['last_name']  = $member->last_name;
+            }
+            if ($member->family_name != null){
+                $full_name['family_name']  = $member->family_name;
+            }
+            return   $array = implode(' ', $full_name);
 
-            $full_name = ($member->first_name ?? '') . ' ' .
-                ($member->second_name ?? '') . ' ' .
-                ($member->third_name ?? '') . ' ' .
-                ($member->last_name ?? '') . ' ' .
-                ($member->family_name ?? '');
             $member->update(['family_name'=>$full_name]);
 
         endforeach;

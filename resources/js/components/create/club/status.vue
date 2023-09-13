@@ -261,9 +261,9 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
-        getCustomTableFields() {
+        async getCustomTableFields() {
             this.isCustom = true;
-             adminApi
+             await adminApi
                 .get(`/customTable/table-columns/cm_statues`)
                 .then((res) => {
                     this.fields = res.data;
@@ -331,10 +331,10 @@ export default {
         },
         resetModal() {
             this.defaultData();
-            setTimeout( () => {
+            setTimeout( async () => {
                 if(this.type != 'edit'){
-                    if(!this.isPage)  this.getCustomTableFields();
-                    if (this.isVisible("member_type_id")) this.getType();
+                    if(!this.isPage) await this.getCustomTableFields();
+                    if (this.isVisible("member_type_id"))  this.getType();
                 }else {
                     if(this.idObjEdit.dataObj){
                         if (this.isVisible("member_type_id")) this.getType();

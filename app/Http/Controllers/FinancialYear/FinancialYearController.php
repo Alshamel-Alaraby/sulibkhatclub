@@ -19,7 +19,7 @@ class FinancialYearController extends Controller
 
     public function find($id)
     {
-        
+
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
@@ -101,6 +101,11 @@ class FinancialYearController extends Controller
         $logs = $this->modelInterface->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
 
+    }
+
+    public function DataOfModelFinancialYear(Request $request){
+        $model = $this->modelInterface->DataOfModelFinancialYear($request);
+        return responseJson(200, 'success', new FinancialYearResource($model));
     }
 
     // public function addFinancialYearToCompany($module_id, $company_id)

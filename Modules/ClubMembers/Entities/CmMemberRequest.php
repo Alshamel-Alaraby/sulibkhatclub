@@ -38,11 +38,6 @@ class CmMemberRequest extends Model
     }
 
 
-    public function memberType()
-    {
-        return $this->belongsTo(CmMemberType::class, 'member_type_id');
-    }
-
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($q) use ($request) {

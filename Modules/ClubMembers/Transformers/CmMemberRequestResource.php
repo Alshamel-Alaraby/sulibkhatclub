@@ -48,7 +48,6 @@ class CmMemberRequestResource extends JsonResource
             'notes' => $this->notes,
             'gender' => $this->gender,
             'sponsors' => $this->sponsors,
-            'membersType' => $this->memberType,
             'financial_status' => $this->financialStatus,
             'transaction' => $this->cmTransaction,
             "status" => new StatusResource($this->status),

@@ -57,7 +57,7 @@ export default {
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             },
@@ -68,7 +68,7 @@ export default {
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             },
@@ -76,7 +76,7 @@ export default {
                 branch_id: true,
                 prefix: true,
                 cm_member_id: true,
-                cm_member_type_id: true,
+                discharge_reson_id: true,
                 note: true,
                 session_number: true,
                 date: true,
@@ -113,8 +113,8 @@ export default {
             data: {required: requiredIf(function (model) {
                     return this.isRequired("data");
                 })},
-            cm_member_type_id: {required: requiredIf(function (model) {
-                    return this.isRequired("cm_member_type_id");
+            discharge_reson_id: {required: requiredIf(function (model) {
+                    return this.isRequired("discharge_reson_id");
                 })},
             note: {required: requiredIf(function (model) {
                     return this.isRequired("note");
@@ -136,8 +136,8 @@ export default {
             data: {required: requiredIf(function (model) {
                     return this.isRequired("data");
                 })},
-            cm_member_type_id: {required: requiredIf(function (model) {
-                    return this.isRequired("cm_member_type_id");
+            discharge_reson_id: {required: requiredIf(function (model) {
+                    return this.isRequired("discharge_reson_id");
                 })},
             note: {required: requiredIf(function (model) {
                     return this.isRequired("note");
@@ -240,7 +240,7 @@ export default {
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             };
@@ -332,7 +332,7 @@ export default {
         async getMembersTypes() {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members-types/reject-member-type`)
+                .get(`/club-members/discharge-resons`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -482,7 +482,7 @@ export default {
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             };
@@ -500,14 +500,14 @@ export default {
             if(this.isVisible('cm_member_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('serial_id')) await this.getSerials();
-            if(this.isVisible('cm_member_type_id')) await this.getMembersTypes();
+            if(this.isVisible('discharge_reson_id')) await this.getMembersTypes();
             this.create = {
                 branch_id: null,
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             };
@@ -606,12 +606,12 @@ export default {
             if(this.isVisible('cm_member_id')) await this.getMember();
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('serial_id')) await this.getSerials();
-            if(this.isVisible('cm_member_type_id')) await this.getMembersTypes();
+            if(this.isVisible('discharge_reson_id')) await this.getMembersTypes();
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
             this.edit.data = setting.data;
-            this.edit.cm_member_type_id = setting.cm_member_type_id;
+            this.edit.discharge_reson_id = setting.discharge_reson_id;
             this.edit.note = setting.note;
             this.edit.document_id = setting.document_id;
             this.edit.session_number = setting.session_number;
@@ -628,7 +628,7 @@ export default {
                 cm_member_id: null,
                 document_id: 37,
                 data: new Date().toISOString().slice(0, 10),
-                cm_member_type_id:null,
+                discharge_reson_id:null,
                 note: "",
                 session_number: ""
             };
@@ -874,7 +874,7 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("member_reject_session_number") }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('cm_member_type_id')" v-model="setting.cm_member_type_id"
+                                            <b-form-checkbox v-if="isVisible('discharge_reson_id')" v-model="setting.discharge_reson_id"
                                                              class="mb-1">
                                                 {{ getCompanyKey("member_reject_reason") }}
                                             </b-form-checkbox>
@@ -1111,10 +1111,10 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" v-if="isVisible('cm_member_type_id')">
+                                    <div class="col-md-6" v-if="isVisible('discharge_reson_id')">
                                         <div class="form-group">
                                             <label>{{ getCompanyKey("member_reject_reason") }}</label>
-                                            <multiselect @input="showBranchModal" v-model="create.cm_member_type_id"
+                                            <multiselect @input="showBranchModal" v-model="create.discharge_reson_id"
                                                          :options="membersTypes.map((type) => type.id)" :custom-label="
                                                     (opt) =>
                                                         $i18n.locale == 'ar'
@@ -1122,15 +1122,15 @@ export default {
                                                             : membersTypes.find((x) => x.id == opt).name_e
                                                 " :class="{
                                                         'is-invalid':
-                                                            $v.create.cm_member_type_id.$error || errors.cm_member_type_id,
+                                                            $v.create.discharge_reson_id.$error || errors.discharge_reson_id,
                                                     }">
                                             </multiselect>
-                                            <div v-if="!$v.create.cm_member_type_id.required" class="invalid-feedback">
+                                            <div v-if="!$v.create.discharge_reson_id.required" class="invalid-feedback">
                                                 {{ $t("general.fieldIsRequired") }}
                                             </div>
 
-                                            <template v-if="errors.cm_member_type_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.cm_member_type_id"
+                                            <template v-if="errors.discharge_reson_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.discharge_reson_id"
                                                               :key="index">{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
@@ -1256,17 +1256,17 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.cm_member_type_id && isVisible('cm_member_type_id')">
+                                    <th v-if="setting.discharge_reson_id && isVisible('discharge_reson_id')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_reject_reason") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="transactions.sort(sortString('cm_member_type_id'))"
+                                                    @click="transactions.sort(sortString('discharge_reson_id'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="transactions.sort(sortString('-cm_member_type_id'))"
+                                                    @click="transactions.sort(sortString('-discharge_reson_id'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -1335,7 +1335,7 @@ export default {
                                     <td v-if="setting.session_number && isVisible('session_number')">
                                         <h5 class="m-0 font-weight-normal">{{ data.session_number }}</h5>
                                     </td>
-                                    <td v-if="setting.cm_member_type_id && isVisible('cm_member_type_id')">
+                                    <td v-if="setting.discharge_reson_id && isVisible('discharge_reson_id')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{data.member_type ? $i18n.locale == "ar" ? data.member_type.name : data.member_type.name_e : ' - '}}
                                         </h5>

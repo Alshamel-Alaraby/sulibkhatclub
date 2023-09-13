@@ -38,7 +38,7 @@ class EmployeeResource extends JsonResource
             'manage_others' => $this->manage_others,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'job_title' => new RelationJobTitleResource($this->jobTitle),
+            'job_title' => $this,
             'branch_id' => $this->branch_id,
             'branch' => new RelationBranchResource($this->branch),
             'manager' => new RelationEmployeeResource($this->manager),

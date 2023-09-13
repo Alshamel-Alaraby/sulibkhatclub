@@ -32,6 +32,11 @@ class FinancialYearRepository implements FinancialYearInterface
     public function create($request)
     {
         DB::transaction(function () use ($request) {
+            if ($request['is_active'] == 1) {
+                collect($this->model->all())->each(function ($item) {
+                    $item->update(["is_active" => 0]);
+                });
+            }
             $this->model->create($request->all());
             cacheForget("financial-years");
         });
@@ -40,6 +45,11 @@ class FinancialYearRepository implements FinancialYearInterface
     public function update($request, $id)
     {
         DB::transaction(function () use ($id, $request) {
+            if ($request['is_active'] == 1) {
+                collect($this->model->all())->each(function ($item) {
+                    $item->update(["is_active" => 0]);
+                });
+            }
             $this->model->where("id", $id)->update($request->all());
             $this->forget($id);
         });
@@ -79,6 +89,11 @@ class FinancialYearRepository implements FinancialYearInterface
     public function logs($id)
     {
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
+    }
+
+    public function DataOfModelFinancialYear($request)
+    {
+        return $this->model->whereDate('start_date', '<=', $request['date'])->whereDate('end_date', '>=', $request['date'])->where('is_active', 1)->first();
     }
 
     private function forget($id)

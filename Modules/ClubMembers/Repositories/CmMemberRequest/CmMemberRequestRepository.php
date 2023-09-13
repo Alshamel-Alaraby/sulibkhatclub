@@ -25,7 +25,7 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
             $models->where('member_type_id', $request->member_type_id);
         }
         if ($request->member_types) {
-            $models->whereIn('member_type_id', [15,16]);
+            $models->whereIn('member_type_id', [1,2]);
         }
 
         if ($request->member_id){

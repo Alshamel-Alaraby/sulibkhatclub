@@ -17,22 +17,21 @@ class CmMemberTypeRepository implements CmMemberTypeInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        if ($request->parent){
+        if ($request->parent) {
             $models->WhereRelation('parent', 'parent_id', $request->parent);
         }
 
-        if ($request->parent_relation){
+        if ($request->parent_relation) {
             $models->whereNull('parent_id');
         }
-        if ($request->children_relation){
+        if ($request->children_relation) {
             $models->whereNotNull('parent_id');
         }
 
-
-        if ($request->normal_member){
-            $models->Where( 'parent_id', $request->normal_member);
+        if ($request->normal_member) {
+            $models->Where('parent_id', $request->normal_member);
         }
-
+       
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -40,9 +39,10 @@ class CmMemberTypeRepository implements CmMemberTypeInterface
         }
     }
 
-    public function rejectMemberType($request){
+    public function rejectMemberType($request)
+    {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC')
-        ->where('parent_id',3);
+            ->where('parent_id', 3);
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -55,7 +55,6 @@ class CmMemberTypeRepository implements CmMemberTypeInterface
     {
         return $this->model->find($id);
     }
-
 
     public function create($request)
     {
