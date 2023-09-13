@@ -245,7 +245,9 @@ class CmStaticsController extends Controller
         $totalSponsors = $sponsorsGroups->sum('sponsors_count');
 
         $data['sponsors_group'] = $sponsorsGroups->map(function ($group) use ($totalSponsors) {
-            $percentage = ($group->sponsors_count / $totalSponsors) * 100;
+            // $percentage = ($group->sponsors_count / $totalSponsors) * 100;
+            $percentage = ($totalSponsors > 0) ? ($group->sponsors_count / $totalSponsors) * 100 : 0;
+
 
             return [
                 'name' => $group->name,
@@ -267,7 +269,9 @@ class CmStaticsController extends Controller
 
         $data['sponsors_members'] = $memberCounts->map(function ($sponsor) use ($totalMembers) {
             $count = $sponsor->members_count;
-            $percentage = ($count / $totalMembers) * 100;
+            // $percentage = ($count / $totalMembers) * 100;
+            $percentage = ($totalMembers > 0) ? ($count / $totalMembers) * 100 : 0;
+
 
             return [
                 'id' => $sponsor->id,
@@ -300,7 +304,9 @@ class CmStaticsController extends Controller
                         ->where('members_permissions_id', $permission->id)
                         ->count();
 
-                    $percentage = ($count / $totalMembersPermissions) * 100;
+                    // $percentage = ($count / $totalMembersPermissions) * 100;
+                    $percentage = ($totalMembersPermissions > 0) ? ($count / $totalMembersPermissions) * 100 : 0;
+
 
                     $counts[] = [
                         'id' => $permission->id,
