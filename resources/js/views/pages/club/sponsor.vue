@@ -22,7 +22,7 @@ export default {
   mixins: [translation,customTable,crudHelper],
   components: {
         Layout, PageHeader, loader, searchPage,
-        actionSetting, tableCustom, Group
+        actionSetting, tableCustom, Sponsor
     },
   beforeRouteEnter(to, from, next) {
             next((vm) => {
