@@ -71,7 +71,7 @@ export default {
 </div>
 </template>
 
-<style>
+<style scoped>
 .card-body{
     background: #bee3fe !important;
 }
