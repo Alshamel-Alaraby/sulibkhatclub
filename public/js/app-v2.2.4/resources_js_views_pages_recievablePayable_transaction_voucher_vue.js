@@ -11787,6 +11787,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "loader",
@@ -11797,6 +11798,9 @@ __webpack_require__.r(__webpack_exports__);
       validator: function validator(value) {
         return ['large', 'small', 'middle'].indexOf(value) != -1;
       }
+    },
+    updateData: {
+      "default": false
     }
   }
 });
@@ -41092,6 +41096,8 @@ var render = function () {
         class: ["m-2", "loader-" + _vm.size],
         attrs: { variant: "success", role: "status" },
       }),
+      _vm._v(" "),
+      _vm.updateData ? _c("h1") : _vm._e(),
     ],
     1
   )

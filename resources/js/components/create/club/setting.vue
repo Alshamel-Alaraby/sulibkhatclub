@@ -14,6 +14,15 @@
             <loader size="large" v-if="isCustom && !isPage" />
             <div class="mb-3 d-flex justify-content-end">
                 <b-button
+                    variant="success"
+                    @click.prevent="updateAllTransaction"
+                    type="button"
+                    class="mx-1 font-weight-bold px-3 mr-3 ml-3"
+                    v-if="!isLoader && type == 'edit'"
+                >
+                    {{ $t("general.updateData") }}
+                </b-button>
+                <b-button
                     v-if="type != 'edit'"
                     variant="success"
                     :disabled="!is_disabled"
@@ -768,6 +777,22 @@ export default {
         resetModalHidden() {
             this.defaultData();
             this.$bvModal.hide(this.id);
+        },
+        async updateAllTransaction() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/club-members/members/updateCmMember`)
+                .then((res) => {
+                    setTimeout(() => {
+                        this.successFun('DoneSuccessfully');
+                    }, 500);
+                })
+                .catch((err) => {
+                    this.errorFun('Error', 'Thereisanerrorinthesystem');
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         resetModal() {
             this.defaultData();

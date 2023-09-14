@@ -498,7 +498,7 @@ export default {
               class="table-responsive mb-3 custom-table-theme position-relative"
             >
               <!--       start loader       -->
-              <loader size="large" v-if="isLoader" />
+              <loader updateData="true" size="large" v-if="isLoader" />
               <!--       end loader       -->
               <table
                 class="table table-borderless table-hover table-centered m-0"

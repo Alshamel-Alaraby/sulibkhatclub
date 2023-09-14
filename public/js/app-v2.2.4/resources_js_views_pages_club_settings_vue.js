@@ -570,6 +570,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -871,65 +880,91 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.defaultData();
       this.$bvModal.hide(this.id);
     },
-    resetModal: function resetModal() {
+    updateAllTransaction: function updateAllTransaction() {
       var _this3 = this;
-      this.defaultData();
-      setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-        var setting;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(_this3.type != 'edit')) {
-                  _context2.next = 9;
-                  break;
-                }
-                if (_this3.isPage) {
-                  _context2.next = 4;
-                  break;
-                }
-                _context2.next = 4;
-                return _this3.getCustomTableFields();
-              case 4:
-                if (_this3.isVisible("cm_members_type_id")) _this3.getType();
-                if (_this3.isVisible("cm_permissions_id")) _this3.getPermissions();
-                if (_this3.isVisible("cm_financial_status_id")) _this3.getStatus();
-                _context2.next = 10;
-                break;
-              case 9:
-                if (_this3.idObjEdit.dataObj) {
-                  setting = _this3.idObjEdit.dataObj;
-                  if (_this3.isVisible("cm_members_type_id")) _this3.getType();
-                  if (_this3.isVisible("cm_permissions_id")) _this3.getPermissions();
-                  if (_this3.isVisible("cm_financial_status_id")) _this3.getStatus();
-                  _this3.edit.day = setting.allowed_subscription_date.slice(3);
-                  _this3.edit.month = setting.allowed_subscription_date.slice(0, 2);
-                  _this3.edit.cm_members_type_id = setting.type.id;
-                  _this3.edit.cm_permissions_id = setting.cm_permissions_id;
-                  _this3.edit.cm_financial_status_id = setting.financialStatus.id;
-                  _this3.edit.membership_period = setting.membership_period;
-                  _this3.edit.allowed_subscription_date = setting.allowed_subscription_date;
-                  _this3.edit.vote_day = setting.allowed_vote_date.slice(3);
-                  _this3.edit.vote_month = setting.allowed_vote_date.slice(0, 2);
-                  _this3.edit.allowed_vote_date = setting.allowed_vote_date;
-                  _this3.errors = {};
-                }
-              case 10:
+                _this3.isLoader = true;
+                _context2.next = 3;
+                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members/updateCmMember").then(function (res) {
+                  setTimeout(function () {
+                    _this3.successFun('DoneSuccessfully');
+                  }, 500);
+                })["catch"](function (err) {
+                  _this3.errorFun('Error', 'Thereisanerrorinthesystem');
+                })["finally"](function () {
+                  _this3.isLoader = false;
+                });
+              case 3:
               case "end":
                 return _context2.stop();
             }
           }
         }, _callee2);
+      }))();
+    },
+    resetModal: function resetModal() {
+      var _this4 = this;
+      this.defaultData();
+      setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var setting;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!(_this4.type != 'edit')) {
+                  _context3.next = 9;
+                  break;
+                }
+                if (_this4.isPage) {
+                  _context3.next = 4;
+                  break;
+                }
+                _context3.next = 4;
+                return _this4.getCustomTableFields();
+              case 4:
+                if (_this4.isVisible("cm_members_type_id")) _this4.getType();
+                if (_this4.isVisible("cm_permissions_id")) _this4.getPermissions();
+                if (_this4.isVisible("cm_financial_status_id")) _this4.getStatus();
+                _context3.next = 10;
+                break;
+              case 9:
+                if (_this4.idObjEdit.dataObj) {
+                  setting = _this4.idObjEdit.dataObj;
+                  if (_this4.isVisible("cm_members_type_id")) _this4.getType();
+                  if (_this4.isVisible("cm_permissions_id")) _this4.getPermissions();
+                  if (_this4.isVisible("cm_financial_status_id")) _this4.getStatus();
+                  _this4.edit.day = setting.allowed_subscription_date.slice(3);
+                  _this4.edit.month = setting.allowed_subscription_date.slice(0, 2);
+                  _this4.edit.cm_members_type_id = setting.type.id;
+                  _this4.edit.cm_permissions_id = setting.cm_permissions_id;
+                  _this4.edit.cm_financial_status_id = setting.financialStatus.id;
+                  _this4.edit.membership_period = setting.membership_period;
+                  _this4.edit.allowed_subscription_date = setting.allowed_subscription_date;
+                  _this4.edit.vote_day = setting.allowed_vote_date.slice(3);
+                  _this4.edit.vote_month = setting.allowed_vote_date.slice(0, 2);
+                  _this4.edit.allowed_vote_date = setting.allowed_vote_date;
+                  _this4.errors = {};
+                }
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
       })), 50);
     },
     AddSubmit: function AddSubmit() {
-      var _this4 = this;
+      var _this5 = this;
       var data = null;
       if (this.type != 'edit') {
         this.create.memberships_renewals.forEach(function (el, index) {
-          _this4.create.memberships_renewals[index].allowed_subscription_date = "".concat(el.month, "-").concat(el.day);
-          _this4.create.memberships_renewals[index].allowed_vote_date = "".concat(el.vote_month, "-").concat(el.vote_day);
-          _this4.create.memberships_renewals[index].cm_members_type_id = _this4.create.cm_members_type_id;
+          _this5.create.memberships_renewals[index].allowed_subscription_date = "".concat(el.month, "-").concat(el.day);
+          _this5.create.memberships_renewals[index].allowed_vote_date = "".concat(el.vote_month, "-").concat(el.vote_day);
+          _this5.create.memberships_renewals[index].cm_members_type_id = _this5.create.cm_members_type_id;
         });
         this.$v.create.$touch();
         data = this.create;
@@ -949,84 +984,84 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].post(this.url, _objectSpread(_objectSpread({}, data), {}, {
             company_id: this.company_id
           })).then(function (res) {
-            _this4.is_disabled = true;
-            if (!_this4.isPage) _this4.$emit("created");else _this4.$emit("getDataTable");
+            _this5.is_disabled = true;
+            if (!_this5.isPage) _this5.$emit("created");else _this5.$emit("getDataTable");
             setTimeout(function () {
-              _this4.successFun('Addedsuccessfully');
+              _this5.successFun('Addedsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this4.errors = err.response.data.errors;
+              _this5.errors = err.response.data.errors;
             } else {
-              _this4.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         } else {
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), _objectSpread({}, data)).then(function (res) {
-            _this4.$bvModal.hide(_this4.id);
-            _this4.$emit("getDataTable");
+            _this5.$bvModal.hide(_this5.id);
+            _this5.$emit("getDataTable");
             setTimeout(function () {
-              _this4.successFun('Editsuccessfully');
+              _this5.successFun('Editsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this4.errors = err.response.data.errors;
+              _this5.errors = err.response.data.errors;
             } else {
-              _this4.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         }
       }
     },
     getType: function getType() {
-      var _this5 = this;
+      var _this6 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members-types").then(function (res) {
         var l = res.data.data;
-        _this5.typs = l;
-      })["catch"](function (err) {
-        _this5.errorFun('Error', 'Thereisanerrorinthesystem');
-      })["finally"](function () {
-        _this5.isLoader = false;
-      });
-    },
-    getPermissions: function getPermissions() {
-      var _this6 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members-permissions").then(function (res) {
-        var l = res.data.data;
-        _this6.permissions = l;
+        _this6.typs = l;
       })["catch"](function (err) {
         _this6.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this6.isLoader = false;
       });
     },
-    getStatus: function getStatus() {
+    getPermissions: function getPermissions() {
       var _this7 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/financial-status").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members-permissions").then(function (res) {
         var l = res.data.data;
-        _this7.status = l;
+        _this7.permissions = l;
       })["catch"](function (err) {
         _this7.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this7.isLoader = false;
       });
     },
-    updateAllData: function updateAllData() {
+    getStatus: function getStatus() {
       var _this8 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members/updateCmMember").then(function (res) {
-        _this8.successFun('DoneSuccessfully');
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/financial-status").then(function (res) {
+        var l = res.data.data;
+        _this8.status = l;
       })["catch"](function (err) {
         _this8.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this8.isLoader = false;
+      });
+    },
+    updateAllData: function updateAllData() {
+      var _this9 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/members/updateCmMember").then(function (res) {
+        _this9.successFun('DoneSuccessfully');
+      })["catch"](function (err) {
+        _this9.errorFun('Error', 'Thereisanerrorinthesystem');
+      })["finally"](function () {
+        _this9.isLoader = false;
       });
     },
     getDay: function getDay() {
@@ -2333,6 +2368,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "loader",
@@ -2343,6 +2379,9 @@ __webpack_require__.r(__webpack_exports__);
       validator: function validator(value) {
         return ['large', 'small', 'middle'].indexOf(value) != -1;
       }
+    },
+    updateData: {
+      "default": false
     }
   }
 });
@@ -4011,7 +4050,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-e26f75a2] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-e26f75a2] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6233,6 +6272,29 @@ var render = function () {
             "div",
             { staticClass: "mb-3 d-flex justify-content-end" },
             [
+              !_vm.isLoader && _vm.type == "edit"
+                ? _c(
+                    "b-button",
+                    {
+                      staticClass: "mx-1 font-weight-bold px-3 mr-3 ml-3",
+                      attrs: { variant: "success", type: "button" },
+                      on: {
+                        click: function ($event) {
+                          $event.preventDefault()
+                          return _vm.updateAllTransaction.apply(null, arguments)
+                        },
+                      },
+                    },
+                    [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(_vm.$t("general.updateData")) +
+                          "\n            "
+                      ),
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
               _vm.type != "edit"
                 ? _c(
                     "b-button",
@@ -14076,6 +14138,8 @@ var render = function () {
         class: ["m-2", "loader-" + _vm.size],
         attrs: { variant: "success", role: "status" },
       }),
+      _vm._v(" "),
+      _vm.updateData ? _c("h1") : _vm._e(),
     ],
     1
   )
@@ -15359,9 +15423,9 @@ var render = function () {
                     companyKeys: _vm.companyKeys,
                     defaultsKeys: _vm.defaultsKeys,
                     current_page: _vm.current_page,
-                    isCreate: true,
+                    isCreate: false,
                     isEdit: true,
-                    isDelete: true,
+                    isDelete: false,
                     permissionCreate: _vm.isPermission("create Status"),
                     permissionUpdate: _vm.isPermission("update Status"),
                     permissionDelete: _vm.isPermission("delete Status"),
@@ -15457,7 +15521,7 @@ var render = function () {
                         defaultsKeys: _vm.defaultsKeys,
                         tables: _vm.tables,
                         isEdit: true,
-                        isDelete: true,
+                        isDelete: false,
                         permissionUpdate: _vm.isPermission("update Status"),
                         permissionDelete: _vm.isPermission("delete Status"),
                         isVisible: _vm.isVisible,

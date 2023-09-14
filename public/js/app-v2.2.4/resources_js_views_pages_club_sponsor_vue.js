@@ -1585,6 +1585,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "loader",
@@ -1595,6 +1596,9 @@ __webpack_require__.r(__webpack_exports__);
       validator: function validator(value) {
         return ['large', 'small', 'middle'].indexOf(value) != -1;
       }
+    },
+    updateData: {
+      "default": false
     }
   }
 });
@@ -2578,7 +2582,7 @@ __webpack_require__.r(__webpack_exports__);
         trans: "sponsor_group",
         isV: "group_id",
         type: "relation",
-        name: "sponsorGroup",
+        name: "group",
         sort: false,
         col1: "name",
         col2: "name_e",
@@ -6057,7 +6061,7 @@ var render = function () {
                         },
                       }),
                       _vm._v(" "),
-                      _vm.$v.edit.group_id.$error || _vm.errors.group_id
+                      _vm.$v.create.group_id.$error || _vm.errors.group_id
                         ? _c("div", { staticClass: "text-danger" }, [
                             _vm._v(
                               "\n                        " +
@@ -11958,6 +11962,8 @@ var render = function () {
         class: ["m-2", "loader-" + _vm.size],
         attrs: { variant: "success", role: "status" },
       }),
+      _vm._v(" "),
+      _vm.updateData ? _c("h1") : _vm._e(),
     ],
     1
   )

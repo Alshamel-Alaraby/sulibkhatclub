@@ -1091,6 +1091,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "loader",
@@ -1101,6 +1102,9 @@ __webpack_require__.r(__webpack_exports__);
       validator: function validator(value) {
         return ['large', 'small', 'middle'].indexOf(value) != -1;
       }
+    },
+    updateData: {
+      "default": false
     }
   }
 });
@@ -2555,7 +2559,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print[data-v-87f73070] {\r\n    display: none;\n}\n.arrow-sort[data-v-87f73070] {\r\n    display: none;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print[data-v-87f73070] {\n    display: none;\n}\n.arrow-sort[data-v-87f73070] {\n    display: none;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -9960,6 +9964,8 @@ var render = function () {
         class: ["m-2", "loader-" + _vm.size],
         attrs: { variant: "success", role: "status" },
       }),
+      _vm._v(" "),
+      _vm.updateData ? _c("h1") : _vm._e(),
     ],
     1
   )
@@ -10871,7 +10877,9 @@ var render = function () {
                 },
                 [
                   _vm.isLoader
-                    ? _c("loader", { attrs: { size: "large" } })
+                    ? _c("loader", {
+                        attrs: { updateData: "true", size: "large" },
+                      })
                     : _vm._e(),
                   _vm._v(" "),
                   _c(
