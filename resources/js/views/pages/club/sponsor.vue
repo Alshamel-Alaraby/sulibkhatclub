@@ -25,11 +25,10 @@ export default {
         actionSetting, tableCustom, Sponsor
     },
   beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "Sponsor", "all sponsor club");
+    next((vm) => {
+        return permissionGuard(vm, "Sponsor", "all sponsor club");
     });
-
-    },
+  },
   data() {
     return {
       url: '/club-members/sponsers',
@@ -45,7 +44,7 @@ export default {
             },
             {
                 isFilter: true, isSet: true, trans: "sponsor_group",isV: "group_id",
-                type: "relation", name: "sponsorGroup", sort: false, col1: "name", col2: "name_e",
+                type: "relation", name: "group", sort: false, col1: "name", col2: "name_e",
                 setting: { group_id: true }, isSetting: true,
             },
 

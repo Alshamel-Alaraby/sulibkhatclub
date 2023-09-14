@@ -370,7 +370,7 @@ export default {
                         </multiselect>
                         <div
                             v-if="
-                                  $v.edit.group_id.$error ||
+                                  $v.create.group_id.$error ||
                                   errors.group_id
                                 "
                             class="text-danger"
