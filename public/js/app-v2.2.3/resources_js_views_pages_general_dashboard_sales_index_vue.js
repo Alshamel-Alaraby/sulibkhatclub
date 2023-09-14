@@ -5713,7 +5713,7 @@ var render = function render() {
     staticClass: "text-muted font-15 mb-1 text-truncate"
   }, [_vm._v(_vm._s(_vm.$t("general.Writtenofffornonpayment")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_18))])])])])])])]), _vm._v(" "), _c("h1", {
     staticClass: "header-title text-center my-3"
-  }, [_vm._v(_vm._s(_vm.$t("general.sponsor")) + ": " + _vm._s(_vm.statices.sponsors))]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.sponsors")) + ": " + _vm._s(_vm.statices.sponsors))]), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-xl-6"

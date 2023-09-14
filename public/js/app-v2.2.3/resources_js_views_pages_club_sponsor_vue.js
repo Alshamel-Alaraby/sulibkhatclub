@@ -2039,7 +2039,7 @@ __webpack_require__.r(__webpack_exports__);
     searchPage: _components_general_searchPage__WEBPACK_IMPORTED_MODULE_7__["default"],
     actionSetting: _components_general_actionSetting__WEBPACK_IMPORTED_MODULE_8__["default"],
     tableCustom: _components_general_tableCustom__WEBPACK_IMPORTED_MODULE_9__["default"],
-    Group: Group
+    Sponsor: _components_create_club_sponsor__WEBPACK_IMPORTED_MODULE_10__["default"]
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
@@ -2078,7 +2078,7 @@ __webpack_require__.r(__webpack_exports__);
         trans: "sponsor_group",
         isV: "group_id",
         type: "relation",
-        name: "sponsorGroup",
+        name: "group",
         sort: false,
         col1: "name",
         col2: "name_e",
@@ -2347,7 +2347,7 @@ var render = function render() {
       },
       expression: "create.group_id"
     }
-  }), _vm._v(" "), _vm.$v.edit.group_id.$error || _vm.errors.group_id ? _c("div", {
+  }), _vm._v(" "), _vm.$v.create.group_id.$error || _vm.errors.group_id ? _c("div", {
     staticClass: "text-danger"
   }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.errors.group_id ? _vm._l(_vm.errors.group_id, function (errorMessage, index) {
     return _c("ErrorMessage", {

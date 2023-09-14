@@ -3263,7 +3263,7 @@ var render = function render() {
       },
       expression: "create.group_id"
     }
-  }), _vm._v(" "), _vm.$v.edit.group_id.$error || _vm.errors.group_id ? _c("div", {
+  }), _vm._v(" "), _vm.$v.create.group_id.$error || _vm.errors.group_id ? _c("div", {
     staticClass: "text-danger"
   }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.errors.group_id ? _vm._l(_vm.errors.group_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
