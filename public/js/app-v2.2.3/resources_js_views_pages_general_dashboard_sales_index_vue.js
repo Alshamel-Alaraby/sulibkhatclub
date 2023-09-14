@@ -1583,60 +1583,8 @@ __webpack_require__.r(__webpack_exports__);
           offsetX: 0,
           offsetY: 7
         },
-        labels: [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"],
-        responsive: [{
-          breakpoint: 600,
-          options: {
-            chart: {
-              height: 240
-            },
-            legend: {
-              show: false
-            }
-          }
-        }]
-      },
-      series8: [],
-      chartOptions8: {
-        legend: {
-          show: true,
-          position: "bottom",
-          horizontalAlign: "center",
-          verticalAlign: "middle",
-          floating: false,
-          fontSize: "14px",
-          offsetX: 0,
-          offsetY: 7
-        },
-        labels: [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"],
-        responsive: [{
-          breakpoint: 600,
-          options: {
-            chart: {
-              height: 240
-            },
-            legend: {
-              show: false
-            }
-          }
-        }]
-      },
-      series9: [],
-      chartOptions9: {
-        legend: {
-          show: true,
-          position: "bottom",
-          horizontalAlign: "center",
-          verticalAlign: "middle",
-          floating: false,
-          fontSize: "14px",
-          offsetX: 0,
-          offsetY: 7
-        },
-        labels: [this.$t('general.Deletedathisrequest'), this.$t('general.Cancellationduetodeath'), this.$t('general.Cancellationaccordingtotheministerialdecision'), this.$t('general.WrittenoffaccordingtotheAuthorityletter'), this.$t('general.Writtenofffornonpayment')],
-        colors: ["#3bafda", "#1abc9c", "#f7b84b", "#675aa9", "#f1556c"],
+        labels: [this.$t('general.SubscriptionsWaiting'), this.$t('general.SubscriptionsRejected')],
+        colors: ["#675aa9", "#f1556c"],
         responsive: [{
           breakpoint: 600,
           options: {
@@ -1681,6 +1629,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.chartOptions6.colors.push(_this.colors[index]);
       });
       this.series5 = [newDa.Percentage_6, newDa.Percentage_7, newDa.Percentage_8, newDa.Percentage_9, newDa.Percentage_18];
+      this.series7 = [newDa.member_requests_waiting_percentage, newDa.member_requests_rejected_percentage];
     }
   },
   components: {
@@ -5712,6 +5661,41 @@ var render = function render() {
   }, [_c("p", {
     staticClass: "text-muted font-15 mb-1 text-truncate"
   }, [_vm._v(_vm._s(_vm.$t("general.Writtenofffornonpayment")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.count_18))])])])])])])]), _vm._v(" "), _c("h1", {
+    staticClass: "header-title text-center my-3"
+  }, [_vm._v(_vm._s(_vm.$t("general.Subscriptions")) + ": " + _vm._s(_vm.statices.member_requests_count))]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-xl-6"
+  }, [_c("div", {
+    staticClass: "card"
+  }, [_c("div", {
+    staticClass: "card-body"
+  }, [_c("h4", {
+    staticClass: "header-title"
+  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionsRequest")))]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3 text-center",
+    attrs: {
+      dir: "ltr"
+    }
+  }, [_c("apexchart", {
+    staticClass: "apex-charts",
+    attrs: {
+      type: "donut",
+      options: _vm.chartOptions7,
+      height: "312",
+      series: _vm.series7
+    }
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "row mt-3"
+  }, [_c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionsWaiting")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.member_requests_waiting_count))])]), _vm._v(" "), _c("div", {
+    staticClass: "col-4"
+  }, [_c("p", {
+    staticClass: "font-15 mb-1 text-truncate"
+  }, [_vm._v(_vm._s(_vm.$t("general.SubscriptionsRejected")))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(_vm.statices.member_requests_rejected_count))])])])])])])]), _vm._v(" "), _c("h1", {
     staticClass: "header-title text-center my-3"
   }, [_vm._v(_vm._s(_vm.$t("general.sponsors")) + ": " + _vm._s(_vm.statices.sponsors))]), _vm._v(" "), _c("div", {
     staticClass: "row"

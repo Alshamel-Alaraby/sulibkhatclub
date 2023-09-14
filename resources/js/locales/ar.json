@@ -1467,6 +1467,10 @@
         "Sponsormembersbyrights": "اعضاء الرعاه حسب الحقوق",
         "Thenumberofmemberswithineachsponsor": "عدد الاعضاء عند كل راعي",
         "fffmembers": "الاعضاء الساريين",
-        "sponsors": "الرعاه"
+        "sponsors": "الرعاه",
+        "Subscriptions": "الاشتراكات",
+        "SubscriptionsRequest": "طلبات الاشتراكات",
+        "SubscriptionsWaiting": " قيد الانتظار",
+        "SubscriptionsRejected": "المرفوضين"
     }
 }

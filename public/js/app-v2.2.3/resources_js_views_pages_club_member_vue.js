@@ -2730,7 +2730,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+        member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -2748,7 +2748,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+        member_kind_id: null,
         financial_status_id: null
       },
       company_id: null,
@@ -2761,7 +2761,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       setting: {
         gender: true,
         name: true,
-        status_id: true,
+        member_status_id: true,
         auto_status_sun: true,
         birth_date: true,
         national_id: true,
@@ -2795,7 +2795,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       third_name: {},
       last_name: {},
       family_name: {},
-      status_id: {},
+      member_status_id: {},
       birth_date: {},
       membership_number: {},
       national_id: {},
@@ -2812,7 +2812,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       session_date: {},
       sponsor_id: {},
       member_type: {},
-      member_type_id: {},
+      member_kind_id: {},
       financial_status_id: {},
       applying_date: {},
       applying_number: {}
@@ -2929,7 +2929,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (index > -1) {
         _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
       }
-      index = this.filterSetting.indexOf("status_id");
+      index = this.filterSetting.indexOf("member_status_id");
       if (index > -1) {
         _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
       }
@@ -2962,7 +2962,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         if (index > -1) {
           _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
         }
-        index = this.filterSetting.indexOf("status_id");
+        index = this.filterSetting.indexOf("member_status_id");
         if (index > -1) {
           _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
         }
@@ -2998,7 +2998,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     resetModalEdit: function resetModalEdit(id) {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var _member$financial_sta, _member$status_id, _member$sponsor_id;
+        var _member$member_kind_i, _member$financial_sta, _member$member_status, _member$sponsor_id;
         var member;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
@@ -3028,13 +3028,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               _this7.edit.first_name = member.first_name;
               _this7.edit.phone_code = member.phone_code;
               _this7.edit.second_name = member.second_name;
-              _this7.edit.member_type_id = member.member_type_id ? member.member_type_id.id : null;
+              _this7.edit.member_kind_id = (_member$member_kind_i = member.member_kind_id) !== null && _member$member_kind_i !== void 0 ? _member$member_kind_i : null;
               _this7.edit.financial_status_id = (_member$financial_sta = member.financial_status_id) !== null && _member$financial_sta !== void 0 ? _member$financial_sta : null;
               _this7.edit.member_type = member.member_type;
               _this7.edit.third_name = member.third_name;
               _this7.edit.last_name = member.last_name;
               _this7.edit.family_name = member.family_name;
-              _this7.edit.status_id = (_member$status_id = member.status_id) !== null && _member$status_id !== void 0 ? _member$status_id : null;
+              _this7.edit.member_status_id = (_member$member_status = member.member_status_id) !== null && _member$member_status !== void 0 ? _member$member_status : null;
               _this7.edit.birth_date = member.birth_date;
               _this7.edit.national_id = member.national_id;
               _this7.edit.nationality_number = member.nationality_number;
@@ -3073,7 +3073,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+        member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -3086,7 +3086,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+        member_kind_id: null,
         financial_status_id: null
       };
     },
@@ -3175,7 +3175,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     getMemberTypes: function getMemberTypes() {
       var _this10 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/club-members/members-types?children_relation=1").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/club-members/members-types").then(function (res) {
         _this10.memberTypes = res.data.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_8___default().fire({
@@ -7545,11 +7545,11 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.getCompanyKey("member_applying_number")) + "\n                      ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
-      value: _vm.setting.status_id,
+      value: _vm.setting.member_status_id,
       callback: function callback($$v) {
-        _vm.$set(_vm.setting, "status_id", $$v);
+        _vm.$set(_vm.setting, "member_status_id", $$v);
       },
-      expression: "setting.status_id"
+      expression: "setting.member_status_id"
     }
   }, [_vm._v(_vm._s(_vm.getCompanyKey("status")) + "\n                      ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
@@ -7912,7 +7912,7 @@ var render = function render() {
         _vm.members.sort(_vm.sortString("-name"));
       }
     }
-  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.status_id ? _c("th", [_c("div", {
+  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.member_status_id ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("status")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -8263,7 +8263,7 @@ var render = function render() {
           }
         }
       }
-    })])]) : _vm._e(), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.name ? _c("td", [_vm._v("\n                      " + _vm._s("".concat(data.first_name, " ").concat(data.second_name, " ").concat(data.third_name, " ").concat(data.last_name, " ").concat(data.family_name)) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.financial_status_id ? _c("td", [data.financial_status ? [_vm._v("\n                        " + _vm._s(data.financial_status ? _vm.$i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "") + "\n                      ")] : _vm._e()], 2) : _vm._e(), _vm._v(" "), _vm.setting.applying_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.applying_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.status_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.status ? _vm.$i18n.locale == "ar" ? data.status.name : data.status.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.auto_status_sun ? _c("td", [_vm._v("\n                      " + _vm._s(data.membersType ? _vm.$i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.national_id) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.birth_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                      " + _vm._s(data.gender == 1 ? _vm.$t("general.male") : _vm.$t("general.female")) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.nationality_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.nationality_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                      " + _vm._s(data.job) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                      " + _vm._s(data.degree) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.acceptance ? _c("td", [_c("span", {
+    })])]) : _vm._e(), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.name ? _c("td", [_vm._v("\n                      " + _vm._s("".concat(data.first_name, " ").concat(data.second_name, " ").concat(data.third_name, " ").concat(data.last_name, " ").concat(data.family_name)) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.financial_status_id ? _c("td", [data.financial_status ? [_vm._v("\n                        " + _vm._s(data.financial_status ? _vm.$i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "") + "\n                      ")] : _vm._e()], 2) : _vm._e(), _vm._v(" "), _vm.setting.applying_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.applying_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_status_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.status ? _vm.$i18n.locale == "ar" ? data.status.name : data.status.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.auto_status_sun ? _c("td", [_vm._v("\n                      " + _vm._s(data.membersType ? _vm.$i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.national_id) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.birth_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                      " + _vm._s(data.gender == 1 ? _vm.$t("general.male") : _vm.$t("general.female")) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.nationality_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.nationality_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                      " + _vm._s(data.job) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                      " + _vm._s(data.degree) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.acceptance ? _c("td", [_c("span", {
       staticClass: "text-success"
     }, [data.acceptance == "0" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.pending")) + "\n                        ")] : data.acceptance == "1" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.accepted")) + "\n                        ")] : [_vm._v("\n                          " + _vm._s(_vm.$t("general.declined")) + "\n                        ")]], 2)]) : _vm._e(), _vm._v(" "), _vm.setting.session_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.session_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.sponsor_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.sponsors ? _vm.$i18n.locale == "ar" ? data.sponsors.name : data.sponsors.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _c("b-modal", {
       ref: "edit-".concat(data.id),
@@ -8861,15 +8861,15 @@ var render = function render() {
         }
       },
       model: {
-        value: _vm.edit.status_id,
+        value: _vm.edit.member_status_id,
         callback: function callback($$v) {
-          _vm.$set(_vm.edit, "status_id", $$v);
+          _vm.$set(_vm.edit, "member_status_id", $$v);
         },
-        expression: "edit.status_id"
+        expression: "edit.member_status_id"
       }
-    }), _vm._v(" "), _vm.$v.edit.status_id.$error || _vm.errors.status_id ? _c("div", {
+    }), _vm._v(" "), _vm.$v.edit.member_status_id.$error || _vm.errors.member_status_id ? _c("div", {
       staticClass: "text-danger"
-    }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                              ")]) : _vm._e(), _vm._v(" "), _vm.errors.status_id ? _vm._l(_vm.errors.status_id, function (errorMessage, index) {
+    }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                              ")]) : _vm._e(), _vm._v(" "), _vm.errors.member_status_id ? _vm._l(_vm.errors.member_status_id, function (errorMessage, index) {
       return _c("ErrorMessage", {
         key: index
       }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
@@ -8895,15 +8895,15 @@ var render = function render() {
         }
       },
       model: {
-        value: _vm.edit.member_type_id,
+        value: _vm.edit.member_kind_id,
         callback: function callback($$v) {
-          _vm.$set(_vm.edit, "member_type_id", $$v);
+          _vm.$set(_vm.edit, "member_kind_id", $$v);
         },
-        expression: "edit.member_type_id"
+        expression: "edit.member_kind_id"
       }
-    }), _vm._v(" "), _vm.$v.edit.member_type_id.$error || _vm.errors.member_type_id ? _c("div", {
+    }), _vm._v(" "), _vm.$v.edit.member_kind_id.$error || _vm.errors.member_kind_id ? _c("div", {
       staticClass: "text-danger"
-    }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                              ")]) : _vm._e(), _vm._v(" "), _vm.errors.member_type_id ? _vm._l(_vm.errors.member_type_id, function (errorMessage, index) {
+    }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                              ")]) : _vm._e(), _vm._v(" "), _vm.errors.member_kind_id ? _vm._l(_vm.errors.member_kind_id, function (errorMessage, index) {
       return _c("ErrorMessage", {
         key: index
       }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
@@ -8915,6 +8915,7 @@ var render = function render() {
       staticClass: "control-label"
     }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("financial_status")) + "\n                              ")]), _vm._v(" "), _c("multiselect", {
       attrs: {
+        disabled: true,
         options: _vm.financialStatuses.map(function (type) {
           return type.id;
         }),
@@ -8994,58 +8995,6 @@ var render = function render() {
         }
       }
     }), _vm._v(" "), _vm.errors.membership_number ? _vm._l(_vm.errors.membership_number, function (errorMessage, index) {
-      return _c("ErrorMessage", {
-        key: index
-      }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
-    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-      staticClass: "col-md-3"
-    }, [_c("div", {
-      staticClass: "form-group"
-    }, [_c("label", {
-      staticClass: "mr-2"
-    }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("member_acceptance")) + "\n                              ")]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
-      staticClass: "d-inline-block",
-      attrs: {
-        disabled: "",
-        name: "edit_acceptance",
-        value: "0"
-      },
-      model: {
-        value: _vm.$v.edit.acceptance.$model,
-        callback: function callback($$v) {
-          _vm.$set(_vm.$v.edit.acceptance, "$model", $$v);
-        },
-        expression: "$v.edit.acceptance.$model"
-      }
-    }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.pending")) + "\n                                ")]), _vm._v(" "), _c("b-form-radio", {
-      staticClass: "d-inline-block m-1",
-      attrs: {
-        disabled: "",
-        name: "edit_acceptance",
-        value: "1"
-      },
-      model: {
-        value: _vm.$v.edit.acceptance.$model,
-        callback: function callback($$v) {
-          _vm.$set(_vm.$v.edit.acceptance, "$model", $$v);
-        },
-        expression: "$v.edit.acceptance.$model"
-      }
-    }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.accepted")) + "\n                                ")]), _vm._v(" "), _c("b-form-radio", {
-      staticClass: "d-inline-block m-1",
-      attrs: {
-        disabled: "",
-        name: "edit_acceptance",
-        value: "2"
-      },
-      model: {
-        value: _vm.$v.edit.acceptance.$model,
-        callback: function callback($$v) {
-          _vm.$set(_vm.$v.edit.acceptance, "$model", $$v);
-        },
-        expression: "$v.edit.acceptance.$model"
-      }
-    }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.declined")) + "\n                                ")])], 1), _vm._v(" "), _vm.errors.acceptance ? _vm._l(_vm.errors.acceptance, function (errorMessage, index) {
       return _c("ErrorMessage", {
         key: index
       }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
