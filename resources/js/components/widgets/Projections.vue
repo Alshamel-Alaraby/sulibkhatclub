@@ -298,7 +298,7 @@ export default {
 
 <template>
     <div>
-        <h1 class="header-title text-center my-3">{{ $t('general.Ordinarymembers') }}</h1>
+        <h1 class="header-title text-center my-3">{{ $t('general.fffmembers') }} : {{ statices.validMembersCount }}</h1>
         <div class="row">
 
             <!-- end col -->
@@ -392,12 +392,12 @@ export default {
 
         </div>
 
-        <h1 class="header-title text-center my-3">{{ $t('general.dismissedMemberCount') }}</h1>
+        <h1 class="header-title text-center my-3">{{ $t('general.dismissedMemberCount') }}: {{ statices.DeletedMember }}</h1>
         <div class="row">
             <!-- end col -->
             <div class="col-xl-6">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body ordinaryMember">
 
                         <h4 class="header-title">{{ $t('general.memberType') }}</h4>
 
@@ -469,7 +469,7 @@ export default {
             <!-- end col -->
         </div>
 
-        <h1 class="header-title text-center my-3">{{ $t('general.sponsor') }}</h1>
+        <h1 class="header-title text-center my-3">{{ $t('general.sponsors') }}: {{ statices.sponsors }}</h1>
         <div class="row">
             <!-- end col -->
             <div class="col-xl-6">
@@ -574,5 +574,9 @@ h1 {
 
 .card-body {
     color: #000 !important;
+}
+
+.ordinaryMember{
+    min-height: 522px;
 }
 </style>

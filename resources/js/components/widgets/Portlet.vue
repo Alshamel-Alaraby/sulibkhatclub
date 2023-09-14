@@ -51,9 +51,9 @@ export default {
             showCollapse ? 'collapsed' : null,
             showCollapse ? 'mdi mdi-minus' : 'mdi mdi-plus'
           ]" :aria-expanded="showCollapse ? 'true' : 'false'" aria-controls="collapse-1" @click="collapse"></a>
-            <a href="javascript: void(0);" @click="remove">
-                <i class="mdi mdi-close"></i>
-            </a>
+<!--            <a href="javascript: void(0);" @click="remove">-->
+<!--                <i class="mdi mdi-close"></i>-->
+<!--            </a>-->
         </div>
         <h4 class="header-title mb-0" :class="portletclass">{{ $t(`general.${headertitle}`) }}</h4>
     </div>
@@ -71,7 +71,7 @@ export default {
 </div>
 </template>
 
-<style>
+<style scoped>
 .card-body{
     background: #bee3fe !important;
 }

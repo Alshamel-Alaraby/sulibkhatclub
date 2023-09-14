@@ -42,12 +42,7 @@ export default {
             {
                 isFilter: true,isSet: true,trans:"club_statuses_name_en",isV: 'name_e',
                 type: 'string',sort: true,setting: {"name_e":true},isSetting: true
-            },
-            {
-                isFilter: true, isSet: true, trans: "club_statuses_member_type",isV: "member_type_id",
-                type: "relation", name: "member_type", sort: false, col1: "name", col2: "name_e",setting: { member_type_id: true }, isSetting: true,
-            },
-
+            }
         ],
         sendSetting: {},
         searchField: [],
@@ -56,17 +51,12 @@ export default {
   mounted() {
       this.searchField = this.tableSetting.filter(e => e.isFilter ).map(el => el.isV);
       this.settingFun();
-      this.getCustomTableFields('cm_statues');
+      this.getCustomTableFields('cm_member_status');
       this.getData(1,this.url,this.filterSearch(this.searchField));
   },
   methods: {
       filterSearch(fields){
-          let indexC = fields.indexOf("member_type_id"),
-              filter = '';
-          if (indexC > -1) {
-              fields[indexC] = this.$i18n.locale == "ar" ? "member_type.name" : "member_type.name_e";
-          }
-
+          let  filter = '';
           for (let i = 0; i < fields.length; ++i) {
               filter += `columns[${i}]=${fields[i]}&`;
           }
@@ -111,7 +101,7 @@ export default {
               <!-- start setting -->
               <actionSetting
                   :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :current_page="current_page"
-                  :isCreate="true" :isEdit="true" :isDelete="true"
+                  :isCreate="false" :isEdit="true" :isDelete="false"
                   :permissionCreate="isPermission('create Status')"
                   :permissionUpdate="isPermission('update Status')"
                   :permissionDelete="isPermission('delete Status')" :isExcl="true"
@@ -150,7 +140,7 @@ export default {
 
                 <tableCustom
                     :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
-                    :tables="tables" :isEdit="true" :isDelete="true"
+                    :tables="tables" :isEdit="true" :isDelete="false"
                     :permissionUpdate="isPermission('update Status')"
                     :permissionDelete="isPermission('delete Status')"
                     :isVisible="isVisible" :tableSetting="tableSetting"

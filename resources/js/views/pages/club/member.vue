@@ -89,7 +89,7 @@ export default {
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+          member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -107,7 +107,7 @@ export default {
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+          member_kind_id: null,
         financial_status_id: null,
       },
       company_id: null,
@@ -120,7 +120,7 @@ export default {
       setting: {
         gender: true,
         name: true,
-        status_id: true,
+          member_status_id: true,
         auto_status_sun: true,
         birth_date: true,
         national_id: true,
@@ -158,7 +158,7 @@ export default {
       third_name: {  },
       last_name: {  },
       family_name: {  },
-      status_id: {  },
+        member_status_id: {  },
       birth_date: {  },
       membership_number: {  },
       national_id: {  },
@@ -175,7 +175,7 @@ export default {
       session_date: {  },
       sponsor_id: {},
       member_type: {},
-      member_type_id: {  },
+        member_kind_id: {  },
       financial_status_id: {  },
       applying_date: {  },
       applying_number: {  },
@@ -302,7 +302,7 @@ export default {
         _filterSetting[index] =
           this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
       }
-      index = this.filterSetting.indexOf("status_id");
+      index = this.filterSetting.indexOf("member_status_id");
       if (index > -1) {
         _filterSetting[index] =
           this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
@@ -345,7 +345,7 @@ export default {
           _filterSetting[index] =
             this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
         }
-        index = this.filterSetting.indexOf("status_id");
+        index = this.filterSetting.indexOf("member_status_id");
         if (index > -1) {
           _filterSetting[index] =
             this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
@@ -409,13 +409,13 @@ export default {
       this.edit.first_name = member.first_name;
       this.edit.phone_code = member.phone_code;
       this.edit.second_name = member.second_name;
-      this.edit.member_type_id = member.member_type_id ? member.member_type_id.id : null;
+      this.edit.member_kind_id = member.member_kind_id ?? null;
       this.edit.financial_status_id = member.financial_status_id ?? null;
       this.edit.member_type = member.member_type;
       this.edit.third_name = member.third_name;
       this.edit.last_name = member.last_name;
       this.edit.family_name = member.family_name;
-      this.edit.status_id = member.status_id ?? null;
+      this.edit.member_status_id = member.member_status_id ?? null;
       this.edit.birth_date = member.birth_date;
       this.edit.national_id = member.national_id;
       this.edit.nationality_number = member.nationality_number;
@@ -448,7 +448,7 @@ export default {
         third_name: "",
         last_name: "",
         family_name: "",
-        status_id: null,
+          member_status_id: null,
         birth_date: this.formatDate(new Date()),
         national_id: "",
         nationality_number: "",
@@ -461,7 +461,7 @@ export default {
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
-        member_type_id: null,
+          member_kind_id: null,
         financial_status_id: null,
       };
     },
@@ -532,7 +532,7 @@ export default {
     getMemberTypes() {
       this.isLoader = true;
       adminApi
-        .get(`/club-members/members-types?children_relation=1`)
+        .get(`/club-members/members-types`)
         .then((res) => {
           this.memberTypes = res.data.data;
         })
@@ -764,7 +764,7 @@ export default {
                         class="mb-1"
                         >{{ getCompanyKey("member_applying_number") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-model="setting.status_id" class="mb-1"
+                      <b-form-checkbox v-model="setting.member_status_id" class="mb-1"
                         >{{ getCompanyKey("status") }}
                       </b-form-checkbox>
                       <b-form-checkbox v-model="setting.birth_date" class="mb-1"
@@ -1082,7 +1082,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.status_id">
+                    <th v-if="setting.member_status_id">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("status") }}</span>
                         <div class="arrow-sort">
@@ -1404,7 +1404,7 @@ export default {
                     <td v-if="setting.applying_number">
                       {{ data.applying_number }}
                     </td>
-                    <td v-if="setting.status_id">
+                    <td v-if="setting.member_status_id">
                       {{
                         data.status
                           ? $i18n.locale == "ar"
@@ -1954,7 +1954,7 @@ export default {
                                 {{ getCompanyKey("status") }}
                               </label>
                               <multiselect
-                                v-model="edit.status_id"
+                                v-model="edit.member_status_id"
                                 :options="statuses.map((type) => type.id)"
                                 :custom-label="
                                   (opt) =>
@@ -1966,17 +1966,17 @@ export default {
                               </multiselect>
                               <div
                                 v-if="
-                                  $v.edit.status_id.$error || errors.status_id
+                                  $v.edit.member_status_id.$error || errors.member_status_id
                                 "
                                 class="text-danger"
                               >
                                 {{ $t("general.fieldIsRequired") }}
                               </div>
-                              <template v-if="errors.status_id">
+                              <template v-if="errors.member_status_id">
                                 <ErrorMessage
                                   v-for="(
                                     errorMessage, index
-                                  ) in errors.status_id"
+                                  ) in errors.member_status_id"
                                   :key="index"
                                   >{{ errorMessage }}
                                 </ErrorMessage>
@@ -2008,7 +2008,7 @@ export default {
                                 {{ getCompanyKey("member_type_id") }}
                               </label>
                               <multiselect
-                                v-model="edit.member_type_id"
+                                v-model="edit.member_kind_id"
                                 :options="memberTypes.map((type) => type.id)"
                                 :custom-label="
                                   (opt) => memberTypes.find((x) => x.id == opt)?
@@ -2022,18 +2022,18 @@ export default {
                               </multiselect>
                               <div
                                 v-if="
-                                  $v.edit.member_type_id.$error ||
-                                  errors.member_type_id
+                                  $v.edit.member_kind_id.$error ||
+                                  errors.member_kind_id
                                 "
                                 class="text-danger"
                               >
                                 {{ $t("general.fieldIsRequired") }}
                               </div>
-                              <template v-if="errors.member_type_id">
+                              <template v-if="errors.member_kind_id">
                                 <ErrorMessage
                                   v-for="(
                                     errorMessage, index
-                                  ) in errors.member_type_id"
+                                  ) in errors.member_kind_id"
                                   :key="index"
                                   >{{ errorMessage }}
                                 </ErrorMessage>
@@ -2046,6 +2046,7 @@ export default {
                                 {{ getCompanyKey("financial_status") }}
                               </label>
                               <multiselect
+                                  :disabled="true"
                                 v-model="edit.financial_status_id"
                                 :options="
                                   financialStatuses.map((type) => type.id)
@@ -2126,51 +2127,51 @@ export default {
                               </template>
                             </div>
                           </div>
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <label class="mr-2">
-                                {{ getCompanyKey("member_acceptance") }}
-                              </label>
-                              <b-form-group>
-                                <b-form-radio
-                                    disabled
-                                  class="d-inline-block"
-                                  v-model="$v.edit.acceptance.$model"
-                                  name="edit_acceptance"
-                                  value="0"
-                                  >
-                                    {{ $t("general.pending") }}
-                                </b-form-radio>
-                                <b-form-radio
-                                    disabled
-                                  class="d-inline-block m-1"
-                                  v-model="$v.edit.acceptance.$model"
-                                  name="edit_acceptance"
-                                  value="1"
-                                  >
-                                    {{ $t("general.accepted") }}
-                                </b-form-radio>
-                                <b-form-radio
-                                    disabled
-                                  class="d-inline-block m-1"
-                                  v-model="$v.edit.acceptance.$model"
-                                  name="edit_acceptance"
-                                  value="2"
-                                  >
-                                    {{ $t("general.declined") }}
-                                </b-form-radio>
-                              </b-form-group>
-                              <template v-if="errors.acceptance">
-                                <ErrorMessage
-                                  v-for="(
-                                    errorMessage, index
-                                  ) in errors.acceptance"
-                                  :key="index"
-                                  >{{ errorMessage }}
-                                </ErrorMessage>
-                              </template>
-                            </div>
-                          </div>
+<!--                          <div class="col-md-3">-->
+<!--                            <div class="form-group">-->
+<!--                              <label class="mr-2">-->
+<!--                                {{ getCompanyKey("member_acceptance") }}-->
+<!--                              </label>-->
+<!--                              <b-form-group>-->
+<!--                                <b-form-radio-->
+<!--                                    disabled-->
+<!--                                  class="d-inline-block"-->
+<!--                                  v-model="$v.edit.acceptance.$model"-->
+<!--                                  name="edit_acceptance"-->
+<!--                                  value="0"-->
+<!--                                  >-->
+<!--                                    {{ $t("general.pending") }}-->
+<!--                                </b-form-radio>-->
+<!--                                <b-form-radio-->
+<!--                                    disabled-->
+<!--                                  class="d-inline-block m-1"-->
+<!--                                  v-model="$v.edit.acceptance.$model"-->
+<!--                                  name="edit_acceptance"-->
+<!--                                  value="1"-->
+<!--                                  >-->
+<!--                                    {{ $t("general.accepted") }}-->
+<!--                                </b-form-radio>-->
+<!--                                <b-form-radio-->
+<!--                                    disabled-->
+<!--                                  class="d-inline-block m-1"-->
+<!--                                  v-model="$v.edit.acceptance.$model"-->
+<!--                                  name="edit_acceptance"-->
+<!--                                  value="2"-->
+<!--                                  >-->
+<!--                                    {{ $t("general.declined") }}-->
+<!--                                </b-form-radio>-->
+<!--                              </b-form-group>-->
+<!--                              <template v-if="errors.acceptance">-->
+<!--                                <ErrorMessage-->
+<!--                                  v-for="(-->
+<!--                                    errorMessage, index-->
+<!--                                  ) in errors.acceptance"-->
+<!--                                  :key="index"-->
+<!--                                  >{{ errorMessage }}-->
+<!--                                </ErrorMessage>-->
+<!--                              </template>-->
+<!--                            </div>-->
+<!--                          </div>-->
                           <div class="col-md-3 position-relative">
                             <div class="form-group">
                               <label class="control-label">

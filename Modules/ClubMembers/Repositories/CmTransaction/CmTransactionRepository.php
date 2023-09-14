@@ -75,7 +75,12 @@ class CmTransactionRepository implements CmTransactionInterface
                 {
                     $member =  $this->modelMember->find($transaction['cm_member_id']);
                     if ($member){
-                        $member->update(['last_transaction_date'=>$transaction['date']]);
+                        $member->update([
+                            'last_transaction_date'=>$transaction['date'],
+                            'last_transaction_id'=>$model->id,
+                            'doc_date'=>$transaction['date'],
+                            'doc_no'=>$transaction['document_id'],
+                        ]);
                     }
                 }
                 if ( isset($transaction['member_request_id']) ){

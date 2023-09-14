@@ -18,7 +18,6 @@ class CmMemberStatuResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "name_e" => $this->name_e,
-            "member_type" => $this->memberType,
         ];
     }
 }
