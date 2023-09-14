@@ -1479,6 +1479,10 @@
         "Thenumberofmemberswithineachsponsor": "The number of members within each sponsor",
         "fffmembers": "Valid members",
         "sponsors": "Sponsors",
-        "UpdatingDataPleaseWait": "Updating data, please wait"
+        "UpdatingDataPleaseWait": "Updating data, please wait",
+        "Subscriptions": "Subscriptions",
+        "SubscriptionsRequest": "Subscription Requests",
+        "SubscriptionsWaiting": "Pending",
+        "SubscriptionsRejected": "Rejected"
     }
 }

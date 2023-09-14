@@ -303,4 +303,9 @@ class CmMemberController extends Controller
         return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
+    public function getPublicUpdatePermissionCmMember($id)
+    {
+       return $models = $this->modelInterface->publicUpdatePermissionCmMember($id);
+
+    }
 }

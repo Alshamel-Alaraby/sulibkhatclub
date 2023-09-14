@@ -180,11 +180,9 @@ export default {
                     offsetY: 7
                 },
                 labels: [
-                    this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
-                    this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
-                    this.$t('general.Writtenofffornonpayment')
+                    this.$t('general.SubscriptionsWaiting'),this.$t('general.SubscriptionsRejected')
                 ],
-                colors: ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"],
+                colors: ["#675aa9","#f1556c"],
                 responsive: [{
                     breakpoint: 600,
                     options: {
@@ -197,66 +195,6 @@ export default {
                     }
                 }]
             },
-            series8: [],
-            chartOptions8: {
-                legend: {
-                    show: true,
-                    position: "bottom",
-                    horizontalAlign: "center",
-                    verticalAlign: "middle",
-                    floating: false,
-                    fontSize: "14px",
-                    offsetX: 0,
-                    offsetY: 7
-                },
-                labels: [
-                    this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
-                    this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
-                    this.$t('general.Writtenofffornonpayment')
-                ],
-                colors: ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"],
-                responsive: [{
-                    breakpoint: 600,
-                    options: {
-                        chart: {
-                            height: 240
-                        },
-                        legend: {
-                            show: false
-                        }
-                    }
-                }]
-            },
-            series9: [],
-            chartOptions9: {
-                legend: {
-                    show: true,
-                    position: "bottom",
-                    horizontalAlign: "center",
-                    verticalAlign: "middle",
-                    floating: false,
-                    fontSize: "14px",
-                    offsetX: 0,
-                    offsetY: 7
-                },
-                labels: [
-                    this.$t('general.Deletedathisrequest'),this.$t('general.Cancellationduetodeath'),
-                    this.$t('general.Cancellationaccordingtotheministerialdecision'),this.$t('general.WrittenoffaccordingtotheAuthorityletter'),
-                    this.$t('general.Writtenofffornonpayment')
-                ],
-                colors: ["#3bafda", "#1abc9c", "#f7b84b","#675aa9","#f1556c"],
-                responsive: [{
-                    breakpoint: 600,
-                    options: {
-                        chart: {
-                            height: 240
-                        },
-                        legend: {
-                            show: false
-                        }
-                    }
-                }]
-            }
         };
     },
     props: ['statices'],
@@ -287,7 +225,8 @@ export default {
                 this.chartOptions6.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
                 this.chartOptions6.colors.push(this.colors[index]);
             });
-            this.series5 = [(newDa.Percentage_6),newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
+            this.series5 = [newDa.Percentage_6,newDa.Percentage_7,newDa.Percentage_8,newDa.Percentage_9,newDa.Percentage_18];
+            this.series7 = [newDa.member_requests_waiting_percentage,newDa.member_requests_rejected_percentage];
         }
     },
     components:{
@@ -469,6 +408,42 @@ export default {
             <!-- end col -->
         </div>
 
+        <h1 class="header-title text-center my-3">{{ $t('general.Subscriptions') }}: {{ statices.member_requests_count }}</h1>
+        <div class="row">
+            <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="header-title">{{ $t('general.SubscriptionsRequest') }}</h4>
+
+                        <div class="mt-3 text-center" dir="ltr">
+                            <apexchart
+                                class="apex-charts"
+                                type="donut"
+                                :options="chartOptions7"
+                                height="312"
+                                :series="series7"
+                            >
+                            </apexchart>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-4">
+                                <p class="font-15 mb-1 text-truncate">{{ $t('general.SubscriptionsWaiting') }}</p>
+                                <h4>{{ statices.member_requests_waiting_count }}</h4>
+                            </div>
+                            <div class="col-4">
+                                <p class="font-15 mb-1 text-truncate">{{ $t('general.SubscriptionsRejected') }}</p>
+                                <h4>{{ statices.member_requests_rejected_count }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+
         <h1 class="header-title text-center my-3">{{ $t('general.sponsors') }}: {{ statices.sponsors }}</h1>
         <div class="row">
             <!-- end col -->
@@ -500,6 +475,7 @@ export default {
             </div>
             <!-- end col -->
         </div>
+
         <div class="row mt-1">
             <!-- Table -->
             <div class="col-xl-12">

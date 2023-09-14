@@ -8,6 +8,7 @@ use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmMemberRequest;
 use Modules\ClubMembers\Entities\CmTransaction;
+use Modules\ClubMembers\Entities\CmTypePermission;
 
 class CmMemberRepository implements CmMemberInterface
 {
@@ -252,6 +253,7 @@ class CmMemberRepository implements CmMemberInterface
 
     public function reportCmMember($request)
     {
+        $this->publicUpdatePermissionCmMember($request->members_permissions_id);
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->cm_permissions_id == 1) {
@@ -337,6 +339,59 @@ class CmMemberRepository implements CmMemberInterface
 
             }
         }
+
+        return 200;
+    }
+
+
+    public function publicUpdatePermissionCmMember($permission_id)
+    {
+
+        $permissions =  CmTypePermission::where('cm_permissions_id',$permission_id)->get();
+
+        $financialyear = FinancialYear::where('is_active',1)->first();
+
+        if ($financialyear){
+
+            foreach ($permissions as $permission){
+
+                $running_member_all =   $this->model->whereNotNull('last_transaction_date')->where('member_status_id',1)->where('member_kind_id',$permission->cm_members_type_id)->get();
+
+
+                foreach ($running_member_all as $index => $Member){
+
+                    if ( $financialyear->start_date <= $Member->last_transaction_date  && $financialyear->end_date >= $Member->last_transaction_date ){
+
+                        $dbDate                    = \Carbon\Carbon::parse($Member->membership_date)->format('Y-m-d');
+                        $diffYears                 = \Carbon\Carbon::now()->diffInYears($dbDate);
+
+                        ///Second Condition
+                        $Last_Member_transaction  = $Member->last_transaction_date;
+                        $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('m-d');
+
+
+                        $dateformat =  strftime("%F", strtotime(now()->format('Y')."-".$permission->allowed_subscription_date));
+                        $permission_Day      = \Carbon\Carbon::parse($dateformat)->format('m-d');
+
+                        if($diffYears >= $permission->membership_period && $permission_Day  >= $Last_date ){
+                            $Member->update([
+                                'financial_status_id' => $permission->cm_financial_status_id ,
+                                'members_permissions_id' => $permission->cm_permissions_id ,
+                            ]);
+                        }
+
+                    }else{
+                        $Member->update([
+                            'financial_status_id' => 2 ,
+                        ]);
+                    }
+
+
+                }
+
+            }
+        }
+
 
         return 200;
     }

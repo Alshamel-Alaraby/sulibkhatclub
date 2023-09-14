@@ -32,15 +32,19 @@ class TransactionDb extends Command
     public function handle()
     {
         // load sql file
-        $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/transactions.sql'));
+//        $sql = file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/transactions.sql'));
         // migrate it to Database
-        DB::unprepared($sql);
+//        DB::unprepared($sql);
+
+        ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
+        set_time_limit(3600);
+        ini_set('memory_limit', -1);
 
         DB::table('PaymentTransactions')->orderBy('DocNo')->chunk(100, function ($records) {
             $this->insertTransaction($records);
         });
         // drop table  PaymentTransactions
-        Schema::dropIfExists('PaymentTransactions');
+//        Schema::dropIfExists('PaymentTransactions');
         $this->info('All cm_transactions table is seeded!');
 
     }
@@ -79,6 +83,7 @@ class TransactionDb extends Command
             }
 
             CmTransaction::create([
+
                 'document_id' => $documentId,
                 'branch_id' => $branchId,
                 'serial_id' => $serialId,

@@ -49,6 +49,7 @@ class CmTransactionController extends Controller
 
     public function create(CmTransactionRequest $request)
     {
+
         $model = $this->modelInterface->create($request);
         return responseJson(200, 'success');
 

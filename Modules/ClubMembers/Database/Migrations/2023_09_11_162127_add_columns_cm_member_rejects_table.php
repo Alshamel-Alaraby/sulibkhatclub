@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('', function (Blueprint $table) {
+        Schema::table('cm_member_rejects', function (Blueprint $table) {
             $table->dropColumn('cm_member_id');
             $table->unsignedInteger('discharge_reson_id')->nullable();
 

@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-content-center align-items-center position-absolute loader">
         <b-spinner :class="['m-2',`loader-${size}`]" variant="success" role="status"></b-spinner>
-        <h1 v-if="updateData"></h1>
+        <h1 v-if="updateData">{{$t('general.UpdatingDataPleaseWait')}}</h1>
     </div>
 </template>
 
