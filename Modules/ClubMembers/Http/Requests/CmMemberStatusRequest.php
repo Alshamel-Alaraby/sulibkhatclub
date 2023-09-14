@@ -14,9 +14,8 @@ class CmMemberStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:cm_statues,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e' => 'sometimes|string|max:255|unique:cm_statues,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'member_type_id' => 'nullable|exists:cm_members_types,id',
+            'name' => 'sometimes|string|max:255|unique:cm_member_status,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'name_e' => 'sometimes|string|max:255|unique:cm_member_status,name_e' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
         ];
     }
 

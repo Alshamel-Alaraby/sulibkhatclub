@@ -670,7 +670,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
+                .get(`/club-members/members?member_status_id=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -814,22 +814,22 @@ export default {
 <!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
 <!--                                    </button>-->
                                     <!-- start mult delete  -->
-                                    <button
-                                        class="custom-btn-dowonload"
-                                        v-if="checkAll.length > 1 && isPermission('delete subscription club')"
-                                        @click.prevent="deleteBranch(checkAll)"
-                                    >
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
+<!--                                    <button-->
+<!--                                        class="custom-btn-dowonload"-->
+<!--                                        v-if="checkAll.length > 1 && isPermission('delete subscription club')"-->
+<!--                                        @click.prevent="deleteBranch(checkAll)"-->
+<!--                                    >-->
+<!--                                        <i class="fas fa-trash-alt"></i>-->
+<!--                                    </button>-->
                                     <!-- end mult delete  -->
                                     <!--  start one delete  -->
-                                    <button
-                                        class="custom-btn-dowonload"
-                                        v-if="checkAll.length == 1 && isPermission('delete subscription club')"
-                                        @click.prevent="deleteBranch(checkAll[0])"
-                                    >
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
+<!--                                    <button-->
+<!--                                        class="custom-btn-dowonload"-->
+<!--                                        v-if="checkAll.length == 1 && isPermission('delete subscription club')"-->
+<!--                                        @click.prevent="deleteBranch(checkAll[0])"-->
+<!--                                    >-->
+<!--                                        <i class="fas fa-trash-alt"></i>-->
+<!--                                    </button>-->
                                     <!--  end one delete  -->
                                 </div>
                                 <!-- end create and printer -->
@@ -1337,7 +1337,7 @@ export default {
                                     </td>
                                     <td v-if="setting.discharge_reson_id && isVisible('discharge_reson_id')">
                                         <h5 class="m-0 font-weight-normal">
-                                            {{data.member_type ? $i18n.locale == "ar" ? data.member_type.name : data.member_type.name_e : ' - '}}
+                                            {{data.discharge_reson ? $i18n.locale == "ar" ? data.discharge_reson.name : data.discharge_reson.name_e : ' - '}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.note && isVisible('note')">
@@ -1367,19 +1367,19 @@ export default {
 <!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
 <!--                                                    </div>-->
 <!--                                                </a>-->
-                                                <a
-                                                    v-if="isPermission('delete subscription club')"
-                                                    class="dropdown-item text-black"
-                                                    href="#"
-                                                    @click.prevent="deleteBranch(data.id)"
-                                                >
-                                                    <div
-                                                        class="d-flex justify-content-between align-items-center text-black"
-                                                    >
-                                                        <span>{{ $t("general.delete") }}</span>
-                                                        <i class="fas fa-times text-danger"></i>
-                                                    </div>
-                                                </a>
+<!--                                                <a-->
+<!--                                                    v-if="isPermission('delete subscription club')"-->
+<!--                                                    class="dropdown-item text-black"-->
+<!--                                                    href="#"-->
+<!--                                                    @click.prevent="deleteBranch(data.id)"-->
+<!--                                                >-->
+<!--                                                    <div-->
+<!--                                                        class="d-flex justify-content-between align-items-center text-black"-->
+<!--                                                    >-->
+<!--                                                        <span>{{ $t("general.delete") }}</span>-->
+<!--                                                        <i class="fas fa-times text-danger"></i>-->
+<!--                                                    </div>-->
+<!--                                                </a>-->
                                             </div>
                                         </div>
 

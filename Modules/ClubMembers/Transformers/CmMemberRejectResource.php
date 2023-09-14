@@ -22,7 +22,7 @@ class CmMemberRejectResource extends JsonResource
             'prefix' => $this->prefix,
             'member' => collect($this->member)->only(['id','first_name','second_name','third_name','last_name','family_name']),
             'branch' => collect($this->branch)->only(['id','name','name_e']),
-            'member_type' => collect($this->memberType)->only(['id','name','name_e']),
+            'discharge_reson' => collect($this->dischargeReson)->only(['id','name','name_e']),
 
 
         ];

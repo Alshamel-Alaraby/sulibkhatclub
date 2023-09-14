@@ -3,11 +3,11 @@
 namespace Modules\ClubMembers\Repositories\CmStatus;
 
 use Illuminate\Support\Facades\DB;
-use Modules\ClubMembers\Entities\Status;
+use Modules\ClubMembers\Entities\CmMemberStatus;
 
 class CmStatusRepository implements CmStatusInterface
 {
-    public function __construct(private Status $model)
+    public function __construct(private CmMemberStatus $model)
     {
         $this->model = $model;
     }

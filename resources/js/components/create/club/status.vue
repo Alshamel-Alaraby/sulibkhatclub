@@ -151,33 +151,6 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('member_type_id')">
-                        <div class="form-group position-relative">
-                            <label class="control-label">
-                                {{ getCompanyKey("member_type") }}
-                                <span class="text-danger">*</span>
-                            </label>
-                            <multiselect
-                                v-model="$v.create.member_type_id.$model"
-                                :options="typs.map((type) => type.id)"
-                                :custom-label="
-                                 (opt) =>
-                                    $i18n.locale == 'ar'
-                                      ? typs.find((x) => x.id == opt).name
-                                      : typs.find((x) => x.id == opt).name_e
-                                "
-                            >
-                            </multiselect>
-                            <div v-if="$v.create.member_type_id.$error || errors.member_type_id" class="text-danger">
-                                {{ $t("general.fieldIsRequired") }}
-                            </div>
-                            <template v-if="errors.member_type_id">
-                                <ErrorMessage v-for="(errorMessage, index) in errors.member_type_id" :key="index">
-                                    {{ errorMessage }}
-                                </ErrorMessage>
-                            </template>
-                        </div>
-                    </div>
                 </div>
             </form>
         </b-modal>
@@ -227,7 +200,6 @@ export default {
             create: {
                 name: "",
                 name_e: "",
-                member_type_id: "",
             },
             company_id: null,
             errors: {},
@@ -250,11 +222,6 @@ export default {
                 minLength: minLength(3),
                 maxLength: maxLength(100),
             },
-            member_type_id: {
-                required: requiredIf(function (model) {
-                    return this.isRequired("member_type_id");
-                }),
-            },
         },
     },
     mounted() {
@@ -264,7 +231,7 @@ export default {
         async getCustomTableFields() {
             this.isCustom = true;
              await adminApi
-                .get(`/customTable/table-columns/cm_statues`)
+                .get(`/customTable/table-columns/cm_member_status`)
                 .then((res) => {
                     this.fields = res.data;
                 })
@@ -295,29 +262,10 @@ export default {
                 return this.isRequiredPage(fieldName);
             }
         },
-         getType() {
-            this.isLoader = true;
-             adminApi.get(`/club-members/members-types`)
-                .then((res) => {
-                    let l = res.data.data;
-                    this.typs = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
         defaultData(edit = null){
             this.create = {
                 name: "",
                 name_e: "",
-                member_type_id: "",
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -334,15 +282,12 @@ export default {
             setTimeout( async () => {
                 if(this.type != 'edit'){
                     if(!this.isPage) await this.getCustomTableFields();
-                    if (this.isVisible("member_type_id"))  this.getType();
                 }else {
                     if(this.idObjEdit.dataObj){
-                        if (this.isVisible("member_type_id")) this.getType();
                         let module = this.idObjEdit.dataObj;
                         this.errors = {};
                         this.create.name = module.name;
                         this.create.name_e = module.name_e;
-                        this.create.member_type_id = module.member_type.id;
                     }
                 }
             },50);
