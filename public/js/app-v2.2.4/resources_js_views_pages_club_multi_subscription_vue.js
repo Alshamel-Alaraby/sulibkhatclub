@@ -3388,7 +3388,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
                 _this19.isLoader = true;
                 _context9.next = 4;
-                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?sponsor_id=".concat(_this19.create.sponsor_id, "&hasTransaction=1&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
+                return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?sponsor_id=".concat(_this19.create.sponsor_id, "&hasTransaction=1&member_status_id=1&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
                   var l = res.data.data;
                   _this19.members = l;
                 })["catch"](function (err) {

@@ -230,9 +230,9 @@ class CmMemberRepository implements CmMemberInterface
                         [
                             'acceptance' => 1,
                             'membership_number' => $max,
-                            'financial_status_id' => 3,
-                            'member_type_id' => 4,
-                            'status_id' => 2,
+                            'financial_status_id' => 1,
+                            'member_kind_id' => 1,
+                            'member_status_id' => 1,
                         ]));
                     $transaction = $this->modelTransaction->where('member_request_id', $memberRequest->id)->first();
                     if ($transaction) {
