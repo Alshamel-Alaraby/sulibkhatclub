@@ -387,12 +387,12 @@ export default {
     /**
      *   show Modal (edit)
      */
-    async resetModalEdit(id) {
+     resetModalEdit(id) {
       let member = this.members.find((e) => id == e.id);
-      await this.getStatus();
-      await this.getSponsors();
-      await this.getFinancialStatus();
-      await this.getMemberTypes();
+       this.getStatus();
+       this.getSponsors();
+       this.getFinancialStatus();
+       this.getMemberTypes();
       this.birth_date = new Date(member.birth_date);
       this.session_date = member.session_date
         ? new Date(member.session_date)
@@ -489,10 +489,10 @@ export default {
      *  end  ckeckRow
      */
 
-    async getStatus() {
+     getStatus() {
       this.isLoader = true;
 
-      await adminApi
+       adminApi
         .get(`/club-members/cm-status`)
         .then((res) => {
           let l = res.data.data;
@@ -509,9 +509,9 @@ export default {
           this.isLoader = false;
         });
     },
-    async getSponsors() {
+     getSponsors() {
       this.isLoader = true;
-      await adminApi
+       adminApi
         .get(`/club-members/sponsers`)
         .then((res) => {
           let l = res.data.data;
@@ -547,9 +547,9 @@ export default {
           this.isLoader = false;
         });
     },
-    async getFinancialStatus() {
+     getFinancialStatus() {
       this.isLoader = true;
-      await adminApi
+       adminApi
         .get(`/club-members/financial-status`)
         .then((res) => {
           let l = res.data.data;
@@ -1430,9 +1430,9 @@ export default {
                     </td>
                     <td v-if="setting.gender">
                       {{
-                        data.gender == 1
+                        data.gender  ?data.gender == 1
                           ? $t("general.male")
-                          : $t("general.female")
+                          : $t("general.female"): null
                       }}
                     </td>
                     <td v-if="setting.nationality_number">
@@ -1957,10 +1957,10 @@ export default {
                                 v-model="edit.member_status_id"
                                 :options="statuses.map((type) => type.id)"
                                 :custom-label="
-                                  (opt) =>
+                                  (opt) => statuses.find((x) => x.id == opt)?
                                     $i18n.locale == 'ar'
                                       ? statuses.find((x) => x.id == opt).name
-                                      : statuses.find((x) => x.id == opt).name_e
+                                      : statuses.find((x) => x.id == opt).name_e: null
                                 "
                               >
                               </multiselect>
@@ -2052,14 +2052,16 @@ export default {
                                   financialStatuses.map((type) => type.id)
                                 "
                                 :custom-label="
-                                  (opt) =>
+                                  (opt) => financialStatuses.find(
+                                          (x) => x.id == opt
+                                        )?
                                     $i18n.locale == 'ar'
                                       ? financialStatuses.find(
                                           (x) => x.id == opt
                                         ).name
                                       : financialStatuses.find(
                                           (x) => x.id == opt
-                                        ).name_e
+                                        ).name_e: null
                                 "
                               >
                               </multiselect>
