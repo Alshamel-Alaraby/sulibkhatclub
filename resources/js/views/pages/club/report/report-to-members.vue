@@ -70,6 +70,7 @@ export default {
             setting: {
                 gender: true,
                 Subscription_receipt_number: true,
+                membership_number: true,
                 first_name: true,
                 second_name: true,
                 third_name: true,
@@ -91,6 +92,7 @@ export default {
 
             },
             filterSetting: [
+                "membership_number",
                 "first_name",
                 "second_name",
                 "third_name",
@@ -361,6 +363,9 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
+                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
+                                            {{ getCompanyKey("member_membership_number") }}
+                                        </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">
                                             {{ getCompanyKey("member_first_name") }}
                                         </b-form-checkbox>
@@ -462,6 +467,7 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.first_name" class="mb-1">{{ getCompanyKey("member_first_name") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.second_name" class="mb-1">{{ getCompanyKey("member_second_name") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.third_name" class="mb-1">{{ getCompanyKey("member_third_name") }}</b-form-checkbox>
@@ -674,17 +680,32 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th v-if="setting.membership_number">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="installmentStatus.sort(sortString('membership_number'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="installmentStatus.sort(sortString('-membership_number'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.first_name">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_first_name") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name'))"
+                                                    @click="installmentStatus.sort(sortString('name'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name'))"
+                                                    @click="installmentStatus.sort(sortString('-name'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -695,11 +716,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
+                                                    @click="installmentStatus.sort(sortString('name_e'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
+                                                    @click="installmentStatus.sort(sortString('-name_e'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -710,11 +731,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
+                                                    @click="installmentStatus.sort(sortString('name_e'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
+                                                    @click="installmentStatus.sort(sortString('-name_e'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -725,11 +746,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
+                                                    @click="installmentStatus.sort(sortString('name_e'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
+                                                    @click="installmentStatus.sort(sortString('-name_e'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -740,11 +761,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
+                                                    @click="installmentStatus.sort(sortString('name_e'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
+                                                    @click="installmentStatus.sort(sortString('-name_e'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -754,10 +775,10 @@ export default {
                                             <span>{{ getCompanyKey("member_birth_date") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="members.sort(sortString('birth_date'))"
+                                                   @click="installmentStatus.sort(sortString('birth_date'))"
                                                 ></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="members.sort(sortString('-birth_date'))"
+                                                   @click="installmentStatus.sort(sortString('-birth_date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -772,10 +793,10 @@ export default {
                                             <span>{{ getCompanyKey("member_membership_date")}}</span>
                                             <div class="arrow-sort">
                                                 <i  class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('membership_date'))"
+                                                    @click="installmentStatus.sort(sortString('membership_date'))"
                                                 ></i>
                                                 <i class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-membership_date'))"
+                                                    @click="installmentStatus.sort(sortString('-membership_date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -802,11 +823,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('national_id'))"
+                                                    @click="installmentStatus.sort(sortString('national_id'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-national_id'))"
+                                                    @click="installmentStatus.sort(sortString('-national_id'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -817,11 +838,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('home_phone'))"
+                                                    @click="installmentStatus.sort(sortString('home_phone'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-home_phone'))"
+                                                    @click="installmentStatus.sort(sortString('-home_phone'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -832,11 +853,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('work_phone'))"
+                                                    @click="installmentStatus.sort(sortString('work_phone'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-work_phone'))"
+                                                    @click="installmentStatus.sort(sortString('-work_phone'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -847,11 +868,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('home_address'))"
+                                                    @click="installmentStatus.sort(sortString('home_address'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-home_address'))"
+                                                    @click="installmentStatus.sort(sortString('-home_address'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -862,11 +883,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('work_address'))"
+                                                    @click="installmentStatus.sort(sortString('work_address'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-work_address'))"
+                                                    @click="installmentStatus.sort(sortString('-work_address'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -877,11 +898,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('job'))"
+                                                    @click="installmentStatus.sort(sortString('job'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-job'))"
+                                                    @click="installmentStatus.sort(sortString('-job'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -892,11 +913,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('degree'))"
+                                                    @click="installmentStatus.sort(sortString('degree'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-degree'))"
+                                                    @click="installmentStatus.sort(sortString('-degree'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -910,6 +931,9 @@ export default {
                                     class="body-tr-custom"
                                 >
 
+                                    <td v-if="setting.membership_number">
+                                        {{ data.membership_number }}
+                                    </td>
                                     <td v-if="setting.first_name">
                                         {{ data.first_name }}
                                     </td>
@@ -929,7 +953,7 @@ export default {
                                         {{ data.birth_date }}
                                     </td>
                                     <td v-if="setting.gender">
-                                        {{ data.gender == 1 ? $t("general.male") : $t("general.female")}}
+                                        {{data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'}}
                                     </td>
                                     <td v-if="setting.membership_date">
                                         {{ formatDate(data.membership_date) }}
