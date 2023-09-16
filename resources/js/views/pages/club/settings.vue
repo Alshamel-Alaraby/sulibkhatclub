@@ -58,6 +58,10 @@ export default {
                     type: 'string',sort: true,setting: {"allowed_subscription_date":true},isSetting: true,
                     columnCustom: 'allowed_subscription_date'
                 },
+                {
+                    isFilter: false,isSet: true,trans:"allowed_vote_date",isV: 'allowed_vote_date',
+                    type: 'string',sort: true,setting: {"allowed_vote_date":true},isSetting: true
+                },
             ],
             sendSetting: {},
             searchField: [],

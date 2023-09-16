@@ -2347,6 +2347,17 @@ __webpack_require__.r(__webpack_exports__);
         },
         isSetting: true,
         columnCustom: 'allowed_subscription_date'
+      }, {
+        isFilter: false,
+        isSet: true,
+        trans: "allowed_vote_date",
+        isV: 'allowed_vote_date',
+        type: 'string',
+        sort: true,
+        setting: {
+          "allowed_vote_date": true
+        },
+        isSetting: true
       }],
       sendSetting: {},
       searchField: []
@@ -2744,7 +2755,7 @@ var render = function render() {
       return _c("ErrorMessage", {
         key: index
       }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
-    }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.memberships_renewals[index].cm_permissions_id == 2 && _vm.isVisible("allowed_vote_date") ? _c("div", {
+    }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.memberships_renewals[index].cm_permissions_id > 1 && _vm.isVisible("allowed_vote_date") ? _c("div", {
       staticClass: "col-md-2"
     }, [_c("div", {
       staticClass: "form-group"
@@ -3116,11 +3127,11 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n                        ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.edit.cm_permissions_id == 2 && _vm.isVisible("allowed_vote_date") ? _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.edit.cm_permissions_id > 1 && _vm.isVisible("allowed_vote_date") ? _c("div", {
     staticClass: "col-md-12"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v("\n                        " + _vm._s(_vm.$t("general.allowed_vote_date")) + "\n                        "), _vm.isRequired("allowed_vote_date") ? _c("span", {
+  }, [_c("label", [_vm._v("\n                        " + _vm._s(_vm.getCompanyKey("allowed_vote_date")) + "\n                        "), _vm.isRequired("allowed_vote_date") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "d-flex"
@@ -7619,7 +7630,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-e26f75a2] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-e26f75a2] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

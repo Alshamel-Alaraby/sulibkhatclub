@@ -11150,6 +11150,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "club"
             ],
+            [
+                "key" => "allowed_vote_date",
+                "default_en" => "Allowed Vote Date",
+                "default_ar" => "اقصى تاريخ للاحقية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
         ]);
         //membership_renewal
         Translation::insert([

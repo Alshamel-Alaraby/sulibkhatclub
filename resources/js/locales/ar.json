@@ -1395,7 +1395,7 @@
         "checkInReport": "تقرير اشعار الدخول",
         "DailyAccommodationInvoiceReport": "تقرير فاتورة الإقامة اليومية",
         "ItemsReport": "تقرير الخدمات",
-        "allowed_vote_date": "اقصى تاريخ لاحقية التصويت",
+        "allowed_vote_date": "اقصى تاريخ للاحقية",
         "memberRejectTable": "جدول شطب العضوية",
         "ReceiptVoucher": "سند قبض",
         "ReceiptVoucherMember": "عرض سندات القبض للعضو :",

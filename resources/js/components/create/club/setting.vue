@@ -240,7 +240,7 @@
                                 </template>
                             </div>
                         </div>
-                        <div v-if="create.memberships_renewals[index].cm_permissions_id == 2 && isVisible('allowed_vote_date')" class="col-md-2">
+                        <div v-if="create.memberships_renewals[index].cm_permissions_id > 1 && isVisible('allowed_vote_date')" class="col-md-2">
                             <div class="form-group">
                                 <label>
                                     {{ $t("general.allowed_vote_date") }}
@@ -488,10 +488,10 @@
                         </template>
                     </div>
                 </div>
-                <div v-if="edit.cm_permissions_id == 2 && isVisible('allowed_vote_date')" class="col-md-12">
+                <div v-if="edit.cm_permissions_id > 1 && isVisible('allowed_vote_date')" class="col-md-12">
                     <div class="form-group">
                         <label>
-                            {{ $t("general.allowed_vote_date") }}
+                            {{ getCompanyKey("allowed_vote_date") }}
                             <span v-if="isRequired('allowed_vote_date')" class="text-danger">*</span>
                         </label>
                         <div class="d-flex">
