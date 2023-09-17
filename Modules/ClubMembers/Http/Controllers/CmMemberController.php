@@ -5,6 +5,7 @@ namespace Modules\ClubMembers\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\ClubMembers\Entities\CmMember;
+
 use Modules\ClubMembers\Http\Requests\CmAcceptMembersRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberAcceptRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberDeclineRequest;
@@ -175,6 +176,7 @@ class CmMemberController extends Controller
     }
     public function dataMemberFildFullNameTable()
     {
+        return  $member =  CmMember::wherehas('transactions')->count();
         ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
         set_time_limit(3600);
         ini_set('memory_limit', -1);
@@ -192,6 +194,16 @@ class CmMemberController extends Controller
     }
     public function dataMemberTable()
     {
+       return $members = CmMember::whereHas('transactions')->with('transactions')->where('membership_number','34')->get();
+//        foreach ($members as $index => $member):
+//            return  $member->transactions['date'];
+//            $member->update([
+//                'last_transaction_date' => $Last_date,
+//                'last_transaction_id' => $member->transactions['id'],
+//            ]);
+//        endforeach;
+
+
         $members = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.json')));
         foreach ($members[2]->data as $data ){
             return          \Carbon\Carbon::parse($data->DOC_DATE)->format('Y-m-d');

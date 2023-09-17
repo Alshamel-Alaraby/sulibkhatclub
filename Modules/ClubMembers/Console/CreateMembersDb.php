@@ -4,6 +4,7 @@ namespace Modules\ClubMembers\Console;
 
 use Illuminate\Console\Command;
 use Modules\ClubMembers\Entities\CmMember;
+use Modules\ClubMembers\Entities\CmTransaction;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -43,21 +44,47 @@ class CreateMembersDb extends Command
         ini_set('max_execution_time', 3600); // 3600 seconds = 60 minutes
         set_time_limit(3600);
         ini_set('memory_limit', -1);
-        $members = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.json')));
-        foreach ($members[2]->data  as  $member):
+        $members = CmMember::whereHas('lastCmTransaction')->with('lastCmTransaction')->get();
+        foreach ($members as $index => $member):
 
-            $updateMember = CmMember::find($member->MEMBER_ID);
-            if ($updateMember){
-                $updateMember->update([
-                    "membership_date"       => $member->ORDER_DATE == null ? null : \Carbon\Carbon::parse($member->ORDER_DATE)->format('Y-m-d'),
-                    "last_transaction_date" => $member->LstPayDate == null ? null :\Carbon\Carbon::parse($member->LstPayDate)->format('Y-m-d'),
-                    "last_transaction_id"   => $member->LstPayDoc,
-                    "doc_date"              => $member->DOC_DATE == null   ? null:\Carbon\Carbon::parse($member->DOC_DATE)->format('Y-m-d'),
-                    "doc_no"                => $member->DOC_NO,
-                ]);
-            }
+            $member->update([
+                'last_transaction_date' => $member->lastCmTransaction['date'],
+                'doc_date'              => $member->lastCmTransaction['date'],
+                'last_transaction_id'   => $member->lastCmTransaction['id'],
+            ]);
 
         endforeach;
+        $this->info('Successfully Data Full Name In Table CmMember ');
+
+//
+//        $members = CmTransaction::get()->chunk(10000);
+//        foreach ($members as $index => $member):
+//            foreach ($member as $full_name):
+//                $members =   CmMember::where('membership_number',$full_name->member_number)->first();
+//                if ($members){
+//                    $full_name->update(['cm_member_id' => $members->id]);
+//
+//                }
+//            endforeach;
+//            $this->info('Successfully Data Full Name In Table CmMember ');
+//        endforeach;
+
+
+//        $members = json_decode(file_get_contents(base_path('Modules/ClubMembers/Resources/assets/db/members.json')));
+//        foreach ($members[2]->data  as  $member):
+//            $updateMember = CmMember::find($member->MEMBER_ID);
+//            if ($updateMember){
+//
+//                $updateMember->update([
+//                    "membership_date"       => $member->ORDER_DATE == null ? null : \Carbon\Carbon::parse($member->ORDER_DATE)->format('Y-m-d'),
+//                    "last_transaction_date" => $member->LstPayDate == null ? null :\Carbon\Carbon::parse($member->LstPayDate)->format('Y-m-d'),
+//                    "last_transaction_id"   => $member->LstPayDoc,
+//                    "doc_date"              => $member->DOC_DATE == null   ? null:\Carbon\Carbon::parse($member->DOC_DATE)->format('Y-m-d'),
+//                    "doc_no"                => $member->DOC_NO,
+//                ]);
+//
+//            }
+//        endforeach;
         $this->info('Successfully Data Full Name In Table CmMember ');
 
 //        CmMember::create([

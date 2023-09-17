@@ -297,47 +297,103 @@ class CmMemberRepository implements CmMemberInterface
 
     public function updateCmMember()
     {
-        /////type_permissions
-        $permissions = DB::table('cm_type_permissions')->get();
+        //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
+        // reset the member permission id in Cm Members for all active (saary) members to 1 (ليس له حق الحضور)
+        /// update to columns  financial_status_id =  غير مسدد and  members_permissions_id = ليس له حق الحضور  in table CmMembers
+        collect($this->model->all())->each(function ($item) {
+            $item->update([
+                'financial_status_id' => 2,
+                'members_permissions_id' => 1
+            ]);
+        });
 
+
+        // all settings
+        $settings = DB::table('cm_type_permissions')->orderBy('cm_permissions_id', 'asc')->get();
+
+        // get the active financial year
         $financialyear = FinancialYear::where('is_active', 1)->first();
+
+        // filter the "saaaaary" members which have at least one last_transaction_date
+        // that its last_transaction_year as the financial year
+        $running_member_all = $this->model
+            ->whereNotNull('last_transaction_date') // transaction is NOT null
+            ->where('member_status_id', 1)	// ساري
+            ->where('last_transaction_year', $financialyear->year) // int ? int
+            ->get();
+
+
 
         if ($financialyear) {
 
-            foreach ($permissions as $permission) {
+            foreach ($running_member_all as  $member){
 
-                $running_member_all = $this->model->whereNotNull('last_transaction_date')->where('member_status_id', 1)->where('member_kind_id', $permission->cm_members_type_id)->get();
+                if ( $member->member_kind_id == 2  )
+                {
+                    $member->update
+                    ([
+                        'financial_status_id'    => 1,  // غير مطلوب السداد
+                    ]);
+                }
 
-                foreach ($running_member_all as $index => $Member) {
+                foreach ($settings->reverse() as $setting){
 
-                    if ($financialyear->start_date <= $Member->last_transaction_date && $financialyear->end_date >= $Member->last_transaction_date) {
-
-                        $dbDate = \Carbon\Carbon::parse($Member->membership_date)->format('Y-m-d');
+                    if( $member->member_kind_id  == $setting->cm_members_type_id )
+                    {
+                        $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                         $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
-                        ///Second Condition
-                        $Last_Member_transaction = $Member->last_transaction_date;
-                        $Last_date = \Carbon\Carbon::parse($Last_Member_transaction)->format('m-d');
+                        $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d') ; // format: (yyyy-mm-dd)
 
-                        $dateformat = strftime("%F", strtotime(now()->format('Y') . "-" . $permission->allowed_subscription_date));
-                        $permission_Day = \Carbon\Carbon::parse($dateformat)->format('m-d');
+                        $yearGlued_allowed_vote_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_vote_date)); // format: (yyyy-mm-dd)
+                        $yearGlued_allowed_subscription_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_subscription_date)); // format: (yyyy-mm-dd)
 
-                        if ($diffYears >= $permission->membership_period && $permission_Day >= $Last_date) {
-                            $Member->update([
-                                'financial_status_id' => $permission->cm_financial_status_id,
-                                'members_permissions_id' => $permission->cm_permissions_id,
+
+
+                        if ( $Last_Member_transaction <= $yearGlued_allowed_subscription_date && $member->member_kind_id != 2  )
+                        {
+                            $member->update
+                            ([
+                                'financial_status_id'    => 3,  //مسدد في الموعد
                             ]);
+
                         }
 
-                    } else {
-                        $Member->update([
-                            'financial_status_id' => 2,
-                        ]);
+                        if ( $Last_Member_transaction >= $yearGlued_allowed_subscription_date && $member->member_kind_id != 2 )
+                        {
+                            $member->update
+                            ([
+                                'financial_status_id'    => 4,  // مسدد بعد الموعد
+                            ]);
+
+                        }
+
+                        if ( $Last_Member_transaction <= $yearGlued_allowed_vote_date && $diffYears >= $setting->membership_period )
+                        {
+                            if ($member->member_kind_id == 1){
+                                $member->update
+                                ([
+                                    'members_permissions_id' => $setting->cm_permissions_id,
+                                ]);
+                            }
+
+
+
+                            break; // exit the for each on the permissions => he/she can NOT achieve better
+                        }
+
+
                     }
+
 
                 }
 
             }
+
+
+        }else{
+
+            return  'There must be an active financial year!';
         }
 
         return 200;
@@ -347,51 +403,107 @@ class CmMemberRepository implements CmMemberInterface
     public function publicUpdatePermissionCmMember($permission_id)
     {
 
-        $permissions =  CmTypePermission::where('cm_permissions_id',$permission_id)->get();
 
-        $financialyear = FinancialYear::where('is_active',1)->first();
-
-        if ($financialyear){
-
-            foreach ($permissions as $permission){
-
-                $running_member_all =   $this->model->whereNotNull('last_transaction_date')->where('member_status_id',1)->where('member_kind_id',$permission->cm_members_type_id)->get();
-
-
-                foreach ($running_member_all as $index => $Member){
-
-                    if ( $financialyear->start_date <= $Member->last_transaction_date  && $financialyear->end_date >= $Member->last_transaction_date ){
-
-                        $dbDate                    = \Carbon\Carbon::parse($Member->membership_date)->format('Y-m-d');
-                        $diffYears                 = \Carbon\Carbon::now()->diffInYears($dbDate);
-
-                        ///Second Condition
-                        $Last_Member_transaction  = $Member->last_transaction_date;
-                        $Last_date                = \Carbon\Carbon::parse($Last_Member_transaction)->format('m-d');
+        //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
+        // reset the member permission id in Cm Members for all active (saary) members to 1 (ليس له حق الحضور)
+        /// update to columns  financial_status_id =  غير مسدد and  members_permissions_id = ليس له حق الحضور  in table CmMembers
+        collect($this->model->all())->each(function ($item) {
+            $item->update([
+                'financial_status_id' => 2,
+                'members_permissions_id' => 1
+            ]);
+        });
 
 
-                        $dateformat =  strftime("%F", strtotime(now()->format('Y')."-".$permission->allowed_subscription_date));
-                        $permission_Day      = \Carbon\Carbon::parse($dateformat)->format('m-d');
+        // all settings
+        $settings = DB::table('cm_type_permissions')->where('cm_permissions_id',$permission_id)->orderBy('cm_permissions_id', 'asc')->get();
 
-                        if($diffYears >= $permission->membership_period && $permission_Day  >= $Last_date ){
-                            $Member->update([
-                                'financial_status_id' => $permission->cm_financial_status_id ,
-                                'members_permissions_id' => $permission->cm_permissions_id ,
+        // get the active financial year
+        $financialyear = FinancialYear::where('is_active', 1)->first();
+
+        // filter the "saaaaary" members which have at least one last_transaction_date
+        // that its last_transaction_year as the financial year
+        $running_member_all = $this->model
+            ->whereHas('lastCmTransaction')
+            ->with('lastCmTransaction')
+            ->whereNotNull('last_transaction_date') // transaction is NOT null
+            ->where('member_status_id', 1)	// ساري
+            ->where('last_transaction_year', $financialyear->year) // int ? int
+            ->get();
+
+
+
+        if ($financialyear) {
+
+            foreach ($running_member_all as  $member){
+
+                if ( $member->member_kind_id == 2  )
+                {
+                    $member->update
+                    ([
+                        'financial_status_id'    => 1,  // غير مطلوب السداد
+                    ]);
+                }
+
+                foreach ($settings->reverse() as $setting){
+
+                    if( $member->member_kind_id  == $setting->cm_members_type_id )
+                    {
+                        $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
+                        $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
+
+                        $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d') ; // format: (yyyy-mm-dd)
+
+                        $yearGlued_allowed_vote_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_vote_date)); // format: (yyyy-mm-dd)
+                        $yearGlued_allowed_subscription_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_subscription_date)); // format: (yyyy-mm-dd)
+
+
+
+                        if ( $Last_Member_transaction <= $yearGlued_allowed_subscription_date && $member->member_kind_id != 2  )
+                        {
+                            $member->update
+                            ([
+                                'financial_status_id'    => 3,  //مسدد في الموعد
                             ]);
+
                         }
 
-                    }else{
-                        $Member->update([
-                            'financial_status_id' => 2 ,
-                        ]);
+                        if ( $Last_Member_transaction >= $yearGlued_allowed_subscription_date && $member->member_kind_id != 2 )
+                        {
+                            $member->update
+                            ([
+                                'financial_status_id'    => 4,  // مسدد بعد الموعد
+                            ]);
+
+                        }
+
+                        if ( $Last_Member_transaction <= $yearGlued_allowed_vote_date && $diffYears >= $setting->membership_period )
+                        {
+                            if ($member->member_kind_id == 1){
+                                $member->update
+                                ([
+                                    'members_permissions_id' => $setting->cm_permissions_id,
+                                ]);
+                            }
+
+
+
+                            break; // exit the for each on the permissions => he/she can NOT achieve better
+                        }
+
+
                     }
 
 
                 }
 
             }
-        }
 
+
+        }else{
+
+            return  'There must be an active financial year!';
+        }
 
         return 200;
     }

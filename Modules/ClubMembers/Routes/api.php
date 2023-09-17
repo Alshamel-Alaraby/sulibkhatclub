@@ -64,6 +64,8 @@ Route::prefix('club-members')->group(function () {
         Route::get('/pending', 'CmMemberController@allAcceptancePending')->name('cm-members.allAcceptancePending');
         Route::get('/Acceptance', 'CmMemberController@allAcceptance')->name('cm-members.allAcceptance');
         Route::get('/', 'CmMemberController@all')->name('cm-members.all');
+        Route::get('/dataMemberTable', 'CmMemberController@dataMemberTable');
+
         Route::get('/logs/{id}', 'CmMemberController@logs')->name('cm-members.logs');
         Route::get('/{id}', 'CmMemberController@find')->name('cm-members.find');
         Route::get('public-update-permission-cm-member/{id}', 'CmMemberController@getPublicUpdatePermissionCmMember');

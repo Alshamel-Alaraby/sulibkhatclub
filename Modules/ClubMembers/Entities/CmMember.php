@@ -38,6 +38,7 @@ class CmMember extends Model
         return $this->belongsTo(CmMemberStatus::class, 'member_status_id');
     }
 
+
     public function sponsors()
     {
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponser::class, 'sponsor_id');
