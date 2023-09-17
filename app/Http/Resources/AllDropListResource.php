@@ -15,10 +15,9 @@ class AllDropListResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            'id' => $this->id ,
             'name' => $this->name ?? $this->title,
             'name_e' => $this->name_e ?? $this->title_e,
-   
         ];
     }
 }

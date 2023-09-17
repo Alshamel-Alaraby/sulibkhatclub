@@ -17,6 +17,17 @@ class Street extends Model
         // 'is_active' => '\App\Enums\IsActive',
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+            'is_active',
+            'avenue_id',
+        )->with('avenue:id,name,name_e');
+    }
+
     public function avenue()
     {
         return $this->belongsTo(Avenue::class);
@@ -40,14 +51,12 @@ class Street extends Model
             $relationsWithChildren[] = [
                 'relation' => 'customerBranches',
                 'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray()
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
             ];
         }
 
-
         return $relationsWithChildren;
     }
-
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
@@ -56,6 +65,6 @@ class Street extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Street')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

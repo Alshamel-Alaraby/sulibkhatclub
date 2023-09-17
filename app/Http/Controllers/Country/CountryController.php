@@ -30,7 +30,6 @@ class CountryController extends Controller
     public function all(Request $request)
     {
 
-
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', CountryResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
@@ -64,8 +63,6 @@ class CountryController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-
-
     public function delete($id)
     {
         $model = $this->modelInterface->find($id);
@@ -90,7 +87,6 @@ class CountryController extends Controller
 
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -144,7 +140,6 @@ class CountryController extends Controller
     {
         return DB::table("country_seeder")->get();
     }
-
 
     public function getDropDown(Request $request)
     {

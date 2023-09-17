@@ -22,6 +22,16 @@ class Avenue extends Model
         "company_id",
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name',
+            'name_e',
+            'is_active',
+            'country_id',
+            'governorate_id',
+            'city_id'
+        )->with(['country:id,name,name_e', 'governorate:id,name,name_e', 'city:id,name,name_e']);
+    }
 
     public function country()
     {
@@ -56,7 +66,6 @@ class Avenue extends Model
     //     $this->streets()->count() > 0;
     // }
 
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -65,22 +74,19 @@ class Avenue extends Model
             $relationsWithChildren[] = [
                 'relation' => 'customerBranches',
                 'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray()
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
             ];
         }
         if ($this->streets()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'streets',
                 'count' => $this->streets()->count(),
-                'ids' => $this->streets()->pluck('id')->toArray()
+                'ids' => $this->streets()->pluck('id')->toArray(),
             ];
         }
 
-
-
         return $relationsWithChildren;
     }
-
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

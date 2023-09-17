@@ -33,6 +33,22 @@ class Country extends Model implements HasMedia
         // "is_default" => '\App\Enums\IsDefault',
     ];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id', 'name',
+                'name_e',
+                'is_active',
+                'is_default',
+                "phone_key",
+                'national_id_length',
+                "long_name",
+                "long_name_e",
+                "short_code")
+            ->with('media');
+
+    }
+
     // relations
     public function governorates()
     {
@@ -99,7 +115,6 @@ class Country extends Model implements HasMedia
     //     return $h;
     // }
 
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -108,14 +123,14 @@ class Country extends Model implements HasMedia
             $relationsWithChildren[] = [
                 'relation' => 'avenues',
                 'count' => $this->avenues()->count(),
-                'ids' => $this->avenues()->pluck('id')->toArray()
+                'ids' => $this->avenues()->pluck('id')->toArray(),
             ];
         }
         if ($this->governorates()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'governorates',
                 'count' => $this->governorates()->count(),
-                'ids' => $this->governorates()->pluck('id')->toArray()
+                'ids' => $this->governorates()->pluck('id')->toArray(),
             ];
         }
 
@@ -123,42 +138,42 @@ class Country extends Model implements HasMedia
             $relationsWithChildren[] = [
                 'relation' => 'cities',
                 'count' => $this->cities()->count(),
-                'ids' => $this->cities()->pluck('id')->toArray()
+                'ids' => $this->cities()->pluck('id')->toArray(),
             ];
         }
         if ($this->banks()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'banks',
                 'count' => $this->banks()->count(),
-                'ids' => $this->banks()->pluck('id')->toArray()
+                'ids' => $this->banks()->pluck('id')->toArray(),
             ];
         }
         if ($this->rlstOwners()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'rlstOwners',
                 'count' => $this->rlstOwners()->count(),
-                'ids' => $this->rlstOwners()->pluck('id')->toArray()
+                'ids' => $this->rlstOwners()->pluck('id')->toArray(),
             ];
         }
         if ($this->externalSalesmen()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'externalSalesmen',
                 'count' => $this->externalSalesmen()->count(),
-                'ids' => $this->externalSalesmen()->pluck('id')->toArray()
+                'ids' => $this->externalSalesmen()->pluck('id')->toArray(),
             ];
         }
         if ($this->customerBranches()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'customerBranches',
                 'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray()
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
             ];
         }
         if ($this->Panels()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'Panels',
                 'count' => $this->Panels()->count(),
-                'ids' => $this->Panels()->pluck('id')->toArray()
+                'ids' => $this->Panels()->pluck('id')->toArray(),
             ];
         }
 

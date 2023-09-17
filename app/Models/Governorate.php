@@ -14,7 +14,18 @@ class Governorate extends Model
     protected $table = 'general_governorates';
     protected $guarded = ['id'];
 
-
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id',
+                'name',
+                'name_e',
+                'is_default',
+                'is_active',
+                'phone_key',
+                'country_id')
+            ->with('country:id,name,name_e');
+    }
 
     public function country()
     {
@@ -45,7 +56,6 @@ class Governorate extends Model
         return $this->hasMany(\Modules\BoardsRent\Entities\OrderDetails::class);
     }
 
-
     // public function hasChildren()
     // {
     //     return $this->avenues()->count() > 0 ||
@@ -64,14 +74,14 @@ class Governorate extends Model
             $relationsWithChildren[] = [
                 'relation' => 'avenues',
                 'count' => $this->avenues()->count(),
-                'ids' => $this->avenues()->pluck('id')->toArray()
+                'ids' => $this->avenues()->pluck('id')->toArray(),
             ];
         }
         if ($this->cities()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'cities',
                 'count' => $this->cities()->count(),
-                'ids' => $this->cities()->pluck('id')->toArray()
+                'ids' => $this->cities()->pluck('id')->toArray(),
             ];
         }
 
@@ -79,21 +89,21 @@ class Governorate extends Model
             $relationsWithChildren[] = [
                 'relation' => 'panels',
                 'count' => $this->panels()->count(),
-                'ids' => $this->panels()->pluck('id')->toArray()
+                'ids' => $this->panels()->pluck('id')->toArray(),
             ];
         }
         if ($this->customerBranches()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'customerBranches',
                 'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray()
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
             ];
         }
         if ($this->orderDetails()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'orderDetails',
                 'count' => $this->orderDetails()->count(),
-                'ids' => $this->orderDetails()->pluck('id')->toArray()
+                'ids' => $this->orderDetails()->pluck('id')->toArray(),
             ];
         }
 

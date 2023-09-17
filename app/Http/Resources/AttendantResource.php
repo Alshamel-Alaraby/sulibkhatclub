@@ -23,7 +23,7 @@ class AttendantResource extends JsonResource
             'id_number' => $this->id_number,
             'notes' => $this->notes,
             'customer_id' => $this->customer_id,
-            'customer' => collect($this->whenLoaded('customer'))->only(['id', 'name','name_e']),
+            'customer' => $this->customer
         ];
 
 

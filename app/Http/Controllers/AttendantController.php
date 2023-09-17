@@ -95,7 +95,7 @@ class AttendantController extends Controller
 
     }
 
-    
+
 
 
 }

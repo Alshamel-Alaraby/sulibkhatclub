@@ -22,8 +22,8 @@ class CityResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            "country" => new RelationCountryResource($this->country),
-            "governorate" =>new RelationGovernorateResource($this->governorate),
+            "country" =>$this->country,
+            "governorate" =>$this->governorate,
             'is_active' => $this->is_active,
         ];
     }

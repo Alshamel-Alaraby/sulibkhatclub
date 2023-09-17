@@ -908,9 +908,9 @@ Route::get('serial/branch', [SerialController::class, 'getSerialByBranchId']);
 
 Route::resource('branches', BranchController::class)->except('create', 'edit');
 Route::resource('serials', SerialController::class)->except('create', 'edit');
+Route::get('cities/get-drop-down', [CityController::class, 'getDropDown']);
 Route::resource('cities', CityController::class)->except('create', 'edit');
 Route::get('cities/logs/{id}', [CityController::class, 'logs']);
-Route::get('cities/get-drop-down', [CityController::class, 'getDropDown']);
 Route::post('cities/bulk-delete', [CityController::class, 'bulkDelete']);
 Route::resource('currencies', CurrencyController::class)->except('create', 'edit');
 Route::get('currencies/logs/{id}', [CurrencyController::class, 'logs']);

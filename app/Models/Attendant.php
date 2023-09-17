@@ -21,6 +21,13 @@ class Attendant extends Model
         return $this->belongsTo(GeneralCustomer::class, 'customer_id');
     }
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name','name_e','national_id','id_number','notes','customer_id')
+            ->with('customer:id,name,name_e');
+    }
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

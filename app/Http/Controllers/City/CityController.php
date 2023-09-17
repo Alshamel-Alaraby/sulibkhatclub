@@ -193,7 +193,6 @@ class CityController extends Controller
 
     public function getDropDown(Request $request)
     {
-
         $models = $this->repository->getName($request);
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

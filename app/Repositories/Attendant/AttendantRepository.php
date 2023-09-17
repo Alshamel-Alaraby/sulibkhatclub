@@ -15,7 +15,9 @@ class AttendantRepository implements AttendantInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model
+        ->data()
+        ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->customer_id)
         {
@@ -31,7 +33,7 @@ class AttendantRepository implements AttendantInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)

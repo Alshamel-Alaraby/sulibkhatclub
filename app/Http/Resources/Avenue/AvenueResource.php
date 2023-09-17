@@ -2,9 +2,6 @@
 
 namespace App\Http\Resources\Avenue;
 
-use App\Http\Resources\City\RelationCityResource;
-use App\Http\Resources\Country\RelationCountryResource;
-use App\Http\Resources\Governorate\RelationGovernorateResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AvenueResource extends JsonResource
@@ -23,11 +20,10 @@ class AvenueResource extends JsonResource
             'name' => $this->name,
             'name_e' => $this->name_e,
             'is_active' => $this->is_active,
-            'city' => new RelationCityResource($this->city),
-            'governorate' => new RelationGovernorateResource($this->governorate),
-            'country' =>new RelationCountryResource($this->country),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'city' => $this->city,
+            'governorate' => $this->governorate,
+            'country' => $this->country,
+
         ];
     }
 }

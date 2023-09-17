@@ -26,8 +26,6 @@ class CountryResource extends JsonResource
             "short_code" => $this->short_code,
             "phone_key" => $this->phone_key,
             "media" =>  isset($this->files) ? FileResource::collection($this->files) : null,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'national_id_length' => $this->national_id_length
         ];
     }

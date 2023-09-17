@@ -26,11 +26,11 @@ class AvenueController extends Controller
         return responseJson(200, 'success', new AvenueResource($model));
     }
 
-    public function all(AllRequest $request)
+    public function all(Request $request)
     {
-
+        
         $models = $this->modelInterface->all($request);
-        return responseJson(200, 'success', AvenueResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(AvenueRequest $request)

@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Governorate;
 
-use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\Country\RelationCountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GovernorateResource extends JsonResource
@@ -24,9 +22,7 @@ class GovernorateResource extends JsonResource
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,
             "phone_key" => $this->phone_key,
-            "country" => new RelationCountryResource($this->country),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            "country" => $this->country,
         ];
     }
 }

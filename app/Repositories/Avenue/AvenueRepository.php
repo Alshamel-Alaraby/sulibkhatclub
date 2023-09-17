@@ -16,7 +16,7 @@ class AvenueRepository implements AvenueInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -27,7 +27,7 @@ class AvenueRepository implements AvenueInterface
 
     public function find($id)
     {
-        return $this->model->with(["governorate", 'city', 'country'])->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -41,7 +41,7 @@ class AvenueRepository implements AvenueInterface
 
     public function update($request, $id)
     {
-     
+
         return DB::transaction(function () use ($id, $request) {
             $this->model->where("id", $id)->update($request->all());
             return $this->model->find($id);
@@ -65,11 +65,20 @@ class AvenueRepository implements AvenueInterface
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
 
-
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 'active');
+
+        if ($request->country_id) {
+            $models->where('country_id', $request->country_id);
+        }
+
+        if ($request->governorate_id) {
+            $models->where('governorate_id', $request->governorate_id);
+        }
+        if ($request->city_id) {
+            $models->where('city_id', $request->city_id);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

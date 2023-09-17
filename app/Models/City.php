@@ -14,6 +14,16 @@ class City extends Model
 
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id',
+                'name',
+                'name_e',
+                'is_active',
+                'country_id', 'governorate_id')
+            ->with('country:id,name,name_e', 'governorate:id,name,name_e');
+    }
 
     public function governorate()
     {
@@ -41,9 +51,8 @@ class City extends Model
 
     public function Panels()
     {
-        return $this->hasMany(Panel::class,'city_id');
+        return $this->hasMany(Panel::class, 'city_id');
     }
-
 
     public function hasChildren()
     {
@@ -53,14 +62,14 @@ class City extends Model
             $relationsWithChildren[] = [
                 'relation' => 'avenues',
                 'count' => $this->avenues()->count(),
-                'ids' => $this->avenues()->pluck('id')->toArray()
+                'ids' => $this->avenues()->pluck('id')->toArray(),
             ];
         }
         if ($this->customerBranches()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'customerBranches',
                 'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray()
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
             ];
         }
 
@@ -68,14 +77,14 @@ class City extends Model
             $relationsWithChildren[] = [
                 'relation' => 'rlstOwners',
                 'count' => $this->rlstOwners()->count(),
-                'ids' => $this->rlstOwners()->pluck('id')->toArray()
+                'ids' => $this->rlstOwners()->pluck('id')->toArray(),
             ];
         }
         if ($this->Panels()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'Panels',
                 'count' => $this->Panels()->count(),
-                'ids' => $this->Panels()->pluck('id')->toArray()
+                'ids' => $this->Panels()->pluck('id')->toArray(),
             ];
         }
 

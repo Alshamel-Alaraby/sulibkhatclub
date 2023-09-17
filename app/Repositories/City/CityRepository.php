@@ -14,14 +14,14 @@ class CityRepository implements CityRepositoryInterface
     }
     public function getAll($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-        if ($request->country_id){
-            $models->where('country_id',$request->country_id);
-        }
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        if ($request->country_id) {
+            $models->where('country_id', $request->country_id);
+        } // تتحذف بعد النهايه
 
-        if ($request->governorate_id){
-            $models->where('governorate_id',$request->governorate_id);
-        }
+        if ($request->governorate_id) {
+            $models->where('governorate_id', $request->governorate_id);
+        } // تتحذف بعد النهايه
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -79,8 +79,15 @@ class CityRepository implements CityRepositoryInterface
 
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-   
+        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 1);
+
+        if ($request->country_id) {
+            $models->where('country_id', $request->country_id);
+        }
+
+        if ($request->governorate_id) {
+            $models->where('governorate_id', $request->governorate_id);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

@@ -20,7 +20,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-    protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
+//    protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
 
 
 
