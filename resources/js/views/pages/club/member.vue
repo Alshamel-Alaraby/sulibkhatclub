@@ -974,12 +974,15 @@ export default {
                                     <td>
                                         {{ data.amount }}
                                     </td>
-                                    <td v-if="data.prefix == 'old'">
-                                        {{ `${data.year_from}-${data.branch_id}-${data.document_id}-${data.prefix}-${data.serial_number}` }}
+                                    <td>
+                                        {{ data.document_no }}
                                     </td>
-                                    <td v-else>
-                                        {{data.prefix}}
-                                    </td>
+<!--                                    <td v-if="data.prefix == 'old'">-->
+<!--                                        {{ `${data.year_from}-${data.branch_id}-${data.document_id}-${data.prefix}-${data.serial_number}` }}-->
+<!--                                    </td>-->
+<!--                                    <td v-else>-->
+<!--                                        {{data.prefix}}-->
+<!--                                    </td>-->
                                 </tr>
 
                                 </tbody>
