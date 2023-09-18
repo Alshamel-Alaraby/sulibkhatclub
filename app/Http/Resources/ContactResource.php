@@ -25,12 +25,9 @@ class ContactResource extends JsonResource
             "model_type" => $this->model_type,
             'socials' => $this->socials,
             'phones' => $this->phones,
-            // 'job'=>collect($this->whenLoaded('job')),
-            // 'priority'=>collect($this->whenLoaded('priority')),
-            'job' => new ScreenTreePropertyResource($this->job),
-            'priority' => new ScreenTreePropertyResource($this->priority),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'job' => $this->job,
+            'priority' => $this->priority,
+
 
         ];
     }

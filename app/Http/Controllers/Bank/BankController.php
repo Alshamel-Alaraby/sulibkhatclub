@@ -30,8 +30,6 @@ class BankController extends Controller
 
     public function all(AllRequest $request)
     {
-
-
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', BankResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
@@ -40,7 +38,7 @@ class BankController extends Controller
     {
 //        return $request;
         $model = $this->modelInterface->create($request);
-        return responseJson(200, 'success', new BankResource($model));
+        return responseJson(200, 'success');
     }
 
     public function update(BankRequest $request, $id)
@@ -51,7 +49,7 @@ class BankController extends Controller
         }
         $this->modelInterface->update($request, $id);
         $model->refresh();
-        return responseJson(200, 'success', new BankResource($model));
+        return responseJson(200, 'success');
     }
 
     public function logs($id)

@@ -11,14 +11,15 @@ class Bank extends Model
 {
     use HasFactory, LogTrait, SoftDeletes;
 
-    protected $table="general_banks";
-    protected $fillable = [
-        'name',
-        'name_e',
-        'country_id',
-        'swift_code',
-        "company_id"
-    ];
+    protected $table = "general_banks";
+    protected $guarded = ['id'];
+
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id', 'name', 'name_e', 'swift_code', 'country_id')
+            ->with('country:id,name,name_e');
+    }
 
     public function country()
     {
@@ -43,10 +44,9 @@ class Bank extends Model
             $relationsWithChildren[] = [
                 'relation' => 'bankAccounts',
                 'count' => $this->bankAccounts()->count(),
-                'ids' => $this->bankAccounts()->pluck('id')->toArray()
+                'ids' => $this->bankAccounts()->pluck('id')->toArray(),
             ];
         }
-
 
         return $relationsWithChildren;
     }

@@ -16,25 +16,26 @@ class Branch extends Model
 
     protected $guarded = [];
 
-    // protected $casts = [
-    //     'is_active' => 'App\Enums\IsActive',
-    // ];
-
-    // public function getIsActive()
-    // {
-    //     return $this->is_active == 1 ? 'Active' : 'Non Active';
-    // }
-
-  
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id', 'name', 'name_e', 'is_active', 'parent_id')
+            ->with([
+                'parent:id,name,name_e',
+                'children',
+                'serials',
+                'stores',
+            ]);
+    }
 
     public function stores()
     {
-        return $this->hasMany(Store::class,'branch_id');
+        return $this->hasMany(Store::class, 'branch_id');
     }
 
     public function serials()
     {
-        return $this->hasMany(Serial::class,'branch_id');
+        return $this->hasMany(Serial::class, 'branch_id');
     }
 
     public function children()

@@ -29,7 +29,6 @@ class BranchController extends Controller
 
     public function store(BranchRequest $request)
     {
-        cacheForget('branches');
         $this->repository->create($request->validated());
         return responseJson(200, __('done'));
 

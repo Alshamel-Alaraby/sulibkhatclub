@@ -10,19 +10,15 @@ class Contact extends Model
 {
     use HasFactory, LogTrait;
     protected $table = 'general_contacts';
-    protected $fillable = [
-        'name',
-        'name_e',
-        'description',
-        'description_e',
-        'socials',
-        'phones',
-        'job_id',
-        'priority_id',
-        'is_active',
-        'company_id',
-    ];
+    protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e',
+            'description', 'description_e', 'model_id',
+            'model_type', 'socials', 'phones', 'job_id', 'priority_id')
+            ->with('job:id,screen_id,property_id', 'priority:id,screen_id,property_id');
+    }
 
     //  get set attributes
 

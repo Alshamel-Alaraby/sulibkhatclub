@@ -33,7 +33,7 @@ class BrandController extends Controller
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success', new BrandResource($model));
+        return responseJson(200, 'success');
     }
 
     public function update(BrandRequest $request, $id)
@@ -44,7 +44,7 @@ class BrandController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new BrandResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {

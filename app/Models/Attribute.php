@@ -16,7 +16,11 @@ class Attribute extends Model
     protected $guarded = ['id'];
 
 
-
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name','name_e');
+    }
 
     public function children()
     {

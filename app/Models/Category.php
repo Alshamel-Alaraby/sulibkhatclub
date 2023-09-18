@@ -15,13 +15,12 @@ class Category extends Model
 
     protected $table = 'general_categories';
 
-    protected $fillable = [
-        'id',
-        'name',
-        'name_e',
-        'company_id',
+    protected $guarded = ['id'];
 
-    ];
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e');
+    }
 
     protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total','item_purchased','total_purchased'];
 

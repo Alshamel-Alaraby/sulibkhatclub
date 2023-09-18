@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Bank;
 
-use App\Http\Resources\Country\CountryResource;
-use App\Http\Resources\Country\RelationCountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BankResource extends JsonResource
@@ -22,10 +20,9 @@ class BankResource extends JsonResource
             'name' => $this->name,
             'name_e' => $this->name_e,
             'swift_code' => $this->swift_code,
-            "country_id"=>$this->country_id,
-            "country" => new RelationCountryResource($this->country),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            "country_id" => $this->country_id,
+            "country" => $this->country,
+
         ];
     }
 }

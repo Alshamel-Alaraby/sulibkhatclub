@@ -9,7 +9,13 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
+
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e', 'is_active', 'client_id','url', 'logo','address', 'phone', 'cr', 'tax_id',  'vat_no', 'email','website'
+        );
+    }
 
     public function stores()
     {

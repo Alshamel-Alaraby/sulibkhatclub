@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Attribute\AttributeRequest;
 use App\Http\Resources\Attribute\AttributeResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class AttributeController extends Controller
 {
@@ -24,22 +23,18 @@ class AttributeController extends Controller
         return responseJson(200, 'success', new AttributeResource($model));
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', AttributeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-
     public function create(AttributeRequest $request)
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success', new AttributeResource($model));
+        return responseJson(200, 'success');
     }
-
-
 
     public function update(AttributeRequest $request, $id)
     {
@@ -49,7 +44,7 @@ class AttributeController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new AttributeResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {
@@ -85,7 +80,6 @@ class AttributeController extends Controller
 
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -134,8 +128,6 @@ class AttributeController extends Controller
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
     }
-
-    
 
 //     public function delete($id)
 //     {

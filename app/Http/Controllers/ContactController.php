@@ -18,7 +18,7 @@ class ContactController extends Controller
 
     public function find($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->data()->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -28,7 +28,7 @@ class ContactController extends Controller
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -44,7 +44,7 @@ class ContactController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new ContactResource($model));
+        return responseJson(200, 'created');
 
     }
 
@@ -58,7 +58,7 @@ class ContactController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new ContactResource($model));
+        return responseJson(200, 'updated');
     }
 
     public function logs($id)

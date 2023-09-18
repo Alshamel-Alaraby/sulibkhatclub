@@ -18,7 +18,6 @@ class AttributeResource extends JsonResource
             'id' =>$this->id,
             'name' =>$this->name,
             'name_e' =>$this->name_e,
-            'company_id' =>$this->company_id,
         ];
     }
 }

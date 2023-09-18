@@ -14,22 +14,21 @@ class BranchRepository implements BranchRepositoryInterface
     }
     public function getAllBranches($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'created_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'created_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->document_id) {
             $models->whereHas('serials', function ($q) use ($request) {
                 $q->where('document_id', $request->document_id);
             });
-        }
+        } //للحذف عند النهايه
 
         if ($request->notParent) {
             $models->whereNotNull('parent_id');
-        }
-
+        }//للحذف عند النهايه
 
         if ($request->products) {
             $models->whereHas('products')->whereNotNull('parent_id');
-        }
+        }//للحذف عند النهايه
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -42,20 +41,18 @@ class BranchRepository implements BranchRepositoryInterface
     {
         DB::transaction(function () use ($data) {
             $this->model->create($data);
-            // cacheForget("branches");
         });
     }
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function update($data, $id)
     {
         DB::transaction(function () use ($id, $data) {
             $this->model->where("id", $id)->update($data);
-            // $this->forget($id);
         });
     }
     public function logs($id)
@@ -66,22 +63,9 @@ class BranchRepository implements BranchRepositoryInterface
     {
         $model = $this->find($id);
         if ($model) {
-            // $this->forget($id);
             $model->delete();
         }
     }
-
-    // private function forget($id)
-    // {
-    //     $keys = [
-    //         "branches",
-    //         "branches_" . $id,
-    //     ];
-    //     foreach ($keys as $key) {
-    //         cacheForget($key);
-    //     }
-
-    // }
 
     public function processJsonData(array $data)
     {
@@ -145,9 +129,21 @@ class BranchRepository implements BranchRepositoryInterface
 
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'created_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 1);
 
+        if ($request->document_id) {
+            $models->whereHas('serials', function ($q) use ($request) {
+                $q->where('document_id', $request->document_id);
+            });
+        }
 
+        if ($request->notParent) {
+            $models->whereNotNull('parent_id');
+        }
+
+        if ($request->products) {
+            $models->whereHas('products')->whereNotNull('parent_id');
+        }
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

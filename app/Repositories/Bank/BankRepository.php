@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\DB;
 class BankRepository implements BankInterface
 {
 
-    public function __construct(private \App\Models\Bank$model)
+    public function __construct(private \App\Models\Bank $model)
     {}
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -23,7 +23,7 @@ class BankRepository implements BankInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -67,10 +67,11 @@ class BankRepository implements BankInterface
 
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e')->when($request->country_id, function ($query) use ($request) {
+            $query->where('country_id', $request->country_id);
+        });
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

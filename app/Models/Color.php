@@ -10,16 +10,15 @@ use Spatie\Activitylog\LogOptions;
 
 class Color extends Model
 {
-    use HasFactory, SoftDeletes, LogTrait   ;
+    use HasFactory, SoftDeletes, LogTrait;
     protected $table = 'general_colors';
 
+    protected $guarded = ['id'];
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'is_active',
-        "company_id"
-    ];
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e', 'is_active');
+    }
 
     protected $casts = [
         'is_active' => '\App\Enums\IsActive',

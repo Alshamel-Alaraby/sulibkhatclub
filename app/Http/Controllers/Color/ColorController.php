@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Color;
 
-use App\Http\Requests\Color\StoreColorRequest;
-use App\Http\Requests\Color\UpdateColorRequest;
 use App\Http\Requests\ColorRequest;
 use App\Http\Resources\Color\ColorResource;
 use Illuminate\Http\Request;
@@ -18,29 +16,19 @@ class ColorController extends Controller
 
     public function find($id)
     {
-        $model = cacheGet('colors_' . $id);
+
+        $model = $this->modelInterface->find($id);
         if (!$model) {
-            $model = $this->modelInterface->find($id);
-            if (!$model) {
-                return responseJson(404, __('message.data not found'));
-            } else {
-                cachePut('colors_' . $id, $model);
-            }
+            return responseJson(404, __('message.data not found'));
+
         }
         return responseJson(200, 'success', new ColorResource($model));
     }
 
     public function all(Request $request)
     {
-        if (count($_GET) == 0) {
-            $models = cacheGet('colors');
-            if (!$models) {
-                $models = $this->modelInterface->all($request);
-                cachePut('colors', $models);
-            }
-        } else {
-            $models = $this->modelInterface->all($request);
-        }
+
+        $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', ColorResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

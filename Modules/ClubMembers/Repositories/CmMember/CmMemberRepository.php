@@ -3,6 +3,7 @@
 namespace Modules\ClubMembers\Repositories\CmMember;
 
 use App\Models\FinancialYear;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
@@ -322,15 +323,17 @@ class CmMemberRepository implements CmMemberInterface
 
             // filter the "saaaaary" members which have at least one last_transaction_date
             // that its last_transaction_year as the financial year
-              $running_member_all = $this->model
+
+            $running_member_all = $this->model
                 ->where('member_status_id', 1)	// ساري
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
                         ->where('last_transaction_year', $financialyear->year) ;// int ? int
                 })->orWhere('member_kind_id',2)->get();
+            $time = strtotime('2023/02/28');
 
-              // allowed_vote_date
-            $date_allowed_vote_date = '2023-02-28';
+            $date_allowed_vote_date = date('Y-m-d',$time);
+
 
 
             $update_3ady_members = $this->model
@@ -356,31 +359,36 @@ class CmMemberRepository implements CmMemberInterface
                 ])
             ;
 
+
+
+
             foreach ($running_member_all as  $member){
+
+
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
                 foreach ($settings->reverse() as $setting){
 
-                        if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->cm_financial_status_id && $diffYears >= $setting->membership_period )
-                        {
+                    if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period)
+                    {
 
-                            $member->update
-                            ([
-                                'members_permissions_id' => $setting->cm_permissions_id,
-                            ]);
-                            //   }
+                        $member->update
+                        ([
+                            'members_permissions_id' => $setting->cm_permissions_id,
+                        ]);
+                        //   }
 
-                            break; // exit the for each on the permissions => he/she can NOT achieve better
-                            //}
+                        break; // exit the for each on the permissions => he/she can NOT achieve better
+                        //}
 
-                        }else{
-                            $member->update
-                            ([
-                                'members_permissions_id' => 1,
-                            ]);
+                    }else{
+                        $member->update
+                        ([
+                            'members_permissions_id' => 1,
+                        ]);
 
-                        }
+                    }
 
                 }
 

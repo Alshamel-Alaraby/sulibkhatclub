@@ -77,81 +77,61 @@ class PermissionDb extends Command
 
             // filter the "saaaaary" members which have at least one last_transaction_date
             // that its last_transaction_year as the financial year
-            $running_member_all = CmMember::
-                where('member_status_id', 1)	// ساري
+            $running_member_all = CmMember::where('member_status_id', 1)	// ساري
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
                         ->where('last_transaction_year', $financialyear->year) ;// int ? int
                 })->orWhere('member_kind_id',2)->get();
 
+            // allowed_vote_date
+            $date_allowed_vote_date = '2023-02-28';
+
+
+            $update_3ady_members = CmMember::where('member_status_id', 1)	// ساري
+                ->where('member_kind_id', 1) // عادي
+                ->whereNotNull('last_transaction_date') // عنده transaction
+                ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
+                ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
+                ->update
+                ([
+                    'financial_status_id'    => 3,  //مسدد في الموعد
+                ]);
+
+            $update_3ady_members_2 = CmMember::where('member_status_id', 1)	// ساري
+                ->where('member_kind_id', 1) // عادي
+                ->whereNotNull('last_transaction_date') // عنده transaction
+                ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
+                ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
+                ->update
+                ([
+                    'financial_status_id'    => 4,  //مسدد في الموعد
+                ])
+            ;
+
             foreach ($running_member_all as  $member){
+                $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
+                $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
-
-                $paidontime = false;
 
                 foreach ($settings->reverse() as $setting){
 
-                    if( $member->member_kind_id  == $setting->cm_members_type_id )
+                    if($member->member_kind_id  == $setting->cm_members_type_id  && $diffYears >= $setting->membership_period )
                     {
-                        $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
-                        $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
-                        $yearGlued_allowed_vote_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_vote_date)); // format: (yyyy-mm-dd)
-                        $yearGlued_allowed_subscription_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_subscription_date)); // format: (yyyy-mm-dd)
 
-                        if ($member->last_transaction_date){
+                        $member->update
+                        ([
+                            'members_permissions_id' => $setting->cm_permissions_id,
+                        ]);
+                        //   }
 
-                            $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d') ; // format: (yyyy-mm-dd)
+                        break; // exit the for each on the permissions => he/she can NOT achieve better
+                        //}
 
-                            if ( $Last_Member_transaction <= $yearGlued_allowed_vote_date )
-                            {
-                                $member->update
-                                ([
-                                    'financial_status_id'    => 3,  //مسدد في الموعد
-                                ]);
-
-                                $paidontime = true;
-
-                            }else// ( $Last_Member_transaction > $yearGlued_allowed_vote_date )
-                            {
-                                $member->update
-                                ([
-                                    'financial_status_id'    => 4,  // مسدد بعد الموعد
-                                ]);
-
-                            }
-
-
-                        }
-                        if($setting->cm_financial_status_id == 1){
-                            $paidontime = true; // كانه داااافع
-                        } // ليس مطلوب السداد
-
-                        // اعطاء حق لعضو عادي او مؤسس بناءا علي مدة الاشتراك
-
-                        if($paidontime == true && $diffYears >= $setting->membership_period )
-                        {
-
-                            //if ($Last_Member_transaction <= $yearGlued_allowed_vote_date)
-                            //{
-                            //   if ($member->member_kind_id == 1){
-                            $member->update
-                            ([
-                                'members_permissions_id' => $setting->cm_permissions_id,
-                            ]);
-                            //   }
-
-                            break; // exit the for each on the permissions => he/she can NOT achieve better
-                            //}
-
-                        }else{
-                            $member->update
-                            ([
-                                'members_permissions_id' => 1,
-                            ]);
-
-                        }
-
-
+                    }else{
+                        $member->update
+                        ([
+                            'members_permissions_id' => 1,
+                        ]);
 
                     }
 

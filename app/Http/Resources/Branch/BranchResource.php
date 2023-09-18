@@ -19,12 +19,11 @@ class BranchResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'company' => $this->company_id,
             'name' => $this->name,
             'name_e' => $this->name_e,
             'is_active' => $this->is_active,
             'parent_id' => $this->parent_id,
-            "parent" => new RelationBranchResource($this->parent),
+            "parent" => $this->parent,
             "children" =>  RelationBranchResource::collection($this->children),
             "serials" =>  RelationSerialResource::collection($this->serials),
             "stores" => RelationStoreResource::collection($this->stores),
