@@ -12,6 +12,7 @@
     >
         <form>
             <loader size="large" v-if="isCustom && !isPage" />
+            <loader updateData="true" size="large" v-if="isLoader"/>
             <div class="mb-3 d-flex justify-content-end">
                 <b-button
                     variant="success"
