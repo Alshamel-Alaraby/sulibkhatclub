@@ -33,6 +33,7 @@ class CmMember extends Model
         }
     }
 
+
     public function status()
     {
         return $this->belongsTo(CmMemberStatus::class, 'member_status_id');
@@ -74,6 +75,8 @@ class CmMember extends Model
             ->useLogName('Sponser')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
+
+
 
     // public function scopeTransaction($query)
     // {
