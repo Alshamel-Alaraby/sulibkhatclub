@@ -11454,9 +11454,7 @@ var render = function () {
                 },
                 [
                   _vm.isLoader
-                    ? _c("loader", {
-                        attrs: { updateData: "true", size: "large" },
-                      })
+                    ? _c("loader", { attrs: { size: "large" } })
                     : _vm._e(),
                   _vm._v(" "),
                   _c(

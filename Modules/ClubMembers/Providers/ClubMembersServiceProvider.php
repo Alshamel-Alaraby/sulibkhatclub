@@ -87,6 +87,7 @@ class ClubMembersServiceProvider extends ServiceProvider
             \Modules\ClubMembers\Console\FullNameDb::class,
             \Modules\ClubMembers\Console\CreateMembersDb::class,
             \Modules\ClubMembers\Console\MemberTypeIdDb::class,
+            \Modules\ClubMembers\Console\PermissionDb::class,
         ]);
 
     }
