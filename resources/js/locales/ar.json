@@ -1472,6 +1472,7 @@
         "Subscriptions": "الاشتراكات",
         "SubscriptionsRequest": "طلبات الاشتراكات",
         "SubscriptionsWaiting": " قيد الانتظار",
-        "SubscriptionsRejected": "المرفوضين"
+        "SubscriptionsRejected": "المرفوضين",
+        "ReceiptNumber": "رقم الايصال"
     }
 }

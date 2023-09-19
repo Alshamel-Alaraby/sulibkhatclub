@@ -945,7 +945,7 @@ export default {
                                         </th>
                                         <th>
                                             <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.serial_number') }}</span>
+                                                <span>{{ $t('general.ReceiptNumber') }}</span>
                                             </div>
                                         </th>
                                     </tr>

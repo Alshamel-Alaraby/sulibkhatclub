@@ -1483,6 +1483,7 @@
         "Subscriptions": "Subscriptions",
         "SubscriptionsRequest": "Subscription Requests",
         "SubscriptionsWaiting": "Pending",
-        "SubscriptionsRejected": "Rejected"
+        "SubscriptionsRejected": "Rejected",
+        "ReceiptNumber": "Receipt Number"
     }
 }
