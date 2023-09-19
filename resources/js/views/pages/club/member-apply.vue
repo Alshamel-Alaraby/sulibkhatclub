@@ -1387,13 +1387,15 @@ export default {
                       <label class="control-label">
                         {{ getCompanyKey("apply_membership_date") }}
                       </label>
-                      <date-picker
-                        type="date"
-                        v-model="applying_date"
-                        defaultValue
-                        @change="v_dateCreate($event, 'applying_date')"
-                        confirm
-                      ></date-picker>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            v-model="$v.create.applying_date.$model"
+                            :class="{ 'is-invalid':  $v.create.applying_date.$error || errors.applying_date,
+                             'is-valid':!$v.create.applying_date.$invalid &&!errors.applying_date,
+                            }"
+                        >
                       <template v-if="errors.applying_date">
                         <ErrorMessage
                           v-for="(errorMessage, index) in errors.applying_date"
@@ -1588,16 +1590,18 @@ export default {
                       <label class="control-label">
                         {{ getCompanyKey("member_birth_date") }}
                       </label>
-                      <date-picker
-                        type="date"
-                        v-model="birth_date"
-                        defaultValue
-                        @change="v_dateCreate($event, 'birth_date')"
-                        confirm
-                      ></date-picker>
-                      <template v-if="errors.date">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            v-model="$v.create.birth_date.$model"
+                            :class="{ 'is-invalid':  $v.create.birth_date.$error || errors.birth_date,
+                             'is-valid':!$v.create.birth_date.$invalid &&!errors.birth_date,
+                            }"
+                        >
+                      <template v-if="errors.birth_date">
                         <ErrorMessage
-                          v-for="(errorMessage, index) in errors.date"
+                          v-for="(errorMessage, index) in errors.birth_date"
                           :key="index"
                         >
                           {{ errorMessage }}
@@ -2372,13 +2376,15 @@ export default {
                                 <label class="control-label">
                                   {{ getCompanyKey("apply_membership_date") }}
                                 </label>
-                                <date-picker
-                                  type="date"
-                                  v-model="applying_date"
-                                  defaultValue
-                                  @change="v_dateEdit($event, 'applying_date')"
-                                  confirm
-                                ></date-picker>
+                                  <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="yyyy-mm-dd"
+                                      v-model="$v.edit.applying_date.$model"
+                                      :class="{ 'is-invalid':  $v.edit.applying_date.$error || errors.applying_date,
+                                     'is-valid':!$v.edit.applying_date.$invalid &&!errors.applying_date,
+                                    }"
+                                  >
                                 <template v-if="errors.applying_date">
                                   <ErrorMessage
                                     v-for="(
@@ -2616,13 +2622,15 @@ export default {
                                 <label class="control-label">
                                   {{ getCompanyKey("member_birth_date") }}
                                 </label>
-                                <date-picker
-                                  type="date"
-                                  v-model="birth_date"
-                                  defaultValue
-                                  @change="v_dateEdit($event, 'birth_date')"
-                                  confirm
-                                ></date-picker>
+                                  <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="yyyy-mm-dd"
+                                      v-model="$v.edit.birth_date.$model"
+                                      :class="{ 'is-invalid':  $v.edit.birth_date.$error || errors.birth_date,
+                                     'is-valid':!$v.edit.birth_date.$invalid &&!errors.birth_date,
+                                    }"
+                                  >
                                 <template v-if="errors.date">
                                   <ErrorMessage
                                     v-for="(errorMessage, index) in errors.date"

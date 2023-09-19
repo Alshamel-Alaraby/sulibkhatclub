@@ -671,13 +671,15 @@ export default {
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_session_date") }}
                                             </label>
-                                            <date-picker
-                                                type="date"
-                                                v-model="session_date"
-                                                defaultValue
-                                                @change="v_dateEdit($event, 'session_date')"
-                                                confirm
-                                            ></date-picker>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="yyyy-mm-dd"
+                                                v-model="$v.approve.session_date.$model"
+                                                :class="{ 'is-invalid':  $v.approve.session_date.$error || errors.session_date,
+                                                 'is-valid':!$v.approve.session_date.$invalid &&!errors.session_date,
+                                                }"
+                                            >
                                             <template v-if="errors.session_date">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.session_date"
@@ -731,16 +733,12 @@ export default {
                                                 <label class="control-label">
                                                     {{ $t('general.Dateofreceipt') }}
                                                 </label>
-                                                <date-picker
-                                                    type="date"
-                                                    disabled
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder="yyyy-mm-dd"
                                                     v-model="date[index].membership_date"
-                                                    defaultValue
-                                                    @change="v_dateEditIndex($event, 'membership_date', index)"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    confirm
-                                                ></date-picker>
+                                                >
                                                 <template v-if="errors.membership_date">
                                                     <ErrorMessage v-for="( errorMessage, index ) in errors.membership_date" :key="index">
                                                         {{ errorMessage }}

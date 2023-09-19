@@ -119,7 +119,7 @@ class CmTransactionController extends Controller
     public function checkDateMemberTransaction(Request $request)
     {
 
-        $models['data'] = CmTransaction::whereDate('date', '<=', $request->date)->where('year_to', $request->year)->paginate($request->per_page);
+        $models['data'] = CmTransaction::whereDate('date', '<=', $request->date)->where('year', $request->year)->paginate($request->per_page);
         $models['paginate'] = true;
         return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
@@ -180,7 +180,7 @@ class CmTransactionController extends Controller
     public function memberTransactionPaidAfterDate(Request $request)
     {
 
-        $models['data'] = CmTransaction::whereDate('date', '>', $request->date)->where('year_to', $request->year)->paginate($request->per_page);
+        $models['data'] = CmTransaction::whereDate('date', '>', $request->date)->where('year', $request->year)->paginate($request->per_page);
         $models['paginate'] = true;
         return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 

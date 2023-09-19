@@ -368,16 +368,16 @@ export default {
                                     </button>
 
                                 </div>
-                                <b-button
-                                    variant="secondary"
-                                    v-if="installmentStatus.length > 0"
-                                    :disabled="isLoader"
-                                    class="btn-sm mx-1 font-weight-bold"
-                                    @click="changeStatus"
-                                >
-                                    {{ $t('general.changeStatus') }}
-                                    <i class="mdi mdi-square-edit-outline"></i>
-                                </b-button>
+<!--                                <b-button-->
+<!--                                    variant="secondary"-->
+<!--                                    v-if="installmentStatus.length > 0"-->
+<!--                                    :disabled="isLoader"-->
+<!--                                    class="btn-sm mx-1 font-weight-bold"-->
+<!--                                    @click="changeStatus"-->
+<!--                                >-->
+<!--                                    {{ $t('general.changeStatus') }}-->
+<!--                                    <i class="mdi mdi-square-edit-outline"></i>-->
+<!--                                </b-button>-->
                                 <!-- end create and printer -->
                             </div>
                             <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center  justify-content-end">
@@ -495,6 +495,7 @@ export default {
                                             <input
                                                 type="text"
                                                 class="form-control"
+                                                placeholder="yyyy-mm-dd"
                                                 v-model="$v.create.date.$model"
                                                 :class="{ 'is-invalid':  $v.create.date.$error || errors.date,
                                                     'is-valid':!$v.create.date.$invalid &&!errors.date,
@@ -516,6 +517,7 @@ export default {
                                             </label>
                                             <input
                                                 type="text"
+                                                placeholder="yyyy"
                                                 class="form-control"
                                                 v-model="$v.create.year.$model"
                                                 :class="{ 'is-invalid':  $v.create.year.$error || errors.year,
