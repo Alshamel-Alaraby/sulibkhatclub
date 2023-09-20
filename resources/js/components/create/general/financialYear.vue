@@ -173,6 +173,37 @@
                         </template>
                     </div>
                 </div>
+                <div class="col-md-12" v-if="isVisible('due_date')">
+                    <div class="form-group">
+                        <label class="control-label">
+                            {{ $t('general.instalmentDate') }}
+                            <span
+                                v-if="isRequired('due_date')"
+                                class="text-danger"
+                            >*</span
+                            >
+                        </label>
+                        <date-picker
+                            v-model="create.due_date"
+                            type="date"
+                            format="YYYY-MM-DD"
+                            valueType="format"
+                        ></date-picker>
+                        <div
+                            v-if="!$v.create.due_date.required"
+                            class="invalid-feedback"
+                        >
+                            {{ $t("general.fieldIsRequired") }}
+                        </div>
+                        <template v-if="errors.due_date">
+                            <ErrorMessage
+                                v-for="(errorMessage, index) in errors.due_date"
+                                :key="index"
+                            >{{ errorMessage }}</ErrorMessage
+                            >
+                        </template>
+                    </div>
+                </div>
                 <div class="col-md-12" v-if="isVisible('start_date')">
                     <div class="form-group">
                         <label class="control-label">
@@ -303,6 +334,7 @@ export default {
                 custom_date_end: null,
                 is_active: 0,
                 year: '',
+                due_date: this.formatDate(new Date())
             },
             errors: {},
             is_disabled: false,
@@ -343,6 +375,11 @@ export default {
             year: {
                 required: requiredIf(function (model) {
                     return this.isRequired("year");
+                })
+            },
+            due_date: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("due_date");
                 })
             },
         },
@@ -395,6 +432,7 @@ export default {
                 custom_date_end: null,
                 is_active: 0,
                 year: '',
+                due_date: ''
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -423,6 +461,7 @@ export default {
                         this.create.end_date = financialYear.end_date;
                         this.create.is_active = financialYear.is_active;
                         this.create.year = financialYear.year;
+                        this.create.due_date = financialYear.due_date;
                     }
                 }
             },50);
@@ -444,7 +483,7 @@ export default {
             } else {
                 this.isLoader = true;
                 this.errors = {};
-                const { name, name_e, start_date, end_date,is_active,year } = this.create;
+                const { name, name_e, start_date, end_date,is_active,year,due_date } = this.create;
                 if(this.type != 'edit') {
                     adminApi
                         .post(this.url, {

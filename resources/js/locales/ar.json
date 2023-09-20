@@ -1474,6 +1474,9 @@
         "SubscriptionsWaiting": " قيد الانتظار",
         "SubscriptionsRejected": "المرفوضين",
         "ReceiptNumber": "رقم الايصال",
+        "serial_name": "اسم المسلسل",
+        "Year": "السنه",
+        "Payment-report-over-period": "تقرير الدفع خلال فترة",
         "DocumentNumber": "رقم السند",
         "memberName": "اسم العضو",
         "MembershipNo": "رقم العضوية",
@@ -1493,6 +1496,11 @@
         "addSubscription": "اضف اشتراك",
         "NameMembershipApplicant": "اسم طالب العضوية",
         "MembershipApplicant": "طالب العضوية",
-        "GroupPaymentReport": "تقرير سداد مجموعة"
+        "GroupPaymentReport": "تقرير سداد مجموعة",
+        "duplicate": "التكرار",
+        "DuplicatbondsReport": "تقرير السندات المكررة",
+        "typeMember": "نوع العضويه",
+        "SearchDocument": "بحث عن المسدد",
+        "Searchdd": "السندات المكررة"
     }
 }

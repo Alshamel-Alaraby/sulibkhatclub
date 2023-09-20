@@ -39,7 +39,6 @@ class CmMemberTransactionsResource extends JsonResource
             'date_from' => $this->date_from,
             'date_to' => $this->date_to,
             'member_request_id' => $this->member_request_id,
-            'document_no' => $this->document_no,
 
 
             // year - branch - document - prefix - serial_number

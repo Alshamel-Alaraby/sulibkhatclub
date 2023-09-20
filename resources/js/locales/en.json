@@ -1485,6 +1485,9 @@
         "SubscriptionsWaiting": "Pending",
         "SubscriptionsRejected": "Rejected",
         "ReceiptNumber": "Receipt Number",
+        "serial_name": "Serial Name",
+        "Year": "Year",
+        "Payment-report-over-period": "Payment Report Over Period",
         "DocumentNumber": "Document Number",
         "memberName": "Member Name",
         "MembershipNo": "Membership No",
@@ -1504,6 +1507,10 @@
         "addSubscription": "Add Subscription",
         "NameMembershipApplicant": "Name Membership Applicant",
         "MembershipApplicant": "Membership Applicant",
-        "GroupPaymentReport": "Group Payment Report"
+        "GroupPaymentReport": "Group Payment Report",
+        "duplicate": "Duplicate",
+        "DuplicatbondsReport": "Duplicate bonds Report",
+        "typeMember":"Membership Type",
+        "Searchdd": "Duplicate bonds"
     }
 }

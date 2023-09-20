@@ -308,6 +308,7 @@ class CmMemberRepository implements CmMemberInterface
         //return CmTransaction::where('cm_member_id', 13838)->first();
 
         //ini_set('max_execution_time', '60');
+
         $financialyear = FinancialYear::where('is_active', 1)->first();
         if ($financialyear){
 
@@ -347,6 +348,9 @@ class CmMemberRepository implements CmMemberInterface
             // From a date string
             $date_allowed_vote_date = Carbon::createFromFormat('Y-m-d', '2022-02-28');
 
+            // From a date string
+            $date_allowed_vote_date = Carbon::createFromFormat('Y-m-d', '2022-02-28');
+
 
             $update_3ady_members = $this->model
                 ->where('member_status_id', 1)	// ساري
@@ -360,6 +364,7 @@ class CmMemberRepository implements CmMemberInterface
                 ]);
 
 
+
             $update_3ady_members_2 = $this->model
                 ->where('member_status_id', 1)	// ساري
                 ->where('member_kind_id', 1) // عادي
@@ -371,6 +376,14 @@ class CmMemberRepository implements CmMemberInterface
                     'financial_status_id'    => 4,  //مسدد بعد الموعد
                 ]);
 
+                //return $update_3ady_members_2;
+
+                /*
+                ->update
+                ([
+                    'financial_status_id'    => 4,  //مسدد بعد الموعد
+                ]);
+                */
 
                 //$time2 = strtotime('1900/02/27');
                 //$date2 = date('Y-m-d',$time);
@@ -394,7 +407,6 @@ class CmMemberRepository implements CmMemberInterface
 
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
-
 
 
                 foreach ($settings->reverse() as $setting){

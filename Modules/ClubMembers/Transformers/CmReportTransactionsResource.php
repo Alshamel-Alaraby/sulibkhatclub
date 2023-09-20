@@ -20,16 +20,14 @@ class CmReportTransactionsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            
-            "full_name" =>DB::table('cm_members')->select('full_name')->where('membership_number', $this->member_number)->first()->full_name,
+            "full_name" => collect($this->member)->only(['full_name'])->first(),
             'member_number' => $this->member_number,
-            'serial_id' => $this->serial_id,
+            'serial_id' => $this->serial_id > 0?DB::table('general_serials')->select('name')->where('id', $this->serial_id)->first():null,
             'document_no' => $this->document_no,
             'date' => $this->date,
-            'amount' => $this->amount,          
+            'amount' => $this->amount,
             'year' => $this->year,
-            'type' => $this->type,
-
+            'type' => $this->type == 'renew' ? 'تجديد' : 'اشتراك'
         ];
 
 
