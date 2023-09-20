@@ -28,7 +28,7 @@ class CmTransactionRepository implements CmTransactionInterface
         if ($request->invoice_id) {
             $models->where('invoice_id', $request->invoice_id);
         }
-        if ($request->sponsor == 0)
+        if (isset($request->sponsor) && $request->sponsor == 0)
         {
             $models->whereNull('sponsor_id');
         }
@@ -40,6 +40,16 @@ class CmTransactionRepository implements CmTransactionInterface
         if ($request->document_id)
         {
             $models->where('document_id',$request->document_id);
+        }
+
+        if ($request->sponsor_id)
+        {
+           $models->where('sponsor_id',$request->sponsor_id);
+        }
+
+        if ($request->date)
+        {
+            $models->whereDate('date',$request->date);
         }
 
         if ($request->per_page) {
@@ -141,9 +151,9 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function reportCmTransactions($request)
     {
-        
-        
-        $models = 
+
+
+        $models =
         $this->model->filter($request)
         ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
@@ -151,12 +161,12 @@ class CmTransactionRepository implements CmTransactionInterface
         if ($request->serial_id) {
             $models->whereIn('serial_id', explode(",", $request->serial_id));
         }
-        
+
         // 2: document_no (1, 10)
         if ($request->document_no) {
-            
+
             $document_numbers = explode(",", $request->document_no);
-          
+
             $models
             ->whereBetween('document_no', [$document_numbers[0], $document_numbers[1]])
             ;
@@ -166,11 +176,11 @@ class CmTransactionRepository implements CmTransactionInterface
         if ($request->start_date && $request->end_date) {
             $start_date = $request->start_date;
             $end_date = $request->end_date;
-    
+
             $models->whereBetween('date', [$start_date, $end_date]);
         }
 
-        
+
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

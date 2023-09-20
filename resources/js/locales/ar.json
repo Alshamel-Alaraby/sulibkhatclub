@@ -1490,6 +1490,9 @@
         "SubscriptionNumber": "رقم طلب الاشتراك",
         "serialName": "اسم المسلسل",
         "subscriptionDate": "تاريخ الاشترك",
-        "addSubscription": "اضف اشتراك"
+        "addSubscription": "اضف اشتراك",
+        "NameMembershipApplicant": "اسم طالب العضوية",
+        "MembershipApplicant": "طالب العضوية",
+        "GroupPaymentReport": "تقرير سداد مجموعة"
     }
 }

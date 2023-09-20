@@ -209,4 +209,12 @@ export default [
         },
         component: () => import('../../views/pages/club/change-of-member-rights'),
     },
+    {
+        path: '/dashboard/club/multi-payment-report',
+        name: 'multi payment report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/multi-payment-report'),
+    },
 ];

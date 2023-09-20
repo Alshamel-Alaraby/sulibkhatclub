@@ -98,6 +98,8 @@ export default {
                 "cm_member_id",
                 "date",
                 "prefix",
+                "session_number",
+                "discharge_reson_id"
             ],
             printLoading: true,
             printObj: {
@@ -267,9 +269,18 @@ export default {
          */
         getData(page = 1) {
             this.isLoader = true;
+            let _filterSetting = [...this.filterSetting];
+            let index = this.filterSetting.indexOf("cm_member_id");
+            if (index > -1) {
+                _filterSetting[index] ="member.full_name";
+            }
+            index = this.filterSetting.indexOf("discharge_reson_id");
+            if (index > -1) {
+                _filterSetting[index] =this.$i18n.locale == "ar" ? "dischargeReson.name" : "dischargeReson.name_e";
+            }
             let filter = "";
-            for (let i = 0; i < this.filterSetting.length; ++i) {
-                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            for (let i = 0; i < _filterSetting.length; ++i) {
+                filter += `columns[${i}]=${_filterSetting[i]}&`;
             }
             adminApi
                 .get(
@@ -299,9 +310,18 @@ export default {
                 this.current_page
             ) {
                 this.isLoader = true;
+                let _filterSetting = [...this.filterSetting];
+                let index = this.filterSetting.indexOf("cm_member_id");
+                if (index > -1) {
+                    _filterSetting[index] ="member.full_name";
+                }
+                index = this.filterSetting.indexOf("discharge_reson_id");
+                if (index > -1) {
+                    _filterSetting[index] =this.$i18n.locale == "ar" ? "dischargeReson.name" : "dischargeReson.name_e";
+                }
                 let filter = "";
-                for (let i = 0; i < this.filterSetting.length; ++i) {
-                    filter += `columns[${i}]=${this.filterSetting[i]}&`;
+                for (let i = 0; i < _filterSetting.length; ++i) {
+                    filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
                 adminApi
                     .get(
@@ -790,6 +810,14 @@ export default {
                                         <b-form-checkbox v-if="isVisible('prefix')" v-model="filterSetting"
                                                          value="prefix" class="mb-1"
                                         >{{ getCompanyKey("member_reject_Serial_Number") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('session_number')" v-model="filterSetting"
+                                                         value="session_number" class="mb-1"
+                                        >{{ getCompanyKey("member_reject_session_number") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('discharge_reson_id')" v-model="filterSetting"
+                                                         value="discharge_reson_id" class="mb-1"
+                                        >{{ getCompanyKey("member_reject_reason") }}
                                         </b-form-checkbox>
                                         <!-- Basic dropdown -->
                                     </b-dropdown>

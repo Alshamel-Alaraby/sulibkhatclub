@@ -1501,6 +1501,9 @@
         "SubscriptionNumber": "SubscriptionNumber",
         "serialName": "Serial Name",
         "subscriptionDate": "Subscription Date",
-        "addSubscription": "Add Subscription"
+        "addSubscription": "Add Subscription",
+        "NameMembershipApplicant": "Name Membership Applicant",
+        "MembershipApplicant": "Membership Applicant",
+        "GroupPaymentReport": "Group Payment Report"
     }
 }

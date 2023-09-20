@@ -14,15 +14,15 @@
             <loader size="large" v-if="isCustom && !isPage" />
             <loader updateData="true" size="large" v-if="isLoader"/>
             <div class="mb-3 d-flex justify-content-end">
-                <b-button
-                    variant="success"
-                    @click.prevent="updateAllTransaction"
-                    type="button"
-                    class="mx-1 font-weight-bold px-3 mr-3 ml-3"
-                    v-if="!isLoader && type == 'edit'"
-                >
-                    {{ $t("general.updateData") }}
-                </b-button>
+<!--                <b-button-->
+<!--                    variant="success"-->
+<!--                    @click.prevent="updateAllTransaction"-->
+<!--                    type="button"-->
+<!--                    class="mx-1 font-weight-bold px-3 mr-3 ml-3"-->
+<!--                    v-if="!isLoader && type == 'edit'"-->
+<!--                >-->
+<!--                    {{ $t("general.updateData") }}-->
+<!--                </b-button>-->
                 <b-button
                     v-if="type != 'edit'"
                     variant="success"

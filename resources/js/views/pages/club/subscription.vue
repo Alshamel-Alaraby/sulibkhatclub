@@ -284,6 +284,10 @@ export default {
                 _filterSetting[index] =
                     this.$i18n.locale == "ar" ? "serial.name" : "serial.name_e";
             }
+            index = this.filterSetting.indexOf("cm_member_id");
+            if (index > -1) {
+                _filterSetting[index] ="member.full_name";
+            }
             let filter = "";
             for (let i = 0; i < _filterSetting.length; ++i) {
                 filter += `columns[${i}]=${_filterSetting[i]}&`;
@@ -1381,19 +1385,11 @@ export default {
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="
-                                                      transactions.sort(
-                                                        sortString(($i18n.locale = 'ar' ? 'name' : 'name_e'))
-                                                      )
-                                                    "
+                                                    @click="transactions.sort(sortString('full_name'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="
-                                                      transactions.sort(
-                                                        sortString(($i18n.locale = 'ar' ? '-name' : '-name_e'))
-                                                      )
-                                                    "
+                                                    @click="transactions.sort(sortString('-full_name'))"
                                                 ></i>
                                             </div>
                                         </div>

@@ -38,8 +38,8 @@ export default {
         <h4 style="text-align: right;">{{$t('general.Date')}} : {{formatDate(data_row.date)}} </h4>
         <h4 style="text-align: right;">{{$t('general.DocumentNumber')}} : {{data_row.document_no}}</h4>
         <hr>
-        <h2 style="text-align: center;">{{$t('general.TheMember')}}</h2>
-        <h4 style="text-align: right;">{{$t('general.memberName')}} : {{data_row.member_request ? data_row.member_request.full_name : data_row.member.full_name}}</h4>
+        <h2 style="text-align: center;">{{data_row.member ? $t('general.TheMember') : $t('general.MembershipApplicant')}}</h2>
+        <h4 style="text-align: right;">{{data_row.member ? $t('general.memberName') : $t('general.name')}} : {{data_row.member_request ? data_row.member_request.full_name : data_row.member.full_name}}</h4>
         <h4 v-if="data_row.member" style="text-align: right;">{{$t('general.MembershipNo')}}: {{data_row.member.membership_number}}</h4>
         <hr>
         <h2 style="text-align: center;">{{$t('general.theDetails')}}</h2>

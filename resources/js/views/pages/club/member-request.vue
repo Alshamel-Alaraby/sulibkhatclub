@@ -470,16 +470,13 @@ export default {
                                         class="btn-block setting-search"
                                     >
                                         <b-form-checkbox v-model="filterSetting" value="full_name" class="mb-1">
-                                            {{ $t("general.TheMember") }}
+                                            {{ $t("general.NameMembershipApplicant") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="document_no" class="mb-1">
                                             {{ $t("general.SubscriptionNumber") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="date" class="mb-1">
                                             {{ $t("general.subscriptionDate") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">
-                                            {{ getCompanyKey("status") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">
                                             {{ getCompanyKey("member_national_id") }}
@@ -573,7 +570,7 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.TheMember") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.NameMembershipApplicant") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.SubscriptionNumber") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.date" class="mb-1"> {{ $t("general.subscriptionDate") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
@@ -837,7 +834,7 @@ export default {
                                     </th>
                                     <th v-if="setting.full_name">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.TheMember") }}</span>
+                                            <span>{{ $t("general.NameMembershipApplicant") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
@@ -1012,7 +1009,7 @@ export default {
                                         {{ data.full_name }}
                                     </td>
                                     <td v-if="setting.document_no">
-                                        <h5 class="m-0 font-weight-normal">{{ data.transaction.document_no }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ data.transaction ? data.transaction.document_no: "---" }}</h5>
                                     </td>
                                     <td v-if="setting.date">
                                         <h5 class="m-0 font-weight-normal">{{ formatDate(data.transaction.date) }}</h5>

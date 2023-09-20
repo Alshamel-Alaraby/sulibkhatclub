@@ -14298,8 +14298,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "new_subscription_member",
-                "default_en" => "Member",
-                "default_ar" => "العضو",
+                "default_en" => "Name Membership Applicant",
+                "default_ar" => "اسم طالب العضوية",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,

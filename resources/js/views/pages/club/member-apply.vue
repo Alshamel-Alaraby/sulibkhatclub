@@ -115,11 +115,7 @@ export default {
         gender: true,
           member_type_id: true,
           Subscription_receipt_number: true,
-        first_name: true,
-        second_name: true,
-        third_name: true,
-        last_name: true,
-        family_name: true,
+          full_name: true,
         status_id: true,
         birth_date: true,
         national_id: true,
@@ -133,11 +129,8 @@ export default {
       },
       is_disabled: false,
       filterSetting: [
-        "first_name",
-        "second_name",
-        "third_name",
-        "last_name",
-        "family_name",
+        "full_name",
+        "document_no",
         "birth_date",
         "national_id",
         "home_phone",
@@ -466,10 +459,15 @@ export default {
      */
     getData(page = 1) {
       this.isLoader = true;
-      let filter = "";
-      for (let i = 0; i < this.filterSetting.length; ++i) {
-        filter += `columns[${i}]=${this.filterSetting[i]}&`;
-      }
+        let _filterSetting = [...this.filterSetting];
+        let index = this.filterSetting.indexOf("document_no");
+        if (index > -1) {
+            _filterSetting[index] = "cmTransaction.document_no";
+        }
+        let filter = "";
+        for (let i = 0; i < _filterSetting.length; ++i) {
+            filter += `columns[${i}]=${_filterSetting[i]}&`;
+        }
       adminApi
         .get(
           `/club-members/member-requests?member_types=1&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
@@ -498,11 +496,15 @@ export default {
         this.current_page
       ) {
         this.isLoader = true;
-        let filter = "";
-        for (let i = 0; i < this.filterSetting.length; ++i) {
-          filter += `columns[${i}]=${this.filterSetting[i]}&`;
-        }
-
+          let _filterSetting = [...this.filterSetting];
+          let index = this.filterSetting.indexOf("document_no");
+          if (index > -1) {
+              _filterSetting[index] = "cmTransaction.document_no";
+          }
+          let filter = "";
+          for (let i = 0; i < _filterSetting.length; ++i) {
+              filter += `columns[${i}]=${_filterSetting[i]}&`;
+          }
         adminApi
           .get(
             `/club-members/member-requests?member_types=1&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&company_id=${this.company_id}`
@@ -973,48 +975,12 @@ export default {
                     ref="dropdown"
                     class="btn-block setting-search"
                   >
-                    <b-form-checkbox
-                      v-if="isVisible('first_name')"
-                      v-model="filterSetting"
-                      value="first_name"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_first_name") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-if="isVisible('second_name')"
-                      v-model="filterSetting"
-                      value="second_name"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_second_name") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-if="isVisible('third_name')"
-                      v-model="filterSetting"
-                      value="third_name"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_third_name") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-if="isVisible('last_name')"
-                      v-model="filterSetting"
-                      value="last_name"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_last_name") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-if="isVisible('family_name')"
-                      v-model="filterSetting"
-                      value="family_name"
-                      class="mb-1"
-                      >{{ getCompanyKey("member_family_name") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-if="isVisible('status_id')"
-                      v-model="filterSetting"
-                      value="status_id"
-                      class="mb-1"
-                      >{{ getCompanyKey("status") }}
-                    </b-form-checkbox>
+                      <b-form-checkbox v-model="filterSetting" value="full_name" class="mb-1">
+                          {{ $t("general.NameMembershipApplicant") }}
+                      </b-form-checkbox>
+                      <b-form-checkbox v-model="filterSetting" value="document_no" class="mb-1">
+                          {{ $t("general.SubscriptionNumber") }}
+                      </b-form-checkbox>
                     <b-form-checkbox
                       v-if="isVisible('national_id')"
                       v-model="filterSetting"
@@ -1183,36 +1149,7 @@ export default {
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
-                      <b-form-checkbox
-                        v-if="isVisible('first_name')"
-                        v-model="setting.first_name"
-                        class="mb-1"
-                        >{{ getCompanyKey("member_first_name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox
-                        v-if="isVisible('second_name')"
-                        v-model="setting.second_name"
-                        class="mb-1"
-                        >{{ getCompanyKey("member_second_name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox
-                        v-if="isVisible('third_name')"
-                        v-model="setting.third_name"
-                        class="mb-1"
-                        >{{ getCompanyKey("member_third_name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox
-                        v-if="isVisible('last_name')"
-                        v-model="setting.last_name"
-                        class="mb-1"
-                        >{{ getCompanyKey("member_last_name") }}
-                      </b-form-checkbox>
-                      <b-form-checkbox
-                        v-if="isVisible('family_name')"
-                        v-model="setting.family_name"
-                        class="mb-1"
-                        >{{ getCompanyKey("member_family_name") }}
-                      </b-form-checkbox>
+                        <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.NameMembershipApplicant") }}</b-form-checkbox>
                       <b-form-checkbox
                         v-if="isVisible('birth_date')"
                         v-model="setting.birth_date"
@@ -1940,77 +1877,17 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.first_name && isVisible('first_name')">
+                    <th v-if="setting.full_name && isVisible('full_name')">
                       <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("member_first_name") }}</span>
+                        <span>{{ $t("general.NameMembershipApplicant") }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name'))"
+                            @click="members.sort(sortString('full_name'))"
                           ></i>
                           <i
                             class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.second_name && isVisible('second_name')">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("member_second_name") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name_e'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.third_name && isVisible('third_name')">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("member_third_name") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name_e'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.last_name && isVisible('last_name')">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("member_last_name") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name_e'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.family_name && isVisible('family_name')">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("member_family_name") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name_e'))"
+                            @click="members.sort(sortString('-full_name'))"
                           ></i>
                         </div>
                       </div>
@@ -2225,20 +2102,8 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.first_name && isVisible('first_name')">
-                      {{ data.first_name }}
-                    </td>
-                    <td v-if="setting.second_name && isVisible('second_name')">
-                      {{ data.second_name }}
-                    </td>
-                    <td v-if="setting.third_name && isVisible('third_name')">
-                      {{ data.third_name }}
-                    </td>
-                    <td v-if="setting.last_name && isVisible('last_name')">
-                      {{ data.last_name }}
-                    </td>
-                    <td v-if="setting.family_name && isVisible('family_name')">
-                      {{ data.family_name }}
+                    <td v-if="setting.full_name && isVisible('full_name')">
+                      {{ data.full_name }}
                     </td>
                     <td v-if="setting.birth_date && isVisible('birth_date')">
                       {{ data.birth_date }}
@@ -2254,7 +2119,7 @@ export default {
                         {{parseInt(data.member_type_id) == 1 ? $t('general.pendingMember') : $t('general.unacceptable')}}
                     </td>
                     <td v-if="setting.Subscription_receipt_number">
-                      {{data.transaction ? data.transaction.prefix: "---"}}
+                      {{data.transaction ? data.transaction.document_no: "---"}}
                     </td>
                     <td v-if="setting.national_id && isVisible('national_id')">
                       {{ data.national_id }}
@@ -2998,6 +2863,17 @@ export default {
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>{{ getCompanyKey("Subscription_receipt_number") }}</label>
+                                        <input
+                                            disabled
+                                            v-model="transaction.document_no"
+                                            class="form-control"
+                                            type="text"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ $t("general.serial_number") }}</label>
                                         <input
                                             disabled
                                             v-model="transaction.prefix"

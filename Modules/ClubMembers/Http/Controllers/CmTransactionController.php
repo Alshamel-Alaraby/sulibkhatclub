@@ -254,7 +254,7 @@ class CmTransactionController extends Controller
     }
 
 
-    public function reportCmTransactions(Request $request)    
+    public function reportCmTransactions(Request $request)
     {
         $models = $this->modelInterface->reportCmTransactions($request);
 
