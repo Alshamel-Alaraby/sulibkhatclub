@@ -154,10 +154,12 @@ export default {
                 this.isLoader = true;
                 let dateStartArray = this.create.start_date.split("-");
                 let dateEndArray = this.create.end_date.split("-");
+                let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
+                let endDate = dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0]
 
-                let data = '?start_date='+dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
-                    data += '&end_date='+dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
-                    data += '&document_no='+this.create.document_no1+ ','+this.create.document_no2;
+                let data = '?start_date='+ (this.create.start_date ? startDate : '' );
+                    data += '&end_date='+ (this.create.end_date ? endDate : '');
+                    data += '&document_no='+((this.create.document_no1 && this.create.document_no2) ? this.create.document_no1+ ','+this.create.document_no2 : '');
                     data += '&serial_id='+this.create.serial_id.join();
 
                 adminApi.get(`/club-members/transactions/report-cm-transactions${data}&per_page=50`)
