@@ -14,6 +14,7 @@ use Spatie\MediaLibrary\HasMedia;
 class Country extends Model implements HasMedia
 {
     use HasFactory, MediaTrait, SoftDeletes, LogTrait;
+    
     protected $table = "general_countries";
     protected $fillable = [
         'name',

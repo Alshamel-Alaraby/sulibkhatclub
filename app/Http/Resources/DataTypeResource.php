@@ -21,8 +21,7 @@ class DataTypeResource extends JsonResource
             "placeholder_e" => $this->placeholder_e,
             "placeholder" => $this->placeholder,
             "length" => $this->length,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
+          
         ];
     }
 }

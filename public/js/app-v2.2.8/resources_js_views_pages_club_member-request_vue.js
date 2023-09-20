@@ -1637,6 +1637,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../helper/startDate */ "./resources/js/helper/startDate.js");
 /* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../helper/langTransform */ "./resources/js/helper/langTransform.js");
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 
@@ -1709,11 +1715,9 @@ __webpack_require__.r(__webpack_exports__);
         gender: true,
         member_type_id: true,
         Subscription_receipt_number: true,
-        first_name: true,
-        second_name: true,
-        third_name: true,
-        last_name: true,
-        family_name: true,
+        full_name: true,
+        document_no: true,
+        date: true,
         status_id: true,
         birth_date: true,
         national_id: true,
@@ -1726,7 +1730,7 @@ __webpack_require__.r(__webpack_exports__);
         degree: true
       },
       is_disabled: false,
-      filterSetting: ["first_name", "second_name", "third_name", "last_name", "family_name", "birth_date", "national_id", "home_phone", "work_phone", "home_address", "work_address", "job", "degree"],
+      filterSetting: ["full_name", "document_no", "date", "birth_date", "national_id", "home_phone", "work_phone", "home_address", "work_address", "job", "degree"],
       reject: {
         notes: ""
       },
@@ -1813,9 +1817,18 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
+      var _filterSetting = _toConsumableArray(this.filterSetting);
+      var index = this.filterSetting.indexOf("document_no");
+      if (index > -1) {
+        _filterSetting[index] = "cmTransaction.document_no";
+      }
+      index = this.filterSetting.indexOf("date");
+      if (index > -1) {
+        _filterSetting[index] = "cmTransaction.date";
+      }
       var filter = "";
-      for (var i = 0; i < this.filterSetting.length; ++i) {
-        filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
+      for (var i = 0; i < _filterSetting.length; ++i) {
+        filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
       }
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].get("/club-members/member-requests?hasTransaction=1&page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
@@ -2694,7 +2707,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\r\n        display: none;\n}\n.arrow-sort {\r\n        display: none;\n}\n.text-success {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n.text-danger {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11388,7 +11401,29 @@ var render = function () {
                                   "b-form-checkbox",
                                   {
                                     staticClass: "mb-1",
-                                    attrs: { value: "first_name" },
+                                    attrs: { value: "full_name" },
+                                    model: {
+                                      value: _vm.filterSetting,
+                                      callback: function ($$v) {
+                                        _vm.filterSetting = $$v
+                                      },
+                                      expression: "filterSetting",
+                                    },
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                        " +
+                                        _vm._s(_vm.$t("general.TheMember")) +
+                                        "\n                                    "
+                                    ),
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-form-checkbox",
+                                  {
+                                    staticClass: "mb-1",
+                                    attrs: { value: "document_no" },
                                     model: {
                                       value: _vm.filterSetting,
                                       callback: function ($$v) {
@@ -11401,7 +11436,7 @@ var render = function () {
                                     _vm._v(
                                       "\n                                        " +
                                         _vm._s(
-                                          _vm.getCompanyKey("member_first_name")
+                                          _vm.$t("general.SubscriptionNumber")
                                         ) +
                                         "\n                                    "
                                     ),
@@ -11412,7 +11447,7 @@ var render = function () {
                                   "b-form-checkbox",
                                   {
                                     staticClass: "mb-1",
-                                    attrs: { value: "second_name" },
+                                    attrs: { value: "date" },
                                     model: {
                                       value: _vm.filterSetting,
                                       callback: function ($$v) {
@@ -11425,83 +11460,7 @@ var render = function () {
                                     _vm._v(
                                       "\n                                        " +
                                         _vm._s(
-                                          _vm.getCompanyKey(
-                                            "member_second_name"
-                                          )
-                                        ) +
-                                        "\n                                    "
-                                    ),
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "b-form-checkbox",
-                                  {
-                                    staticClass: "mb-1",
-                                    attrs: { value: "third_name" },
-                                    model: {
-                                      value: _vm.filterSetting,
-                                      callback: function ($$v) {
-                                        _vm.filterSetting = $$v
-                                      },
-                                      expression: "filterSetting",
-                                    },
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(
-                                          _vm.getCompanyKey("member_third_name")
-                                        ) +
-                                        "\n                                    "
-                                    ),
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "b-form-checkbox",
-                                  {
-                                    staticClass: "mb-1",
-                                    attrs: { value: "last_name" },
-                                    model: {
-                                      value: _vm.filterSetting,
-                                      callback: function ($$v) {
-                                        _vm.filterSetting = $$v
-                                      },
-                                      expression: "filterSetting",
-                                    },
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(
-                                          _vm.getCompanyKey("member_last_name")
-                                        ) +
-                                        "\n                                    "
-                                    ),
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "b-form-checkbox",
-                                  {
-                                    staticClass: "mb-1",
-                                    attrs: { value: "family_name" },
-                                    model: {
-                                      value: _vm.filterSetting,
-                                      callback: function ($$v) {
-                                        _vm.filterSetting = $$v
-                                      },
-                                      expression: "filterSetting",
-                                    },
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(
-                                          _vm.getCompanyKey(
-                                            "member_family_name"
-                                          )
+                                          _vm.$t("general.subscriptionDate")
                                         ) +
                                         "\n                                    "
                                     ),
@@ -11926,21 +11885,44 @@ var render = function () {
                                     {
                                       staticClass: "mb-1",
                                       model: {
-                                        value: _vm.setting.first_name,
+                                        value: _vm.setting.full_name,
                                         callback: function ($$v) {
                                           _vm.$set(
                                             _vm.setting,
-                                            "first_name",
+                                            "full_name",
                                             $$v
                                           )
                                         },
-                                        expression: "setting.first_name",
+                                        expression: "setting.full_name",
+                                      },
+                                    },
+                                    [
+                                      _vm._v(
+                                        _vm._s(_vm.$t("general.TheMember"))
+                                      ),
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "b-form-checkbox",
+                                    {
+                                      staticClass: "mb-1",
+                                      model: {
+                                        value: _vm.setting.document_no,
+                                        callback: function ($$v) {
+                                          _vm.$set(
+                                            _vm.setting,
+                                            "document_no",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "setting.document_no",
                                       },
                                     },
                                     [
                                       _vm._v(
                                         _vm._s(
-                                          _vm.getCompanyKey("member_first_name")
+                                          _vm.$t("general.SubscriptionNumber")
                                         )
                                       ),
                                     ]
@@ -11951,101 +11933,19 @@ var render = function () {
                                     {
                                       staticClass: "mb-1",
                                       model: {
-                                        value: _vm.setting.second_name,
+                                        value: _vm.setting.date,
                                         callback: function ($$v) {
-                                          _vm.$set(
-                                            _vm.setting,
-                                            "second_name",
-                                            $$v
-                                          )
+                                          _vm.$set(_vm.setting, "date", $$v)
                                         },
-                                        expression: "setting.second_name",
+                                        expression: "setting.date",
                                       },
                                     },
                                     [
                                       _vm._v(
-                                        _vm._s(
-                                          _vm.getCompanyKey(
-                                            "member_second_name"
+                                        " " +
+                                          _vm._s(
+                                            _vm.$t("general.subscriptionDate")
                                           )
-                                        )
-                                      ),
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-form-checkbox",
-                                    {
-                                      staticClass: "mb-1",
-                                      model: {
-                                        value: _vm.setting.third_name,
-                                        callback: function ($$v) {
-                                          _vm.$set(
-                                            _vm.setting,
-                                            "third_name",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "setting.third_name",
-                                      },
-                                    },
-                                    [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm.getCompanyKey("member_third_name")
-                                        )
-                                      ),
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-form-checkbox",
-                                    {
-                                      staticClass: "mb-1",
-                                      model: {
-                                        value: _vm.setting.last_name,
-                                        callback: function ($$v) {
-                                          _vm.$set(
-                                            _vm.setting,
-                                            "last_name",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "setting.last_name",
-                                      },
-                                    },
-                                    [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm.getCompanyKey("member_last_name")
-                                        )
-                                      ),
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-form-checkbox",
-                                    {
-                                      staticClass: "mb-1",
-                                      model: {
-                                        value: _vm.setting.family_name,
-                                        callback: function ($$v) {
-                                          _vm.$set(
-                                            _vm.setting,
-                                            "family_name",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "setting.family_name",
-                                      },
-                                    },
-                                    [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm.getCompanyKey(
-                                            "member_family_name"
-                                          )
-                                        )
                                       ),
                                     ]
                                   ),
@@ -13062,7 +12962,7 @@ var render = function () {
                                 )
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.setting.first_name
+                            _vm.setting.full_name
                               ? _c("th", [
                                   _c(
                                     "div",
@@ -13073,11 +12973,7 @@ var render = function () {
                                     [
                                       _c("span", [
                                         _vm._v(
-                                          _vm._s(
-                                            _vm.getCompanyKey(
-                                              "member_first_name"
-                                            )
-                                          )
+                                          _vm._s(_vm.$t("general.TheMember"))
                                         ),
                                       ]),
                                       _vm._v(" "),
@@ -13087,7 +12983,7 @@ var render = function () {
                                           on: {
                                             click: function ($event) {
                                               _vm.members.sort(
-                                                _vm.sortString("name")
+                                                _vm.sortString("full_name")
                                               )
                                             },
                                           },
@@ -13098,7 +12994,7 @@ var render = function () {
                                           on: {
                                             click: function ($event) {
                                               _vm.members.sort(
-                                                _vm.sortString("-name")
+                                                _vm.sortString("-full_name")
                                               )
                                             },
                                           },
@@ -13109,7 +13005,7 @@ var render = function () {
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.setting.second_name
+                            _vm.setting.document_no
                               ? _c("th", [
                                   _c(
                                     "div",
@@ -13121,42 +13017,16 @@ var render = function () {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            _vm.getCompanyKey(
-                                              "member_second_name"
-                                            )
+                                            _vm.$t("general.SubscriptionNumber")
                                           )
                                         ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("-name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
                                       ]),
                                     ]
                                   ),
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.setting.third_name
+                            _vm.setting.date
                               ? _c("th", [
                                   _c(
                                     "div",
@@ -13168,129 +13038,9 @@ var render = function () {
                                       _c("span", [
                                         _vm._v(
                                           _vm._s(
-                                            _vm.getCompanyKey(
-                                              "member_third_name"
-                                            )
+                                            _vm.$t("general.subscriptionDate")
                                           )
                                         ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("-name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.setting.last_name
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.getCompanyKey(
-                                              "member_last_name"
-                                            )
-                                          )
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("-name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                      ]),
-                                    ]
-                                  ),
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.setting.family_name
-                              ? _c("th", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "d-flex justify-content-center",
-                                    },
-                                    [
-                                      _c("span", [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.getCompanyKey(
-                                              "member_family_name"
-                                            )
-                                          )
-                                        ),
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("div", { staticClass: "arrow-sort" }, [
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-up",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
-                                        _vm._v(" "),
-                                        _c("i", {
-                                          staticClass: "fas fa-arrow-down",
-                                          on: {
-                                            click: function ($event) {
-                                              _vm.members.sort(
-                                                _vm.sortString("-name_e")
-                                              )
-                                            },
-                                          },
-                                        }),
                                       ]),
                                     ]
                                   ),
@@ -13805,52 +13555,52 @@ var render = function () {
                                         )
                                       : _vm._e(),
                                     _vm._v(" "),
-                                    _vm.setting.first_name
+                                    _vm.setting.full_name
                                       ? _c("td", [
                                           _vm._v(
                                             "\n                                    " +
-                                              _vm._s(data.first_name) +
+                                              _vm._s(data.full_name) +
                                               "\n                                "
                                           ),
                                         ])
                                       : _vm._e(),
                                     _vm._v(" "),
-                                    _vm.setting.second_name
+                                    _vm.setting.document_no
                                       ? _c("td", [
-                                          _vm._v(
-                                            "\n                                    " +
-                                              _vm._s(data.second_name) +
-                                              "\n                                "
+                                          _c(
+                                            "h5",
+                                            {
+                                              staticClass:
+                                                "m-0 font-weight-normal",
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  data.transaction.document_no
+                                                )
+                                              ),
+                                            ]
                                           ),
                                         ])
                                       : _vm._e(),
                                     _vm._v(" "),
-                                    _vm.setting.third_name
+                                    _vm.setting.date
                                       ? _c("td", [
-                                          _vm._v(
-                                            "\n                                    " +
-                                              _vm._s(data.third_name) +
-                                              "\n                                "
-                                          ),
-                                        ])
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.setting.last_name
-                                      ? _c("td", [
-                                          _vm._v(
-                                            "\n                                    " +
-                                              _vm._s(data.last_name) +
-                                              "\n                                "
-                                          ),
-                                        ])
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.setting.family_name
-                                      ? _c("td", [
-                                          _vm._v(
-                                            "\n                                    " +
-                                              _vm._s(data.family_name) +
-                                              "\n                                "
+                                          _c(
+                                            "h5",
+                                            {
+                                              staticClass:
+                                                "m-0 font-weight-normal",
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.formatDate(
+                                                    data.transaction.date
+                                                  )
+                                                )
+                                              ),
+                                            ]
                                           ),
                                         ])
                                       : _vm._e(),

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\LogTrait;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,9 +15,15 @@ class CustomerCategory extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id', 'name', 'name_e', 'parent_id')
+            ->with('parent:id,name,name_e');
+    }
 
     public function parent()
     {
@@ -33,7 +38,6 @@ class CustomerCategory extends Model
         return $this->children()->count() > 0;
     }
 
-
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";
@@ -43,7 +47,5 @@ class CustomerCategory extends Model
             ->useLogName('Customer')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
-
-
 
 }

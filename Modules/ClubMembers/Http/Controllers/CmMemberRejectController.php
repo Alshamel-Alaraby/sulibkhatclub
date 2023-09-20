@@ -14,7 +14,7 @@ use Modules\ClubMembers\Transformers\CmMemberRejectResource;
 
 class CmMemberRejectController extends Controller
 {
-    public function __construct(private CmMemberReject $model, CmMember $modelMember)
+    public function __construct(private CmMemberReject $model,private CmMember $modelMember)
     {
         $this->model = $model;
         $this->modelMember = $modelMember;
@@ -65,7 +65,8 @@ class CmMemberRejectController extends Controller
             "serial_number" => $serials['serial_number'],
             "prefix" => $serials['prefix'],
         ]);
-        return $model;
+
+        return responseJson(200, 'success', new CmMemberRejectResource($model));
     }
 
     public function logs($id)

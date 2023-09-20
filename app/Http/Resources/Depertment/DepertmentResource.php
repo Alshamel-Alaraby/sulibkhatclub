@@ -21,8 +21,6 @@ class DepertmentResource extends JsonResource
             'name_e' => $this->name_e,
             'supervisors' => $this->supervisors,
             'attentions' => $this->attentions,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
         ];
     }
 }

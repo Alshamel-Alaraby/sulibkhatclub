@@ -16,7 +16,7 @@ class EmployeeRepository implements EmployeeInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
         if ($request->customer_handel) {
             $models->where('customer_handel', '!=', 'non_customer');
         }
@@ -36,28 +36,26 @@ class EmployeeRepository implements EmployeeInterface
                     ->orWhere('manager_id', $request->id);
             });
         }
-        if ($request->manage)
-        {
-            if ($request->employee_id)
-            {
+        if ($request->manage) {
+            if ($request->employee_id) {
                 $models->where(function ($query) use ($request) {
-                    $query->where('id','!=', $request->employee_id);
+                    $query->where('id', '!=', $request->employee_id);
                 });
             }
         }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } elseif ($request->limet){
+        } elseif ($request->limet) {
             return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
-        }else {
+        } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -159,17 +157,42 @@ class EmployeeRepository implements EmployeeInterface
         return $messages;
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e');
 
+        if ($request->customer_handel) {
+            $models->where('customer_handel', '!=', 'non_customer');
+        }
+        if ($request->is_salesman) {
+            $models->where('is_salesman', 'true');
+        }
+
+        if ($request->manager_id) {
+            $models->where('manager_id', $request->manager_id);
+        }
+        if ($request->manage_others) {
+            $models->where('manage_others', $request->manage_others);
+        }
+        if ($request->id) {
+            $models->where(function ($query) use ($request) {
+                $query->where('id', $request->id)
+                    ->orWhere('manager_id', $request->id);
+            });
+        }
+        if ($request->manage) {
+            if ($request->employee_id) {
+                $models->where(function ($query) use ($request) {
+                    $query->where('id', '!=', $request->employee_id);
+                });
+            }
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } elseif ($request->limet){
+        } elseif ($request->limet) {
             return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
-        }else {
+        } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }

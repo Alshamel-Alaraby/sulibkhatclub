@@ -51,7 +51,10 @@ class CmMemberRepository implements CmMemberInterface
 
 
         if ($request->postal_report) {
-            $models->Where('member_kind_id', $request->postal_report)->where('member_status_id', 1);
+            $models->where('member_kind_id', $request->postal_report)->where('member_status_id', 1);
+        }
+        if ($request->without) {
+            $models->whereNotIn('id', explode(",", $request->without));
         }
 
         if ($request->per_page) {
@@ -242,6 +245,7 @@ class CmMemberRepository implements CmMemberInterface
                         $transaction->update([
                             'cm_member_id' => $model->id,
                             'member_request_id' => null,
+                            "member_number" => $model['membership_number'],
 
                         ]);
                     }
@@ -300,6 +304,8 @@ class CmMemberRepository implements CmMemberInterface
 //        return "all";
     public function updateCmMember()
     {
+        ini_set('max_execution_time', '3600');
+
         $financialyear = FinancialYear::where('is_active', 1)->first();
         if ($financialyear){
 
@@ -332,10 +338,12 @@ class CmMemberRepository implements CmMemberInterface
                     $q->whereNotNull('last_transaction_date')
                         ->where('last_transaction_year', $financialyear->year) ;// int ? int
                 })->orWhere('member_kind_id',2)->get();
-            $time = strtotime('2023/02/28');
 
-            $date_allowed_vote_date = date('Y-m-d',$time);
+            //$time = strtotime('2023/02/28');
+            //$date_allowed_vote_date = date('Y-m-d',$time);
 
+            // From a date string
+            $date_allowed_vote_date = Carbon::createFromFormat('Y-m-d', '2022-02-28');
 
 
             $update_3ady_members = $this->model
@@ -349,6 +357,7 @@ class CmMemberRepository implements CmMemberInterface
                     'financial_status_id'    => 3,  //مسدد في الموعد
                 ]);
 
+
             $update_3ady_members_2 = $this->model
                 ->where('member_status_id', 1)	// ساري
                 ->where('member_kind_id', 1) // عادي
@@ -357,10 +366,24 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
                 ->update
                 ([
-                    'financial_status_id'    => 4,  //مسدد في الموعد
-                ])
-            ;
+                    'financial_status_id'    => 4,  //مسدد بعد الموعد
+                ]);
 
+
+                //$time2 = strtotime('1900/02/27');
+                //$date2 = date('Y-m-d',$time);
+                //$date2 = new Carbon('2023-02-28');
+                //$date2 = Carbon::createFromFormat('Y-m-d', '2023-02-27');;
+                //return $date_allowed_vote_date > $date2 ? "true" : "false" ;
+
+                //return $update_3ady_members_2;
+
+                /*
+                ->update
+                ([
+                    'financial_status_id'    => 4,  //مسدد بعد الموعد
+                ]);
+                */
 
 
 
@@ -370,27 +393,36 @@ class CmMemberRepository implements CmMemberInterface
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
+
+
                 foreach ($settings->reverse() as $setting){
 
-                    if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period)
-                    {
 
-                        $member->update
-                        ([
-                            'members_permissions_id' => $setting->cm_permissions_id,
-                        ]);
-                        //   }
 
-                        break; // exit the for each on the permissions => he/she can NOT achieve better
-                        //}
+                    if(
+                       $member->member_kind_id  == $setting->cm_members_type_id &&
+                       $diffYears >= $setting->membership_period &&
+                       $member->financial_status_id == $setting->cm_financial_status_id
+                       )
+                      {
 
-                    }else{
-                        $member->update
-                        ([
-                            'members_permissions_id' => 1,
-                        ]);
+                                $member->update
+                                ([
+                                    'members_permissions_id' => $setting->cm_permissions_id,
+                                ]);
+                                //   }
 
-                    }
+                                break; // exit the for each on the permissions => he/she can NOT achieve better
+                                //}
+
+                        }else{
+                                $member->update
+                                ([
+                                    'members_permissions_id' => 1,
+                                ]);
+                        }
+
+
 
                 }
 
@@ -478,7 +510,7 @@ class CmMemberRepository implements CmMemberInterface
 
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
-
+return $settings->reverse();
                 foreach ($settings->reverse() as $setting){
                     if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period)
                     {
@@ -688,5 +720,6 @@ class CmMemberRepository implements CmMemberInterface
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
+
 
 }

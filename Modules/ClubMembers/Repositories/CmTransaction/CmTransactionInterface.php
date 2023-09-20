@@ -18,7 +18,7 @@ interface CmTransactionInterface
 
     public function findCmMemberLastTransaction($id);
 
-
+    public function reportCmTransactions($request);
 
 
 }

@@ -14220,6 +14220,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "member reject"
             ],
+            [
+                "key" => "member_reject_entity",
+                "default_en" => "Authority",
+                "default_ar" => "الجهة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "member reject"
+            ],
 
         ]);
 

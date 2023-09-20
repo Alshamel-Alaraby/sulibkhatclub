@@ -1,14 +1,9 @@
 <?php
 
-
 namespace App\Repositories\DepertmentTask;
 
 use App\Models\DepertmentTask;
-use App\Models\GeneralCustomTable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Document\DocumentResource;
 
 class DepertmentTaskRepository implements DepertmentTaskInterface
 {
@@ -19,7 +14,7 @@ class DepertmentTaskRepository implements DepertmentTaskInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
         if ($request->department_id) {
             $models->where('department_id', $request->department_id);
         }
@@ -36,10 +31,9 @@ class DepertmentTaskRepository implements DepertmentTaskInterface
 
     public function find($id)
     {
-        $data = $this->model->find($id);
+        $data = $this->model->data()->find($id);
         return $data;
     }
-
 
     public function create($request)
     {
@@ -47,7 +41,6 @@ class DepertmentTaskRepository implements DepertmentTaskInterface
             $this->model->create($request);
         });
     }
-
 
     public function update($request, $id)
     {
@@ -67,12 +60,17 @@ class DepertmentTaskRepository implements DepertmentTaskInterface
         $model->delete();
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-      
+        $models = $this->model->select('id', 'name', 'name_e');
 
+        if ($request->department_id) {
+            $models->where('department_id', $request->department_id);
+        }
+        if ($request->depertment) {
+            $models->whereHas('depertment');
+        }
+        
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

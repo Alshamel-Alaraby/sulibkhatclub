@@ -20,7 +20,7 @@ class EquipmentController extends Controller
 
     public function find($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->data()->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -30,15 +30,15 @@ class EquipmentController extends Controller
 
     public function all(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if($request->location_id){
             $this->model->where('location_id',$request->location_id);
-        }
+        } //للحذف ف النهايه
 
         if($request->equipment_id){
             $this->model->where('parent_id',$request->equipment_id);
-        }
+        } //للحذف ف النهايه
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -54,7 +54,7 @@ class EquipmentController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new EquipmentResource($model));
+        return responseJson(200, 'created');
     }
 
     public function update($id, EquipmentRequest $request)
@@ -67,7 +67,7 @@ class EquipmentController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new EquipmentResource($model));
+        return responseJson(200, 'updated');
     }
 
     public function logs($id)
@@ -120,8 +120,16 @@ class EquipmentController extends Controller
 
     public function getDropDown(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id','name','name_e');
 
+        if($request->location_id){
+            $this->model->where('location_id',$request->location_id);
+        } //للحذف ف النهايه
+
+        if($request->equipment_id){
+            $this->model->where('parent_id',$request->equipment_id);
+        } //للحذف ف النهايه
+        
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

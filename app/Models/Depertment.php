@@ -21,6 +21,10 @@ class Depertment extends Model
         'attentions',
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e', 'supervisors', 'attentions');
+    }
 
     public function employees()
     {
@@ -47,7 +51,7 @@ class Depertment extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Depertment')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
     public function getAttentionsAttribute($value)
@@ -59,8 +63,6 @@ class Depertment extends Model
     {
         $this->attributes['attentions'] = json_encode($value);
     }
-
-
 
     public function getSupervisorsAttribute($value)
     {

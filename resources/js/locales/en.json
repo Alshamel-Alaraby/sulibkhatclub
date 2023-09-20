@@ -1160,7 +1160,7 @@
         "subscribe": "Subscribe",
         "renew": "Renew",
         "BothSponsorsAreSame": "Both sponsors are same",
-        "multiSubscriptionTable": "Multi Subscription Table",
+        "multiSubscriptionSponsorTable": "Multi Subscription Sponsor Table",
         "month": "Month",
         "memberAccept": "Accepted Members",
         "memberAcceptTable": "Accepted Members Table",
@@ -1484,6 +1484,23 @@
         "SubscriptionsRequest": "Subscription Requests",
         "SubscriptionsWaiting": "Pending",
         "SubscriptionsRejected": "Rejected",
-        "ReceiptNumber": "Receipt Number"
+        "ReceiptNumber": "Receipt Number",
+        "DocumentNumber": "Document Number",
+        "memberName": "Member Name",
+        "MembershipNo": "Membership No",
+        "SulaibikhatClub": "Sulaibikhat Club",
+        "docu":"document",
+        "TheMember":"The Member",
+        "multiSubscriptionTable": "Multi Subscription Table",
+        "theDetails": "The Details",
+        "management": "Management",
+        "authority": "Authority",
+        "sessionNumber": "Session Number",
+        "Authority": "Authority",
+        "ThisMemberIsNotSubscribedOrHasBeenDeleted": "This Member Is Not Subscribed Or Has Been Deleted",
+        "SubscriptionNumber": "SubscriptionNumber",
+        "serialName": "Serial Name",
+        "subscriptionDate": "Subscription Date",
+        "addSubscription": "Add Subscription"
     }
 }

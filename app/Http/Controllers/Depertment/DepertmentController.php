@@ -4,14 +4,9 @@ namespace App\Http\Controllers\Depertment;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DepertmentRequest;
-use App\Http\Requests\DocumentRequest;
-use App\Http\Requests\FromAdminDocumentRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Depertment\DepertmentResource;
-use App\Http\Resources\Depertment\GetNameDepertmentResource;
-use App\Http\Resources\Document\DocumentResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepertmentController extends Controller
 {
@@ -41,7 +36,7 @@ class DepertmentController extends Controller
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success', new DepertmentResource($model));
+        return responseJson(200, 'success');
     }
 
 
@@ -54,7 +49,7 @@ class DepertmentController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new DepertmentResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {

@@ -79,11 +79,9 @@ export default {
                 gender: true,
                 member_type_id: true,
                 Subscription_receipt_number: true,
-                first_name: true,
-                second_name: true,
-                third_name: true,
-                last_name: true,
-                family_name: true,
+                full_name: true,
+                document_no: true,
+                date: true,
                 status_id: true,
                 birth_date: true,
                 national_id: true,
@@ -97,11 +95,9 @@ export default {
             },
             is_disabled: false,
             filterSetting: [
-                "first_name",
-                "second_name",
-                "third_name",
-                "last_name",
-                "family_name",
+                "full_name",
+                "document_no",
+                "date",
                 "birth_date",
                 "national_id",
                 "home_phone",
@@ -182,9 +178,18 @@ export default {
          */
         getData(page = 1) {
             this.isLoader = true;
+            let _filterSetting = [...this.filterSetting];
+            let index = this.filterSetting.indexOf("document_no");
+            if (index > -1) {
+                _filterSetting[index] = "cmTransaction.document_no";
+            }
+            index = this.filterSetting.indexOf("date");
+            if (index > -1) {
+                _filterSetting[index] = "cmTransaction.date";
+            }
             let filter = "";
-            for (let i = 0; i < this.filterSetting.length; ++i) {
-                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            for (let i = 0; i < _filterSetting.length; ++i) {
+                filter += `columns[${i}]=${_filterSetting[i]}&`;
             }
             adminApi
                 .get(
@@ -464,20 +469,14 @@ export default {
                                         ref="dropdown"
                                         class="btn-block setting-search"
                                     >
-                                        <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">
-                                            {{ getCompanyKey("member_first_name") }}
+                                        <b-form-checkbox v-model="filterSetting" value="full_name" class="mb-1">
+                                            {{ $t("general.TheMember") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">
-                                            {{getCompanyKey("member_second_name")}}
+                                        <b-form-checkbox v-model="filterSetting" value="document_no" class="mb-1">
+                                            {{ $t("general.SubscriptionNumber") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">
-                                            {{ getCompanyKey("member_third_name") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1" >
-                                            {{ getCompanyKey("member_last_name") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">
-                                            {{getCompanyKey("member_family_name")}}
+                                        <b-form-checkbox v-model="filterSetting" value="date" class="mb-1">
+                                            {{ $t("general.subscriptionDate") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">
                                             {{ getCompanyKey("status") }}
@@ -574,11 +573,9 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">{{ getCompanyKey("member_first_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">{{ getCompanyKey("member_second_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">{{ getCompanyKey("member_third_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{ getCompanyKey("member_last_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">{{ getCompanyKey("member_family_name") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.TheMember") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.SubscriptionNumber") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date" class="mb-1"> {{ $t("general.subscriptionDate") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.member_type_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
@@ -840,79 +837,29 @@ export default {
                                             />
                                         </div>
                                     </th>
-                                    <th v-if="setting.first_name">
+                                    <th v-if="setting.full_name">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_first_name") }}</span>
+                                            <span>{{ $t("general.TheMember") }}</span>
                                             <div class="arrow-sort">
                                                 <i
                                                     class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name'))"
+                                                    @click="members.sort(sortString('full_name'))"
                                                 ></i>
                                                 <i
                                                     class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name'))"
+                                                    @click="members.sort(sortString('-full_name'))"
                                                 ></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.second_name">
+                                    <th v-if="setting.document_no">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_second_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
-                                                ></i>
-                                            </div>
+                                            <span>{{ $t("general.SubscriptionNumber") }}</span>
                                         </div>
                                     </th>
-                                    <th v-if="setting.third_name">
+                                    <th v-if="setting.date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_third_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.last_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_last_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
-                                                ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.family_name">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_family_name") }}</span>
-                                            <div class="arrow-sort">
-                                                <i
-                                                    class="fas fa-arrow-up"
-                                                    @click="members.sort(sortString('name_e'))"
-                                                ></i>
-                                                <i
-                                                    class="fas fa-arrow-down"
-                                                    @click="members.sort(sortString('-name_e'))"
-                                                ></i>
-                                            </div>
+                                            <span>{{ $t("general.subscriptionDate") }}</span>
                                         </div>
                                     </th>
                                     <th v-if="setting.birth_date">
@@ -1063,20 +1010,14 @@ export default {
                                             />
                                         </div>
                                     </td>
-                                    <td v-if="setting.first_name">
-                                        {{ data.first_name }}
+                                    <td v-if="setting.full_name">
+                                        {{ data.full_name }}
                                     </td>
-                                    <td v-if="setting.second_name">
-                                        {{ data.second_name }}
+                                    <td v-if="setting.document_no">
+                                        <h5 class="m-0 font-weight-normal">{{ data.transaction.document_no }}</h5>
                                     </td>
-                                    <td v-if="setting.third_name">
-                                        {{ data.third_name }}
-                                    </td>
-                                    <td v-if="setting.last_name">
-                                        {{ data.last_name }}
-                                    </td>
-                                    <td v-if="setting.family_name">
-                                        {{ data.family_name }}
+                                    <td v-if="setting.date">
+                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.transaction.date) }}</h5>
                                     </td>
                                     <td v-if="setting.birth_date">
                                         {{ data.birth_date }}

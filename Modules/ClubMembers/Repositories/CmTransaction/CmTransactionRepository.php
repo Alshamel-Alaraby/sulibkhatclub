@@ -2,6 +2,7 @@
 
 namespace Modules\ClubMembers\Repositories\CmTransaction;
 
+use Carbon\Carbon;
 use App\Models\Serial;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
@@ -57,14 +58,16 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function findCmMemberLastTransaction($id)
     {
-        $data = $this->model->where('cm_member_id',$id)->latest()->first();
+        $data = $this->model->where('cm_member_id',$id)->latest('id')->first();
         return $data;
     }
 
     public function create($request)
     {
-        DB::transaction(function () use ($request) {
+        $data = [];
+       return DB::transaction(function () use ($request) {
             foreach ($request['transactions'] as $transaction):
+                $member_number=null;
                 if ($transaction['module_type'] == 'club' && !$transaction['serial_id'])
                 {
                     $serial = Serial::where([['branch_id',$transaction['branch_id']],['document_id',$transaction['document_id']]])->first();
@@ -75,6 +78,7 @@ class CmTransactionRepository implements CmTransactionInterface
                 {
                     $member =  $this->modelMember->find($transaction['cm_member_id']);
                     if ($member){
+                        $member_number = $member['membership_number'];
                         $member->update([
                             'last_transaction_date'=>$transaction['date'],
                             'last_transaction_id'=>$model->id,
@@ -98,9 +102,13 @@ class CmTransactionRepository implements CmTransactionInterface
                 }
                 $model->update([
                     "serial_number" => $serials['serial_number'],
+                    "document_no" => $serials['serial_number'],
+                    "member_number" => $member_number,
                     "prefix" => $serials['prefix'],
                 ]);
+                $data[] = $model;
             endforeach;
+            return $data;
         });
     }
 
@@ -128,6 +136,44 @@ class CmTransactionRepository implements CmTransactionInterface
     {
         $model = $this->model->find($id);
         $model->delete();
+    }
+
+
+    public function reportCmTransactions($request)
+    {
+        $models = 
+        $this->model->filter($request)
+        ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        
+        if ($request->serial_id) {
+            $models->whereIn('serial_id', explode(",", $request->serial_id));
+        }
+        
+
+        if ($request->document_no) {
+            
+            $document_numbers = explode(",", $request->document_no);
+          
+            $models
+            ->whereBetween('document_no', [$document_numbers[0], $document_numbers[1]])
+            ;
+        }
+
+        if ($request->start_date && $request->end_date) {
+            $start_date = $request->start_date;
+            $end_date = $request->end_date;
+    
+            $models->whereBetween('date', [$start_date, $end_date]);
+        }
+
+        
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
     }
 
 }

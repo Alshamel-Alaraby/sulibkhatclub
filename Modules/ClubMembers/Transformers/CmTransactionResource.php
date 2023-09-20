@@ -38,6 +38,8 @@ class CmTransactionResource extends JsonResource
             'year' => $this->year,
             'date_from' => $this->date_from,
             'date_to' => $this->date_to,
+            'document_no' => $this->document_no,
+            'serial' => $this->serial
 
 
 //

@@ -13,6 +13,7 @@ import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import permissionGuard from "../../../helper/permission";
+import PrintRenewal from "./print/print-renewal";
 
 /**
  * Advanced Table component
@@ -31,6 +32,7 @@ export default {
         loader,
         Multiselect,
         DatePicker,
+        PrintRenewal
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
@@ -42,6 +44,7 @@ export default {
             fields: [],
             per_page: 50,
             search: "",
+            dataInv:"",
             debounce: {},
             transactionsPagination: {},
             transactions: [],
@@ -81,6 +84,9 @@ export default {
                 branch_id: true,
                 serial_number: true,
                 cm_member_id: true,
+                document_no: true,
+                serial_id: true,
+                date: true,
                 date_from: true,
                 date_to: true,
                 year: true,
@@ -95,10 +101,12 @@ export default {
             current_page: 1,
             filterSetting: [
                 "cm_member_id",
-                "date_from",
-                "date_to",
+                "document_no",
+                "serial_id",
+                "date",
                 "amount",
                 "prefix",
+                "year",
             ],
             printLoading: true,
             printObj: {
@@ -270,9 +278,15 @@ export default {
          */
         getData(page = 1) {
             this.isLoader = true;
+            let _filterSetting = [...this.filterSetting];
+            let index = this.filterSetting.indexOf("serial_id");
+            if (index > -1) {
+                _filterSetting[index] =
+                    this.$i18n.locale == "ar" ? "serial.name" : "serial.name_e";
+            }
             let filter = "";
-            for (let i = 0; i < this.filterSetting.length; ++i) {
-                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            for (let i = 0; i < _filterSetting.length; ++i) {
+                filter += `columns[${i}]=${_filterSetting[i]}&`;
             }
             adminApi
                 .get(
@@ -302,9 +316,15 @@ export default {
                 this.current_page
             ) {
                 this.isLoader = true;
+                let _filterSetting = [...this.filterSetting];
+                let index = this.filterSetting.indexOf("serial_id");
+                if (index > -1) {
+                    _filterSetting[index] =
+                        this.$i18n.locale == "ar" ? "serial.name" : "serial.name_e";
+                }
                 let filter = "";
-                for (let i = 0; i < this.filterSetting.length; ++i) {
-                    filter += `columns[${i}]=${this.filterSetting[i]}&`;
+                for (let i = 0; i < _filterSetting.length; ++i) {
+                    filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
                 adminApi
                     .get(
@@ -548,6 +568,7 @@ export default {
                                 timer: 1500,
                             });
                         }, 500);
+                        this.printInv(res.data.data[0])
                     })
                     .catch((err) => {
                         if (err.response.data) {
@@ -811,6 +832,10 @@ export default {
                 .finally(() => {
                     this.isLoader = false;
                 });
+        },
+
+        printInv(data){
+            this.dataInv = data
         }
     },
 };
@@ -819,6 +844,9 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
+        <div v-if="dataInv" style="display:none;">
+            <PrintRenewal :data_row="dataInv"/>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -839,13 +867,17 @@ export default {
                                                          class="mb-1"
                                         >{{ getCompanyKey("member") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('date_from')" v-model="filterSetting"
-                                                         value="date_from" class="mb-1"
-                                        >{{ getCompanyKey("year_from") }}
+                                        <b-form-checkbox v-if="isVisible('document_no')" v-model="filterSetting" value="document_no"
+                                                         class="mb-1"
+                                        >{{ $t("general.DocumentNumber") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-if="isVisible('date_to')" v-model="filterSetting"
-                                                         value="date_to" class="mb-1"
-                                        >{{ getCompanyKey("year_to") }}
+                                        <b-form-checkbox v-if="isVisible('serial_id')" v-model="filterSetting" value="serial_id"
+                                                         class="mb-1"
+                                        >{{ $t("general.serialName") }}
+                                        </b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('date')" v-model="filterSetting"
+                                                         value="date" class="mb-1"
+                                        >{{ $t("general.date") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('amount')" v-model="filterSetting"
                                                          value="amount" class="mb-1"
@@ -943,12 +975,21 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-if="isVisible('serial_number')" v-model="setting.serial_number" class="mb-1">
-                                                {{ $t("general.serial_number") }}
-                                            </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="setting.cm_member_id"
                                                              class="mb-1"
                                             >{{ getCompanyKey("member") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('serial_number')" v-model="setting.serial_number" class="mb-1">
+                                                {{ $t("general.serial_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('document_no')" v-model="setting.document_no" class="mb-1">
+                                                {{ $t("general.DocumentNumber") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('serial_id')" v-model="setting.serial_id" class="mb-1">
+                                                {{ $t("general.serialName") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('date')" v-model="setting.date" class="mb-1">
+                                                {{ $t("general.date") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('amount')" v-model="setting.amount"
                                                              class="mb-1">
@@ -1035,6 +1076,16 @@ export default {
                                         :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
                                     >
                                         {{ $t("general.AddNewRecord") }}
+                                    </b-button>
+                                    <b-button
+                                        variant="primary"
+                                        :disabled="!is_disabled"
+                                        type="button"
+                                        v-print="'#printInv'"
+                                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : 'mx-2']"
+                                    >
+                                        {{ $t("general.print") }}
+                                        <i class="fe-printer"></i>
                                     </b-button>
                                     <!-- Emulate built in modal footer ok and cancel button actions -->
                                     <template v-if="!is_disabled">
@@ -1330,25 +1381,6 @@ export default {
                                             />
                                         </div>
                                     </th>
-                                    <th v-if="setting.serial_number && isVisible('serial_number')">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.serial_number") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        transactions.sort(
-                                                            sortString(
-                                                                $i18n.locale == 'ar' ? 'serial_number' : 'serial_number'
-                                                            )
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        transactions.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-serial_number' : '-serial_number')
-                                                        )
-                                                    "></i>
-                                            </div>
-                                        </div>
-                                    </th>
                                     <th v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member") }}</span>
@@ -1368,6 +1400,64 @@ export default {
                                                         sortString(($i18n.locale = 'ar' ? '-name' : '-name_e'))
                                                       )
                                                     "
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.serial_number && isVisible('serial_number')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.serial_number") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString('prefix'))"></i>
+                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString('-prefix'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.document_no && isVisible('document_no')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.DocumentNumber") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="transactions.sort(sortString($i18n.locale == 'ar' ? 'document_no' : 'document_no'))"
+                                                ></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click=" transactions.sort(sortString($i18n.locale == 'ar' ? '-document_no' : '-document_no'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.serial_id && isVisible('serial_id')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.serialName") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="
+                                                      transactions.sort(
+                                                        sortString(($i18n.locale = 'ar' ? 'name' : 'name_e'))
+                                                      )
+                                                    "
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="
+                                                      transactions.sort(
+                                                        sortString(($i18n.locale = 'ar' ? '-name' : '-name_e'))
+                                                      )
+                                                    "
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.date && isVisible('date')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.date") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="transactions.sort(sortString($i18n.locale == 'ar' ? 'date' : 'date'))"
+                                                ></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click=" transactions.sort(sortString($i18n.locale == 'ar' ? '-date' : '-date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -1458,17 +1548,28 @@ export default {
                                             />
                                         </div>
                                     </td>
-                                    <td v-if="setting.serial_number && isVisible('serial_number')">
-                                        <h5 class="m-0 font-weight-normal">
-                                            {{ data.prefix }}
-                                        </h5>
-                                    </td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
                                                 data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
                                             }}
                                         </h5>
+                                    </td>
+                                    <td v-if="setting.serial_number && isVisible('serial_number')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.prefix }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.document_no && isVisible('document_no')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.document_no }}</h5>
+                                    </td>
+                                    <td v-if="setting.serial_id && isVisible('serial_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---' }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.date && isVisible('date')">
+                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
                                     </td>
                                     <td v-if="setting.amount && isVisible('amount')">
                                         <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
@@ -1506,6 +1607,13 @@ export default {
 <!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
 <!--                                                    </div>-->
 <!--                                                </a>-->
+
+                                                <a class="dropdown-item"  v-print="'#printInv'" href="#" @click="printInv(data)" >
+                                                    <div class="d-flex justify-content-between align-items-center text-black">
+                                                        {{ $t("general.print") }}
+                                                        <i class="fe-printer"></i>
+                                                    </div>
+                                                </a>
                                                 <a
                                                     v-if="isPermission('delete subscription club')"
                                                     class="dropdown-item text-black"

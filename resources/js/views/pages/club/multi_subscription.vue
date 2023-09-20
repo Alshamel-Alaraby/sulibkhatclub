@@ -15,6 +15,7 @@ import DatePicker from "vue2-datepicker";
 import Branch from "../../../components/create/general/branch";
 import Sponsor from "../../../components/create/club/sponsor.vue";
 import permissionGuard from "../../../helper/permission";
+import PrintMultiRenewal from "./print/print-multi-renewal";
 
 /**
  * Advanced Table component
@@ -34,16 +35,19 @@ export default {
         loader,
         Multiselect,
         DatePicker,
-        Sponsor
+        Sponsor,
+        PrintMultiRenewal
     },
     data() {
         return {
             fields: [],
             per_page: 50,
             search: "",
+            dataInv:[],
             debounce: {},
             transactionsPagination: {},
             transactions: [],
+            removeMembers: [],
             branches: [],
             renewal: [],
             sponsors: [],
@@ -307,6 +311,7 @@ export default {
         },
         resetForm() {
             this.total = 0;
+            this.removeMembers = [];
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
@@ -557,6 +562,7 @@ export default {
          */
         resetModalHidden() {
             this.total = 0;
+            this.removeMembers = [];
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
@@ -587,6 +593,7 @@ export default {
             if(this.isVisible('branch_id')) await this.getBranches();
             if(this.isVisible('sponsor_id')) await this.getSponsors();
             this.total = 0;
+            this.removeMembers = [];
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
@@ -630,6 +637,7 @@ export default {
                             timer: 1500,
                         });
                     }, 500);
+                    this.printInv(res.data.data)
                 })
                 .catch((err) => {
                     if (err.response.data) {
@@ -729,6 +737,7 @@ export default {
                 module_type:"club"
             };
             this.members = [];
+            this.removeMembers = [];
         },
         /*
          *  start  dynamicSortString
@@ -765,7 +774,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&member_status_id=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
+                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&member_status_id=1&without=${this.removeMembers}&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -871,7 +880,7 @@ export default {
             }, 100);
         },
 
-        addNewField() {
+       async addNewField() {
 
             let data = this.create;
             let serial = this.serials.find((el)=> el.id ==data.serial_id);
@@ -899,17 +908,21 @@ export default {
                     module_type:"club",
                     date:new Date().toISOString().slice(0, 10),
                 });
+                this.removeMembers.push(this.create.cm_member_id);
                 this.create.cm_member_id = null;
                 this.total += parseFloat(this.create.amount);
+                await this.getMember();
             }
 
         },
-        removeNewField(index) {
+       async removeNewField(index) {
             this.create.transactions.splice(index, 1);
+            this.removeMembers.splice(index, 1);
             this.total = 0;
             this.create.transactions.forEach((el) => {
                 this.total += parseFloat(el.amount);
             });
+            await this.getMember();
         },
         getMemberTransaction(){
             this.isLoader = true;
@@ -935,6 +948,15 @@ export default {
                 .finally(() => {
                     this.isLoader = false;
                 });
+        },
+        handelDataPrintInv(data)
+        {
+            let array = [];
+            array.push(data);
+            this.printInv(array);
+        },
+        printInv(data){
+            this.dataInv = data
         }
     },
 };
@@ -943,13 +965,16 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
+        <div v-if="dataInv" style="display:none;">
+            <PrintMultiRenewal :data_row="dataInv"/>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title">{{ $t("general.multiSubscriptionTable") }}</h4>
+                            <h4 class="header-title">{{ $t("general.multiSubscriptionSponsorTable") }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                                 <div class="d-inline-block" style="width: 22.2%">
                                     <!-- Basic dropdown -->
@@ -1204,6 +1229,16 @@ export default {
                                         >
                                             {{ $t("general.AddNewRecord") }}
                                         </b-button>
+                                        <b-button
+                                            variant="primary"
+                                            :disabled="!is_disabled"
+                                            type="button"
+                                            v-print="'#printInv'"
+                                            :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : 'mx-2']"
+                                        >
+                                            {{ $t("general.print") }}
+                                            <i class="fe-printer"></i>
+                                        </b-button>
                                         <!-- Emulate built in modal footer ok and cancel button actions -->
                                         <template v-if="!is_disabled">
                                             <b-button
@@ -1412,66 +1447,66 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-3" v-if="isVisible('date_from')">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.from_date') }}
-                                                <span v-if="isRequired('date_from')" class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                :disabled="true"
-                                                type="date"
-                                                v-model="$v.create.date_from.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.date_from.$error ||
-                                                        errors.date_from,
-                                                    'is-valid':
-                                                        !$v.create.date_from
-                                                            .$invalid &&
-                                                        !errors.date_from,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.date_from">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3" v-if="isVisible('date_to')">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.to_date') }}
-                                                <span v-if="isRequired('date_to')" class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                :disabled="true"
-                                                type="date"
-                                                v-model="$v.create.date_to.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':
-                                                        $v.create.date_to.$error ||
-                                                        errors.date_to,
-                                                    'is-valid':
-                                                        !$v.create.date_to
-                                                            .$invalid &&
-                                                        !errors.date_to,
-                                                }"
-                                            ></date-picker>
-                                            <template v-if="errors.date_to">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-md-3" v-if="isVisible('date_from')">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label class="control-label">-->
+<!--                                                {{ $t('general.from_date') }}-->
+<!--                                                <span v-if="isRequired('date_from')" class="text-danger">*</span>-->
+<!--                                            </label>-->
+<!--                                            <date-picker-->
+<!--                                                :disabled="true"-->
+<!--                                                type="date"-->
+<!--                                                v-model="$v.create.date_from.$model"-->
+<!--                                                format="YYYY-MM-DD"-->
+<!--                                                valueType="format"-->
+<!--                                                :confirm="false"-->
+<!--                                                :class="{ 'is-invalid':-->
+<!--                                                        $v.create.date_from.$error ||-->
+<!--                                                        errors.date_from,-->
+<!--                                                    'is-valid':-->
+<!--                                                        !$v.create.date_from-->
+<!--                                                            .$invalid &&-->
+<!--                                                        !errors.date_from,-->
+<!--                                                }"-->
+<!--                                            ></date-picker>-->
+<!--                                            <template v-if="errors.date_from">-->
+<!--                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_from"-->
+<!--                                                              :key="index">-->
+<!--                                                    {{ errorMessage }}-->
+<!--                                                </ErrorMessage>-->
+<!--                                            </template>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-md-3" v-if="isVisible('date_to')">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label class="control-label">-->
+<!--                                                {{ $t('general.to_date') }}-->
+<!--                                                <span v-if="isRequired('date_to')" class="text-danger">*</span>-->
+<!--                                            </label>-->
+<!--                                            <date-picker-->
+<!--                                                :disabled="true"-->
+<!--                                                type="date"-->
+<!--                                                v-model="$v.create.date_to.$model"-->
+<!--                                                format="YYYY-MM-DD"-->
+<!--                                                valueType="format"-->
+<!--                                                :confirm="false"-->
+<!--                                                :class="{ 'is-invalid':-->
+<!--                                                        $v.create.date_to.$error ||-->
+<!--                                                        errors.date_to,-->
+<!--                                                    'is-valid':-->
+<!--                                                        !$v.create.date_to-->
+<!--                                                            .$invalid &&-->
+<!--                                                        !errors.date_to,-->
+<!--                                                }"-->
+<!--                                            ></date-picker>-->
+<!--                                            <template v-if="errors.date_to">-->
+<!--                                                <ErrorMessage v-for="(errorMessage,index) in errors.date_to"-->
+<!--                                                              :key="index">-->
+<!--                                                    {{ errorMessage }}-->
+<!--                                                </ErrorMessage>-->
+<!--                                            </template>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
 
                                     <div class="col-md-1 pt-3">
                                         <b-button variant="success"
@@ -1503,8 +1538,8 @@ export default {
                                                         <th>{{ getCompanyKey("member") }}</th>
                                                         <th v-if="isVisible('amount')">{{ getCompanyKey("subscription_amount") }}</th>
                                                         <th v-if="isVisible('year')">{{ $t("general.ForAYear") }}</th>
-                                                        <th v-if="isVisible('date_from')">{{ getCompanyKey("year_from") }}</th>
-                                                        <th v-if="isVisible('date_to')">{{ getCompanyKey("year_to") }}</th>
+<!--                                                        <th v-if="isVisible('date_from')">{{ getCompanyKey("year_from") }}</th>-->
+<!--                                                        <th v-if="isVisible('date_to')">{{ getCompanyKey("year_to") }}</th>-->
                                                         <th>{{ $t("general.Action") }}</th>
                                                     </tr>
                                                     </thead>
@@ -1526,10 +1561,10 @@ export default {
                                                             <h5 class="m-0 font-weight-normal">{{data.amount}}</h5>
                                                         </td>
                                                         <td v-if="isVisible('year')"> <h5 class="m-0 font-weight-normal"> {{ data.year }}</h5></td>
-                                                        <td v-if="isVisible('date_from')">
-                                                            <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
-                                                        </td>
-                                                        <td v-if="isVisible('date_to')"><h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5></td>
+<!--                                                        <td v-if="isVisible('date_from')">-->
+<!--                                                            <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>-->
+<!--                                                        </td>-->
+<!--                                                        <td v-if="isVisible('date_to')"><h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5></td>-->
                                                         <td>
                                                             <button  type="button"
                                                                      @click.prevent="removeNewField(index)"
@@ -1690,6 +1725,12 @@ export default {
 <!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
 <!--                                                    </div>-->
 <!--                                                </a>-->
+                                                <a class="dropdown-item"  v-print="'#printInv'" href="#" @click="handelDataPrintInv(data)" >
+                                                    <div class="d-flex justify-content-between align-items-center text-black">
+                                                        {{ $t("general.print") }}
+                                                        <i class="fe-printer"></i>
+                                                    </div>
+                                                </a>
                                                 <a
                                                     v-if="isPermission('delete multiSubscription club')"
                                                     class="dropdown-item text-black"

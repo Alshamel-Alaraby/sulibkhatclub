@@ -1,15 +1,9 @@
 <?php
 
-
 namespace App\Repositories\CustomerGroup;
 
 use App\Models\CustomerGroup;
-use App\Models\DepertmentTask;
-use App\Models\GeneralCustomTable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Document\DocumentResource;
 
 class CustomerGroupRepository implements CustomerGroupInterface
 {
@@ -21,7 +15,7 @@ class CustomerGroupRepository implements CustomerGroupInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -32,24 +26,22 @@ class CustomerGroupRepository implements CustomerGroupInterface
 
     public function find($id)
     {
-        $data = $this->model->find($id);
+        $data = $this->model->data()->find($id);
         return $data;
     }
 
-
     public function create($request)
     {
-        checkIsDefaultGeneral($request['is_default'],$this->model);
+        checkIsDefaultGeneral($request['is_default'], $this->model);
 
         return DB::transaction(function () use ($request) {
-           return  $this->model->create($request);
+            return $this->model->create($request);
         });
     }
 
-
     public function update($request, $id)
     {
-        checkIsDefaultGeneral($request['is_default'],$this->model);
+        checkIsDefaultGeneral($request['is_default'], $this->model);
 
         $data = $this->model->find($id);
         $data->update($request);
@@ -67,10 +59,9 @@ class CustomerGroupRepository implements CustomerGroupInterface
         $model->delete();
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'title', 'title_e');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

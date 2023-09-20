@@ -15,6 +15,14 @@ class DepertmentTask extends Model
 
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name','name_e','description','description_e','estimate_task_duration','department_id')
+            ->with('depertment:id,name,name_e');
+    }
+
+ 
 
     public function depertment()
     {

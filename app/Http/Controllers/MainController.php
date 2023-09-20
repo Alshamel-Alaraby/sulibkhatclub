@@ -104,7 +104,8 @@ class MainController extends \Illuminate\Routing\Controller
     public function dataTypes()
     {
 
-        $data = \App\Models\DataType::all();
+        $data = \App\Models\DataType::data()->get();
+
         return responseJson(200, 'success', \App\Http\Resources\DataTypeResource::collection($data));
     }
 
