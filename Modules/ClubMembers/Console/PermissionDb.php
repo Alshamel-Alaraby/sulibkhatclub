@@ -115,7 +115,7 @@ class PermissionDb extends Command
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
 
-                foreach ($settings->reverse() as $setting){
+                foreach ($settings as $setting){
 
                     if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period)
                     {

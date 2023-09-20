@@ -1484,6 +1484,10 @@
         "SubscriptionsRequest": "Subscription Requests",
         "SubscriptionsWaiting": "Pending",
         "SubscriptionsRejected": "Rejected",
-        "ReceiptNumber": "Receipt Number"
+        "ReceiptNumber": "Receipt Number",
+        "serial_name": "Serial Name",
+        "DocumentNumber": "Document Number",
+        "Year": "Year",
+        "Payment-report-over-period": "Payment Report Over Period"
     }
 }

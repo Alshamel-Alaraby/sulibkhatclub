@@ -2,6 +2,7 @@
 
 namespace Modules\ClubMembers\Repositories\CmTransaction;
 
+use Carbon\Carbon;
 use App\Models\Serial;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
@@ -128,6 +129,47 @@ class CmTransactionRepository implements CmTransactionInterface
     {
         $model = $this->model->find($id);
         $model->delete();
+    }
+
+
+    public function reportCmTransactions($request)
+    {
+        
+        
+        $models = 
+        $this->model->filter($request)
+        ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        // 1: serial_id (1, 2, 3)
+        if ($request->serial_id) {
+            $models->whereIn('serial_id', explode(",", $request->serial_id));
+        }
+        
+        // 2: document_no (1, 10)
+        if ($request->document_no) {
+            
+            $document_numbers = explode(",", $request->document_no);
+          
+            $models
+            ->whereBetween('document_no', [$document_numbers[0], $document_numbers[1]])
+            ;
+        }
+
+        // 3: date (from & to)
+        if ($request->start_date && $request->end_date) {
+            $start_date = $request->start_date;
+            $end_date = $request->end_date;
+    
+            $models->whereBetween('date', [$start_date, $end_date]);
+        }
+
+        
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
     }
 
 }

@@ -201,4 +201,12 @@ export default [
         },
         component: () => import('../../views/pages/club/change-of-member-rights'),
     },
+    {
+        path: '/dashboard/club/Payment-report-over-period',
+        name: 'Change of member rights',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/Payment-report-over-period'),
+    },
 ];

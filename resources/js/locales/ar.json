@@ -1473,6 +1473,10 @@
         "SubscriptionsRequest": "طلبات الاشتراكات",
         "SubscriptionsWaiting": " قيد الانتظار",
         "SubscriptionsRejected": "المرفوضين",
-        "ReceiptNumber": "رقم الايصال"
+        "ReceiptNumber": "رقم الايصال",
+        "serial_name": "اسم المسلسل",
+        "DocumentNumber": "رقم المستند",
+        "Year": "السنه",
+        "Payment-report-over-period": "تقرير الدفع خلال فترة"
     }
 }

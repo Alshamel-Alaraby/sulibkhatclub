@@ -14,7 +14,7 @@ use Modules\ClubMembers\Transformers\CmMemberRejectResource;
 
 class CmMemberRejectController extends Controller
 {
-    public function __construct(private CmMemberReject $model, CmMember $modelMember)
+    public function __construct(private CmMemberReject $model,private CmMember $modelMember)
     {
         $this->model = $model;
         $this->modelMember = $modelMember;

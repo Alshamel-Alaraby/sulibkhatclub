@@ -22,6 +22,7 @@ class CmMemberRejectRequest extends FormRequest
             'session_number' => "nullable|string",
             'note' => "nullable|string",
             'discharge_reson_id' => "required|exists:cm_discharge_reson,id",
+            'entity' => 'nullable|string|max:20',
         ];
     }
 

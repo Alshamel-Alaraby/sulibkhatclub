@@ -16,10 +16,12 @@ class CmTransaction extends Model
 
     protected $guarded = ['id'];
     protected $table = 'cm_transactions';
+    /*
     protected $casts = [
 
         'date' => 'date',
     ];
+    */
 
     public function branch()
     {
