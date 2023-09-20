@@ -581,6 +581,8 @@ export default {
             this.edit.membership_cost = module.membership_cost;
             this.edit.renewal_availability = module.renewal_availability;
             this.edit.renewal_cost = module.renewal_cost;
+            this.edit.from = module.from;
+            this.edit.to = module.to;
             this.errors = {};
         },
         resetModalHiddenEdit(id) {
@@ -837,13 +839,12 @@ export default {
                                                 <label class="control-label">
                                                     {{ $t("general.from_date") }}
                                                 </label>
-                                                <date-picker
-                                                    type="date"
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder="yyyy-mm-dd"
                                                     v-model="$v.create.memberships_renewals.$each[index].from.$model"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                ></date-picker>
+                                                >
                                                 <template v-if="errors.from">
                                                     <ErrorMessage v-for="(errorMessage, index) in errors.from" :key="index">
                                                         {{ errorMessage }}
@@ -856,13 +857,12 @@ export default {
                                                 <label class="control-label">
                                                     {{ $t("general.to_date") }}
                                                 </label>
-                                                <date-picker
-                                                    type="date"
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    placeholder="yyyy-mm-dd"
                                                     v-model="$v.create.memberships_renewals.$each[index].to.$model"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                ></date-picker>
+                                                >
                                                 <template v-if="errors.to">
                                                     <ErrorMessage v-for="(errorMessage, index) in errors.to" :key="index">
                                                         {{ errorMessage }}
@@ -1116,13 +1116,12 @@ export default {
                                                             <label class="control-label">
                                                                 {{ $t("general.from_date") }}
                                                             </label>
-                                                            <date-picker
-                                                                type="date"
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder="yyyy-mm-dd"
                                                                 v-model="$v.edit.from.$model"
-                                                                format="YYYY-MM-DD"
-                                                                valueType="format"
-                                                                :confirm="false"
-                                                            ></date-picker>
+                                                            >
                                                             <template v-if="errors.from">
                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.from" :key="index">
                                                                     {{ errorMessage }}
@@ -1135,13 +1134,12 @@ export default {
                                                             <label class="control-label">
                                                                 {{ $t("general.to_date") }}
                                                             </label>
-                                                            <date-picker
-                                                                type="date"
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder="yyyy-mm-dd"
                                                                 v-model="$v.edit.to.$model"
-                                                                format="YYYY-MM-DD"
-                                                                valueType="format"
-                                                                :confirm="false"
-                                                            ></date-picker>
+                                                            >
                                                             <template v-if="errors.to">
                                                                 <ErrorMessage v-for="(errorMessage, index) in errors.to" :key="index">
                                                                     {{ errorMessage }}

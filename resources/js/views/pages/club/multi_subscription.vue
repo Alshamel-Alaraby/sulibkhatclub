@@ -1398,12 +1398,11 @@ export default {
                                                 {{ $t('general.ForAYear') }}
                                                 <span v-if="isRequired('year')" class="text-danger">*</span>
                                             </label>
-                                            <date-picker
-                                                type="year"
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="yyyy"
                                                 v-model="$v.create.year.$model"
-                                                format="YYYY"
-                                                valueType="format"
-                                                :confirm="false"
                                                 :class="{ 'is-invalid':
                                                         $v.create.year.$error ||
                                                         errors.year,
@@ -1412,7 +1411,7 @@ export default {
                                                             .$invalid &&
                                                         !errors.year,
                                                 }"
-                                            ></date-picker>
+                                            >
                                             <template v-if="errors.year">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.year"
                                                               :key="index">

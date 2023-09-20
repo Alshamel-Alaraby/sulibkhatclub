@@ -59,7 +59,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -71,7 +71,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -251,7 +251,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -494,7 +494,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -520,7 +520,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -626,7 +626,7 @@ export default {
             let setting = this.transactions.find((e) => id == e.id);
             this.edit.cm_member_id = setting.member.id;
             this.edit.branch_id = setting.branch.id;
-            this.edit.data = setting.data;
+            this.edit.date = setting.data;
             this.edit.discharge_reson_id = setting.discharge_reson_id;
             this.edit.entity = setting.entity;
             this.edit.note = setting.note;
@@ -644,7 +644,7 @@ export default {
                 serial_id: null,
                 cm_member_id: null,
                 document_id: 37,
-                data: new Date().toISOString().slice(0, 10),
+                date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
                 entity: "",
                 note: "",
@@ -1106,16 +1106,12 @@ export default {
                                                 {{ getCompanyKey('member_reject_date') }}
                                                 <span v-if="isRequired('date')" class="text-danger">*</span>
                                             </label>
-                                            <date-picker
-                                                type="date"
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="yyyy-mm-dd"
                                                 v-model="create.date"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{ 'is-invalid':errors.date,
-                                                    'is-valid': !errors.date,
-                                                }"
-                                            ></date-picker>
+                                            >
                                             <template v-if="errors.date">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.date"
                                                               :key="index">
