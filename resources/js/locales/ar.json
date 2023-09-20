@@ -1142,7 +1142,7 @@
         "changeSpenser": "تغيير الراعى",
         "subscribe": "اشتراك",
         "renew": "تجديد",
-        "multiSubscriptionTable": "جدول تجديد العضويات المتعددة",
+        "multiSubscriptionSponsorTable": "جدول تجديد العضويات المتعددة للراعى",
         "month": "شهر",
         "memberAccept": "الاعضاء المقبولين",
         "memberAcceptTable": "جدول الاعضاء المقبولين",
@@ -1477,6 +1477,23 @@
         "serial_name": "اسم المسلسل",
         "DocumentNumber": "رقم المستند",
         "Year": "السنه",
-        "Payment-report-over-period": "تقرير الدفع خلال فترة"
+        "Payment-report-over-period": "تقرير الدفع خلال فترة",
+        "DocumentNumber": "رقم السند",
+        "memberName": "اسم العضو",
+        "MembershipNo": "رقم العضوية",
+        "SulaibikhatClub": "نادى الصليبخات",
+        "docu": "سند",
+        "TheMember": "العضو",
+        "multiSubscriptionTable": "جدول تجديد العضويات المتعددة",
+        "theDetails": "التفاصيل",
+        "management": "ادارة",
+        "authority": "هيئة",
+        "sessionNumber": "رقم الجلسه",
+        "Authority": "الجهة",
+        "ThisMemberIsNotSubscribedOrHasBeenDeleted": "هذا العضو غير مشترك أو تم حذفه",
+        "SubscriptionNumber": "رقم طلب الاشتراك",
+        "serialName": "اسم المسلسل",
+        "subscriptionDate": "تاريخ الاشترك",
+        "addSubscription": "اضف اشتراك"
     }
 }

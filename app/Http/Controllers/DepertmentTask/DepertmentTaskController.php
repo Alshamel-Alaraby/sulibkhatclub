@@ -5,14 +5,11 @@ namespace App\Http\Controllers\DepertmentTask;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DepertmentTask\DepertmentTaskRequest;
 use App\Http\Resources\AllDropListResource;
-use App\Http\Resources\Depertment\DepertmentResource;
 use App\Http\Resources\DepertmentTask\DepertmentTaskResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepertmentTaskController extends Controller
 {
-
 
     public function __construct(private \App\Repositories\DepertmentTask\DepertmentTaskInterface $modelInterface)
     {
@@ -28,13 +25,11 @@ class DepertmentTaskController extends Controller
         return responseJson(200, 'success', new DepertmentTaskResource($model));
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', DepertmentTaskResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
-
 
     public function create(DepertmentTaskRequest $request)
     {
@@ -42,8 +37,6 @@ class DepertmentTaskController extends Controller
 
         return responseJson(200, 'success');
     }
-
-
 
     public function update(DepertmentTaskRequest $request, $id)
     {
@@ -53,7 +46,7 @@ class DepertmentTaskController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new DepertmentTaskResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {
@@ -64,7 +57,6 @@ class DepertmentTaskController extends Controller
         $logs = $this->modelInterface->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
-
 
     public function delete($id)
     {
@@ -96,7 +88,6 @@ class DepertmentTaskController extends Controller
         }
         return responseJson(200, __('Done'));
     }
-
 
     public function getDropDown(Request $request)
     {

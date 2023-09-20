@@ -15,7 +15,7 @@ class FinancialYearRepository implements FinancialYearInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -26,7 +26,7 @@ class FinancialYearRepository implements FinancialYearInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -38,7 +38,6 @@ class FinancialYearRepository implements FinancialYearInterface
                 });
             }
             $this->model->create($request->all());
-            cacheForget("financial-years");
         });
     }
 
@@ -46,19 +45,16 @@ class FinancialYearRepository implements FinancialYearInterface
     {
         DB::transaction(function () use ($id, $request) {
             if ($request['is_active'] == 1) {
-                collect($this->model->all())->each(function ($item) {
-                    $item->update(["is_active" => 0]);
-                });
+                $this->model->where('id', '!=', $id)->update(['is_active' => 0]);
             }
             $this->model->where("id", $id)->update($request->all());
-            $this->forget($id);
         });
     }
 
     public function delete($id)
     {
+
         $model = $this->find($id);
-        $this->forget($id);
         $model->delete();
     }
 
@@ -96,14 +92,5 @@ class FinancialYearRepository implements FinancialYearInterface
         return $this->model->whereDate('start_date', '<=', $request['date'])->whereDate('end_date', '>=', $request['date'])->where('is_active', 1)->first();
     }
 
-    private function forget($id)
-    {
-        $keys = [
-            "financial-years",
-            "financial-years_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
-    }
+
 }

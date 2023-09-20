@@ -4,13 +4,9 @@ namespace App\Http\Controllers\CustomerGroup;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerGroup\CustomerGroupRequest;
-use App\Http\Requests\DepertmentTask\DepertmentTaskRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\CustomerGroup\CustomerGroupResource;
-use App\Http\Resources\CustomerGroup\GetNameCustomerGroupResource;
-use App\Http\Resources\DepertmentTask\DepertmentTaskResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class CustomerGroupController extends Controller
 {
@@ -28,22 +24,18 @@ class CustomerGroupController extends Controller
         return responseJson(200, 'success', new CustomerGroupResource($model));
     }
 
-
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', CustomerGroupResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
-
     public function create(CustomerGroupRequest $request)
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success', new CustomerGroupResource($model));
+        return responseJson(200, 'success');
     }
-
-
 
     public function update(CustomerGroupRequest $request, $id)
     {
@@ -53,7 +45,7 @@ class CustomerGroupController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new CustomerGroupResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {
@@ -65,16 +57,15 @@ class CustomerGroupController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-
     public function delete($id)
     {
-         $model = $this->modelInterface->find($id);
-         if (!$model) {
-             return responseJson(404, __('message.data not found'));
-         }
-         if ($model->hasChildren()) {
-             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-         }
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        if ($model->hasChildren()) {
+            return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
+        }
         $this->modelInterface->delete($id);
         return responseJson(200, 'success');
     }
@@ -96,7 +87,6 @@ class CustomerGroupController extends Controller
         }
         return responseJson(200, __('Done'));
     }
-
 
     public function getDropDown(Request $request)
     {

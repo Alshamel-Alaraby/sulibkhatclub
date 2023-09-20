@@ -154,7 +154,7 @@ export default {
                 this.isLoader = true;
 
                 let data = '?start_date='+this.create.start_date;
-                    data += '&start_date='+this.create.end_date;
+                    data += '&end_date='+this.create.end_date;
                     data += '&document_no='+this.create.document_no1+ ','+this.create.document_no2;
                     data += '&serial_id='+this.create.serial_id.join();
 
@@ -175,6 +175,39 @@ export default {
                     .finally(() => {
                         this.isLoader = false;
                     });
+            }
+        },
+        getDataCurrentPage(page = 1) {
+            this.$v.create.$touch();
+            if (this.$v.create.$invalid) {
+                return;
+            } else {
+                if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
+                    this.isLoader = true;
+
+                    let data = '?start_date='+this.create.start_date;
+                    data += '&end_date='+this.create.end_date;
+                    data += '&document_no='+this.create.document_no1+ ','+this.create.document_no2;
+                    data += '&serial_id='+this.create.serial_id.join();
+
+                    adminApi.get(`/club-members/transactions/report-cm-transactions${data}&per_page=50`)
+                        .then((res) => {
+                            let l = res.data;
+                            this.installmentStatus = l.data;
+                            this.installmentStatusPagination = l.pagination;
+                            this.current_page = l.pagination.current_page;
+                        })
+                        .catch((err) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: `${this.$t('general.Error')}`,
+                                text: `${this.$t('general.Thereisanerrorinthesystem')}`,
+                            });
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
+                }
             }
         },
         /**

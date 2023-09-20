@@ -13,6 +13,7 @@ import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import permissionGuard from "../../../helper/permission";
+import PrintMemberReject from "./print/print-member-reject";
 
 /**
  * Advanced Table component
@@ -31,6 +32,7 @@ export default {
         loader,
         Multiselect,
         DatePicker,
+        PrintMemberReject
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
@@ -42,6 +44,7 @@ export default {
             fields: [],
             per_page: 50,
             search: "",
+            dataInv:"",
             debounce: {},
             transactionsPagination: {},
             transactions: [],
@@ -58,6 +61,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             },
@@ -69,6 +73,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             },
@@ -77,6 +82,7 @@ export default {
                 prefix: true,
                 cm_member_id: true,
                 discharge_reson_id: true,
+                entity: true,
                 note: true,
                 session_number: true,
                 date: true,
@@ -116,6 +122,9 @@ export default {
             discharge_reson_id: {required: requiredIf(function (model) {
                     return this.isRequired("discharge_reson_id");
                 })},
+            entity: {required: requiredIf(function (model) {
+                    return this.isRequired("entity");
+                })},
             note: {required: requiredIf(function (model) {
                     return this.isRequired("note");
                 })},
@@ -138,6 +147,9 @@ export default {
                 })},
             discharge_reson_id: {required: requiredIf(function (model) {
                     return this.isRequired("discharge_reson_id");
+                })},
+            entity: {required: requiredIf(function (model) {
+                    return this.isRequired("entity");
                 })},
             note: {required: requiredIf(function (model) {
                     return this.isRequired("note");
@@ -241,6 +253,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             };
@@ -483,6 +496,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             };
@@ -508,6 +522,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             };
@@ -542,6 +557,7 @@ export default {
                                 timer: 1500,
                             });
                         }, 500);
+                        this.printInv(res.data.data)
                     })
                     .catch((err) => {
                         if (err.response.data) {
@@ -612,6 +628,7 @@ export default {
             this.edit.branch_id = setting.branch.id;
             this.edit.date = setting.data;
             this.edit.discharge_reson_id = setting.discharge_reson_id;
+            this.edit.entity = setting.entity;
             this.edit.note = setting.note;
             this.edit.document_id = setting.document_id;
             this.edit.session_number = setting.session_number;
@@ -629,6 +646,7 @@ export default {
                 document_id: 37,
                 date: new Date().toISOString().slice(0, 10),
                 discharge_reson_id:null,
+                entity: "",
                 note: "",
                 session_number: ""
             };
@@ -732,6 +750,9 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
+        printInv(data){
+            this.dataInv = data
+        }
     },
 };
 </script>
@@ -739,6 +760,9 @@ export default {
 <template>
     <Layout>
         <PageHeader/>
+        <div v-if="dataInv" style="display:none;">
+            <PrintMemberReject :data_row="dataInv"/>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -878,6 +902,10 @@ export default {
                                                              class="mb-1">
                                                 {{ getCompanyKey("member_reject_reason") }}
                                             </b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('entity')" v-model="setting.entity"
+                                                             class="mb-1">
+                                                {{ getCompanyKey("member_reject_entity") }}
+                                            </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('note')" v-model="setting.note"
                                                              class="mb-1">
                                                 {{ getCompanyKey("member_reject_note") }}
@@ -953,6 +981,16 @@ export default {
                                         :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
                                     >
                                         {{ $t("general.AddNewRecord") }}
+                                    </b-button>
+                                    <b-button
+                                        variant="primary"
+                                        :disabled="!is_disabled"
+                                        type="button"
+                                        v-print="'#printInv'"
+                                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : 'mx-2']"
+                                    >
+                                        {{ $t("general.print") }}
+                                        <i class="fe-printer"></i>
                                     </b-button>
                                     <!-- Emulate built in modal footer ok and cancel button actions -->
                                     <template v-if="!is_disabled">
@@ -1109,7 +1147,10 @@ export default {
                                     </div>
                                     <div class="col-md-6" v-if="isVisible('discharge_reson_id')">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("member_reject_reason") }}</label>
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_reject_reason") }}
+                                                <span v-if="isRequired('discharge_reson_id')" class="text-danger">*</span>
+                                            </label>
                                             <multiselect @input="showBranchModal" v-model="create.discharge_reson_id"
                                                          :options="membersTypes.map((type) => type.id)" :custom-label="
                                                     (opt) =>
@@ -1128,6 +1169,30 @@ export default {
                                             <template v-if="errors.discharge_reson_id">
                                                 <ErrorMessage v-for="(errorMessage, index) in errors.discharge_reson_id"
                                                               :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" v-if="isVisible('entity')">
+                                        <div class="form-group">
+                                            <label  class="control-label">
+                                                {{ getCompanyKey("member_reject_entity") }}
+                                                <span v-if="isRequired('entity')" class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-control" v-model="create.entity" :class="{
+                                                  'is-invalid': $v.create.entity.$error || errors.entity,
+                                                  'is-valid':
+                                                    !$v.create.entity.$invalid && !errors.entity,
+                                                }">
+                                                <option value="authority">{{$t('general.authority')}}</option>
+                                                <option value="management">{{$t('general.management')}}</option>
+                                            </select>
+
+                                            <template v-if="errors.entity">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.entity"
+                                                    :key="index"
+                                                >{{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
@@ -1267,6 +1332,21 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.entity && isVisible('entity')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_reject_entity") }}</span>
+                                            <div class="arrow-sort">
+                                                <i
+                                                    class="fas fa-arrow-up"
+                                                    @click="transactions.sort(sortString('entity'))"
+                                                ></i>
+                                                <i
+                                                    class="fas fa-arrow-down"
+                                                    @click="transactions.sort(sortString('-entity'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.note && isVisible('note')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_reject_note") }}</span>
@@ -1336,6 +1416,11 @@ export default {
                                             {{data.discharge_reson ? $i18n.locale == "ar" ? data.discharge_reson.name : data.discharge_reson.name_e : ' - '}}
                                         </h5>
                                     </td>
+                                    <td v-if="setting.entity && isVisible('entity')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{data.entity ? $t('general.'+data.entity) : '---'}}
+                                        </h5>
+                                    </td>
                                     <td v-if="setting.note && isVisible('note')">
                                         <h5 class="m-0 font-weight-normal">{{ data.note }}</h5>
                                     </td>
@@ -1376,6 +1461,12 @@ export default {
 <!--                                                        <i class="fas fa-times text-danger"></i>-->
 <!--                                                    </div>-->
 <!--                                                </a>-->
+                                                <a class="dropdown-item"  v-print="'#printInv'" href="#" @click="printInv(data)" >
+                                                    <div class="d-flex justify-content-between align-items-center text-black">
+                                                        {{ $t("general.print") }}
+                                                        <i class="fe-printer"></i>
+                                                    </div>
+                                                </a>
                                             </div>
                                         </div>
 

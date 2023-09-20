@@ -14,11 +14,11 @@ class DepertmentRepository implements DepertmentInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->employees) {
             $models->whereHas('employees');
-        }
+        } //للحذف عند النهايه
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -29,7 +29,7 @@ class DepertmentRepository implements DepertmentInterface
 
     public function find($id)
     {
-        $data = $this->model->find($id);
+        $data = $this->model->data()->find($id);
         return $data;
     }
 
@@ -58,8 +58,6 @@ class DepertmentRepository implements DepertmentInterface
         $model = $this->model->find($id);
         $model->delete();
     }
-
-
 
     public function processJsonData($data)
     {
@@ -121,10 +119,13 @@ class DepertmentRepository implements DepertmentInterface
         return $messages;
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->employees) {
+            $models->whereHas('employees');
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

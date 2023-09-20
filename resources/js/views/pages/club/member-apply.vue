@@ -25,6 +25,7 @@ import Multiselect from "vue-multiselect";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import Subscription from "../../../components/create/club/subscription";
 
 /**
  * Advanced Table component
@@ -43,12 +44,14 @@ export default {
     ErrorMessage,
     loader,
     Multiselect,
+    Subscription
   },
   data() {
     return {
       fields: [],
       per_page: 50,
       search: "",
+        member_request_id: "",
       debounce: {},
       enabled3: true,
       membersPagination: {},
@@ -760,6 +763,7 @@ export default {
                 timer: 1500,
               });
             }, 500);
+            this.member_request_id = res.data.data.id;
           })
           .catch((err) => {
             if (err.response.data) {
@@ -933,6 +937,10 @@ export default {
       this.edit.phone_code = e.countryCode;
       this.create.phone_code = e.countryCode;
     },
+      showSubscriptionModal()
+      {
+          this.$bvModal.show("add_subscription");
+      }
   },
 };
 </script>
@@ -940,6 +948,13 @@ export default {
 <template>
   <Layout>
     <PageHeader />
+      <Subscription
+          :companyKeys="companyKeys"
+          :defaultsKeys="defaultsKeys"
+          :member_request_id="member_request_id"
+          :id="'add_subscription'"
+          @created="getData"
+      />
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -1343,6 +1358,16 @@ export default {
             >
               <form>
                 <div class="mb-3 d-flex justify-content-end">
+                    <b-button
+                        @click="showSubscriptionModal"
+                        variant="primary"
+                        :disabled="!is_disabled"
+                        type="button"
+                        v-print="'#printInv'"
+                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : 'mx-2']"
+                    >
+                        {{ $t("general.addSubscription") }}
+                    </b-button>
                   <b-button
                     variant="success"
                     :disabled="!is_disabled"

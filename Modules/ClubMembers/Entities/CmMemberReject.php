@@ -3,6 +3,7 @@
 namespace Modules\ClubMembers\Entities;
 
 use App\Models\Branch;
+use App\Models\Serial;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,10 @@ class CmMemberReject extends Model
     public function dischargeReson()
     {
         return $this->belongsTo(CmDischargeReson::class, 'discharge_reson_id');
+    }
+    public function serial()
+    {
+        return $this->belongsTo(Serial::class, 'serial_id');
     }
 
 

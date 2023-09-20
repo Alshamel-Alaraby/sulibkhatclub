@@ -65,7 +65,8 @@ class CmMemberRejectController extends Controller
             "serial_number" => $serials['serial_number'],
             "prefix" => $serials['prefix'],
         ]);
-        return $model;
+
+        return responseJson(200, 'success', new CmMemberRejectResource($model));
     }
 
     public function logs($id)

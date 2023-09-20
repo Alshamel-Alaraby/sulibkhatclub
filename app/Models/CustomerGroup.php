@@ -9,18 +9,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerGroup extends Model
 {
-    use HasFactory, SoftDeletes,LogTrait;
+    use HasFactory, SoftDeletes, LogTrait;
 
     protected $table = 'general_customer_groups';
 
     protected $guarded = ['id'];
 
-    public function generalCustomers(){
-        return $this->hasMany(GeneralCustomer::class,'customer_group_id');
+    public function scopeData($query)
+    {
+        return $query->select('id', 'title', 'title_e', 'discount', 'is_default');
+    }
+
+    public function generalCustomers()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'customer_group_id');
     }
     public function hasChildren()
     {
-        return $this->generalCustomers()->count() > 0 ;
+        return $this->generalCustomers()->count() > 0;
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

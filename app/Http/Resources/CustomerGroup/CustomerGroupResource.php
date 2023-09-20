@@ -21,7 +21,6 @@ class CustomerGroupResource extends JsonResource
             'title_e' => $this->title_e,
             'discount' => $this->discount,
             'is_default' => $this->is_default,
-            'company_id' => $this->company_id,
 
         ];
     }

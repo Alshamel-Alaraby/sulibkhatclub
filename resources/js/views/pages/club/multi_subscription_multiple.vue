@@ -774,7 +774,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?sponsor_id=${this.create.sponsor_id}&hasTransaction=1&member_status_id=1&without=${this.removeMembers}&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
+                .get(`/club-members/members?hasTransaction=1&member_status_id=1&without=${this.removeMembers}&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -915,7 +915,7 @@ export default {
             }
 
         },
-       async removeNewField(index) {
+        async removeNewField(index) {
             this.create.transactions.splice(index, 1);
             this.removeMembers.splice(index, 1);
             this.total = 0;
@@ -974,7 +974,7 @@ export default {
                     <div class="card-body">
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title">{{ $t("general.multiSubscriptionSponsorTable") }}</h4>
+                            <h4 class="header-title">{{ $t("general.multiSubscriptionTable") }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                                 <div class="d-inline-block" style="width: 22.2%">
                                     <!-- Basic dropdown -->
@@ -1398,11 +1398,12 @@ export default {
                                                 {{ $t('general.ForAYear') }}
                                                 <span v-if="isRequired('year')" class="text-danger">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder="yyyy"
+                                            <date-picker
+                                                type="year"
                                                 v-model="$v.create.year.$model"
+                                                format="YYYY"
+                                                valueType="format"
+                                                :confirm="false"
                                                 :class="{ 'is-invalid':
                                                         $v.create.year.$error ||
                                                         errors.year,
@@ -1411,7 +1412,7 @@ export default {
                                                             .$invalid &&
                                                         !errors.year,
                                                 }"
-                                            >
+                                            ></date-picker>
                                             <template v-if="errors.year">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.year"
                                                               :key="index">

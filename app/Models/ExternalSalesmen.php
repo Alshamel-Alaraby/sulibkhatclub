@@ -27,6 +27,14 @@ class ExternalSalesmen extends Model
     ];
 
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name','name_e','phone','address','rp_code','email','is_active','national_id','country_id')
+            ->with('country:id,name,name_e');
+    }
+
+
     public function country()
     {
         return $this->belongsTo(Country::class);

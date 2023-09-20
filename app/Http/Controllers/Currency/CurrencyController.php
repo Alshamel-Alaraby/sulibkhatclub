@@ -36,7 +36,7 @@ class CurrencyController extends Controller
     public function store(CurrencyRequest $request)
     {
         $model = $this->repository->create($request->validated());
-        return responseJson(200, __('done'), new $this->resource($model));
+        return responseJson(200, __('done'));
 
     }
 
@@ -78,7 +78,7 @@ class CurrencyController extends Controller
         }
         $model->refresh();
         $this->repository->update($request->all(), $id);
-        return responseJson(200, __('updated'), new $this->resource($model));
+        return responseJson(200, __('updated'));
 
     }
 

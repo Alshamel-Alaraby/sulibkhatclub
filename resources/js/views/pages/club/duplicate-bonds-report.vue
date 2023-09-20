@@ -48,8 +48,8 @@ export default {
             payment_types: [],
             isLoader: false,
             create: {
-                date: '',
-                year: '',
+                start_date: '',
+                end_date: '',
             },
             errors: {},
             is_disabled: false,
@@ -81,8 +81,8 @@ export default {
     },
     validations: {
         create: {
-            date: {required},
-            year: {required},
+            start_date: {required},
+            end_date: {required},
         },
     },
     watch: {
@@ -116,9 +116,6 @@ export default {
             }
         },
     },
-    mounted(){
-        this.getData();
-    },
     methods: {
         /**
          *  start get Data module && pagination
@@ -130,9 +127,13 @@ export default {
             } else {
                 this.isLoader = true;
 
-                adminApi.get(`/club-members/transactions/check-date-member-transaction`)
+                let data = '?start_date='+this.create.start_date;
+                data += '&end_date='+this.create.end_date;
+
+                adminApi.get(`/club-members/transactions/member-transaction-defore-after-date${data}&per_page=${this.per_page}`)
                     .then((res) => {
                         let l = res.data;
+                        console.log(l)
                         this.installmentStatus = l.data;
                         this.installmentStatusPagination = l.pagination;
                         this.current_page = l.pagination.current_page;
@@ -156,23 +157,11 @@ export default {
             } else {
                 if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
                     this.isLoader = true;
-                    let _filterSetting = [...this.filterSetting];
-                    let index = this.filterSetting.indexOf("cm_member_id");
-                    let index1 = this.filterSetting.indexOf("membership_number");
-                    if (index > -1) {
-                        _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "member.first_name" : "member.first_name";
-                    }
-                    if (index1 > -1) {
-                        _filterSetting[index1] =
-                            this.$i18n.locale == "ar" ? "member.membership_number" : "member.membership_number";
-                    }
-                    let filter = "";
-                    for (let i = 0; i < _filterSetting.length; ++i) {
-                        filter += `columns[${i}]=${_filterSetting[i]}&`;
-                    }
 
-                    adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    let data = '?start_date='+this.create.start_date;
+                    data += '&end_date='+this.create.end_date;
+
+                    adminApi.get(`/club-members/transactions/member-transaction-defore-after-date${data}&per_page=${this.per_page}`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -294,53 +283,22 @@ export default {
 
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title"> {{ $t('general.QueryAboutThePayersBeforeASpecificDate') }}</h4>
-                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
-
-                                <div class="d-inline-block" style="width: 22.2%;">
-                                    <!-- Basic dropdown -->
-                                    <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
-                                                class="btn-block setting-search">
-                                        <b-form-checkbox v-model="filterSetting"
-                                                         value="cm_member_id"
-                                                         class="mb-1">{{ $t('general.member') }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
-                                            {{ getCompanyKey("member_membership_number")  }}
-                                        </b-form-checkbox>
-                                    </b-dropdown>
-                                    <!-- Basic dropdown -->
-                                </div>
-
-                                <div class="d-inline-block position-relative" style="width: 77%;">
-                                    <span
-                                        :class="['search-custom position-absolute',$i18n.locale == 'ar'?'search-custom-ar':'']"
-                                    >
-                                        <i class="fe-search"></i>
-                                    </span>
-                                    <input
-                                        class="form-control"
-                                        style="display:block;width:93%;padding-top: 3px;"
-                                        type="text"
-                                        v-model.trim="search"
-                                        :placeholder="`${$t('general.Search')}...`"
-                                    >
-                                </div>
-                            </div>
+                            <h4 class="header-title"> {{ $t('general.Payment-report-over-period') }}</h4>
+                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500"></div>
                         </div>
                         <!-- end search -->
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
-<!--                                <b-button-->
-<!--                                    v-b-modal.create-->
-<!--                                    variant="primary"-->
-<!--                                    class="btn-sm mx-1 font-weight-bold"-->
-<!--                                >-->
-<!--                                    {{ $t('general.Search') }}-->
-<!--                                    <i class="fe-search"></i>-->
-<!--                                </b-button>-->
+                                <b-button
+                                    v-b-modal.create
+                                    variant="primary"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                >
+                                    {{ $t('general.Search') }}
+                                    <i class="fe-search"></i>
+                                </b-button>
                                 <div class="d-inline-flex">
                                     <button class="custom-btn-dowonload" @click="ExportExcel('xlsx')">
                                         <i class="fas fa-file-download"></i>
@@ -350,17 +308,6 @@ export default {
                                     </button>
 
                                 </div>
-                                <!--                                <b-button-->
-                                <!--                                    variant="secondary"-->
-                                <!--                                    v-if="installmentStatus.length > 0"-->
-                                <!--                                    :disabled="isLoader"-->
-                                <!--                                    class="btn-sm mx-1 font-weight-bold"-->
-                                <!--                                    @click="changeStatus"-->
-                                <!--                                >-->
-                                <!--                                    {{ $t('general.changeStatus') }}-->
-                                <!--                                    <i class="mdi mdi-square-edit-outline"></i>-->
-                                <!--                                </b-button>-->
-                                <!-- end create and printer -->
                             </div>
                             <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center  justify-content-end">
                                 <div class="d-fex">
@@ -433,6 +380,92 @@ export default {
                             </div>
                         </div>
 
+                        <!--  create   -->
+                        <b-modal
+                            id="create"
+                            :title="$t('general.Search')"
+                            title-class="font-18"
+                            body-class="p-4"
+                            size="lg"
+                            :hide-footer="true"
+                            @show="resetModal"
+                            @hidden="resetModalHidden"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <template v-if="!is_disabled">
+                                        <b-button
+                                            variant="success"
+                                            type="button" class="mx-1"
+                                            v-if="!isLoader"
+                                            @click.prevent="getData(1)"
+                                        >
+                                            {{ $t('general.Search') }}
+                                        </b-button>
+
+                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                        </b-button>
+                                    </template>
+                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                    <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
+                                        {{ $t('general.Cancel') }}
+                                    </b-button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.startDate') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="yyyy-mm-dd"
+                                                v-model="$v.create.start_date.$model"
+                                                :class="{ 'is-invalid':  $v.create.start_date.$error || errors.start_date,
+                                                    'is-valid':!$v.create.start_date.$invalid &&!errors.start_date,
+                                                    }"
+                                            >
+                                            <template v-if="errors.start_date">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.start_date"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.endDate') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="yyyy-mm-dd"
+                                                v-model="$v.create.end_date.$model"
+                                                :class="{ 'is-invalid':  $v.create.end_date.$error || errors.end_date,
+                                                    'is-valid':!$v.create.end_date.$invalid &&!errors.end_date,
+                                                    }"
+                                            >
+                                            <template v-if="errors.end_date">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.end_date"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /create   -->
+
                         <!-- start .table-responsive-->
                         <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printCustom">
 
@@ -445,12 +478,37 @@ export default {
                                 <tr>
                                     <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                            <span>{{ $t('general.date')  }}</span>
                                         </div>
                                     </th>
                                     <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
+                                            <span>{{ $t('general.DocumentNumber')  }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.serial_name')  }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.name') }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number")   }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.Year')  }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.type') }}</span>
                                         </div>
                                     </th>
                                 </tr>
@@ -462,96 +520,28 @@ export default {
                                     class="body-tr-custom"
                                 >
                                     <td>
-                                        {{ data.member ? data.member.membership_number : '-' }}
+                                        {{ data.date }}
                                     </td>
                                     <td>
-                                        {{ data.member ?  formatDate(data.member.membership_date)   : '-' }}
+                                        {{ data.document_no }}
                                     </td>
-                                    <!--  create   -->
-                                    <b-modal
-                                        id="create"
-                                        :title="$t('general.Search')"
-                                        title-class="font-18"
-                                        body-class="p-4"
-                                        size="lg"
-                                        :hide-footer="true"
-                                        @show="resetModal"
-                                        @hidden="resetModalHidden"
-                                    >
-                                        <form>
-                                            <div class="mb-3 d-flex justify-content-end">
-                                                <template v-if="!is_disabled">
-                                                    <b-button
-                                                        variant="success"
-                                                        type="button" class="mx-1"
-                                                        v-if="!isLoader"
-                                                        @click.prevent="getData(1)"
-                                                    >
-                                                        {{ $t('general.Search') }}
-                                                    </b-button>
-
-                                                    <b-button variant="success" class="mx-1" disabled v-else>
-                                                        <b-spinner small></b-spinner>
-                                                        <span class="sr-only">{{ $t('login.Loading') }}...</span>
-                                                    </b-button>
-                                                </template>
-                                                <!-- Emulate built in modal footer ok and cancel button actions -->
-
-                                                <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
-                                                    {{ $t('general.Cancel') }}
-                                                </b-button>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">
-                                                            {{ $t('general.beforeDate') }}
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            class="form-control"
-                                                            placeholder="yyyy-mm-dd"
-                                                            v-model="$v.create.date.$model"
-                                                            :class="{ 'is-invalid':  $v.create.date.$error || errors.date,
-                                                    'is-valid':!$v.create.date.$invalid &&!errors.date,
-                                                    }"
-                                                        >
-                                                        <template v-if="errors.date">
-                                                            <ErrorMessage v-for="(errorMessage,index) in errors.date"
-                                                                          :key="index">
-                                                                {{ errorMessage }}
-                                                            </ErrorMessage>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">
-                                                            {{ $t('general.forYear') }}
-                                                            <span class="text-danger">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="yyyy"
-                                                            class="form-control"
-                                                            v-model="$v.create.year.$model"
-                                                            :class="{ 'is-invalid':  $v.create.year.$error || errors.year,
-                                                    'is-valid':!$v.create.year.$invalid &&!errors.year,
-                                                    }"
-                                                        >
-                                                        <template v-if="errors.year">
-                                                            <ErrorMessage v-for="(errorMessage,index) in errors.year"
-                                                                          :key="index">
-                                                                {{ errorMessage }}
-                                                            </ErrorMessage>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </b-modal>
-                                    <!--  /create   -->
+                                    <td>
+                                        {{ data.serial_id }}
+                                    </td>
+                                    <td>
+                                        <h5 class="m-0 font-weight-normal td5">
+                                            {{ data.member  }}
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        {{ data.member_number }}
+                                    </td>
+                                    <td>
+                                        {{ data.year }}
+                                    </td>
+                                    <td>
+                                        {{ data.type }}
+                                    </td>
                                 </tr>
                                 </tbody>
                                 <tbody v-else>

@@ -15,30 +15,39 @@ class Employee extends Model
 {
     use HasFactory, LogTrait;
     protected $table = 'general_employees';
-    protected $casts = [
-        "manage_others" => "integer",
-    ];
-    protected $fillable = [
-        'id',
-        'name',
-        'name_e',
-        'salesman_type_id',
-        'is_salesman',
-        "for_all_customer",
-        // "company_id",
-        "department_id",
-        'manager_id',
-        'whatsapp',
-        'mobile',
-        'email',
-        'customer_handel',
-        'job_id',
-        'branch_id',
-        'manage_others',
-        'code_country',
+    protected $casts = [ "manage_others" => "integer"];
+    protected $guarded = ['id'];
 
-    ];
- 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id',
+                'manager_id',
+                'name',
+                'name_e',
+                'is_salesman',
+                'customer_handel',
+                'department_id',
+                'code_country',
+                'salesman_type_id',
+                'for_all_customer',
+                'mobile',
+                'email',
+                'whatsapp',
+                'company_id',
+                'job_id',
+                'manage_others',
+                'branch_id'
+            )
+            ->with(
+                'jobTitle:id,name,name_e',
+                'branch:id,name,name_e',
+                'manager:id,name,name_e',
+                'salesmanType:id,name,name_e',
+                'department:id,name,name_e',
+                'plans:id,name,name_e'
+            );
+    }
 
     public function jobTitle()
     {

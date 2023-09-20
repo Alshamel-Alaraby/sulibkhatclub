@@ -18,14 +18,13 @@ class EquipmentResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'parent' => collect($this->whenLoaded('parent'))->only(['id', 'name', 'name_e']),
             'parent_id' => $this->parent_id,
-            "location" => collect($this->whenLoaded('location'))->only(['id', 'name', 'name_e']),
             "location_id" => $this->location_id,
-            "periodic_maintenance" =>collect($this->whenLoaded('periodicMaintenance'))->only(['id', 'name', 'name_e']) ,
             "periodic_maintenance_id" => $this->periodic_maintenance_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'parent' => $this->parent,
+            "location" => $this->location,
+            "periodic_maintenance" => $this->periodicMaintenance,
+
         ];
     }
 }

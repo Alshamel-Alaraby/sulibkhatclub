@@ -14,7 +14,7 @@ class CurrencyRepository implements CurrencyRepositoryInterface
     }
     public function getAll($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ?$request->order: 'updated_at', $request->sort ?$request->sort: 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ?$request->order: 'updated_at', $request->sort ?$request->sort: 'DESC');
 
         if($request->is_default){
             $this->model->whereIsDefault($request->is_default);
@@ -30,7 +30,6 @@ class CurrencyRepository implements CurrencyRepositoryInterface
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            cacheForget("currencies");
             $model = $this->model->create($data);
             if (request()->is_default == 1) {
                 $this->model->where('id', '!=', $model->id)->update(['is_default' => 0]);
@@ -42,7 +41,7 @@ class CurrencyRepository implements CurrencyRepositoryInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function update($data, $id)
@@ -52,7 +51,6 @@ class CurrencyRepository implements CurrencyRepositoryInterface
             if (request()->is_default == 1) {
                 $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
             }
-            $this->forget($id);
         });
     }
 
@@ -60,7 +58,6 @@ class CurrencyRepository implements CurrencyRepositoryInterface
     {
         $model = $this->find($id);
         if ($model) {
-            $this->forget($id);
             $model->delete();
         }
     }
@@ -70,15 +67,5 @@ class CurrencyRepository implements CurrencyRepositoryInterface
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
 
-    private function forget($id)
-    {
-        $keys = [
-            "currencies",
-            "currencies_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
-
-    }
+  
 }

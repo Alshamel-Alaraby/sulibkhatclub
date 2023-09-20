@@ -150,7 +150,7 @@ class CmStaticsController extends Controller
 
         foreach ($member_types as $member_type) {
 
-            $member_types_count = CmMember::where('member_status_id', 1)->whereIn('member_kind_id', $member_type)->count();
+            $member_types_count = CmMember::where('member_status_id', 1)->where('member_kind_id', $member_type->id)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($member_types_count / $data['validMembersCount']) * 100, 2) : 0;
 
             $data['member_types_data'][] = [
@@ -162,10 +162,11 @@ class CmStaticsController extends Controller
         }
 
         $financial_statuses = CmFinancialStatus::get();
+
         $data['financial_statuses_data'] = [];
 
         foreach ($financial_statuses as $financial_status) {
-            $financial_statuses_count = CmMember::where('member_status_id', 1)->whereIn('financial_status_id', $financial_status)->count();
+            $financial_statuses_count = CmMember::where('member_status_id', 1)->where('financial_status_id', $financial_status->id)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($financial_statuses_count / $data['validMembersCount']) * 100, 2) : 0;
 
             $data['financial_statuses_data'][] = [
@@ -181,7 +182,7 @@ class CmStaticsController extends Controller
         $data['member_permissions_data'] = [];
 
         foreach ($member_permissions as $member_permission) {
-            $member_permissions_count = CmMember::where('member_status_id', 1)->whereIn('members_permissions_id', $member_permission)->count();
+            $member_permissions_count = CmMember::where('member_status_id', 1)->where('members_permissions_id', $member_permission->id)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($member_permissions_count / $data['validMembersCount']) * 100, 2) : 0;
 
             $data['member_permissions_data'][] = [

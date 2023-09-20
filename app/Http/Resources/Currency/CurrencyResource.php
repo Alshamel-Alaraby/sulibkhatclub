@@ -27,8 +27,6 @@ class CurrencyResource extends JsonResource
             'symbol_e' => $this->symbol_e,
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

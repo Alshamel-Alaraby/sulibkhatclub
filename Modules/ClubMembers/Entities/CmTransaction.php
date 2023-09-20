@@ -4,6 +4,7 @@ namespace Modules\ClubMembers\Entities;
 
 use App\Models\Branch;
 use App\Models\Document;
+use App\Models\Serial;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,11 @@ class CmTransaction extends Model
     public function document()
     {
         return $this->belongsTo(Document::class, 'document_id');
+
+    }
+    public function serial()
+    {
+        return $this->belongsTo(Serial::class, 'serial_id');
 
     }
     public function member()

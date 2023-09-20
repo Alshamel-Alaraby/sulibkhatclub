@@ -55,6 +55,7 @@ class CmMemberResource extends JsonResource
             "status" => new StatusResource($this->status),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'cm_transaction_count' => $this->cm_transaction_count??null,
         ];
     }
 }

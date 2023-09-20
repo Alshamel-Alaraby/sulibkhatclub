@@ -109,6 +109,14 @@ export default [
         component: () => import('../../views/pages/club/multi_subscription'),
     },
     {
+        path: '/dashboard/club/multiSubscriptionMultiple',
+        name: 'club-multi-subscription-multiple',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/multi_subscription_multiple'),
+    },
+    {
         path: '/dashboard/club/change-spenser',
         name: 'club-change-spenser',
         meta: {

@@ -4,11 +4,13 @@ namespace Modules\ClubMembers\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmTransaction;
 use Modules\ClubMembers\Http\Requests\CmTransactionRequest;
 use Modules\ClubMembers\Repositories\CmTransaction\CmTransactionInterface;
 use Modules\ClubMembers\Transformers\CheckDateMemberTransactionResource;
+use Modules\ClubMembers\Transformers\CmMemberResource;
 use Modules\ClubMembers\Transformers\CmMemberTransactionsResource;
 use Modules\ClubMembers\Transformers\CmTransactionResource;
 use Modules\ClubMembers\Transformers\CmReportTransactionsResource;
@@ -50,9 +52,9 @@ class CmTransactionController extends Controller
 
     public function create(CmTransactionRequest $request)
     {
-
         $model = $this->modelInterface->create($request);
-        return responseJson(200, 'success');
+        return responseJson(200, 'success', CmTransactionResource::collection($model),  null);
+
 
     }
 
@@ -180,10 +182,30 @@ class CmTransactionController extends Controller
 
     public function memberTransactionBeforeAndAfterDate(Request $request)
     {
+        $models =   DB::table('cm_transactions')->whereDate('date', '>=',$request->start_date)->whereDate('date', '<=', $request->end_date)
+            ->select('document_no', DB::raw('count(*) as total' ))
+            ->groupBy('document_no')
+            ->having('total','>',1)->paginate($request->per_page);
 
-        $models = CmTransaction::whereDate('date', '>', $request->start_date)->whereDate('date', '<', $request->end_date)->get()->groupBy('document_no');
-        return responseJson(200, 'success', $models);
+        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
 
+    }
+
+    public function getMemberIsDocument(Request $request)
+    {
+        $models = CmMember::whereHas('cmTransaction',function ($q) use ($request){
+            $q->where('document_no', $request->document_no)->whereDate('date', '>=',$request->start_date)->whereDate('date', '<', $request->end_date);
+        })->withCount(['cmTransaction'=>function ($q) use ($request) {
+            $q->where('document_no', $request->document_no)->whereDate('date', '>=',$request->start_date)->whereDate('date', '<', $request->end_date);
+        }]);
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        } //
+
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function memberTransactionPaidAfterDate(Request $request)
@@ -197,7 +219,7 @@ class CmTransactionController extends Controller
 
     public function UpdateMemberTransactionPaidAfterDate(Request $request)
     {
-        $transactionArray = CmTransaction::whereDate('date', '>', $request->date)->where('year_from', $request->year)->pluck('cm_member_id')->toArray();
+        $transactionArray = CmTransaction::whereDate('date', '>', $request->date)->where('year', $request->year)->pluck('cm_member_id')->toArray();
         $models['data'] = CmMember::whereIn('id', $transactionArray)->where('member_type_id', 1)->whereRelation('memberType', 'parent_id', 1)->update(['financial_status_id' => 4]);
 
         $models['paginate'] = true;
@@ -208,7 +230,7 @@ class CmTransactionController extends Controller
     {
 
         $models['data'] = CmMember::where('financial_status_id', $request->financial_status_id)->whereHas('cmTransaction', function ($query) use ($request) {
-            $query->where('year_to', '<=', $request->year - $request->membership_numbers);
+            $query->where('year', '<=', $request->year - $request->membership_numbers);
         })->paginate($request->per_page);
 
         $models['paginate'] = true;
@@ -234,7 +256,7 @@ class CmTransactionController extends Controller
     }
 
 
-    public function reportCmTransactions(Request $request)    
+    public function reportCmTransactions(Request $request)
     {
         $models = $this->modelInterface->reportCmTransactions($request);
 

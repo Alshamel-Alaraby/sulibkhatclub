@@ -48,6 +48,7 @@ class BankAccountRequest extends FormRequest
                 "rp_code" => "nullable|string|max:255",
                 "media" => "nullable|array",
                 "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
+
             ];
         endif;
 

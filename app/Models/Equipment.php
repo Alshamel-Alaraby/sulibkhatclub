@@ -13,18 +13,20 @@ class Equipment extends Model
 
     protected $table = 'general_equipments';
 
-    protected $fillable = [
-        'id',
-        'name',
-        'name_e',
-        'parent_id',
-        'company_id',
-        'location_id',
-        'periodic_maintenance_id',
-    ];
+    protected $guarded = ['id'];
+
+    public function scopeData($query)
+    {
+        return $query->select(
+                'id', 'name', 'name_e', 'parent_id', 'location_id', 'periodic_maintenance_id'
+            )->with(
+                'parent:id,name,name_e',
+                'location:id,name,name_e',
+                'periodicMaintenance:id,name,name_e',
+            );
+    }
 
     protected $appends = ['haveChildren'];
-
 
     // relations
 
@@ -58,7 +60,6 @@ class Equipment extends Model
         return $this->belongsTo(Location::class, 'location_id');
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -66,6 +67,6 @@ class Equipment extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Equipment')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }
