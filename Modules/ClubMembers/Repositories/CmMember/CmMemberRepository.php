@@ -304,8 +304,10 @@ class CmMemberRepository implements CmMemberInterface
 //        return "all";
     public function updateCmMember()
     {
-        ini_set('max_execution_time', '3600');
+        //return CmMember::with('lastCmTransaction')->find(13838);
+        //return CmTransaction::where('cm_member_id', 13838)->first();
 
+        //ini_set('max_execution_time', '60');
         $financialyear = FinancialYear::where('is_active', 1)->first();
         if ($financialyear){
 

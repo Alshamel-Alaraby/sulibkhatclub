@@ -21,7 +21,7 @@ class FinancialYear extends Model
         "company_id",
         "year",
         'is_active',
-        'dye_date'
+        'due_date'
     ];
 
     public function scopeData($query)

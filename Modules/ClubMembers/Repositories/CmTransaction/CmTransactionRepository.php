@@ -141,16 +141,18 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function reportCmTransactions($request)
     {
+        
+        
         $models = 
         $this->model->filter($request)
         ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        
+        // 1: serial_id (1, 2, 3)
         if ($request->serial_id) {
             $models->whereIn('serial_id', explode(",", $request->serial_id));
         }
         
-
+        // 2: document_no (1, 10)
         if ($request->document_no) {
             
             $document_numbers = explode(",", $request->document_no);
@@ -160,6 +162,7 @@ class CmTransactionRepository implements CmTransactionInterface
             ;
         }
 
+        // 3: date (from & to)
         if ($request->start_date && $request->end_date) {
             $start_date = $request->start_date;
             $end_date = $request->end_date;

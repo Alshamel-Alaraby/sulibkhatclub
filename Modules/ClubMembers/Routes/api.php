@@ -189,6 +189,8 @@ Route::prefix('club-members')->group(function () {
         Route::get('member-transaction-paid-after-date', 'CmTransactionController@memberTransactionPaidAfterDate');
         Route::get('get-member-voting', 'CmTransactionController@getMemberVoting');
 
+        Route::get('get-member-is-document', 'CmTransactionController@getMemberIsDocument');
+
         Route::get('member-transaction-defore-after-date', 'CmTransactionController@memberTransactionBeforeAndAfterDate');
 
         Route::get('/', 'CmTransactionController@all')->name('transaction.all');

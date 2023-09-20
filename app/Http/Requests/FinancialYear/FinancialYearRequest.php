@@ -25,6 +25,7 @@ class FinancialYearRequest extends FormRequest
     public function rules()
     {
         return [
+
             // 'name' => 'nullable|string|max:255|unique:general_financial_years,name,' . ($this->method() == 'PUT' ? $this->id : ''),
             // 'name_e' => 'nullable|string|max:255|unique:general_financial_years,name_e,' . ($this->method() == 'PUT' ? $this->id : ''),
 
@@ -68,7 +69,7 @@ class FinancialYearRequest extends FormRequest
                     return $query->where('deleted_at', null);
                 }),
             ],
-            'dye_date' => [
+            'due_date' => [
                 'nullable',
                 'date',
                 Rule::unique('general_financial_years')->ignore($this->id)->where(function ($query) {

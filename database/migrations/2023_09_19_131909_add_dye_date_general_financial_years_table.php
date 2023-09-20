@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('general_financial_years', function (Blueprint $table) {
-            $table->date('dye_date')->nullable();
+            $table->date('due_date')->nullable();
         });
     }
 

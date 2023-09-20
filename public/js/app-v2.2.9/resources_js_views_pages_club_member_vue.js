@@ -4569,7 +4569,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\n    display: none;\n}\n.arrow-sort {\n    display: none;\n}\n.text-success {\n    background-color: unset;\n    color: #6c757d !important;\n    border: unset;\n}\n.text-danger {\n    background-color: unset;\n    color: #6c757d !important;\n    border: unset;\n}\n}\nthead th {\n  white-space: nowrap !important;\n}\ntable td {\n  white-space: nowrap !important;\n}\n.custom-radio\n  .custom-control-input:disabled:checked\n  ~ .custom-control-label::before {\n  background-color: #2494be;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\r\n    display: none;\n}\n.arrow-sort {\r\n    display: none;\n}\n.text-success {\r\n    background-color: unset;\r\n    color: #6c757d !important;\r\n    border: unset;\n}\n.text-danger {\r\n    background-color: unset;\r\n    color: #6c757d !important;\r\n    border: unset;\n}\n}\nthead th {\r\n  white-space: nowrap !important;\n}\ntable td {\r\n  white-space: nowrap !important;\n}\n.custom-radio\r\n  .custom-control-input:disabled:checked\r\n  ~ .custom-control-label::before {\r\n  background-color: #2494be;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
