@@ -152,9 +152,11 @@ export default {
                 return;
             } else {
                 this.isLoader = true;
+                let dateStartArray = this.create.start_date.split("-");
+                let dateEndArray = this.create.end_date.split("-");
 
-                let data = '?start_date='+this.create.start_date;
-                    data += '&end_date='+this.create.end_date;
+                let data = '?start_date='+dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
+                    data += '&end_date='+dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
                     data += '&document_no='+this.create.document_no1+ ','+this.create.document_no2;
                     data += '&serial_id='+this.create.serial_id.join();
 
@@ -389,7 +391,7 @@ export default {
                         <!--  create   -->
                         <b-modal
                             id="create"
-                            :title="$t('general.Search')"
+                            :title="$t('general.SearchDocument')"
                             title-class="font-18"
                             body-class="p-4"
                             size="lg"
@@ -420,44 +422,11 @@ export default {
                                         {{ $t('general.Cancel') }}
                                     </b-button>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.DocumentNumber')  }} ({{ $t('general.from') }})
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                v-model="$v.create.document_no1.$model"
-                                                :class="{ 'is-invalid':  $v.create.document_no1.$error || errors.document_no1,
-                                                    'is-valid':!$v.create.document_no1.$invalid &&!errors.document_no1,
-                                                    }"
-                                            >
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.DocumentNumber')  }} ({{ $t('general.to') }})
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                v-model="$v.create.document_no2.$model"
-                                                :class="{ 'is-invalid':  $v.create.document_no2.$error || errors.document_no2,
-                                                    'is-valid':!$v.create.document_no2.$invalid &&!errors.document_no2,
-                                                    }"
-                                            >
-                                        </div>
-                                    </div>
+                                <div class="row justify-content-center">
                                     <div class="col-md-6" >
                                         <div class="form-group">
                                             <label>
                                                 {{ $t('general.serial_name') }}
-                                                <span class="text-danger">*</span>
                                             </label>
                                             <multiselect
                                                 v-model="create.serial_id"
@@ -481,21 +450,51 @@ export default {
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6" >
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ $t('general.startDate') }}
-                                                <span class="text-danger">*</span>
+                                                {{ $t('general.DocumentNumber')  }} ({{ $t('general.from') }})
                                             </label>
                                             <input
                                                 type="text"
                                                 class="form-control"
-                                                placeholder="yyyy-mm-dd"
-                                                v-model="$v.create.start_date.$model"
-                                                :class="{ 'is-invalid':  $v.create.start_date.$error || errors.start_date,
-                                                    'is-valid':!$v.create.start_date.$invalid &&!errors.start_date,
+                                                v-model="$v.create.document_no1.$model"
+                                                :class="{ 'is-invalid':  $v.create.document_no1.$error || errors.document_no1,
+                                                    'is-valid':!$v.create.document_no1.$invalid &&!errors.document_no1,
                                                     }"
                                             >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.DocumentNumber')  }} ({{ $t('general.to') }})
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                v-model="$v.create.document_no2.$model"
+                                                :class="{ 'is-invalid':  $v.create.document_no2.$error || errors.document_no2,
+                                                    'is-valid':!$v.create.document_no2.$invalid &&!errors.document_no2,
+                                                    }"
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.startDate') }}
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="create.start_date"
+                                                placeholder="DD-MM-YYYY"
+                                                format="DD-MM-YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                            ></date-picker>
                                             <template v-if="errors.start_date">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.start_date"
                                                               :key="index">
@@ -508,17 +507,15 @@ export default {
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ $t('general.endDate') }}
-                                                <span class="text-danger">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder="yyyy-mm-dd"
-                                                v-model="$v.create.end_date.$model"
-                                                :class="{ 'is-invalid':  $v.create.end_date.$error || errors.end_date,
-                                                    'is-valid':!$v.create.end_date.$invalid &&!errors.end_date,
-                                                    }"
-                                            >
+                                            <date-picker
+                                                type="date"
+                                                v-model="create.end_date"
+                                                placeholder="DD-MM-YYYY"
+                                                format="DD-MM-YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                            ></date-picker>
                                             <template v-if="errors.end_date">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.end_date"
                                                               :key="index">
@@ -574,7 +571,7 @@ export default {
                                     </th>
                                     <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.type') }}</span>
+                                            <span>{{ $t('general.typeMember') }}</span>
                                         </div>
                                     </th>
                                 </tr>
@@ -592,11 +589,11 @@ export default {
                                         {{ data.document_no }}
                                     </td>
                                     <td>
-                                        {{ data.serial_id }}
+                                        {{ data.serial_id? data.serial_id.name: '-' }}
                                     </td>
                                     <td>
                                         <h5 class="m-0 font-weight-normal td5">
-                                            {{ data.member  }}
+                                            {{ data.full_name  }}
                                         </h5>
                                     </td>
                                     <td>

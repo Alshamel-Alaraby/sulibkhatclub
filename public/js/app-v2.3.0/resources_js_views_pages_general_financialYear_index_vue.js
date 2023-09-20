@@ -79,7 +79,8 @@ __webpack_require__.r(__webpack_exports__);
         custom_date_start: this.formatDate(new Date()),
         custom_date_end: null,
         is_active: 0,
-        year: ''
+        year: '',
+        due_date: this.formatDate(new Date())
       },
       errors: {},
       is_disabled: false,
@@ -120,6 +121,11 @@ __webpack_require__.r(__webpack_exports__);
       year: {
         required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_8__.requiredIf)(function (model) {
           return this.isRequired("year");
+        })
+      },
+      due_date: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_8__.requiredIf)(function (model) {
+          return this.isRequired("due_date");
         })
       }
     }
@@ -170,7 +176,8 @@ __webpack_require__.r(__webpack_exports__);
         custom_date_start: this.formatDate(new Date()),
         custom_date_end: null,
         is_active: 0,
-        year: ''
+        year: '',
+        due_date: ''
       };
       this.$nextTick(function () {
         _this2.$v.$reset();
@@ -200,6 +207,7 @@ __webpack_require__.r(__webpack_exports__);
             _this3.create.end_date = financialYear.end_date;
             _this3.create.is_active = financialYear.is_active;
             _this3.create.year = financialYear.year;
+            _this3.create.due_date = financialYear.due_date;
           }
         }
       }, 50);
@@ -227,7 +235,8 @@ __webpack_require__.r(__webpack_exports__);
           start_date = _this$create.start_date,
           end_date = _this$create.end_date,
           is_active = _this$create.is_active,
-          year = _this$create.year;
+          year = _this$create.year,
+          due_date = _this$create.due_date;
         if (this.type != 'edit') {
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_3__["default"].post(this.url, {
             name: name,
@@ -2379,6 +2388,33 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v("\n                            " + _vm._s(errorMessage) + "\n                        ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("due_date") ? _c("div", {
+    staticClass: "col-md-12"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.instalmentDate")) + "\n                        "), _vm.isRequired("start_date") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format"
+    },
+    model: {
+      value: _vm.create.due_date,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "due_date", $$v);
+      },
+      expression: "create.due_date"
+    }
+  }), _vm._v(" "), !_vm.$v.create.due_date.required ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.errors.due_date ? _vm._l(_vm.errors.due_date, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("start_date") ? _c("div", {
     staticClass: "col-md-12"
   }, [_c("div", {
@@ -7049,7 +7085,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5a32b677] {\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5a32b677] {\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

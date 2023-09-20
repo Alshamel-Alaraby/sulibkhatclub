@@ -185,7 +185,12 @@ class CmTransactionController extends Controller
         $models =   DB::table('cm_transactions')->whereDate('date', '>=',$request->start_date)->whereDate('date', '<=', $request->end_date)
             ->select('document_no', DB::raw('count(*) as total' ))
             ->groupBy('document_no')
-            ->having('total','>',1)->paginate($request->per_page);
+            ->having('total','>',1);
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
 
         return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
 
@@ -193,11 +198,8 @@ class CmTransactionController extends Controller
 
     public function getMemberIsDocument(Request $request)
     {
-        $models = CmMember::whereHas('cmTransaction',function ($q) use ($request){
-            $q->where('document_no', $request->document_no)->whereDate('date', '>=',$request->start_date)->whereDate('date', '<', $request->end_date);
-        })->withCount(['cmTransaction'=>function ($q) use ($request) {
-            $q->where('document_no', $request->document_no)->whereDate('date', '>=',$request->start_date)->whereDate('date', '<', $request->end_date);
-        }]);
+        $models = CmTransaction::with('member:id,full_name')->where('document_no', $request->document_no)->whereDate('date', '>=',$request->start_date)->whereDate('date', '<', $request->end_date);
+        ;
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -205,7 +207,7 @@ class CmTransactionController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         } //
 
-        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function memberTransactionPaidAfterDate(Request $request)

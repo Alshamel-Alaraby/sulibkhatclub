@@ -217,4 +217,12 @@ export default [
         },
         component: () => import('../../views/pages/club/Payment-report-over-period'),
     },
+    {
+        path: '/dashboard/club/duplicate-bonds-report',
+        name: 'Change of member rights',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/duplicate-bonds-report'),
+    },
 ];

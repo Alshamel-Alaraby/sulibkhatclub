@@ -1486,7 +1486,6 @@
         "SubscriptionsRejected": "Rejected",
         "ReceiptNumber": "Receipt Number",
         "serial_name": "Serial Name",
-        "DocumentNumber": "Document Number",
         "Year": "Year",
         "Payment-report-over-period": "Payment Report Over Period",
         "DocumentNumber": "Document Number",
@@ -1505,6 +1504,10 @@
         "SubscriptionNumber": "SubscriptionNumber",
         "serialName": "Serial Name",
         "subscriptionDate": "Subscription Date",
-        "addSubscription": "Add Subscription"
+        "addSubscription": "Add Subscription",
+        "duplicate": "Duplicate",
+        "DuplicatbondsReport": "Duplicate bonds Report",
+        "typeMember":"Membership Type",
+        "Searchdd": "Duplicate bonds"
     }
 }

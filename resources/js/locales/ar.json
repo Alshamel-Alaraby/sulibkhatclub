@@ -1475,7 +1475,6 @@
         "SubscriptionsRejected": "المرفوضين",
         "ReceiptNumber": "رقم الايصال",
         "serial_name": "اسم المسلسل",
-        "DocumentNumber": "رقم المستند",
         "Year": "السنه",
         "Payment-report-over-period": "تقرير الدفع خلال فترة",
         "DocumentNumber": "رقم السند",
@@ -1494,6 +1493,11 @@
         "SubscriptionNumber": "رقم طلب الاشتراك",
         "serialName": "اسم المسلسل",
         "subscriptionDate": "تاريخ الاشترك",
-        "addSubscription": "اضف اشتراك"
+        "addSubscription": "اضف اشتراك",
+        "duplicate": "التكرار",
+        "DuplicatbondsReport": "تقرير السندات المكررة",
+        "typeMember": "نوع العضويه",
+        "SearchDocument": "بحث عن المسدد",
+        "Searchdd": "السندات المكررة"
     }
 }
