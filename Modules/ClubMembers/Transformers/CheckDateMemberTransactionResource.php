@@ -18,7 +18,7 @@ class CheckDateMemberTransactionResource extends JsonResource
             'id' => $this->id,
             'member' => collect($this->member)->only(['id','first_name','second_name','third_name','last_name','family_name','membership_number','membership_date']),
 
-            'serial_number' => $this->serial_number,
+            'serial_number' => $this->document_no,
 
             'date' => $this->date,
 
