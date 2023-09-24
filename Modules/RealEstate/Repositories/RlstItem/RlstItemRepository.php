@@ -11,7 +11,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class RlstItemRepository implements RlstItemInterface
 {
 
-    public function __construct(private RlstItem $model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
+    public function __construct(private RlstItem $model, private \Spatie\MediaLibrary\MediaCollections\Models\Media $media)
     {
         $this->model = $model;
         $this->media = $media;
@@ -20,7 +20,7 @@ class RlstItemRepository implements RlstItemInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -31,7 +31,7 @@ class RlstItemRepository implements RlstItemInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -39,8 +39,6 @@ class RlstItemRepository implements RlstItemInterface
 
         return DB::transaction(function () use ($request) {
             $model = $this->model->create($request->all());
-
-            // $model->categories()->attach($request['category_item_id']);
 
             if ($request->media) {
                 foreach ($request->media as $media) {
@@ -60,16 +58,8 @@ class RlstItemRepository implements RlstItemInterface
     {
 
         return DB::transaction(function () use ($id, $request) {
-            // $this->model->where("id", $id)->update($request->all());
             $model = $this->model->find($id);
-
-            // if($request['category_item_id']){
-
-            //     $model->categories()->sync($request['category_item_id']);
-            // }
-
             $model->update($request->all());
-
             if ($request->media && !$request->old_media) { // if there is new media and no old media
                 $model->clearMediaCollection('media');
                 foreach ($request->media as $media) {

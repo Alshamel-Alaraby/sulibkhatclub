@@ -233,4 +233,12 @@ export default [
         },
         component: () => import('../../views/pages/club/duplicate-bonds-report'),
     },
+    {
+        path: '/dashboard/club/old-members-report',
+        name: 'old members report',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/old-members-report'),
+    },
 ];

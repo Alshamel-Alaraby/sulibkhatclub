@@ -267,4 +267,12 @@ Route::prefix('club-members')->group(function () {
         Route::post("/bulk-delete", "CmMemberStatusController@bulkDelete");
         Route::delete('/{id}', 'CmMemberStatusController@delete')->name('cm-status.delete');
     });
+
+    // old members report
+    Route::group(['prefix' => 'cm-old-members'], function () {
+
+        Route::get('/getOldStatus', 'CmOldMembersReportController@getStatus')->name('cm-old-status.all');
+        Route::get('/getOldMembers', 'CmOldMembersReportController@getOldMembers')->name('cm-old-status.all');
+
+    });
 });

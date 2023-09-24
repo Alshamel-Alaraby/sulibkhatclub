@@ -1445,6 +1445,7 @@
         "yearsOfMembership": "Years Of Membership",
         "Changeofmemberrights": "Change of member rights",
         "ReportToMembers": "Report To Members",
+        "ReportToOldMembers": "Report To Old Members",
         "whichYearHeStarted": "which year he started",
         "NumberOfSubscriptionYears": "Number of subscription years",
         "Ordinarymembers": "Ordinary Members",
@@ -1515,6 +1516,7 @@
         "discountPerDay": "Discount Per Day",
         "totalDiscount": "total Discount",
         "floorsTable": "Floors Table",
-        "AttendanceNumber": "Attendance Number"
+        "AttendanceNumber": "Attendance Number",
+        "LstPayDate": "Lst Pay Date"
     }
 }

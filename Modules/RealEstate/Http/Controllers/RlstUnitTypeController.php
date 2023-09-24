@@ -18,7 +18,7 @@ class RlstUnitTypeController extends Controller
 
     public function find($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->data()->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -29,7 +29,7 @@ class RlstUnitTypeController extends Controller
     public function all(Request $request)
     {
 
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

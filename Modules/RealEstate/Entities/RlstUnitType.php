@@ -3,10 +3,10 @@
 namespace Modules\RealEstate\Entities;
 
 use App\Traits\LogTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RlstUnitType extends Model
 {
@@ -14,12 +14,12 @@ class RlstUnitType extends Model
 
     protected $table = 'rlst_units_type';
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'company_id',
+    protected $guarded = ['id'];
 
-    ];
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e');
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

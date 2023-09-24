@@ -18,6 +18,31 @@ class RlstUnit extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'code',
+                'name',
+                'name_e',
+                'description',
+                'description_e',
+                'unit_ty',
+                'unit_area',
+                'building_id',
+                'unit_status_id',
+                'rooms',
+                "unit_net_area",
+                'path',
+                'view',
+                'floor',
+                'finishing',
+                'properties',
+                'module',
+            )->with('unitStatus:id,name,name_e','building:id,name,name_e', 'media');
+    }
+
     // relations
 
     public function unitStatus()
@@ -45,14 +70,6 @@ class RlstUnit extends Model implements HasMedia
         return $this->hasMany(RlstItem::class, 'unit_id');
     }
 
-    // public function hasChildren()
-    // {
-    //     // $h = $this->internalSalesman()->exists();
-    //     // return $h;
-
-    //     return $this->items()->count() > 0 ;
-    // }
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -61,17 +78,12 @@ class RlstUnit extends Model implements HasMedia
             $relationsWithChildren[] = [
                 'relation' => 'items',
                 'count' => $this->items()->count(),
-                'ids' => $this->items()->pluck('id')->toArray()
+                'ids' => $this->items()->pluck('id')->toArray(),
             ];
         }
 
-
         return $relationsWithChildren;
     }
-
-
-
-
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -88,16 +100,16 @@ class RlstUnit extends Model implements HasMedia
     protected function attachments(): Attribute
     {
         return Attribute::make(
-            get:fn($value) => json_decode($value),
-            set:fn($value) => json_encode($value),
+            get: fn($value) => json_decode($value),
+            set: fn($value) => json_encode($value),
         );
     }
 
     protected function properties(): Attribute
     {
         return Attribute::make(
-            get:fn($value) => json_decode($value),
-            set:fn($value) => json_encode($value),
+            get: fn($value) => json_decode($value),
+            set: fn($value) => json_encode($value),
         );
     }
 

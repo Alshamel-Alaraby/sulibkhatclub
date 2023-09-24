@@ -50,11 +50,13 @@ export default {
             create: {
                 date: '',
                 year: '',
+                member_status_id: 1
             },
             errors: {},
             is_disabled: false,
             isCheckAll: false,
             checkAll: [],
+            statuses: [],
             current_page: 1,
             enabled3: true,
             printLoading: true,
@@ -79,10 +81,14 @@ export default {
             mouseEnter: null,
         }
     },
+    mounted(){
+       this.getStatus();
+    },
     validations: {
         create: {
             date: {required},
             year: {required},
+            member_status_id:  {required}
         },
     },
     watch: {
@@ -117,6 +123,26 @@ export default {
         },
     },
     methods: {
+        getStatus() {
+            this.isLoader = true;
+
+            adminApi
+                .get(`/club-members/cm-status`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.statuses = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         /**
          *  start get Data module && pagination
          */
@@ -142,7 +168,7 @@ export default {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&member_status_id=${this.create.member_status_id}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -184,7 +210,7 @@ export default {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
 
-                    adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    adminApi.get(`/club-members/transactions/check-date-member-transaction?date=${this.create.date}&year=${this.create.year}&member_status_id=${this.create.member_status_id}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -485,7 +511,35 @@ export default {
                                         {{ $t('general.Cancel') }}
                                     </b-button>
                                 </div>
-                                <div class="row">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-6">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("status") }}
+                                            </label>
+                                            <multiselect
+                                                v-model="create.member_status_id"
+                                                :options="statuses.map((type) => type.id)"
+                                                :custom-label="
+                                  (opt) => statuses.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar'
+                                      ? statuses.find((x) => x.id == opt).name
+                                      : statuses.find((x) => x.id == opt).name_e: null
+                                "
+                                            >
+                                            </multiselect>
+                                            <div
+                                                v-if="
+                                  $v.create.member_status_id.$error || errors.member_status_id
+                                "
+                                                class="text-danger"
+                                            >
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">

@@ -1409,7 +1409,7 @@
         "voteMemberCount": "اعضاء لهم حق التصويت فى الانتخابات",
         "AttendElections": "اعضاء لهم حق حضور الانتخابات",
         "beforeDate": "قبل تاريخ",
-        "forYear": "عن سنة",
+        "forYear": "حتي سنة",
         "memberNumber": "رقم العضو",
         "QueryAboutThePayersBeforeASpecificDate": "الاستعلام عن المسددين قبل تاريخ محدد",
         "year_from": "تاريخ بداية الاشتراك",
@@ -1430,6 +1430,7 @@
         "yearsOfMembership": "عدد سنوات العضويه",
         "Changeofmemberrights": "تغير حقوق الاعضاء",
         "ReportToMembers": "تقرير الاستعلام عن الاعضاء",
+        "ReportToOldMembers": "تقرير الاستعلام عن الاعضاء القديم",
         "whichYearHeStarted": "بدا من سنه",
         "NumberOfSubscriptionYears": "عدد سنوات الاشتراك",
         "Ordinarymembers": "الاعضاء العاديين",
@@ -1505,6 +1506,7 @@
         "discountPerDay": "خصم اليوم",
         "totalDiscount": "اجمالى الخصم",
         "floorsTable": "جدول الطوابق",
-        "AttendanceNumber": "عدد المرافقين"
+        "AttendanceNumber": "عدد المرافقين",
+        "LstPayDate": "تاريخ اخر سداد"
     }
 }

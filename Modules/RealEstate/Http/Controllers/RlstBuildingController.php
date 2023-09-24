@@ -2,6 +2,7 @@
 
 namespace Modules\RealEstate\Http\Controllers;
 
+use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class RlstBuildingController extends Controller
 {
 
-    public function __construct(private RlstBuilding $model,private Media $media)
+    public function __construct(private RlstBuilding $model, private Media $media)
     {
         $this->model = $model;
     }
@@ -159,7 +160,6 @@ class RlstBuildingController extends Controller
     //     return responseJson(200, __('Done'));
     // }
 
-
     public function delete($id)
     {
         $model = $this->model->find($id);
@@ -184,7 +184,6 @@ class RlstBuildingController extends Controller
 
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -232,6 +231,19 @@ class RlstBuildingController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

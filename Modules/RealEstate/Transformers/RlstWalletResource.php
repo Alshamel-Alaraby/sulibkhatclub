@@ -22,8 +22,7 @@ class RlstWalletResource extends JsonResource
             'owners' => RlstOwnerResource::collection($this->whenLoaded('owners')),
             'create_owners' => RlstOwnerResource::collection($this->owners,$this->id),
             "buildings" => RlstBuildingResource::collection($this->buildings),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            
 
         ];
     }

@@ -3,6 +3,7 @@
 namespace Modules\RealEstate\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstUnit;
@@ -10,26 +11,24 @@ use Modules\RealEstate\Entities\RlstWallet;
 use Modules\RealEstate\Http\Requests\RlstUnitEditRequest;
 use Modules\RealEstate\Http\Requests\RlstUnitFilterRequest;
 use Modules\RealEstate\Http\Requests\RlstUnitRequest;
+use Modules\RealEstate\Transformers\RlstUnitFilterResource;
 use Modules\RealEstate\Transformers\RlstUnitResource;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Modules\RealEstate\Transformers\RlstUnitFilterResource;
-
 
 class RlstUnitController extends Controller
 {
 
-    public function __construct(private RlstUnit $model,  RlstWallet $modelWallet)
+    public function __construct(private RlstUnit $model, private RlstWallet $modelWallet, private \Spatie\MediaLibrary\MediaCollections\Models\Media $media)
     {
         $this->model = $model;
         $this->modelWallet = $modelWallet;
+        $this->media = $media;
     }
 
     public function generalFilter(RlstUnitFilterRequest $request)
     {
 
         $models = $this->model->filter($request)->generalfilter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-
-
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -41,10 +40,9 @@ class RlstUnitController extends Controller
 
     }
 
-
     public function find($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->data()->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -54,15 +52,14 @@ class RlstUnitController extends Controller
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->when($request->building_id,function($q) use($request){
+        $models = $this->model->data()->when($request->building_id, function ($q) use ($request) {
             $q->where("building_id", $request->building_id);
         })
-        ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+            ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->unit_status_id) {
             $models->where('unit_status_id', $request->unit_status_id);
         }
-
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -94,7 +91,6 @@ class RlstUnitController extends Controller
         return responseJson(200, 'created', new RlstUnitResource($model));
 
     }
-
 
     public function update($id, RlstUnitEditRequest $request)
     {
@@ -145,9 +141,6 @@ class RlstUnitController extends Controller
 
         return responseJson(200, 'updated', new RlstUnitResource($model));
     }
-
-
-
 
     public function logs($id)
     {
@@ -215,7 +208,6 @@ class RlstUnitController extends Controller
         return responseJson(200, 'success');
     }
 
-
     public function bulkDelete(Request $request)
     {
         $itemsWithRelations = [];
@@ -268,17 +260,36 @@ class RlstUnitController extends Controller
     {
         $owner = $this->modelWallet->with('owners')->find($wallet_id);
         // $owner = $wallet->owners;
-        return responseJson(200, 'success', $owner );
+        return responseJson(200, 'success', $owner);
     }
-
 
     public function getBuildingByWalletId($wallet_id)
     {
         $building = $this->modelWallet->with('buildings')->find($wallet_id);
         // $owner = $wallet->owners;
-        return responseJson(200, 'success', $building );
+        return responseJson(200, 'success', $building);
     }
 
+
+    public function getDropDown(AllRequest $request)
+    {
+        $models = $this->model->select('id','name','name_e')->when($request->building_id, function ($q) use ($request) {
+            $q->where("building_id", $request->building_id);
+        })
+            ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->unit_status_id) {
+            $models->where('unit_status_id', $request->unit_status_id);
+        }
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
 
 
 }

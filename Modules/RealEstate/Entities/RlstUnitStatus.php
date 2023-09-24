@@ -12,20 +12,24 @@ class RlstUnitStatus extends Model
 {
     use HasFactory, LogTrait, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'is_default',
-        'is_active',
-        'company_id',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'is_default' => '\App\Enums\IsDefault',
         'is_active' => '\App\Enums\IsActive',
     ];
-    // relations
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'name',
+                'name_e',
+                'is_default',
+                'is_active',
+            );
+    }
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -38,7 +42,7 @@ class RlstUnitStatus extends Model
 
     public function units()
     {
-        return $this->hasMany(RlstUnit::class,"unit_status_id");
+        return $this->hasMany(RlstUnit::class, "unit_status_id");
     }
 
     // public function hasChildren()
@@ -55,7 +59,7 @@ class RlstUnitStatus extends Model
             $relationsWithChildren[] = [
                 'relation' => 'units',
                 'count' => $this->units()->count(),
-                'ids' => $this->units()->pluck('id')->toArray()
+                'ids' => $this->units()->pluck('id')->toArray(),
             ];
         }
 

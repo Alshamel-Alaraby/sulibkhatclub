@@ -124,6 +124,8 @@ Route::prefix('real-estate')->group(function () {
 
     // units
     Route::group(['prefix' => 'units'], function () {
+        Route::get('/get-drop-down', 'RlstUnitController@getDropDown')->name('rlst-units.getDropDown');
+
         Route::get('/general-filter', 'RlstUnitController@generalFilter');
 
         Route::get('/owner-wallet/{wallet_id}', 'RlstUnitController@getOwnerByWalletId');
@@ -142,6 +144,8 @@ Route::prefix('real-estate')->group(function () {
 
     // unit statuses
     Route::group(['prefix' => 'unit-statuses'], function () {
+        Route::get('/get-drop-down', 'RlstUnitStatusController@getDropDown')->name('rlst-unit-statuses.getDropDown');
+
         Route::get('/', 'RlstUnitStatusController@all')->name('rlst-unit-statuses.all');
         Route::get('/logs/{id}', 'RlstUnitStatusController@logs')->name('rlst-unit-statuses.logs');
         Route::get('/{id}', 'RlstUnitStatusController@find')->name('rlst-unit-statuses.find');
@@ -164,6 +168,8 @@ Route::prefix('real-estate')->group(function () {
 
     // buildings
     Route::group(['prefix' => 'buildings'], function () {
+        Route::get('/get-drop-down', 'RlstBuildingController@getDropDown')->name('rlst-buildings.getDropDown');
+
         Route::get('/', 'RlstBuildingController@all')->name('rlst-buildings.all');
         Route::get('/logs/{id}', 'RlstBuildingController@logs')->name('rlst-buildings.logs');
         Route::get('/{id}', 'RlstBuildingController@find')->name('rlst-buildings.find');

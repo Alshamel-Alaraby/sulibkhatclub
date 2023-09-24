@@ -39,14 +39,14 @@ class RlstItemController extends Controller
     public function create(ItemRequest $request)
     {
         $model = $this->modelInterface->create($request);
-        if ($request->media) {
-            foreach ($request->media as $media) {
-                $this->media::where('id', $media)->update([
-                    'model_id' => $model->id,
-                    'model_type' => get_class($this->model),
-                ]);
-            }
-        }
+        // if ($request->media) {
+        //     foreach ($request->media as $media) {
+        //         $this->media::where('id', $media)->update([
+        //             'model_id' => $model->id,
+        //             'model_type' => get_class($this->model),
+        //         ]);
+        //     }
+        // }
         $model->refresh();
         return responseJson(200, 'success', new RlstItemResource($model));
     }
@@ -206,7 +206,7 @@ class RlstItemController extends Controller
         return responseJson(200, __('Done'));
     }
 
-    
+
     private function getRelationDisplayName($relation)
     {
         $displayableName = str_replace('_', ' ', $relation);

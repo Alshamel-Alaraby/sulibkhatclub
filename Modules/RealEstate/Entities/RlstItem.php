@@ -14,16 +14,21 @@ class RlstItem extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, LogTrait, MediaTrait;
 
-    protected $fillable = [
-        "name",
-        "name_e",
-        "code_number",
-        "type",
-        "unit_id",
-        "company_id",
-        "price",
+    protected $guarded = ['id'];
 
-    ];
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                "id",
+                "name",
+                "name_e",
+                "code_number",
+                "type",
+                "price",
+                "unit_id"
+            )->with('units:id,name,name_e', 'media', 'categories');
+    }
 
     // relations
     public function units()

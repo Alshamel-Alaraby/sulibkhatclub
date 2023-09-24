@@ -14,26 +14,37 @@ class RlstOwner extends Model
 {
     use HasFactory, SoftDeletes, LogTrait;
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'phone',
-        'email',
-        'country_id',
-        'company_id',
-        'city_id',
-        'rb_code',
-        'phone_code',
-        'nationality_id',
-        'bank_account_id',
-        'contact_person',
-        'contact_phones',
-        'national_id',
-        'whatsapp',
-        'categories',
-        'attachments',
+    protected $guarded = ['id'];
 
-    ];
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'name',
+                'name_e',
+                'phone',
+                'email',
+                'rb_code',
+                'phone_code',
+                'contact_person',
+                'contact_phones',
+                'national_id',
+                'whatsapp',
+                'country_id',
+                'city_id',
+                'nationality_id',
+                'bank_account_id',
+                'categories',
+                'attachments', )
+            ->with(
+                'country:id,name,name_e',
+                'city:id,name,name_e',
+                'nationality:id,name,name_e',
+                'bankAccount:id,bank_id',
+                'bankAccount.bank:id,name,name_e'
+            );
+    }
 
     // relations
     public function country()
@@ -58,7 +69,6 @@ class RlstOwner extends Model
 
     public function wallets()
     {
-
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstWallet::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id')
             ->withPivot('percentage');
     }
@@ -82,16 +92,16 @@ class RlstOwner extends Model
     protected function categories(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => json_decode($value),
-            set: fn ($value) => json_encode($value),
+            get: fn($value) => json_decode($value),
+            set: fn($value) => json_encode($value),
         );
     }
 
     protected function attachments(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => json_decode($value),
-            set: fn ($value) => json_encode($value),
+            get: fn($value) => json_decode($value),
+            set: fn($value) => json_encode($value),
         );
     }
 
@@ -116,6 +126,6 @@ class RlstOwner extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Real Estate Owners')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }
