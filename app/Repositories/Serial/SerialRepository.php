@@ -16,7 +16,7 @@ class SerialRepository implements SerialRepositoryInterface
     }
     public function getAll($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->branch_id) {
             $models->where('branch_id', $request->branch_id);
@@ -61,7 +61,7 @@ class SerialRepository implements SerialRepositoryInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function update($request, $id)
@@ -113,6 +113,29 @@ class SerialRepository implements SerialRepositoryInterface
         $model = $this->find($id);
         if ($model) {
             $model->delete();
+        }
+    }
+
+    public function getName($request)
+    {
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->branch_id) {
+            $models->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->document_id) {
+            $models->where('document_id', $request->document_id);
+        }
+
+        if ($request->company_id) {
+            $models->where('company_id', $request->company_id);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
         }
     }
 

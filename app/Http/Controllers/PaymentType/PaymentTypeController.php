@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\PaymentType;
 
 use App\Http\Requests\PaymentType\PaymentTypeRequest;
-use App\Http\Requests\PaymentType\UpdatePaymentTypeRequest;
 use App\Http\Resources\PaymentType\PaymentTypeResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -17,7 +16,7 @@ class PaymentTypeController extends Controller
 
     public function find($id)
     {
-    
+
         $model = $this->modelInterface->find($id);
         if ($model) {
             return responseJson(200, 'success', new PaymentTypeResource($model));
@@ -29,16 +28,6 @@ class PaymentTypeController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('payment_types');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('payment_types', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
-
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', PaymentTypeResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

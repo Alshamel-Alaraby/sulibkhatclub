@@ -18,6 +18,11 @@ class Group extends Model
 
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e');
+    }
+
     protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
 
     public function products()

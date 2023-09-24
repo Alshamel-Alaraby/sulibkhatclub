@@ -55,7 +55,7 @@ class TaskController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', TaskResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 
@@ -253,7 +253,7 @@ class TaskController extends Controller
                 'message' => "قام $user_name بتعديل وقت البدء من $model->start_time الى $request->start_time في "
                     . now()->format('Y-m-d H:i:s'),
                 'user_id' => $user_id,
-            ]); 
+            ]);
         }
 
         if ($request->end_time != $model->end_time) {
@@ -535,5 +535,18 @@ class TaskController extends Controller
             $model->delete();
         });
         return responseJson(200, 'deleted');
+    }
+
+    public function getDropDown($request)
+    {
+        $models = $this->model->select('id', 'task_title');
+
+        if ($request->per_page) {
+            $modelData = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $modelData = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', $modelData['data'], $modelData['paginate'] ? getPaginates($modelData['data']) : null);
     }
 }

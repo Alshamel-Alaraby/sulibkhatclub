@@ -18,12 +18,12 @@ class SupplierRepository implements SupplierInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } elseif ($request->limet){
+        } elseif ($request->limit){
             return ['data' => $models->take($request->limit)->get(), 'paginate' => false];
         }else {
             return ['data' => $models->get(), 'paginate' => false];
@@ -32,7 +32,7 @@ class SupplierRepository implements SupplierInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($data)
@@ -97,6 +97,20 @@ class SupplierRepository implements SupplierInterface
     {
         return $this->model->find($id)->activities()->orderBy('created_at', 'DESC')->get();
     }
+
+    public function getName($request)
+    {
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } elseif ($request->limit){
+            return ['data' => $models->take($request->limit)->get(), 'paginate' => false];
+        }else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
 
 
 }

@@ -34,8 +34,8 @@ class BankAccountRequest extends FormRequest
                 "emp_id" => "nullable|exists:general_employees,id",
                 "rp_code" => "nullable|string|max:255",
                 "media" => "nullable|array",
-                "media.*" => ["nullable|exists:media,id", new \App\Rules\MediaRule()],
-                'old_media.*' => ['nullable|exists:media,id', new \App\Rules\MediaRule("App\Models\BankAccount")],
+                "media.*" => ["nullable",'exists:media,id', new \App\Rules\MediaRule()],
+                'old_media.*' => ['nullable','exists:media,id', new \App\Rules\MediaRule("App\Models\BankAccount")],
             ];
         else:
             return [

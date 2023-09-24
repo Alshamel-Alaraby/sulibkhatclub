@@ -20,5 +20,7 @@ interface CmTransactionInterface
 
     public function reportCmTransactions($request);
 
+    public function reportSponsorPaidTransactions($request);
+
 
 }

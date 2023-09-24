@@ -11,6 +11,8 @@ return new class extends Migration
      *
      * @return void
      */
+
+    
     public function up()
     {
         Schema::create('booking_settings', function (Blueprint $table) {

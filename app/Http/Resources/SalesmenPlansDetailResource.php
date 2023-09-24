@@ -17,13 +17,11 @@ class SalesmenPlansDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'plan' => new RelationSalesmenPlanResource($this->plan),
+            'plan' => $this->plan,
             'amount_from' => $this->amount_from,
             'amount_to' => $this->amount_to,
             'commission_percent' => $this->commission_percent,
             'is_default' => $this->is_default,
-            'created_at' => $this->created_at,
-            'created_at' => $this->updated_at,
         ];
     }
 }

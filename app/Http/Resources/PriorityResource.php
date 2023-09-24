@@ -19,12 +19,11 @@ class PriorityResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'parent' => new RelationPriorityResource($this->parent),
+            'parent' => $this->parent,
             'parent_id' => $this->parent_id,
             'is_valid' => $this->is_valid,
             'is_default' => $this->is_default,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+
         ];
     }
 }

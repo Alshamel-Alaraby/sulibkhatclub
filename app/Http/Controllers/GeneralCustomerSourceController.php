@@ -42,7 +42,7 @@ class GeneralCustomerSourceController extends Controller
         $model = $this->model->create($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'created', new GeneralCustomerSourceResource($model));
+        return responseJson(200, 'created');
     }
 
     public function update($id, GeneralCustomerSourceRequest $request)
@@ -55,7 +55,7 @@ class GeneralCustomerSourceController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated', new GeneralCustomerSourceResource($model));
+        return responseJson(200, 'updated');
     }
 
     public function logs($id)

@@ -30,7 +30,7 @@ class InternalSalesmanController extends Controller
 
     public function find($id)
     {
-     
+
         $model = $this->repository->find($id);
 
         if (!$model) {

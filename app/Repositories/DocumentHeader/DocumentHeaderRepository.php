@@ -410,6 +410,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                     'unit_type'          => $HeaderDetails['unit_type'] ,
                     'price_per_uint'     => $HeaderDetails['price_per_uint'] ,
                     'unit_id'            => $HeaderDetails['unit_id'],
+                    'note'            => $HeaderDetails['note'],
                 ]);
             endforeach;
         }

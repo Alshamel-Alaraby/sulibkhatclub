@@ -25,7 +25,8 @@ class BranchResource extends JsonResource
             'parent_id' => $this->parent_id,
             "parent" => $this->parent,
             "children" =>  RelationBranchResource::collection($this->children),
-            "serials" =>  RelationSerialResource::collection($this->serials),
+//            "serials" =>  RelationSerialResource::collection($this->serials),
+            "serials" =>  $this->serials,
             "stores" => RelationStoreResource::collection($this->stores),
         ];
     }

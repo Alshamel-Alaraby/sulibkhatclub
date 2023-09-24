@@ -17,7 +17,7 @@ class UnitRepository implements UnitInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -28,7 +28,7 @@ class UnitRepository implements UnitInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -97,6 +97,16 @@ class UnitRepository implements UnitInterface
             cacheForget($key);
         }
 
+    }
+
+    public function getName($request)
+    {
+        $models = $this->model->select('id','name','name_e')->where('is_active','active');
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 
 }

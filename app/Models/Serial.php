@@ -24,6 +24,21 @@ class Serial extends Model
         "name",
         "name_e",
     ];
+
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'start_no',
+            'perfix',
+            'suffix',
+            'restart_period_id',
+            'document_id',
+            "branch_id",
+            "name",
+            "name_e",
+        )->with(['branch:id,name,name_e','document:id,name,name_e','restartPeriod:id,name,name_e']);
+    }
     // protected $casts = [
     //     'is_default' => 'App\Enums\IsDefault',
     // ];

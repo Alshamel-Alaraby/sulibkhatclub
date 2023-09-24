@@ -5,10 +5,10 @@ namespace Modules\Booking\Http\Controllers;
 use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\Booking\Entities\Unit;
 use Modules\Booking\Http\Requests\UnitRequest;
 use Modules\Booking\Transformers\UnitResource;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class UnitController extends Controller
 {
@@ -33,6 +33,24 @@ class UnitController extends Controller
 
         if ($request->unit_status_id) {
             $models->where('unit_status_id', $request->unit_status_id);
+        }
+
+        if ($request->start_date && $request->end_date) {
+
+            $models = DB::table('booking_units')
+                ->whereDate('created_at', '>=', $request->start_date)
+                ->whereDate('created_at', '<=', $request->end_date)
+                ->select('unit_status_id', DB::raw('count(*) as total'))
+                ->groupBy('unit_status_id');
+
+            if ($request->per_page) {
+                $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+            } else {
+                $models = ['data' => $models->get(), 'paginate' => false];
+            }
+
+            return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+
         }
 
         if ($request->per_page) {
@@ -107,9 +125,7 @@ class UnitController extends Controller
 
     public function getDropDown(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-
-     
+        $models = $this->model->select('id', 'name', 'name_e');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

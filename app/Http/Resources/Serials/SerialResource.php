@@ -32,9 +32,9 @@ class SerialResource extends JsonResource
             'restart_period_id' => $this->restart_period_id,
             "store" => $this->store,
             "has_child" => $this->has_child,
-            "document" => new DocumentResource($this->document),
-            "branch" => new RelationBranchResource($this->branch),
-            'restart_period' => new RelationRestartPeriodResource($this->restartPeriod),
+            "document" => $this->document,
+            "branch" => $this->branch,
+            'restart_period' => $this->restartPeriod,
         ];
     }
 }

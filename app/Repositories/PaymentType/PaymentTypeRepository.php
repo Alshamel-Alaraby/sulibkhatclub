@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 class PaymentTypeRepository implements PaymentTypeInterface
 {
 
-    public function __construct(private \App\Models\PaymentType$model, private \Spatie\MediaLibrary\MediaCollections\Models\Media$media)
+    public function __construct(private \App\Models\PaymentType $model, private \Spatie\MediaLibrary\MediaCollections\Models\Media $media)
     {
         $this->model = $model;
         $this->media = $media;
@@ -16,7 +16,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -27,7 +27,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -38,7 +38,6 @@ class PaymentTypeRepository implements PaymentTypeInterface
                 $this->model->where('id', '!=', $model->id)->update(['is_default' => 0]);
             }
 
-            cacheForget("payment_types");
         });
     }
 
@@ -50,7 +49,6 @@ class PaymentTypeRepository implements PaymentTypeInterface
             if ($request->is_default == 1) {
                 $this->model->where('id', '!=', $id)->update(['is_default' => 0]);
             }
-            $this->forget($id);
 
         });
 
@@ -62,20 +60,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
         $model->delete();
-    }
-
-    private function forget($id)
-    {
-        $keys = [
-            "payment_types",
-            "payment_types_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
-
     }
 
 }

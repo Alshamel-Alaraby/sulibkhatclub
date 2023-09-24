@@ -24,6 +24,9 @@ return new class extends Migration
             $table->text('note');
             $table->string('session_number')->nullable();
             $table->string('prefix')->nullable();
+            $table->unsignedInteger('discharge_reson_id')->nullable();
+            $table->string('entity', 20)->nullable();
+            
             $table->timestamps();
         });
     }

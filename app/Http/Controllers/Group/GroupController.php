@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Group;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Brand\BrandRequest;
 use App\Http\Requests\Group\GroupRequest;
-use App\Http\Resources\Brand\BrandResource;
 use App\Http\Resources\Group\GroupResource;
-use App\Repositories\Group\GroupInterface;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class GroupController extends Controller
 {
@@ -39,7 +35,7 @@ class GroupController extends Controller
     {
         $model = $this->modelInterface->create($request->validated());
 
-        return responseJson(200, 'success', new GroupResource($model));
+        return responseJson(200, 'success');
     }
 
 
@@ -52,7 +48,7 @@ class GroupController extends Controller
         }
         $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
-        return responseJson(200, 'success', new GroupResource($model));
+        return responseJson(200, 'success');
     }
     public function logs($id)
     {

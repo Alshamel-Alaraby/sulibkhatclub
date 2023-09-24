@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-
 
 class BookingSettingTableSeeder extends Seeder
 {
@@ -21,7 +20,7 @@ class BookingSettingTableSeeder extends Seeder
         $data = [
             [
                 'key' => 'Check-in',
-                'value' => Carbon::createFromTime(13, 0)->format('H:i'), 
+                'value' => Carbon::createFromTime(13, 0)->format('H:i'),
             ],
             [
                 'key' => 'Check-out',

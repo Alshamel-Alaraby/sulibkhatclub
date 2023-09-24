@@ -19,34 +19,32 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC')
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC')
             ->where(function ($q) use ($request) {
                 $q->when($request->opening_balance, function ($q) use ($request) {
                     $q->doesntHave('opening_balances');
                 });
             });
 
-        if($request->employee_id)
-        {
-            $models->where('employee_id',$request->employee_id);
+        if ($request->employee_id) {
+            $models->where('employee_id', $request->employee_id);
         }
-        if($request->type!==null)
-        {
-            $models->where('type',$request->type);
+        if ($request->type !== null) {
+            $models->where('type', $request->type);
         }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } elseif ($request->limet){
+        } elseif ($request->limet) {
             return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
-        }else {
+        } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($data)
@@ -61,31 +59,31 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
         });
     }
 
-    public function createSupplier($data,$model){
+    public function createSupplier($data, $model)
+    {
 
-        if ($data['is_supplier'] == 1){
-            $supplier_exists = $this->supplier->where('name',$data['name'])->where('customer_id',null)->first();
-            if ($supplier_exists){
-                $supplier_exists->update(['customer_id'=>$model->id]);
+        if ($data['is_supplier'] == 1) {
+            $supplier_exists = $this->supplier->where('name', $data['name'])->where('customer_id', null)->first();
+            if ($supplier_exists) {
+                $supplier_exists->update(['customer_id' => $model->id]);
                 return $supplier_exists;
             }
-            $create_supplier =  collect($model)->except(['id','updated_at','created_at']);
+            $create_supplier = collect($model)->except(['id', 'updated_at', 'created_at']);
             $supplier = $this->supplier->create($create_supplier->all());
-            $supplier->update(['customer_id'=>$model->id]);
+            $supplier->update(['customer_id' => $model->id]);
             return $create_supplier;
         }
         return 'is_supplier == 0';
     }
-
 
     public function update($data, $id)
     {
 
         return DB::transaction(function () use ($id, $data) {
             $model = $this->model->where("id", $id)->first();
-             $model->update($data->all());
+            $model->update($data->all());
             if (isset($data['is_supplier'])) {
-                    $this->updateSupplier($data, $model);
+                $this->updateSupplier($data, $model);
             }
             if (request()->media && !request()->old_media) { // if there is new media and no old media
                 $model->clearMediaCollection('media');
@@ -125,45 +123,45 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
 
     }
 
-    public function updateSupplier($data,$model)
+    public function updateSupplier($data, $model)
     {
-        $supplier_customer = $this->supplier->where('name',$data['name'])->where('customer_id',$model->id)->first();
+        $supplier_customer = $this->supplier->where('name', $data['name'])->where('customer_id', $model->id)->first();
 
-        if($data['is_supplier'] == 1){
+        if ($data['is_supplier'] == 1) {
 
-            if ($supplier_customer){
+            if ($supplier_customer) {
 
-                $supplier_not_exists = $this->supplier->where('name',$data['name'])->where('customer_id',null)->first();
-                if ($supplier_not_exists){
-                    $supplier_not_exists->update(['customer_id'=>$model->id]);
+                $supplier_not_exists = $this->supplier->where('name', $data['name'])->where('customer_id', null)->first();
+                if ($supplier_not_exists) {
+                    $supplier_not_exists->update(['customer_id' => $model->id]);
                     return $supplier_not_exists;
                 }
-                $supplier_exists = $this->supplier->where('name',$data['name'])->where('customer_id',$model->id)->first();
-                if (!$supplier_exists){
-                    $create_supplier =  collect($model)->except(['id','updated_at','created_at']);
+                $supplier_exists = $this->supplier->where('name', $data['name'])->where('customer_id', $model->id)->first();
+                if (!$supplier_exists) {
+                    $create_supplier = collect($model)->except(['id', 'updated_at', 'created_at']);
                     $supplier = $this->supplier->create($create_supplier->all());
-                    $supplier->update(['customer_id'=>$model->id]);
+                    $supplier->update(['customer_id' => $model->id]);
                     return $create_supplier;
                 }
 
             }
         }
-        if($data['is_supplier'] == 0){
-            if ($supplier_customer){
-                if ($supplier_customer->hasChildren()){
-                    $supplier_customer->update(['customer_id'=>null]);
+        if ($data['is_supplier'] == 0) {
+            if ($supplier_customer) {
+                if ($supplier_customer->hasChildren()) {
+                    $supplier_customer->update(['customer_id' => null]);
                     $supplier_customer->delete();
                 }
                 return "delete";
             }
         }
-        $supplier_not_exists = $this->supplier->where('name',$data['name'])->where('customer_id',null)->first();
-        if ($supplier_not_exists){
-            $supplier_not_exists->update(['customer_id'=>$model->id]);
+        $supplier_not_exists = $this->supplier->where('name', $data['name'])->where('customer_id', null)->first();
+        if ($supplier_not_exists) {
+            $supplier_not_exists->update(['customer_id' => $model->id]);
             return $supplier_not_exists;
         }
 
-        if (!$supplier_customer){
+        if (!$supplier_customer) {
             $this->createSupplier($data, $model);
             return "create Supplier";
         }
@@ -197,55 +195,53 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
 
     public function checkSupplier($request)
     {
-        if ($request['supplier'] == 'create'){
+        if ($request['supplier'] == 'create') {
 
-            if ($request['is_supplier']  == 1){
+            if ($request['is_supplier'] == 1) {
 
-                $supplier_exists = $this->supplier->where('name',$request['name'])->where('customer_id',null)->first();
-                if ($supplier_exists){
-                    return responseJson(200, 'Exists',$supplier_exists);
+                $supplier_exists = $this->supplier->where('name', $request['name'])->where('customer_id', null)->first();
+                if ($supplier_exists) {
+                    return responseJson(200, 'Exists', $supplier_exists);
                 }
 
-                $supplier_customer = $this->supplier->where('name',$request['name'])->where('customer_id','!=',null)->first();
-                if ($supplier_customer){
+                $supplier_customer = $this->supplier->where('name', $request['name'])->where('customer_id', '!=', null)->first();
+                if ($supplier_customer) {
                     $supplier_customer->customer;
-                    return responseJson(400, 'Supplier Customer',$supplier_customer);
+                    return responseJson(400, 'Supplier Customer', $supplier_customer);
                 }
 
             }
 
         }
-        if ($request['supplier'] == 'update'){
+        if ($request['supplier'] == 'update') {
 
-            if ($request['is_supplier']  == 1){
+            if ($request['is_supplier'] == 1) {
 
-                $model = $this->model->where('id',$request['id'])->where('is_supplier',1)->first();
-                if (!$model){
+                $model = $this->model->where('id', $request['id'])->where('is_supplier', 1)->first();
+                if (!$model) {
 
-                    $supplier_customer = $this->supplier->where('name',$request['name'])->where('customer_id',$request['id'])->first();
-                    if (!$supplier_customer){
+                    $supplier_customer = $this->supplier->where('name', $request['name'])->where('customer_id', $request['id'])->first();
+                    if (!$supplier_customer) {
 
-                        $supplier_exists = $this->supplier->where('name',$request['name'])->where('customer_id',null)->first();
-                        if ($supplier_exists){
-                            return responseJson(200, 'Exists',$supplier_exists);
+                        $supplier_exists = $this->supplier->where('name', $request['name'])->where('customer_id', null)->first();
+                        if ($supplier_exists) {
+                            return responseJson(200, 'Exists', $supplier_exists);
                         }
 
-                        $supplier_customer_first = $this->supplier->where('name',$request['name'])->where('customer_id','!=',null)->first();
-                        if ($supplier_customer_first){
+                        $supplier_customer_first = $this->supplier->where('name', $request['name'])->where('customer_id', '!=', null)->first();
+                        if ($supplier_customer_first) {
                             $supplier_customer_first->customer;
-                            return responseJson(400, 'Supplier Customer',$supplier_customer_first);
+                            return responseJson(400, 'Supplier Customer', $supplier_customer_first);
                         }
                     }
-
 
                 }
 
             }
 
-            if ($request['is_supplier']  == 0)
-            {
-                $model = $this->model->where('id',$request['id'])->where('is_supplier',1)->first();
-                if ($model){
+            if ($request['is_supplier'] == 0) {
+                $model = $this->model->where('id', $request['id'])->where('is_supplier', 1)->first();
+                if ($model) {
                     return responseJson(200, 'Delete Supplier');
 
                 }
@@ -254,21 +250,30 @@ class GeneralCustomerRepository implements GeneralCustomerRepositoryInterface
 
         }
 
-
         return 'is_supplier == 0';
 
     }
 
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e')->where(function ($q) use ($request) {
+            $q->when($request->opening_balance, function ($q) use ($request) {
+                $q->doesntHave('opening_balances');
+            });
+        });
+
+        if ($request->employee_id) {
+            $models->where('employee_id', $request->employee_id);
+        }
+        if ($request->type !== null) {
+            $models->where('type', $request->type);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } elseif ($request->limet){
+        } elseif ($request->limet) {
             return ['data' => $models->take($request->limet)->get(), 'paginate' => false];
-        }else {
+        } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }

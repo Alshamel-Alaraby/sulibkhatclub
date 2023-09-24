@@ -19,6 +19,15 @@ class GeneralCustomerSource extends Model
         'parent_id',
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id', 'name', 'name_e', 'parent_id'
+        )->with(
+            'parent:id,name,name_e',
+
+        );
+    }
 
     protected $appends = ['haveChildren'];
 
@@ -44,21 +53,19 @@ class GeneralCustomerSource extends Model
     //      return $this->children()->count() > 0;
     //  }
 
-   public function hasChildren()
-   {
-       $relationsWithChildren = [];
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
 
-       if ($this->children()->count() > 0) {
-           $relationsWithChildren[] = [
-               'relation' => 'general customer sources',
-               'count' => $this->children()->count(),
-               'ids' => $this->children()->pluck('id')->toArray()
-           ];
-       }
-       return $relationsWithChildren;
-   }
-
-
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'general customer sources',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('id')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

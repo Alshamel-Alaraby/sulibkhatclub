@@ -17,7 +17,21 @@ class PaymentMethod extends Model
 
     protected $guarded = ['id'];
 
-  
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+            "is_default",
+            'type',
+            'status',
+            'created_by',
+        );
+    }
+
+
+
     public function payments()
     {
         return $this->hasMany(Payment::class, 'payment_method_id');

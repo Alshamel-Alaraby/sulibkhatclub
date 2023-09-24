@@ -10,7 +10,6 @@ use Modules\ClubMembers\Entities\CmHistoryTransform;
 use Modules\ClubMembers\Entities\CmMember;
 use Modules\ClubMembers\Entities\CmMemberRequest;
 use Modules\ClubMembers\Entities\CmTransaction;
-use Modules\ClubMembers\Entities\CmTypePermission;
 
 class CmMemberRepository implements CmMemberInterface
 {
@@ -48,7 +47,6 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->member_status_id) {
             $models->where('member_status_id', $request->member_status_id);
         }
-
 
         if ($request->postal_report) {
             $models->where('member_kind_id', $request->postal_report)->where('member_status_id', 1);
@@ -278,7 +276,7 @@ class CmMemberRepository implements CmMemberInterface
         }
 
         if ($request->members_permissions_id) {
-            $models->where('members_permissions_id', $request->members_permissions_id)->where('member_status_id',1);
+            $models->where('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', 2024);
         }
 
         if ($request->per_page) {
@@ -310,22 +308,21 @@ class CmMemberRepository implements CmMemberInterface
         //ini_set('max_execution_time', '60');
 
         $financialyear = FinancialYear::where('is_active', 1)->first();
-        if ($financialyear){
+        if ($financialyear) {
 
             //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
             // reset the member permission id in Cm Members for all active (saary) members to 1 (ليس له حق الحضور)
             /// update to columns  financial_status_id =  غير مسدد and  members_permissions_id = ليس له حق الحضور  in table CmMembers
             CmMember::where(['member_status_id' => 1, 'member_kind_id' => 2])->update([
-                'financial_status_id' => 1,  // غير مطلوب السداد
-                'members_permissions_id' => 4 // كل الحقوق
+                'financial_status_id' => 1, // غير مطلوب السداد
+                'members_permissions_id' => 4, // كل الحقوق
             ]);
 
             // عضو عادي
-             CmMember::where(['member_status_id' => 1, 'member_kind_id' => 1])->update([
-                'financial_status_id' => 2,  // غير مسدد
-                'members_permissions_id' => 1 // ليس له حق
+            CmMember::where(['member_status_id' => 1, 'member_kind_id' => 1])->update([
+                'financial_status_id' => 2, // غير مسدد
+                'members_permissions_id' => 1, // ليس له حق
             ]);
-
 
             // all settings
             $settings = DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
@@ -336,11 +333,11 @@ class CmMemberRepository implements CmMemberInterface
             // that its last_transaction_year as the financial year
 
             $running_member_all = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
-                        ->where('last_transaction_year', $financialyear->year) ;// int ? int
-                })->orWhere('member_kind_id',2)->get();
+                        ->where('last_transaction_year', $financialyear->year); // int ? int
+                })->orWhere('member_kind_id', 2)->get();
 
             //$time = strtotime('2023/02/28');
             //$date_allowed_vote_date = date('Y-m-d',$time);
@@ -351,101 +348,89 @@ class CmMemberRepository implements CmMemberInterface
             // From a date string
             $date_allowed_vote_date = Carbon::createFromFormat('Y-m-d', '2022-02-28');
 
-
             $update_3ady_members = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where('member_kind_id', 1) // عادي
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
                 ->update
                 ([
-                    'financial_status_id'    => 3,  //مسدد في الموعد
-                ]);
-
-
+                'financial_status_id' => 3, //مسدد في الموعد
+            ]);
 
             $update_3ady_members_2 = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where('member_kind_id', 1) // عادي
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
                 ->update
                 ([
-                    'financial_status_id'    => 4,  //مسدد بعد الموعد
-                ]);
+                'financial_status_id' => 4, //مسدد بعد الموعد
+            ]);
 
-                //return $update_3ady_members_2;
+            //return $update_3ady_members_2;
 
-                /*
-                ->update
-                ([
-                    'financial_status_id'    => 4,  //مسدد بعد الموعد
-                ]);
-                */
+            /*
+            ->update
+            ([
+            'financial_status_id'    => 4,  //مسدد بعد الموعد
+            ]);
+             */
 
-                //$time2 = strtotime('1900/02/27');
-                //$date2 = date('Y-m-d',$time);
-                //$date2 = new Carbon('2023-02-28');
-                //$date2 = Carbon::createFromFormat('Y-m-d', '2023-02-27');;
-                //return $date_allowed_vote_date > $date2 ? "true" : "false" ;
+            //$time2 = strtotime('1900/02/27');
+            //$date2 = date('Y-m-d',$time);
+            //$date2 = new Carbon('2023-02-28');
+            //$date2 = Carbon::createFromFormat('Y-m-d', '2023-02-27');;
+            //return $date_allowed_vote_date > $date2 ? "true" : "false" ;
 
-                //return $update_3ady_members_2;
+            //return $update_3ady_members_2;
 
-                /*
-                ->update
-                ([
-                    'financial_status_id'    => 4,  //مسدد بعد الموعد
-                ]);
-                */
+            /*
+            ->update
+            ([
+            'financial_status_id'    => 4,  //مسدد بعد الموعد
+            ]);
+             */
 
-
-
-            foreach ($running_member_all as  $index => $member){
+            foreach ($running_member_all as $index => $member) {
                 $member->refresh();
 
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
 
+                foreach ($settings->reverse() as $setting) {
 
-                foreach ($settings->reverse() as $setting){
+                    if (
+                        $member->member_kind_id == $setting->cm_members_type_id &&
+                        $diffYears >= $setting->membership_period &&
+                        $member->financial_status_id == $setting->cm_financial_status_id
+                    ) {
 
+                        $member->update
+                            ([
+                            'members_permissions_id' => $setting->cm_permissions_id,
+                        ]);
+                        //   }
 
+                        break; // exit the for each on the permissions => he/she can NOT achieve better
+                        //}
 
-                    if(
-                       $member->member_kind_id  == $setting->cm_members_type_id &&
-                       $diffYears >= $setting->membership_period &&
-                       $member->financial_status_id == $setting->cm_financial_status_id
-                       )
-                      {
-
-                                $member->update
-                                ([
-                                    'members_permissions_id' => $setting->cm_permissions_id,
-                                ]);
-                                //   }
-
-                                break; // exit the for each on the permissions => he/she can NOT achieve better
-                                //}
-
-                        }else{
-                                $member->update
-                                ([
-                                    'members_permissions_id' => 1,
-                                ]);
-                        }
-
-
+                    } else {
+                        $member->update
+                            ([
+                            'members_permissions_id' => 1,
+                        ]);
+                    }
 
                 }
 
             }
 
+        } else {
 
-        }else{
-
-            return  'There must be an active financial year!';
+            return 'There must be an active financial year!';
         }
 
         return 200;
@@ -456,22 +441,21 @@ class CmMemberRepository implements CmMemberInterface
         Artisan::call('permission:db');
         return "all";
         $financialyear = FinancialYear::where('is_active', 1)->first();
-        if ($financialyear){
+        if ($financialyear) {
 
             //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
             // reset the member permission id in Cm Members for all active (saary) members to 1 (ليس له حق الحضور)
             /// update to columns  financial_status_id =  غير مسدد and  members_permissions_id = ليس له حق الحضور  in table CmMembers
             CmMember::where(['member_status_id' => 1, 'member_kind_id' => 2])->update([
-                'financial_status_id' => 1,  // غير مطلوب السداد
-                'members_permissions_id' => 4 // كل الحقوق
+                'financial_status_id' => 1, // غير مطلوب السداد
+                'members_permissions_id' => 4, // كل الحقوق
             ]);
 
             // عضو عادي
             CmMember::where(['member_status_id' => 1, 'member_kind_id' => 1])->update([
-                'financial_status_id' => 2,  // غير مسدد
-                'members_permissions_id' => 1 // ليس له حق
+                'financial_status_id' => 2, // غير مسدد
+                'members_permissions_id' => 1, // ليس له حق
             ]);
-
 
             // all settings
             $settings = DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
@@ -482,55 +466,48 @@ class CmMemberRepository implements CmMemberInterface
             // that its last_transaction_year as the financial year
 
             $running_member_all = DB::table('cm_members')
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
-                        ->where('last_transaction_year', $financialyear->year) ;// int ? int
-                })->orWhere('member_kind_id',2)->get();
+                        ->where('last_transaction_year', $financialyear->year); // int ? int
+                })->orWhere('member_kind_id', 2)->get();
             $time = strtotime('2023/02/28');
 
-
-            $date_allowed_vote_date = date('Y-m-d',$time);
-
-
+            $date_allowed_vote_date = date('Y-m-d', $time);
 
             $update_3ady_members = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where('member_kind_id', 1) // عادي
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
                 ->update
                 ([
-                    'financial_status_id'    => 3,  //مسدد في الموعد
-                ]);
+                'financial_status_id' => 3, //مسدد في الموعد
+            ]);
 
             $update_3ady_members_2 = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where('member_kind_id', 1) // عادي
                 ->whereNotNull('last_transaction_date') // عنده transaction
                 ->where('last_transaction_year', $financialyear->year) // سنة ال transaction هي سنة السنة المالية
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
                 ->update
                 ([
-                    'financial_status_id'    => 4,  //مسدد في الموعد
-                ])
+                'financial_status_id' => 4, //مسدد في الموعد
+            ])
             ;
 
-
-
-
-            foreach ($running_member_all as  $member){
+            foreach ($running_member_all as $member) {
 
                 $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                 $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
-return $settings->reverse();
-                foreach ($settings->reverse() as $setting){
-                    if($member->member_kind_id  == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period)
-                    {
+                return $settings->reverse();
+                foreach ($settings->reverse() as $setting) {
+                    if ($member->member_kind_id == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period) {
 
                         $member->update
-                        ([
+                            ([
                             'members_permissions_id' => $setting->cm_permissions_id,
                         ]);
                         //   }
@@ -538,9 +515,9 @@ return $settings->reverse();
                         break; // exit the for each on the permissions => he/she can NOT achieve better
                         //}
 
-                    }else{
+                    } else {
                         $member->update
-                        ([
+                            ([
                             'members_permissions_id' => 1,
                         ]);
 
@@ -550,108 +527,99 @@ return $settings->reverse();
 
             }
 
+        } else {
 
-        }else{
-
-            return  'There must be an active financial year!';
+            return 'There must be an active financial year!';
         }
 
         return 200;
     }
 
-
     public function publicUpdatePermissionCmMember($permission_id)
     {
 
-
         $financialyear = FinancialYear::where('is_active', 1)->first();
-        if ($financialyear){
+        if ($financialyear) {
 
             //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
             // reset the member permission id in Cm Members for all active (saary) members to 1 (ليس له حق الحضور)
             /// update to columns  financial_status_id =  غير مسدد and  members_permissions_id = ليس له حق الحضور  in table CmMembers
             collect($this->model->where('member_status_id', 1)->get())->each(function ($item) {
-                if($item->member_kind_id == 2){
+                if ($item->member_kind_id == 2) {
                     $item->update([
-                        'financial_status_id' => 1,  // غير مطلوب السداد
-                        'members_permissions_id' => 4 // كل الحقوق
+                        'financial_status_id' => 1, // غير مطلوب السداد
+                        'members_permissions_id' => 4, // كل الحقوق
                     ]);
 
-                }else {
+                } else {
                     $item->update([
                         'financial_status_id' => 2, // غير مسدد
-                        'members_permissions_id' => 1 // ليس له حقوق
+                        'members_permissions_id' => 1, // ليس له حقوق
                     ]);
                 }
             });
 
-
             // all settings
-            $settings = DB::table('cm_type_permissions')->where('cm_permissions_id',$permission_id)->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
+            $settings = DB::table('cm_type_permissions')->where('cm_permissions_id', $permission_id)->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
 
             // get the active financial year
 
             // filter the "saaaaary" members which have at least one last_transaction_date
             // that its last_transaction_year as the financial year
             $running_member_all = $this->model
-                ->where('member_status_id', 1)	// ساري
+                ->where('member_status_id', 1) // ساري
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
-                        ->where('last_transaction_year', $financialyear->year) ;// int ? int
-                })->orWhere('member_kind_id',2)->get();
+                        ->where('last_transaction_year', $financialyear->year); // int ? int
+                })->orWhere('member_kind_id', 2)->get();
 
-            foreach ($running_member_all as  $member){
-
+            foreach ($running_member_all as $member) {
 
                 $paidontime = false;
 
-                foreach ($settings->reverse() as $setting){
+                foreach ($settings->reverse() as $setting) {
 
-                    if( $member->member_kind_id  == $setting->cm_members_type_id )
-                    {
+                    if ($member->member_kind_id == $setting->cm_members_type_id) {
                         $dbDate = \Carbon\Carbon::parse($member->membership_date)->format('Y-m-d');
                         $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
                         $yearGlued_allowed_vote_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_vote_date)); // format: (yyyy-mm-dd)
                         $yearGlued_allowed_subscription_date = strftime("%F", strtotime($financialyear->year . "-" . $setting->allowed_subscription_date)); // format: (yyyy-mm-dd)
 
-                        if ($member->last_transaction_date){
+                        if ($member->last_transaction_date) {
 
-                            $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d') ; // format: (yyyy-mm-dd)
+                            $Last_Member_transaction = \Carbon\Carbon::parse($member->last_transaction_date)->format('Y-m-d'); // format: (yyyy-mm-dd)
 
-                            if ( $Last_Member_transaction <= $yearGlued_allowed_vote_date )
-                            {
+                            if ($Last_Member_transaction <= $yearGlued_allowed_vote_date) {
                                 $member->update
-                                ([
-                                    'financial_status_id'    => 3,  //مسدد في الموعد
+                                    ([
+                                    'financial_status_id' => 3, //مسدد في الموعد
                                 ]);
 
                                 $paidontime = true;
 
-                            }else// ( $Last_Member_transaction > $yearGlued_allowed_vote_date )
+                            } else // ( $Last_Member_transaction > $yearGlued_allowed_vote_date )
                             {
                                 $member->update
-                                ([
-                                    'financial_status_id'    => 4,  // مسدد بعد الموعد
+                                    ([
+                                    'financial_status_id' => 4, // مسدد بعد الموعد
                                 ]);
 
                             }
 
-
                         }
-                        if($setting->cm_financial_status_id == 1){
+                        if ($setting->cm_financial_status_id == 1) {
                             $paidontime = true; // كانه داااافع
                         } // ليس مطلوب السداد
 
                         // اعطاء حق لعضو عادي او مؤسس بناءا علي مدة الاشتراك
 
-                        if($paidontime == true && $diffYears >= $setting->membership_period )
-                        {
+                        if ($paidontime == true && $diffYears >= $setting->membership_period) {
 
                             //if ($Last_Member_transaction <= $yearGlued_allowed_vote_date)
                             //{
                             //   if ($member->member_kind_id == 1){
                             $member->update
-                            ([
+                                ([
                                 'members_permissions_id' => $setting->cm_permissions_id,
                             ]);
                             //   }
@@ -659,27 +627,23 @@ return $settings->reverse();
                             break; // exit the for each on the permissions => he/she can NOT achieve better
                             //}
 
-                        }else{
+                        } else {
                             $member->update
-                            ([
+                                ([
                                 'members_permissions_id' => 1,
                             ]);
 
                         }
 
-
-
                     }
-
 
                 }
 
             }
 
+        } else {
 
-        }else{
-
-            return  'There must be an active financial year!';
+            return 'There must be an active financial year!';
         }
 
         return 200;
@@ -734,6 +698,5 @@ return $settings->reverse();
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
-
 
 }

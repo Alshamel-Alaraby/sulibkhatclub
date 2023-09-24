@@ -142,10 +142,7 @@
                                @search-change="searchMember"
                                v-model="create.member_request_id"
                                :options="members.map((type) => type.id)"
-                               :custom-label="
-                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
-                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
-                                                "
+                               :custom-label="(opt) => members.find((x) => x.id == opt).full_name"
                            >
                            </multiselect>
                            <div
@@ -194,6 +191,7 @@
                                <span v-if="isRequired('year')" class="text-danger">*</span>
                            </label>
                            <date-picker
+                               :disabled="true"
                                type="year"
                                v-model="$v.create.year.$model"
                                format="YYYY"
@@ -223,6 +221,7 @@
                                <span v-if="isRequired('date_from')" class="text-danger">*</span>
                            </label>
                            <date-picker
+                               :disabled="true"
                                type="date"
                                v-model="$v.create.date_from.$model"
                                format="YYYY-MM-DD"
@@ -252,6 +251,7 @@
                                <span v-if="isRequired('date_to')" class="text-danger">*</span>
                            </label>
                            <date-picker
+                               :disabled="true"
                                type="date"
                                v-model="$v.create.date_to.$model"
                                format="YYYY-MM-DD"
@@ -281,6 +281,7 @@
                                <span v-if="isRequired('amount')" class="text-danger">*</span>
                            </label>
                            <input
+                               :disabled="true"
                                type="number"
                                step="any"
                                class="form-control"
@@ -580,11 +581,6 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
-                    if (this.renewal.length > 0)
-                    {
-                        this.create.date_from = this.renewal[0].from;
-                        this.create.date_to = this.renewal[0].to;
-                    }
                     if (this.create.type)
                     {
                         this.renewalAmount();
@@ -653,6 +649,8 @@ export default {
                     if(l)
                     {
                         this.create.year = l.data.year+'';
+                        this.create.date_from = l.data.start_date;
+                        this.create.date_to = l.data.end_date;
                     }
                 })
                 .catch((err) => {

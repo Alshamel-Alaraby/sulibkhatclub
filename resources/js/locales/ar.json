@@ -1493,7 +1493,7 @@
         "SubscriptionNumber": "رقم طلب الاشتراك",
         "serialName": "اسم المسلسل",
         "subscriptionDate": "تاريخ الاشترك",
-        "addSubscription": "اضف اشتراك",
+        "addSubscription": "سداد اشتراك",
         "NameMembershipApplicant": "اسم طالب العضوية",
         "MembershipApplicant": "طالب العضوية",
         "GroupPaymentReport": "تقرير سداد مجموعة",
@@ -1501,6 +1501,10 @@
         "DuplicatbondsReport": "تقرير السندات المكررة",
         "typeMember": "نوع العضويه",
         "SearchDocument": "بحث عن المسدد",
-        "Searchdd": "السندات المكررة"
+        "Searchdd": "السندات المكررة",
+        "discountPerDay": "خصم اليوم",
+        "totalDiscount": "اجمالى الخصم",
+        "floorsTable": "جدول الطوابق",
+        "AttendanceNumber": "عدد المرافقين"
     }
 }

@@ -3,15 +3,7 @@
 namespace App\Http\Resources\GeneralCustomer;
 
 use App\Http\Resources\BankAccount\RelationBankAccountResource;
-use App\Http\Resources\City\RelationCityResource;
-use App\Http\Resources\Country\RelationCountryResource;
-use App\Http\Resources\CustomerCategory\RelationCustomerCategoryResource;
-use App\Http\Resources\CustomerGroup\RelationCustomerGroupResource;
-use App\Http\Resources\CustomerSource\RelationCustomerSourceResource;
-use App\Http\Resources\Employee\RelationEmployeeResource;
 use App\Http\Resources\FileResource;
-use App\Http\Resources\Salesman\RelationSalesmanResource;
-use App\Http\Resources\Sector\RelationSectorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GeneralCustomerResource extends JsonResource
@@ -55,9 +47,6 @@ class GeneralCustomerResource extends JsonResource
             'customer_group_id' => $this->customer_group_id,
             'is_supplier' => $this->is_supplier,
             'sector_id' => $this->sector_id,
-            // 'sector' => $this->sector,
-            // 'customer_source' => $this->customerSource,
-
             'type' => $this->type,
             'address' => $this->address,
             'id_number' => $this->id_number,
@@ -66,37 +55,16 @@ class GeneralCustomerResource extends JsonResource
             'visa_no' => $this->visa_no,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
 
-            'sector' => new RelationSectorResource($this->sector),
-            'customer_source' => new RelationCustomerSourceResource($this->customerSource),
-            'salesmen' => new RelationSalesmanResource($this->salesmen),
-            'employee' => new RelationEmployeeResource($this->employee),
-            'country' => new RelationCountryResource($this->country),
-            'city' => new RelationCityResource($this->city),
+            'sector' => $this->sector,
+            'customer_source' => $this->customerSource,
+            'salesmen' => $this->salesmen,
+            'employee' => $this->employee,
+            'country' => $this->country,
+            'city' => $this->city,
             'bankAccount' => new RelationBankAccountResource($this->bankAccount),
-            'customerGroup' => new RelationCustomerGroupResource($this->customerGroup),
-            'customer_main_category' => new RelationCustomerCategoryResource($this->customer_main_category),
-            'customer_sub_category' => new RelationCustomerCategoryResource($this->customer_sub_category),
-
-            // "salesmen" => new SalesmanResource($this->salesmen),
-            // "employee" => new EmployeeResource($this->employee),
-            // "country" => new CountryResource($this->country),
-            // "city" => new CityResource($this->city),
-            // "bankAccount" => new BankAccountResource($this->bankAccount),
-            // "customerGroup" => new CustomerGroupResource($this->customerGroup),
-            // 'customer_main_category' => $this->customer_main_category,
-            // 'customer_sub_category' => $this->customer_sub_category,
-
-//            'company_id'=>$this->company_id,
-//            'facebook'=>$this->facebook,
-//            'instagram'=>$this->instagram,
-//            'linkedin'=>$this->linkedin,
-//            'snapchat'=>$this->snapchat,
-//            'twitter'=>$this->twitter,
-//            'website'=>$this->website,
-//            'salesman_id'=>$this->salesman_id,
-//            'customer_source_id'=>$this->customer_source_id,
-//            'sector_id'=>$this->sector_id,
-//            'avenue_id'=>$this->avenue_id,
+            'customerGroup' => $this->customerGroup,
+            'customer_main_category' => $this->customer_main_category,
+            'customer_sub_category' => $this->customer_sub_category,
 
         ];
     }

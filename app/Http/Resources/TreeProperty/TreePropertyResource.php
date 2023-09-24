@@ -23,8 +23,6 @@ class TreePropertyResource extends JsonResource
             'screen_id'=>$this->screen_id,
             'required'=>$this->required,
             'screen_node'=>$this->screen_node,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }

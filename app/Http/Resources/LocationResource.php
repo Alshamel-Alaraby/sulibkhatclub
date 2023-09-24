@@ -20,12 +20,11 @@ class LocationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'parent' => new RelationLocationResource($this->parent),
-            "priority" => new RelationPriorityResource($this->priority),
             "priority_id" => $this->priority_id,
             'parent_id' => $this->parent_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'parent' =>$this->parent,
+            "priority" =>$this->priority,
+
         ];
     }
 }

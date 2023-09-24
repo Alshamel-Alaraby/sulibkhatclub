@@ -67,8 +67,19 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
                 ($request['third_name'] ?? '') . ' ' .
                 ($request['last_name'] ?? '') . ' ' .
                 ($request['family_name'] ?? '') ;
+            $request['applying_number'] = $this->incrementApplyingNumber();
             return $this->model->create(array_merge($request,['full_name' => $full_name]));
         });
+    }
+
+    public function incrementApplyingNumber()
+    {
+        $model = $this->model->get()->last();
+        if ($model)
+        {
+            return $model['applying_number'] + 1;
+        }
+        return 1 ;
     }
 
     public function update($request, $id)

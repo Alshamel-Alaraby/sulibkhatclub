@@ -53,6 +53,7 @@ class DocumentHeaderResource extends JsonResource
             'total_depit_note' => $this->total_depit_note,
             'check_out_time' => $this->check_out_time,
             'check_in_time' => $this->check_in_time,
+            'attendans_num' => $this->attendans_num,
 
 //            'document_status'         => new DocumentStatuseResource($this->documentStatus),
             'branch' => new BranchResource($this->branch),

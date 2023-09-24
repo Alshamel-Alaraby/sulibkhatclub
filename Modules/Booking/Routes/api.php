@@ -34,4 +34,16 @@ Route::prefix('booking')->group(function () {
         });
     });
 
+    Route::group(['prefix' => 'floors'], function () {
+        Route::controller(\Modules\Booking\Http\Controllers\FloorController::class)->group(function () {
+            Route::get('/', 'all')->name('units.index');
+            Route::get('/{id}', 'find')->name('units.find');
+            Route::post('/', 'create')->name('units.create');
+            Route::put('/{id}', 'update')->name('units.update');
+            Route::delete('/{id}', 'delete')->name('units.destroy');
+            Route::post("/bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('units.logs');
+        });
+    });
+
 });

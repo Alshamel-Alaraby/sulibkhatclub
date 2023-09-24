@@ -20,6 +20,15 @@ class Salesman extends Model
         "company_id",
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'name',
+            'name_e',
+            'salesman_type_id',
+        )->with(['salesmanType:id,name,name_e']);
+    }
+
     protected $table = "general_salesmen";
 
     // relations

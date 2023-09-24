@@ -39,7 +39,7 @@ class RestartPeriodController extends Controller
         $model = $this->modelInterface->create($request);
         $model->refresh();
 
-        return responseJson(200, 'success', new RestartPeriodResource($model));
+        return responseJson(200, 'success');
     }
 
     public function update(RestartPeriodRequest $request, $id)
@@ -50,7 +50,7 @@ class RestartPeriodController extends Controller
         }
         $this->modelInterface->update($request, $id);
         $model->refresh();
-        return responseJson(200, 'success', new RestartPeriodResource($model));
+        return responseJson(200, 'success');
     }
 
     public function logs($id)

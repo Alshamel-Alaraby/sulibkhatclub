@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Avenue;
 
-use App\Http\Requests\AllRequest;
 use App\Http\Requests\AvenueRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Avenue\AvenueResource;
-use App\Http\Resources\Avenue\GetNameAvenueResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -28,7 +26,7 @@ class AvenueController extends Controller
 
     public function all(Request $request)
     {
-        
+
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
     }
@@ -50,8 +48,6 @@ class AvenueController extends Controller
 
         return responseJson(200, 'success', new AvenueResource($model));
     }
-
-
 
     public function delete($id)
     {
@@ -77,7 +73,6 @@ class AvenueController extends Controller
 
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -136,7 +131,6 @@ class AvenueController extends Controller
         $logs = $this->modelInterface->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
-
 
     public function getDropDown(Request $request)
     {

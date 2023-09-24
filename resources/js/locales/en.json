@@ -1511,6 +1511,10 @@
         "duplicate": "Duplicate",
         "DuplicatbondsReport": "Duplicate bonds Report",
         "typeMember":"Membership Type",
-        "Searchdd": "Duplicate bonds"
+        "Searchdd": "Duplicate bonds",
+        "discountPerDay": "Discount Per Day",
+        "totalDiscount": "total Discount",
+        "floorsTable": "Floors Table",
+        "AttendanceNumber": "Attendance Number"
     }
 }

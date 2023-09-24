@@ -6,12 +6,8 @@ use App\Models\DocumentHeaderDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\LogTrait;
-use App\Traits\MediaTrait;
-use App\Traits\VideoLink;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\HasMedia;
 
 
 class Unit extends Model
@@ -25,12 +21,17 @@ class Unit extends Model
 
     public function unitStatus()
     {
-        return $this->belongsTo(\Modules\Booking\Entities\UnitStatus::class);
+        return $this->belongsTo(\App\Models\Status::class);
     }
 
     public function documentHeaderDetails()
     {
         return $this->hasMany(DocumentHeaderDetail::class,'unit_id');
+    }
+
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class,'booking_floor_id');
     }
 
     public function getActivitylogOptions(): LogOptions

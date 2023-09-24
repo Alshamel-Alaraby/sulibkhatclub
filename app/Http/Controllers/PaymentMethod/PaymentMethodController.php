@@ -38,7 +38,7 @@ class PaymentMethodController extends Controller
     public function create(PaymentMethodRequest $request)
     {
         $model = $this->modelInterface->create($request);
-        return responseJson(200, 'success', new PaymentMethodResource($model));
+        return responseJson(200, 'success');
     }
 
     public function update(PaymentMethodRequest $request, $id)
@@ -49,7 +49,7 @@ class PaymentMethodController extends Controller
         }
         $model = $this->modelInterface->update($request, $id);
 
-        return responseJson(200, 'success', new PaymentMethodResource($model));
+        return responseJson(200, 'success');
     }
 
     public function logs($id)

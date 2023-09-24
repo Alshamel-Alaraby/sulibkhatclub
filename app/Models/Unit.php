@@ -16,6 +16,11 @@ class Unit extends Model
     protected $table = 'general_units';
     protected $fillable = ['name', 'name_e', 'is_active','company_id'];
 
+    public function scopeData($query)
+    {
+        return $query->select('id','name', 'name_e','is_active');
+    }
+
     // protected $casts = [
     //     'is_active' => '\App\Enums\IsActive',
     // ];

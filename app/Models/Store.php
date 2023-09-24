@@ -23,6 +23,16 @@ class Store extends Model
 
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            "name_e",
+            "name",
+            "branch_id",
+            'is_active'
+        )->with('branch:id,name,name_e');
+    }
+
     protected $casts = [
         'is_active' => 'App\Enums\IsActive',
     ];

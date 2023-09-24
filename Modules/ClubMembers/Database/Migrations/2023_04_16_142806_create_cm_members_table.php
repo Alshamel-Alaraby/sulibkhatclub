@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('home_phone')->nullable();
             $table->unsignedBigInteger('member_status_id')->nullable();
             $table->date('last_transaction_date')->nullable();
+            $table->year('last_transaction_year')->nullable();
             $table->string('last_transaction_id')->nullable();
             $table->date('doc_date')->nullable();
             $table->string('doc_no')->nullable();
@@ -59,6 +60,8 @@ return new class extends Migration
             $table->unsignedBigInteger('member_kind_id')->nullable();
             $table->unsignedBigInteger('discharge_reson_id')->nullable();
             $table->unsignedBigInteger('members_permissions_id')->nullable();
+            $table->unsignedInteger('national_no')->nullable();
+            $table->unsignedInteger('company_id')->default(0);
 
 
             $table->softDeletes();

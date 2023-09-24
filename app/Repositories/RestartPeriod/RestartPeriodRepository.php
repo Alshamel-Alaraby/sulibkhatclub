@@ -15,7 +15,7 @@ class RestartPeriodRepository implements RestartPeriodInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         $ids = [5, 6];
 
@@ -32,7 +32,7 @@ class RestartPeriodRepository implements RestartPeriodInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->data()->find($id);
     }
 
     public function create($request)
@@ -64,11 +64,9 @@ class RestartPeriodRepository implements RestartPeriodInterface
         $model->delete();
     }
 
-
-
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e');
 
         $ids = [5, 6];
 

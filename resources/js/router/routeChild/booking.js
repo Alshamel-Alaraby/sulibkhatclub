@@ -123,5 +123,4 @@ export default [
         component: () => import('../../views/pages/booking/report/items'),
 
     },
-
 ];

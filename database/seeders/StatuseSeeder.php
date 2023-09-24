@@ -77,6 +77,31 @@ class StatuseSeeder extends Seeder
                 "module_type" => "panel",
                 "color" => "bg-primary text-white"
             ],
+
+            [
+                "name" => "فارغة",
+                "name_e" => "Empty",
+                "module_type" => "booking",
+                "color" => "bg-success text-white"
+            ],
+            [
+                'name' => 'تحت الصيانه',
+                'name_e' => 'under maintenance',
+                "module_type" => "booking",
+                "color" => "bg-warning text-white"
+            ],
+            [
+                "name" => "محجوزة",
+                "name_e" => "Reserved",
+                "module_type" => "booking",
+                "color" => "bg-danger text-white"
+            ],
+            [
+                "name" => "مؤكد الحجز",
+                "name_e" => "Reservation confirmed",
+                "module_type" => "booking",
+                "color" => "bg-primary text-white"
+            ],
         ]);
     }
 }

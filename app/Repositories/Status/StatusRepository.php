@@ -65,7 +65,7 @@ class StatusRepository implements StatusInterface
 
     public function getName($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id','name','name_e','color');
 
         if($request->module_type){
              $models->where('module_type',$request->module_type);

@@ -18,8 +18,7 @@ class RestartPeriodResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+        
         ];
     }
 }

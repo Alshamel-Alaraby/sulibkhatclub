@@ -13482,6 +13482,36 @@ class TranslationSeeder extends Seeder
                 "screen" => "Booking Rooms"
 
             ],
+            [
+                "key" => "room_number_of_individuals",
+                "default_en" => "Number Of Individuals",
+                "default_ar" => "عدد الافراد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_extra_guest_price",
+                "default_en" => "Extra Guest Price",
+                "default_ar" => "سعر الفرد الزياده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
+            [
+                "key" => "room_floor",
+                "default_en" => "Floor",
+                "default_ar" => "الطابق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+
+            ],
         ]);
 
         //booking attendant
@@ -14298,8 +14328,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "new_subscription_member",
-                "default_en" => "Name Membership Applicant",
-                "default_ar" => "اسم طالب العضوية",
+                "default_en" => "Member",
+                "default_ar" => "العضو",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -14402,6 +14432,50 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "club"
             ],
+        ]);
+
+        //floor
+        Translation::insert([
+            [
+                "key" => "floor_create_form",
+                "default_en" => "Add New Floor",
+                "default_ar" => "اضف طابق جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+            ],
+            [
+                "key" => "floor_edit_form",
+                "default_en" => "Edit Floor form",
+                "default_ar" => "تعديل الطابق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ],
+            [
+                "key" => "floor_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ],
+            [
+                "key" => "floor_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Brand"
+
+            ]
+
         ]);
     }
 }

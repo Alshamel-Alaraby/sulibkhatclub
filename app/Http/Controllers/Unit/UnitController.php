@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Unit;
 
+use App\Http\Requests\AllRequest;
 use App\Http\Requests\Unit\UnitRequest;
 use App\Http\Requests\Unit\UpdateUnitRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Unit\UnitResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -165,6 +167,13 @@ class UnitController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     // public function delete($id)

@@ -3,9 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Depertment\DepertmentResource;
-use App\Http\Resources\Depertment\RelationDepertmentResource;
-use App\Http\Resources\RestartPeriod\RelationRestartPeriodResource;
 
 class PeriodicMaintenanceResource extends JsonResource
 {
@@ -22,13 +19,14 @@ class PeriodicMaintenanceResource extends JsonResource
             'name' => $this->name,
             'name_e' => $this->name_e,
             'date' => $this->date,
-            "task" => new TaskResource($this->task),
-            "department" => new RelationDepertmentResource($this->department),
-            "restart_period_id" => $this->restart_period_id,
-            "restart_period" => new RelationRestartPeriodResource($this->restartPeriod),
             'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            "restart_period_id" => $this->restart_period_id,
+            'department_id'=> $this->department_id,
+            'task_id'=> $this->task_id,
+            "task" => $this->task,
+            "department" => $this->department,
+            "restart_period" => $this->restartPeriod,
+
         ];
     }
 }

@@ -14,7 +14,7 @@ class VoucherHeaderRepository implements VoucherHeaderInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->Data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
         if($request->document_id)
         {
             $models->where('document_id',$request->document_id);
@@ -29,7 +29,7 @@ class VoucherHeaderRepository implements VoucherHeaderInterface
 
     public function find($id)
     {
-        $data = $this->model->find($id);
+        $data = $this->model->Data()->find($id);
         return $data;
     }
 

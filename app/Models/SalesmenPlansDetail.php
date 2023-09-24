@@ -22,6 +22,17 @@ class SalesmenPlansDetail extends Model
         'is_default'
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'plan_id',
+            'amount_from',
+            'amount_to',
+            'commission_percent',
+            'is_default'
+        )->with(['plan:id,name,name_e']);
+    }
+
 
     public function plan()
     {

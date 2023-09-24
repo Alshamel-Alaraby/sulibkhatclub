@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'employee_id' => $this->employee_id,
             'is_active' => $this->is_active,
             "email" => $this->email,
-            "employee" => new RelationEmployeeResource($this->employee),
+            "employee" => $this->employee,
             "role" => $this->roles,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

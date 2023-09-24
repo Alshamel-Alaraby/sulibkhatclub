@@ -14,12 +14,17 @@ class PaymentType extends Model
 
     protected $table = 'general_payment_types';
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'is_default',
-        "company_id"
-    ];
+    protected $guarded = ['id'];
+
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+            'is_default',
+        );
+    }
 
     protected $casts = [
         'is_default' => '\App\Enums\IsDefault',

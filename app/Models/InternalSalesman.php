@@ -12,11 +12,17 @@ use Spatie\Activitylog\LogOptions;
 
 class InternalSalesman extends Model
 {
-    use HasFactory, LogTrait, SoftDeletes   ;
+    use HasFactory, LogTrait, SoftDeletes;
 
     protected $table = 'general_internal_salesman';
 
     protected $guarded = ["id"];
+
+    public function scopeData($query)
+    {
+        return $query->select("id", "employee_id", "is_active")
+                    ->with('employee:id,name,name_e');
+    }
 
     protected $casts = [
         'is_active' => 'App\Enums\IsActive',

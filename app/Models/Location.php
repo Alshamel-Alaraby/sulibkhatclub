@@ -19,11 +19,25 @@ class Location extends Model
         'name_e',
         'parent_id',
         'priority_id',
-        'company_id'
+        'company_id',
     ];
 
-    protected $appends = ['haveChildren'];
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+            "priority_id",
+            'parent_id',
+        )->with(
+            'parent:id,name,name_e',
+            'priority:id,name,name_e',
 
+        );
+    }
+
+    protected $appends = ['haveChildren'];
 
     // relations
 
@@ -47,7 +61,6 @@ class Location extends Model
         return $this->children()->count() > 0;
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -55,7 +68,7 @@ class Location extends Model
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
             ->useLogName('Location')
-            ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
+            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
     public function priority()

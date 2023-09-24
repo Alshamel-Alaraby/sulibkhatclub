@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Requests\Store\StoreRequest;
 use App\Http\Requests\Store\UpdateStoreRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Store\StoreResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -108,6 +109,13 @@ class StoreController extends Controller
             return responseJson(400, __('some items has relation cant delete'));
         }
         return responseJson(200, __('Done'));
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

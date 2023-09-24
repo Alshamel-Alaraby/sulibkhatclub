@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Serials;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SerialRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Serials\SerialResource;
 use App\Models\Serial;
 use App\Repositories\Serial\SerialRepositoryInterface;
@@ -270,6 +271,13 @@ class SerialController extends Controller
         }
 
         return responseJson(404, __('not found'));
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->repository->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

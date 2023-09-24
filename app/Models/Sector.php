@@ -19,6 +19,15 @@ class Sector extends Model
         'company_id',
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'name',
+            'name_e',
+            'parent_id',
+        )->with(['parent:id,name,name_e']);
+    }
+
     // public function customers()
     // {
     //     return $this->hasMany(GeneralCustomer::class);

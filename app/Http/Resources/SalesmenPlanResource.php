@@ -20,8 +20,8 @@ class SalesmenPlanResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            "salesmen_plans_source" => new RelationSalesmenPlansSourceResource($this->salesmenPlansSource),
-            'restart_period' => new RelationRestartPeriodResource($this->restartPeriod),
+            "salesmen_plans_source" => $this->salesmenPlansSource,
+            'restart_period' => $this->restartPeriod,
         ];
     }
 }

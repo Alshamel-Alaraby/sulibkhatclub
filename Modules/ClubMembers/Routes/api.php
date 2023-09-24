@@ -181,6 +181,7 @@ Route::prefix('club-members')->group(function () {
     Route::group(['prefix' => 'transactions'], function () {
 
         Route::get('report-cm-transactions', 'CmTransactionController@reportCmTransactions');
+        Route::get('report-sponsor-paid-transactions', 'CmTransactionController@reportSponsorPaidTransactions');
         Route::get('unpaid-member-transaction', 'CmTransactionController@unpaidMemberTransaction');
         Route::get('/member-transaction/{id}', 'CmTransactionController@MemberTransactions')
             ->name('MemberTransaction.find');

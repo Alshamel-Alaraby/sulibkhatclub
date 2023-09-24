@@ -20,8 +20,56 @@ class GeneralCustomer extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-//    protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
+    protected $appends = ['item_sold', 'sub_total', 'tax', 'discount', 'total', 'item_purchased', 'total_purchased'];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'name',
+                'name_e',
+                'phone',
+                'email',
+                'country_id',
+                'city_id',
+                'rp_code',
+                'nationality',
+                'bank_account_id',
+                'contact_person',
+                'contact_phone',
+                'national_id',
+                'whatsapp',
+                'passport_no',
+                'note',
+                'code_country',
+                'facebook',
+                'instagram',
+                'linkedin',
+                'snapchat',
+                'twitter',
+                'website',
+                'salesman_id',
+                'employee_id',
+                'customer_source_id',
+                'customer_group_id',
+                'is_supplier',
+                'sector_id',
+                'type',
+                'address',
+                'id_number',
+                'tax_record',
+                'passport_expiry_date',
+                'visa_no',
+            )
+            ->with('media', 'sector:id,name,name_e', 'customerSource:id,name,name_e', 'salesmen:id,name,name_e',
+                'employee:id,name,name_e', 'country:id,name,name_e',
+                'city:id,name,name_e', 'bankAccount',
+                'customerGroup:id,title,title_e', 'customer_main_category:id,name,name_e',
+                'customer_sub_category:id,name,name_e'
+
+            );
+    }
 
 
 

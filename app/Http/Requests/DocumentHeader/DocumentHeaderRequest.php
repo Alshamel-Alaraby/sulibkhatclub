@@ -51,6 +51,7 @@ class DocumentHeaderRequest extends FormRequest
             "check_out_time" => 'nullable',
             "check_in_time" => 'nullable',
             "attendants.*" => 'nullable|numeric|integer',
+            "attendans_num" => 'nullable|numeric|integer',
 
             "header_details" => 'required|array',
             'header_details.*.unit_id' => 'nullable',

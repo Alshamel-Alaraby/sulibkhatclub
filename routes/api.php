@@ -85,6 +85,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'stores'], function () {
         Route::controller(\App\Http\Controllers\Store\StoreController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('stores.getDropDown');
             Route::get('/', 'all')->name('stores.index');
             Route::get('logs/{id}', 'logs')->name('stores.logs');
             Route::get('/{id}', 'find');
@@ -223,7 +224,7 @@ Route::middleware(['authorize.user'])->group(function () {
     });
 
     Route::group(['prefix' => 'tasks'], function () {
-
+        Route::get('/get-drop-down', '\App\Http\Controllers\TaskController@getDropDown')->name('tasks.getDropDown');
         Route::post('/all', '\App\Http\Controllers\TaskController@allPost')->name('tasks.all.post');
         Route::get('/', '\App\Http\Controllers\TaskController@all')->name('tasks.all');
         Route::post('/', '\App\Http\Controllers\TaskController@create')->name('tasks.create');
@@ -306,7 +307,6 @@ Route::middleware(['authorize.user'])->group(function () {
     Route::group(['prefix' => 'periodic-maintenances'], function () {
         Route::controller(\App\Http\Controllers\PeriodicMaintenanceController::class)->group(function () {
             Route::get('/get-drop-down', 'getDropDown')->name('periodic-maintenances.getDropDown');
-
             Route::get('/', 'all')->name('periodic-maintenances.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('periodic-maintenances.create');
@@ -319,7 +319,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'locations'], function () {
         Route::controller(\App\Http\Controllers\LocationController::class)->group(function () {
-            Route::get('/get-drop-down', 'getDropDown')->name('equipments.getDropDown');
+            Route::get('/get-drop-down', 'getDropDown')->name('locations.getDropDown');
             Route::get('root-nodes', 'getRootNodes');
             Route::get('/child-nodes/{parentId}', 'getChildNodes');
             Route::get('/', 'all')->name('locations.index');
@@ -360,6 +360,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'units'], function () {
         Route::controller(\App\Http\Controllers\Unit\UnitController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('units.getDropDown');
             Route::get('/', 'all')->name('units.index');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('units.create');
@@ -472,7 +473,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'users'], function () {
         Route::controller(\App\Http\Controllers\User\UserController::class)->group(function () {
-            Route::get('/get-drop-down', 'getDropDown')->name('users.getDropDown');
+//            Route::get('/get-drop-down', 'getDropDown')->name('users.getDropDown');
             Route::get('/profile', 'profile');
             Route::get('/', 'all')->name('users.index');
             Route::get('logs/{id}', 'logs')->name('users.logs');
@@ -641,6 +642,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'serials'], function () {
         Route::controller(SerialController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('serials.getDropDown');
             Route::get('logs/{id}', 'logs')->name('serials.logs');
             Route::post("bulk-delete", "bulkDelete");
         });
@@ -944,6 +946,7 @@ Route::get('general-customer/logs/{id}', [GeneralCustomerController::class, 'log
 Route::get('check-supplier', [GeneralCustomerController::class, 'getCheckSupplier']);
 Route::post('general-customer/bulk-delete', [GeneralCustomerController::class, 'bulkDelete']);
 
+Route::get('/suppliers/get-drop-down', [SupplierController::class, 'getDropDown']);
 Route::resource('suppliers', SupplierController::class)->except('create', 'edit');
 Route::get('suppliers/logs/{id}', [SupplierController::class, 'logs']);
 Route::post('suppliers/bulk-delete', [SupplierController::class, 'bulkDelete']);

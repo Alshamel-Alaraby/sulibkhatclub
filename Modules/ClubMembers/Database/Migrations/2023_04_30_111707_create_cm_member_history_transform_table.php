@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('sponser_id_to');
             $table->integer('member_id');
             $table->date('date')->comment('date when the transform is process');
+            $table->unsignedInteger('company_id')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

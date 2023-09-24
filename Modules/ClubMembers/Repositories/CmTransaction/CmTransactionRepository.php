@@ -157,6 +157,7 @@ class CmTransactionRepository implements CmTransactionInterface
         $this->model->filter($request)
         ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+
         // 1: serial_id (1, 2, 3)
         if ($request->serial_id) {
             $models->whereIn('serial_id', explode(",", $request->serial_id));
@@ -188,5 +189,33 @@ class CmTransactionRepository implements CmTransactionInterface
         }
 
     }
+
+
+    public function reportSponsorPaidTransactions($request)
+    {
+        
+
+        $models = 
+        $this->model->filter($request)
+        ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        
+
+        // request has ? => sponsor_id, date
+
+        if($request->sponsor_id && $request->date)
+        {      
+            $models ->where('sponsor_id', $request->sponsor_id) ->where('date', $request->date);
+        }
+        
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
+
+    }
+
 
 }

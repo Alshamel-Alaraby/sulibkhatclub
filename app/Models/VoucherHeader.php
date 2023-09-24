@@ -17,6 +17,18 @@ class VoucherHeader extends Model
 
     protected $table = 'general_voucher_headers';
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id','document_id','branch_id','date','serial_id','customer_id','salesmen_id',
+                'payment_method_id','amount','serial_number','prefix'
+            )
+            ->with([
+                'branch:id,name,name_e','document:id,name,name_e','salesmen:id,name,name_e',
+                'customer:id,name,name_e','serial:id,name,name_e','paymentMethod:id,name,name_e'
+            ]);
+    }
 
     public function branch()
     {

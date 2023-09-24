@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('name_e')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->date('end_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

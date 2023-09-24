@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Supplier;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Supplier\SupplierRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Supplier\SupplierResource;
 use App\Repositories\Supplier\SupplierRepository;
 use App\Traits\BulkDeleteTrait;
@@ -110,5 +111,12 @@ class SupplierController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->repository->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

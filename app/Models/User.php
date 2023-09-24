@@ -27,11 +27,17 @@ class User extends Authenticatable implements HasMedia
         'email',
         'is_active',
         'password',
-        'active',
         "employee_id",
         "type",
         "company_id",
     ];
+
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name', 'name_e', 'email', 'is_active', 'password', "employee_id", "type")
+            ->with(['employee:id,name,name_e','roles','media']);
+    }
 
     protected $hidden = [
         'password',

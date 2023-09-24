@@ -760,11 +760,6 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
-                    if (this.renewal.length > 0)
-                    {
-                        this.create.date_from = this.renewal[0].from;
-                        this.create.date_to = this.renewal[0].to;
-                    }
                     if (this.create.type)
                     {
                         this.renewalAmount();
@@ -850,6 +845,8 @@ export default {
                     if(l)
                     {
                         this.create.year = l.data.year+'';
+                        this.create.date_from = l.data.start_date;
+                        this.create.date_to = l.data.end_date;
                     }
                 })
                 .catch((err) => {
@@ -1230,9 +1227,7 @@ export default {
                                                 v-model="create.member_request_id"
                                                 :options="members.map((type) => type.id)"
                                                 :custom-label="
-                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
-                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
-                                                "
+                                                  (opt) => members.find((x) => x.id == opt).full_name"
                                             >
                                             </multiselect>
                                             <div
@@ -1281,6 +1276,7 @@ export default {
                                                 <span v-if="isRequired('year')" class="text-danger">*</span>
                                             </label>
                                             <input
+                                                :disabled="true"
                                                 type="text"
                                                 class="form-control"
                                                 placeholder="yyyy"
@@ -1309,6 +1305,7 @@ export default {
                                                 <span v-if="isRequired('date_from')" class="text-danger">*</span>
                                             </label>
                                             <input
+                                                :disabled="true"
                                                 type="text"
                                                 class="form-control"
                                                 placeholder="yyyy-mm-dd"
@@ -1337,6 +1334,7 @@ export default {
                                                 <span v-if="isRequired('date_to')" class="text-danger">*</span>
                                             </label>
                                             <input
+                                                :disabled="true"
                                                 type="text"
                                                 class="form-control"
                                                 placeholder="yyyy-mm-dd"
@@ -1365,6 +1363,7 @@ export default {
                                                 <span v-if="isRequired('amount')" class="text-danger">*</span>
                                             </label>
                                             <input
+                                                :disabled="true"
                                                 type="number"
                                                 step="any"
                                                 class="form-control"
@@ -1578,10 +1577,10 @@ export default {
                                     </td>
                                     <td v-if="setting.member_request_id && isVisible('member_request_id')">
                                         <h5 v-if="data.member_request" class="m-0 font-weight-normal">
-                                            {{ data.member_request ? data.member_request.first_name +' '+ data.member_request.second_name +' '+ data.member_request.third_name +' '+ data.member_request.last_name:''}}
+                                            {{ data.member_request ? data.member_request.full_name:'---'}}
                                         </h5>
                                         <h5 v-else class="m-0 font-weight-normal">
-                                            {{data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''}}
+                                            {{data.member ? data.member.full_name:'---'}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.serial_number && isVisible('serial_number')">

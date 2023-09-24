@@ -64,7 +64,7 @@ export default {
         transaction:"",
       create: {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         first_name: "",
         second_name: "",
         third_name: "",
@@ -86,7 +86,7 @@ export default {
       },
       edit: {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         first_name: "",
         second_name: "",
         phone_code: "",
@@ -239,11 +239,11 @@ export default {
           return this.isRequired("applying_date");
         }),
       },
-      applying_number: {
-        required: requiredIf(function (model) {
-          return this.isRequired("applying_number");
-        }),
-      },
+      // applying_number: {
+      //   required: requiredIf(function (model) {
+      //     return this.isRequired("applying_number");
+      //   }),
+      // },
     },
     edit: {
       first_name: {
@@ -644,7 +644,7 @@ export default {
       this.applying_date = new Date();
       this.create = {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         first_name: "",
         phone_code: "",
         second_name: "",
@@ -679,7 +679,7 @@ export default {
       this.codeCountry = this.$store.getters["locationIp/countryCode"];
       this.create = {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         first_name: "",
         phone_code: "",
         second_name: "",
@@ -713,7 +713,7 @@ export default {
       this.codeCountry = this.$store.getters["locationIp/countryCode"];
       this.create = {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         phone_code: "",
         first_name: "",
         second_name: "",
@@ -850,6 +850,7 @@ export default {
       this.edit.gender = member.gender;
       this.edit.member_type_id = member.member_type_id;
       this.transaction = member.transaction;
+      this.member_request_id = member.id;
       this.errors = {};
     },
     /**
@@ -862,7 +863,7 @@ export default {
         this.transaction = "";
       this.edit = {
         applying_date: this.formatDate(new Date()),
-        applying_number: "",
+        // applying_number: "",
         phone_code: "",
         first_name: "",
         second_name: "",
@@ -1341,13 +1342,11 @@ export default {
                   </b-button>
                 </div>
                 <div class="row">
-                  <div
-                    class="col-md-3 position-relative"
-                    v-if="isVisible('applying_date')"
-                  >
+                  <div class="col-md-3 position-relative" v-if="isVisible('applying_date')">
                     <div class="form-group">
                       <label class="control-label">
                         {{ getCompanyKey("apply_membership_date") }}
+                          <span v-if="isRequired('applying_date')" class="text-danger">*</span>
                       </label>
                         <input
                             type="text"
@@ -1367,35 +1366,36 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div class="col-md-3" v-if="isVisible('applying_number')">
-                    <div class="form-group">
-                      <label>{{
-                        getCompanyKey("apply_membership_number")
-                      }}</label>
-                      <input
-                        v-model="$v.create.applying_number.$model"
-                        class="form-control"
-                        type="number"
-                        :class="{
-                          'is-invalid':
-                            $v.create.applying_number.$error ||
-                            errors.applying_number,
-                          'is-valid':
-                            !$v.create.applying_number.$invalid &&
-                            !errors.applying_number,
-                        }"
-                      />
-                      <template v-if="errors.applying_number">
-                        <ErrorMessage
-                          v-for="(
-                            errorMessage, index
-                          ) in errors.applying_number"
-                          :key="index"
-                          >{{ errorMessage }}
-                        </ErrorMessage>
-                      </template>
-                    </div>
-                  </div>
+<!--                  <div class="col-md-3" v-if="isVisible('applying_number')">-->
+<!--                    <div class="form-group">-->
+<!--                      <label class="control-label">-->
+<!--                          {{getCompanyKey("apply_membership_number")}}-->
+<!--                          <span v-if="isRequired('applying_number')" class="text-danger">*</span>-->
+<!--                      </label>-->
+<!--                      <input-->
+<!--                        v-model="$v.create.applying_number.$model"-->
+<!--                        class="form-control"-->
+<!--                        type="number"-->
+<!--                        :class="{-->
+<!--                          'is-invalid':-->
+<!--                            $v.create.applying_number.$error ||-->
+<!--                            errors.applying_number,-->
+<!--                          'is-valid':-->
+<!--                            !$v.create.applying_number.$invalid &&-->
+<!--                            !errors.applying_number,-->
+<!--                        }"-->
+<!--                      />-->
+<!--                      <template v-if="errors.applying_number">-->
+<!--                        <ErrorMessage-->
+<!--                          v-for="(-->
+<!--                            errorMessage, index-->
+<!--                          ) in errors.applying_number"-->
+<!--                          :key="index"-->
+<!--                          >{{ errorMessage }}-->
+<!--                        </ErrorMessage>-->
+<!--                      </template>-->
+<!--                    </div>-->
+<!--                  </div>-->
                 </div>
                 <hr
                   style="
@@ -1413,7 +1413,11 @@ export default {
                 <div class="row">
                   <div class="col-md-2" v-if="isVisible('first_name')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_first_name") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_first_name") }}
+                          <span v-if="isRequired('first_name')" class="text-danger">*</span>
+                        </label>
+
                       <input
                         v-model="$v.create.first_name.$model"
                         class="form-control"
@@ -1437,7 +1441,10 @@ export default {
                   </div>
                   <div class="col-md-2" v-if="isVisible('second_name')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_second_name") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_second_name") }}
+                            <span v-if="isRequired('second_name')" class="text-danger">*</span>
+                        </label>
                       <input
                         v-model="$v.create.second_name.$model"
                         class="form-control"
@@ -1461,7 +1468,10 @@ export default {
                   </div>
                   <div class="col-md-2" v-if="isVisible('third_name')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_third_name") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_third_name") }}
+                            <span v-if="isRequired('third_name')" class="text-danger">*</span>
+                        </label>
                       <input
                         v-model="$v.create.third_name.$model"
                         class="form-control"
@@ -1485,7 +1495,10 @@ export default {
                   </div>
                   <div class="col-md-2" v-if="isVisible('last_name')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_last_name") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_last_name") }}
+                            <span v-if="isRequired('last_name')" class="text-danger">*</span>
+                        </label>
                       <input
                         v-model="$v.create.last_name.$model"
                         class="form-control"
@@ -1508,7 +1521,10 @@ export default {
                   </div>
                   <div class="col-md-2" v-if="isVisible('family_name')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_family_name") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_family_name") }}
+                          <span v-if="isRequired('family_name')" class="text-danger">*</span>
+                        </label>
                       <input
                         v-model="$v.create.family_name.$model"
                         class="form-control"
@@ -1544,13 +1560,11 @@ export default {
                   "
                 />
                 <div class="row">
-                  <div
-                    class="col-md-3 position-relative"
-                    v-if="isVisible('birth_date')"
-                  >
+                  <div class="col-md-3 position-relative" v-if="isVisible('birth_date')">
                     <div class="form-group">
                       <label class="control-label">
                         {{ getCompanyKey("member_birth_date") }}
+                          <span v-if="isRequired('birth_date')" class="text-danger">*</span>
                       </label>
                         <input
                             type="text"
@@ -1573,8 +1587,9 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('gender')">
                     <div class="form-group">
-                      <label class="mr-2">
+                      <label class="control-label mr-2">
                         {{ getCompanyKey("member_gender") }}
+                          <span v-if="isRequired('gender')" class="text-danger">*</span>
                       </label>
                       <b-form-group
                         :class="{
@@ -1610,7 +1625,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('national_id')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_national_id") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_national_id") }}
+                          <span v-if="isRequired('national_id')" class="text-danger">*</span>
+                      </label>
                       <input
                         v-model="$v.create.national_id.$model"
                         class="form-control"
@@ -1634,9 +1652,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('nationality_number')">
                     <div class="form-group">
-                      <label>{{
-                        getCompanyKey("member_nationality_number")
-                      }}</label>
+                        <label class="control-label">
+                          {{getCompanyKey("member_nationality_number")}}
+                          <span v-if="isRequired('nationality_number')" class="text-danger">*</span>
+                        </label>
                       <input
                         v-model="$v.create.nationality_number.$model"
                         class="form-control"
@@ -1677,7 +1696,10 @@ export default {
                 <div class="row">
                   <div class="col-md-3" v-if="isVisible('home_phone')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_home_phone") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_home_phone") }}
+                          <span v-if="isRequired('home_phone')" class="text-danger">*</span>
+                        </label>
                       <VuePhoneNumberInput
                         v-model="$v.create.home_phone.$model"
                         :default-country-code="codeCountry"
@@ -1697,7 +1719,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('home_address')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_home_address") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_home_address") }}
+                          <span v-if="isRequired('home_address')" class="text-danger">*</span>
+                      </label>
                       <input
                         v-model="$v.create.home_address.$model"
                         class="form-control"
@@ -1722,7 +1747,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('work_phone')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_work_phone") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_work_phone") }}
+                          <span v-if="isRequired('work_phone')" class="text-danger">*</span>
+                        </label>
                       <VuePhoneNumberInput
                         v-model="$v.create.work_phone.$model"
                         :default-country-code="codeCountry"
@@ -1742,7 +1770,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('work_address')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_work_address") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_work_address") }}
+                          <span v-if="isRequired('work_address')" class="text-danger">*</span>
+                      </label>
                       <input
                         v-model="$v.create.work_address.$model"
                         class="form-control"
@@ -1776,7 +1807,10 @@ export default {
                 <div class="row">
                   <div class="col-md-3" v-if="isVisible('job')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_job") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_job") }}
+                          <span v-if="isRequired('job')" class="text-danger">*</span>
+                      </label>
                       <input
                         v-model="$v.create.job.$model"
                         class="form-control"
@@ -1797,7 +1831,10 @@ export default {
                   </div>
                   <div class="col-md-3" v-if="isVisible('degree')">
                     <div class="form-group">
-                      <label>{{ getCompanyKey("member_degree") }}</label>
+                        <label class="control-label">
+                          {{ getCompanyKey("member_degree") }}
+                          <span v-if="isRequired('degree')" class="text-danger">*</span>
+                      </label>
                       <input
                         v-model="$v.create.degree.$model"
                         class="form-control"
@@ -2124,12 +2161,7 @@ export default {
                     <td v-if="setting.national_id && isVisible('national_id')">
                       {{ data.national_id }}
                     </td>
-                    <td
-                      v-if="
-                        setting.nationality_number &&
-                        isVisible('nationality_number')
-                      "
-                    >
+                    <td v-if="setting.nationality_number &&isVisible('nationality_number')">
                       {{ data.nationality_number }}
                     </td>
                     <td v-if="setting.home_phone && isVisible('home_phone')">
@@ -2138,14 +2170,10 @@ export default {
                     <td v-if="setting.work_phone && isVisible('work_phone')">
                       {{ data.work_phone }}
                     </td>
-                    <td
-                      v-if="setting.home_address && isVisible('home_address')"
-                    >
+                    <td v-if="setting.home_address && isVisible('home_address')">
                       {{ data.home_address }}
                     </td>
-                    <td
-                      v-if="setting.work_address && isVisible('work_address')"
-                    >
+                    <td v-if="setting.work_address && isVisible('work_address')">
                       {{ data.work_address }}
                     </td>
                     <td v-if="setting.job && isVisible('job')">
@@ -2225,6 +2253,16 @@ export default {
                         <form>
                           <div class="mb-3 d-flex justify-content-end">
                             <!-- Emulate built in modal footer ok and cancel button actions -->
+                              <b-button
+                                  @click="showSubscriptionModal"
+                                  variant="primary"
+                                  :disabled="data.transaction"
+                                  type="button"
+                                  v-print="'#printInv'"
+                                  :class="['font-weight-bold px-2 mx-2']"
+                              >
+                                  {{ $t("general.addSubscription") }}
+                              </b-button>
                             <b-button
                               variant="success"
                               type="submit"
@@ -2258,13 +2296,11 @@ export default {
                             </b-button>
                           </div>
                           <div class="row">
-                            <div
-                              class="col-md-3 position-relative"
-                              v-if="isVisible('applying_date')"
-                            >
+                            <div class="col-md-3 position-relative" v-if="isVisible('applying_date')">
                               <div class="form-group">
                                 <label class="control-label">
                                   {{ getCompanyKey("apply_membership_date") }}
+                                    <span v-if="isRequired('applying_date')" class="text-danger">*</span>
                                 </label>
                                   <input
                                       type="text"
@@ -2286,15 +2322,14 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              class="col-md-3"
-                              v-if="isVisible('applying_number')"
-                            >
+                            <div class="col-md-3" v-if="isVisible('applying_number')">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("apply_membership_number")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("apply_membership_number")}}
+                                    <span v-if="isRequired('applying_number')" class="text-danger">*</span>
+                                </label>
                                 <input
+                                    :disabled="true"
                                   v-model="$v.edit.applying_number.$model"
                                   class="form-control"
                                   type="number"
@@ -2333,14 +2368,12 @@ export default {
                             "
                           />
                           <div class="row">
-                            <div
-                              v-if="isVisible('first_name')"
-                              class="col-md-2"
-                            >
+                            <div v-if="isVisible('first_name')" class="col-md-2">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_first_name")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_first_name")}}
+                                    <span v-if="isRequired('first_name')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.first_name.$model"
                                   class="form-control"
@@ -2365,14 +2398,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('second_name')"
-                              class="col-md-2"
-                            >
+                            <div v-if="isVisible('second_name')" class="col-md-2">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_second_name")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_second_name")}}
+                                    <span v-if="isRequired('second_name')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.second_name.$model"
                                   class="form-control"
@@ -2397,14 +2428,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('third_name')"
-                              class="col-md-2"
-                            >
+                            <div v-if="isVisible('third_name')" class="col-md-2">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_third_name")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_third_name")}}
+                                    <span v-if="isRequired('third_name')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.third_name.$model"
                                   class="form-control"
@@ -2431,9 +2460,10 @@ export default {
                             </div>
                             <div v-if="isVisible('last_name')" class="col-md-2">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_last_name")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_last_name")}}
+                                    <span v-if="isRequired('last_name')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.last_name.$model"
                                   class="form-control"
@@ -2458,14 +2488,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('family_name')"
-                              class="col-md-2"
-                            >
+                            <div v-if="isVisible('family_name')" class="col-md-2">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_family_name")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_family_name")}}
+                                    <span v-if="isRequired('family_name')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.family_name.$model"
                                   class="form-control"
@@ -2504,13 +2532,11 @@ export default {
                             "
                           />
                           <div class="row">
-                            <div
-                              v-if="isVisible('birth_date')"
-                              class="col-md-3 position-relative"
-                            >
+                            <div v-if="isVisible('birth_date')" class="col-md-3 position-relative">
                               <div class="form-group">
                                 <label class="control-label">
                                   {{ getCompanyKey("member_birth_date") }}
+                                    <span v-if="isRequired('birth_date')" class="text-danger">*</span>
                                 </label>
                                   <input
                                       type="text"
@@ -2533,8 +2559,9 @@ export default {
                             </div>
                             <div v-if="isVisible('gender')" class="col-md-3">
                               <div class="form-group">
-                                <label class="mr-2">
+                                <label class="control-label mr-2">
                                   {{ getCompanyKey("member_gender") }}
+                                    <span v-if="isRequired('gender')" class="text-danger">*</span>
                                 </label>
                                 <b-form-group
                                   :class="{
@@ -2571,14 +2598,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('national_id')"
-                              class="col-md-3"
-                            >
+                            <div v-if="isVisible('national_id')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_national_id")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_national_id")}}
+                                    <span v-if="isRequired('national_id')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.national_id.$model"
                                   class="form-control"
@@ -2603,14 +2628,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('nationality_number')"
-                              class="col-md-3"
-                            >
+                            <div v-if="isVisible('nationality_number')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_nationality_number")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_nationality_number")}}
+                                    <span v-if="isRequired('nationality_number')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.nationality_number.$model"
                                   class="form-control"
@@ -2649,14 +2672,12 @@ export default {
                             "
                           />
                           <div class="row">
-                            <div
-                              v-if="isVisible('home_phone')"
-                              class="col-md-3"
-                            >
+                            <div v-if="isVisible('home_phone')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_home_phone")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_home_phone")}}
+                                    <span v-if="isRequired('home_phone')" class="text-danger">*</span>
+                                </label>
                                 <VuePhoneNumberInput
                                   v-model="$v.edit.home_phone.$model"
                                   :default-country-code="edit.phone_code"
@@ -2676,14 +2697,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('home_address')"
-                              class="col-md-3"
-                            >
+                            <di v-if="isVisible('home_address')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_home_address")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_home_address")}}
+                                    <span v-if="isRequired('home_address')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.home_address.$model"
                                   class="form-control"
@@ -2707,15 +2726,13 @@ export default {
                                   </ErrorMessage>
                                 </template>
                               </div>
-                            </div>
-                            <div
-                              v-if="isVisible('work_phone')"
-                              class="col-md-3"
-                            >
+                            </di>
+                            <div v-if="isVisible('work_phone')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_work_phone")
-                                }}</label>
+                                <label class="control-label">
+                                    {{getCompanyKey("member_work_phone")}}
+                                    <span v-if="isRequired('work_phone')" class="text-danger">*</span>
+                                </label>
                                 <VuePhoneNumberInput
                                   v-model="$v.edit.work_phone.$model"
                                   :default-country-code="edit.phone_code"
@@ -2735,14 +2752,12 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div
-                              v-if="isVisible('work_address')"
-                              class="col-md-3"
-                            >
+                            <div v-if="isVisible('work_address')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_work_address")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_work_address")}}
+                                    <span v-if="isRequired('work_address')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.work_address.$model"
                                   class="form-control"
@@ -2778,7 +2793,10 @@ export default {
                           <div class="row">
                             <div v-if="isVisible('job')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{ getCompanyKey("member_job") }}</label>
+                                  <label class="control-label">
+                                    {{ getCompanyKey("member_job") }}
+                                    <span v-if="isRequired('job')" class="text-danger">*</span>
+                                </label>
                                 <input
                                   v-model="$v.edit.job.$model"
                                   class="form-control"
@@ -2801,9 +2819,10 @@ export default {
                             </div>
                             <div v-if="isVisible('degree')" class="col-md-3">
                               <div class="form-group">
-                                <label>{{
-                                  getCompanyKey("member_degree")
-                                }}</label>
+                                  <label class="control-label">
+                                    {{getCompanyKey("member_degree")}}
+                                    <span v-if="isRequired('degree')" class="text-danger">*</span>
+                                  </label>
                                 <input
                                   v-model="$v.edit.degree.$model"
                                   class="form-control"
@@ -2831,7 +2850,7 @@ export default {
                                   <div class="form-group">
                                       <label  class="control-label">
                                           {{ $t("general.status") }}
-                                          <span  v-if="isRequired('type')" class="text-danger">*</span>
+                                          <span  v-if="isRequired('member_type_id')" class="text-danger">*</span>
                                       </label>
                                       <select :disabled="true"  class="form-control" v-model="edit.member_type_id" :class="{
                                                   'is-invalid': $v.edit.member_type_id.$error || errors.member_type_id,

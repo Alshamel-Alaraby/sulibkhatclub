@@ -761,15 +761,11 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
-                    if (this.renewal.length > 0)
-                    {
-                        this.create.date_from = this.renewal[0].from;
-                        this.create.date_to = this.renewal[0].to;
-                    }
                     if (this.create.type)
                     {
                         this.renewalAmount();
                     }
+                    this.DataOfModelFinancialYear();
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -824,13 +820,35 @@ export default {
                     }else{
                         this.create.year = `${parseInt(l.year_from) + 1}`
                     }
-                    this.getRenewal();
                 })
                 .catch((err) => {
                     Swal.fire({
                         icon: "error",
                         title: `${this.$t("general.Error")}`,
                         text: `${this.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        async DataOfModelFinancialYear() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/financial-years/DataOfModelFinancialYear?date=${this.create.date}`)
+                .then((res) => {
+                    let l = res.data;
+                    if(l)
+                    {
+                        this.create.date_from = l.data.start_date;
+                        this.create.date_to = l.data.end_date;
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
                     });
                 })
                 .finally(() => {
@@ -1200,8 +1218,7 @@ export default {
                                                 v-model="create.cm_member_id"
                                                 :options="members.map((type) => type.id)"
                                                 :custom-label="
-                                                  (opt) => members.find((x) => x.id == opt).first_name +' '+ members.find((x) => x.id == opt).second_name
-                                                     +' '+ members.find((x) => x.id == opt).third_name +' '+ members.find((x) => x.id == opt).last_name
+                                                  (opt) => members.find((x) => x.id == opt).full_name
                                                 "
                                             >
                                             </multiselect>
@@ -1540,9 +1557,7 @@ export default {
                                     </td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
                                         <h5 class="m-0 font-weight-normal">
-                                            {{
-                                                data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
-                                            }}
+                                            {{data.member ? data.member.full_name:''}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.serial_number && isVisible('serial_number')">

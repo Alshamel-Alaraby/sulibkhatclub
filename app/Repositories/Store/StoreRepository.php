@@ -16,7 +16,7 @@ class StoreRepository implements StoreInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->with('branch')->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->Data()->filter($request)->with('branch')->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -27,7 +27,7 @@ class StoreRepository implements StoreInterface
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->Data()->find($id);
     }
 
     public function create($request)
@@ -70,6 +70,17 @@ class StoreRepository implements StoreInterface
             cacheForget($key);
         }
 
+    }
+
+    public function getName($request)
+    {
+        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 'active');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 
 }

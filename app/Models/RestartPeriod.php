@@ -12,11 +12,16 @@ class RestartPeriod extends Model
 
     protected $table = 'general_restart_period';
 
-    protected $fillable = [
-        'name',
-        'name_e',
-        'company_id',
-    ];
+    protected $guarded = ['id'];
+
+    public function scopeData($query)
+    {
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+        );
+    }
 
     public function salesmenPlans()
     {

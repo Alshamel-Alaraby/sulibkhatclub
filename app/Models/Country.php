@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\BoardsRent\Entities\Panel;
 use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Country extends Model implements HasMedia
 {
@@ -85,6 +86,7 @@ class Country extends Model implements HasMedia
     {
         return $this->hasMany(\App\Models\CustomerBranch::class);
     }
+
 
     public function Panels()
     {

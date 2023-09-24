@@ -21,6 +21,16 @@ class SalesmenPlan extends Model
         'company_id',
     ];
 
+    public function scopeData($query)
+    {
+        return $query->select(
+            'name',
+            'name_e',
+            'salesmen_plans_source_id',
+            'restart_period_id',
+        )->with(['salesmenPlansSource:id,name,name_e','restartPeriod:id,name,name_e']);
+    }
+
     public function salesmenPlansSource()
     {
         return $this->belongsTo(SalesmenPlansSource::class);

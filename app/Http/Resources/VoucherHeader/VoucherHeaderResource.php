@@ -32,12 +32,12 @@ class VoucherHeaderResource extends JsonResource
             'amount' => $this->amount,
             'serial_number' => $this->serial_number,
             'prefix' => $this->prefix,
-            'branch' => new RelationBranchResource($this->branch),
-            'document' => new DocumentResource($this->document),
-            'salesmen' => new RelationEmployeeResource($this->salesmen),
-            'customer' => new RelationGeneralCustomerResource($this->customer),
-            'serial' => new RelationSerialResource($this->serial),
-            'paymentMethod' => new RelationPaymentMethodResource($this->paymentMethod),
+            'branch' => $this->branch,
+            'document' => $this->document,
+            'salesmen' => $this->salesmen,
+            'customer' => $this->customer,
+            'serial' => $this->serial,
+            'paymentMethod' => $this->paymentMethod
 
         ];
     }

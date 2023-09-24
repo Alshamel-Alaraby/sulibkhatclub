@@ -80,7 +80,6 @@ class SalesmanController extends Controller
         return responseJson(200, __('Done'));
     }
 
-
     public function getDropDown(Request $request)
     {
 

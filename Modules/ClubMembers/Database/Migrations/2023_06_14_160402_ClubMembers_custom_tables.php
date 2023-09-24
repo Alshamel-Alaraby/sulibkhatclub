@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('table_name');
             $table->json('columns');
             $table->unsignedBigInteger('company_id')->default(0);
-
             $table->timestamps();
         });
     }

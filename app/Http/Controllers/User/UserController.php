@@ -104,10 +104,10 @@ class UserController extends Controller
     }
 
 
-    public function getDropDown(AllRequest $request)
+    public function getDropDown(Request $request)
     {
 
-        $models = $this->modelInterface->all($request);
+        $models = $this->modelInterface->getName($request);
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 

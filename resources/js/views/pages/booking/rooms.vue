@@ -14,6 +14,7 @@ import { formatDateOnly } from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import Multiselect from "vue-multiselect";
 
 /**
  * Advanced Table component
@@ -30,6 +31,7 @@ export default {
         Switches,
         ErrorMessage,
         loader,
+        Multiselect
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
@@ -49,6 +51,7 @@ export default {
             debounce: {},
             categoriesPagination: {},
             categories: [],
+            floors: [],
             isLoader: false,
             Tooltip: "",
             mouseEnter: null,
@@ -60,6 +63,9 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             },
             edit: {
                 name: "",
@@ -68,6 +74,9 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             },
             errors: {},
             isCheckAll: false,
@@ -80,6 +89,9 @@ export default {
                 price: true,
                 description: true,
                 description_e: true,
+                number_of_individuals:true,
+                extra_guest_price:true,
+                booking_floor_id:true,
             },
             is_disabled: false,
             filterSetting: [
@@ -88,7 +100,10 @@ export default {
                 "code",
                 "price",
                 "description",
-                "description_e"
+                "description_e",
+                "number_of_individuals",
+                "extra_guest_price",
+                "booking_floor_id",
             ],
         };
     },
@@ -115,6 +130,18 @@ export default {
                     return this.isRequired("description_e");
                 }), maxLength: maxLength(1000),
             },
+            number_of_individuals: { required: requiredIf(function (model) {
+                    return this.isRequired("number_of_individuals");
+                }), maxLength: maxLength(1000),
+            },
+            extra_guest_price: { required: requiredIf(function (model) {
+                    return this.isRequired("extra_guest_price");
+                }), maxLength: maxLength(1000),
+            },
+            booking_floor_id: { required: requiredIf(function (model) {
+                    return this.isRequired("extra_guest_price");
+                }), maxLength: maxLength(1000),
+            },
 
         },
         edit: {
@@ -137,6 +164,18 @@ export default {
             },
             description_e: { required: requiredIf(function (model) {
                     return this.isRequired("description_e");
+                }), maxLength: maxLength(1000),
+            },
+            number_of_individuals: { required: requiredIf(function (model) {
+                    return this.isRequired("number_of_individuals");
+                }), maxLength: maxLength(1000),
+            },
+            extra_guest_price: { required: requiredIf(function (model) {
+                    return this.isRequired("extra_guest_price");
+                }), maxLength: maxLength(1000),
+            },
+            booking_floor_id: { required: requiredIf(function (model) {
+                    return this.isRequired("extra_guest_price");
                 }), maxLength: maxLength(1000),
             },
         },
@@ -218,11 +257,16 @@ export default {
          */
         getData(page = 1) {
             this.isLoader = true;
-            let filter = "";
-            for (let i = 0; i < this.filterSetting.length; ++i) {
-                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            let _filterSetting = [...this.filterSetting];
+            let index = this.filterSetting.indexOf("booking_floor_id");
+            if (index > -1) {
+                _filterSetting[index] =
+                    this.$i18n.locale == "ar" ? "floor.name" : "floor.name_e";
             }
-
+            let filter = "";
+            for (let i = 0; i < _filterSetting.length; ++i) {
+                filter += `columns[${i}]=${_filterSetting[i]}&`;
+            }
             adminApi
                 .get(
                     `/booking/units?page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
@@ -251,9 +295,15 @@ export default {
                 this.current_page
             ) {
                 this.isLoader = true;
+                let _filterSetting = [...this.filterSetting];
+                let index = this.filterSetting.indexOf("booking_floor_id");
+                if (index > -1) {
+                    _filterSetting[index] =
+                        this.$i18n.locale == "ar" ? "floor.name" : "floor.name_e";
+                }
                 let filter = "";
-                for (let i = 0; i < this.filterSetting.length; ++i) {
-                    filter += `columns[${i}]=${this.filterSetting[i]}&`;
+                for (let i = 0; i < _filterSetting.length; ++i) {
+                    filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
                 adminApi
@@ -398,6 +448,9 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -408,7 +461,8 @@ export default {
         /**
          *  hidden Modal (create)
          */
-        resetModal() {
+        async resetModal() {
+            if(this.isVisible('booking_floor_id')) await this.getFloors();
             this.create = {
                 name: "",
                 name_e: "",
@@ -416,6 +470,9 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -433,6 +490,9 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -547,7 +607,8 @@ export default {
         /**
          *   show Modal (edit)
          */
-        resetModalEdit(id) {
+        async resetModalEdit(id) {
+            if(this.isVisible('booking_floor_id')) await this.getFloors();
             let category = this.categories.find((e) => id == e.id);
             this.edit.name = category.name;
             this.edit.name_e = category.name_e;
@@ -555,6 +616,9 @@ export default {
             this.edit.description_e = category.description_e;
             this.edit.code = category.code;
             this.edit.price = category.price;
+            this.edit.number_of_individuals = category.number_of_individuals;
+            this.edit.extra_guest_price = category.extra_guest_price;
+            this.edit.booking_floor_id = category.booking_floor_id;
             this.errors = {};
         },
         /**
@@ -569,7 +633,27 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                number_of_individuals:1,
+                extra_guest_price:0,
+                booking_floor_id:null,
             };
+        },
+        async getFloors() {
+            this.isLoader = true;
+            await adminApi
+                .get(`/booking/floors`)
+                .then((res) => {
+                    this.isLoader = false;
+                    let l = res.data.data;
+                    this.floors = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                });
         },
         /*
          *  start  dynamicSortString
@@ -679,6 +763,9 @@ export default {
                                         <b-form-checkbox v-if="isVisible('price')" v-model="filterSetting" value="price" class="mb-1">{{getCompanyKey('room_price')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('name')" v-model="filterSetting" value="name" class="mb-1">{{getCompanyKey('room_name_ar')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('name_e')" v-model="filterSetting" value="name_e" class="mb-1">{{getCompanyKey('room_name_en')}}</b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('number_of_individuals')" v-model="filterSetting" value="number_of_individuals" class="mb-1">{{getCompanyKey('room_number_of_individuals')}}</b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('extra_guest_price')" v-model="filterSetting" value="extra_guest_price" class="mb-1">{{getCompanyKey('room_extra_guest_price')}}</b-form-checkbox>
+                                        <b-form-checkbox v-if="isVisible('booking_floor_id')" v-model="filterSetting" value="booking_floor_id" class="mb-1">{{getCompanyKey('room_floor')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('description')" v-model="filterSetting" value="description" class="mb-1">{{getCompanyKey('room_description_ar')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('description_e')" v-model="filterSetting" value="description_e" class="mb-1">{{getCompanyKey('room_description_en')}}</b-form-checkbox>
                                     </b-dropdown>
@@ -778,6 +865,9 @@ export default {
                                             <b-form-checkbox v-if="isVisible('price')" v-model="setting.price" class="mb-1">{{getCompanyKey('room_price')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1">{{getCompanyKey('room_name_ar')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">{{getCompanyKey('room_name_en')}}</b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('number_of_individuals')" v-model="setting.number_of_individuals" class="mb-1">{{getCompanyKey('room_number_of_individuals')}}</b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('extra_guest_price')" v-model="setting.extra_guest_price" class="mb-1">{{getCompanyKey('room_extra_guest_price')}}</b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('booking_floor_id')" v-model="setting.booking_floor_id" class="mb-1">{{getCompanyKey('room_floor')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('description')" v-model="setting.description" class="mb-1">{{getCompanyKey('room_description_ar')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('description_e')" v-model="setting.description_e" class="mb-1">{{getCompanyKey('room_description_en')}}</b-form-checkbox>
                                             <div class="d-flex justify-content-end">
@@ -871,6 +961,40 @@ export default {
                                     </b-button>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-12" v-if="isVisible('booking_floor_id')">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group position-relative">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("room_floor") }}
+                                                        <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
+                                                    </label>
+                                                    <multiselect
+                                                        v-model="create.booking_floor_id"
+                                                        :options="floors.map((type) => type.id)"
+                                                        :custom-label="(opt) => $i18n.locale == 'ar'
+                                                    ? floors.find((x) => x.id == opt).name
+                                                    : floors.find((x) => x.id == opt).name_e
+                                                "
+                                                    >
+                                                    </multiselect>
+                                                    <div
+                                                        v-if="$v.create.booking_floor_id.$error || errors.booking_floor_id"
+                                                        class="text-danger"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.booking_floor_id">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.booking_floor_id"
+                                                            :key="index"
+                                                        >{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div v-if="isVisible('code')" class="col-md-6">
                                         <div class="form-group">
                                             <label for="field-4353" class="control-label">
@@ -1004,6 +1128,54 @@ export default {
                                             </template>
                                         </div>
                                     </div>
+                                    <div v-if="isVisible('number_of_individuals')" class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("room_number_of_individuals") }}
+                                                <span v-if="isRequired('number_of_individuals')" class="text-danger">*</span>
+                                            </label>
+                                            <div dir="ltr">
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    v-model="$v.create.number_of_individuals.$model"
+                                                    :class="{
+                                                        'is-invalid':
+                                                          $v.create.number_of_individuals.$error || errors.number_of_individuals,
+                                                        'is-valid':
+                                                          !$v.create.number_of_individuals.$invalid && !errors.number_of_individuals,
+                                                      }"
+                                                />
+                                            </div>
+                                            <template v-if="errors.number_of_individuals">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.number_of_individuals" :key="index">{{ errorMessage }}</ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div v-if="isVisible('extra_guest_price')" class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("room_extra_guest_price") }}
+                                                <span v-if="isRequired('extra_guest_price')" class="text-danger">*</span>
+                                            </label>
+                                            <div dir="ltr">
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    v-model="$v.create.extra_guest_price.$model"
+                                                    :class="{
+                                                        'is-invalid':
+                                                          $v.create.extra_guest_price.$error || errors.extra_guest_price,
+                                                        'is-valid':
+                                                          !$v.create.extra_guest_price.$invalid && !errors.extra_guest_price,
+                                                      }"
+                                                />
+                                            </div>
+                                            <template v-if="errors.extra_guest_price">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.extra_guest_price" :key="index">{{ errorMessage }}</ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6" v-if="isVisible('description')">
                                         <div class="form-group">
                                             <label class="mr-2">
@@ -1101,6 +1273,33 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.number_of_individuals && isVisible('number_of_individuals')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey('room_number_of_individuals') }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="categories.sort(sortString('number_of_individuals'))"></i>
+                                                <i class="fas fa-arrow-down" @click="categories.sort(sortString('-number_of_individuals'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.extra_guest_price && isVisible('extra_guest_price')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey('room_extra_guest_price') }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="categories.sort(sortString('extra_guest_price'))"></i>
+                                                <i class="fas fa-arrow-down" @click="categories.sort(sortString('-extra_guest_price'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.booking_floor_id && isVisible('booking_floor_id')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey('room_floor') }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="categories.sort(sortString(($i18n.locale = 'ar' ? 'floor.name' : 'floor.name_e')))"></i>
+                                                <i class="fas fa-arrow-down" @click="categories.sort(sortString(($i18n.locale = 'ar' ? '-floor.name' : '-floor.name_e')))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.description && isVisible('description')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey('room_description_ar') }}</span>
@@ -1155,6 +1354,17 @@ export default {
                                     </td>
                                     <td v-if="setting.name_e  && isVisible('name_e')">
                                         <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
+                                    </td>
+                                    <td v-if="setting.number_of_individuals  && isVisible('number_of_individuals')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.number_of_individuals }}</h5>
+                                    </td>
+                                    <td v-if="setting.extra_guest_price  && isVisible('extra_guest_price')">
+                                        <h5 class="m-0 font-weight-normal">{{ data.extra_guest_price }}</h5>
+                                    </td>
+                                    <td v-if="setting.booking_floor_id  && isVisible('booking_floor_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.floor ? $i18n.locale == 'ar' ? data.floor.name : data.floor.name : '---' }}
+                                        </h5>
                                     </td>
                                     <td v-if="setting.description  && isVisible('description')">
                                         <h5 class="m-0 font-weight-normal">{{ data.description }}</h5>
@@ -1242,6 +1452,40 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
+                                                    <div class="col-md-12" v-if="isVisible('booking_floor_id')">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group position-relative">
+                                                                    <label class="control-label">
+                                                                        {{ getCompanyKey("room_floor") }}
+                                                                        <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
+                                                                    </label>
+                                                                    <multiselect
+                                                                        v-model="edit.booking_floor_id"
+                                                                        :options="floors.map((type) => type.id)"
+                                                                        :custom-label="(opt) => $i18n.locale == 'ar'
+                                                                            ? floors.find((x) => x.id == opt).name
+                                                                            : floors.find((x) => x.id == opt).name_e
+                                                                        "
+                                                                    >
+                                                                    </multiselect>
+                                                                    <div
+                                                                        v-if="$v.edit.booking_floor_id.$error || errors.booking_floor_id"
+                                                                        class="text-danger"
+                                                                    >
+                                                                        {{ $t("general.fieldIsRequired") }}
+                                                                    </div>
+                                                                    <template v-if="errors.booking_floor_id">
+                                                                        <ErrorMessage
+                                                                            v-for="(errorMessage, index) in errors.booking_floor_id"
+                                                                            :key="index"
+                                                                        >{{ errorMessage }}
+                                                                        </ErrorMessage>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div v-if="isVisible('code')" class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="field-435443" class="control-label">
@@ -1386,6 +1630,54 @@ export default {
                                                                     :key="index"
                                                                 >{{ errorMessage }}</ErrorMessage
                                                                 >
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="isVisible('number_of_individuals')" class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("room_number_of_individuals") }}
+                                                                <span v-if="isRequired('number_of_individuals')" class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="ltr">
+                                                                <input
+                                                                    type="number"
+                                                                    class="form-control"
+                                                                    v-model="$v.edit.number_of_individuals.$model"
+                                                                    :class="{
+                                                                        'is-invalid':
+                                                                          $v.edit.number_of_individuals.$error || errors.number_of_individuals,
+                                                                        'is-valid':
+                                                                          !$v.edit.number_of_individuals.$invalid && !errors.number_of_individuals,
+                                                                      }"
+                                                                />
+                                                            </div>
+                                                            <template v-if="errors.number_of_individuals">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.number_of_individuals" :key="index">{{ errorMessage }}</ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="isVisible('extra_guest_price')" class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("room_extra_guest_price") }}
+                                                                <span v-if="isRequired('extra_guest_price')" class="text-danger">*</span>
+                                                            </label>
+                                                            <div dir="ltr">
+                                                                <input
+                                                                    type="number"
+                                                                    class="form-control"
+                                                                    v-model="$v.edit.extra_guest_price.$model"
+                                                                    :class="{
+                                                                        'is-invalid':
+                                                                          $v.edit.extra_guest_price.$error || errors.extra_guest_price,
+                                                                        'is-valid':
+                                                                          !$v.edit.extra_guest_price.$invalid && !errors.extra_guest_price,
+                                                                      }"
+                                                                />
+                                                            </div>
+                                                            <template v-if="errors.extra_guest_price">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.extra_guest_price" :key="index">{{ errorMessage }}</ErrorMessage>
                                                             </template>
                                                         </div>
                                                     </div>
