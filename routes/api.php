@@ -920,6 +920,7 @@ Route::post('currencies/bulk-delete', [CurrencyController::class, 'bulkDelete'])
 Route::resource('role_types', RoleTypeController::class)->except('create', 'edit');
 Route::group(['prefix' => 'tree-properties'], function () {
     Route::controller(TreePropertyController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
         Route::get('root-nodes', 'getRootNodes');
         Route::get('/child-nodes/{parentId}', 'getChildNodes');
         Route::post('bulk-create', 'bulkCreate');

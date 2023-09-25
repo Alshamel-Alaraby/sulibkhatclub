@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TreeProperty;
 use App\Http\Requests\BulkCreatePropertyRequest;
 use App\Http\Requests\TreeProperty\TreePropertyRequest;
 use App\Http\Requests\TreeProperty\EditTreePropertyRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\TreeProperty\TreePropertyResource;
 use App\Repositories\TreeProperty\TreePropertyRepositoryInterface;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class TreePropertyController extends Controller
 
     public function show($id)
     {
-        
+
 
         $model = $this->modelInterface->find($id);
         if (!$model) {
@@ -128,6 +129,13 @@ class TreePropertyController extends Controller
             \App\Models\TreeProperty::create($row);
         }
         return responseJson(200, 'success');
+    }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 }

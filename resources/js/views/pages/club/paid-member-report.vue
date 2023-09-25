@@ -635,21 +635,21 @@ export default {
                                     class="body-tr-custom"
                                 >
                                     <td>
-                                        {{ data.member ? data.member.membership_number : '-' }}
+                                        {{ data.membership_number }}
                                     </td>
                                     <td>
-                                        {{ data.member ?  formatDate(data.member.membership_date)   : '-' }}
+                                        {{ data.membership_date ?  formatDate(data.membership_date): '-' }}
                                     </td>
                                     <td>
                                         <h5 class="m-0 font-weight-normal td5">
-                                            {{ data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:'' }}
+                                            {{ data.full_name }}
                                         </h5>
                                     </td>
                                     <td>
-                                        {{ data.serial_number }}
+                                        {{ data.cmTransaction.length > 0 ? data.cmTransaction[0].document_no: '-' }}
                                     </td>
                                     <td>
-                                        {{ formatDate(data.date) }}
+                                        {{ data.cmTransaction.length > 0 ? formatDate(data.cmTransaction[0].date) : '-' }}
                                     </td>
                                 </tr>
                                 </tbody>

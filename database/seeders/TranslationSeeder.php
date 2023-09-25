@@ -13483,7 +13483,15 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "room_number_of_individuals",
+                "key" => "room_unit_status",
+                "default_en" => "Status",
+                "default_ar" => "الحاله",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Booking Rooms"
+            ],
+            [    "key" => "room_number_of_individuals",
                 "default_en" => "Number Of Individuals",
                 "default_ar" => "عدد الافراد",
                 "new_ar" => "",
@@ -13510,8 +13518,7 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "Booking Rooms"
-
-            ],
+            ]
         ]);
 
         //booking attendant
@@ -14479,3 +14486,4 @@ class TranslationSeeder extends Seeder
         ]);
     }
 }
+

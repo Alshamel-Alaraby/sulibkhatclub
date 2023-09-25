@@ -120,19 +120,36 @@ class CmTransactionController extends Controller
     public function checkDateMemberTransaction(Request $request)
     {
 
-        $query = CmTransaction::whereDate('date', '<=', $request->date)->where('year', $request->year);
+        $query = CmMember::whereDate('last_transaction_date', '<=', $request->date)
+        ->where('last_transaction_year', $request->year)
+        ->with(['cmTransaction'=> function ($q) use ($request) {
+            $q->where('year', $request->year );
+        }]);
 
         if ($request->member_status_id) {
-            $query->whereHas('member', function ($q) use ($request) {
-                $q->where('member_status_id', $request->member_status_id);
-            });
+            $query->where('member_status_id', $request->member_status_id);
         }
 
+
         $models['data'] = $query->paginate($request->per_page);
-
-
         $models['paginate'] = true;
+
         return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+        // return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+
+        // $query = CmTransaction::whereDate('date', '<=', $request->date)->where('year', $request->year);
+
+        // if ($request->member_status_id) {
+        //     $query->whereHas('member', function ($q) use ($request) {
+        //         $q->where('member_status_id', $request->member_status_id);
+        //     });
+        // }
+
+        // $models['data'] = $query->paginate($request->per_page);
+
+        // $models['paginate'] = true;
+        // return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function UpdateMemberTransactionPaid(Request $request)
@@ -143,6 +160,8 @@ class CmTransactionController extends Controller
         return responseJson(200, 'success', 'Updated Successfully');
     }
 
+    
+
     public function unpaidMemberTransaction(Request $request)
     {
 
@@ -150,7 +169,7 @@ class CmTransactionController extends Controller
             ->pluck('cm_member_id')
             ->toArray();
 
-        $unpaidMembersQuery = CmMember::where('member_kind_id', 1)
+        $unpaidMembersQuery = CmMember::where('member_status_id', 1)
             ->whereNotIn('id', $transactionMemberIds)
             ->with('lastCmTransaction')
             ->paginate($request->per_page);
@@ -164,7 +183,7 @@ class CmTransactionController extends Controller
             ->pluck('cm_member_id')
             ->toArray();
 
-        $members = CmMember::where('member_kind_id', 1)
+        $members = CmMember::where('member_status_id', 1)
             ->whereNotIn('id', $transactionMemberIds)
             ->update(['financial_status_id' => 2]);
 
@@ -208,18 +227,37 @@ class CmTransactionController extends Controller
     public function memberTransactionPaidAfterDate(Request $request)
     {
 
-        $query = CmTransaction::whereDate('date', '>', $request->date)->where('year', $request->year);
+        $query = CmMember::whereDate('last_transaction_date', '>', $request->date)
+        ->where('last_transaction_year', $request->year)
+        ->with(['cmTransaction'=> function ($q) use ($request) {
+            $q->where('year', $request->year );
+        }]);
 
         if ($request->member_status_id) {
-            $query->whereHas('member', function ($q) use ($request) {
-                $q->where('member_status_id', $request->member_status_id);
-            });
+                $query->where('member_status_id', $request->member_status_id);
         }
 
         $models['data'] = $query->paginate($request->per_page);
-
         $models['paginate'] = true;
+
         return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+        // return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+
+
+
+        // $query = CmTransaction::whereDate('date', '>', $request->date)->where('year', $request->year);
+
+        // if ($request->member_status_id) {
+        //     $query->whereHas('member', function ($q) use ($request) {
+        //         $q->where('member_status_id', $request->member_status_id);
+        //     });
+        // }
+
+        // $models['data'] = $query->paginate($request->per_page);
+
+        // $models['paginate'] = true;
+        // return responseJson(200, 'success', CheckDateMemberTransactionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 

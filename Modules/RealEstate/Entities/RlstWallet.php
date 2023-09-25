@@ -26,10 +26,21 @@ class RlstWallet extends Model
     //         ->whereNull('deleted_at');
     // }
 
+    public function scopeData($query)
+    {
+        return $query->select('id', 'name', 'name_e')
+            ->with([
+                'owners:id,name,name_e',
+                'buildings:id,name,name_e',
+
+            ])
+            ->whereNull('deleted_at');
+    }
+
     // relations
     public function owners()
     {
-        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstOwner::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id');
+        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstOwner::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id')->withPivot('percentage')->wherePivotNull('deleted_at');
 
     }
 
@@ -44,7 +55,7 @@ class RlstWallet extends Model
 
     public function buildings()
     {
-        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'rlst_building_wallet', 'wallet_id', 'building_id');
+        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'rlst_building_wallet', 'wallet_id', 'building_id')->withPivot('bu_ty');
 
     }
 

@@ -21,4 +21,6 @@ interface TreePropertyRepositoryInterface
 
     public function getSetting($user_id, $screen_id);
 
+    public function getName($request);
+
 }

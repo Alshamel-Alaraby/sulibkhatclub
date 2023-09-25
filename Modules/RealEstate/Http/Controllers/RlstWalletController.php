@@ -19,7 +19,7 @@ class RlstWalletController extends Controller
 
     public function find($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->data()->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -29,7 +29,7 @@ class RlstWalletController extends Controller
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -37,7 +37,7 @@ class RlstWalletController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', RlstWalletResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(RlstWalletRequest $request)
