@@ -543,7 +543,7 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ $t('general.beforeDate') }}
+                                                {{ $t('general.afterDate') }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <input

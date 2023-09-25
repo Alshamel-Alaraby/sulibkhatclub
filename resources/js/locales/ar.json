@@ -1507,6 +1507,7 @@
         "totalDiscount": "اجمالى الخصم",
         "floorsTable": "جدول الطوابق",
         "AttendanceNumber": "عدد المرافقين",
-        "LstPayDate": "تاريخ اخر سداد"
+        "LstPayDate": "تاريخ اخر سداد",
+        "afterDate": " بعد تاريخ"
     }
 }

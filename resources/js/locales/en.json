@@ -1517,6 +1517,7 @@
         "totalDiscount": "total Discount",
         "floorsTable": "Floors Table",
         "AttendanceNumber": "Attendance Number",
-        "LstPayDate": "Lst Pay Date"
+        "LstPayDate": "Lst Pay Date",
+        "afterDate": " After Date"
     }
 }
