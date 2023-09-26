@@ -120,7 +120,7 @@ class CmTransactionController extends Controller
     public function checkDateMemberTransaction(Request $request)
     {
 
-        $query = CmMember::whereDate('last_transaction_date', '<=', $request->date)
+        $query = CmMember::whereDate('last_transaction_date', '<', $request->date)
         ->where('last_transaction_year', $request->year)
         ->with(['cmTransaction'=> function ($q) use ($request) {
             $q->where('year', $request->year );
@@ -160,7 +160,7 @@ class CmTransactionController extends Controller
         return responseJson(200, 'success', 'Updated Successfully');
     }
 
-    
+
 
     public function unpaidMemberTransaction(Request $request)
     {

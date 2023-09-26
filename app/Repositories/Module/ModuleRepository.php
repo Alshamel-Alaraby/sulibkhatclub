@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Module;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Nwidart\Modules\Facades\Module;
 
 class ModuleRepository implements ModuleInterface
@@ -78,17 +80,50 @@ class ModuleRepository implements ModuleInterface
 
     }
 
+
     public function moduleDisable($request)
     {
-//        return Module::all();
-
         collect(Module::all())->each(function ($item , $key){
             Module::enable($key);
         });
-//        foreach ($request['modules_name']  as $item){
-//            Module::enable($item);
-//        }
+        return 250;
 
+//        $request->url()
+         // domain Ulr
+         $pieces = parse_url($request->url());
+         // host addeffect.alshamelalaraby.com
+         $host =  $pieces['host'];
+         // host array ['addeffect','alshamelalaraby','com']
+         $name = explode(".", $host);
+         // get name
+         $url =  "https://admin.alshamelalaraby.com/api/project-program-modules/all-company-program/".$name[0];
+
+
+        $request_2 = Http::get($url);
+       return $response_2 = $request_2->json();
+
+       if ($response_2){
+           $data = [];
+           foreach ($response_2 as $index => $response){
+               if ($response['name_e'] == 'reservation' ){
+                   $data['Booking'] = 'Booking';
+               }
+           }
+           collect(Module::all())->each(function ($item , $key){
+               Module::disable($key);
+           });
+
+           foreach ($data  as $item){
+               Module::enable($item);
+           }
+
+           Artisan::call("migrate:fresh");
+
+           return "Success Project Program Modules";
+
+       }
+
+        return "Not Found Date Project Program Modules";
     }
 
 }

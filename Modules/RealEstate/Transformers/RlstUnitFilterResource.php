@@ -21,7 +21,9 @@ class RlstUnitFilterResource extends JsonResource
 
         // $unitDetails = RlstUnit::where('building_id', $this->building_id)->first();
         $buildingWallet = RlstBuildingWallet::where('building_id', $this->building_id)->first();
-        $ownerId = RlstWalletOwner::where('wallet_id', $buildingWallet->wallet_id)->first();
+        if ($buildingWallet){
+            $ownerId = RlstWalletOwner::where('wallet_id', $buildingWallet->wallet_id)->first();
+        }
 
         return [
             'id' => $this->id,
@@ -42,12 +44,10 @@ class RlstUnitFilterResource extends JsonResource
             'finishing' => $this->finishing,
             'properties' => $this->properties,
             'module' => $this->module,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            "building" => new RlstBuildingResource($this->building),
-            "unit_status" => new RlstUnitStatusResource($this->unitStatus),
-            'owner' => new RlstOwnerResource(RlstOwner::find($ownerId->owner_id)),
-            'wallet' => new RlstWalletResource(RlstWallet::find($ownerId->wallet_id)),
+            "building" => $this->whenLoaded('building'),
+            "unit_status" => $this->whenLoaded('unitStatus'),
+            'owner' =>  isset($ownerId) ? new RlstOwnerResource(RlstOwner::find($ownerId->owner_id)) : null,
+            'wallet' => isset($ownerId) ?  new RlstWalletResource(RlstWallet::find($ownerId->wallet_id)): null,
 
         ];
     }

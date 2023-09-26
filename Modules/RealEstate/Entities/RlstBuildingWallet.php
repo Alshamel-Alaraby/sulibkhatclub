@@ -19,6 +19,17 @@ class RlstBuildingWallet extends Model
         'bu_ty',
     ];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id',
+                'wallet_id',
+                'building_id',
+                'bu_ty')
+            ->with('wallet:id,name,name_e', 'building:id,name,name_e');
+//        ,'owner:id,name,name_e','currency:id,link,model_id,model_type'
+    }
+
     public function wallet()
     {
         return $this->belongsTo(RlstWallet::class, 'wallet_id');

@@ -15,12 +15,11 @@ class RlstBuildingWalletResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id" => $this->id,
-            "wallet" => new RlstWalletResource($this->wallet),
-            "building" => new RlstBuildingResource($this->building),
-            "bu_ty" => $this->bu_ty,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
+            "id"       => $this->id,
+            "wallet"   => $this->whenLoaded('wallet'),
+            "building" => $this->whenLoaded('building'),
+            "bu_ty"    => $this->bu_ty,
+
         ];
     }
 }

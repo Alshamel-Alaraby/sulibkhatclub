@@ -25,6 +25,7 @@ class RlstUnitResource extends JsonResource
             'unit_ty' => $this->unit_ty,
             'unit_area' => $this->unit_area,
             'building_id' => $this->building_id,
+
             "building" => $this->building,
             'unit_status_id' => $this->unit_status_id,
             "unit_status" => $this->unitStatus,
@@ -36,6 +37,7 @@ class RlstUnitResource extends JsonResource
             'finishing' => $this->finishing,
             'properties' => $this->properties,
             'module' => $this->module,
+
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
             "video_link" => $this->video_link,
         ];

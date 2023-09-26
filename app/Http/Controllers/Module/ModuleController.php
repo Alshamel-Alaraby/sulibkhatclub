@@ -29,7 +29,7 @@ class ModuleController extends Controller
 
     public function all(AllRequest $request)
     {
-       
+
         $models = $this->modelInterface->all($request);
 
         return responseJson(200, 'success', ModuleResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -85,7 +85,7 @@ class ModuleController extends Controller
 
     public function moduleDisable(Request $request)
     {
-        $model = $this->modelInterface->moduleDisable($request);
+      return  $model = $this->modelInterface->moduleDisable($request);
         return responseJson(200, 'success');
     }
 

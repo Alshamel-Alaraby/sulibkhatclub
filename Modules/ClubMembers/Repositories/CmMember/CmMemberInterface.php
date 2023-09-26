@@ -40,4 +40,6 @@ interface CmMemberInterface
     public function updateLastTransactionDate();
 
     public function publicUpdatePermissionCmMember($id);
+
+    public function updateCmMember();
 }

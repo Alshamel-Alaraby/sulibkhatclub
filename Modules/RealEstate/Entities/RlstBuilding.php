@@ -18,6 +18,29 @@ class RlstBuilding extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id',
+                'name',
+                'name_e',
+                'description',
+                'description_e',
+                'land_area',
+                'building_area',
+                'construction_year',
+                'project_id',
+                'country_id',
+                'city_id',
+                'avenue_id',
+                'lng',
+                'lat',
+                'properties',
+                'attachments',
+                'module')
+            ->with('country:id,name,name_e', 'city:id,name,name_e' ,'avenue:id,name,name_e');
+    }
+
     // attributes
     public function setPropertiesAttribute($value)
     {
@@ -82,7 +105,7 @@ class RlstBuilding extends Model implements HasMedia
                 'ids' => $this->buildingWallet()->pluck('id')->toArray()
             ];
         }
-       
+
 
         return $relationsWithChildren;
     }

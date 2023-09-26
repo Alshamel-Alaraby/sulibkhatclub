@@ -18,6 +18,7 @@ class RlstUnit extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+
     public function scopeData($query)
     {
         return $query
@@ -38,6 +39,7 @@ class RlstUnit extends Model implements HasMedia
                 'view',
                 'floor',
                 'finishing',
+
                 'properties',
                 'module',
             )->with('unitStatus:id,name,name_e','building:id,name,name_e', 'media');

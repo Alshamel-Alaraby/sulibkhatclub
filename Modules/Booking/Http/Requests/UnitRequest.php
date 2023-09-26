@@ -29,6 +29,7 @@ class UnitRequest extends FormRequest
             'extra_guest_price' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
             'number_of_individuals' => 'nullable|numeric|min:0',
             'booking_floor_id' => 'nullable|exists:booking_floors,id',
+            'unit_status_id' => 'nullable',
 
             'company_id' => 'nullable',
         ];

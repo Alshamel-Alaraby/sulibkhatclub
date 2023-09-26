@@ -28,7 +28,8 @@ class RlstUnitController extends Controller
     public function generalFilter(RlstUnitFilterRequest $request)
     {
 
-        $models = $this->model->filter($request)->generalfilter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        $models = $this->model->data()->filter($request)->generalfilter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -52,6 +53,7 @@ class RlstUnitController extends Controller
 
     public function all(AllRequest $request)
     {
+
         $models = $this->model->data()->when($request->building_id, function ($q) use ($request) {
             $q->where("building_id", $request->building_id);
         })

@@ -25,12 +25,12 @@ class RlstBuildingRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'name_e' => 'sometimes|string|max:255',
-            'description' => "nullable",
-            'description_e' => "nullable",
-            'land_area' => "nullable",
-            'building_area' => ['lt:land_area'],
+            'name'              => 'sometimes|string|max:255',
+            'name_e'            => 'sometimes|string|max:255',
+            'description'       => "nullable|string",
+            'description_e'     => "nullable|string",
+            'land_area'         => "nullable",
+            'building_area'     => ['lt:land_area'],
             'construction_year' => ['gt:1980'],
             'country_id' => "sometimes|exists:general_countries,id",
             'city_id' => "sometimes|exists:general_cities,id",
