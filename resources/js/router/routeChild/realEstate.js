@@ -3,6 +3,7 @@ import checkAuth from "../../middleware/auth-check";
 
 export default [
     {
+        // checked by delta
         path: '/dashboard/realEstate/unitstatus',
         name: 'realEstate-unitstatus',
         meta: {
@@ -11,6 +12,7 @@ export default [
         component: () => import('../../views/pages/realEstate/unit-status'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/admin-report',
         name: 'admin-report',
         meta: {
@@ -19,6 +21,7 @@ export default [
         component: () => import('../../views/pages/realEstate/admin-report'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/unsold-unit-report',
         name: 'unsold-unit-report',
         meta: {
@@ -28,6 +31,7 @@ export default [
     },
 
     {
+        // checked by delta
         path: '/dashboard/realEstate/contract',
         name: 'realEstate-contract',
         meta: {
@@ -36,6 +40,7 @@ export default [
         component: () => import('../../views/pages/realEstate/contract'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/invoice',
         name: 'realEstate-invoice',
         meta: {
@@ -44,6 +49,7 @@ export default [
         component: () => import('../../views/pages/realEstate/invoice'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/unit-type',
         name: 'unit-type',
         meta: {
@@ -52,6 +58,7 @@ export default [
         component: () => import('../../views/pages/realEstate/unit-type'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/view',
         name: 'view',
         meta: {
@@ -60,6 +67,7 @@ export default [
         component: () => import('../../views/pages/realEstate/view'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/finishing',
         name: 'finishing',
         meta: {
@@ -68,6 +76,7 @@ export default [
         component: () => import('../../views/pages/realEstate/finishing'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/building-wallet',
         name: 'realEstate-building-wallet',
         meta: {
@@ -76,6 +85,7 @@ export default [
         component: () => import('../../views/pages/realEstate/building-wallet'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/contractunit',
         name: 'realEstate-contractunit',
         meta: {
@@ -84,6 +94,7 @@ export default [
         component: () => import('../../views/pages/realEstate/contractunit'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/owner',
         name: 'realEstate-owner',
         meta: {
@@ -92,6 +103,7 @@ export default [
         component: () => import('../../views/pages/realEstate/owner'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/building',
         name: 'realEstate-building',
         meta: {
@@ -100,6 +112,7 @@ export default [
         component: () => import('../../views/pages/realEstate/building'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/wallet',
         name: 'realEstate-wallet',
         meta: {
@@ -108,6 +121,7 @@ export default [
         component: () => import('../../views/pages/realEstate/wallet'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/unit',
         name: 'realEstate-wallet-owner',
         meta: {
@@ -116,6 +130,7 @@ export default [
         component: () => import('../../views/pages/realEstate/unit'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/reservation',
         name: 'realEstate-reservation',
         meta: {
@@ -124,6 +139,7 @@ export default [
         component: () => import('../../views/pages/realEstate/reservation'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/category',
         name: 'realEstate-category',
         meta: {
@@ -132,6 +148,7 @@ export default [
         component: () => import('../../views/pages/realEstate/item-category'),
     },
     {
+        // checked by delta
         path: '/dashboard/realEstate/item',
         name: 'realEstate-item',
         meta: {
@@ -140,6 +157,7 @@ export default [
         component: () => import('../../views/pages/realEstate/item'),
     },
     {
+        // repeated
         path: '/dashboard/realEstate/invoice',
         name: 'realEstate-invoice',
         meta: {

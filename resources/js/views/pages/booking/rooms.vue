@@ -40,6 +40,7 @@ export default {
     },
     data() {
         return {
+            statuses: [],
             fields: [],
             enabled3: true,
             printLoading: true,
@@ -63,6 +64,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: 12,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -74,6 +76,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: null,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -89,6 +92,7 @@ export default {
                 price: true,
                 description: true,
                 description_e: true,
+                unit_status_id: true,
                 number_of_individuals:true,
                 extra_guest_price:true,
                 booking_floor_id:true,
@@ -101,6 +105,7 @@ export default {
                 "price",
                 "description",
                 "description_e",
+                this.$i18n.locale == 'ar' ? 'unitStatus.name': 'unitStatus.name_e',
                 "number_of_individuals",
                 "extra_guest_price",
                 "booking_floor_id",
@@ -129,6 +134,10 @@ export default {
             description_e: { required: requiredIf(function (model) {
                     return this.isRequired("description_e");
                 }), maxLength: maxLength(1000),
+            },
+            unit_status_id: { required: requiredIf(function (model) {
+                    return this.isRequired("unit_status_id");
+                }),
             },
             number_of_individuals: { required: requiredIf(function (model) {
                     return this.isRequired("number_of_individuals");
@@ -165,6 +174,11 @@ export default {
             description_e: { required: requiredIf(function (model) {
                     return this.isRequired("description_e");
                 }), maxLength: maxLength(1000),
+            },
+            unit_status_id: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("unit_status_id");
+                }),
             },
             number_of_individuals: { required: requiredIf(function (model) {
                     return this.isRequired("number_of_individuals");
@@ -448,6 +462,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: 12,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -463,6 +478,7 @@ export default {
          */
         async resetModal() {
             if(this.isVisible('booking_floor_id')) await this.getFloors();
+            if(this.isVisible('unit_status_id')) await this.getStatus();
             this.create = {
                 name: "",
                 name_e: "",
@@ -470,6 +486,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: 12,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -490,6 +507,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: 12,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -609,6 +627,7 @@ export default {
          */
         async resetModalEdit(id) {
             if(this.isVisible('booking_floor_id')) await this.getFloors();
+            if(this.isVisible('unit_status_id')) await this.getStatus();
             let category = this.categories.find((e) => id == e.id);
             this.edit.name = category.name;
             this.edit.name_e = category.name_e;
@@ -616,6 +635,7 @@ export default {
             this.edit.description_e = category.description_e;
             this.edit.code = category.code;
             this.edit.price = category.price;
+            this.edit.unit_status_id =  category.unit_status_id;
             this.edit.number_of_individuals = category.number_of_individuals;
             this.edit.extra_guest_price = category.extra_guest_price;
             this.edit.booking_floor_id = category.booking_floor_id;
@@ -633,6 +653,7 @@ export default {
                 price: "",
                 description: "",
                 description_e: "",
+                unit_status_id: null,
                 number_of_individuals:1,
                 extra_guest_price:0,
                 booking_floor_id:null,
@@ -736,6 +757,21 @@ export default {
             this.create.description_e = englishValue(txt);
             this.edit.description_e = englishValue(txt);
         },
+        getStatus(){
+            this.isLoader = true;
+            adminApi
+                .get(`/statuses/get-drop-down?module_type=booking`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.statuses = l;
+                })
+                .catch((err) => {
+                    this.errorFun("Error", "Thereisanerrorinthesystem");
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
     },
 };
 </script>
@@ -768,6 +804,13 @@ export default {
                                         <b-form-checkbox v-if="isVisible('booking_floor_id')" v-model="filterSetting" value="booking_floor_id" class="mb-1">{{getCompanyKey('room_floor')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('description')" v-model="filterSetting" value="description" class="mb-1">{{getCompanyKey('room_description_ar')}}</b-form-checkbox>
                                         <b-form-checkbox v-if="isVisible('description_e')" v-model="filterSetting" value="description_e" class="mb-1">{{getCompanyKey('room_description_en')}}</b-form-checkbox>
+                                        <b-form-checkbox
+                                            v-if="isVisible('unit_status_id')"
+                                            v-model="filterSetting" :value="$i18n.locale == 'ar' ? 'unitStatus.name': 'unitStatus.name_e'"
+                                            class="mb-1"
+                                        >
+                                            {{getCompanyKey('room_unit_status')}}
+                                        </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
@@ -870,6 +913,7 @@ export default {
                                             <b-form-checkbox v-if="isVisible('booking_floor_id')" v-model="setting.booking_floor_id" class="mb-1">{{getCompanyKey('room_floor')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('description')" v-model="setting.description" class="mb-1">{{getCompanyKey('room_description_ar')}}</b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('description_e')" v-model="setting.description_e" class="mb-1">{{getCompanyKey('room_description_en')}}</b-form-checkbox>
+                                            <b-form-checkbox v-if="isVisible('unit_status_id')" v-model="setting.unit_status_id" class="mb-1">{{getCompanyKey('room_unit_status')}}</b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
                                             </div>
@@ -961,38 +1005,61 @@ export default {
                                     </b-button>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12" v-if="isVisible('booking_floor_id')">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group position-relative">
-                                                    <label class="control-label">
-                                                        {{ getCompanyKey("room_floor") }}
-                                                        <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
-                                                    </label>
-                                                    <multiselect
-                                                        v-model="create.booking_floor_id"
-                                                        :options="floors.map((type) => type.id)"
-                                                        :custom-label="(opt) => $i18n.locale == 'ar'
+                                    <div v-if="isVisible('booking_floor_id')" class="col-md-6">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("room_floor") }}
+                                                <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                v-model="create.booking_floor_id"
+                                                :options="floors.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar'
                                                     ? floors.find((x) => x.id == opt).name
                                                     : floors.find((x) => x.id == opt).name_e
                                                 "
-                                                    >
-                                                    </multiselect>
-                                                    <div
-                                                        v-if="$v.create.booking_floor_id.$error || errors.booking_floor_id"
-                                                        class="text-danger"
-                                                    >
-                                                        {{ $t("general.fieldIsRequired") }}
-                                                    </div>
-                                                    <template v-if="errors.booking_floor_id">
-                                                        <ErrorMessage
-                                                            v-for="(errorMessage, index) in errors.booking_floor_id"
-                                                            :key="index"
-                                                        >{{ errorMessage }}
-                                                        </ErrorMessage>
-                                                    </template>
-                                                </div>
+                                            >
+                                            </multiselect>
+                                            <div
+                                                v-if="$v.create.booking_floor_id.$error || errors.booking_floor_id"
+                                                class="text-danger"
+                                            >
+                                                {{ $t("general.fieldIsRequired") }}
                                             </div>
+                                            <template v-if="errors.booking_floor_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.booking_floor_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div v-if="isVisible('unit_status_id')" class="col-md-6">
+                                        <div class="form-group">
+                                            <label>
+                                                {{ getCompanyKey('room_unit_status') }}
+                                                <span v-if="isRequired('unit_status_id')" class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                v-model="create.unit_status_id"
+                                                :options="statuses.map((type) => type.id)"
+                                                :custom-label=" (opt) => statuses.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                                :class="{'is-invalid': $v.create.unit_status_id.$error || errors.unit_status_id,'is-valid': !$v.create.unit_status_id.$invalid && !errors.unit_status_id,}"
+                                            >
+                                            </multiselect>
+                                            <div v-if="!$v.create.unit_status_id.required" class="invalid-feedback">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+
+                                            <template v-if="errors.unit_status_id">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.unit_status_id"
+                                                              :key="index">{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
                                         </div>
                                     </div>
                                     <div v-if="isVisible('code')" class="col-md-6">
@@ -1273,6 +1340,15 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.unit_status_id && isVisible('unit_status_id')">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey('room_unit_status') }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="categories.sort(sortString(($i18n.locale = 'ar' ? 'unit_status.name' : 'unit_status.name_e')))"></i>
+                                                <i class="fas fa-arrow-down" @click="categories.sort(sortString(($i18n.locale = 'ar' ? '-unit_status.name' : '-unit_status.name_e')))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.number_of_individuals && isVisible('number_of_individuals')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey('room_number_of_individuals') }}</span>
@@ -1354,6 +1430,11 @@ export default {
                                     </td>
                                     <td v-if="setting.name_e  && isVisible('name_e')">
                                         <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
+                                    </td>
+                                    <td v-if="setting.unit_status_id  && isVisible('unit_status_id')">
+                                        <h5 class="m-0 font-weight-normal" v-if="data.unit_status">
+                                            {{ $i18n.locale == 'ar' ? data.unit_status.name : data.unit_status.name_e  }}
+                                        </h5>
                                     </td>
                                     <td v-if="setting.number_of_individuals  && isVisible('number_of_individuals')">
                                         <h5 class="m-0 font-weight-normal">{{ data.number_of_individuals }}</h5>
@@ -1452,38 +1533,61 @@ export default {
                                                     </b-button>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-md-12" v-if="isVisible('booking_floor_id')">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group position-relative">
-                                                                    <label class="control-label">
-                                                                        {{ getCompanyKey("room_floor") }}
-                                                                        <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
-                                                                    </label>
-                                                                    <multiselect
-                                                                        v-model="edit.booking_floor_id"
-                                                                        :options="floors.map((type) => type.id)"
-                                                                        :custom-label="(opt) => $i18n.locale == 'ar'
+                                                    <div v-if="isVisible('booking_floor_id')" class="col-md-6">
+                                                        <div class="form-group position-relative">
+                                                            <label class="control-label">
+                                                                {{ getCompanyKey("room_floor") }}
+                                                                <span v-if="isRequired('booking_floor_id')" class="text-danger">*</span>
+                                                            </label>
+                                                            <multiselect
+                                                                v-model="edit.booking_floor_id"
+                                                                :options="floors.map((type) => type.id)"
+                                                                :custom-label="(opt) => $i18n.locale == 'ar'
                                                                             ? floors.find((x) => x.id == opt).name
                                                                             : floors.find((x) => x.id == opt).name_e
                                                                         "
-                                                                    >
-                                                                    </multiselect>
-                                                                    <div
-                                                                        v-if="$v.edit.booking_floor_id.$error || errors.booking_floor_id"
-                                                                        class="text-danger"
-                                                                    >
-                                                                        {{ $t("general.fieldIsRequired") }}
-                                                                    </div>
-                                                                    <template v-if="errors.booking_floor_id">
-                                                                        <ErrorMessage
-                                                                            v-for="(errorMessage, index) in errors.booking_floor_id"
-                                                                            :key="index"
-                                                                        >{{ errorMessage }}
-                                                                        </ErrorMessage>
-                                                                    </template>
-                                                                </div>
+                                                            >
+                                                            </multiselect>
+                                                            <div
+                                                                v-if="$v.edit.booking_floor_id.$error || errors.booking_floor_id"
+                                                                class="text-danger"
+                                                            >
+                                                                {{ $t("general.fieldIsRequired") }}
                                                             </div>
+                                                            <template v-if="errors.booking_floor_id">
+                                                                <ErrorMessage
+                                                                    v-for="(errorMessage, index) in errors.booking_floor_id"
+                                                                    :key="index"
+                                                                >{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="isVisible('unit_status_id')" class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>
+                                                                {{ getCompanyKey('room_unit_status') }}
+                                                                <span v-if="isRequired('unit_status_id')" class="text-danger">*</span>
+                                                            </label>
+                                                            <multiselect
+                                                                v-model="edit.unit_status_id"
+                                                                :options="statuses.map((type) => type.id)"
+                                                                :custom-label=" (opt) => statuses.find((x) => x.id == opt)?
+                                                                    $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                                                    : null
+                                                                "
+                                                                :class="{'is-invalid': $v.edit.unit_status_id.$error || errors.unit_status_id,'is-valid': !$v.edit.unit_status_id.$invalid && !errors.unit_status_id,}"
+                                                            >
+                                                            </multiselect>
+                                                            <div v-if="!$v.edit.unit_status_id.required" class="invalid-feedback">
+                                                                {{ $t("general.fieldIsRequired") }}
+                                                            </div>
+
+                                                            <template v-if="errors.unit_status_id">
+                                                                <ErrorMessage v-for="(errorMessage, index) in errors.unit_status_id"
+                                                                              :key="index">{{ errorMessage }}
+                                                                </ErrorMessage>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                     <div v-if="isVisible('code')" class="col-md-6">
@@ -1739,7 +1843,7 @@ export default {
                                 </tbody>
                                 <tbody v-else>
                                 <tr>
-                                    <th class="text-center" colspan="11">
+                                    <th class="text-center" colspan="13">
                                         {{ $t("general.notDataFound") }}
                                     </th>
                                 </tr>

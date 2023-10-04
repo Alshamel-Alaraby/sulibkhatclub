@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\RecievablePayable\Entities\RpBreakDown;
+use Modules\RecievablePayable\Entities\RpInstallmentPaymentType;
 use Modules\RecievablePayable\Http\Requests\CreateBreakDownRequest;
 use Modules\RecievablePayable\Transformers\BreakDownResource;
 use Modules\RecievablePayable\Transformers\CustomerStatementResource;
@@ -72,7 +73,7 @@ class RpBreakDownController extends Controller
         }
         if ($request->customer_id){
             $models->where('customer_id',$request->customer_id)->doesnthave('children')
-            ->where('invoice_id',null)->orderBy('instalment_date', 'DESC');
+                ->where('invoice_id',null)->orderBy('instalment_date', 'DESC');
         }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -86,10 +87,75 @@ class RpBreakDownController extends Controller
     public function store(CreateBreakDownRequest $request)
     {
         $data = [];
-        foreach ($request->validated()['break_downs'] as $break_downs ):
+        $cont_date = 0;
+
+        foreach ($request->validated()['break_downs'] as  $break_downs ):
+
+            if ($break_downs['repate'] == 1){
+
                 $model = $this->model->create($break_downs);
-            $data[] = $model;
+                $data[] = $model;
+
+            }else{
+
+                $data[] = $this->createObjactBreakDown($break_downs);
+            }
+
         endforeach;
+
+        return collect($data)->collapse();
+    }
+    public function createObjactBreakDown($break_downs){
+
+        $cont_date = 0;
+
+        if ($break_downs['repate'] == 1){
+
+            $model = $this->model->create($break_downs);
+            $data = $model;
+
+        }else{
+
+            $i = 0;
+            for ($i;$i < $break_downs['repate'] ;$i++ ){
+
+                if ($i != 0){
+
+                    $PaymentType = RpInstallmentPaymentType::find($break_downs['instalment_type_id']);
+                    // بنجمع عدد الايام
+                    $cont_date  +=  $PaymentType->freq_period ;
+
+                    $date_instalment =  \Carbon\Carbon::parse($break_downs['instalment_date']);
+
+                    $date = $date_instalment->addDays($cont_date)->format('Y-m-d');
+
+                    $total = $break_downs['debit'] != 0 ? $break_downs['debit'] : $break_downs['credit'];
+
+                    $data_break = collect($break_downs)->except('instalment_date','id','total','repate');
+
+                    $model = $this->model->create(array_merge($data_break->all(),[
+                        'instalment_date' => $date,
+                        'total' => $total,
+                        'repate' => 1,
+                    ]));
+                    $data[$i] = $model;
+
+                }else{
+
+                    $data_break = collect($break_downs)->except('id','total','repate');
+                    $total = $break_downs['debit'] != 0 ? $break_downs['debit'] : $break_downs['credit'];
+
+                    $model = $this->model->create(array_merge($data_break->all(),[
+                        'total' => $total,
+                        'repate' => 1,
+                    ]));
+                    $data[$i] = $model;
+                }
+
+
+            }
+
+        }
         return $data;
     }
 
@@ -101,13 +167,21 @@ class RpBreakDownController extends Controller
             $model = $this->model->where('id',$break_downs['id'])->first();
             if ($model)
             {
-                $model->update($break_downs);
+                if ($model->installment_statu_id == 1){
+                    $model->delete();
+                    $data[] =  $this->createObjactBreakDown($break_downs);
+
+                }
+
             }else{
-                $model = $this->model->create($break_downs);
+
+                $data[] =  $this->createObjactBreakDown($break_downs);
+
             }
-            $data[] = $model;
         endforeach;
-        return $data;
+
+        return collect($data)->collapse();
+
     }
 
     public function destroy($id)

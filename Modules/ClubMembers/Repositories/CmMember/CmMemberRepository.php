@@ -25,7 +25,7 @@ class CmMemberRepository implements CmMemberInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC')->with('lastCmTransaction');
 
         if ($request->financial_status_id) {
             $models->where('financial_status_id', $request->financial_status_id);
@@ -276,7 +276,7 @@ class CmMemberRepository implements CmMemberInterface
         }
 
         if ($request->members_permissions_id) {
-            $models->where('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', 2024);
+            $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', 2024)->with('lastCmTransaction');
         }
 
         if ($request->per_page) {
@@ -304,10 +304,10 @@ class CmMemberRepository implements CmMemberInterface
     {
         //return CmMember::with('lastCmTransaction')->find(13838);
         //return CmTransaction::where('cm_member_id', 13838)->first();
-
         //ini_set('max_execution_time', '60');
 
         $financialyear = FinancialYear::where('is_active', 1)->first();
+        
         if ($financialyear) {
 
             //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
@@ -318,14 +318,19 @@ class CmMemberRepository implements CmMemberInterface
                 'members_permissions_id' => 4, // كل الحقوق
             ]);
 
+
+
             // عضو عادي
             CmMember::where(['member_status_id' => 1, 'member_kind_id' => 1])->update([
                 'financial_status_id' => 2, // غير مسدد
                 'members_permissions_id' => 1, // ليس له حق
             ]);
 
+            
+
             // all settings
-            $settings = DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
+            $settings = 
+            DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
 
             // get the active financial year
 
@@ -337,7 +342,9 @@ class CmMemberRepository implements CmMemberInterface
                 ->where(function ($q) use ($financialyear) {
                     $q->whereNotNull('last_transaction_date')
                         ->where('last_transaction_year', $financialyear->year); // int ? int
-                })->orWhere('member_kind_id', 2)->get();
+                })->orWhere('member_kind_id', 2)->count();
+             
+            return $running_member_all;
 
             //$time = strtotime('2023/02/28');
             //$date_allowed_vote_date = date('Y-m-d',$time);
@@ -695,6 +702,75 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
+    public function getMemberForMultiSubscription($request)
+    {
+        $models = $this->model->orderBy('full_name', 'ASC')->with('lastCmTransaction');
+
+        if ($request->sponsor_id) {
+            $models->where('sponsor_id', $request->sponsor_id);
+        }
+
+        if ($request->hasTransaction) {
+            $models->whereHas('cmTransaction');
+        }
+
+        if ($request->member_status_id) {
+            $models->where('member_status_id', $request->member_status_id);
+        }
+
+        if ($request->financial_status_id) {
+            $models->where('financial_status_id', $request->financial_status_id);
+        }
+
+        if ($request->membership_number) {
+            $models->where('membership_number', $request->membership_number);
+        }
+
+        if ($request->full_name) {
+            $models->where('full_name', 'like', $request->full_name . '%');
+        }
+
+        if ($request->national_id) {
+            $models->where('national_id', $request->national_id);
+        }
+
+        if ($request->first_name) {
+            $models->where('first_name', 'like', $request->first_name . '%');
+        }
+
+        if ($request->second_name) {
+            $models->where('second_name', 'like', $request->second_name . '%');
+        }
+
+        if ($request->third_name) {
+            $models->where('third_name', 'like', $request->third_name . '%');
+        }
+
+        if ($request->last_name) {
+            $models->where('last_name', 'like', $request->last_name . '%');
+        }
+
+        if ($request->family_name) {
+            $models->where('family_name', 'like', $request->family_name . '%');
+        }
+
+        if ($request->year)
+        {
+            $models->whereRelation('lastCmTransaction',function ($q) use ($request){
+                $q->where('year',$request->year);
+            });
+        }
+        if (isset($request->gender) &&($request->gender == 0 || $request->gender == 1)) {
+            $models->where('gender', $request->gender);
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        }  else {
             return ['data' => $models->get(), 'paginate' => false];
         }
     }

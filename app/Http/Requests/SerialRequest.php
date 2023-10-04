@@ -46,6 +46,7 @@ class SerialRequest extends FormRequest
             ],
             "name" => "nullable|max:151|string",
             "name_e" => "nullable|max:151|string",
+            "gender" => "nullable",
         ];
     }
 }

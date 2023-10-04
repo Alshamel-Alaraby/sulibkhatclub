@@ -3,6 +3,7 @@
 namespace App\Repositories\Employee;
 
 use App\Models\Employee;
+use App\Models\GeneralEmployeeManager;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeRepository implements EmployeeInterface
@@ -66,6 +67,10 @@ class EmployeeRepository implements EmployeeInterface
                 $model->plans()->sync($request->plans);
             }
 
+            if ($request->manager_ids) {
+                $model->managers()->attach($request->manager_ids);
+            }
+
             return $model;
         });
     }
@@ -78,6 +83,10 @@ class EmployeeRepository implements EmployeeInterface
             if ($request->plans) {
                 $model->plans()->sync($request->plans);
             }
+
+            if ($request->manager_ids) {
+                $model->managers()->sync($request->manager_ids);
+            }
         });
 
     }
@@ -85,6 +94,10 @@ class EmployeeRepository implements EmployeeInterface
     public function delete($id)
     {
         $model = $this->find($id);
+        $managers = GeneralEmployeeManager::where('employee_id', $model->id)->get();
+        foreach ($managers as $manager) {
+            $manager->delete();
+        }
         $model->delete();
     }
 
@@ -171,8 +184,15 @@ class EmployeeRepository implements EmployeeInterface
         if ($request->manager_id) {
             $models->where('manager_id', $request->manager_id);
         }
+
+        if ($request->department_id) {
+            $models->where('department_id', $request->department_id);
+        }
         if ($request->manage_others) {
             $models->where('manage_others', $request->manage_others);
+        }
+        if ($request->department_id) {
+            $models->where('department_id', $request->department_id);
         }
         if ($request->id) {
             $models->where(function ($query) use ($request) {

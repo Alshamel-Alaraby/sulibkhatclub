@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'users'], function () {
     Route::controller(\App\Http\Controllers\User\UserController::class)->group(function () {
         Route::post("login", 'login');
+        Route::get("test", 'ahmed');
     });
 });
 
@@ -243,6 +244,18 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::post('/', 'create')->name('transactions.create');
             Route::put('/{id}', 'update')->name('transactions.update');
             Route::delete('/{id}', 'delete')->name('transactions.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
+    Route::group(['prefix' => 'messages'], function () {
+        Route::controller(\App\Http\Controllers\MessageController::class)->group(function () {
+            Route::get('/', 'all')->name('messages.index');
+            Route::get('logs/{id}', 'logs')->name('messages.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('messages.create');
+            Route::put('/{id}', 'update')->name('messages.update');
+            Route::delete('/{id}', 'delete')->name('messages.destroy');
             Route::post("bulk-delete", "bulkDelete");
         });
     });
@@ -969,3 +982,4 @@ Route::group(['prefix' => 'backups'], function () {
         Route::post('/', 'create')->name('backups.create');
     });
 });
+

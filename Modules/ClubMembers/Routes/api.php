@@ -52,6 +52,7 @@ Route::prefix('club-members')->group(function () {
 
     // members routes
     Route::group(['prefix' => 'members'], function () {
+        Route::get('/getMemberForMultiSubscription', 'CmMemberController@getMemberForMultiSubscription')->name('cm-members.getMemberForMultiSubscription');
         Route::get('/report-to-members', 'CmMemberController@reportToMembers')->name('cm-members.report-to-members');
         Route::get('get-sponsors', 'CmMemberController@getSponsors')->name('cm-members.getSponsors');
         Route::get('/report-cm-member', 'CmMemberController@getReportCmMember');
@@ -86,6 +87,7 @@ Route::prefix('club-members')->group(function () {
     });
     // member-requests routes
     Route::group(['prefix' => 'member-requests'], function () {
+        Route::get('/checkNationalId', 'CmMemberRequestController@checkNationalId')->name('cm-members.checkNationalId');
 
         Route::get('/', 'CmMemberRequestController@all')->name('cm-members.all');
         Route::get('/logs/{id}', 'CmMemberRequestController@logs')->name('cm-member-requests.logs');
@@ -94,7 +96,6 @@ Route::prefix('club-members')->group(function () {
         Route::put('/{id}', 'CmMemberRequestController@update')->name('cm-member-requests.update');
         Route::post("/bulk-delete", "CmMemberRequestController@bulkDelete");
         Route::delete('/{id}', 'CmMemberRequestController@delete')->name('cm-member-requests.delete');
-
     });
 
     // financial status routes

@@ -52,6 +52,7 @@ export default {
       per_page: 50,
       search: "",
         member_request_id: "",
+        checkMembers: "",
       debounce: {},
       enabled3: true,
       membersPagination: {},
@@ -331,11 +332,11 @@ export default {
           return this.isRequired("applying_date");
         }),
       },
-      applying_number: {
-        required: requiredIf(function (model) {
-          return this.isRequired("applying_number");
-        }),
-      },
+      // applying_number: {
+      //   required: requiredIf(function (model) {
+      //     return this.isRequired("applying_number");
+      //   }),
+      // },
     },
   },
   watch: {
@@ -743,7 +744,6 @@ export default {
     AddSubmit() {
       this.$v.create.$touch();
       this.create.phone_code = this.codeCountry;
-
       if (this.$v.create.$invalid) {
         return;
       } else {
@@ -765,6 +765,7 @@ export default {
                 timer: 1500,
               });
             }, 500);
+              this.$bvModal.hide(`check_national_id`);
             this.member_request_id = res.data.data.id;
           })
           .catch((err) => {
@@ -943,7 +944,31 @@ export default {
       showSubscriptionModal()
       {
           this.$bvModal.show("add_subscription");
-      }
+      },
+      async checkNationalId() {
+          this.isLoader = true;
+          await adminApi
+              .get(`/club-members/member-requests/checkNationalId?national_id=${this.create.national_id}`)
+              .then((res) => {
+                  this.isLoader = false;
+                  let l = res.data;
+                  if (l)
+                  {
+                      this.$bvModal.show("check_national_id");
+                      this.checkMembers = l;
+                  }else {
+                      this.AddSubmit();
+                  }
+
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              });
+      },
   },
 };
 </script>
@@ -1324,7 +1349,7 @@ export default {
                       type="submit"
                       class="mx-1"
                       v-if="!isLoader"
-                      @click.prevent="AddSubmit"
+                      @click.prevent="checkNationalId"
                     >
                       {{ $t("general.Add") }}
                     </b-button>
@@ -1883,7 +1908,252 @@ export default {
               </form>
             </b-modal>
             <!--  /create   -->
-
+              <!--  check_national_id   -->
+              <b-modal
+                  id="check_national_id"
+                  :title="$t('general.WarningThisMemberAlreadyExists')"
+                  title-class="font-18"
+                  body-class="p-4 "
+                  :hide-footer="true"
+              >
+                  <form>
+                      <div class="mb-3 d-flex justify-content-end">
+                          <template v-if="!is_disabled && checkMembers && checkMembers.status && checkMembers.status.id != 1">
+                              <b-button
+                                  variant="success"
+                                  type="submit"
+                                  class="mx-1"
+                                  v-if="!isLoader"
+                                  @click.prevent="AddSubmit"
+                              >
+                                  {{ $t("general.Add") }}
+                              </b-button>
+                              <b-button variant="success" class="mx-1" disabled v-else>
+                                  <b-spinner small></b-spinner>
+                                  <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                              </b-button>
+                          </template>
+                          <b-button
+                              @click.prevent="$bvModal.hide(`check_national_id`)"
+                              variant="danger"
+                              type="button"
+                          >
+                              {{ $t("general.Cancel") }}
+                          </b-button>
+                      </div>
+                      <div class="row" v-if="checkMembers">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_membership_number") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      v-model="checkMembers.membership_number"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.name") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      v-model="checkMembers.full_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.birth_date">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_birth_date") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      v-model="checkMembers.birth_date"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.gender">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_gender") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.gender ? parseInt(checkMembers.gender) == 1 ? $t('general.male') : $t('general.female') : '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.membership_date">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_membership_date") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.membership_date ? formatDate(checkMembers.membership_date) : '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.financial_status_id">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("financial_status") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.financial_status ? $i18n.locale == 'ar'? checkMembers.financial_status.name: checkMembers.financial_status.name_e: '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.member_status_id">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.status") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.status ? $i18n.locale == 'ar'? checkMembers.status.name: checkMembers.status.name_e: '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.last_cm_transaction">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.LstPayDate") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.last_cm_transaction ? formatDate(checkMembers.last_cm_transaction.date): '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.last_cm_transaction">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.ReceiptNumber") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.last_cm_transaction ? checkMembers.last_cm_transaction.document_no: '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.last_cm_transaction">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.ForAYear") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.last_cm_transaction ? checkMembers.last_cm_transaction.year: '---'"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.national_id">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_national_id") }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.national_id"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.home_phone">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_home_phone")  }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.home_phone"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.home_address">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_home_address")  }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.home_address"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.work_phone">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_work_phone")  }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.work_phone"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.job">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_job")  }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.job"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-6" v-if="checkMembers.degree">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_degree")  }}
+                                  </label>
+                                  <input
+                                      :disabled="true"
+                                      :value="checkMembers.degree"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+              </b-modal>
+              <!--  /check_national_id   -->
             <!-- start .table-responsive-->
             <div
               class="table-responsive mb-3 custom-table-theme position-relative"
@@ -2330,25 +2600,17 @@ export default {
                                 </label>
                                 <input
                                     :disabled="true"
-                                  v-model="$v.edit.applying_number.$model"
+                                  v-model="edit.applying_number"
                                   class="form-control"
                                   type="number"
                                   :class="{
-                                    'is-invalid':
-                                      $v.edit.applying_number.$error ||
-                                      errors.applying_number,
-                                    'is-valid':
-                                      !$v.edit.applying_number.$invalid &&
-                                      !errors.applying_number,
+                                    'is-invalid':errors.applying_number,
+                                    'is-valid':!errors.applying_number,
                                   }"
                                 />
                                 <template v-if="errors.applying_number">
-                                  <ErrorMessage
-                                    v-for="(
-                                      errorMessage, index
-                                    ) in errors.applying_number"
-                                    :key="index"
-                                    >{{ errorMessage }}
+                                  <ErrorMessage v-for="( errorMessage, index ) in errors.applying_number" :key="index">
+                                      {{ errorMessage }}
                                   </ErrorMessage>
                                 </template>
                               </div>

@@ -242,6 +242,8 @@ Route::prefix('real-estate')->group(function () {
 
     // Unit Type
     Route::group(['prefix' => 'unit-type'], function () {
+        Route::get('/get-drop-down', 'RlstUnitTypeController@getDropDown')->name('rlst-unit-type.getDropDown');
+
         Route::get('/', 'RlstUnitTypeController@all')->name('rlst-unit-type.all');
         Route::post('/', 'RlstUnitTypeController@create')->name('rlst-unit-type.create');
         Route::put('/{id}', 'RlstUnitTypeController@update')->name('rlst-unit-type.update');
@@ -253,6 +255,8 @@ Route::prefix('real-estate')->group(function () {
 
     // Unit Type
     Route::group(['prefix' => 'finishing'], function () {
+        Route::get('/get-drop-down', 'RlstFinishingController@getDropDown')->name('rlst-unit-type.getDropDown');
+
         Route::get('/', 'RlstFinishingController@all')->name('rlst-finishing.all');
         Route::post('/', 'RlstFinishingController@create')->name('rlst-finishing.create');
         Route::put('/{id}', 'RlstFinishingController@update')->name('rlst-finishing.update');
@@ -264,6 +268,8 @@ Route::prefix('real-estate')->group(function () {
 
     // view
     Route::group(['prefix' => 'view'], function () {
+        Route::get('/get-drop-down', 'RlstViewController@getDropDown')->name('rlst-unit-type.getDropDown');
+
         Route::get('/', 'RlstViewController@all')->name('rlst-view.all');
         Route::post('/', 'RlstViewController@create')->name('rlst-view.create');
         Route::put('/{id}', 'RlstViewController@update')->name('rlst-view.update');

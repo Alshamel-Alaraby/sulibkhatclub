@@ -23,6 +23,7 @@ class Serial extends Model
         "branch_id",
         "name",
         "name_e",
+        "gender",
     ];
 
     public function scopeData($query)
@@ -37,6 +38,7 @@ class Serial extends Model
             "branch_id",
             "name",
             "name_e",
+            "gender",
         )->with(['branch:id,name,name_e','document:id,name,name_e','restartPeriod:id,name,name_e']);
     }
     // protected $casts = [

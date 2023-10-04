@@ -52,7 +52,8 @@ export default {
             isLoader: false,
             create: {
                 sponsor_id: null,
-                date: '',
+                start_date: '',
+                end_date: '',
             },
             errors: {},
             is_disabled: false,
@@ -69,6 +70,7 @@ export default {
                 serial_number: true,
                 cm_member_id: true,
                 document_no: true,
+                date: true,
                 serial_id: true,
                 year: true,
                 amount: true,
@@ -88,7 +90,8 @@ export default {
     validations: {
         create: {
             sponsor_id: {required},
-            date: {required},
+            start_date: {required},
+            end_date: {required},
         },
     },
     watch: {
@@ -133,9 +136,13 @@ export default {
             } else {
                 this.isLoader = true;
 
-                let date = this.create.date;
-                let parts = date.split("-");
-                let convertedDate = parts[2] + "-" + parts[1] + "-" + parts[0];
+                let start_date = this.create.start_date;
+                let parts_start_date = start_date.split("-");
+                let converted_start_date = parts_start_date[2] + "-" + parts_start_date[1] + "-" + parts_start_date[0];
+
+                let end_date = this.create.end_date;
+                let parts_end_date = end_date.split("-");
+                let converted_end_date = parts_end_date[2] + "-" + parts_end_date[1] + "-" + parts_end_date[0];
 
                 let _filterSetting = [...this.filterSetting];
                 let index = this.filterSetting.indexOf("cm_member_id");
@@ -152,7 +159,7 @@ export default {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&date=${convertedDate??''}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -179,9 +186,13 @@ export default {
                 if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
                     this.isLoader = true;
 
-                    let date = this.create.date;
-                    let parts = date.split("-");
-                    let convertedDate = parts[2] + "-" + parts[1] + "-" + parts[0];
+                    let start_date = this.create.start_date;
+                    let parts_start_date = start_date.split("-");
+                    let converted_start_date = parts_start_date[2] + "-" + parts_start_date[1] + "-" + parts_start_date[0];
+
+                    let end_date = this.create.end_date;
+                    let parts_end_date = end_date.split("-");
+                    let converted_end_date = parts_end_date[2] + "-" + parts_end_date[1] + "-" + parts_end_date[0];
 
                     let _filterSetting = [...this.filterSetting];
                     let index = this.filterSetting.indexOf("cm_member_id");
@@ -197,7 +208,7 @@ export default {
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
-                    adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&date=${convertedDate??''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -292,8 +303,21 @@ export default {
         },
         printInv(data){
             this.dataInv = data
-        }
+        },
+        changeDate()
+        {
+            console.log(123)
+            if (this.create.start_date) {
+                const parts = this.create.start_date.split('-');
+                const day = parts[0].padStart(2, '0');
+                const month = parts[1].padStart(2, '0');
+                const year = parts[2];
 
+                this.create.start_date = `${day}-${month}-${year}`;
+            } else {
+                this.create.start_date = '';
+            }
+        }
     },
 };
 </script>
@@ -409,6 +433,9 @@ export default {
                                             <b-form-checkbox v-model="setting.document_no" class="mb-1">
                                                 {{ $t("general.DocumentNumber") }}
                                             </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date" class="mb-1">
+                                                {{ $t("general.PaymentDate") }}
+                                            </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.serial_id" class="mb-1">
                                                 {{ $t("general.serialName") }}
                                             </b-form-checkbox>
@@ -500,6 +527,7 @@ export default {
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("sponsor") }}
+                                                <span class="text-danger">*</span>
                                             </label>
                                             <multiselect v-model="create.sponsor_id"
                                                          :options="sponsors.map((type) => type.id)"
@@ -519,18 +547,62 @@ export default {
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ $t("general.date") }}
+                                                {{ $t('general.fromDate') }}
+                                                <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
                                                 type="date"
-                                                v-model="create.date"
+                                                v-model="$v.create.start_date.$model"
                                                 placeholder="DD-MM-YYYY"
                                                 format="DD-MM-YYYY"
                                                 valueType="format"
                                                 :confirm="false"
+                                                :class="{
+                                                    'is-invalid':
+                                                        $v.create.start_date.$error ||
+                                                        errors.start_date,
+                                                    'is-valid':
+                                                        !$v.create.start_date
+                                                            .$invalid &&
+                                                        !errors.start_date,
+                                                    }"
                                             ></date-picker>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">
+
+                                            <template v-if="errors.start_date">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.start_date"
+                                                              :key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.toDate') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.end_date.$model"
+                                                placeholder="DD-MM-YYYY"
+                                                format="DD-MM-YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{
+                                                    'is-invalid':
+                                                        $v.create.end_date.$error ||
+                                                        errors.end_date,
+                                                    'is-valid':
+                                                        !$v.create.end_date
+                                                            .$invalid &&
+                                                        !errors.end_date,
+                                                    }"
+                                            ></date-picker>
+
+                                            <template v-if="errors.end_date">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.end_date"
+                                                              :key="index">
                                                     {{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
@@ -581,10 +653,23 @@ export default {
                                             <span>{{ $t("general.DocumentNumber") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="transactions.sort(sortString($i18n.locale == 'ar' ? 'document_no' : 'document_no'))"
+                                                   @click="transactions.sort(sortString('document_no'))"
                                                 ></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click=" transactions.sort(sortString($i18n.locale == 'ar' ? '-document_no' : '-document_no'))"
+                                                   @click=" transactions.sort(sortString('-document_no'))"
+                                                ></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.date">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.PaymentDate") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="transactions.sort(sortString('date'))"
+                                                ></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click=" transactions.sort(sortString('-date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -668,6 +753,9 @@ export default {
                                     </td>
                                     <td v-if="setting.document_no">
                                         <h5 class="m-0 font-weight-normal">{{ data.document_no }}</h5>
+                                    </td>
+                                    <td v-if="setting.date">
+                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
                                     </td>
                                     <td v-if="setting.serial_id">
                                         <h5 class="m-0 font-weight-normal">

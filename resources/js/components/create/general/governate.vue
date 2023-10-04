@@ -396,7 +396,7 @@ export default {
       this.isLoader = true;
 
        adminApi
-        .get(`/countries?is_active=active`)
+        .get(`/countries/get-drop-down?is_active=active`)
         .then((res) => {
           let l = res.data.data;
             if (this.isPermission("create Country")) {

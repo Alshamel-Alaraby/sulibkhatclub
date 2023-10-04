@@ -814,7 +814,7 @@ export default {
             this.isLoader = true;
 
             adminApi
-                .get(`/locations`)
+                .get(`/locations/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Location')){
@@ -839,7 +839,7 @@ export default {
             this.isLoader = true;
 
             adminApi
-                .get(`/periodic-maintenances`)
+                .get(`/periodic-maintenances/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Periodic Maintenances')){

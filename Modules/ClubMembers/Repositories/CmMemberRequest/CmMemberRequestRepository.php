@@ -120,5 +120,15 @@ class CmMemberRequestRepository implements CmMemberRequestInterface
         $model->delete();
     }
 
+    public function checkNationalId($request)
+    {
+        $member = CmMember::where('national_id',$request->national_id)->with(['status','lastCmTransaction','financialStatus'])->first();
+        if ($member)
+        {
+            return $member;
+        }
+        return '';
+    }
+
 
 }

@@ -1,16 +1,14 @@
 <script>
 import Layout from "../../layouts/main";
-import permissionGuard from "../../../helper/permission";
-
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
-    required,
-    minLength,
-    maxLength,
-    decimal,
-    minValue, requiredIf,
+  required,
+  minLength,
+  maxLength,
+  decimal,
+  minValue,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
@@ -19,9 +17,11 @@ import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
+import Multiselect from "vue-multiselect";
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -38,10 +38,10 @@ export default {
     Switches,
     ErrorMessage,
     loader,
+    Multiselect
   },
   data() {
     return {
-        fields: [],
       per_page: 50,
       search: "",
       debounce: {},
@@ -59,6 +59,7 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+        managers: []
       },
       edit: {
         name: "",
@@ -68,8 +69,10 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+        managers: []
       },
       company_id: null,
+      employees: [],
       errors: {},
       isCheckAll: false,
       checkAll: [],
@@ -88,50 +91,24 @@ export default {
   },
   validations: {
     create: {
-        name: { required: requiredIf(function (model) {
-                return this.isRequired("name");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-        name_e: { required: requiredIf(function (model) {
-                return this.isRequired("name_e");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-      start_from: { required: requiredIf(function (model) {
-              return this.isRequired("start_from");
-          })  },
-      end_date: { required: requiredIf(function (model) {
-              return this.isRequired("end_date");
-          })  },
-      amount: { required: requiredIf(function (model) {
-              return this.isRequired("amount");
-          })  },
-      from_hour: { required: requiredIf(function (model) {
-              return this.isRequired("from_hour");
-          })  },
-      to_hour: { required: requiredIf(function (model) {
-              return this.isRequired("to_hour");
-          })  },
+      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      start_from: { required },
+      end_date: { required },
+      amount: { required },
+      from_hour: { required },
+      to_hour: { required },
+      managers: {}
     },
     edit: {
-        name: { required: requiredIf(function (model) {
-                return this.isRequired("name");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-        name_e: { required: requiredIf(function (model) {
-                return this.isRequired("name_e");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-        start_from: { required: requiredIf(function (model) {
-                return this.isRequired("start_from");
-            })  },
-        end_date: { required: requiredIf(function (model) {
-                return this.isRequired("end_date");
-            })  },
-        amount: { required: requiredIf(function (model) {
-                return this.isRequired("amount");
-            })  },
-        from_hour: { required: requiredIf(function (model) {
-                return this.isRequired("from_hour");
-            })  },
-        to_hour: { required: requiredIf(function (model) {
-                return this.isRequired("to_hour");
-            })  },
+      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      start_from: { required },
+      end_date: { required },
+      amount: { required },
+      from_hour: { required },
+      to_hour: { required },
+      managers: {}
     },
   },
   watch: {
@@ -167,46 +144,15 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
-    this.getCustomTableFields();
     this.getData();
   },
   beforeRouteEnter(to, from, next) {
         next((vm) => {
-      return permissionGuard(vm, "Request Type", "all requestTypes hr");
-    });
-
+            return permissionGuard(vm, "Request Type", "all requestTypes Hr");
+        });
   },
   methods: {
-      getCustomTableFields() {
-          adminApi
-              .get(`/customTable/table-columns/hr_requests_types`)
-              .then((res) => {
-                  this.fields = res.data;
-              })
-              .catch((err) => {
-                  Swal.fire({
-                      icon: "error",
-                      title: `${this.$t("general.Error")}`,
-                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                  });
-              })
-              .finally(() => {
-                  this.isLoader = false;
-              });
-      },
-      isVisible(fieldName) {
-          let res = this.fields.filter((field) => {
-              return field.column_name == fieldName;
-          });
-          return res.length > 0 && res[0].is_visible == 1 ? true : false;
-      },
-      isRequired(fieldName) {
-          let res = this.fields.filter((field) => {
-              return field.column_name == fieldName;
-          });
-          return res.length > 0 && res[0].is_required == 1 ? true : false;
-      },
-      isPermission(item) {
+    isPermission(item) {
       if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
       }
@@ -435,6 +381,7 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+        managers: []
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -446,7 +393,7 @@ export default {
     /**
      *  hidden Modal (create)
      */
-    resetModal() {
+    async resetModal() {
       this.create = {
         name: "",
         name_e: "",
@@ -455,7 +402,11 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+        managers: []
       };
+
+      await this.getEmployees();
+
       this.$nextTick(() => {
         this.$v.$reset();
       });
@@ -473,6 +424,7 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+        managers: []
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -575,7 +527,7 @@ export default {
     /**
      *   show Modal (edit)
      */
-    resetModalEdit(id) {
+    async resetModalEdit(id) {
       let requestTypes = this.requestTypes.find((e) => id == e.id);
       this.edit.name = requestTypes.name;
       this.edit.name_e = requestTypes.name_e;
@@ -584,6 +536,10 @@ export default {
       this.edit.amount = requestTypes.amount;
       this.edit.from_hour = requestTypes.from_hour;
       this.edit.to_hour = requestTypes.to_hour;
+      await this.getEmployees();
+      requestTypes.managers.forEach(e => {
+          this.edit.managers.push(e.id);
+      });
       this.errors = {};
     },
     /**
@@ -599,6 +555,7 @@ export default {
         amount: 1,
         from_hour: 1,
         to_hour: 1,
+          managers: []
       };
     },
     /*
@@ -641,6 +598,20 @@ export default {
         this.enabled3 = true;
       }, 100);
     },
+      async getEmployees() {
+              await adminApi
+                  .get(`/employees?manage_others=1`)
+                  .then((res) => {
+                      this.employees = res.data.data;
+                  })
+                  .catch((err) => {
+                      Swal.fire({
+                          icon: "error",
+                          title: `${this.$t("general.Error")}`,
+                          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                      });
+                  });
+      },
   },
 };
 </script>
@@ -667,15 +638,13 @@ export default {
                     class="btn-block setting-search"
                   >
                     <b-form-checkbox
-                      v-if="isVisible('name')"
                       v-model="filterSetting"
                       value="name"
                       class="mb-1"
                       >{{ getCompanyKey("request_type_name_ar") }}
                     </b-form-checkbox>
                     <b-form-checkbox
-                        v-if="isVisible('name_e')"
-                        v-model="filterSetting"
+                      v-model="filterSetting"
                       value="name_e"
                       class="mb-1"
                     >
@@ -796,10 +765,10 @@ export default {
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
-                      <b-form-checkbox v-if="isVisible('name')"  v-model="setting.name" class="mb-1"
+                      <b-form-checkbox v-model="setting.name" class="mb-1"
                         >{{ getCompanyKey("request_type_name_ar") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-if="isVisible('name_e')"  v-model="setting.name_e" class="mb-1">
+                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
                         {{ getCompanyKey("request_type_name_en") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
@@ -922,11 +891,11 @@ export default {
                 <b-tabs nav-class="nav-tabs nav-bordered">
                   <b-tab :title="$t('general.DataEntry')" active>
                     <div class="row">
-                      <div class="col-md-6" v-if="isVisible('name')" >
+                      <div class="col-md-6">
                         <div class="form-group">
                           <label for="field-1" class="control-label">
                             {{ getCompanyKey("request_type_name_ar") }}
-                            <span v-if="isRequired('name')"  class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <div dir="rtl">
                             <input
@@ -969,11 +938,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-6" v-if="isVisible('name_e')" >
+                      <div class="col-md-6">
                         <div class="form-group">
                           <label for="field-2" class="control-label">
                             {{ getCompanyKey("request_type_name_en") }}
-                            <span v-if="isRequired('name_e')"  class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <div dir="ltr">
                             <input
@@ -1020,11 +989,11 @@ export default {
                   </b-tab>
                   <b-tab :title="$t('general.options')">
                     <div class="row">
-                      <div class="col-md-4" v-if="isVisible('start_from')" >
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("request_type_start_from") }}
-                            <span v-if="isRequired('start_from')"  class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <b-form-group
                             :class="{
@@ -1060,11 +1029,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4" v-if="isVisible('end_date')">
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("request_type_end_date") }}
-                            <span  v-if="isRequired('end_date')" class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <b-form-group
                             :class="{
@@ -1099,11 +1068,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4" v-if="isVisible('amount')">
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("request_type_amount") }}
-                            <span v-if="isRequired('amount')" class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <b-form-group
                             :class="{
@@ -1137,11 +1106,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4" v-if="isVisible('from_hour')">
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("request_type_from_hour") }}
-                            <span v-if="isRequired('from_hour')" class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <b-form-group
                             :class="{
@@ -1176,11 +1145,11 @@ export default {
                           </template>
                         </div>
                       </div>
-                      <div class="col-md-4"  v-if="isVisible('to_hour')">
+                      <div class="col-md-4">
                         <div class="form-group">
                           <label class="mr-2">
                             {{ getCompanyKey("request_type_to_hour") }}
-                            <span  v-if="isRequired('to_hour')" class="text-danger">*</span>
+                            <span class="text-danger">*</span>
                           </label>
                           <b-form-group
                             :class="{
@@ -1214,6 +1183,31 @@ export default {
                           </template>
                         </div>
                       </div>
+                      <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="mr-2">
+                                    {{ getCompanyKey("request_type_managers") }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <multiselect
+                                    :multiple="true"
+                                    v-model="create.managers"
+                                    :options="employees.map((type) => type.id)"
+                                    :custom-label="
+                                    (opt) => $i18n.locale == 'ar'?
+                                      employees.find((x) => x.id == opt).name:employees.find((x) => x.id == opt).name_e
+                                  "
+                                >
+                                </multiselect>
+                                <template v-if="errors.managers">
+                                    <ErrorMessage
+                                        v-for="(errorMessage, index) in errors.managers"
+                                        :key="index"
+                                    >{{ errorMessage }}</ErrorMessage
+                                    >
+                                </template>
+                            </div>
+                        </div>
                     </div>
                   </b-tab>
                 </b-tabs>
@@ -1250,7 +1244,7 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name && isVisible('name')">
+                    <th v-if="setting.name">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("request_type_name_ar") }}</span>
                         <div class="arrow-sort">
@@ -1265,7 +1259,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e  && isVisible('name_e')">
+                    <th v-if="setting.name_e">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("request_type_name_en") }}</span>
                         <div class="arrow-sort">
@@ -1314,10 +1308,10 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name  && isVisible('name')">
+                    <td v-if="setting.name">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e  && isVisible('name_e')">
+                    <td v-if="setting.name_e">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
                     <td v-if="enabled3" class="do-not-print">
@@ -1413,13 +1407,13 @@ export default {
                           <b-tabs nav-class="nav-tabs nav-bordered">
                             <b-tab :title="$t('general.DataEntry')" active>
                               <div class="row">
-                                <div class="col-md-6" v-if="isVisible('name')">
+                                <div class="col-md-6">
                                   <div class="form-group">
                                     <label for="field-1" class="control-label">
                                       {{
                                         getCompanyKey("request_type_name_ar")
                                       }}
-                                      <span v-if="isRequired('name')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <div dir="rtl">
                                       <input
@@ -1465,13 +1459,13 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div v-if="isVisible('name_e')" class="col-md-6">
+                                <div class="col-md-6">
                                   <div class="form-group">
                                     <label for="field-2" class="control-label">
                                       {{
                                         getCompanyKey("request_type_name_en")
                                       }}
-                                      <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <div dir="ltr">
                                       <input
@@ -1522,13 +1516,13 @@ export default {
                             </b-tab>
                             <b-tab :title="$t('general.options')">
                               <div class="row">
-                                <div class="col-md-4" v-if="isVisible('start_from')">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
                                         getCompanyKey("request_type_start_from")
                                       }}
-                                      <span v-if="isRequired('start_from')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <b-form-group
                                       :class="{
@@ -1570,13 +1564,13 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4" v-if="isVisible('end_date')">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
                                         getCompanyKey("request_type_end_date")
                                       }}
-                                      <span v-if="isRequired('end_date')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <b-form-group
                                       :class="{
@@ -1618,11 +1612,11 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4" v-if="isVisible('amount')">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{ getCompanyKey("request_type_amount") }}
-                                      <span v-if="isRequired('amount')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <b-form-group
                                       :class="{
@@ -1664,13 +1658,13 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4" v-if="isVisible('from_hour')">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
                                         getCompanyKey("request_type_from_hour")
                                       }}
-                                      <span v-if="isRequired('from_hour')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <b-form-group
                                       :class="{
@@ -1712,13 +1706,13 @@ export default {
                                     </template>
                                   </div>
                                 </div>
-                                <div class="col-md-4" v-if="isVisible('to_hour')">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                     <label class="mr-2">
                                       {{
                                         getCompanyKey("request_type_to_hour")
                                       }}
-                                      <span  v-if="isRequired('to_hour')" class="text-danger">*</span>
+                                      <span class="text-danger">*</span>
                                     </label>
                                     <b-form-group
                                       :class="{
@@ -1760,6 +1754,31 @@ export default {
                                     </template>
                                   </div>
                                 </div>
+                                <div class="col-md-4">
+                                      <div class="form-group">
+                                          <label class="mr-2">
+                                              {{ getCompanyKey("request_type_managers") }}
+                                              <span class="text-danger">*</span>
+                                          </label>
+                                          <multiselect
+                                              :multiple="true"
+                                              v-model="edit.managers"
+                                              :options="employees.map((type) => type.id)"
+                                              :custom-label="
+                                                (opt) => $i18n.locale == 'ar'?
+                                                  employees.find((x) => x.id == opt).name:employees.find((x) => x.id == opt).name_e
+                                              "
+                                          >
+                                          </multiselect>
+                                          <template v-if="errors.managers">
+                                              <ErrorMessage
+                                                  v-for="(errorMessage, index) in errors.managers"
+                                                  :key="index"
+                                              >{{ errorMessage }}</ErrorMessage
+                                              >
+                                          </template>
+                                      </div>
+                                  </div>
                               </div>
                             </b-tab>
                           </b-tabs>

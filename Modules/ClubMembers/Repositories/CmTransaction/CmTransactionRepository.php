@@ -47,9 +47,10 @@ class CmTransactionRepository implements CmTransactionInterface
            $models->where('sponsor_id',$request->sponsor_id);
         }
 
-        if ($request->date)
+        if ($request->start_date && $request->end_date)
         {
-            $models->whereDate('date',$request->date);
+            $models->whereDate('date', ">=", $request->start_date)
+                ->whereDate('date', "<=", $request->end_date);
         }
 
         if ($request->per_page) {
@@ -193,20 +194,20 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function reportSponsorPaidTransactions($request)
     {
-        
 
-        $models = 
+
+        $models =
         $this->model->filter($request)
         ->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-        
+
 
         // request has ? => sponsor_id, date
 
         if($request->sponsor_id && $request->date)
-        {      
+        {
             $models ->where('sponsor_id', $request->sponsor_id) ->where('date', $request->date);
         }
-        
+
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

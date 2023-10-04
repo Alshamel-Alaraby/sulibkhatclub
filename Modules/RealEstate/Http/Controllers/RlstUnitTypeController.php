@@ -2,7 +2,7 @@
 
 namespace Modules\RealEstate\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstUnitType;
@@ -96,4 +96,19 @@ class RlstUnitTypeController extends Controller
         });
         return responseJson(200, 'deleted');
     }
+
+    public function getDropDown(Request $request)
+    {
+
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
 }

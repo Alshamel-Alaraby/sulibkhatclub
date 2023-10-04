@@ -1,7 +1,5 @@
 <script>
 import Layout from "../../layouts/main";
-import permissionGuard from "../../../helper/permission";
-
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
@@ -22,6 +20,7 @@ import {
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -78,6 +77,8 @@ export default {
         net: true,
         benefits: true,
         deductions: true,
+          benefits_number: true,
+          deductions_number: true
       },
       is_disabled: false,
       filterSetting: [
@@ -138,32 +139,11 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  // updated() {
-  //   $(function () {
-  //     $(".englishInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return true;
-  //       if (97 <= ew && ew <= 122) return true;
-  //       return false;
-  //     });
-  //     $(".arabicInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return false;
-  //       if (65 <= ew && ew <= 90) return false;
-  //       if (97 <= ew && ew <= 122) return false;
-  //       return true;
-  //     });
-  //   });
-  // },
-  beforeRouteEnter(to, from, next) {
+    beforeRouteEnter(to, from, next) {
         next((vm) => {
-      return permissionGuard(vm, "Payroll Statement", "all payrollsStatement hr");
-    });
-
-  },
+            return permissionGuard(vm, "Payroll Statement", "all payrollsStatement Hr");
+        });
+    },
   methods: {
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
@@ -803,6 +783,16 @@ export default {
                       <b-form-checkbox v-model="setting.net" class="mb-1">
                         {{ getCompanyKey("payroll_statement_net") }}
                       </b-form-checkbox>
+                        <b-form-checkbox
+                            v-model="setting.deductions_number"
+                            class="mb-1"
+                        >
+                            {{ getCompanyKey("payroll_statement_deductions_number") }}
+                        </b-form-checkbox>
+
+                        <b-form-checkbox v-model="setting.benefits_number" class="mb-1">
+                            {{ getCompanyKey("payroll_statement_benefits_number") }}
+                        </b-form-checkbox>
 
                       <div class="d-flex justify-content-end">
                         <a
@@ -1143,21 +1133,33 @@ export default {
                         </div>
                       </div>
                     </th>
+                    <th v-if="setting.benefits_number">
+                          <div class="d-flex justify-content-center">
+                                <span>{{ getCompanyKey("payroll_statement_benefits_number") }}</span>
+                          </div>
+                      </th>
                     <th v-if="setting.deductions">
-                      <div class="d-flex justify-content-center">
+                          <div class="d-flex justify-content-center">
                         <span>{{
                           getCompanyKey("payroll_statement_deductions")
                         }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="payrolls.sort(sortString('name_e'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="payrolls.sort(sortString('-name_e'))"
-                          ></i>
-                        </div>
+                              <div class="arrow-sort">
+                                  <i
+                                      class="fas fa-arrow-up"
+                                      @click="payrolls.sort(sortString('name_e'))"
+                                  ></i>
+                                  <i
+                                      class="fas fa-arrow-down"
+                                      @click="payrolls.sort(sortString('-name_e'))"
+                                  ></i>
+                              </div>
+                          </div>
+                      </th>
+                    <th v-if="setting.deductions_number">
+                      <div class="d-flex justify-content-center">
+                          <span>
+                              {{ getCompanyKey("payroll_statement_deductions_number") }}
+                          </span>
                       </div>
                     </th>
                     <th v-if="setting.net">
@@ -1248,6 +1250,13 @@ export default {
                         }}
                       </h5>
                     </td>
+                    <td v-if="setting.benefits_number">
+                          <h5 class="m-0 font-weight-normal" v-if="data.benefits">
+                              {{
+                                  data.benefits.reduce(function (acc, obj) { return acc + obj.amount; }, 0)
+                              }}
+                          </h5>
+                      </td>
                     <td v-if="setting.deductions">
                       <h5 class="m-0 font-weight-normal">
                         {{
@@ -1259,6 +1268,14 @@ export default {
                         }}
                       </h5>
                     </td>
+                    <td v-if="setting.deductions_number">
+                          <h5 class="m-0 font-weight-normal" v-if="data.deductions">
+                              {{
+                                  data.deductions.reduce(function (acc, obj) { return acc + obj.amount; }, 0)
+                              }}
+                          </h5>
+                      </td>
+
                     <td v-if="setting.net">
                       <h5 class="m-0 font-weight-normal">{{ data.net }}</h5>
                     </td>

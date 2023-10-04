@@ -130,7 +130,7 @@ export default {
           setting: { lng: true },
           isSetting: true,
         },
-        
+
         // {
         //   isFilter: true,
         //   isSet: true,
@@ -199,9 +199,9 @@ export default {
   methods: {
     filterSearch(fields) {
       let indexC = fields.indexOf("module"),
-        indexG = fields.indexOf("country"),
-        indexCty = fields.indexOf("city"),
-        indexAven = fields.indexOf("avenue"),
+        indexG = fields.indexOf("country_id"),
+        indexCty = fields.indexOf("city_id"),
+        indexAven = fields.indexOf("avenue_id"),
         filter = "";
       if (indexC > -1) {
         fields[indexC] =
@@ -219,7 +219,7 @@ export default {
         fields[indexAven] =
           this.$i18n.locale == "ar" ? "avenue.name" : "avenue.name_e";
       }
-      
+
       for (let i = 0; i < fields.length; ++i) {
         filter += `columns[${i}]=${fields[i]}&`;
       }

@@ -571,7 +571,6 @@ export default {
              adminApi
                 .get(`/priorities/root-nodes`)
                 .then((res) => {
-                    console.log(this.rootNodes);
                     this.rootNodes = res.data;
                 })
                 .catch((err) => {

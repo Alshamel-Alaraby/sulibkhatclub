@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\MangerRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeRequest extends FormRequest
@@ -35,7 +34,7 @@ class EmployeeRequest extends FormRequest
             'customer_handel' => "nullable|in:non_customer,his_customer,all_customer",
             'plans' => "nullable|array",
             'plans.*' => "required|exists:general_salesmen_plans,id",
-//            'manager_id' => ["nullable", 'exists:general_employees,id', new MangerRule()],
+            //            'manager_id' => ["nullable", 'exists:general_employees,id', new MangerRule()],
             'manager_id' => ["nullable", 'exists:general_employees,id'],
             'job_id' => 'nullable|exists:hr_job_title,id',
             'branch_id' => 'nullable|exists:general_branches,id',
@@ -44,9 +43,10 @@ class EmployeeRequest extends FormRequest
             'mobile' => 'nullable|string',
             'email' => 'nullable|email',
             'whatsapp' => 'nullable',
-
-
-
+            'sms' => 'nullable',
+            'att_code' => 'nullable',
+            'manager_ids' => 'nullable|array',
+            'manager_ids.*' => 'nullable|exists:general_employees,id',
 
         ];
     }

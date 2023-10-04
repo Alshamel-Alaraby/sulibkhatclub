@@ -136,6 +136,9 @@ export default {
         membership_number: true,
         applying_number: true,
         financial_status_id: true,
+          PaymentDate: true,
+          document_no: true,
+          ForAYear: true,
       },
       is_disabled: false,
       fullName: '',
@@ -515,7 +518,6 @@ export default {
         .get(`/club-members/sponsers`)
         .then((res) => {
           let l = res.data.data;
-          l.unshift({ id: 0, name: "اضف راعي", name_e: "Add sponsor" });
           this.sponsors = l;
         })
         .catch((err) => {
@@ -778,6 +780,9 @@ export default {
                         class="mb-1"
                         >{{ getCompanyKey("member_national_id") }}
                       </b-form-checkbox>
+                        <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">{{ $t("general.PaymentDate") }}</b-form-checkbox>
+                        <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
+                        <b-form-checkbox v-model="setting.ForAYear" class="mb-1">{{ $t("general.ForAYear") }}</b-form-checkbox>
                       <b-form-checkbox
                         v-model="setting.nationality_number"
                         class="mb-1"
@@ -930,6 +935,11 @@ export default {
                                         </th>
                                         <th>
                                             <div class="d-flex justify-content-center">
+                                                <span>{{ $t('general.ForAYear') }}</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="d-flex justify-content-center">
                                                 <span>{{ $t('general.year_from') }}</span>
                                             </div>
                                         </th>
@@ -964,6 +974,9 @@ export default {
                                     </td>
                                     <td>
                                         {{ data.type  ? data.type == 'subscribe' ? $t('general.subscribe'):$t('general.renew'): '-' }}
+                                    </td>
+                                    <td>
+                                        {{ data.year }}
                                     </td>
                                     <td>
                                         {{ data.date_from ? data.date_from: data.year_from }}
@@ -1029,11 +1042,11 @@ export default {
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
-                            @click="members.sort(sortString('name'))"
+                            @click="members.sort(sortString('membership_number'))"
                           ></i>
                           <i
                             class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-name'))"
+                            @click="members.sort(sortString('-membership_number'))"
                           ></i>
                         </div>
                       </div>
@@ -1145,6 +1158,21 @@ export default {
                         </div>
                       </div>
                     </th>
+                      <th v-if="setting.PaymentDate">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.PaymentDate") }}</span>
+                          </div>
+                      </th>
+                      <th v-if="setting.document_no">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.ReceiptNumber") }}</span>
+                          </div>
+                      </th>
+                      <th v-if="setting.ForAYear">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.ForAYear") }}</span>
+                          </div>
+                      </th>
                     <th v-if="setting.birth_date">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_birth_date") }}</span>
@@ -1428,6 +1456,15 @@ export default {
                     <td v-if="setting.national_id">
                       {{ data.national_id }}
                     </td>
+                      <td v-if="setting.PaymentDate">
+                          {{data.transaction ? formatDate(data.transaction.date) : '---' }}
+                      </td>
+                      <td v-if="setting.document_no">
+                          {{ data.transaction ? data.transaction.document_no : '---' }}
+                      </td>
+                      <td v-if="setting.ForAYear">
+                          {{ data.transaction ? data.transaction.year : '---' }}
+                      </td>
                     <td v-if="setting.birth_date">
                       {{ data.birth_date }}
                     </td>
@@ -2227,7 +2264,6 @@ export default {
                                 {{ getCompanyKey("sponsor") }}
                               </label>
                               <multiselect
-                                disabled
                                 v-model="edit.sponsor_id"
                                 :options="sponsors.map((type) => type.id)"
                                 :custom-label=" (opt) => sponsors.find((x) => x.id == opt)?

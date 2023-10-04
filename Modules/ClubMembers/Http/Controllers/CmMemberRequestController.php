@@ -100,12 +100,9 @@ class CmMemberRequestController extends Controller
     }
 
 
-
-
-
-
-
-
-
+    public function checkNationalId(Request $request)
+    {
+        return $this->modelInterface->checkNationalId($request);
+    }
 
 }

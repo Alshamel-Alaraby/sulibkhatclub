@@ -19,6 +19,8 @@ class Depertment extends Model
         'name_e',
         'supervisors',
         'attentions',
+        'attentions',
+        'company_id',
     ];
 
     public function scopeData($query)

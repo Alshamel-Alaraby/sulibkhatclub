@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Providers;
+use Illuminate\Support\Facades\Validator;
 
 use App\Repositories\Attendant\AttendantInterface;
 use App\Repositories\Attendant\AttendantRepository;
@@ -68,6 +69,8 @@ use App\Repositories\InternalSalesman\InternalSalesmanRepository;
 use App\Repositories\InternalSalesman\InternalSalesmanRepositoryInterface;
 use App\Repositories\ItemBreakDown\ItemBreakDownInterface;
 use App\Repositories\ItemBreakDown\ItemBreakDownRepository;
+use App\Repositories\Message\MessageInterface;
+use App\Repositories\Message\MessageRepository;
 use App\Repositories\Module\ModuleInterface;
 use App\Repositories\Module\ModuleRepository;
 use App\Repositories\PaymentMethod\PaymentMethodInterface;
@@ -226,6 +229,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GeneralItemInterface::class, GeneralItemRepository::class);
 
         $this->app->bind(AttendantInterface::class, AttendantRepository::class);
+        $this->app->bind(MessageInterface::class, MessageRepository::class);
 
 
 
@@ -250,5 +254,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+
+        Validator::extend('max_digits', function ($attribute, $value, $parameters, $validator) {
+            $maxDigits = $parameters[0];
+
+            return strlen((string) $value) <= $maxDigits;
+        });
+
+        Validator::replacer('max_digits', function ($message, $attribute, $rule, $parameters) {
+            return str_replace(':max_digits', $parameters[0], $message);
+        });
+
     }
 }

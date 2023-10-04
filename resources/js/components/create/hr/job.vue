@@ -2,7 +2,7 @@
    <div>
        <!--  create   -->
        <b-modal
-           id="job_create_form"
+           :id="id"
            :title="$t('general.job_create_form')"
            title-class="font-18"
            body-class="p-4 "
@@ -157,6 +157,9 @@ export default {
         },
         defaultsKeys:{
             default:[]
+        },
+        id: {
+            default:'create'
         },
     },
     data() {

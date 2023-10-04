@@ -30,6 +30,7 @@ class CmSponserRequest extends FormRequest
             'parent_id' => 'nullable',
             "company_id" => 'nullable',
             'group_id' => 'nullable|exists:cm_sponsors_group,id',
+            'cm_member_id' => 'nullable|exists:cm_members,id|unique:cm_sponsers,cm_member_id' . ($this->method() == 'PUT' ? ',' . $this->id : '')
         ];
 
     }
@@ -40,6 +41,7 @@ class CmSponserRequest extends FormRequest
             'name.unique' => __('message.name already exists'),
             'name_e.unique' => __('message.name already exists'),
             'parent_id.exists' => __('message.parent not found'),
+            'cm_member_id.unique' => __('العضو موجود بالفعل فى قائمة الرعاه'),
         ];
     }
 

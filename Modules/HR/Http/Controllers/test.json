@@ -2,8 +2,16 @@
     "key": "sdwkelk45454kdsbfdsfds-asan!b$",
     "data": [
         {
-            "from_date": "2023-07-01 00:00:00",
-            "to_date": "2023-07-07 00:00:00"
+            "att_code": 24,
+            "vdate": "2022-06-10 08:02:001",
+            "att_type": 0,
+            "machine_id": 1
+        },
+        {
+            "att_code": 24,
+            "vdate": "2022-06-10 17:05:213",
+            "att_type": 1,
+            "machine_id": 2
         }
     ]
 }

@@ -1,28 +1,28 @@
 <script>
 import Layout from "../../layouts/main";
-import permissionGuard from "../../../helper/permission";
 import PageHeader from "../../../components/general/Page-header";
 import loader from "../../../components/general/loader";
 import translation from "../../../helper/mixin/translation-mixin";
+import permissionGuard from "../../../helper/permission";
 import customTable from "../../../helper/mixin/customTable";
 import successError from "../../../helper/mixin/success&error";
 import crudHelper from "../../../helper/mixin/crudHelper";
-import View from "../../../components/create/realEstate/view";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";
+import ViewCom from "../../../components/create/realEstate/view";
 
 /**
  * Advanced Table component
  */
 export default {
-  page: {
-    title: "View",
-    meta: [{ name: "description", content: "View" }],
-  },
+    page: {
+        title: "View",
+        meta: [{ name: "description", content: "View" }],
+    },
     mixins: [translation,customTable,successError,crudHelper],
     components: {
-        Layout, PageHeader, loader, UnitType,
+        Layout, PageHeader, loader, ViewCom,
         searchPage,actionSetting, tableCustom
     },
     data() {
@@ -51,7 +51,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-          return permissionGuard(vm, "View RealEstate", "all Branch");
+            return permissionGuard(vm, "View RealEstate", "all Branch");
         });
     },
     methods: {
@@ -83,6 +83,7 @@ export default {
       <div class="col-12">
         <div class="card">
           <div class="card-body">
+
               <!-- start search -->
               <searchPage
                   page="general.viewsTable"
@@ -119,7 +120,7 @@ export default {
               <!-- end setting -->
 
               <!--  create or edit   -->
-              <View
+              <ViewCom
                   :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                   :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired" :url="url"
                   :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
@@ -132,11 +133,11 @@ export default {
               class="table-responsive mb-3 custom-table-theme position-relative"
               ref="exportable_table" id="printCustom"
             >
-              <!--       start loader       -->
-              <loader size="large" v-if="isLoader" />
-              <!--       end loader       -->
+                <!--       start loader       -->
+                <loader size="large" v-if="isLoader" />
+                <!--       end loader       -->
 
-              <tableCustom
+                <tableCustom
                     :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                     :tables="tables" :isEdit="true" :isDelete="true"
                     :permissionUpdate="isPermission('update unit_status RealState')"
@@ -146,8 +147,7 @@ export default {
                     @delete="ids => deleteRow(ids,url)" @editRow="id => dbClickRow(id)"
                     @checkRows="(cR) => checkAll = cR" @checkRowTable="id => checkRow(id)"
                     :isInputCheck="true" :isLog="true" :isAction="true"
-              />
-
+                />
             </div>
             <!-- end .table-responsive-->
           </div>

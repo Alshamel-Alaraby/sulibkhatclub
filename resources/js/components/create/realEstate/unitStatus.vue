@@ -197,7 +197,8 @@ export default {
             errors: {},
             isCustom: false,
             is_disabled: false,
-            company_id: null
+            company_id: null,
+            fields: []
         };
     },
     validations: {

@@ -226,11 +226,7 @@
               </template>
             </div>
           </div>
-          <div
-            class="col-md-6 direction-ltr"
-            dir="ltr"
-            v-if="isVisible('name_e')"
-          >
+          <div class="col-md-6 direction-ltr" dir="ltr" v-if="isVisible('name_e')">
             <div class="form-group">
               <label for="field-2" class="control-label">
                 {{ getCompanyKey("avenue_name_en") }}
@@ -447,7 +443,7 @@ export default {
         return this.isRequiredPage(fieldName);
       }
     },
-    
+
     showCityModal() {
       if (this.create.city_id == 0) {
         this.$bvModal.show("city-create-avenue");
@@ -586,7 +582,7 @@ export default {
       this.create.governorate_id = null;
       this.create.city_id = null;
       adminApi
-        .get(`/countries?is_active=active`)
+        .get(`/countries/get-drop-down?is_active=active`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create Country")) {
@@ -602,7 +598,6 @@ export default {
       if (id == 0) {
         this.$bvModal.show("country-create-avenue");
         this.create.country_id = null;
-        this.edit.country_id = null;
       }
       if (!id) {
         return;
@@ -610,7 +605,7 @@ export default {
       this.create.city_id = null;
       this.create.governorate_id = null;
       adminApi
-        .get(`/governorates?country_id=${id}`)
+        .get(`/governorates/get-drop-down?country_id=${id}`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create Governorate")) {
@@ -639,7 +634,7 @@ export default {
       this.cities = [];
       this.create.city_id = null;
       adminApi
-        .get(`/cities?country_id=${id}&governorate_id=${id2}`)
+        .get(`/cities/get-drop-down?country_id=${id}&governorate_id=${id2}`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create City")) {

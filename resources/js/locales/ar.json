@@ -1476,7 +1476,7 @@
         "SubscriptionsRejected": "المرفوضين",
         "ReceiptNumber": "رقم الايصال",
         "serial_name": "اسم المسلسل",
-        "Year": "السنه",
+        "Year": "سنه",
         "Payment-report-over-period": "تقرير الدفع خلال فترة",
         "DocumentNumber": "رقم السند",
         "memberName": "اسم العضو",
@@ -1508,6 +1508,23 @@
         "floorsTable": "جدول الطوابق",
         "AttendanceNumber": "عدد المرافقين",
         "LstPayDate": "تاريخ اخر سداد",
-        "afterDate": " بعد تاريخ"
+        "afterDate": " بعد تاريخ",
+        "attendanceTable": "جدول الحضور",
+        "timeAttendanceTable": "جدول الدوامات",
+        "shift": "شفت واحد",
+        "shift2": "2 شفت",
+        "FreeTime": "دوام حر",
+        "attendanceSetting": "اعدادات الحضور",
+        "SelectEmployee": "اختار الموظفيين",
+        "timeEmployeeTable": "جدول دوام الموظفيين",
+        "PaymentDate": "تاريخ السداد",
+        "YouMustChoosePermission": "يجب اختيار صلاحية",
+        "WarningThisMemberAlreadyExists": "تحذير هذا العضو موجود بالفعل !!!",
+        "PrintReceipts": "طباعة الايصالات",
+        "NewSearch": "بحث جديد",
+        "full_name": "الاسم بالكامل",
+        "SponsorMembersOnly": "اعضاء الراعى فقط ؟",
+        "AddNewSubscriptions": "اضافة اشتراكات جديده",
+        "LastYearOfPayment": "اخر سنه سداد"
     }
 }

@@ -36,10 +36,14 @@ class BreakDownResource extends JsonResource
             "module_type"=>$this->module_type,
             "installment_statu_id"=>$this->installment_statu_id,
             "parent_id"=>$this->parent_id,
+            "amount_paid"=>$this->amount_paid,
+            "amount_remaining"=>$this->amount_remaining,
             "terms"=>$this->terms,
             "invoice_id"=>$this->invoice_id,
             "amount_status"=>$this->amount_status,
             "document"=>$this->document,
+
+
             "documentHeader"=>new DocumentHeaderResource($this->documentHeader) ,
 //            "currency"=>$this->currency,
 //            "customer"=>$this->customer,

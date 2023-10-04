@@ -89,7 +89,7 @@ export default {
     methods: {
         showInstallmentPaymentTypeModal(index) {
             if (this.create[index].instalment_type_id == 0) {
-                this.$bvModal.show("installment_payment_type_create");
+                this.$bvModal.show("installment_payment_type_create_show");
                 this.create[index].instalment_type_id = null;
             } else {
                 let payment = this.payment_types.find((x) => x.id == this.create[index].instalment_type_id);
@@ -99,7 +99,7 @@ export default {
         },
         showInstallmentStatusModal(index) {
             if (this.create[index].installment_statu_id == 0) {
-                this.$bvModal.show("installment-payment-create");
+                this.$bvModal.show("installment-create-status_show");
                 this.create[index].installment_statu_id = null;
             }
         },
@@ -548,16 +548,28 @@ export default {
                     this.create[index].total = this.create[index].debit * repate;
                 }
             }
-        }
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == "user") {
+                return this.$store.state.auth.permissions.includes(item);
+            }
+            return true;
+        },
     },
 };
 </script>
 
 <template>
     <div>
-        <InstallmentPaymentType :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
+        <InstallmentPaymentType :id="'installment_payment_type_create_show'"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                                 @created="getInstallPaymentTypes"/>
-        <InstallmentStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getInstallmentStatuses"/>
+        <InstallmentStatus :id="'installment-create-status_show'"
+                           :isPage="false"
+                           type="create"
+                           :isPermission="isPermission"  :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getInstallmentStatuses"/>
         <!--  create   -->
         <b-modal
             id="opening-balance-break-create-show"

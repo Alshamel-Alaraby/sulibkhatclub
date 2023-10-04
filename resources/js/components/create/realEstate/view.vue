@@ -11,13 +11,9 @@ import successError from "../../../helper/mixin/success&error";
  * Advanced Table component
  */
 export default {
-  page: {
-    title: "View",
-    meta: [{ name: "description", content: "View" }],
-  },
   mixins: [transMixinComp,successError],
   props: {
-        id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+        id: {default: "create-view",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
         isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
         type: {default: 'create'}, idObjEdit: {default: null},isPermission: {}
         ,url: {default: '/real-estate/view'}
@@ -253,7 +249,7 @@ export default {
         </div>
         <div class="row">
           <div class="col-md-12" v-if="isVisible('name')">
-          <div class="form-group">
+               <div class="form-group">
             <label for="field-1" class="control-label">
               {{ getCompanyKey("view_name_ar") }}
               <span v-if="isRequired('name')" class="text-danger">*</span>
@@ -289,9 +285,9 @@ export default {
               >
             </template>
           </div>
-        </div>
+          </div>
           <div class="col-md-12" v-if="isVisible('name')">
-          <div class="form-group">
+             <div class="form-group">
             <label for="field-2" class="control-label">
               {{ getCompanyKey("view_name_en") }}
               <span v-if="isRequired('name')" class="text-danger">*</span>
@@ -327,7 +323,7 @@ export default {
               >
             </template>
           </div>
-        </div>
+          </div>
       </div>
     </form>
   </b-modal>

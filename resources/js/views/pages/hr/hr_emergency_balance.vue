@@ -3,8 +3,6 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import permissionGuard from "../../../helper/permission";
-
 import {
   required,
   minLength,
@@ -22,6 +20,7 @@ import {
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -124,10 +123,9 @@ export default {
     this.getData();
   },
   beforeRouteEnter(to, from, next) {
-        next((vm) => {
-      return permissionGuard(vm, "Emergency Balance", "all emergienciesBalances hr");
+    next((vm) => {
+        return permissionGuard(vm, "Emergency Balance", "all emergienciesBalances hr");
     });
-
   },
   methods: {
     arabicValue(txt) {

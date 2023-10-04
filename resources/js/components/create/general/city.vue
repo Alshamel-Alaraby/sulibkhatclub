@@ -121,7 +121,7 @@
                   </div>
                   <div class="col-md-6 direction" dir="rtl" v-if="isVisible('name')">
                       <div class="form-group">
-                          <label for="field-1" class="control-label">
+                          <label class="control-label">
                               {{ getCompanyKey("city_name_ar") }}
                               <span v-if="isRequired('name')" class="text-danger">*</span>
                           </label>
@@ -136,7 +136,6 @@
                           'is-invalid': $v.create.name.$error || errors.name,
                           'is-valid': !$v.create.name.$invalid && !errors.name,
                         }"
-                              id="field-1"
                           />
                           <div v-if="!$v.create.name.minLength" class="invalid-feedback">
                               {{ $t("general.Itmustbeatleast") }}
@@ -159,7 +158,7 @@
                   </div>
                   <div class="col-md-6 direction-ltr" dir="ltr" v-if="isVisible('name_e')">
                       <div class="form-group">
-                          <label for="field-2" class="control-label">
+                          <label class="control-label">
                               {{ getCompanyKey("city_name_en") }}
                               <span v-if="isRequired('name_e')" class="text-danger">*</span>
                           </label>
@@ -175,7 +174,6 @@
                           'is-invalid': $v.create.name_e.$error || errors.name_e,
                           'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
                         }"
-                              id="field-2"
                           />
                           <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
                               {{ $t("general.Itmustbeatleast") }}
@@ -402,7 +400,7 @@ export default {
       this.create.country_id = null;
       this.create.governorate_id = null;
        adminApi
-        .get(`/countries?is_active=active`)
+        .get(`/countries/get-drop-down?is_active=active`)
         .then((res) => {
           let l = res.data.data;
             if (this.isPermission("create Country")) {
@@ -415,11 +413,15 @@ export default {
         });
     },
     getGovernorate(id) {
+        if (id == 0)
+        {
+            this.showCountryModal();
+        }
       if (!id) return;
       this.governorates = [];
       this.create.governorate_id = null;
        adminApi
-        .get(`/governorates?country_id=${id}`)
+        .get(`/governorates/get-drop-down?country_id=${id}`)
         .then((res) => {
           let l = res.data.data;
             if (this.isPermission("create Governorate")) {

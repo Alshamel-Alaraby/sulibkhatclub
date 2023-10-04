@@ -4,6 +4,7 @@ import permissionGuard from "../../helper/permission";
 
 export default [
     {
+        // checked by delta
         path: '/dashboard/club/sponsor',
         name: 'club-sponsor',
         meta: {
@@ -12,6 +13,7 @@ export default [
         component: () => import('../../views/pages/club/sponsor'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/payer-member-report',
         name: 'payer-member-report',
         meta: {
@@ -20,6 +22,7 @@ export default [
         component: () => import('../../views/pages/club/payer-member-report'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/permission-member-report',
         name: 'permission-member-report',
         meta: {
@@ -28,6 +31,7 @@ export default [
         component: () => import('../../views/pages/club/permission-member-report'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/member',
         name: 'club-member',
         meta: {
@@ -36,6 +40,7 @@ export default [
         component: () => import('../../views/pages/club/member'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/member-accept',
         name: 'club-member-accept',
         meta: {
@@ -44,6 +49,7 @@ export default [
         component: () => import('../../views/pages/club/member-accept'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/member-apply',
         name: 'club-member-apply',
         meta: {
@@ -52,6 +58,7 @@ export default [
         component: () => import('../../views/pages/club/member-apply'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/settings',
         name: 'club-setting',
         meta: {
@@ -60,6 +67,7 @@ export default [
         component: () => import('../../views/pages/club/settings'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/membership-renewal',
         name: 'club-membership-renewal',
         meta: {
@@ -68,6 +76,7 @@ export default [
         component: () => import('../../views/pages/club/membership_renewal'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/pending-member',
         name: 'club-pending-member',
         meta: {
@@ -76,6 +85,7 @@ export default [
         component: () => import('../../views/pages/club/pending_member'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/financial-status',
         name: 'club-financial-status',
         meta: {
@@ -85,6 +95,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/members-accept-reject',
         name: 'club-member',
         meta: {
@@ -93,6 +104,7 @@ export default [
         component: () => import('../../views/pages/club/member-request'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/subscription',
         name: 'club-subscription',
         meta: {
@@ -109,6 +121,7 @@ export default [
         component: () => import('../../views/pages/club/multi_subscription'),
     },
     {
+        
         path: '/dashboard/club/multiSubscriptionMultiple',
         name: 'club-multi-subscription-multiple',
         meta: {
@@ -117,6 +130,7 @@ export default [
         component: () => import('../../views/pages/club/multi_subscription_multiple'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/change-spenser',
         name: 'club-change-spenser',
         meta: {
@@ -125,6 +139,7 @@ export default [
         component: () => import('../../views/pages/club/change-sponsor'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/member-reject',
         name: 'member reject',
         meta: {
@@ -133,6 +148,7 @@ export default [
         component: () => import('../../views/pages/club/member-reject'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/postal-report',
         name: 'club-financial-status',
         meta: {
@@ -142,6 +158,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/paid-member-report',
         name: 'paid member',
         meta: {
@@ -151,6 +168,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/unpaid-member-report',
         name: 'unpaid member',
         meta: {
@@ -160,6 +178,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/group',
         name: 'Group Club',
         meta: {
@@ -169,6 +188,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/new-subscription',
         name: 'New Subscription',
         meta: {
@@ -178,6 +198,7 @@ export default [
 
     },
     {
+        // checked by delta
         path: '/dashboard/club/paid-member-report-after',
         name: 'Paid After A Specific Date',
         meta: {
@@ -186,6 +207,7 @@ export default [
         component: () => import('../../views/pages/club/paid-member-report-after'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/status',
         name: 'club status',
         meta: {
@@ -194,6 +216,7 @@ export default [
         component: () => import('../../views/pages/club/status'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/report/report-to-members',
         name: 'report to members',
         meta: {
@@ -202,6 +225,7 @@ export default [
         component: () => import('../../views/pages/club/report/report-to-members'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/change-of-member-rights',
         name: 'Change of member rights',
         meta: {
@@ -210,6 +234,7 @@ export default [
         component: () => import('../../views/pages/club/change-of-member-rights'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/multi-payment-report',
         name: 'multi payment report',
         meta: {
@@ -218,6 +243,7 @@ export default [
         component: () => import('../../views/pages/club/report/multi-payment-report'),
     },
     {
+        // checked by delta
         path: '/dashboard/club/Payment-report-over-period',
         name: 'Change of member rights',
         meta: {

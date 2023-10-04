@@ -437,7 +437,7 @@ export default {
       this.isLoader = true;
 
        adminApi
-        .get(`/salesmen-plans-source`)
+        .get(`/salesmen-plans-source/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           this.sources = l;
@@ -457,7 +457,7 @@ export default {
       this.isLoader = true;
 
        adminApi
-        .get(`/restart-period/get-Restart-period-data`)
+        .get(`/restart-period/get-drop-down`)
         .then((res) => {
           let l = res.data.message;
           this.periods = l;

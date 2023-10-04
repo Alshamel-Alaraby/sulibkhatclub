@@ -879,7 +879,7 @@ export default {
       this.isLoader = true;
 
        adminApi
-        .get(`/banks`)
+        .get(`/banks/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create Bank")) {
@@ -896,7 +896,7 @@ export default {
     },
     getEmployees() {
           adminApi
-              .get(`/employees`)
+              .get(`/employees/get-drop-down`)
               .then((res) => {
                   let l = res.data.data;
                   if (this.isPermission("create Employee")) {

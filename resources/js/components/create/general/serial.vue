@@ -54,6 +54,7 @@ export default {
         branch_id: null,
         document_id: null,
         type: "",
+          gender: "",
       },
       company_id: null,
       errors: {},
@@ -111,6 +112,11 @@ export default {
           return this.isRequired("branch_id");
         }),
       },
+        gender: {
+            required: requiredIf(function (model) {
+                return this.isRequired("gender");
+            }),
+        },
     },
   },
   mounted() {
@@ -168,6 +174,7 @@ export default {
         restart_period_id: null,
         branch_id: null,
         document_id: null,
+          gender: '',
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -401,6 +408,7 @@ export default {
             this.errors = {};
             this.create.name = serial.name;
             this.create.name_e = serial.name_e;
+            this.create.gender = serial.gender;
           }
         }
       }, 50);
@@ -507,7 +515,7 @@ export default {
       this.isLoader = true;
 
       adminApi
-        .get(`/branches?company_id=${this.company_id}&notParent=1`)
+        .get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create Branch")) {
@@ -530,7 +538,7 @@ export default {
       this.isLoader = true;
 
       adminApi
-        .get(`/restart-period`)
+        .get(`/restart-period/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           this.types = l;
@@ -978,6 +986,51 @@ export default {
               </template>
             </div>
           </div>
+            <div class="col-md-6" v-if="isVisible('gender')">
+                <div class="form-group">
+                    <label class="control-label mr-2">
+                        {{ getCompanyKey("serial_gender") }}
+                        <span v-if="isRequired('gender')" class="text-danger">*</span>
+                    </label>
+                    <b-form-group
+                        :class="{
+                          'is-invalid':
+                            $v.create.gender.$error || errors.gender,
+                          'is-valid':
+                            !$v.create.gender.$invalid && !errors.gender,
+                        }"
+                    >
+                        <b-form-radio
+                            class="d-inline-block"
+                            v-model="$v.create.gender.$model"
+                            name="create_gender"
+                            value="1"
+                        >{{ $t("general.male") }}
+                        </b-form-radio>
+                        <b-form-radio
+                            class="d-inline-block m-1"
+                            v-model="$v.create.gender.$model"
+                            name="create_gender"
+                            value="0"
+                        >{{ $t("general.female") }}
+                        </b-form-radio>
+                        <b-form-radio
+                            class="d-inline-block m-1"
+                            v-model="$v.create.gender.$model"
+                            name="create_gender"
+                            value="2"
+                        >{{ $t("general.all") }}
+                        </b-form-radio>
+                    </b-form-group>
+                    <template v-if="errors.gender">
+                        <ErrorMessage
+                            v-for="(errorMessage, index) in errors.gender"
+                            :key="index"
+                        >{{ errorMessage }}
+                        </ErrorMessage>
+                    </template>
+                </div>
+            </div>
         </div>
       </form>
     </b-modal>

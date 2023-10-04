@@ -1,7 +1,5 @@
 <script>
 import Layout from "../../layouts/main";
-import permissionGuard from "../../../helper/permission";
-
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
@@ -14,27 +12,26 @@ import {
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
-import loader from "../../../components/general/loader";
-import alphaArabic from "../../../helper/alphaArabic";
-import alphaEnglish from "../../../helper/alphaEnglish";
+import translation from "../../../helper/mixin/translation-mixin";
 import {
   formatDateTime,
   formatDateOnly,
   formatTime,
 } from "../../../helper/startDate";
+import loader from "../../../components/general/loader";
 import DatePicker from "vue2-datepicker";
 import { dynamicSortString, dynamicSortDate } from "../../../helper/tableSort";
-import translation from "../../../helper/mixin/translation-mixin";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import Multiselect from "vue-multiselect";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
  */
 export default {
   page: {
-    title: "Request",
-    meta: [{ name: "description", content: "Request" }],
+      title: "Online request",
+      meta: [{ name: "description", content: "Online request" }],
   },
   mixins: [translation],
   components: {
@@ -48,6 +45,7 @@ export default {
   },
   data() {
     return {
+      manager: true,
       fields: [],
       per_page: 50,
       search: "",
@@ -55,6 +53,7 @@ export default {
       onlineRequestsPagination: {},
       onlineRequests: [],
       isLoader: false,
+      isUserManager: false,
       employee_id: null,
       requestTypes: [],
       employees: [],
@@ -62,12 +61,34 @@ export default {
       manageOthers: 1,
       from_id:null,
       to_id:null,
+      request_id:null,
       create: {
           custom_request_datetime: new Date(),
-          custom_to_date: new Date(),
-          custom_from_date: new Date(),
-          custom_from_hour: new Date(),
-          custom_to_hour: new Date(),
+          custom_approved_date: null,
+          custom_approved_from_date: null,
+          custom_approved_to_date: null,
+          custom_approved_from_hour: null,
+          custom_approved_to_hour: null,
+          request_status_id: null,
+          request_datetime: formatDateTime(new Date()),
+          from_date: formatDateOnly(new Date()),
+          to_date: this.formatDate(new Date()),
+          remark: '',
+          request_types_id: null,
+          employee_id: null,
+          amount: 0,
+          from_hour: formatTime(new Date()),
+          to_hour: formatTime(new Date()),
+          approved_date: null,
+          approved_from_date: null,
+          approved_to_date: null,
+          approved_from_hour: null,
+          approved_to_hour: null,
+          approved_amount: 0,
+          media: null,
+      },
+      edit: {
+          custom_request_datetime: new Date(),
           custom_approved_date: new Date(),
           custom_approved_from_date: new Date(),
           custom_approved_to_date: new Date(),
@@ -90,24 +111,6 @@ export default {
           approved_to_hour: formatTime(new Date()),
           approved_amount: 0,
       },
-      edit: {
-          request_types_id: null,
-          request_status_id: null,
-          employee_id: null,
-          request_datetime: '',
-          from_date: '',
-          to_date: '',
-          remark: '',
-          amount: 0,
-          from_hour: '',
-          to_hour: '',
-          approved_from_date: '',
-          approved_to_date: '',
-          approved_from_hour: '',
-          approved_to_hour: '',
-          approved_amount: '',
-          approved_date: ''
-      },
       errors: {},
       isCheckAll: false,
       checkAll: [],
@@ -120,7 +123,8 @@ export default {
         approved_from_hour: true,
         approved_to_hour: true,
         approved_amount: true,
-          request_types_id: true,
+        request_types_id: true,
+        request_datetime: true,
         employee_id: true,
         start_from: true,
         end_date: true,
@@ -136,9 +140,15 @@ export default {
       mouseEnter: null,
       enabled3: true,
       printLoading: true,
+      idDelete: null,
       printObj: {
         id: "printBuilding",
       },
+      images: [],
+      media: {},
+      saveImageName: [],
+      showPhoto: "./images/img-1.png",
+      isUpdate: false
     };
   },
   validations: {
@@ -146,131 +156,127 @@ export default {
           request_types_id: { required },
           request_status_id: {required,},
           employee_id: { required },
-          approved_from_date: {  },
-          approved_to_date: {  },
+          approved_from_date: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
+          approved_to_date: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
           request_datetime: { },
-          approved_date: {  },
-          amount: { required },
-          approved_amount: {  },
-          from_hour: { required },
-          approved_from_hour: {},
-          to_hour: {required},
-          approved_to_hour: { },
-          from_date: { required },
-          to_date: { required },
+          approved_date: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
+          amount: { required: requiredIf(function (model) {
+                  return (
+                      !this.create.request_types_id ||
+                      (this.create.request_types_id &&
+                          this.getRequestType(this.create.request_types_id).amount)
+                  );
+              }) },
+          approved_amount: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
+          from_hour: { required: requiredIf(function (model) {
+                  return (
+                      !this.create.request_types_id ||
+                      (this.create.request_types_id &&
+                          this.getRequestType(this.create.request_types_id).from_hour)
+                  );
+              }), },
+          approved_from_hour: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
+          to_hour: {required: requiredIf(function (model) {
+                  return (
+                      !this.create.request_types_id ||
+                      (this.create.request_types_id &&
+                          this.getRequestType(this.create.request_types_id).to_hour)
+                  );
+              }),},
+          approved_to_hour: { required: requiredIf(function (model) {
+                  return this.$store.state.auth.type == "admin"
+              }), },
+          from_date: { required: requiredIf(function (model) {
+                  return (
+                      !this.create.request_types_id ||
+                      (this.create.request_types_id &&
+                          this.getRequestType(this.create.request_types_id).start_from)
+                  );
+              }),
+          },
+          to_date: { required: requiredIf(function (model) {
+                  return (
+                      !this.create.request_types_id ||
+                      (this.create.request_types_id &&
+                          this.getRequestType(this.create.request_types_id).end_date)
+                  );
+              }),
+          },
           remark: { required },
+          media: {}
     },
     edit: {
-      admin_comment: {
-        required: requiredIf(function (model) {
-          return this.manageOthers;
-        }),
-      },
-      status_id: {
-        required: requiredIf(function (model) {
-          return this.manageOthers;
-        }),
-      },
+        media: {},
         request_types_id: { required },
-      employee_id: { required },
-      date: {},
-      approved_date: { required },
-      start_from: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).start_from)
-          );
-        }),
-      },
-      approved_from_date: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).start_from &&
-              this.manageOthers)
-          );
-        }),
-      },
-      end_date: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).end_date)
-          );
-        }),
-      },
-      approved_to_date: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).end_date &&
-              this.manageOthers)
-          );
-        }),
-      },
-      descriptions: { required },
-      amount: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).amount)
-          );
-        }),
-      },
-      approved_amount: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).amount &&
-              this.manageOthers)
-          );
-        }),
-      },
-      from_hour: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).from_hour)
-          );
-        }),
-      },
-      approved_from_hour: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).from_hour &&
-              this.manageOthers)
-          );
-        }),
-      },
-      to_hour: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).to_hour)
-          );
-        }),
-      },
-      approved_to_hour: {
-        required: requiredIf(function (model) {
-          return (
-            !this.edit.request_types_id ||
-            (this.edit.request_types_id &&
-              this.getRequestType(this.edit.request_types_id).to_hour &&
-              this.manageOthers)
-          );
-        }),
-      },
+        request_status_id: {required,},
+        employee_id: { required },
+        approved_from_date: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }),
+        },
+        approved_to_date: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }),
+        },
+        request_datetime: { },
+        approved_date: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }), },
+        amount: { required: requiredIf(function (model) {
+                return (
+                    !this.edit.request_types_id ||
+                    (this.edit.request_types_id &&
+                        this.getRequestType(this.edit.request_types_id).amount)
+                );
+            }) },
+        approved_amount: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }), },
+        from_hour: { required: requiredIf(function (model) {
+                return (
+                    !this.edit.request_types_id ||
+                    (this.edit.request_types_id &&
+                        this.getRequestType(this.edit.request_types_id).from_hour)
+                );
+            }), },
+        approved_from_hour: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }), },
+        to_hour: {required: requiredIf(function (model) {
+                return (
+                    !this.edit.request_types_id ||
+                    (this.edit.request_types_id &&
+                        this.getRequestType(this.edit.request_types_id).to_hour)
+                );
+            }),},
+        approved_to_hour: { required: requiredIf(function (model) {
+                return this.$store.state.auth.type == "admin"
+            }), },
+        from_date: { required: requiredIf(function (model) {
+                return (
+                    !this.edit.request_types_id ||
+                    (this.edit.request_types_id &&
+                        this.getRequestType(this.edit.request_types_id).start_from)
+                );
+            }), },
+        to_date: { required: requiredIf(function (model) {
+                return (
+                    !this.edit.request_types_id ||
+                    (this.edit.request_types_id &&
+                        this.getRequestType(this.edit.request_types_id).end_date)
+                );
+            }), },
+        remark: { required },
     },
   },
   watch: {
@@ -306,16 +312,37 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.manager = this.$store.state.auth.type == 'admin' ? true:false;
     this.getData();
   },
-  beforeRouteEnter(to, from, next) {
+    beforeRouteEnter(to, from, next) {
         next((vm) => {
-      return permissionGuard(vm, "Request", "all onlineRequest hr");
-    });
-
-  },
+            return permissionGuard(vm, "Online Request", "all onlineRequest Hr");
+        });
+    },
   methods: {
-      approved_date(e) {
+    showModule(id,type){
+          let onlineRequest = this.onlineRequests.find((e) => id == e.id);
+          if(type == 'edit' && onlineRequest && onlineRequest.request_status_id != 1){
+              Swal.fire({
+                  icon: "error",
+                  title: `${this.$t("general.Error")}`,
+                  text: `${this.$t("general.YoucantUpdatethisrequestthemanagerhasreceivedit")}`,
+              });
+
+              return false;
+          }else if(type == 'delete' && onlineRequest && onlineRequest.request_status_id != 1){
+              Swal.fire({
+                  icon: "error",
+                  title: `${this.$t("general.Error")}`,
+                  text: `${this.$t("general.YoucantDeletethisrequestthemanagerhasreceivedit")}`,
+              });
+              return false;
+          }
+
+          return true;
+      },
+    approved_date(e) {
           if (e) {
               this.create.approved_date = formatDateOnly(e);
               this.edit.approved_date = formatDateOnly(e);
@@ -324,7 +351,7 @@ export default {
               this.edit.approved_date = null;
           }
       },
-      approved_from_date(e) {
+    approved_from_date(e) {
           if (e) {
               this.create.approved_from_date = formatDateOnly(e);
               this.edit.approved_from_date = formatDateOnly(e);
@@ -333,7 +360,7 @@ export default {
               this.edit.approved_from_date = null;
           }
       },
-      approved_to_date(e) {
+    approved_to_date(e) {
           if (e) {
               this.create.approved_to_date = formatDateOnly(e);
               this.edit.approved_to_date = formatDateOnly(e);
@@ -342,7 +369,7 @@ export default {
               this.edit.approved_to_date = null;
           }
       },
-      to_hour(e) {
+    to_hour(e) {
           if (e) {
               this.create.to_hour = formatTime(e);
               this.edit.to_hour = formatTime(e);
@@ -351,7 +378,7 @@ export default {
               this.edit.to_hour = null;
           }
       },
-      from_hour(e) {
+    from_hour(e) {
           if (e) {
               this.create.from_hour = formatTime(e);
               this.edit.from_hour = formatTime(e);
@@ -360,7 +387,7 @@ export default {
               this.edit.from_hour = null;
           }
       },
-      approved_to_hour(e) {
+    approved_to_hour(e) {
           if (e) {
               this.create.approved_to_hour = formatTime(e);
               this.edit.approved_to_hour = formatTime(e);
@@ -369,7 +396,7 @@ export default {
               this.edit.approved_to_hour = null;
           }
       },
-      approved_from_hour(e) {
+    approved_from_hour(e) {
           if (e) {
               this.create.approved_from_hour = formatTime(e);
               this.edit.approved_from_hour = formatTime(e);
@@ -378,7 +405,6 @@ export default {
               this.edit.approved_from_hour = null;
           }
       },
-
     isPermission(item) {
       if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
@@ -390,18 +416,33 @@ export default {
       return rt.length > 0 ? rt[0] : null;
     },
     async getEmployees() {
-      await adminApi
-        .get(`/employees`)
-        .then((res) => {
-          this.employees = res.data.data;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        });
+      if(this.$store.state.auth.type == 'user'){
+          await adminApi
+              .get(`/hr/requests/employee-login`)
+              .then((res) => {
+                  this.employees = [res.data.data];
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              });
+      }else {
+          await adminApi
+              .get(`/employees`)
+              .then((res) => {
+                  this.employees = res.data.data;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              });
+      }
     },
     async getEmployeeChildren() {
       this.isLoader = true;
@@ -538,53 +579,58 @@ export default {
      */
     deleteFinancialYear(id, index) {
       if (Array.isArray(id)) {
-        Swal.fire({
-          title: `${this.$t("general.Areyousure")}`,
-          text: `${this.$t("general.Youwontbeabletoreverthis")}`,
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
-          cancelButtonText: `${this.$t("general.Nocancel")}`,
-          confirmButtonClass: "btn btn-success mt-2",
-          cancelButtonClass: "btn btn-danger ml-2 mt-2",
-          buttonsStyling: false,
-        }).then((result) => {
-          if (result.value) {
-            this.isLoader = true;
-            adminApi
-              .post(`/hr/requests/bulk-delete`, { ids: id })
-              .then((res) => {
-                this.checkAll = [];
-                this.getData();
-                Swal.fire({
-                  icon: "success",
-                  title: `${this.$t("general.Deleted")}`,
-                  text: `${this.$t("general.Yourrowhasbeendeleted")}`,
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              })
-              .catch((err) => {
-                if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
-                  this.getData();
-                } else {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                  });
+        let onlineRequest = this.onlineRequests.find((e) => 1 != e.request_status_id);
+        if(!onlineRequest){
+            Swal.fire({
+                title: `${this.$t("general.Areyousure")}`,
+                text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
+                cancelButtonText: `${this.$t("general.Nocancel")}`,
+                confirmButtonClass: "btn btn-success mt-2",
+                cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                buttonsStyling: false,
+            }).then((result) => {
+                if (result.value) {
+                    this.isLoader = true;
+                    adminApi
+                        .post(`/hr/requests/bulk-delete`, { ids: id })
+                        .then((res) => {
+                            this.checkAll = [];
+                            this.getData();
+                            Swal.fire({
+                                icon: "success",
+                                title: `${this.$t("general.Deleted")}`,
+                                text: `${this.$t("general.Yourrowhasbeendeleted")}`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        })
+                        .catch((err) => {
+                            if (err.response.status == 400) {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: `${this.$t("general.Error")}`,
+                                    text: `${this.$t("general.CantDeleteRelation")}`,
+                                });
+                                this.getData();
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: `${this.$t("general.Error")}`,
+                                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                });
+                            }
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
                 }
-              })
-              .finally(() => {
-                this.isLoader = false;
-              });
-          }
-        });
+            });
+        }else {
+            this.showModule(onlineRequest.id,'delete')
+        }
       } else {
         Swal.fire({
           title: `${this.$t("general.Areyousure")}`,
@@ -647,15 +693,11 @@ export default {
 
       this.create = {
           custom_request_datetime: new Date(),
-          custom_to_date: new Date(),
-          custom_from_date: new Date(),
-          custom_from_hour: new Date(),
-          custom_to_hour: new Date(),
-          custom_approved_date: new Date(),
-          custom_approved_from_date: new Date(),
-          custom_approved_to_date: new Date(),
-          custom_approved_from_hour: new Date(),
-          custom_approved_to_hour: new Date(),
+          custom_approved_date: null,
+          custom_approved_from_date: null,
+          custom_approved_to_date: null,
+          custom_approved_from_hour: null,
+          custom_approved_to_hour: null,
           request_status_id: null,
           request_datetime: formatDateTime(new Date()),
           from_date: formatDateOnly(new Date()),
@@ -666,17 +708,19 @@ export default {
           amount: 0,
           from_hour: formatTime(new Date()),
           to_hour: formatTime(new Date()),
-          approved_date: formatDateOnly(new Date()),
-          approved_from_date: formatDateOnly(new Date()),
-          approved_to_date: formatDateOnly(new Date()),
-          approved_from_hour: formatTime(new Date()),
-          approved_to_hour: formatTime(new Date()),
+          approved_date: null,
+          approved_from_date: null,
+          approved_to_date: null,
+          approved_from_hour: null,
+          approved_to_hour: null,
           approved_amount: 0,
       };
       this.$nextTick(() => {
         this.$v.$reset();
       });
       this.errors = {};
+      this.images = [];
+      this.request_id = null;
       this.is_disabled = false;
       this.$bvModal.hide(`create`);
     },
@@ -684,84 +728,81 @@ export default {
      *  hidden Modal (create)
      */
     async resetModal() {
-      if (!this.$store.state.auth.user.employee_id) {
-        await this.getEmployees();
-      } else {
-        await this.getEmployeeChildren();
-      }
-
-      await this.getRequestTypes();
-      await this.getStatuses();
-      this.create = {
-          custom_request_datetime: new Date(),
-          custom_to_date: new Date(),
-          custom_from_date: new Date(),
-          custom_from_hour: new Date(),
-          custom_to_hour: new Date(),
-          custom_approved_date: new Date(),
-          custom_approved_from_date: new Date(),
-          custom_approved_to_date: new Date(),
-          custom_approved_from_hour: new Date(),
-          custom_approved_to_hour: new Date(),
-          request_status_id: 1,
-          request_datetime: formatDateTime(new Date()),
-          from_date: formatDateOnly(new Date()),
-          to_date: formatDateOnly(new Date()),
-          remark: '',
-          request_types_id: null,
-          employee_id: null,
-          amount: 0,
-          from_hour: formatTime(new Date()),
-          to_hour: formatTime(new Date()),
-          approved_date: formatDateOnly(new Date()),
-          approved_from_date: formatDateOnly(new Date()),
-          approved_to_date: formatDateOnly(new Date()),
-          approved_from_hour: formatTime(new Date()),
-          approved_to_hour: formatTime(new Date()),
-          approved_amount: 0,
-      };
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
-      this.errors = {};
+          this.manager = this.$store.state.auth.type == 'admin' ? true:false;
+          await this.getStatuses();
+          await this.getEmployees();
+          this.create = {
+              custom_request_datetime: new Date(),
+              custom_approved_date: null,
+              custom_approved_from_date: null,
+              custom_approved_to_date: null,
+              custom_approved_from_hour: null,
+              custom_approved_to_hour: null,
+              request_status_id: 1,
+              request_datetime: formatDateTime(new Date()),
+              from_date: formatDateOnly(new Date()),
+              to_date: formatDateOnly(new Date()),
+              remark: '',
+              request_types_id: null,
+              employee_id: this.$store.state.auth.user.employee_id,
+              amount: 0,
+              from_hour: formatTime(new Date()),
+              to_hour: formatTime(new Date()),
+              approved_date: null,
+              approved_from_date: null,
+              approved_to_date: null,
+              approved_from_hour: null,
+              approved_to_hour: null,
+              approved_amount: 0,
+          };
+          await this.getRequestTypes();
+          this.showPhoto = "./images/img-1.png";
+         this.$nextTick(() => {
+             this.$v.$reset();
+         });
+         this.request_id = null;
+         this.media = {};
+         this.images = [];
+         this.errors = {};
     },
     /**
      *  create countrie
      */
     resetForm() {
+      this.manager = this.$store.state.auth.type == 'admin' ? true:false;
       this.manageOthers = 1;
       this.create = {
           custom_request_datetime: new Date(),
-          custom_to_date: new Date(),
-          custom_from_date: new Date(),
-          custom_from_hour: new Date(),
-          custom_to_hour: new Date(),
-          custom_approved_date: new Date(),
-          custom_approved_from_date: new Date(),
-          custom_approved_to_date: new Date(),
-          custom_approved_from_hour: new Date(),
-          custom_approved_to_hour: new Date(),
+          custom_approved_date: null,
+          custom_approved_from_date: null,
+          custom_approved_to_date: null,
+          custom_approved_from_hour: null,
+          custom_approved_to_hour: null,
           request_status_id: 1,
           request_datetime: formatDateTime(new Date()),
           from_date: formatDateOnly(new Date()),
           to_date: formatDateOnly(new Date()),
           remark: '',
           request_types_id: null,
-          employee_id: null,
+          employee_id: this.$store.state.auth.user.employee_id,
           amount: 0,
           from_hour: formatTime(new Date()),
           to_hour: formatTime(new Date()),
-          approved_date: formatDateOnly(new Date()),
-          approved_from_date: formatDateOnly(new Date()),
-          approved_to_date: formatDateOnly(new Date()),
-          approved_from_hour: formatTime(new Date()),
-          approved_to_hour: formatTime(new Date()),
+          approved_date: null,
+          approved_from_date: null,
+          approved_to_date: null,
+          approved_from_hour: null,
+          approved_to_hour: null,
           approved_amount: 0,
       };
       this.is_disabled = false;
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
+        this.showPhoto = "./images/img-1.png";
+        this.$nextTick(() => {
+            this.$v.$reset();
+        });
+        this.request_id = null;
+        this.media = {};
+        this.images = [];
       this.errors = {};
     },
 
@@ -776,6 +817,7 @@ export default {
         adminApi
           .post(`/hr/requests`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
+            this.request_id = res.data.data.id;
             this.is_disabled = true;
             this.getData();
             setTimeout(() => {
@@ -807,68 +849,216 @@ export default {
      *  edit countrie
      */
     editSubmit(id) {
-      this.$v.edit.$touch();
-
-      if (this.$v.edit.$invalid) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        adminApi
-          .put(`/hr/requests/${id}`, this.edit)
-          .then((res) => {
-            this.$bvModal.hide(`modal-edit-${id}`);
-            this.getData();
-            setTimeout(() => {
-              Swal.fire({
-                icon: "success",
-                text: `${this.$t("general.Editsuccessfully")}`,
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }, 500);
-          })
-          .catch((err) => {
-            if (err.response.data) {
-              this.errors = err.response.data.errors;
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
+        this.$v.edit.$touch();
+        this.images.forEach((e) => {
+            this.edit.old_media.push(e.id);
+        });
+        if (this.$v.edit.$invalid) {
+            return;
+        } else {
+            this.isLoader = true;
+            this.errors = {};
+            if(this.edit.employee_id != this.$store.state.auth.user.employee_id){
+                adminApi
+                    .post(`/hr/requests/updateManager`, {data: {
+                        ...this.edit,
+                    }
+                    })
+                    .then((res) => {
+                        this.$bvModal.hide(`modal-edit-${id}`);
+                        this.getData();
+                        setTimeout(() => {
+                            Swal.fire({
+                                icon: "success",
+                                text: `${this.$t("general.Editsuccessfully")}`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }, 500);
+                    })
+                    .catch((err) => {
+                        if (err.response.data) {
+                            this.errors = err.response.data.errors;
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: `${this.$t("general.Error")}`,
+                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }else {
+                adminApi
+                    .put(`/hr/requests/${this.request_id}`, {
+                        ...this.edit,
+                        approved_by: parseInt(this.$store.state.auth.user.employee_id)
+                    })
+                    .then((res) => {
+                        this.$bvModal.hide(`modal-edit-${id}`);
+                        this.getData();
+                        setTimeout(() => {
+                            Swal.fire({
+                                icon: "success",
+                                text: `${this.$t("general.Editsuccessfully")}`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }, 500);
+                    })
+                    .catch((err) => {
+                        if (err.response.data) {
+                            this.errors = err.response.data.errors;
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: `${this.$t("general.Error")}`,
+                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
             }
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
-      }
+        }
     },
     /**
      *   show Modal (edit)
      */
     async resetModalEdit(id) {
-      await this.getEmployees();
-      await this.getRequestTypes();
-      await this.getStatuses();
       let financialYear = this.onlineRequests.find((e) => id == e.id);
-      this.edit.request_types_id = financialYear.request_types_id;
-      this.edit.employee_id = financialYear.employee_id;
-      this.edit.date = financialYear.date;
-      this.edit.amount = financialYear.amount;
-      this.edit.start_from = financialYear.from_date;
-      this.edit.end_date = financialYear.to_date;
+        this.request_id = financialYear.id;
+        this.getManager(financialYear);
+        this.date(financialYear.request_datetime);
+        let currDateFromHour = financialYear.from_hour ? new Date(): '';
+        if(currDateFromHour){
+            financialYear.from_hour?currDateFromHour.setHours(
+                financialYear.from_hour.split(":")[0],
+                financialYear.from_hour.split(":")[1],
+                financialYear.from_hour.split(":")[2]
+            ): false;
+        }
+        let currDateToHour = financialYear.to_hour ? new Date(): '';
+        if(currDateToHour){
+            financialYear.to_hour?currDateToHour.setHours(
+                financialYear.to_hour.split(":")[0],
+                financialYear.to_hour.split(":")[1],
+                financialYear.to_hour.split(":")[2]
+            ): false;
+        }
+
+        this.edit.id = financialYear.id;
+        this.edit.custom_from_hour = financialYear.from_hour? currDateFromHour: financialYear.from_hour;
+        this.edit.custom_to_hour = financialYear.to_hour? currDateToHour : financialYear.to_hour;
+        this.edit.from_hour = financialYear.from_hour?this.formatTime(currDateFromHour):financialYear.from_hour;
+        this.edit.to_hour = financialYear.to_hour?this.formatTime(currDateToHour):financialYear.to_hour;
+        this.edit.to_date = financialYear.to_date;
+        this.edit.from_date = financialYear.from_date
+        this.edit.custom_request_datetime = financialYear.request_datetime? new Date(financialYear.request_datetime):new Date();
+        if(this.$store.state.auth.type == 'user') {
+            if (financialYear.employee_id != this.$store.state.auth.user.employee_id && financialYear.request_status_id < 3) {
+                this.edit.approved_date= formatDateOnly(new Date());
+                this.edit.approved_from_date = financialYear.from_date;
+                this.edit.approved_to_date = financialYear.to_date;
+                let currDateApprovedFromHour = financialYear.from_hour ? new Date(): '';
+                if(currDateApprovedFromHour){
+                    financialYear.from_hour?currDateApprovedFromHour.setHours(
+                        financialYear.from_hour.split(":")[0],
+                        financialYear.from_hour.split(":")[1],
+                        financialYear.from_hour.split(":")[2]
+                    ): false;
+                }
+
+                let currDateApprovedToHour = financialYear.to_hour ? new Date(): '';
+                if(currDateApprovedToHour){
+                    financialYear.to_hour?currDateApprovedToHour.setHours(
+                        financialYear.to_hour.split(":")[0],
+                        financialYear.to_hour.split(":")[1],
+                        financialYear.to_hour.split(":")[2]
+                    ): false;
+                }
+                this.edit.custom_approved_from_hour = currDateApprovedFromHour;
+                this.edit.custom_approved_to_hour = currDateApprovedToHour;
+                this.edit.approved_from_hour = currDateApprovedFromHour?this.formatTime(currDateApprovedFromHour):null;
+                this.edit.approved_to_hour = currDateApprovedToHour?this.formatTime(currDateApprovedToHour):null;
+                this.edit.approved_amount = financialYear.amount;
+            }else {
+                this.edit.approved_date= financialYear.approved_date;
+                this.edit.approved_from_date = financialYear.approved_from_date;
+                this.edit.approved_to_date = financialYear.approved_to_date;
+                this.edit.approved_amount = financialYear.approved_amount;
+                let currDateApprovedFromHour = financialYear.approved_from_hour ? new Date(): '';
+                if(currDateApprovedFromHour){
+                    financialYear.approved_from_hour?currDateApprovedFromHour.setHours(
+                        financialYear.approved_from_hour.split(":")[0],
+                        financialYear.approved_from_hour.split(":")[1],
+                        financialYear.approved_from_hour.split(":")[2]
+                    ): false;
+                }
+
+                let currDateApprovedToHour = financialYear.approved_to_hour ? new Date(): '';
+                if(currDateApprovedToHour){
+                    financialYear.approved_to_hour?currDateApprovedToHour.setHours(
+                        financialYear.approved_to_hour.split(":")[0],
+                        financialYear.approved_to_hour.split(":")[1],
+                        financialYear.approved_to_hour.split(":")[2]
+                    ): false;
+                }
+                this.edit.custom_approved_from_hour = currDateApprovedFromHour;
+                this.edit.custom_approved_to_hour = currDateApprovedToHour;
+                this.edit.approved_from_hour = currDateApprovedFromHour?this.formatTime(currDateApprovedFromHour):null;
+                this.edit.approved_to_hour = currDateApprovedToHour?this.formatTime(currDateApprovedToHour):null;
+            }
+        }else {
+            this.edit.approved_date= financialYear.approved_date;
+            this.edit.approved_from_date = financialYear.approved_from_date;
+            this.edit.approved_to_date = financialYear.approved_to_date;
+            this.edit.approved_amount = financialYear.approved_amount;
+            let currDateApprovedFromHour = financialYear.approved_from_hour ? new Date(): '';
+            if(currDateApprovedFromHour){
+                financialYear.approved_from_hour?currDateApprovedFromHour.setHours(
+                    financialYear.approved_from_hour.split(":")[0],
+                    financialYear.approved_from_hour.split(":")[1],
+                    financialYear.approved_from_hour.split(":")[2]
+                ): false;
+            }
+
+            let currDateApprovedToHour = financialYear.approved_to_hour ? new Date(): '';
+            if(currDateApprovedToHour){
+                financialYear.approved_to_hour?currDateApprovedToHour.setHours(
+                    financialYear.approved_to_hour.split(":")[0],
+                    financialYear.approved_to_hour.split(":")[1],
+                    financialYear.approved_to_hour.split(":")[2]
+                ): false;
+            }
+            this.edit.custom_approved_from_hour = currDateApprovedFromHour;
+            this.edit.custom_approved_to_hour = currDateApprovedToHour;
+            this.edit.approved_from_hour = currDateApprovedFromHour? this.formatTime(currDateApprovedFromHour):null;
+            this.edit.approved_to_hour = currDateApprovedToHour?this.formatTime(currDateApprovedToHour):null;
+        }
+        // if(this.$store.state.auth.type == 'admin'){
+        //     this.edit.approved_date = financialYear.approved_date ? financialYear.approved_date : formatDateOnly(new Date());
+        //     this.edit.approved_from_date= financialYear.approved_from_date ?financialYear.approved_from_date: formatDateOnly(new Date());
+        //     this.edit.approved_to_date= financialYear.approved_to_date ?financialYear.approved_to_date: formatDateOnly(new Date());
+        // }
       this.edit.remark = financialYear.remark;
       this.edit.amount = financialYear.amount;
-      this.edit.from_hour = financialYear.from_hour;
-      this.edit.to_hour = financialYear.to_hour;
-      this.edit.status_id = financialYear.status_id;
-      this.edit.approved_date = financialYear.approved_date;
-      this.edit.approved_from_date = financialYear.approved_from_date;
-      this.edit.approved_to_date = financialYear.approved_to_date;
-      this.edit.approved_from_hour = financialYear.approved_from_hour;
-      this.edit.approved_to_hour = financialYear.approved_to_hour;
-      this.edit.approved_amount = financialYear.approved_amount;
+      this.employees.push(financialYear.employee);
+      this.edit.employee_id = financialYear.employee_id;
+      await this.getRequestTypes();
+      this.edit.request_types_id = financialYear.request_types_id;
+      await this.getStatuses();
+      this.edit.request_status_id = financialYear.request_status_id;
+
+        this.images = financialYear.media ?? [];
+        if (this.images && this.images.length > 0) {
+            this.showPhoto = this.images[this.images.length - 1].webp;
+        } else {
+            this.showPhoto = "./images/img-1.png";
+        }
       this.errors = {};
     },
     /**
@@ -878,23 +1068,28 @@ export default {
       this.manageOthers = 1;
       this.errors = {};
       this.edit = {
-        employee_id: null,
+          custom_request_datetime: new Date(),
+          custom_approved_date: new Date(),
+          custom_approved_from_date: new Date(),
+          custom_approved_to_date: new Date(),
+          custom_approved_from_hour: new Date(),
+          custom_approved_to_hour: new Date(),
+          request_status_id: null,
+          request_datetime: formatDateTime(new Date()),
+          from_date: formatDateOnly(new Date()),
+          to_date: formatDateOnly(new Date()),
+          remark: '',
           request_types_id: null,
-        date: "",
-
-        from_date: "",
-        to_date: "",
-        remark: "",
-        amount: 0,
-        from_hour: "",
-        to_hour: "",
-        status_id: null,
-        approved_date: "",
-        approved_from_date: "",
-        approved_to_date: "",
-        approved_from_hour: "",
-        approved_to_hour: "",
-        approved_amount: 0,
+          employee_id: null,
+          amount: 0,
+          from_hour: formatTime(new Date()),
+          to_hour: formatTime(new Date()),
+          approved_date: formatDateOnly(new Date()),
+          approved_from_date: formatDateOnly(new Date()),
+          approved_to_date: formatDateOnly(new Date()),
+          approved_from_hour: formatTime(new Date()),
+          approved_to_hour: formatTime(new Date()),
+          approved_amount: 0,
       };
     },
     /*
@@ -956,7 +1151,6 @@ export default {
     formatTime(value) {
       return formatTime(value);
     },
-
     log(id) {
       if (this.mouseEnter != id) {
         this.Tooltip = "";
@@ -1009,6 +1203,207 @@ export default {
       this.create.name_e = englishValue(txt);
       this.edit.name_e = englishValue(txt);
     },
+    showRequestTypeModel(id){
+        if(id){
+            this.create.amount = this.getRequestType(id).amount ? 0: 0;
+            this.create.from_date = this.getRequestType(id).start_from ? formatDateOnly(new Date())  : '';
+            this.create.to_date = this.getRequestType(id).end_date ? formatDateOnly(new Date()) : '';
+            this.create.from_hour = this.getRequestType(id).from_hour? formatTime(new Date()) : '';
+            this.create.to_hour = this.getRequestType(id).to_hour ? formatTime(new Date()): '';
+            return true;
+        }
+        this.create.amount = 0;
+        this.create.from_date = formatDateOnly(new Date());
+        this.create.to_date = formatDateOnly(new Date());
+        this.create.from_hour =  formatTime(new Date())
+        this.create.to_hour = formatTime(new Date());
+    },
+    changePhoto() {
+          document.getElementById("uploadImageCreate").click();
+      },
+    changePhotoEdit() {
+          document.getElementById("uploadImageEdit").click();
+      },
+    onImageChanged(e) {
+          const file = e.target.files[0];
+          this.addImage(file);
+      },
+    addImage(file) {
+          this.media = file; //upload
+          if (file) {
+              this.idDelete = null;
+              let is_media = this.images.find(
+                  (e) => e.name == file.name.slice(0, file.name.indexOf("."))
+              );
+              this.idDelete = is_media ? is_media.id : null;
+              if (!this.idDelete) {
+                  this.isLoader = true;
+                  let formDate = new FormData();
+                  formDate.append("media[0]", this.media);
+                  adminApi
+                      .post(`/media`, formDate)
+                      .then((res) => {
+                          let old_media = [];
+                          this.images.forEach((e) => old_media.push(e.id));
+                          let new_media = [];
+                          res.data.data.forEach((e) => new_media.push(e.id));
+
+                          adminApi
+                              .put(`/hr/requests/${this.request_id}`, {
+                                  old_media,
+                                  media: new_media,
+                              })
+                              .then((res) => {
+                                  this.images = res.data.data.media ?? [];
+                                  if (this.images && this.images.length > 0) {
+                                      this.showPhoto = this.images[this.images.length - 1].webp;
+                                  } else {
+                                      this.showPhoto = "./images/img-1.png";
+                                  }
+                                  this.getData();
+                              })
+                              .catch((err) => {
+                                  Swal.fire({
+                                      icon: "error",
+                                      title: `${this.$t("general.Error")}`,
+                                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                  });
+                              });
+                      })
+                      .catch((err) => {
+                          if (err.response.data) {
+                              this.errors = err.response.data.errors;
+                          } else {
+                              Swal.fire({
+                                  icon: "error",
+                                  title: `${this.$t("general.Error")}`,
+                                  text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                              });
+                          }
+                      })
+                      .finally(() => {
+                          this.isLoader = false;
+                      });
+              } else {
+                  Swal.fire({
+                      title: `${this.$t("general.Thisfilehasalreadybeenuploaded")}`,
+                      type: "warning",
+                      showCancelButton: true,
+                      confirmButtonText: `${this.$t("general.Replace")}`,
+                      cancelButtonText: `${this.$t("general.Nocancel")}`,
+                      confirmButtonClass: "btn btn-success mt-2",
+                      cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                      buttonsStyling: false,
+                  }).then((result) => {
+                      if (result.value) {
+                          this.isLoader = true;
+                          let formDate = new FormData();
+                          formDate.append("media[0]", this.media);
+                          adminApi
+                              .post(`/media`, formDate)
+                              .then((res) => {
+                                  let old_media = [];
+                                  this.images.forEach((e) => old_media.push(e.id));
+                                  old_media.splice(old_media.indexOf(this.idDelete), 1);
+                                  let new_media = [];
+                                  res.data.data.forEach((e) => new_media.push(e.id));
+
+                                  adminApi
+                                      .put(`/hr/requests/${this.request_id}`, {
+                                          old_media,
+                                          media: new_media,
+                                      })
+                                      .then((res) => {
+                                          this.images = res.data.data.media ?? [];
+                                          if (this.images && this.images.length > 0) {
+                                              this.showPhoto = this.images[this.images.length - 1].webp;
+                                          } else {
+                                              this.showPhoto = "./images/img-1.png";
+                                          }
+                                          this.getData();
+                                      })
+                                      .catch((err) => {
+                                          Swal.fire({
+                                              icon: "error",
+                                              title: `${this.$t("general.Error")}`,
+                                              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                          });
+                                      });
+                              })
+                              .catch((err) => {
+                                  if (err.response.data) {
+                                      this.errors = err.response.data.errors;
+                                  } else {
+                                      Swal.fire({
+                                          icon: "error",
+                                          title: `${this.$t("general.Error")}`,
+                                          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                      });
+                                  }
+                              })
+                              .finally(() => {
+                                  this.isLoader = false;
+                              });
+                      }
+                  });
+              }
+          }
+      },
+    deleteImageCreate(id, index) {
+          let old_media = [];
+          this.images.forEach((e) => {
+              if (e.id != id) {
+                  old_media.push(e.id);
+              }
+          });
+          adminApi
+              .put(`/hr/requests/${this.request_id}`, { old_media })
+              .then((res) => {
+                  this.onlineRequests[index] = res.data.data;
+                  this.images = res.data.data.media ?? [];
+                  if (this.images && this.images.length > 0) {
+                      this.showPhoto = this.images[this.images.length - 1].webp;
+                  } else {
+                      this.showPhoto = "./images/img-1.png";
+                  }
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              });
+      },
+    getManager(request){
+        if(this.$store.state.auth.type == 'user'){
+            if(request.employee_id == this.$store.state.auth.user.employee_id){
+                if(request.request_status_id > 1){
+                    this.manager = true;
+                    this.isUserManager = true;
+                    this.isUpdate = true;
+                }else{
+                    this.manager = false;
+                    this.isUserManager = true;
+                    this.isUpdate = false;
+                }
+            }else {
+                if(request.request_status_id < 3){
+                    this.manager = true;
+                    this.isUserManager = false;
+                    this.isUpdate = false;
+                }else{
+                    this.manager = true;
+                    this.isUserManager = true;
+                    this.isUpdate = true;
+                }
+            }
+        }else {
+            this.manager = true;
+            this.isUserManager = true;
+            this.isUpdate = true;
+        }
+      }
   },
 };
 </script>
@@ -1079,7 +1474,7 @@ export default {
             <!-- start search -->
             <div class="row justify-content-between align-items-center mb-2">
               <h4 class="header-title">
-                {{ $t("general.requestsTable") }}
+                  {{ $t("general.onlineRequestsTable") }}
               </h4>
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
@@ -1136,7 +1531,7 @@ export default {
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
-                  v-if="isPermission('create onlineRequest hr')"
+                  v-if="isPermission('create onlineRequest hr') && $store.state.auth.type == 'user'"
                   v-b-modal.create
                   variant="primary"
                   class="btn-sm mx-1 font-weight-bold"
@@ -1144,13 +1539,6 @@ export default {
                   {{ $t("general.Create") }}
                   <i class="fas fa-plus"></i>
                 </b-button>
-                <b-button
-                      v-b-modal.filter
-                      variant="primary"
-                      class="btn-sm mx-1 font-weight-bold"
-                  >
-                      {{ $t("general.filter") }}
-                  </b-button>
                 <div class="d-inline-flex">
                   <button
                     class="custom-btn-dowonload"
@@ -1161,21 +1549,21 @@ export default {
                   <button class="custom-btn-dowonload" v-print="'#printCustom'">
                     <i class="fe-printer"></i>
                   </button>
-<!--                  <button-->
-<!--                    class="custom-btn-dowonload"-->
-<!--                    @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
-<!--                    v-if="-->
-<!--                      checkAll.length == 1-->
-<!--                    "-->
-<!--                  >-->
-<!--                    <i class="mdi mdi-eye text-info"></i>-->
-<!--                  </button>-->
+                  <button
+                    class="custom-btn-dowonload"
+                    @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
+                    v-if="
+                      checkAll.length == 1
+                    "
+                  >
+                      <i class="mdi mdi-square-edit-outline"></i>
+                  </button>
                   <!-- start mult delete  -->
                   <button
                     class="custom-btn-dowonload"
                     v-if="
                       checkAll.length > 1 &&
-                      isPermission('delete onlineRequest hr')
+                      isPermission('delete onlineRequest hr') && !manager
                     "
                     @click.prevent="deleteFinancialYear(checkAll)"
                   >
@@ -1187,9 +1575,9 @@ export default {
                     class="custom-btn-dowonload"
                     v-if="
                       checkAll.length == 1 &&
-                      isPermission('delete onlineRequest hr')
+                      isPermission('delete onlineRequest hr') && !manager
                     "
-                    @click.prevent="deleteFinancialYear(checkAll[0])"
+                    @click.prevent="showModule(checkAll[0],'delete')?deleteFinancialYear(checkAll[0]):false"
                   >
                     <i class="fas fa-trash-alt"></i>
                   </button>
@@ -1293,6 +1681,11 @@ export default {
                         class="mb-1"
                         >{{ getCompanyKey("online_request_approved_date") }}
                       </b-form-checkbox>
+                        <b-form-checkbox
+                            v-model="setting.request_datetime"
+                            class="mb-1"
+                        >{{ getCompanyKey("online_request_date") }}
+                        </b-form-checkbox>
 
                       <div class="d-flex justify-content-end">
                         <a
@@ -1371,482 +1764,676 @@ export default {
                   @hidden="resetModalHidden"
               >
                   <form>
-                      <div class="mb-3 d-flex justify-content-end">
-                          <b-button
-                              variant="success"
-                              :disabled="!is_disabled"
-                              @click.prevent="resetForm"
-                              type="button"
-                              :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
-                          >
-                              {{ $t("general.AddNewRecord") }}
-                          </b-button>
-                          <template v-if="!is_disabled">
-                              <b-button
-                                  variant="success"
-                                  type="button"
-                                  class="mx-1"
-                                  v-if="!isLoader"
-                                  @click.prevent="AddSubmit"
-                              >
-                                  {{ $t("general.Add") }}
-                              </b-button>
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="mt-1 d-flex justify-content-end">
+                                  <!-- Emulate built in modal footer ok and cancel button actions -->
+                                  <b-button
+                                      variant="success"
+                                      :disabled="!request_id"
+                                      @click.prevent="resetForm"
+                                      type="button"
+                                      :class="['font-weight-bold px-2', request_id ? 'mx-2' : '']"
+                                  >
+                                      {{ $t("general.AddNewRecord") }}
+                                  </b-button>
 
-                              <b-button variant="success" class="mx-1" disabled v-else>
-                                  <b-spinner small></b-spinner>
-                                  <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                              </b-button>
-                          </template>
-                          <!-- Emulate built in modal footer ok and cancel button actions -->
+                                  <template v-if="!request_id">
+                                      <b-button
+                                          variant="success"
+                                          type="button"
+                                          class="mx-1 font-weight-bold px-3"
+                                          v-if="!isLoader"
+                                          @click.prevent="AddSubmit"
+                                      >
+                                          {{ $t("general.Save") }}
+                                      </b-button>
 
-                          <b-button
-                              variant="danger"
-                              type="button"
-                              @click.prevent="resetModalHidden"
-                          >
-                              {{ $t("general.Cancel") }}
-                          </b-button>
-                      </div>
-                      <div class="row">
-                          <div class="col-md-4">
-                              <div class="form-group position-relative">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("employee") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <multiselect
-                                      v-model="create.employee_id"
-                                      :options="employees.map((type) => type.id)"
-                                      :custom-label="
+                                      <b-button variant="success" class="mx-1" disabled v-else>
+                                          <b-spinner small></b-spinner>
+                                          <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                      </b-button>
+                                  </template>
+
+                                  <b-button
+                                      variant="danger"
+                                      class="font-weight-bold"
+                                      type="button"
+                                      @click.prevent="resetModalHidden"
+                                  >
+                                      {{ $t("general.Cancel") }}
+                                  </b-button>
+                              </div>
+                          </div>
+                          <b-tabs nav-class="nav-tabs nav-bordered">
+                              <b-tab :title="$t('general.DataEntry')" active>
+                                  <div class="row">
+                                      <div class="col-md-4">
+                                          <div class="form-group position-relative">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("employee") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <multiselect
+                                                  :disabled="true"
+                                                  v-model="create.employee_id"
+                                                  :options="employees.map((type) => type.id)"
+                                                  :custom-label="
                                     (opt) =>
                                       employees.find((x) => x.id == opt).name
                                   "
-                                  >
-                                  </multiselect>
-                                  <div
-                                      v-if="
-                                    $v.create.request_types_id.$error ||
-                                    errors.request_types_id
+                                              >
+                                              </multiselect>
+                                              <div
+                                                  v-if="
+                                    $v.create.employee_id.$error ||
+                                    errors.employee_id
                                   "
-                                      class="text-danger"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.request_types_id">
-                                      <ErrorMessage
-                                          v-for="(
+                                                  class="text-danger"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.employee_id">
+                                                  <ErrorMessage
+                                                      v-for="(
                                       errorMessage, index
-                                    ) in errors.request_types_id"
-                                          :key="index"
-                                      >{{ errorMessage }}
-                                      </ErrorMessage>
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group position-relative">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("request_type") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <multiselect
-                                      v-model="create.request_types_id"
-                                      :options="requestTypes.map((type) => type.id)"
-                                      :custom-label="
+                                    ) in errors.employee_id"
+                                                      :key="index"
+                                                  >{{ errorMessage }}
+                                                  </ErrorMessage>
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="form-group position-relative">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("request_type") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <multiselect
+                                                  @input="showRequestTypeModel(create.request_types_id)"
+                                                  v-model="create.request_types_id"
+                                                  :options="requestTypes.map((type) => type.id)"
+                                                  :custom-label="
                                     (opt) =>
                                       requestTypes.find((x) => x.id == opt).name
                                   "
-                                  >
-                                  </multiselect>
-                                  <div
-                                      v-if="
+                                              >
+                                              </multiselect>
+                                              <div
+                                                  v-if="
                                     $v.create.request_types_id.$error ||
                                     errors.request_types_id
                                   "
-                                      class="text-danger"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.request_types_id">
-                                      <ErrorMessage
-                                          v-for="(
+                                                  class="text-danger"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.request_types_id">
+                                                  <ErrorMessage
+                                                      v-for="(
                                       errorMessage, index
                                     ) in errors.request_types_id"
-                                          :key="index"
-                                      >{{ errorMessage }}
-                                      </ErrorMessage>
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_date") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      v-model="create.custom_date"
-                                      type="datetime"
-                                      :default-value="create.custom_date"
-                                      @change="date"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.request_datetime.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.request_datetime">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.request_datetime"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                                      :key="index"
+                                                  >{{ errorMessage }}
+                                                  </ErrorMessage>
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_date") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <date-picker
+                                                  :disabled="true"
+                                                  v-model="create.custom_request_datetime"
+                                                  type="datetime"
+                                                  :default-value="create.custom_request_datetime"
+                                                  @change="date"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.request_datetime.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.request_datetime">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.request_datetime"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="!create.request_types_id || (create.request_types_id && getRequestType(create.request_types_id).start_from)"
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_start_from") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      v-model="create.custom_from_date"
-                                      type="date"
-                                      :default-value="create.custom_start_from"
-                                      @change="start_from"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.from_date.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.from_date">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.from_date"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_start_from") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <date-picker
+                                                  v-model="create.from_date"
+                                                  type="date"
+                                                  format="YYYY-MM-DD"
+                                                  valueType="format"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.from_date.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.from_date">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.from_date"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).end_date)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_end_date") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      v-model="create.custom_to_date"
-                                      type="date"
-                                      @change="end_date"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.to_date.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.to_date">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.to_date"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_end_date") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <date-picker
+                                                  v-model="create.to_date"
+                                                  format="YYYY-MM-DD"
+                                                  valueType="format"
+                                                  type="date"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.to_date.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.to_date">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.to_date"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_remark") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <input
+                                                  type="text"
+                                                  v-model="create.remark"
+                                                  class="form-control"
+                                              />
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).amount)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_remark") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <input
-                                      type="text"
-                                      v-model="create.remark"
-                                      class="form-control"
-                                  />
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_amount") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <input
-                                      type="number"
-                                      v-model="create.amount"
-                                      class="form-control"
-                                  />
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_from_hour") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      v-model="create.custom_from_hour"
-                                      type="time"
-                                      :default-value="create.custom_from_hour"
-                                      @change="from_hour"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.from_hour.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.from_hour">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.from_hour"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_amount") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <input
+                                                  type="number"
+                                                  v-model="create.amount"
+                                                  class="form-control"
+                                              />
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).from_hour)
+                              "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_to_hour") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      v-model="create.custom_to_hour"
-                                      type="time"
-                                      :default-value="create.custom_to_hour"
-                                      @change="to_hour"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.to_hour.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.to_hour">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.to_hour"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_from_hour") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <date-picker
+                                                  v-model="create.custom_from_hour"
+                                                  type="time"
+                                                  format="hh:mm A"
+                                                  :default-value="create.custom_from_hour"
+                                                  @change="from_hour"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.from_hour.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.from_hour">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.from_hour"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).to_hour)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group position-relative">
-                                  <label class="control-label">
-                                      {{
-                                          getCompanyKey("online_request_last_status")
-                                      }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <multiselect
-                                      v-model="create.request_status_id"
-                                      :options="statuses.map((type) => type.id)"
-                                      :custom-label="
-                                    (opt) =>
-                                      statuses.find((x) => x.id == opt).name
-                                  "
-                                  >
-                                  </multiselect>
-                                  <div
-                                      v-if="
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_to_hour") }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <date-picker
+                                                  v-model="create.custom_to_hour"
+                                                  type="time"
+                                                  format="hh:mm A"
+                                                  :default-value="create.custom_to_hour"
+                                                  @change="to_hour"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.to_hour.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.to_hour">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.to_hour"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="form-group position-relative">
+                                              <label class="control-label">
+                                                  {{
+                                                      getCompanyKey("online_request_last_status")
+                                                  }}
+                                                  <span class="text-danger">*</span>
+                                              </label>
+                                              <multiselect
+                                                  :disabled="true"
+                                                  v-model="create.request_status_id"
+                                                  :options="statuses.map((type) => type.id)"
+                                                  :custom-label="
+                                                    (opt) => $i18n.locale == 'ar' ?statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                                  "
+                                              >
+                                              </multiselect>
+                                              <div
+                                                  v-if="
                                     $v.create.request_status_id.$error || errors.request_status_id
                                   "
-                                      class="text-danger"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.request_status_id">
-                                      <ErrorMessage
-                                          v-for="(
+                                                  class="text-danger"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.request_status_id">
+                                                  <ErrorMessage
+                                                      v-for="(
                                       errorMessage, index
                                     ) in errors.request_status_id"
-                                          :key="index"
-                                      >{{ errorMessage }}
-                                      </ErrorMessage>
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_approved_date") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      :disabled="true"
-                                      v-model="create.custom_approved_date"
-                                      type="date"
-                                      :default-value="create.custom_approved_date"
-                                      @change="approved_date"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.approved_date.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
+                                                      :key="index"
+                                                  >{{ errorMessage }}
+                                                  </ErrorMessage>
+                                              </template>
+                                          </div>
+                                      </div>
                                   </div>
-                                  <template v-if="errors.approved_date">
-                                      <ErrorMessage
-                                          v-for="(errorMessage, index) in errors.approved_date"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                  <hr style="
+                        margin: 10px 0 !important;
+                        border-top: 1px solid rgb(141 163 159 / 42%);
+                      "/>
+                                  <div class="row">
+                                      <div class="col-md-4">
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_approved_date") }}
+                                              </label>
+                                              <date-picker
+                                                  :disabled="true"
+                                                  v-model="create.custom_approved_date"
+                                                  type="date"
+                                                  :default-value="create.custom_approved_date"
+                                                  @change="approved_date"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.approved_date.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.approved_date">
+                                                  <ErrorMessage
+                                                      v-for="(errorMessage, index) in errors.approved_date"
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="!create.request_types_id || (create.request_types_id && getRequestType(create.request_types_id).start_from)"
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{
-                                          getCompanyKey("online_request_approved_start_from")
-                                      }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      :disabled="!manageOthers"
-                                      v-model="create.custom_approved_from_date"
-                                      type="date"
-                                      :default-value="create.custom_approved_from_date"
-                                      @change="approved_from_date"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.approved_from_date.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.approved_from_date">
-                                      <ErrorMessage
-                                          v-for="(
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{
+                                                      getCompanyKey("online_request_approved_start_from")
+                                                  }}
+                                              </label>
+                                              <date-picker
+                                                  :disabled="true"
+                                                  v-model="create.approved_from_date"
+                                                  type="date"
+                                                  format="YYYY-MM-DD"
+                                                  valueType="format"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.approved_from_date.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.approved_from_date">
+                                                  <ErrorMessage
+                                                      v-for="(
                             errorMessage, index
                           ) in errors.approved_from_date"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).end_date)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_approved_end_date") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      :disabled="!manageOthers"
-                                      v-model="create.custom_approved_to_date"
-                                      type="date"
-                                      :default-value="create.custom_approved_to_date"
-                                      @change="approved_to_date"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.approved_to_date.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.approved_to_date">
-                                      <ErrorMessage
-                                          v-for="(
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_approved_end_date") }}
+                                              </label>
+                                              <date-picker
+                                                  :disabled="true"
+                                                  v-model="create.approved_to_date"
+                                                  format="YYYY-MM-DD"
+                                                  valueType="format"
+                                                  type="date"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.approved_to_date.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.approved_to_date">
+                                                  <ErrorMessage
+                                                      v-for="(
                             errorMessage, index
                           ) in errors.approved_to_date"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).from_hour)
+                              "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_approved_from_hour") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      :disabled="!manageOthers"
-                                      v-model="create.custom_approved_from_hour"
-                                      type="time"
-                                      :default-value="create.custom_approved_from_hour"
-                                      @change="approved_from_hour"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.approved_from_hour.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.approved_from_hour">
-                                      <ErrorMessage
-                                          v-for="(
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_approved_from_hour") }}
+                                              </label>
+                                              <date-picker
+                                                  format="hh:mm A"
+                                                  :disabled="true"
+                                                  v-model="create.custom_approved_from_hour"
+                                                  type="time"
+                                                  :default-value="create.custom_approved_from_hour"
+                                                  @change="approved_from_hour"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.approved_from_hour.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.approved_from_hour">
+                                                  <ErrorMessage
+                                                      v-for="(
                             errorMessage, index
                           ) in errors.approved_from_hour"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).to_hour)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{ getCompanyKey("online_request_approved_to_hour") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <date-picker
-                                      :disabled="!manageOthers"
-                                      v-model="create.custom_approved_to_hour"
-                                      type="time"
-                                      :default-value="create.custom_approved_to_hour"
-                                      @change="approved_to_hour"
-                                      confirm
-                                  ></date-picker>
-                                  <div
-                                      v-if="!$v.create.approved_to_hour.required"
-                                      class="invalid-feedback"
-                                  >
-                                      {{ $t("general.fieldIsRequired") }}
-                                  </div>
-                                  <template v-if="errors.approved_to_hour">
-                                      <ErrorMessage
-                                          v-for="(
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{ getCompanyKey("online_request_approved_to_hour") }}
+                                              </label>
+                                              <date-picker
+                                                  format="hh:mm A"
+                                                  :disabled="true"
+                                                  v-model="create.custom_approved_to_hour"
+                                                  type="time"
+                                                  :default-value="create.custom_approved_to_hour"
+                                                  @change="approved_to_hour"
+                                                  confirm
+                                              ></date-picker>
+                                              <div
+                                                  v-if="!$v.create.approved_to_hour.required"
+                                                  class="invalid-feedback"
+                                              >
+                                                  {{ $t("general.fieldIsRequired") }}
+                                              </div>
+                                              <template v-if="errors.approved_to_hour">
+                                                  <ErrorMessage
+                                                      v-for="(
                             errorMessage, index
                           ) in errors.approved_to_hour"
-                                          :key="index"
-                                      >{{ errorMessage }}</ErrorMessage
+                                                      :key="index"
+                                                  >{{ errorMessage }}</ErrorMessage
+                                                  >
+                                              </template>
+                                          </div>
+                                      </div>
+                                      <div
+                                          class="col-md-4"
+                                          v-if="
+                                  !create.request_types_id ||
+                                  (create.request_types_id &&
+                                    getRequestType(create.request_types_id).amount)
+                                "
                                       >
-                                  </template>
-                              </div>
-                          </div>
-                          <div class="col-md-4">
-                              <div class="form-group">
-                                  <label class="control-label">
-                                      {{getCompanyKey("online_request_approved_amount") }}
-                                      <span class="text-danger">*</span>
-                                  </label>
-                                  <input
-                                      type="number"
-                                      v-model="create.approved_amount"
-                                      class="form-control"
-                                  />
-                              </div>
-                          </div>
+                                          <div class="form-group">
+                                              <label class="control-label">
+                                                  {{getCompanyKey("online_request_approved_amount") }}
+                                              </label>
+                                              <input
+                                                  :disabled="true"
+                                                  type="number"
+                                                  v-model="create.approved_amount"
+                                                  class="form-control"
+                                              />
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-tab>
+                              <b-tab
+                                  :disabled="!request_id"
+                                  :title="$t('general.ImageUploads')"
+                              >
+                                  <div class="row">
+                                      <input
+                                          accept="image/png, image/gif, image/jpeg, image/jpg"
+                                          type="file"
+                                          id="uploadImageCreate"
+                                          @change.prevent="onImageChanged"
+                                          class="input-file-upload position-absolute d-none"
+                                      />
+                                      <div class="col-md-8 my-1">
+                                          <!-- file upload -->
+                                          <div
+                                              class="row align-content-between"
+                                              style="width: 100%; height: 100%"
+                                          >
+                                              <div class="col-12">
+                                                  <div class="d-flex flex-wrap">
+                                                      <div class="col-4" v-for="(photo, index) in images">
+                                                          <div
+                                                              class="dropzone-previews position-relative mb-2"
+                                                          >
+                                                              <div
+                                                                  :class="[
+                                                                      'card mb-0 shadow-none border',
+                                                                      images.length - 1 == index
+                                                                        ? 'bg-primary'
+                                                                        : '',
+                                                                    ]"
+                                                              >
+                                                                  <div class="p-2">
+                                                                      <div class="row align-items-center">
+                                                                          <div
+                                                                              class="col-auto"
+                                                                              @click="showPhoto = photo.webp"
+                                                                          >
+                                                                              <img
+                                                                                  data-dz-thumbnail
+                                                                                  :src="photo.webp"
+                                                                                  class="avatar-sm rounded bg-light"
+                                                                                  @error="src = './images/img-1.png'"
+                                                                              />
+                                                                          </div>
+                                                                          <div class="col pl-0">
+                                                                              <a
+                                                                                  href="javascript:void(0);"
+                                                                                  :class="[
+                                                      'font-weight-bold',
+                                                      images.length - 1 == index
+                                                        ? 'text-white'
+                                                        : 'text-muted',
+                                                    ]"
+                                                                                  data-dz-name
+                                                                              >
+                                                                                  {{ photo.name }}
+                                                                              </a>
+                                                                          </div>
+                                                                          <!-- Button -->
+                                                                          <a
+                                                                              href="javascript:void(0);"
+                                                                              :class="[
+                                                    'btn-danger text-muted dropzone-close',
+                                                    $i18n.locale == 'ar'
+                                                      ? 'dropzone-close-rtl'
+                                                      : '',
+                                                  ]"
+                                                                              data-dz-remove
+                                                                              @click.prevent="
+                                                    deleteImageCreate(photo.id, index)
+                                                  "
+                                                                          >
+                                                                              <i class="fe-x"></i>
+                                                                          </a>
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                          <div class="text-center">
+                                                              <a download class="btn btn-danger" :href="photo.webp">{{ $t('general.download') }}</a>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                              <div class="footer-image col-12">
+                                                  <b-button
+                                                      @click="changePhoto"
+                                                      variant="success"
+                                                      type="button"
+                                                      class="mx-1 font-weight-bold px-3"
+                                                      v-if="!isLoader"
+                                                  >
+                                                      {{ $t("general.Add") }}
+                                                  </b-button>
+                                                  <b-button variant="success" class="mx-1" disabled v-else>
+                                                      <b-spinner small></b-spinner>
+                                                      <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                                  </b-button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                          <div class="show-dropzone">
+                                              <img
+                                                  :src="showPhoto"
+                                                  class="img-thumbnail"
+                                                  @error="src = './images/img-1.png'"
+                                              />
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-tab>
+                          </b-tabs>
                       </div>
                   </form>
               </b-modal>
@@ -1913,7 +2500,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.date">
+                    <th v-if="setting.request_datetime">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("online_request_date") }}</span>
                         <div class="arrow-sort">
@@ -2037,19 +2624,13 @@ export default {
                         <span>{{
                           getCompanyKey("online_request_last_status")
                         }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="onlineRequests.sort(sortString('name'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="onlineRequests.sort(sortString('-name'))"
-                          ></i>
-                        </div>
                       </div>
                     </th>
-
+                    <th v-if="setting.approved_date">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("online_request_approved_date") }}</span>
+                          </div>
+                    </th>
                     <th v-if="setting.approved_from_date">
                       <div class="d-flex justify-content-center">
                         <span>{{
@@ -2135,23 +2716,6 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.approved_date">
-                      <div class="d-flex justify-content-center">
-                        <span>{{
-                          getCompanyKey("online_request_approved_date")
-                        }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="onlineRequests.sort(sortString('name'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="onlineRequests.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
                     <th v-if="enabled3" class="do-not-print">
                       {{ $t("general.Action") }}
                     </th>
@@ -2160,7 +2724,9 @@ export default {
                     </th>
                   </tr>
                 </thead>
-                <tbody v-if="onlineRequests.length > 0">
+                <tbody
+                    v-if="onlineRequests.length > 0"
+                >
                   <tr
                     @click.capture="checkRow(data.id)"
                     @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
@@ -2182,7 +2748,6 @@ export default {
                         />
                       </div>
                     </td>
-
                     <td v-if="setting.employee_id">
                       <h5 v-if="data.employee" class="m-0 font-weight-normal">
                         {{
@@ -2204,9 +2769,9 @@ export default {
                         }}
                       </h5>
                     </td>
-                    <td v-if="setting.date">
-                      {{ data.date }}
-                    </td>
+                    <th v-if="setting.request_datetime">
+                        {{ data.request_datetime }}
+                    </th>
                     <td v-if="setting.start_from">
                       <h5 class="m-0 font-weight-normal">
                         {{ data.from_date }}
@@ -2236,13 +2801,16 @@ export default {
                       </h5>
                     </td>
                     <td v-if="setting.status_id">
-                      <h5 v-if="data.status" class="m-0 font-weight-normal">
+                      <h5 v-if="data.request_status" class="m-0 font-weight-normal">
                         {{
                           $i18n.locale == "ar"
-                            ? data.status.name
-                            : data.status.name_e
+                            ? data.request_status.name
+                            : data.request_status.name_e
                         }}
                       </h5>
+                    </td>
+                    <td v-if="setting.approved_date">
+                          {{data.approved_date}}
                     </td>
                     <td v-if="setting.approved_from_date">
                       {{ data.approved_from_date }}
@@ -2259,9 +2827,6 @@ export default {
                     <td v-if="setting.approved_amount">
                       {{ data.approved_amount }}
                     </td>
-                    <td v-if="setting.approved_date">
-                      {{ data.approved_date }}
-                    </td>
                     <td v-if="enabled3" class="do-not-print">
                       <div class="btn-group">
                         <button
@@ -2274,22 +2839,23 @@ export default {
                           <i class="fas fa-angle-down"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-custom">
-<!--                          <a-->
-<!--                            class="dropdown-item"-->
-<!--                            href="#"-->
-<!--                            @click="$bvModal.show(`modal-edit-${data.id}`)"-->
-<!--                          >-->
-<!--                            <div-->
-<!--                              class="d-flex justify-content-between align-items-center text-black"-->
-<!--                            >-->
-<!--                              <span>{{ $t("general.view") }}</span>-->
-<!--                              <i class="mdi mdi-eye text-info"></i>-->
-<!--                            </div>-->
-<!--                          </a>-->
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            @click="$bvModal.show(`modal-edit-${data.id}`)"
+                          >
+                            <div
+                              class="d-flex justify-content-between align-items-center text-black"
+                            >
+                                <span>{{ $t('general.edit') }}</span>
+                                <i class="mdi mdi-square-edit-outline text-info"></i>
+                            </div>
+                          </a>
                           <a
                             class="dropdown-item text-black"
                             href="#"
-                            @click.prevent="deleteFinancialYear(data.id)"
+                            v-if="!manager"
+                            @click.prevent="showModule(data.id,'delete')?deleteFinancialYear(data.id):false"
                           >
                             <div
                               class="d-flex justify-content-between align-items-center text-black"
@@ -2300,378 +2866,725 @@ export default {
                           </a>
                         </div>
                       </div>
+                        <!--  edit   -->
+                      <b-modal
+                        :id="`modal-edit-${data.id}`"
+                        :title="getCompanyKey('request_view_form')"
+                        title-class="font-18"
+                        body-class="p-4"
+                        dialog-class="modal-full-width"
+                        :ref="`edit-${data.id}`"
+                        :hide-footer="true"
+                        @show="resetModalEdit(data.id)"
+                        @hidden="resetModalHiddenEdit(data.id)"
+                      >
+                        <form>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mt-1 d-flex justify-content-end">
+                                        <!-- Emulate built in modal footer ok and cancel button actions -->
+                                        <b-button
+                                            variant="success"
+                                            type="submit"
+                                            class="mx-1"
+                                            :disabled="isUpdate"
+                                            v-if="!isLoader"
+                                            @click.prevent="editSubmit(data.id)"
+                                        >
+                                            {{ $t("general.Edit") }}
+                                        </b-button>
 
-                      <!--  edit   -->
-<!--                      <b-modal-->
-<!--                        :id="`modal-edit-${data.id}`"-->
-<!--                        :title="getCompanyKey('request_view_form')"-->
-<!--                        title-class="font-18"-->
-<!--                        body-class="p-4"-->
-<!--                        dialog-class="modal-full-width"-->
-<!--                        :ref="`edit-${data.id}`"-->
-<!--                        :hide-footer="true"-->
-<!--                        @show="resetModalEdit(data.id)"-->
-<!--                        @hidden="resetModalHiddenEdit(data.id)"-->
-<!--                      >-->
-<!--                        <form>-->
-<!--                          <div class="mb-3 d-flex justify-content-end">-->
-<!--                            &lt;!&ndash; Emulate built in modal footer ok and cancel button actions &ndash;&gt;-->
-<!--                            &lt;!&ndash; <b-button-->
-<!--                              variant="success"-->
-<!--                              type="submit"-->
-<!--                              class="mx-1"-->
-<!--                              v-if="!isLoader"-->
-<!--                              @click.prevent="editSubmit(data.id)"-->
-<!--                            >-->
-<!--                              {{ $t("general.Edit") }}-->
-<!--                            </b-button>-->
+                                        <b-button
+                                            variant="success"
+                                            class="mx-1"
+                                            disabled
+                                            v-else
+                                        >
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only"
+                                            >{{ $t("login.Loading") }}...</span
+                                            >
+                                        </b-button>
 
-<!--                            <b-button-->
-<!--                              variant="success"-->
-<!--                              class="mx-1"-->
-<!--                              disabled-->
-<!--                              v-else-->
-<!--                            >-->
-<!--                              <b-spinner small></b-spinner>-->
-<!--                              <span class="sr-only"-->
-<!--                                >{{ $t("login.Loading") }}...</span-->
-<!--                              >-->
-<!--                            </b-button> &ndash;&gt;-->
-
-<!--                            <b-button-->
-<!--                              variant="danger"-->
-<!--                              type="button"-->
-<!--                              @click.prevent="-->
-<!--                                $bvModal.hide(`modal-edit-${data.id}`)-->
-<!--                              "-->
-<!--                            >-->
-<!--                              {{ $t("general.Cancel") }}-->
-<!--                            </b-button>-->
-<!--                          </div>-->
-<!--                          <div class="row">-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group position-relative">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("employee") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <multiselect-->
-<!--                                  :disabled="true"-->
-<!--                                  v-model="edit.employee_id"-->
-<!--                                  :options="employees.map((type) => type.id)"-->
-<!--                                  :custom-label="-->
-<!--                                    (opt) =>-->
-<!--                                      employees.find((x) => x.id == opt).name-->
-<!--                                  "-->
-<!--                                >-->
-<!--                                </multiselect>-->
-<!--                                <div-->
-<!--                                  v-if="-->
-<!--                                    $v.edit.request_types_id.$error ||-->
-<!--                                    errors.request_types_id-->
-<!--                                  "-->
-<!--                                  class="text-danger"-->
-<!--                                >-->
-<!--                                  {{ $t("general.fieldIsRequired") }}-->
-<!--                                </div>-->
-<!--                                <template v-if="errors.request_types_id">-->
-<!--                                  <ErrorMessage-->
-<!--                                    v-for="(-->
-<!--                                      errorMessage, index-->
-<!--                                    ) in errors.request_types_id"-->
-<!--                                    :key="index"-->
-<!--                                    >{{ errorMessage }}-->
-<!--                                  </ErrorMessage>-->
-<!--                                </template>-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group position-relative">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("request_type") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <multiselect-->
-<!--                                  :disabled="true"-->
-<!--                                  v-model="edit.request_types_id"-->
-<!--                                  :options="requestTypes.map((type) => type.id)"-->
-<!--                                  :custom-label="-->
-<!--                                    (opt) =>-->
-<!--                                      requestTypes.find((x) => x.id == opt).name-->
-<!--                                  "-->
-<!--                                >-->
-<!--                                </multiselect>-->
-<!--                                <div-->
-<!--                                  v-if="-->
-<!--                                    $v.edit.request_types_id.$error ||-->
-<!--                                    errors.request_types_id-->
-<!--                                  "-->
-<!--                                  class="text-danger"-->
-<!--                                >-->
-<!--                                  {{ $t("general.fieldIsRequired") }}-->
-<!--                                </div>-->
-<!--                                <template v-if="errors.request_types_id">-->
-<!--                                  <ErrorMessage-->
-<!--                                    v-for="(-->
-<!--                                      errorMessage, index-->
-<!--                                    ) in errors.request_types_id"-->
-<!--                                    :key="index"-->
-<!--                                    >{{ errorMessage }}-->
-<!--                                  </ErrorMessage>-->
-<!--                                </template>-->
-<!--                              </div>-->
-<!--                            </div>-->
-
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("online_request_date") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey("online_request_start_from")-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.from_date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("online_request_end_date") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.to_date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("online_request_remark") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.remark"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("online_request_amount") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.amount"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey("online_request_from_hour")-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.from_hour"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{ getCompanyKey("online_request_to_hour") }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.to_hour"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group position-relative">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey("online_request_last_status")-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <multiselect-->
-<!--                                  :disabled="true"-->
-<!--                                  v-model="edit.status_id"-->
-<!--                                  :options="statuses.map((type) => type.id)"-->
-<!--                                  :custom-label="-->
-<!--                                    (opt) =>-->
-<!--                                      statuses.find((x) => x.id == opt).name-->
-<!--                                  "-->
-<!--                                >-->
-<!--                                </multiselect>-->
-<!--                                <div-->
-<!--                                  v-if="-->
-<!--                                    $v.edit.status_id.$error || errors.status_id-->
-<!--                                  "-->
-<!--                                  class="text-danger"-->
-<!--                                >-->
-<!--                                  {{ $t("general.fieldIsRequired") }}-->
-<!--                                </div>-->
-<!--                                <template v-if="errors.status_id">-->
-<!--                                  <ErrorMessage-->
-<!--                                    v-for="(-->
-<!--                                      errorMessage, index-->
-<!--                                    ) in errors.status_id"-->
-<!--                                    :key="index"-->
-<!--                                    >{{ errorMessage }}-->
-<!--                                  </ErrorMessage>-->
-<!--                                </template>-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_start_from"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_from_date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_end_date"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_to_date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_from_hour"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_from_hour"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_to_hour"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_to_hour"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_amount"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_amount"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-4">-->
-<!--                              <div class="form-group">-->
-<!--                                <label class="control-label">-->
-<!--                                  {{-->
-<!--                                    getCompanyKey(-->
-<!--                                      "online_request_approved_date"-->
-<!--                                    )-->
-<!--                                  }}-->
-<!--                                  <span class="text-danger">*</span>-->
-<!--                                </label>-->
-<!--                                <input-->
-<!--                                  :disabled="true"-->
-<!--                                  type="text"-->
-<!--                                  v-model="edit.approved_date"-->
-<!--                                  class="form-control"-->
-<!--                                />-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                          </div>-->
-<!--                        </form>-->
-<!--                      </b-modal>-->
+                                        <b-button
+                                            variant="danger"
+                                            type="button"
+                                            @click.prevent="
+                                $bvModal.hide(`modal-edit-${data.id}`)
+                              "
+                                        >
+                                            {{ $t("general.Cancel") }}
+                                        </b-button>
+                                    </div>
+                                </div>
+                                <b-tabs nav-class="nav-tabs nav-bordered">
+                                    <b-tab :title="$t('general.DataEntry')" active>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group position-relative">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("employee") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <multiselect
+                                                        :disabled="true"
+                                                        v-model="edit.employee_id"
+                                                        :options="employees.map((type) => type.id)"
+                                                        :custom-label="
+                                                (opt) =>
+                                                  employees.find((x) => x.id == opt).name
+                                              "
+                                                    >
+                                                    </multiselect>
+                                                    <div
+                                                        v-if="
+                                    $v.edit.request_types_id.$error ||
+                                    errors.request_types_id
+                                  "
+                                                        class="text-danger"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.request_types_id">
+                                                        <ErrorMessage
+                                                            v-for="(
+                                      errorMessage, index
+                                    ) in errors.request_types_id"
+                                                            :key="index"
+                                                        >{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group position-relative">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("request_type") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <multiselect
+                                                        :disabled="manager"
+                                                        v-model="edit.request_types_id"
+                                                        :options="requestTypes.map((type) => type.id)"
+                                                        :custom-label="
+                                    (opt) =>
+                                      requestTypes.find((x) => x.id == opt).name
+                                  "
+                                                    >
+                                                    </multiselect>
+                                                    <div
+                                                        v-if="
+                                    $v.edit.request_types_id.$error ||
+                                    errors.request_types_id
+                                  "
+                                                        class="text-danger"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.request_types_id">
+                                                        <ErrorMessage
+                                                            v-for="(
+                                      errorMessage, index
+                                    ) in errors.request_types_id"
+                                                            :key="index"
+                                                        >{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_date") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="true"
+                                                        v-model="edit.custom_request_datetime"
+                                                        type="datetime"
+                                                        :default-value="edit.custom_request_datetime"
+                                                        @change="date"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.request_datetime.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.request_datetime">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.request_datetime"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id)
+                                            .start_from)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_start_from") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="manager"
+                                                        v-model="edit.from_date"
+                                                        type="date"
+                                                        format="YYYY-MM-DD"
+                                                        valueType="format"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.from_date.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.from_date">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.from_date"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id).end_date)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_end_date") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="manager"
+                                                        v-model="edit.to_date"
+                                                        type="date"
+                                                        format="YYYY-MM-DD"
+                                                        valueType="format"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.to_date.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.to_date">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.to_date"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_remark") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input
+                                                        :disabled="manager"
+                                                        type="text"
+                                                        v-model="edit.remark"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id).amount)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_amount") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input
+                                                        :disabled="manager"
+                                                        type="number"
+                                                        v-model="edit.amount"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                    !edit.request_types_id ||
+                                    (edit.request_types_id &&
+                                      getRequestType(edit.request_types_id)
+                                        .from_hour)
+                                  "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_from_hour") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <date-picker
+                                                        format="hh:mm A"
+                                                        :disabled="manager"
+                                                        v-model="edit.custom_from_hour"
+                                                        type="time"
+                                                        :default-value="edit.custom_from_hour"
+                                                        @change="from_hour"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.from_hour.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.from_hour">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.from_hour"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                    !edit.request_types_id ||
+                                    (edit.request_types_id &&
+                                      getRequestType(edit.request_types_id).to_hour)
+                                  "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_to_hour") }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <date-picker
+                                                        format="hh:mm A"
+                                                        :disabled="manager"
+                                                        v-model="edit.custom_to_hour"
+                                                        type="time"
+                                                        :default-value="edit.custom_to_hour"
+                                                        @change="to_hour"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.to_hour.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.to_hour">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.to_hour"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group position-relative">
+                                                    <label class="control-label">
+                                                        {{
+                                                            getCompanyKey("online_request_last_status")
+                                                        }}
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <multiselect
+                                                        :disabled="isUserManager"
+                                                        v-model="edit.request_status_id"
+                                                        :options="statuses.map((type) => type.id)"
+                                                        :custom-label="
+                                                        (opt) => $i18n.locale == 'ar' ?statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                                      "
+                                                    >
+                                                    </multiselect>
+                                                    <div
+                                                        v-if="
+                                    $v.edit.request_status_id.$error || errors.request_status_id
+                                  "
+                                                        class="text-danger"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.request_status_id">
+                                                        <ErrorMessage
+                                                            v-for="(
+                                      errorMessage, index
+                                    ) in errors.request_status_id"
+                                                            :key="index"
+                                                        >{{ errorMessage }}
+                                                        </ErrorMessage>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" v-if="data.approved">
+                                                <div class="form-group position-relative">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_approved_by") }}
+                                                    </label>
+                                                    <input
+                                                        disabled
+                                                        type="text"
+                                                        class="form-control"
+                                                        :value="$i18n.locale == 'ar'?data.approved.name:data.approved.name_e"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="
+                        margin: 10px 0 !important;
+                        border-top: 1px solid rgb(141 163 159 / 42%);
+                      "/>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_approved_date") }}
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="true"
+                                                        v-model="edit.approved_date"
+                                                        format="YYYY-MM-DD"
+                                                        valueType="format"
+                                                        type="date"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.approved_date.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.approved_date">
+                                                        <ErrorMessage
+                                                            v-for="(errorMessage, index) in errors.approved_date"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id).start_from)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{
+                                                            getCompanyKey("online_request_approved_start_from")
+                                                        }}
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="isUserManager"
+                                                        v-model="edit.approved_from_date"
+                                                        type="date"
+                                                        format="YYYY-MM-DD"
+                                                        valueType="format"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.approved_from_date.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.approved_from_date">
+                                                        <ErrorMessage
+                                                            v-for="(
+                            errorMessage, index
+                          ) in errors.approved_from_date"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id).end_date)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_approved_end_date") }}
+                                                    </label>
+                                                    <date-picker
+                                                        :disabled="isUserManager"
+                                                        v-model="edit.approved_to_date"
+                                                        format="YYYY-MM-DD"
+                                                        valueType="format"
+                                                        type="date"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.approved_to_date.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.approved_to_date">
+                                                        <ErrorMessage
+                                                            v-for="(
+                            errorMessage, index
+                          ) in errors.approved_to_date"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                    !edit.request_types_id ||
+                                    (edit.request_types_id &&
+                                      getRequestType(edit.request_types_id)
+                                        .from_hour)
+                                  "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_approved_from_hour") }}
+                                                    </label>
+                                                    <date-picker
+                                                        format="hh:mm A"
+                                                        :disabled="isUserManager"
+                                                        v-model="edit.custom_approved_from_hour"
+                                                        type="time"
+                                                        :default-value="edit.custom_approved_from_hour"
+                                                        @change="approved_from_hour"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.approved_from_hour.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.approved_from_hour">
+                                                        <ErrorMessage
+                                                            v-for="(
+                            errorMessage, index
+                          ) in errors.approved_from_hour"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                    !edit.request_types_id ||
+                                    (edit.request_types_id &&
+                                      getRequestType(edit.request_types_id).to_hour)
+                                  "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{ getCompanyKey("online_request_approved_to_hour") }}
+                                                    </label>
+                                                    <date-picker
+                                                        format="hh:mm A"
+                                                        :disabled="isUserManager"
+                                                        v-model="edit.custom_approved_to_hour"
+                                                        type="time"
+                                                        :default-value="edit.custom_approved_to_hour"
+                                                        @change="approved_to_hour"
+                                                        confirm
+                                                    ></date-picker>
+                                                    <div
+                                                        v-if="!$v.edit.approved_to_hour.required"
+                                                        class="invalid-feedback"
+                                                    >
+                                                        {{ $t("general.fieldIsRequired") }}
+                                                    </div>
+                                                    <template v-if="errors.approved_to_hour">
+                                                        <ErrorMessage
+                                                            v-for="(
+                            errorMessage, index
+                          ) in errors.approved_to_hour"
+                                                            :key="index"
+                                                        >{{ errorMessage }}</ErrorMessage
+                                                        >
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-md-4"
+                                                v-if="
+                                        !edit.request_types_id ||
+                                        (edit.request_types_id &&
+                                          getRequestType(edit.request_types_id).amount)
+                                      "
+                                            >
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        {{getCompanyKey("online_request_approved_amount") }}
+                                                    </label>
+                                                    <input
+                                                        format="hh:mm A"
+                                                        :disabled="isUserManager"
+                                                        type="number"
+                                                        v-model="edit.approved_amount"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </b-tab>
+                                    <b-tab :title="$t('general.ImageUploads')">
+                                        <div class="row">
+                                            <input
+                                                accept="image/png, image/gif, image/jpeg, image/jpg"
+                                                type="file"
+                                                id="uploadImageEdit"
+                                                @change.prevent="onImageChanged"
+                                                class="input-file-upload position-absolute d-none"
+                                            />
+                                            <div class="col-md-8 my-1">
+                                                <!-- file upload -->
+                                                <div
+                                                    class="row align-content-between"
+                                                    style="width: 100%; height: 100%"
+                                                >
+                                                    <div class="col-12">
+                                                        <div class="d-flex flex-wrap">
+                                                            <div class="col-4" v-for="(photo, index) in images">
+                                                                <div
+                                                                    class="dropzone-previews position-relative mb-2"
+                                                                >
+                                                                    <div
+                                                                        :class="[
+                                                                      'card mb-0 shadow-none border',
+                                                                      images.length - 1 == index
+                                                                        ? 'bg-primary'
+                                                                        : '',
+                                                                    ]"
+                                                                    >
+                                                                        <div class="p-2">
+                                                                            <div class="row align-items-center">
+                                                                                <div
+                                                                                    class="col-auto"
+                                                                                    @click="showPhoto = photo.webp"
+                                                                                >
+                                                                                    <img
+                                                                                        data-dz-thumbnail
+                                                                                        :src="photo.webp"
+                                                                                        class="avatar-sm rounded bg-light"
+                                                                                        @error="src = './images/img-1.png'"
+                                                                                    />
+                                                                                </div>
+                                                                                <div class="col pl-0">
+                                                                                    <a
+                                                                                        href="javascript:void(0);"
+                                                                                        :class="[
+                                                      'font-weight-bold',
+                                                      images.length - 1 == index
+                                                        ? 'text-white'
+                                                        : 'text-muted',
+                                                    ]"
+                                                                                        data-dz-name
+                                                                                    >
+                                                                                        {{ photo.name }}
+                                                                                    </a>
+                                                                                </div>
+                                                                                <!-- Button -->
+                                                                                <a
+                                                                                    href="javascript:void(0);"
+                                                                                    :class="[
+                                                    'btn-danger text-muted dropzone-close',
+                                                    $i18n.locale == 'ar'
+                                                      ? 'dropzone-close-rtl'
+                                                      : '',
+                                                  ]"
+                                                                                    data-dz-remove
+                                                                                    @click.prevent="
+                                                    deleteImageCreate(photo.id, index)
+                                                  "
+                                                                                >
+                                                                                    <i class="fe-x"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="text-center">
+                                                                    <a download class="btn btn-danger" :href="photo.webp">{{ $t('general.download') }}</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="footer-image col-12">
+                                                        <b-button
+                                                            @click="changePhotoEdit"
+                                                            :disabled="isUpdate"
+                                                            variant="success"
+                                                            type="button"
+                                                            class="mx-1 font-weight-bold px-3"
+                                                            v-if="!isLoader"
+                                                        >
+                                                            {{ $t("general.Add") }}
+                                                        </b-button>
+                                                        <b-button
+                                                            variant="success"
+                                                            class="mx-1"
+                                                            disabled
+                                                            v-else
+                                                        >
+                                                            <b-spinner small></b-spinner>
+                                                            <span class="sr-only"
+                                                            >{{ $t("login.Loading") }}...</span
+                                                            >
+                                                        </b-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="show-dropzone">
+                                                    <img
+                                                        :src="showPhoto"
+                                                        class="img-thumbnail"
+                                                        @error="src = './images/img-1.png'"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </b-tab>
+                                </b-tabs>
+                            </div>
+                        </form>
+                      </b-modal>
                       <!--  /edit   -->
                     </td>
                     <td v-if="enabled3" class="do-not-print">
@@ -2693,7 +3606,7 @@ export default {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <th class="text-center" colspan="11">
+                    <th class="text-center" colspan="20">
                       {{ $t("general.notDataFound") }}
                     </th>
                   </tr>
@@ -2707,16 +3620,61 @@ export default {
     </div>
   </Layout>
 </template>
-<style lang="scss" scoped>
+
+<style lang="scss">
 .line {
-  border-bottom: 1px solid #fff !important;
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
+    border-bottom: 1px solid #fff !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
 }
 table {
-  td,
-  th {
-    white-space: nowrap;
-  }
+    td,
+    th {
+        white-space: nowrap;
+    }
+}
+.modal-dialog .card {
+    margin: 0 !important;
+}
+
+.bankAccount.modal-body {
+    padding: 0 !important;
+}
+
+.modal-dialog .card-body {
+    padding: 1.5rem 1.5rem 0 1.5rem !important;
+}
+
+.nav-bordered {
+    border: unset !important;
+}
+
+.nav {
+    background-color: #dff0fe;
+}
+
+.tab-content {
+    padding: 70px 60px 40px;
+    min-height: 300px;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid #b7b7b7 !important;
+    background-color: #d7e5f2;
+    border-bottom: 0 !important;
+    margin-bottom: 1px;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: #000;
+    background-color: hsl(0deg 0% 96%);
+    border-bottom: 0 !important;
+}
+
+.img-thumbnail {
+    max-height: 400px !important;
 }
 </style>

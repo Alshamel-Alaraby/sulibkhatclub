@@ -81,26 +81,6 @@ export default {
       media: {},
     },
   },
-  updated() {
-    // $(function () {
-    //   $(".englishInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return true;
-    //     if (65 <= ew && ew <= 90) return true;
-    //     if (97 <= ew && ew <= 122) return true;
-    //     return false;
-    //   });
-    //   $(".arabicInput").keypress(function (event) {
-    //     var ew = event.which;
-    //     if (ew == 32) return true;
-    //     if (48 <= ew && ew <= 57) return false;
-    //     if (65 <= ew && ew <= 90) return false;
-    //     if (97 <= ew && ew <= 122) return false;
-    //     return true;
-    //   });
-    // });
-  },
   methods: {
     async getCustomTableFields() {
       this.isCustom = true;
@@ -136,7 +116,6 @@ export default {
         return this.isRequiredPage(fieldName);
       }
     },
-
     addCategoryToItem(id) {
       if (id == 0) {
         this.$bvModal.show("category-create");
@@ -210,7 +189,7 @@ export default {
     },
     async getItemCategories() {
       await adminApi
-        .get(`/real-estate/Category-item?item_id=${this.item_id}`)
+        .get(`/real-estate/Category-item/get-drop-down?item_id=${this.item_id}`)
         .then((res) => {
           this.itemCategories = res.data.data;
         })
@@ -224,7 +203,7 @@ export default {
     },
     async getCategories() {
       await adminApi
-        .get(`real-estate/Category-item`)
+        .get(`real-estate/Category-item/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           l.unshift({ id: 0, name: "اضف فئة", name_e: "Add category" });
@@ -371,7 +350,7 @@ export default {
     },
     async getUnits() {
       await adminApi
-        .get(`/units`)
+        .get(`/units/get-drop-down`)
         .then((res) => {
           let l = res.data;
           this.units = l.data;
@@ -540,11 +519,9 @@ export default {
           });
         });
     },
-
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
     },
-
     englishValue(txt) {
       this.create.name_e = englishValue(txt);
     },
@@ -1044,6 +1021,9 @@ export default {
 </template>
 
 <style>
+form {
+    position: relative;
+}
 .dropdown-menu-custom-company.dropdown .dropdown-menu {
   padding: 5px 10px !important;
   overflow-y: scroll;

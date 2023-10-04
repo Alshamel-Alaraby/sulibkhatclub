@@ -89,7 +89,7 @@ export default {
         },
         showInstallmentStatusModal(index) {
             if (this.create[index].installment_statu_id == 0) {
-                this.$bvModal.show("installment-payment-create");
+                this.$bvModal.show("installment-create-status");
                 this.create[index].installment_statu_id = null;
             }
         },
@@ -608,16 +608,28 @@ export default {
                 this.openingBreak.is_update = is_update;
                 this.$bvModal.show("opening-balance-break-create-show");
             }
-        }
+        },
+        isPermission(item) {
+            if (this.$store.state.auth.type == "user") {
+                return this.$store.state.auth.permissions.includes(item);
+            }
+            return true;
+        },
     },
 };
 </script>
 
 <template>
     <div>
-        <InstallmentStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getInstallmentStatuses"/>
+        <InstallmentStatus :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'installment-create-status'"
+                           :isPage="false"
+                           type="create"
+                           :isPermission="isPermission" @created="getInstallmentStatuses"/>
         <showBreak :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :opening="openingBreak"/>
-        <InstallmentPaymentType :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getInstallPaymentTypes"/>
+        <InstallmentPaymentType :id="'installment_payment_type_create'"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getInstallPaymentTypes"/>
         <!--  create   -->
         <b-modal
             id="opening-balance-break-create"
@@ -793,7 +805,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
-                                    :disabled="!isDebit ? true :opening.is_update?false:create[index].id?true:false"
+                                    :disabled=" create[index].installment_statu_id != 1 ? true : !isDebit ? true :opening.is_update?false:create[index].id?true:false"
                                     type="number"
                                     step="any"
                                     class="form-control"
@@ -823,7 +835,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
-                                    :disabled="isDebit?true:opening.is_update?false:create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true : isDebit?true:opening.is_update?false:create[index].id?true:false"
                                     type="number"
                                     step="any"
                                     class="form-control"
@@ -851,7 +863,7 @@ export default {
                                 <label v-if="index == 0"
                                        class="control-label">{{ getCompanyKey("installment_payment_type_id") }}</label>
                                 <multiselect
-                                    :disabled="create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true : create[index].id?true:false"
                                     @input="showInstallmentPaymentTypeModal(index)"
                                     v-model="create[index].instalment_type_id"
                                     :options="payment_types.map((type) => type.id)"
@@ -887,7 +899,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
-                                    :disabled="opening.is_update?false:create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true : opening.is_update?false:create[index].id?true:false"
                                     type="number"
                                     class="form-control"
                                     data-create="3"
@@ -915,7 +927,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <date-picker
-                                    :disabled="opening.is_update?false:create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true : opening.is_update?false:create[index].id?true:false"
                                     type="date"
                                     v-model="$v.create.$each[index].instalment_date.$model"
                                     format="YYYY-MM-DD"
@@ -973,7 +985,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
-                                    :disabled="opening.is_update?false:create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true : opening.is_update?false:create[index].id?true:false"
                                     type="text"
                                     class="form-control"
                                     v-model="$v.create.$each[index].details.$model"
@@ -1027,24 +1039,24 @@ export default {
                         </div>
 
                         <div :class="[index == 0 ? ' pt-3':'' ,'col-md-1']">
-                            <b-button v-if="((create[index].repate > 1 && opening.is_update)||(create[index].repate > 1 && !create[index].id)) && parseInt(residual) == 0"
-                                      variant="primary"
-                                      class="btn btn-primary"
-                                      @click="showBreakDetails(index)"
-                            >
-                                {{ $t('general.Break') }}
-                            </b-button>
+<!--                            <b-button v-if="((create[index].repate > 1 && opening.is_update)||(create[index].repate > 1 && !create[index].id)) && parseInt(residual) == 0"-->
+<!--                                      variant="primary"-->
+<!--                                      class="btn btn-primary"-->
+<!--                                      @click="showBreakDetails(index)"-->
+<!--                            >-->
+<!--                                {{ $t('general.Break') }}-->
+<!--                            </b-button>-->
 
-                            <b-button v-else
-                                      variant="secondary"
-                                      class="btn btn-secondary"
-                            >
-                                {{ $t('general.Break') }}
-                            </b-button>
+<!--                            <b-button v-else-->
+<!--                                      variant="secondary"-->
+<!--                                      class="btn btn-secondary"-->
+<!--                            >-->
+<!--                                {{ $t('general.Break') }}-->
+<!--                            </b-button>-->
                         </div>
 
                         <div :class="[index == 0 ? ' pt-3':'' ,'col-md-1']">
-                            <button v-if="opening.is_update||(create.length > 1 && !create[index].id)"
+                            <button v-if="(opening.is_update||(create.length > 1 && !create[index].id) ) && create[index].installment_statu_id == 1"
                                     type="button"
                                     @click.prevent="removeNewField(index)"
                                     class="custom-btn-dowonload"

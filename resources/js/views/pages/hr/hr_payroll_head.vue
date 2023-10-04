@@ -4,11 +4,11 @@ import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import {
-    required,
-    minLength,
-    maxLength,
-    decimal,
-    minValue, requiredIf,
+  required,
+  minLength,
+  maxLength,
+  decimal,
+  minValue,
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
@@ -17,11 +17,10 @@ import {
   dynamicSortString,
   dynamicSortNumber,
 } from "../../../helper/tableSort";
-import permissionGuard from "../../../helper/permission";
-
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -41,7 +40,6 @@ export default {
   },
   data() {
     return {
-      fields: [],
       per_page: 50,
       search: "",
       debounce: {},
@@ -78,20 +76,12 @@ export default {
   },
   validations: {
     create: {
-        name: { required: requiredIf(function (model) {
-                return this.isRequired("name");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-        name_e: { required: requiredIf(function (model) {
-                return this.isRequired("name_e");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
+      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
     },
     edit: {
-        name: { required: requiredIf(function (model) {
-                return this.isRequired("name");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
-        name_e: { required: requiredIf(function (model) {
-                return this.isRequired("name_e");
-            }) , minLength: minLength(2), maxLength: maxLength(100) },
+      name: { required, minLength: minLength(2), maxLength: maxLength(255) },
+      name_e: { required, minLength: minLength(2), maxLength: maxLength(255) },
     },
   },
   watch: {
@@ -127,45 +117,14 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
-    this.getCustomTableFields();
     this.getData();
   },
   beforeRouteEnter(to, from, next) {
-        next((vm) => {
-      return permissionGuard(vm, "Payroll Head", "all payrollHeads hr");
+    next((vm) => {
+        return permissionGuard(vm, "Payroll Head", "all payrollHeads Hr");
     });
-
   },
   methods: {
-    getCustomTableFields() {
-          adminApi
-              .get(`/customTable/table-columns/hr_payroll_heads`)
-              .then((res) => {
-                  this.fields = res.data;
-              })
-              .catch((err) => {
-                  Swal.fire({
-                      icon: "error",
-                      title: `${this.$t("general.Error")}`,
-                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                  });
-              })
-              .finally(() => {
-                  this.isLoader = false;
-              });
-      },
-    isVisible(fieldName) {
-          let res = this.fields.filter((field) => {
-              return field.column_name == fieldName;
-          });
-          return res.length > 0 && res[0].is_visible == 1 ? true : false;
-      },
-    isRequired(fieldName) {
-          let res = this.fields.filter((field) => {
-              return field.column_name == fieldName;
-          });
-          return res.length > 0 && res[0].is_required == 1 ? true : false;
-      },
     isPermission(item) {
       if (this.$store.state.auth.type == "user") {
         return this.$store.state.auth.permissions.includes(item);
@@ -603,14 +562,12 @@ export default {
                   >
                     <b-form-checkbox
                       v-model="filterSetting"
-                      v-if="isVisible('name')"
                       value="name"
                       class="mb-1"
                       >{{ getCompanyKey("payroll_head_name_ar") }}
                     </b-form-checkbox>
                     <b-form-checkbox
                       v-model="filterSetting"
-                      v-if="isVisible('name_e')"
                       value="name_e"
                       class="mb-1"
                     >
@@ -731,10 +688,10 @@ export default {
                       ref="dropdown"
                       class="dropdown-custom-ali"
                     >
-                      <b-form-checkbox v-if="isVisible('name')" v-model="setting.name" class="mb-1"
+                      <b-form-checkbox v-model="setting.name" class="mb-1"
                         >{{ getCompanyKey("payroll_head_name_ar") }}
                       </b-form-checkbox>
-                      <b-form-checkbox v-if="isVisible('name_e')" v-model="setting.name_e" class="mb-1">
+                      <b-form-checkbox v-model="setting.name_e" class="mb-1">
                         {{ getCompanyKey("payroll_head_name_en") }}
                       </b-form-checkbox>
                       <div class="d-flex justify-content-end">
@@ -854,11 +811,11 @@ export default {
                   </b-button>
                 </div>
                 <div class="row">
-                  <div class="col-md-12" v-if="isVisible('name')">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label for="field-1" class="control-label">
                         {{ getCompanyKey("payroll_head_name_ar") }}
-                        <span v-if="isRequired('name')" class="text-danger">*</span>
+                        <span class="text-danger">*</span>
                       </label>
                       <div dir="rtl">
                         <input
@@ -900,11 +857,11 @@ export default {
                       </template>
                     </div>
                   </div>
-                  <div class="col-md-12" v-if="isVisible('name_e')">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label for="field-2" class="control-label">
                         {{ getCompanyKey("payroll_head_name_en") }}
-                        <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                        <span class="text-danger">*</span>
                       </label>
                       <div dir="ltr">
                         <input
@@ -981,7 +938,7 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name && isVisible('name')">
+                    <th v-if="setting.name">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("payroll_head_name_ar") }}</span>
                         <div class="arrow-sort">
@@ -996,7 +953,7 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th v-if="setting.name_e && isVisible('name_e')">
+                    <th v-if="setting.name_e">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("payroll_head_name_en") }}</span>
                         <div class="arrow-sort">
@@ -1045,10 +1002,10 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name && isVisible('name')">
+                    <td v-if="setting.name">
                       <h5 class="m-0 font-weight-normal">{{ data.name }}</h5>
                     </td>
-                    <td v-if="setting.name_e && isVisible('name_e')">
+                    <td v-if="setting.name_e">
                       <h5 class="m-0 font-weight-normal">{{ data.name_e }}</h5>
                     </td>
                     <td v-if="enabled3" class="do-not-print">
@@ -1141,11 +1098,11 @@ export default {
                             </b-button>
                           </div>
                           <div class="row">
-                            <div class="col-md-12" v-if="isVisible('name')">
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <label for="edit-1" class="control-label">
                                   {{ getCompanyKey("payroll_head_name_ar") }}
-                                  <span v-if="isRequired('name')" class="text-danger">*</span>
+                                  <span class="text-danger">*</span>
                                 </label>
                                 <div dir="rtl">
                                   <input
@@ -1188,11 +1145,11 @@ export default {
                                 </template>
                               </div>
                             </div>
-                            <div class="col-md-12" v-if="isVisible('name_e')">
+                            <div class="col-md-12">
                               <div class="form-group">
                                 <label for="edit-2" class="control-label">
                                   {{ getCompanyKey("payroll_head_name_en") }}
-                                  <span v-if="isRequired('name_e')" class="text-danger">*</span>
+                                  <span class="text-danger">*</span>
                                 </label>
                                 <div dir="ltr">
                                   <input

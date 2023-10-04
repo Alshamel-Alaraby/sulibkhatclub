@@ -123,4 +123,13 @@ export default [
         component: () => import('../../views/pages/booking/report/items'),
 
     },
+    {
+        path: '/dashboard/booking/floor',
+        name: 'items report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/floor'),
+
+    },
 ];

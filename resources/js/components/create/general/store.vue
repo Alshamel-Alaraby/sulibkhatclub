@@ -237,7 +237,7 @@ export default {
       this.isLoader = true;
 
       adminApi
-        .get(`/branches?company_id=${this.company_id}`)
+        .get(`/branches/get-drop-down?company_id=${this.company_id}`)
         .then((res) => {
           let l = res.data.data;
           if (this.isPermission("create Branch")) {

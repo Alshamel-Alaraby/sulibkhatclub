@@ -390,7 +390,7 @@ export default {
             this.isLoader = true;
 
             adminApi
-                .get(`/salesmen-plans`)
+                .get(`/salesmen-plans/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Plan')){

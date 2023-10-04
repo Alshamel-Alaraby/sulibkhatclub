@@ -576,63 +576,11 @@ export default {
                 }
             }
         },
-        editSubmit(id) {
-            // if (!this.edit.name) {
-            //     this.edit.name = this.edit.name_e;
-            // }
-            // if (!this.edit.name_e) {
-            //     this.edit.name_e = this.edit.name;
-            // }
-            this.$v.edit.$touch();
-
-            if (this.$v.edit.$invalid) {
-                return;
-            } else {
-                this.isLoader = true;
-                this.errors = {};
-                adminApi
-                    .put(`/external-salesmen/${id}`, this.edit)
-                    .then((res) => {
-                        this.$bvModal.hide(`modal-edit-${id}`);
-                        this.getData();
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: "success",
-                                text: `${this.$t("general.Editsuccessfully")}`,
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }, 500);
-                    })
-                    .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        }
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
-            }
-        },
-        checkRow(id) {
-            if (!this.checkAll.includes(id)) {
-                this.checkAll.push(id);
-            } else {
-                let index = this.checkAll.indexOf(id);
-                this.checkAll.splice(index, 1);
-            }
-        },
         getCategory() {
             this.isLoader = true;
             this.countries = [];
             adminApi
-                .get(`/countries`)
+                .get(`/countries/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Country')){

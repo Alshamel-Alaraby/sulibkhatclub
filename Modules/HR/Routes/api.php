@@ -119,7 +119,6 @@ Route::prefix('hr')->group(function () {
         }); ////////////////////////////////////////
     });
 
-
     // hr routes
     Route::group(['prefix' => 'requests'], function () {
         Route::controller(\Modules\HR\Http\Controllers\RequestController::class)->group(function () {
@@ -138,7 +137,6 @@ Route::prefix('hr')->group(function () {
         });
     });
 
-
     //customTable
     Route::group(['prefix' => 'CustomTable'], function () {
         Route::controller(\Modules\HR\Http\Controllers\HRCustomTableController::class)->group(function () {
@@ -154,5 +152,105 @@ Route::prefix('hr')->group(function () {
             Route::post("bulk-delete", "bulkDelete");
         });
     });
+    //fingerprint
+    Route::group(['prefix' => 'fingerprint'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\FingerprintController::class)->group(function () {
+            // Route::post('/show-data', 'showData')->name('fingerprint.showData');
+
+            Route::get('/', 'all')->name('fingerprint.index');
+            Route::post('/', 'create')->name('fingerprint.create');
+
+        });
+    });
+
+    //time-tables-header
+
+    Route::group(['prefix' => 'time-tables-header'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\TimeTablesHeaderController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('time-tables-heade.getDropDown');
+
+            Route::get('/', 'all')->name('time-tables-header.index');
+            Route::get('/{id}', 'find')->name('time-tables-header.find');
+            Route::post('/', 'create')->name('time-tables-header.create');
+            Route::put('/{id}', 'update')->name('time-tables-header.update');
+            Route::delete('/{id}', 'delete')->name('time-tables-header.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('time-tables-header.logs');
+        });
+    });
+    //time-tables-detail
+
+    Route::group(['prefix' => 'time-tables-detail'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\TimeTablesDetailController::class)->group(function () {
+            Route::get('/', 'all')->name('time-tables-detail.index');
+            Route::get('/{id}', 'find')->name('time-tables-detail.find');
+            Route::post('/', 'create')->name('time-tables-detail.create');
+            Route::put('/{id}', 'update')->name('time-tables-detail.update');
+            Route::delete('/{id}', 'delete')->name('time-tables-detail.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('time-tables-detail.logs');
+        });
+    });
+
+
+    Route::group(['prefix' => 'time-tables-types'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\TimeTableTypeController::class)->group(function () {
+            Route::get('/', 'all')->name('time-tables-types.index');
+
+        });
+    });
+
+    Route::group(['prefix' => 'attendance_settings'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\AttendanceSettingController::class)->group(function () {
+            Route::get('/', 'all')->name('attendance_settings.index');
+            Route::get('/{id}', 'find')->name('attendance_settings.find');
+            Route::post('/', 'create')->name('attendance_settings.create');
+            Route::put('/{id}', 'update')->name('attendance_settings.update');
+            Route::delete('/{id}', 'delete')->name('attendance_settings.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('attendance_settings.logs');
+        });
+    });
+
+
+    Route::group(['prefix' => 'employees-time-tables-header'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\EmployeesTimeTablesHeaderController::class)->group(function () {
+            Route::get('/', 'all')->name('employees-time-tables-header.index');
+            Route::get('/{id}', 'find')->name('employees-time-tables-header.find');
+            Route::post('/', 'create')->name('employees-time-tables-header.create');
+            Route::put('/{id}', 'update')->name('employees-time-tables-header.update');
+            Route::delete('/{id}', 'delete')->name('employees-time-tables-header.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('employees-time-tables-header.logs');
+        });
+    });
+
+    Route::group(['prefix' => 'employees-time-tables-detail'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\EmployeesTimeTablesDetailController::class)->group(function () {
+/////////////////
+            Route::get('/get-employees-time-tables-details', 'getEmployeesTimeTablesDetails')->name('employees-time-tables-detail.getEmployeesTimeTablesDetails');
+
+            Route::get('/get-employees', 'getEmployees')->name('employees-time-tables-detail.getEmployees');
+            Route::get('/', 'all')->name('employees-time-tables-detail.index');
+            Route::get('/{id}', 'find')->name('employees-time-tables-detail.find');
+            Route::post('/', 'create')->name('employees-time-tables-detail.create');
+            Route::put('/{id}', 'update')->name('employees-time-tables-detail.update');
+            Route::delete('/{id}', 'delete')->name('employees-time-tables-detail.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+            Route::get('logs/{id}', 'logs')->name('employees-time-tables-detail.logs');
+        });
+    });
+
+
+       //reports
+       Route::group(['prefix' => 'reports'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\ReportController::class)->group(function () {
+
+            Route::get('/attendance-departure', 'AttendanceDeparture')->name('reports.AttendanceDeparture');
+
+        });
+    });
+
+
 
 });

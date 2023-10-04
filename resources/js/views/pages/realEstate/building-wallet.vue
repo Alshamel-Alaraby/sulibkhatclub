@@ -30,7 +30,6 @@ export default {
   //     );
   //   });
   // },
-
   components: {
     Layout,
     PageHeader,
@@ -71,7 +70,7 @@ export default {
           setting: { wallet_id: true },
           isSetting: true,
         },
-        
+
         {
           isFilter: false,
           isSet: true,

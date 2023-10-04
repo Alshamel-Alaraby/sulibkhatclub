@@ -6,6 +6,7 @@ use App\Http\Requests\EmployeeRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Employee\EmployeeResource;
 use App\Http\Resources\Employee\GetNameEmployeeResource;
+use App\Models\GeneralEmployeeManager;
 use App\Repositories\Employee\EmployeeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -96,6 +97,10 @@ class EmployeeController extends Controller
         foreach ($request->ids as $id) {
             $model = $this->modelInterface->find($id);
 
+            $managers = GeneralEmployeeManager::where('employee_id', $model->id)->get();
+            foreach ($managers as $manager) {
+                $manager->delete();
+            }
             $relationsWithChildren = $model->hasChildren();
             if (!empty($relationsWithChildren)) {
                 $itemsWithRelations[] = [

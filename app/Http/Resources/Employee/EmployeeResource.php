@@ -28,6 +28,8 @@ class EmployeeResource extends JsonResource
             'mobile' => $this->mobile,
             'email' => $this->email,
             'whatsapp' => $this->whatsapp,
+            'sms' => $this->sms,
+            'att_code' => $this->att_code,
             'company_id' => $this->company_id,
             'job_id' => $this->job_id,
             'manage_others' => $this->manage_others,
@@ -38,6 +40,13 @@ class EmployeeResource extends JsonResource
             'salesman_type' => $this->salesmanType,
             'department' => $this->depertment,
             'plans' => $this->plans,
+            'managers' => $this->managersData->map(function ($manager) {
+                return [
+                    'id' => $manager->manager_id,
+                    'name' => $manager->manager_name,
+                    'name_e' => $manager->manager_name_e,
+                ];
+            })->toArray(),
 
         ];
     }

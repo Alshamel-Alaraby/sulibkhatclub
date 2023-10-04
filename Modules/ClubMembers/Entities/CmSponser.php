@@ -18,6 +18,7 @@ class CmSponser extends Model
         'parent_id',
         'group_id',
         'company_id',
+        'cm_member_id',
 
     ];
 
@@ -76,5 +77,10 @@ public function totalMembersPermissions($permissions)
     {
         $h = $this->members()->count() > 0;
         return $h;
+    }
+
+    public function sponsorAsMember()
+    {
+        return $this->has(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id','id');
     }
 }

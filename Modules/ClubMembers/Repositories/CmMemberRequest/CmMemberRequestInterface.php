@@ -17,5 +17,6 @@ interface CmMemberRequestInterface
 
     public function delete($id);
 
+    public function checkNationalId($request);
 
 }

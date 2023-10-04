@@ -1090,7 +1090,7 @@
         "credit": "Credit",
         "totalAmount": "Total Amount",
         "totalDivision": "Total Division",
-        "Residual": "Residual",
+        "Residual": "Remaining",
         "Invoice": "Invoice",
         "rebates": "Rebates",
         "total": "Total",
@@ -1518,6 +1518,23 @@
         "floorsTable": "Floors Table",
         "AttendanceNumber": "Attendance Number",
         "LstPayDate": "Lst Pay Date",
-        "afterDate": " After Date"
+        "afterDate": " After Date",
+        "attendanceTable": "Attendance Table",
+        "timeAttendanceTable": " Times Table",
+        "shift": "Shift",
+        "shift2": "2 Shifts",
+        "FreeTime": "Free time",
+        "attendanceSetting": "Attendance Setting",
+        "SelectEmployee": "Select Employee",
+        "timeEmployeeTable": "time Employee Table",
+        "PaymentDate": "Payment Date",
+        "YouMustChoosePermission": "You Must Choose Permission",
+        "WarningThisMemberAlreadyExists": "Warning This member already exists !!!",
+        "PrintReceipts": "Print Receipts",
+        "NewSearch": "New Search",
+        "full_name": "Full Name",
+        "SponsorMembersOnly": "Sponsor members only?",
+        "AddNewSubscriptions": "Add New Subscriptions",
+        "LastYearOfPayment": "Last year of payment"
     }
 }

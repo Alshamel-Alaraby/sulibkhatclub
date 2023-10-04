@@ -53,7 +53,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: 1,
       },
       errors: {},
       isCheckAll: false,
@@ -158,7 +158,7 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: "active",
+        is_active: 1,
         media: null,
       };
       this.$nextTick(() => {
@@ -194,8 +194,8 @@ export default {
             this.create.name_e = user.name_e;
             this.create.email = user.email;
             this.create.employee_id = user.employee_id ?? null;
-            this.getRoles();
-            this.create.role_id = user.role[0].id ?? null;
+            user.role.length > 0? this.getRoles(): true;
+            this.create.role_id = user.role.length > 0? user.role[0].id : null;
             this.create.is_active = user.is_active;
             this.images = user.media ? user.media : [];
             if (this.images && this.images.length > 0) {
@@ -284,7 +284,7 @@ export default {
     },
     async getEmployees() {
       await adminApi
-        .get(`/employees`)
+        .get(`/employees/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           l.unshift({ id: 0, name: "اضف موظف", name_e: "Add Employee" });
@@ -566,10 +566,10 @@ export default {
                         v-model="create.employee_id"
                         :options="employees.map((type) => type.id)"
                         :custom-label="
-                          (opt) =>
+                          (opt) => employees.find((x) => x.id == opt)?
                             $i18n.locale == 'ar'
                               ? employees.find((x) => x.id == opt).name
-                              : employees.find((x) => x.id == opt).name_e
+                              : employees.find((x) => x.id == opt).name_e: null
                         "
                       >
                       </multiselect>
@@ -768,14 +768,14 @@ export default {
                           class="d-inline-block"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="active"
+                          value="1"
                           >{{ $t("general.Active") }}</b-form-radio
                         >
                         <b-form-radio
                           class="d-inline-block m-1"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="inactive"
+                          value="0"
                           >{{ $t("general.Inactive") }}</b-form-radio
                         >
                       </b-form-group>

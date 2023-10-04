@@ -71,6 +71,9 @@ export default {
                 membership_date: true,
                 financial_status_id: true,
                 member_status_id: true,
+                PaymentDate: true,
+                document_no: true,
+                ForAYear: true,
                 national_id: true,
                 home_phone: true,
                 home_address: true,
@@ -147,6 +150,15 @@ export default {
             return formatDateOnly(value);
         },
         getData(page = 1) {
+            if (this.cm_permission_id.length == 0)
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: `${this.$t("general.Error")}`,
+                    text: `${this.$t("general.YouMustChoosePermission")}`,
+                });
+                return;
+            }
             this.isLoader = true;
             let _filterSetting = [...this.filterSetting];
             let index = this.filterSetting.indexOf("financial_status_id");
@@ -164,7 +176,7 @@ export default {
                 filter += `columns[${i}]=${_filterSetting[i]}&`;
             }
             adminApi
-                .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&per_page=20&search=${this.search}&${filter}`, {
+                .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&page=${page}&per_page=50&search=${this.search}&${filter}`, {
                     params: {
                         members_permissions_id: this.cm_permission_id,
                     },
@@ -192,6 +204,15 @@ export default {
                 this.current_page != this.itemsPagination.current_page &&
                 this.current_page
             ) {
+                if (this.cm_permission_id.length == 0)
+                {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.YouMustChoosePermission")}`,
+                    });
+                    return;
+                }
                 this.isLoader = true;
                 let _filterSetting = [...this.filterSetting];
                 let index = this.filterSetting.indexOf("financial_status_id");
@@ -210,7 +231,7 @@ export default {
                 }
 
                 adminApi
-                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&per_page=20&search=${this.search}&${filter}`, {
+                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
                         params: {
                             members_permissions_id: this.cm_permission_id,
                         },
@@ -382,6 +403,7 @@ export default {
                                 <div style="width: 100%">
                                     <multiselect
                                         @input="getData(1)"
+                                        :multiple="true"
                                         v-model="cm_permission_id"
                                         :options="permissions.map((type) => type.id)"
                                         :custom-label="
@@ -434,6 +456,9 @@ export default {
                                             <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ getCompanyKey("financial_status") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.member_status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">{{ $t("general.PaymentDate") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.ForAYear" class="mb-1">{{ $t("general.ForAYear") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
                                             <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
@@ -559,6 +584,21 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.PaymentDate">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.PaymentDate") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.document_no">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.ReceiptNumber") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.ForAYear">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.ForAYear") }}</span>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.national_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_national_id") }}</span>
@@ -641,6 +681,15 @@ export default {
                                     </td>
                                     <td v-if="setting.member_status_id">
                                         {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
+                                    </td>
+                                    <td v-if="setting.PaymentDate">
+                                        {{data.transaction ? formatDate(data.transaction.date) : '---' }}
+                                    </td>
+                                    <td v-if="setting.document_no">
+                                        {{ data.transaction ? data.transaction.document_no : '---' }}
+                                    </td>
+                                    <td v-if="setting.ForAYear">
+                                        {{ data.transaction ? data.transaction.year : '---' }}
                                     </td>
                                     <td v-if="setting.national_id">
                                         {{ data.national_id ? data.national_id : '---' }}

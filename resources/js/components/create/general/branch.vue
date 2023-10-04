@@ -269,7 +269,7 @@ export default {
       this.isLoader = true;
 
        adminApi
-        .get(`/branches?company_id=${this.company_id}`)
+        .get(`/branches/get-drop-down?company_id=${this.company_id}`)
         .then((res) => {
           let l = res.data.data;
           this.parent = l;
@@ -281,12 +281,12 @@ export default {
           this.isLoader = false;
         });
     },
-      async getCustomTableFields() {
+    async getCustomTableFields() {
         this.isCustom = true;
-          await adminApi
+        await adminApi
         .get(`/customTable/table-columns/general_branches`)
         .then((res) => {
-          this.fields = res.data;
+            this.fields = res.data;
         })
         .catch((err) => {
             this.errorFun('Error','Thereisanerrorinthesystem');

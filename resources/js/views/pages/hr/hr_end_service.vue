@@ -13,8 +13,6 @@ import {
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
-import permissionGuard from "../../../helper/permission";
-
 import {
   dynamicSortString,
   dynamicSortNumber,
@@ -22,6 +20,7 @@ import {
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -124,30 +123,10 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  // updated() {
-  //   $(function () {
-  //     $(".englishInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return true;
-  //       if (97 <= ew && ew <= 122) return true;
-  //       return false;
-  //     });
-  //     $(".arabicInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return false;
-  //       if (65 <= ew && ew <= 90) return false;
-  //       if (97 <= ew && ew <= 122) return false;
-  //       return true;
-  //     });
-  //   });
-  // },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      return permissionGuard(vm, "End Service", "all endServices hr");
-    });
+        next((vm) => {
+            return permissionGuard(vm, "End Service", "all endServices hr");
+        });
   },
   methods: {
     arabicValue(txt) {
@@ -430,10 +409,7 @@ export default {
         this.errors = {};
 
         adminApi
-          .post(`/hr/end-service/getAll`, {
-            ...this.create,
-            company_id: this.$store.getters["auth/company_id"],
-          })
+          .post(`/hr/end-service/getAll`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.is_disabled = true;
             this.getData();
@@ -665,7 +641,7 @@ export default {
                   <button
                     @click="ExportExcel('xlsx')"
                     class="custom-btn-dowonload"
-                  >
+                >
                     <i class="fas fa-file-download"></i>
                   </button>
                   <button

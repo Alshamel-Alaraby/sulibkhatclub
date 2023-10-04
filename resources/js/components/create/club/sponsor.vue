@@ -28,14 +28,17 @@ export default {
         return {
             groups: [],
             fields: [],
+            members: [],
             isCustom : false,
             isLoader: false,
             create: {
                 name: "",
                 name_e: "",
                 parent_id: null,
+                cm_member_id: null,
             },
             errors: {},
+            company_id:null,
             is_disabled: false
         };
     },
@@ -55,7 +58,14 @@ export default {
                     return this.isRequired("group_id");
                 })
             },
+            cm_member_id: {required: requiredIf(function (model) {
+                    return this.isRequired("cm_member_id");
+                })
+            },
         },
+    },
+    mounted() {
+        this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
         async getCustomTableFields() {
@@ -114,7 +124,7 @@ export default {
             return formatDateOnly(value);
         },
         defaultData(edit = null){
-            this.create = { name: "", name_e: "", group_id : null };
+            this.create = { name: "", name_e: "", group_id : null , cm_member_id : null };
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -131,14 +141,17 @@ export default {
                 if(this.type != 'edit'){
                     if(!this.isPage) await  this.getCustomTableFields();
                     if (this.isVisible("group_id")) this.getGroup();
+                    if (this.isVisible("cm_member_id")) this.getMember();
                 }else {
                     if(this.idObjEdit.dataObj){
                         if (this.isVisible("group_id")) this.getGroup();
+                        if (this.isVisible("cm_member_id")) this.getMember();
                         let module = this.idObjEdit.dataObj;
                         this.errors = {};
                         this.create.name = module.name;
                         this.create.name_e = module.name_e;
                         this.create.group_id = module.group_id;
+                        this.create.cm_member_id = module.cm_member_id;
                     }
                 }
             },50);
@@ -212,7 +225,40 @@ export default {
         },
         englishValue(txt) {
             this.create.name_e = englishValue(txt);
+        },
+        async searchMember(e)
+        {
+            let search = e??'';
+            clearTimeout(this.debounce);
+            this.debounce = setTimeout(() => {
+                this.getMember(search);
+            }, 500);
+        },
+
+        async getMember(search='') {
+            this.isLoader = true;
+            await adminApi
+                .get(`/club-members/members?hasTransaction=1&member_status_id=1&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.members = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getMemberName () {
+            if (this.create.cm_member_id)
+            {
+               this.create.name = this.members.find((row) => this.create.cm_member_id == row.id).full_name;
+               this.create.name_e = '';
+            }
+
         }
+
     },
 };
 </script>
@@ -271,84 +317,110 @@ export default {
                 </b-button>
             </div>
             <div class="row">
-                <div class="col-12 direction" v-if="isVisible('name')" dir="rtl">
-                    <div class="form-group">
-                        <label for="field-1" class="control-label">
-                            {{ getCompanyKey("sponsor_name_ar") }}
-                            <span v-if="isRequired('name')"  class="text-danger">*</span>
+                <div class="col-md-12" v-if="isVisible('cm_member_id')">
+                    <div class="form-group position-relative">
+                        <label class="control-label">
+                            {{ getCompanyKey("member") }}
+                            <span v-if="isRequired('cm_member_id')" class="text-danger">*</span>
                         </label>
-                        <input
-                            type="text"
-                            class="form-control arabicInput"
-                            v-model="$v.create.name.$model"
-                            :class="{
-                              'is-invalid': $v.create.name.$error || errors.name,
-                              'is-valid': !$v.create.name.$invalid && !errors.name,
-                            }"
-                            @keyup="arabicValue(create.name)"
-                            id="field-1"
-                        />
-                        <div v-if="!$v.create.name.minLength" class="invalid-feedback">
-                            {{ $t("general.Itmustbeatleast") }}
-                            {{ $v.create.name.$params.minLength.min }}
-                            {{ $t("general.letters") }}
-                        </div>
-                        <div v-if="!$v.create.name.maxLength" class="invalid-feedback">
-                            {{ $t("general.Itmustbeatmost") }}
-                            {{ $v.create.name.$params.maxLength.max }}
-                            {{ $t("general.letters") }}
-                        </div>
-                        <template v-if="errors.name">
+                        <multiselect
+                            :internalSearch="false"
+                            @input="getMemberName"
+                            @search-change="searchMember"
+                            v-model="create.cm_member_id"
+                            :options="members.map((type) => type.id)"
+                            :custom-label="(opt) => members.find((x) => x.id == opt).full_name"
+                        >
+                        </multiselect>
+                        <template v-if="errors.cm_member_id">
                             <ErrorMessage
-                                v-for="(errorMessage, index) in errors.name"
+                                v-for="(errorMessage, index) in errors.cm_member_id"
                                 :key="index"
-                            >{{ $t(errorMessage) }}</ErrorMessage
-                            >
+                            >{{ errorMessage }}
+                            </ErrorMessage>
                         </template>
                     </div>
                 </div>
-                <div class="col-12 direction-ltr" v-if="isVisible('name_e')" dir="ltr">
-                    <div class="form-group">
-                        <label for="field-2" class="control-label">
-                            {{ getCompanyKey("sponsor_name_en") }}
-                            <span v-if="isRequired('name_e')" class="text-danger">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            class="form-control englishInput"
-                            v-model="$v.create.name_e.$model"
-                            :class="{
-                              'is-invalid': $v.create.name_e.$error || errors.name_e,
-                              'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
-                            }"
-                            @keyup="englishValue(create.name_e)"
-                            id="field-2"
-                        />
-                        <div
-                            v-if="!$v.create.name_e.minLength"
-                            class="invalid-feedback"
-                        >
-                            {{ $t("general.Itmustbeatleast") }}
-                            {{ $v.create.name_e.$params.minLength.min }}
-                            {{ $t("general.letters") }}
-                        </div>
-                        <div
-                            v-if="!$v.create.name_e.maxLength"
-                            class="invalid-feedback"
-                        >
-                            {{ $t("general.Itmustbeatmost") }}
-                            {{ $v.create.name_e.$params.maxLength.max }}
-                            {{ $t("general.letters") }}
-                        </div>
-                        <template v-if="errors.name_e">
-                            <ErrorMessage
-                                v-for="(errorMessage, index) in errors.name_e"
-                                :key="index"
-                            >{{ $t(errorMessage) }}</ErrorMessage
-                            >
-                        </template>
-                    </div>
-                </div>
+<!--                <div class="col-12 direction" v-if="isVisible('name')" dir="rtl">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="field-1" class="control-label">-->
+<!--                            {{ getCompanyKey("sponsor_name_ar") }}-->
+<!--                            <span v-if="isRequired('name')"  class="text-danger">*</span>-->
+<!--                        </label>-->
+<!--                        <input-->
+<!--                            disabled-->
+<!--                            type="text"-->
+<!--                            class="form-control arabicInput"-->
+<!--                            v-model="$v.create.name.$model"-->
+<!--                            :class="{-->
+<!--                              'is-invalid': $v.create.name.$error || errors.name,-->
+<!--                              'is-valid': !$v.create.name.$invalid && !errors.name,-->
+<!--                            }"-->
+<!--                            @keyup="arabicValue(create.name)"-->
+<!--                            id="field-1"-->
+<!--                        />-->
+<!--                        <div v-if="!$v.create.name.minLength" class="invalid-feedback">-->
+<!--                            {{ $t("general.Itmustbeatleast") }}-->
+<!--                            {{ $v.create.name.$params.minLength.min }}-->
+<!--                            {{ $t("general.letters") }}-->
+<!--                        </div>-->
+<!--                        <div v-if="!$v.create.name.maxLength" class="invalid-feedback">-->
+<!--                            {{ $t("general.Itmustbeatmost") }}-->
+<!--                            {{ $v.create.name.$params.maxLength.max }}-->
+<!--                            {{ $t("general.letters") }}-->
+<!--                        </div>-->
+<!--                        <template v-if="errors.name">-->
+<!--                            <ErrorMessage-->
+<!--                                v-for="(errorMessage, index) in errors.name"-->
+<!--                                :key="index"-->
+<!--                            >{{ $t(errorMessage) }}</ErrorMessage-->
+<!--                            >-->
+<!--                        </template>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-12 direction-ltr" v-if="isVisible('name_e')" dir="ltr">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="field-2" class="control-label">-->
+<!--                            {{ getCompanyKey("sponsor_name_en") }}-->
+<!--                            <span v-if="isRequired('name_e')" class="text-danger">*</span>-->
+<!--                        </label>-->
+<!--                        <input-->
+<!--                            disabled-->
+<!--                            type="text"-->
+<!--                            class="form-control englishInput"-->
+<!--                            v-model="$v.create.name_e.$model"-->
+<!--                            :class="{-->
+<!--                              'is-invalid': $v.create.name_e.$error || errors.name_e,-->
+<!--                              'is-valid': !$v.create.name_e.$invalid && !errors.name_e,-->
+<!--                            }"-->
+<!--                            @keyup="englishValue(create.name_e)"-->
+<!--                            id="field-2"-->
+<!--                        />-->
+<!--                        <div-->
+<!--                            v-if="!$v.create.name_e.minLength"-->
+<!--                            class="invalid-feedback"-->
+<!--                        >-->
+<!--                            {{ $t("general.Itmustbeatleast") }}-->
+<!--                            {{ $v.create.name_e.$params.minLength.min }}-->
+<!--                            {{ $t("general.letters") }}-->
+<!--                        </div>-->
+<!--                        <div-->
+<!--                            v-if="!$v.create.name_e.maxLength"-->
+<!--                            class="invalid-feedback"-->
+<!--                        >-->
+<!--                            {{ $t("general.Itmustbeatmost") }}-->
+<!--                            {{ $v.create.name_e.$params.maxLength.max }}-->
+<!--                            {{ $t("general.letters") }}-->
+<!--                        </div>-->
+<!--                        <template v-if="errors.name_e">-->
+<!--                            <ErrorMessage-->
+<!--                                v-for="(errorMessage, index) in errors.name_e"-->
+<!--                                :key="index"-->
+<!--                            >{{ $t(errorMessage) }}</ErrorMessage-->
+<!--                            >-->
+<!--                        </template>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="col-12" v-if="isVisible('group_id')">
                     <div class="form-group position-relative">
                         <label class="control-label">

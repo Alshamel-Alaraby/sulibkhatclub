@@ -12,6 +12,7 @@ use Modules\ClubMembers\Http\Requests\CmMemberDeclineRequest;
 use Modules\ClubMembers\Http\Requests\CmMemberRequest;
 use Modules\ClubMembers\Http\Requests\CmUpdateAcceptedMemberRequest;
 use Modules\ClubMembers\Repositories\CmMember\CmMemberInterface;
+use Modules\ClubMembers\Transformers\CmMemberPermissionReportResource;
 use Modules\ClubMembers\Transformers\CmMemberResource;
 use Modules\ClubMembers\Transformers\GetSponsorMembersResource;
 use Modules\ClubMembers\Transformers\ReportMembertResource;
@@ -246,7 +247,7 @@ class CmMemberController extends Controller
     {
 
         $models = $this->modelInterface->reportCmMember($request);
-        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', CmMemberPermissionReportResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
 
@@ -319,5 +320,12 @@ class CmMemberController extends Controller
     {
        return $models = $this->modelInterface->publicUpdatePermissionCmMember($id);
 
+    }
+
+    public function getMemberForMultiSubscription(Request $request)
+    {
+        $models = $this->modelInterface->getMemberForMultiSubscription($request);
+
+        return responseJson(200, 'success', CmMemberResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

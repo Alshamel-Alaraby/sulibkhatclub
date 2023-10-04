@@ -1112,7 +1112,7 @@ export default {
         },
         getEmployees() {
              adminApi
-                .get(`/employees`)
+                .get(`/employees/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.employees = l;

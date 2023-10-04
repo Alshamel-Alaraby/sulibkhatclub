@@ -1137,6 +1137,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "serial"
             ],
+            [
+                "key" => "serial_gender",
+                "default_en" => "gender",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "serial"
+            ],
 
         ]);
         //Unit status
@@ -2613,6 +2622,16 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "employee_is_sms",
+                "default_en" => "Sms is the same WhatsApp number ? ",
+                "default_ar" => "هل رقم الواتس هو نفسه رقم sms ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+
+            ],
+            [
                 "key" => "employee_name_en",
                 "default_en" => "Employee name (english)",
                 "default_ar" => "اسم الموظف (انجليزي)",
@@ -2624,8 +2643,35 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "employee_manager",
-                "default_en" => "Manager name",
-                "default_ar" => "اسم المدير",
+                "default_en" => "Name of the direct manager",
+                "default_ar" => "اسم المدير المباشر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_managers",
+                "default_en" => "other managers",
+                "default_ar" => " المديرين الاخرين ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_att_code",
+                "default_en" => "Fingerprint code",
+                "default_ar" => "كود البصمه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_sms",
+                "default_en" => "SMS Message",
+                "default_ar" => "رسائل sms",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -14483,6 +14529,413 @@ class TranslationSeeder extends Seeder
 
             ]
 
+        ]);
+
+        //attendance
+        Translation::insert([
+            [
+                "key" => "attendance_fingerprint_device",
+                "default_en" => " The employee's number on the fingerprint device",
+                "default_ar" => "رقم الموظف على جهاز البصمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance"
+
+            ],
+            [
+                "key" => "attendance_vdate",
+                "default_en" => "Fingerprint history",
+                "default_ar" => "تاريخ البصمه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance"
+
+            ],
+            [
+                "key" => "attendance_type",
+                "default_en" => "Fingerprint type",
+                "default_ar" => "نوع البصمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance"
+
+            ],
+            [
+                "key" => "attendance_Fingerprint_number",
+                "default_en" => "Fingerprint device number",
+                "default_ar" => "رقم جهاز البصمه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance"
+            ]
+
+        ]);
+
+        //attendance times
+        Translation::insert([
+            [
+                "key" => "attendance_times_create_form",
+                "default_en" => "Add new attendance times",
+                "default_ar" => "اضف وقت حضور جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_times_edit_form",
+                "default_en" => "Edit attendance times form",
+                "default_ar" => "نموذج تعديل وقت الحضور",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_times_name_en",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (العربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_times_name_ar",
+                "default_en" => " Name (english)",
+                "default_ar" =>  "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_times_tt_type",
+                "default_en" => "Work type",
+                "default_ar" => "نوع دوام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_times_tt_monthly_hours",
+                "default_en" => "Number of monthly working hours",
+                "default_ar" => "عدد ساعات الدوام الشهرية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ]
+
+        ]);
+
+        //attendance times detail
+        Translation::insert([
+            [
+                "key" => "attendance_detail_day_no",
+                "default_en" => "Day",
+                "default_ar" => "يوم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_detail_is_off",
+                "default_en" => " holiday ?",
+                "default_ar" =>  "يوم عطله ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_detail_shift1_from",
+                "default_en" => "Shift 1 (from)",
+                "default_ar" => "شفت 1 (من)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_detail_shift1_to",
+                "default_en" => "Shift 1 (to)",
+                "default_ar" => "شفت 1 (الي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_detail_shift2_from",
+                "default_en" => "Shift 2 (from)",
+                "default_ar" => "شفت 2 (من)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_detail_shift2_to",
+                "default_en" => "Shift 2 (to)",
+                "default_ar" => "شفت 2 (الي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ]
+        ]);
+
+        //attendance setting
+        Translation::insert([
+            [
+                "key" => "attendance_setting_edit_form",
+                "default_en" => "Edit Attendance Setting form",
+                "default_ar" => "نموذج تعديل اعدادات الحضور",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+
+            ],
+            [
+                "key" => "attendance_setting_pre_in",
+                "default_en" => "It is allowed to arrive a few minutes before the appointment",
+                "default_ar" => "مسموح الحضور قبل الموعد بكام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+
+            ],
+            [
+                "key" => "attendance_setting_post_in",
+                "default_en" => "A fingerprint is allowed after the attendance time, without a delay of a few minutes",
+                "default_ar" =>  "مسموح بصمه بعد موعد الحضور بدون تاخير بكام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+
+            ],
+            [
+                "key" => "attendance_setting_absent_minutes",
+                "default_en" => "It is considered late after a few minutes",
+                "default_ar" => "يعتبر متاخر بعد كام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+            ],
+            [
+                "key" => "attendance_setting_pre_out",
+                "default_en" => "It is allowed to leave a few minutes before the appointment",
+                "default_ar" => "مسموح الانصراف قبل الموعد بكام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+            ],
+            [
+                "key" => "attendance_setting_post_out",
+                "default_en" => "Dismissal is considered (without additional fees) after a few minutes",
+                "default_ar" => "يعتبر الانصراف (بدون اضافي) بعد كام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance setting"
+
+            ],
+            [
+                "key" => "attendance_setting_max_out",
+                "default_en" => "The maximum fingerprint is a few minutes after the departure time",
+                "default_ar" => "اقصي بصمه بعد الموعد الانصراف بكام دقيقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ]
+        ]);
+
+        //employees timetables header
+        Translation::insert([
+            [
+                "key" => "time_employee_create_form",
+                "default_en" => "Add new Staff Time",
+                "default_ar" => "اضف دوام للموظفين ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "time_employee_edit_form",
+                "default_en" => "Edit Staff Time form",
+                "default_ar" => "نموذج تعديل دوام الموظفين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "time_employee_timetables_header",
+                "default_en" => "work hours",
+                "default_ar" => "الدوام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "time_employee_start_from",
+                "default_en" => "Start From",
+                "default_ar" =>  "بدايه من",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+        ]);
+
+        //Attendance And Departure
+        Translation::insert([
+            [
+                "key" => "attendance_and_departure_employee_id",
+                "default_en" => "Employee number",
+                "default_ar" => "رقم الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_employee_name",
+                "default_en" => "Name",
+                "default_ar" => "الاسم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_day",
+                "default_en" => "Day",
+                "default_ar" => "اليوم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_attendance",
+                "default_en" => "Attendance",
+                "default_ar" => "الحضور",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_departure",
+                "default_en" => "Departure",
+                "default_ar" => "الانصراف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_attendance_shift2",
+                "default_en" => "Attendance (shift 2)",
+                "default_ar" => "حضور (شفت 2 )",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_departure_shift2",
+                "default_en" => "Departure (shift 2)",
+                "default_ar" => "الانصراف (شفت 2 )",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_delay",
+                "default_en" => "Delay",
+                "default_ar" => "تاخير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_additional",
+                "default_en" => "Additional",
+                "default_ar" => "اضافي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_Actualnumberofhours",
+                "default_en" => "Actual number of hours",
+                "default_ar" => "عدد ساعات فعليه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_absence",
+                "default_en" => "absence ?",
+                "default_ar" => "غياب ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
+            [
+                "key" => "attendance_and_departure_note",
+                "default_en" => "Note",
+                "default_ar" => "ملاحظه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+
+            ],
         ]);
     }
 }

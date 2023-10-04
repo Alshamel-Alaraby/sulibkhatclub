@@ -1389,7 +1389,7 @@ export default {
         getStatus(){
             this.isLoader = true;
              adminApi
-                .get(`/statuses?module_type=bordRent`)
+                .get(`/statuses/get-drop-down?module_type=bordRent`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Status')){
@@ -1406,7 +1406,7 @@ export default {
         },
         getEmployeeDepartments() {
              adminApi
-                .get(`/employees?depertment=1`)
+                .get(`/employees/get-drop-down?depertment=1`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Employee')){
@@ -1420,7 +1420,7 @@ export default {
         },
         getEmployees() {
              adminApi
-                .get(`/employees`)
+                .get(`/employees/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.employees = l;
@@ -1456,7 +1456,7 @@ export default {
         getDepartment() {
             this.isLoader = true;
             adminApi
-                .get(`/depertments?employees=1`)
+                .get(`/depertments/get-drop-down?employees=1`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Department')){
@@ -1485,7 +1485,7 @@ export default {
         getCustomers(search='') {
             this.isLoader = true;
             adminApi
-                .get(`/general-customer?limet=10&company_id=${this.company_id}${search? '&search=${search}&columns[0]=name&columns[1]=name_e' : ''}`)
+                .get(`/general-customer/get-drop-down?limet=10&company_id=${this.company_id}${search? '&search=${search}&columns[0]=name&columns[1]=name_e' : ''}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({id: 0, name: "اضافة زبون", name_e: "Add customer"});
@@ -1526,7 +1526,7 @@ export default {
         getDepartmentTask() {
             this.isLoader = true;
             adminApi
-                .get(`/department-tasks?department_id=${this.department_id}`)
+                .get(`/department-tasks/get-drop-down?department_id=${this.department_id}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({id: 0, name: "اضافة مهمة", name_e: "Add Task"});
@@ -1546,7 +1546,7 @@ export default {
         getEquipment(location){
             this.isLoader = true;
              adminApi
-                .get(`/equipments?location_id=${location}`)
+                .get(`/equipments/get-drop-down?location_id=${location}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف معده", name_e: "Add Equipment" });
@@ -1562,7 +1562,7 @@ export default {
         getEquipmentChild(child){
             this.isLoader = true;
              adminApi
-                .get(`/equipments?equipment_id=${child}`)
+                .get(`/equipments/get-drop-down?equipment_id=${child}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.equipment_childs = l;
@@ -1584,7 +1584,7 @@ export default {
         getLocation(){
             this.isLoader = true;
              adminApi
-                .get(`/locations`)
+                .get(`/locations/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.locations = l;
@@ -1693,7 +1693,7 @@ export default {
             this.isLoader = true;
 
             adminApi
-                .get(`/priorities`)
+                .get(`/priorities/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.priorities = l;

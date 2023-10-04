@@ -850,4 +850,8 @@ export default {
 </script>
 
 
-<style scoped></style>
+<style scoped>
+form {
+    position: relative;
+}
+</style>

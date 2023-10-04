@@ -2,8 +2,6 @@
 import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
-import permissionGuard from "../../../helper/permission";
-
 import Switches from "vue-switches";
 import {
   required,
@@ -22,6 +20,7 @@ import {
 import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -123,35 +122,11 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  // updated() {
-  //   $(function () {
-  //     $(".englishInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return true;
-  //       if (65 <= ew && ew <= 90) return true;
-  //       if (97 <= ew && ew <= 122) return true;
-  //       return false;
-  //     });
-  //     $(".arabicInput").keypress(function (event) {
-  //       var ew = event.which;
-  //       if (ew == 32) return true;
-  //       if (48 <= ew && ew <= 57) return false;
-  //       if (65 <= ew && ew <= 90) return false;
-  //       if (97 <= ew && ew <= 122) return false;
-  //       return true;
-  //     });
-  //   });
-  // },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      return permissionGuard(
-        vm,
-        "Vacation Balance",
-        "all vacationsBalances hr"
-      );
-    });
-  },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "Vacation Balance", "all vacationsBalances Hr");
+        });
+    },
   methods: {
     arabicValue(txt) {
       this.create.name = arabicValue(txt);
@@ -433,10 +408,7 @@ export default {
         this.errors = {};
 
         adminApi
-          .post(`/hr/vacation-balance/getAll`, {
-            ...this.create,
-            company_id: this.$store.getters["auth/company_id"],
-          })
+          .post(`/hr/vacation-balance/getAll`, {...this.create,company_id: this.$store.getters["auth/company_id"],})
           .then((res) => {
             this.is_disabled = true;
             this.getData();
@@ -1051,9 +1023,9 @@ export default {
                     <td v-if="setting.employee">
                       <h5 class="m-0 font-weight-normal">
                         {{
-                          $i18n.locale == "ar"
+                          data.employee? $i18n.locale == "ar"
                             ? data.employee.name
-                            : data.employee.name_e
+                            : data.employee.name_e : '-'
                         }}
                       </h5>
                     </td>

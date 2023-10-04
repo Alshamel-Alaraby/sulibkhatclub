@@ -474,7 +474,7 @@ export default {
         },
         getTask() {
             this.isLoader = true;
-             adminApi.get(`/tasks`)
+             adminApi.get(`/tasks/get-drop-down`)
                 .then((res) => {
                     let l = res.data;
                     this.tasks = l.data;
@@ -489,7 +489,7 @@ export default {
         getDepartment() {
             this.isLoader = true;
              adminApi
-                .get(`/depertments`)
+                .get(`/depertments/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.departments = l;

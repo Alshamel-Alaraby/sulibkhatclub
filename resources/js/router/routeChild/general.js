@@ -37,6 +37,8 @@ export default [
         component: () => import('../../views/pages/general/colors/index'),
     },
     {
+        
+        // checked by Delta
         path: '/dashboard/city',
         name: 'city',
         meta: {
@@ -45,6 +47,7 @@ export default [
         component: () => import('../../views/pages/general/city/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/category',
         name: 'Category',
         meta: {
@@ -61,6 +64,8 @@ export default [
         component: () => import('../../views/pages/general/brand/index'),
     },
     {
+        // checked by Delta
+
         path: '/dashboard/branch',
         name: 'branch',
         meta: {
@@ -77,6 +82,8 @@ export default [
         component: () => import('../../views/pages/general/banks/index'),
     },
     {
+        // checked by Delta
+
         path: '/dashboard/bankAccount',
         name: 'bankAccount',
         meta: {
@@ -85,6 +92,7 @@ export default [
         component: () => import('../../views/pages/general/bankAccounts/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/customer-resource',
         name: 'customer resource',
         meta: {
@@ -101,6 +109,7 @@ export default [
         component: () => import('../../views/pages/general/department/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/customer-group',
         name: 'Customer Group',
         meta: {
@@ -109,6 +118,7 @@ export default [
         component: () => import('../../views/pages/general/customerGroups/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/currency',
         name: 'currency',
         meta: {
@@ -117,6 +127,8 @@ export default [
         component: () => import('../../views/pages/general/currency/index'),
     },
     {
+        // checked by Delta
+
         path: '/dashboard/customer',
         name: 'general customer',
         meta: {
@@ -125,6 +137,8 @@ export default [
         component: () => import('../../views/pages/general/customer/index'),
     },
     {
+        // checked by Delta
+
         path: '/dashboard/financialYear',
         name: 'financialYear',
         meta: {
@@ -133,6 +147,7 @@ export default [
         component: () => import('../../views/pages/general/financialYear/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/general-customer-category',
         name: 'customer-category',
         meta: {
@@ -141,6 +156,7 @@ export default [
         component: () => import('../../views/pages/general/customer_category/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/employee',
         name: 'employee',
         meta: {
@@ -149,6 +165,7 @@ export default [
         component: () => import('../../views/pages/general/employee/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/equipment',
         name: 'equipment',
         meta: {
@@ -157,6 +174,8 @@ export default [
         component: () => import('../../views/pages/general/equipment/index'),
     },
     {
+         // checked by Delta
+
         path: '/dashboard/externalSalesmen',
         name: 'externalSalesmen',
         meta: {
@@ -165,6 +184,8 @@ export default [
         component: () => import('../../views/pages/general/externalSalesmen/index'),
     },
     {
+        // checked by Delta
+
         path: '/dashboard/document/index',
         name: 'document',
         meta: {
@@ -173,6 +194,7 @@ export default [
         component: () => import('../../views/pages/general/document/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/document/document-status',
         name: 'document status',
         meta: {
@@ -181,6 +203,7 @@ export default [
         component: () => import('../../views/pages/general/document/document-status'),
     },
     {
+        // checked by Delta
         path: '/dashboard/document/document-reason',
         name: 'document reason',
         meta: {
@@ -189,6 +212,7 @@ export default [
         component: () => import('../../views/pages/general/document/document-reason'),
     },
     {
+        // checked by Delta
         path: '/dashboard/dictionary',
         name: 'dictionary',
         meta: {
@@ -197,6 +221,7 @@ export default [
         component: () => import('../../views/pages/general/dictionary/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/periodic-maintenance',
         name: 'periodic maintenance',
         meta: {
@@ -205,6 +230,7 @@ export default [
         component: () => import('../../views/pages/general/periodic-maintenance/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/paymentTypes',
         name: 'paymentTypes',
         meta: {
@@ -221,6 +247,7 @@ export default [
         },
     },
     {
+        // checked by Delta
         path: '/dashboard/location',
         name: 'location',
         meta: {
@@ -229,6 +256,7 @@ export default [
         component: () => import('../../views/pages/general/location/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/internalSalesman',
         name: 'internalSalesman',
         meta: {
@@ -237,6 +265,7 @@ export default [
         component: () => import('../../views/pages/general/internalSalesMen/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/group',
         name: 'Group',
         meta: {
@@ -245,6 +274,7 @@ export default [
         component: () => import('../../views/pages/general/group/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/governorate',
         name: 'governorate',
         meta: {
@@ -253,6 +283,7 @@ export default [
         component: () => import('../../views/pages/general/governorate/index'),
     },
     {
+        // checked by Delta
         path: '/dashboard/sector',
         name: 'sector',
         meta: {
@@ -269,6 +300,7 @@ export default [
         component: () => import('../../views/pages/general/screenproperties/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/salesmenTypes',
         name: 'salesmenTypes',
         meta: {
@@ -277,6 +309,7 @@ export default [
         component: () => import('../../views/pages/general/salesmenTypes/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/salesmen',
         name: 'salesmen',
         meta: {
@@ -285,6 +318,7 @@ export default [
         component: () => import('../../views/pages/general/salesmen/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/salesman-plan',
         name: 'salesman-plan',
         meta: {
@@ -293,6 +327,7 @@ export default [
         component: () => import('../../views/pages/general/salesman-plan/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/salesman-plan-details',
         name: 'salesman-plan',
         meta: {
@@ -301,6 +336,7 @@ export default [
         component: () => import('../../views/pages/general/salesman-plan-details/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/roles',
         name: 'roles',
         meta: {
@@ -317,6 +353,7 @@ export default [
         component: () => import('../../views/pages/general/property-tree/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/priority',
         name: 'priority',
         meta: {
@@ -325,6 +362,7 @@ export default [
         component: () => import('../../views/pages/general/priority/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/ticket-manager/tasks',
         name: 'ticketManager tasks',
         meta: {
@@ -333,6 +371,7 @@ export default [
         component: () => import('../../views/pages/general/ticketManager/tasks'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/ticket-manager/tasks-calender',
         name: 'ticketManager calender',
         meta: {
@@ -341,6 +380,7 @@ export default [
         component: () => import('../../views/pages/general/ticketManager/calender'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/units',
         name: 'Units',
         meta: {
@@ -349,6 +389,7 @@ export default [
         component: () => import('../../views/pages/general/units/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/users',
         name: 'users',
         meta: {
@@ -357,6 +398,8 @@ export default [
         component: () => import('../../views/pages/general/users/index'),
     },
     {
+
+        // checked by Delta 
         path: '/dashboard/Variant-Attributes',
         name: 'Variant Attributes',
         meta: {
@@ -365,6 +408,7 @@ export default [
         component: () => import('../../views/pages/general/variantAttributes/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/statuses',
         name: 'statuses',
         meta: {
@@ -373,6 +417,7 @@ export default [
         component: () => import('../../views/pages/general/statuses/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/taxes',
         name: 'Taxes',
         meta: {
@@ -381,6 +426,7 @@ export default [
         component: () => import('../../views/pages/general/taxes/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/supplier',
         name: 'supplier',
         meta: {
@@ -389,6 +435,7 @@ export default [
         component: () => import('../../views/pages/general/supplier/index'),
     },
     {
+        // checked by Delta 
         path: '/dashboard/street',
         name: 'street',
         meta: {

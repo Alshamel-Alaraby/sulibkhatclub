@@ -759,7 +759,7 @@ export default {
             this.isLoader = true;
 
              adminApi
-                .get(`/priorities`)
+                .get(`/priorities/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Priority')){

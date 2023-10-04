@@ -1960,7 +1960,7 @@ export default {
         getCustomers(search='') {
             this.isLoader = true;
             adminApi
-                .get(`/general-customer?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
+                .get(`/general-customer/get-drop-down?limet=10&company_id=${this.company_id}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -2125,7 +2125,7 @@ export default {
         },
         getSectors() {
             adminApi
-                .get(`/sectors`)
+                .get(`/sectors/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.sectors = l;
@@ -2137,7 +2137,7 @@ export default {
         getCategory() {
             this.create.city_id = null;
             adminApi
-                .get(`/countries?is_active=active`)
+                .get(`/countries/get-drop-down?is_active=active`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Country')){
@@ -2152,7 +2152,7 @@ export default {
         },
         getBankAcount() {
             this.bank_accounts = [];
-            adminApi.get(`/bank-accounts?`)
+            adminApi.get(`/bank-accounts/get-drop-down?`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Bank Account')){
@@ -2178,7 +2178,7 @@ export default {
                 this.create.city_id = null;
                 if(this.isVisible('country_id')){
                     adminApi
-                        .get(`/cities?country_id=${id}`)
+                        .get(`/cities/get-drop-down?country_id=${id}`)
                         .then((res) => {
                             let l = res.data.data;
                             if(this.isPermission('create City')){
@@ -2194,7 +2194,7 @@ export default {
         },
         getEmployees() {
             adminApi
-                .get(`/employees?customer_handel=1`)
+                .get(`/employees/get-drop-down?customer_handel=1`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Employee')){
@@ -2208,7 +2208,7 @@ export default {
         },
         getSalesmen() {
              adminApi
-                .get(`/salesmen`)
+                .get(`/salesmen/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if(this.isPermission('create Salesman')){
@@ -2257,7 +2257,7 @@ export default {
         },
         getCustomerResourse() {
             adminApi
-                .get(`/customer-sources`)
+                .get(`/customer-sources/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     if (this.isPermission("create Customer Resource")) {
@@ -2283,7 +2283,7 @@ export default {
             this.sub_customer_categories = [];
             this.create.customer_sub_category_id = null;
             adminApi
-                .get(`/customers-categories?parent_id=0`)
+                .get(`/customers-categories/get-drop-down?parent_id=0`)
                 .then((res) => {
                     let l = res.data.data;
                     if (this.isPermission("create Customer Category")) {
@@ -2297,7 +2297,7 @@ export default {
         },
         getCustomerCategorySub(id) {
             adminApi
-                .get(`/customers-categories?parent_id=${id}`)
+                .get(`/customers-categories/get-drop-down?parent_id=${id}`)
                 .then((res) => {
                     let l = res.data.data;
                     if (this.isPermission("create Customer Category")) {

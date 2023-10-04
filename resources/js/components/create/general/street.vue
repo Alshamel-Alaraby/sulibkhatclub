@@ -308,7 +308,7 @@ export default {
     async getAvenue() {
       this.isLoader = true;
       await adminApi
-        .get(`/avenues`)
+        .get(`/avenues/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           l.unshift({ id: 0, name: "اضافة منطقه", name_e: "Add Avenue" });

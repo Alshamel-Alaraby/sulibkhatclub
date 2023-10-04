@@ -35,6 +35,7 @@ class SerialResource extends JsonResource
             "document" => $this->document,
             "branch" => $this->branch,
             'restart_period' => $this->restartPeriod,
+            "gender" => $this->gender
         ];
     }
 }

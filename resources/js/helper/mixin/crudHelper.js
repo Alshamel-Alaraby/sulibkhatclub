@@ -198,6 +198,7 @@ export default {
         },
         /***  end  ckeckRow*/
         changeType({ typeAction, id }) {
+            console.log(typeAction,id)
             this.type = typeAction;
             this.idEdit = id;
         },

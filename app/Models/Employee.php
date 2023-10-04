@@ -7,15 +7,16 @@ use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\BoardsRent\Entities\Task;
+use Modules\HR\Entities\EmployeesTimeTablesDetail;
+use Modules\HR\Entities\Fingerprint;
 use Modules\HR\Entities\JobTitle;
 use Modules\HR\Entities\RequestType;
-use Spatie\Activitylog\LogOptions;
 
 class Employee extends Model
 {
     use HasFactory, LogTrait;
     protected $table = 'general_employees';
-    protected $casts = [ "manage_others" => "integer"];
+    protected $casts = ["manage_others" => "integer"];
     protected $guarded = ['id'];
 
     public function scopeData($query)
@@ -34,10 +35,13 @@ class Employee extends Model
                 'mobile',
                 'email',
                 'whatsapp',
-                'company_id',
+                'sms',
+                'att_code',
+                // 'company_id',
                 'job_id',
                 'manage_others',
-                'branch_id'
+                'branch_id',
+
             )
             ->with(
                 'jobTitle:id,name,name_e',
@@ -45,7 +49,41 @@ class Employee extends Model
                 'manager:id,name,name_e',
                 'salesmanType:id,name,name_e',
                 'department:id,name,name_e',
-                'plans:id,name,name_e'
+                'plans:id,name,name_e',
+                'managersData'
+            );
+    }
+
+    public function scopeEmployeesTimeTablesDetailsData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'name',
+                'name_e',
+                'att_code',
+                'department_id',
+                'branch_id',
+            )
+            ->with(
+                'branch:id,name,name_e',
+                'department:id,name,name_e',
+            );
+    }
+
+    public function scopeEmployeesAttendanceDepartureReportData($query)
+    {
+        return $query
+            ->select(
+                'id',
+                'name',
+                'name_e',
+                'att_code',
+                'department_id',
+                'branch_id',
+            )
+            ->with(
+                'fingerprints:id,att_code,vdate,att_type,machine_id',
             );
     }
 
@@ -127,6 +165,29 @@ class Employee extends Model
         return $this->belongsToMany(RequestType::class, 'hr_request_types_employees', 'employee_id', 'request_type_id');
     }
 
+    public function managers()
+    {
+        return $this->belongsToMany(Employee::class, 'general_employee_managers', 'employee_id', 'manager_id');
+    }
+
+    public function EmployeesTimeTablesDetails()
+    {
+        return $this->hasMany(EmployeesTimeTablesDetail::class, 'employee_id');
+    }
+
+    public function fingerprints()
+    {
+        return $this->hasMany(Fingerprint::class, 'att_code');
+    }
+
+    public function managersData()
+    {
+        return $this->hasMany(GeneralEmployeeManager::class, 'employee_id')
+            ->select('employee_id', 'manager_id')
+            ->leftJoin('general_employees', 'general_employee_managers.manager_id', '=', 'general_employees.id')
+            ->select('general_employee_managers.employee_id', 'general_employee_managers.manager_id', 'general_employees.name AS manager_name', 'general_employees.name_e AS manager_name_e');
+    }
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -146,13 +207,13 @@ class Employee extends Model
             ];
         }
 
-        if ($this->plans()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'plans',
-                'count' => $this->plans()->count(),
-                'ids' => $this->plans()->pluck('id')->toArray(),
-            ];
-        }
+        // if ($this->plans()->count() > 0) {
+        //     $relationsWithChildren[] = [
+        //         'relation' => 'plans',
+        //         'count' => $this->plans()->count(),
+        //         'ids' => $this->plans()->pluck('id')->toArray() ?? null,
+        //     ];
+        // }
         if ($this->documents()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'documents',
@@ -178,13 +239,13 @@ class Employee extends Model
         return $relationsWithChildren;
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        $user = auth()->user()->id ?? "system";
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     $user = auth()->user()->id ?? "system";
 
-        return \Spatie\Activitylog\LogOptions::defaults()
-            ->logAll()
-            ->useLogName('Employee')
-            ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
-    }
+    //     return \Spatie\Activitylog\LogOptions::defaults()
+    //         ->logAll()
+    //         ->useLogName('Employee')
+    //         ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
+    // }
 }

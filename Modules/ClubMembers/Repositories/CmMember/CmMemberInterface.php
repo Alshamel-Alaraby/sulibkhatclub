@@ -42,4 +42,6 @@ interface CmMemberInterface
     public function publicUpdatePermissionCmMember($id);
 
     public function updateCmMember();
+
+    public function getMemberForMultiSubscription($request);
 }

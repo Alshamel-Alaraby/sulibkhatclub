@@ -283,7 +283,7 @@
 <script>
 import ErrorMessage from "../../widgets/errorMessage";
 import loader from "../../general/loader";
-import {decimal, maxLength, minLength, minValue, required} from "vuelidate/lib/validators";
+import {decimal, maxLength, minLength, minValue, required,requiredIf} from "vuelidate/lib/validators";
 import adminApi from "../../../api/adminAxios";
 import Swal from "sweetalert2";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
@@ -514,8 +514,8 @@ export default {
                         this.is_persentage = true;
                         this.create.name = module.name;
                         this.create.name_e = module.name_e;
-                        if (module.create_owners &&module.create_owners.length) {
-                            module.create_owners.forEach((e) => {
+                        if (module.owners &&module.owners.length) {
+                            module.owners.forEach((e) => {
                                 adminApi
                                     .get(`/real-estate/owners/ownerWalletPercentage/${this.wallet_id}/${e.id}`)
                                     .then((res) => {

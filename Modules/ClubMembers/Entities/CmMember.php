@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\ClubMembers\Entities\Status;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class CmMember extends Model
 {
@@ -136,4 +139,47 @@ class CmMember extends Model
             }
         });
     }
+
+
+    public function scopeWithValidLastTransactionDate(Builder $query)
+    {  
+        return $query->whereHas('cmTransaction', function($q){
+            $q->where("year", DB::table('general_financial_years')->where('is_active', 1)->pluck('year'));
+        })->get();
+    }
+    
+    
+    public function lastTransactionDate()
+    {
+        return $this->whereHas('cmTransaction', function($q){
+            $q->where('year', 2024);
+        })->count();
+        
+        //->where('year', DB::table('general_financial_years')
+        //->where('is_active', 1)->year)->min('date')->pluck('date', 'year')->get();
+        // DB::table('general_financial_years')->where('is_active', 1)->year
+    }
+
+    /*
+    public function memberLastTransactionYear()
+    {
+
+        
+
+    }
+    */
+    /*
+    foreach($employees_id as $employee_id)
+    {
+        $employees_timetables_header_id= EmployeesTimetablesDetails::where('employee_id', $employee_id);
+
+        $timetables_header_id = EmployeesTimetablesHeader::where('id', employees_timetables_header_id);
+
+        $id = TimetablesHeader::where('id', $timetables_header_id );
+        
+        $details = TimetablesDetail::where('id', $id);
+
+    }
+    */
+    
 }
