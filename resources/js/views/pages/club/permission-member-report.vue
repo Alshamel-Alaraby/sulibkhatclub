@@ -461,7 +461,7 @@ export default {
                                     </template>
                                     <!-- Emulate built in modal footer ok and cancel button actions -->
 
-                                    <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
+                                    <b-button variant="danger" type="button" @click.prevent="$bvModal.hide('create')">
                                         {{ $t('general.Cancel') }}
                                     </b-button>
                                 </div>

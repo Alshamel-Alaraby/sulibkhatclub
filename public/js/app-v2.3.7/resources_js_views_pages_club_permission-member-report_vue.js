@@ -5248,7 +5248,7 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.preventDefault();
-        return _vm.resetModalHidden.apply(null, arguments);
+        return _vm.$bvModal.hide("create");
       }
     }
   }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                                ")])], 2), _vm._v(" "), _c("div", {
