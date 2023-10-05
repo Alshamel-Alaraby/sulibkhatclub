@@ -1535,6 +1535,10 @@
         "full_name": "Full Name",
         "SponsorMembersOnly": "Sponsor members only?",
         "AddNewSubscriptions": "Add New Subscriptions",
-        "LastYearOfPayment": "Last year of payment"
+        "LastYearOfPayment": "Last year of payment",
+        "AttendanceAndDepartureTables": "Attendance And Departure Tables",
+        "permissionsMember": "Members permissions",
+        "Theresultofsearchesfomembersrightsisbasedonhistory":"The result of searches for members' rights is based on history: ",
+        "execution": "Execution"
     }
 }

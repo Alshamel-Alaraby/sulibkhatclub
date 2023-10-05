@@ -1525,6 +1525,10 @@
         "full_name": "الاسم بالكامل",
         "SponsorMembersOnly": "اعضاء الراعى فقط ؟",
         "AddNewSubscriptions": "اضافة اشتراكات جديده",
-        "LastYearOfPayment": "اخر سنه سداد"
+        "LastYearOfPayment": "اخر سنه سداد",
+        "AttendanceAndDepartureTables": "جدول الحضور و الانصراف",
+        "permissionsMember": "صلحيات الاعضاء",
+        "Theresultofsearchesfomembersrightsisbasedonhistory": "نتيجه عمليات البحث لحقوق الاعضاء عن تاريخ: ",
+        "execution": "تنفيذ"
     }
 }

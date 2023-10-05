@@ -24,6 +24,7 @@ import {
 } from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
 import {formatDateOnly} from "../../../helper/startDate";
+import DatePicker from "vue2-datepicker";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 /**
@@ -42,11 +43,15 @@ export default {
         Switches,
         ErrorMessage,
         loader,
+        DatePicker,
     },
     data() {
         return {
             permissions: [],
-            cm_permission_id: null,
+            create: {
+                date: '',
+                cm_permission_id: []
+            },
             per_page: 50,
             search: "",
             debounce: {},
@@ -103,7 +108,12 @@ export default {
             },
         };
     },
-    validations: {},
+    validations: {
+        create: {
+            cm_permission_id: {required},
+            date: {required},
+        },
+    },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             return permissionGuard(vm, "Permission Member Report", "all Permission member club");
@@ -150,90 +160,19 @@ export default {
             return formatDateOnly(value);
         },
         getData(page = 1) {
-            if (this.cm_permission_id.length == 0)
-            {
-                Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.YouMustChoosePermission")}`,
-                });
+            this.$v.create.$touch();
+            if (this.$v.create.$invalid) {
                 return;
-            }
-            this.isLoader = true;
-            let _filterSetting = [...this.filterSetting];
-            let index = this.filterSetting.indexOf("financial_status_id");
-            if (index > -1) {
-                _filterSetting[index] =
-                    this.$i18n.locale == "ar" ? "financialStatus.name" : "financialStatus.name_e";
-            }
-            index = this.filterSetting.indexOf("member_status_id");
-            if (index > -1) {
-                _filterSetting[index] =
-                    this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
-            }
-            let filter = "";
-            for (let i = 0; i < _filterSetting.length; ++i) {
-                filter += `columns[${i}]=${_filterSetting[i]}&`;
-            }
-            adminApi
-                .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&page=${page}&per_page=50&search=${this.search}&${filter}`, {
-                    params: {
-                        members_permissions_id: this.cm_permission_id,
-                    },
-                })
-                .then((res) => {
-                    let l = res.data;
-                    this.items = l.data;
-                    this.itemsPagination = l.pagination;
-                    this.current_page = l.pagination.current_page;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
-        getDataCurrentPage(page = 1) {
-            if (
-                this.current_page <= this.itemsPagination.last_page &&
-                this.current_page != this.itemsPagination.current_page &&
-                this.current_page
-            ) {
-                if (this.cm_permission_id.length == 0)
-                {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.YouMustChoosePermission")}`,
-                    });
-                    return;
-                }
+            } else {
                 this.isLoader = true;
-                let _filterSetting = [...this.filterSetting];
-                let index = this.filterSetting.indexOf("financial_status_id");
-                if (index > -1) {
-                    _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "financialStatus.name" : "financialStatus.name_e";
-                }
-                index = this.filterSetting.indexOf("member_status_id");
-                if (index > -1) {
-                    _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
-                }
-                let filter = "";
-                for (let i = 0; i < _filterSetting.length; ++i) {
-                    filter += `columns[${i}]=${_filterSetting[i]}&`;
-                }
+                let dateStartArray = this.create.date.split("-");
+                let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                 adminApi
-                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.cm_permission_id}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
+                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${page}&per_page=50`, {
                         params: {
-                            members_permissions_id: this.cm_permission_id,
+                            members_permissions_id: this.create.cm_permission_id,
+                            dateOfYear: this.create.date
                         },
                     })
                     .then((res) => {
@@ -252,6 +191,46 @@ export default {
                     .finally(() => {
                         this.isLoader = false;
                     });
+            }
+        },
+        getDataCurrentPage(page = 1) {
+            if (
+                this.current_page <= this.itemsPagination.last_page &&
+                this.current_page != this.itemsPagination.current_page &&
+                this.current_page
+            ) {
+                this.$v.create.$touch();
+                if (this.$v.create.$invalid) {
+                    return;
+                } else {
+                    this.isLoader = true;
+                    let dateStartArray = this.create.date.split("-");
+                    let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
+
+                    adminApi
+                        .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
+                            params: {
+                                members_permissions_id: this.create.cm_permission_id,
+                                dateOfYear: this.create.date
+                            },
+                        })
+                        .then((res) => {
+                            let l = res.data;
+                            this.items = l.data;
+                            this.itemsPagination = l.pagination;
+                            this.current_page = l.pagination.current_page;
+                        })
+                        .catch((err) => {
+                            Swal.fire({
+                                icon: "error",
+                                title: `${this.$t("general.Error")}`,
+                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                            });
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
+                }
             }
         },
         async getMemberPermissions() {
@@ -334,58 +313,7 @@ export default {
                             </h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                                 <div class="d-inline-block" style="width: 22.2%">
-                                    <!-- Basic dropdown -->
-                                     <b-dropdown
-                                      variant="primary"
-                                      :text="$t('general.searchSetting')"
-                                      ref="dropdown"
-                                      class="btn-block setting-search"
-                                    >
-                                         <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
-                                             {{ getCompanyKey("member_membership_number") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="full_name" class="mb-1">
-                                             {{ $t("general.name") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="birth_date" class="mb-1">
-                                             {{ getCompanyKey("member_birth_date") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="gender" class="mb-1">
-                                             {{ getCompanyKey("member_gender") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="membership_date" class="mb-1">
-                                             {{ getCompanyKey("member_membership_date") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="financial_status_id" class="mb-1">
-                                             {{ getCompanyKey("financial_status") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="financial_status_id" class="mb-1">
-                                             {{ getCompanyKey("financial_status") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="member_status_id" class="mb-1">
-                                             {{ $t("general.status") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">
-                                             {{ getCompanyKey("member_national_id") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">
-                                             {{ getCompanyKey("member_home_phone") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">
-                                             {{ getCompanyKey("member_home_address") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">
-                                             {{ getCompanyKey("member_work_phone") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="job" class="mb-1">
-                                             {{ getCompanyKey("member_job") }}
-                                         </b-form-checkbox>
-                                         <b-form-checkbox v-model="filterSetting" value="degree" class="mb-1">
-                                             {{ getCompanyKey("member_degree") }}
-                                         </b-form-checkbox>
 
-                                    </b-dropdown>
-                                    <!-- Basic dropdown -->
                                 </div>
 
                                 <div
@@ -400,21 +328,14 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1" >
                             <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
-                                <div style="width: 100%">
-                                    <multiselect
-                                        @input="getData(1)"
-                                        :multiple="true"
-                                        v-model="cm_permission_id"
-                                        :options="permissions.map((type) => type.id)"
-                                        :custom-label="
-                                          (opt) =>
-                                            $i18n.locale == 'ar'
-                                              ? permissions.find((x) => x.id == opt).name
-                                              : permissions.find((x) => x.id == opt).name_e
-                                        "
-                                    >
-                                    </multiselect>
-                                </div>
+                                <b-button
+                                    v-b-modal.create
+                                    variant="primary"
+                                    class="btn-sm mx-1 font-weight-bold"
+                                >
+                                    {{ $t('general.Search') }}
+                                    <i class="fe-search"></i>
+                                </b-button>
                                 <!-- start create and printer -->
                                 <div class="d-inline-flex">
                                     <button
@@ -513,6 +434,97 @@ export default {
                             </div>
                         </div>
 
+                        <!--  create   -->
+                        <b-modal
+                            id="create"
+                            :title="$t('general.execution')"
+                            title-class="font-18"
+                            body-class="p-4"
+                            :hide-footer="true"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <template>
+                                        <b-button
+                                            variant="success"
+                                            type="button" class="mx-1"
+                                            v-if="!isLoader"
+                                            @click.prevent="getData(1)"
+                                        >
+                                            {{ $t('general.execution') }}
+                                        </b-button>
+
+                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                        </b-button>
+                                    </template>
+                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                    <b-button variant="danger" type="button" @click.prevent="resetModalHidden">
+                                        {{ $t('general.Cancel') }}
+                                    </b-button>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-12">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ $t('general.permissionsMember') }}
+                                            </label>
+                                            <multiselect
+                                                :multiple="true"
+                                                v-model="$v.create.cm_permission_id.$model"
+                                                :options="permissions.map((type) => type.id)"
+                                                :custom-label="
+                                                  (opt) => permissions.find((x) => x.id == opt)?
+                                                    $i18n.locale == 'ar'
+                                                      ? permissions.find((x) => x.id == opt).name
+                                                      : permissions.find((x) => x.id == opt).name_e:null
+                                                "
+                                            >
+                                            </multiselect>
+                                            <div
+                                                v-if="
+                                  $v.create.cm_permission_id.$error
+                                "
+                                                class="text-danger"
+                                            >
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t('general.date') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.create.date.$model"
+                                                placeholder="DD-MM-YYYY"
+                                                format="DD-MM-YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                            ></date-picker>
+                                            <div
+                                                v-if="
+                                                  $v.create.date.$error
+                                                "
+                                                class="text-danger"
+                                            >
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /create   -->
+
+                        <h3 class="text-center" v-if="items.length > 0">
+                            {{ $t('general.Theresultofsearchesfomembersrightsisbasedonhistory') + create.date }}
+                        </h3>
                         <!-- start .table-responsive-->
                         <div  class="table-responsive mb-3 custom-table-theme position-relative">
                             <!--       start loader       -->

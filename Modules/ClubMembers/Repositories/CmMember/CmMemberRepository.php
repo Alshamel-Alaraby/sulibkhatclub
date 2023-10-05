@@ -276,7 +276,14 @@ class CmMemberRepository implements CmMemberInterface
         }
 
         if ($request->members_permissions_id) {
-            $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', 2024)->with('lastCmTransaction');
+            $year = Carbon::createFromFormat('d-m-Y',$request->dateOfYear)->format('Y') + 1;
+
+            DB::statement('call p_statistics(?)',["$year"]);
+
+            $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', $year)->with('lastCmTransaction');
+
+            $new_year = Carbon::now()->format('Y') + 1;
+            DB::statement('call p_statistics(?)',["$year"]);
         }
 
         if ($request->per_page) {
@@ -307,7 +314,7 @@ class CmMemberRepository implements CmMemberInterface
         //ini_set('max_execution_time', '60');
 
         $financialyear = FinancialYear::where('is_active', 1)->first();
-        
+
         if ($financialyear) {
 
             //reset the financial status id in Cm Members for all active (saaary) members to 2 (غير مسدد)
@@ -326,10 +333,10 @@ class CmMemberRepository implements CmMemberInterface
                 'members_permissions_id' => 1, // ليس له حق
             ]);
 
-            
+
 
             // all settings
-            $settings = 
+            $settings =
             DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
 
             // get the active financial year
@@ -343,7 +350,7 @@ class CmMemberRepository implements CmMemberInterface
                     $q->whereNotNull('last_transaction_date')
                         ->where('last_transaction_year', $financialyear->year); // int ? int
                 })->orWhere('member_kind_id', 2)->count();
-             
+
             return $running_member_all;
 
             //$time = strtotime('2023/02/28');
