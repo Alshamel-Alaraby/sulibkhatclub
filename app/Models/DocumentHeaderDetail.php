@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Traits\LogTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\BoardsRent\Entities\Package;
 use Modules\Booking\Entities\Unit;
+use Modules\Booking\Entities\UnitStatus;
 
 class DocumentHeaderDetail extends Model
 {
@@ -16,6 +18,26 @@ class DocumentHeaderDetail extends Model
     protected $table = 'general_document_header_details';
 
     protected $guarded = ['id'];
+
+//    protected $casts = [
+//        "date_from" => 'date',
+//        "date_to" => 'date'
+//    ];
+
+    public function setDateAttribute( $value ) {
+        $this->attributes['date_from'] = (new Carbon($value))->format('Y-m-d');
+    }
+
+    public function unitStatus()
+    {
+        return $this->belongsTo(\App\Models\Status::class);
+    }
+
+    public function bookingUnitStatus()
+    {
+        return $this->belongsTo(\Modules\Booking\Entities\UnitStatus::class, 'unit_status_id', 'id');
+    }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
@@ -49,7 +71,6 @@ class DocumentHeaderDetail extends Model
     {
         return $this->hasMany(ItemBreakDown::class,'document_header_detail_id');
     }
-
     public function item()
     {
         return $this->belongsTo(GeneralItem::class,'item_id');

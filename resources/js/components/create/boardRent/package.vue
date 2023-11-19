@@ -49,6 +49,7 @@
                                 {{ getCompanyKey("boardRent_panel_category") }}
                             </label>
                             <multiselect
+                                :disabled="true"
                                 v-model="location.category_id"
                                 :options="categories.map((type) => type.id)"
                                 :custom-label="(opt) => categories.find((x) => x.id == opt)?
@@ -65,6 +66,7 @@
                                 {{ getCompanyKey("boardRent_panel_governorate") }}
                             </label>
                             <multiselect
+                                :disabled="true"
                                 @input="showGovernorateModal"
                                 v-model="location.governorate_id"
                                 :options="governorates.map((type) => type.id)"
@@ -220,7 +222,60 @@
                     <b-tabs :content-class="is_panel?'tab-content-custom':''" nav-class="nav-tabs nav-bordered">
                         <b-tab :title="$t('general.DataEntry')" active @click="is_panel = false">
                             <div class="row">
-                                <div class="row col-7">
+                                <div class="row col-8">
+                                    <div class="col-md-6" v-if="isVisible('category_id')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_package_category") }}
+                                                <span  v-if="isRequired('category_id')" class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                @input="addLocationCategory"
+                                                v-model="$v.create.category_id.$model"
+                                                :options="categories.map((type) => type.id)"
+                                                :custom-label="(opt) => categories.find((x) => x.id == opt)?
+                                                     $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name : categories.find((x) => x.id == opt).name_e
+                                                     :null
+                                                "
+                                            >
+                                            </multiselect>
+                                            <div v-if="$v.create.category_id.$error || errors.category_id" class="text-danger">
+                                                {{ $t("general.fieldIsRequired") }}
+                                            </div>
+                                            <template v-if="errors.category_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.category_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}</ErrorMessage
+                                                >
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" v-if="isVisible('governorate_id')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_package_governorate") }}
+                                                <span v-if="isRequired('governorate_id')" class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                @input="addLocationGovernorate"
+                                                v-model="$v.create.governorate_id.$model"
+                                                :options="governorates.map((type) => type.id)"
+                                                :custom-label="(opt) => governorates.find((x) => x.id == opt)?
+                                                         $i18n.locale == 'ar' ? governorates.find((x) => x.id == opt).name : governorates.find((x) => x.id == opt).name_e
+                                                         :null
+                                                    "
+                                            >
+                                            </multiselect>
+                                            <template v-if="errors.governorate_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.governorate_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}</ErrorMessage
+                                                >
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6" v-if="isVisible('name')">
                                         <div class="form-group">
                                             <label for="field-1" class="control-label">
@@ -351,6 +406,28 @@
                                                     :key="index"
                                                 >{{ errorMessage }}</ErrorMessage
                                                 >
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" v-if="isVisible('note')">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_package_note") }}
+                                                <span v-if="isRequired('note')" class="text-danger">*</span>
+                                            </label>
+                                            <textarea
+                                                class="form-control"
+                                                v-model="$v.create.note.$model"
+                                                :class="{
+                                                    'is-invalid':$v.create.note.$error || errors.note,
+                                                    'is-valid':!$v.create.note.$invalid && !errors.note,
+                                                  }"
+                                                rows="12"
+                                            ></textarea>
+                                            <template v-if="errors.note">
+                                                <ErrorMessage v-for="(errorMessage, index) in errors.note":key="index">
+                                                    {{ errorMessage }}
+                                                </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
@@ -722,6 +799,9 @@ export default {
                 name_e: "",
                 code: "",
                 price: "",
+                note: "",
+                category_id: null,
+                governorate_id: null,
             },
             faces: ['A','B','Multi','One-Face'],
             faceNumber: {'A': 0,'B': 0,'Multi': 0,'One-Face': 0},
@@ -750,6 +830,12 @@ export default {
     },
     validations: {
         create: {
+            category_id: { required: requiredIf(function (model) {
+                    return this.isRequired("category_id");
+                }) },
+            governorate_id: { required: requiredIf(function (model) {
+                    return this.isRequired("governorate_id");
+                }) },
             name: { required: requiredIf(function (model) {
                     return this.isRequired("name");
                 }), minLength: minLength(2), maxLength: maxLength(255) },
@@ -762,6 +848,9 @@ export default {
             price: { required: requiredIf(function (model) {
                     return this.isRequired("price");
                 }), decimal , minValue: minValue(0.01) },
+            note: { required: requiredIf(function (model) {
+                    return this.isRequired("note");
+                }) },
         },
     },
     methods: {
@@ -811,6 +900,9 @@ export default {
                 name_e: "",
                 code: "",
                 price: "",
+                note: "",
+                category_id: null,
+                governorate_id: null,
             };
             this.package_id = null;
             this.location = {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null,code: ''};
@@ -878,10 +970,15 @@ export default {
                         this.create.name_e = pack.name_e;
                         this.create.code = pack.code;
                         this.create.price = pack.price;
-                        this.getPanelUpdate(pack.id);
+                        this.create.note = pack.note;
                         this.getGovernorate();
                         this.getCategory();
-
+                        this.create.governorate_id = pack.governorate_id;
+                        this.create.category_id = pack.category_id;
+                        this.location.governorate_id = pack.governorate_id;
+                        this.location.category_id = pack.category_id;
+                        if (this.location.governorate_id) this.showGovernorateModal();
+                        this.getPanelUpdate(pack.id);
                     }
                 }
             },50);
@@ -1184,7 +1281,26 @@ export default {
             this.panelPackages = [];
             this.panelPackages = this.allPanelPackages.slice(skip,skip+limit);
 
-        }
+        },
+        addLocationCategory()
+        {
+            if (this.create.category_id)
+            {
+                this.location.category_id = this.create.category_id;
+            }else {
+                this.location.category_id = null ;
+            }
+        },
+        addLocationGovernorate()
+        {
+            if (this.create.governorate_id)
+            {
+                this.location.governorate_id = this.create.governorate_id;
+                this.showGovernorateModal();
+            }else {
+                this.location.governorate_id = null ;
+            }
+        },
     },
 }
 </script>

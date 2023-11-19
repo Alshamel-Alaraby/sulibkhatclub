@@ -35,6 +35,7 @@ class DocumentHeaderDetailResource extends JsonResource
             'rent_days' => $this->rent_days,
             'unit_id' => $this->unit_id,
             'item_id' => $this->item_id,
+            'category_booking' => $this->category_booking,
 
 
             'check_in_time' => $this->check_in_time,
@@ -60,8 +61,8 @@ class DocumentHeaderDetailResource extends JsonResource
 
             'break_downs' => ItemBreakDownResource::collection($this->itemBreakDowns),
 
-            'unit' => new UnitResource($this->unit),
-//            'item' => new GeneralItemResource($this->item),
+            'unit' => $this->unit,
+            'item' => $this->item,
         ];
     }
 }

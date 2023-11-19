@@ -67,7 +67,7 @@ export default {
       saveImageName: [],
       showPhoto: "./images/img-1.png",
       idDelete: null,
-      is_disabled:false,
+      is_disabled: false,
     };
   },
   validations: {
@@ -189,7 +189,7 @@ export default {
     },
     async getItemCategories() {
       await adminApi
-        .get(`/real-estate/Category-item/get-drop-down?item_id=${this.item_id}`)
+        .get(`/real-estate/Category-item?item_id=${this.item_id}`)
         .then((res) => {
           this.itemCategories = res.data.data;
         })
@@ -203,7 +203,7 @@ export default {
     },
     async getCategories() {
       await adminApi
-        .get(`real-estate/Category-item/get-drop-down`)
+        .get(`real-estate/Category-item`)
         .then((res) => {
           let l = res.data.data;
           l.unshift({ id: 0, name: "اضف فئة", name_e: "Add category" });
@@ -244,6 +244,7 @@ export default {
     },
     resetModal() {
       this.defaultData();
+      this.getUnits();
       setTimeout(async () => {
         if (this.type != "edit") {
           if (!this.isPage) await this.getCustomTableFields();
@@ -350,7 +351,7 @@ export default {
     },
     async getUnits() {
       await adminApi
-        .get(`/units/get-drop-down`)
+        .get(`/real-estate/units`)
         .then((res) => {
           let l = res.data;
           this.units = l.data;
@@ -751,22 +752,11 @@ export default {
                       {{ getCompanyKey("item_type") }}
                       <span class="text-danger">*</span>
                     </label>
-                    <select
-                      class="form-control"
+                    <multiselect
                       v-model="$v.create.type.$model"
-                      :class="{
-                        'is-invalid': $v.create.type.$error || errors.type,
-                        'is-valid': !$v.create.type.$invalid && !errors.type,
-                      }"
+                      :options="['service', 'item', 'product']"
                     >
-                      <option value="service">
-                        {{ $t("general.Service") }}
-                      </option>
-                      <option value="item">{{ $t("general.Item") }}</option>
-                      <option value="product">
-                        {{ $t("general.Product") }}
-                      </option>
-                    </select>
+                    </multiselect>
                     <template v-if="errors.type">
                       <ErrorMessage
                         v-for="(errorMessage, index) in errors.type"
@@ -1022,7 +1012,7 @@ export default {
 
 <style>
 form {
-    position: relative;
+  position: relative;
 }
 .dropdown-menu-custom-company.dropdown .dropdown-menu {
   padding: 5px 10px !important;

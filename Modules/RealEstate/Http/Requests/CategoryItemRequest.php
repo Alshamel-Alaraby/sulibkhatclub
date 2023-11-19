@@ -24,8 +24,8 @@ class CategoryItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'sometimes|string|max:255|unique:rlst_category_item,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e'    => 'sometimes|string|max:255|unique:rlst_category_item,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
+            'name'      => 'sometimes|string|max:255|unique:rlst_category_item,name,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
+            'name_e'    => 'sometimes|string|max:255|unique:rlst_category_item,name_e,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
             'parent_id' => ["nullable"],
             "company_id"=>'nullable',
         ];

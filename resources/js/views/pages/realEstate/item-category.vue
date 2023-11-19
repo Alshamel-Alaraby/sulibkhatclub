@@ -21,16 +21,15 @@ export default {
     meta: [{ name: "description", content: "Item Category" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(
-  //       vm,
-  //       "Category RealState",
-  //       "all category RealState"
-  //     );
-  //   });
-  // },
-
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(
+        vm,
+        "Category RealState",
+        "all category RealState"
+      );
+    });
+  },
   components: {
     Layout,
     PageHeader,

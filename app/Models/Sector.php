@@ -13,6 +13,7 @@ class Sector extends Model
     protected $table = 'general_sectors';
 
     protected $fillable = [
+        'id',
         'name',
         'name_e',
         'parent_id',
@@ -22,6 +23,7 @@ class Sector extends Model
     public function scopeData($query)
     {
         return $query->select(
+            'id',
             'name',
             'name_e',
             'parent_id',

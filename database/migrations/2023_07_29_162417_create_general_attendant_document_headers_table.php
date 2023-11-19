@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_attendant_document_headers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_header_id');
-            $table->unsignedBigInteger('attendant_id');
+            $table->unsignedBigInteger('document_header_id')->index();
+            $table->unsignedBigInteger('attendant_id')->index();
             $table->timestamps();
         });
     }

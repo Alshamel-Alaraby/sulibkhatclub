@@ -43,6 +43,18 @@ export default {
                 type: 'string',sort: true,setting: {"name_e":true},isSetting: true
             },
             {
+                isFilter: true,isSet: true,trans:"branch_address",isV: 'address',
+                type: 'string',sort: true,setting: {"address":true},isSetting: true
+            },
+            {
+                isFilter: true,isSet: true,trans:"branch_fax",isV: 'fax',
+                type: 'string',sort: true,setting: {"fax":true},isSetting: true
+            },
+            {
+                isFilter: true,isSet: true,trans:"branch_p_o_pox",isV: 'p_o_pox',
+                type: 'string',sort: true,setting: {"p_o_pox":true},isSetting: true
+            },
+            {
                 isFilter: false,isSet: true,trans:"branch_status",isV: 'is_active',
                 type: 'boolean',setting: {"is_active":true},isSetting: true
             }
@@ -132,6 +144,7 @@ export default {
                 :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired"
                 :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
                 @getDataTable="getData(1,url,filterSearch(searchField))" :isPermission="isPermission"
+                :tables="tables"
             />
             <!--  /create   -->
 

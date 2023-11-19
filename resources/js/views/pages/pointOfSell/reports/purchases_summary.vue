@@ -143,12 +143,9 @@ export default {
     this.getGroupsBy();
     this.getBranches();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS purchases summary report", "all sold_Unit RealState");
-  // });
-
-  //  },
+  beforeRouteEnter(to, from, next) {
+      next((vm) => { return permissionGuard(vm, "POS purchases summary report", "all sold_Unit RealState");});
+  },
   methods: {
     getItemsSumOf(items, field) {
       let sum = 0;

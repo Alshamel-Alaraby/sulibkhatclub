@@ -12,6 +12,7 @@ class Sector extends Model
     use HasFactory, LogTrait;
 
     protected $fillable = [
+        'id',
         'name',
         'name_e',
     ];

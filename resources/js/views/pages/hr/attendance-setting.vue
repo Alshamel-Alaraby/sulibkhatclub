@@ -20,7 +20,7 @@ export default {
     mixins: [translation,customTable,successError,crudHelper],
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Attendance Setting", "all Time Attendance Hr");
+            return permissionGuard(vm, "Attendance Setting", "all attendanceSetting hr");
         });
     },
     components: {
@@ -56,6 +56,42 @@ export default {
                 {
                     isFilter: false,isSet: true,trans:"attendance_setting_max_out",isV: 'max_out',
                     type: 'string',setting: {"max_out":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_location_fingerprint",isV: 'location_fingerprint',
+                    type: 'boolean',setting: {"location_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_mobile_id_fingerprint",isV: 'mobile_id_fingerprint',
+                    type: 'boolean',setting: {"mobile_id_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_pe_in_fingerprint",isV: 'pre_in_fingerprint',
+                    type: 'boolean',setting: {"pre_in_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_day_off_fingerprint",isV: 'day_off_fingerprint',
+                    type: 'boolean',setting: {"day_off_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_public_holiday_fingerprint",isV: 'public_holiday_fingerprint',
+                    type: 'boolean',setting: {"public_holiday_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_post_out_fingerprint",isV: 'post_out_fingerprint',
+                    type: 'boolean',setting: {"post_out_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_pre_out_fingerprint",isV: 'pre_out_fingerprint',
+                    type: 'boolean',setting: {"pre_out_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_holiday_fingerprint",isV: 'holiday_fingerprint',
+                    type: 'boolean',setting: {"holiday_fingerprint":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"attendance_setting_training_course_fingerprint",isV: 'training_course_fingerprint',
+                    type: 'boolean',setting: {"training_course_fingerprint":true},isSetting: true
                 }
             ],
             sendSetting: {},

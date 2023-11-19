@@ -78,3 +78,9 @@ export default {
     </div>
 </div>
 </template>
+<style scoped>
+.card-body {
+    background-color: #bee3fe;
+    padding: 1.5rem 10px !important;
+}
+</style>

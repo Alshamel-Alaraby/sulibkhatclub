@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('rlst_revenues_items', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 100);
+            $table->string('name_e', 100);
+            $table->unsignedinteger('code');
+            $table->string('acc_no', 20)->comment('from table gl_chart, previously general_accounts');
+            $table->enum('type', ['building','unit','unit/building','general'])->default('general');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('rlst_revenues_items');
+    }
+};

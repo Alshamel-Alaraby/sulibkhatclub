@@ -17,7 +17,6 @@ class CmMemberPermissionReportResource extends JsonResource
     {
         return [
 
-
             'id' => $this->id,
             'first_name' => $this->first_name,
             'second_name' => $this->second_name,
@@ -55,8 +54,8 @@ class CmMemberPermissionReportResource extends JsonResource
             "status" => new StatusResource($this->status),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'cm_transaction_count' => $this->cm_transaction_count??null,
-            'transaction' => $this->lastCmTransaction
+            'cm_transaction_count' => $this->cm_transaction_count ?? null,
+            'transaction' => $this->lastCmTransaction,
         ];
     }
 }

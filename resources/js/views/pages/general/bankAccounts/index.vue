@@ -155,6 +155,7 @@ export default {
                   :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired" :url="url"
                   :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
                   @getDataTable="getData(1,url,filterSearch(searchField))" :isPermission="isPermission"
+                  :tables="tables"
               />
             <!--  /create   -->
 

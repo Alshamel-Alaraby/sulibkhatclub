@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

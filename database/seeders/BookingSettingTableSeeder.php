@@ -19,7 +19,7 @@ class BookingSettingTableSeeder extends Seeder
 
         $data = [
             [
-                'key' => 'Check-in',
+                'key'   => 'Check-in',
                 'value' => Carbon::createFromTime(13, 0)->format('H:i'),
             ],
             [

@@ -28,7 +28,7 @@ class AvenueController extends Controller
     {
 
         $models = $this->modelInterface->all($request);
-        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', AvenueResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(AvenueRequest $request)

@@ -4,16 +4,21 @@
 namespace App\Repositories\DocumentHeader;
 use App\Http\Resources\Document\DocumentResource;
 use App\Models\AttendantDocumentHeader;
+use App\Models\BreakSettlement;
 use App\Models\Document;
+use App\Models\DocumentCompanyModuleStatus;
 use App\Models\DocumentHeaderDetail;
 use App\Models\GeneralCustomTable;
 use App\Models\ItemBreakDown;
 use App\Models\Serial;
+use App\Models\VoucherHeader;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Booking\Entities\Setting;
 use Modules\RecievablePayable\Entities\RpBreakDown;
+use function Symfony\Component\HttpKernel\Log\format;
 
 class DocumentHeaderRepository implements DocumentHeaderInterface
 {
@@ -26,7 +31,8 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
         if($request->document_id)
         {
             $models->where('document_id',$request->document_id);
@@ -65,6 +71,34 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         } else {
             return ['data' => $models->get(), 'paginate' => false];
         }
+    }
+
+    public function checkOutPrint($id)
+    {
+
+        return  $models = $this->model->print()->find($id);
+
+
+    }
+
+    public function customerRoom($request)
+    {
+     return   $models = $this->model->with('customer')->whereIn('document_id',[33,41,42])->whereHas('documentHeaderDetails',function ($q) use ($request){
+            $q->where('unit_id',$request->unit_id)
+                ->where(function ($q) use ($request ) {
+                    $q->where(function ($qu) use ($request) {
+                        $qu->where('date_from', '>=', $request->date_from )
+                            ->where('date_from', '<=', $request->date_to );
+                    })->orWhere(function ($que) use ($request) {
+                        $que->where('date_to', '>=', $request->date_from )
+                            ->where('date_to', '<=', $request->date_to);
+                    })->orWhere(function ($quer) use ($request) {
+                        $quer->where('date_from', '<=', $request->date_from )
+                            ->where('date_to', '>=', $request->date_to);
+                    });
+                });
+
+        })->first();
     }
 
     public function allDocumentHeader($request)
@@ -109,7 +143,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     public function find($id)
     {
-        $data = $this->model->find($id);
+        $data = $this->model->relation()->find($id);
         return $data;
     }
     public function generalDocument($request,$header_details){
@@ -141,6 +175,76 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     }
 
+    public function objcetStatus($request)
+    {
+        $status =  DocumentCompanyModuleStatus::where([
+            ['company_id',$request['company_id']],
+            ['document_id',$request['document_id']],
+            ['document_module_type_id',$request['document_module_type_id']],
+        ])->first();
+        if ($status){
+            return $status->status_id;
+        }
+        return "null";
+
+
+    }
+
+
+    public function updateDocumentHeader($request)
+    {
+
+          $max_date_check_out = $request['date'] ;
+
+          $data_check_in     =  $this->model->with('documentHeaderDetails')->find($request['related_document_number']);
+
+          $max_date_check_in =  $data_check_in->documentHeaderDetails()->first()->date_to;
+          $min_date_check_in =  $data_check_in->documentHeaderDetails()->first()->date_from;
+
+          $check_in_detail   =  $data_check_in->documentHeaderDetails()->first();
+
+          $start      = Carbon::parse($min_date_check_in);
+          $end        = Carbon::parse($max_date_check_out);
+
+        if ($max_date_check_in != $max_date_check_out ){
+
+            $count       = $start->diffInDays($end);
+
+            $invoice_discount = 0;
+
+            if ($check_in_detail['invoice_discount'] != 0){
+
+                $price_discount   =  $check_in_detail['invoice_discount']  / $check_in_detail['rent_days'];
+                $invoice_discount = $price_discount * $count ;
+            }
+
+            $total       = $count  * $check_in_detail['price_per_uint'] ;
+            $net_invoice = $total  -  $invoice_discount ;
+
+            $check_in_detail->update([
+                'rent_days'        =>  $count,
+                'quantity'         =>  $count,
+                'total'            =>  $total,
+                'date_to'          =>  $request->date,
+                'net_invoice'      =>  $net_invoice,
+                'discount'         =>  $invoice_discount,
+                'invoice_discount' =>  $invoice_discount,
+            ]);
+
+            $discount_header = $invoice_discount != 0 ? $invoice_discount  : $request['invoice_discount'] ;
+
+            $data_check_in->update([
+                'total_invoice'      => $total,
+                'invoice_discount'   => $discount_header,
+                'net_invoice'        => $total - $discount_header,
+            ]);
+
+            return true;
+
+        }
+
+        return false;
+    }
 
     public function create($request){
 
@@ -148,10 +252,23 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
             if (generalCheckDateModelFinancialYear($request['date']) == "true"){
 
+                if (isset( $request['break_settlement'] )){
+                   $BreakSettlement =  BreakSettlement::create($request['break_settlement'][0]);
+                   $break_Settlement_id = $BreakSettlement->id;
+
+                }else{
+                    $break_Settlement_id = null;
+                }
+
+                if (isset($request['voucher_headers'])){
+                    VoucherHeader::whereIn('id',$request['voucher_headers'])->update([ "break_settlement_id" => $break_Settlement_id ]);
+                }
+
+
                 $data_request = $request;
                 $serial = Serial::where([['branch_id',$request['branch_id']],['document_id',$request['document_id']]])->first();
                 $data_request['serial_id'] = $serial ? $serial->id:null;
-                $data = $this->model->create($data_request);
+                $data = $this->model->create(array_merge( $data_request,[ "break_settlement_id" => $break_Settlement_id  ] ));
                 if (isset($request['attendants'])){
                     $data->attendants()->attach($request['attendants']);
                 }
@@ -167,6 +284,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                 foreach ($request['header_details'] as $header_details ){
 
                     $general_document = $this->generalDocument($request,$header_details);
+                    $status_id =  $this->objcetStatus($request);
 
                     $id =  $this->modelDetail->create(array_merge($header_details,[
                         'document_header_id'   =>$data->id,
@@ -175,6 +293,8 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         'sell_method_discount' =>$general_document['sell_method_discount'],
                         'unrealized_revenue'   =>$general_document['unrealized_revenue'],
                         'external_commission'  =>$general_document['external_commission'],
+                        'unit_status_id'       =>$status_id,
+                        "break_settlement_id"  =>$break_Settlement_id,
                     ]));
                     if (isset($header_details['break_downs']))
                     {
@@ -212,7 +332,13 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         'installment_statu_id' =>1,
                     ]);
                 }
+                if ($request['document_id'] == 34){
+                       $this->updateDocumentHeader($data);
+                }
+
+
                 return $data;
+
             }
             return 'false';
         });
@@ -249,6 +375,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                     }
                     foreach ($request['header_details'] as $header_details ){
                         $general_document = $this->generalDocument($request,$header_details);
+                        $status_id =  $this->objcetStatus($request);
 
                         $id =  $this->modelDetail->create(array_merge($header_details,[
                             'document_header_id'   =>$data->id,
@@ -257,6 +384,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                             'sell_method_discount' =>$general_document['sell_method_discount'],
                             'unrealized_revenue'   =>$general_document['unrealized_revenue'],
                             'external_commission'  =>$general_document['external_commission'],
+                            'unit_status_id'       =>$status_id,
                         ]));
                         if (isset($header_details['prefix_related'])){
                             $model_find =  $this->model->where('prefix',$header_details['prefix_related'])->first();
@@ -297,9 +425,9 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                 if ($prefix_related){
                     $prefix_related->update([
                         "complete_status" => 'UnDelivered',
-                        "related_document_id" => $prefix_related['related_document_id'] == 33 ?$prefix_related['related_document_id']:null,
-                        "related_document_number" => $prefix_related['related_document_id'] == 33 ?$prefix_related['related_document_number']:null,
-                        "related_document_prefix" => $prefix_related['related_document_id'] == 33 ?$prefix_related['related_document_prefix']:null,
+                        "related_document_id" => $prefix_related['related_document_id'] == 33 || 35 ?$prefix_related['related_document_id']:null,
+                        "related_document_number" => $prefix_related['related_document_id'] == 33 || 35 ?$prefix_related['related_document_number']:null,
+                        "related_document_prefix" => $prefix_related['related_document_id'] == 33 || 35 ?$prefix_related['related_document_prefix']:null,
                     ]);
                 }
                 foreach ($Details->itemBreakDowns as $break){
@@ -308,23 +436,402 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                 $Details->delete();
             }
         }
+        if ($model->break_settlement_id != null){
+            VoucherHeader::where('break_settlement_id',$model->break_settlement_id)->update(['break_settlement_id' => null]);
+            BreakSettlement::where('id',$model->break_settlement_id)->delete();
+        }
         $model->delete();
     }
 
+    public function createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null, $i , $date = null)
+    {
+        $sum_discount    = 0;
+        $sum_total       = 0;
+        $sum_net_invoice = 0;
+
+        $columns_create_document_header =  collect($model)->except(['id','complete_status','deleted_at','created_at','updated_at','date','related_document_id','related_document_prefix','related_document_number','serial_number','prefix','document_id','serial_id']);
+
+
+        $serial = Serial::where([['branch_id',$model['branch_id']],['document_id',35]])->first();
+        $serial_id = $serial ? $serial->id:null;
+        if ($checkDate == null){
+            $dateHeader =  Carbon::parse($detail->date_from)->format('Y-m-d');
+        }elseif ($checkDate == 1){
+            $dateHeader =  Carbon::parse($detail->date_from)->addDays($i)->format('Y-m-d');
+        }elseif ($checkDate == 2){
+            $dateHeader =  now()->format('Y-m-d');
+        }elseif ($checkDate == 3){
+            $dateHeader =  $date;
+        }
+        // Create Document Header
+        $document_header = $this->model->create(array_merge($columns_create_document_header->all(),[
+            'date' => $dateHeader ,
+            'document_id'         => 35,
+            'related_document_id' => 33,
+            'related_document_number' => $model['id'],
+            'related_document_prefix' => $model['serial_number'],
+            'serial_id'               => $serial_id,
+        ]));
+        if ($model->attendants){
+            $document_header->attendants()->attach($model->attendants->pluck('id')->toArray());
+        }
+
+        $document_header->refresh();
+
+        $this->createSerial($document_header);
+
+        // Create Document Header Detail
+
+        $item_discount = $detail['discount']  /  $detail['rent_days'];
+        if ($model['invoice_discount'] > 0 && $detail['discount'] == 0)
+        {
+            $sum_discount = $model['invoice_discount'];
+        }else{
+            $sum_discount += $item_discount;
+        }
+
+        $total        = $detail['price_per_uint']  *  1 ;
+        $sum_total   += $total;
+
+        $net_invoice      = $total  -  $item_discount  ;
+        $sum_net_invoice += $net_invoice;
+
+        if ($checkDate == null){
+            $date_detail =  Carbon::parse($detail->date_from)->format('Y-m-d');
+        }elseif ($checkDate == 1){
+            $date_detail =  Carbon::parse($detail->date_from)->addDays($i)->format('Y-m-d');
+        }elseif ($checkDate == 2){
+            $date_detail =  now()->format('Y-m-d');
+        }elseif ($checkDate == 3){
+            $date_detail =  $date;
+        }
+
+
+
+        $this->modelDetail->create([
+
+            'document_header_id' => $document_header->id,
+            'date_from'          => $date_detail ,
+            'date_to'            => $date_detail ,
+            'check_in_time'      => now()->format('H:i'),
+            'rent_days'          => 1,
+            'quantity'           => 1,
+            'discount'           => $item_discount,
+            'total'              => $total ,
+            'invoice_discount'   => $item_discount ,
+            'net_invoice'        => $total  -  $item_discount  ,
+            'unit_type'          => $detail['unit_type'] ,
+            'price_per_uint'     => $detail['price_per_uint'] ,
+            'unit_id'            => $detail['unit_id'],
+            'note'               => $detail['note'],
+//            'unit_status_id'     => $detail['unit_status_id'],
+        ]);
+
+        $document_header->update([
+            "total_invoice"    => $sum_total,
+            "invoice_discount" => $sum_discount,
+            "net_invoice"      => $sum_net_invoice,
+        ]);
+
+    }
+
+//    public function createDailyInvoice()
     public function checkBooking()
+    {
+        // object Check_Out Booking
+        $booking = Setting::find(2);
+
+        // check Time Setting  == || >=   Time now
+        if (Carbon::parse($booking->value)->format('H:i:s') <= now()->format('H:i:s')){
+
+            // check in model DocumentHeader -> document_id == 33 &&  related_document_id == null all()
+            $models_document_header =  $this->model->with('documentHeaderDetails')->where('document_id',33)->whereNull('related_document_id')->get();
+
+            foreach ($models_document_header as $index =>  $model) {
+
+                $details  =  $model->documentHeaderDetails()->get();
+
+
+                foreach ($details as $in => $detail){
+
+                    $i = 0;
+                    $data = [];
+                    $start      = Carbon::parse($detail->date_from);
+                    $end        = Carbon::parse($detail->date_to);
+                    $count_date = $start->diffInDays($end) ;
+
+
+                    $min_date = DocumentHeaderDetail::where('unit_id',$detail->unit_id)->whereHas('documentHeader',function ($q) use ($detail) {
+                        $q->where('related_document_number',$detail->document_header_id);
+                    })->min('date_from');
+
+
+
+                    $min =  isset($min_date) ? Carbon::parse($min_date)->format('Y-m-d') : null ;
+
+                    $max_date = DocumentHeaderDetail::where('unit_id',$detail->unit_id)->whereHas('documentHeader',function ($q) use ($detail) {
+                        $q->where('related_document_number',$detail->document_header_id);
+                    })->max('date_from');
+
+                    $max =  isset($max_date) ? Carbon::parse($max_date)->format('Y-m-d') : null ;
+
+
+                    if (Carbon::parse($detail->date_from)->format('Y-m-d')  != $min ) {
+                        for ($i ; $i <= $count_date; $i++){
+
+                            if ($i == 0){
+
+                                if (Carbon::parse($detail->date_from)->format('Y-m-d')  != $min){
+
+                                    if (Carbon::parse($detail->date_from)->format('Y-m-d') == now()->format('Y-m-d')){
+
+                                        $data[0] =  Carbon::parse($detail->date_from)->format('Y-m-d') ;
+                                        $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
+                                        break ;
+
+                                    }
+                                    $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
+                                    $data[0] =  Carbon::parse($detail->date_from)->format('Y-m-d') ;
+
+
+                                }else{
+
+                                    break ;
+                                }
+
+                            }else{
+
+                                if (Carbon::parse($detail->date_from)->format('Y-m-d')  != $min){
+
+                                    if (Carbon::parse($detail->date_from)->addDays($i)->format('Y-m-d') == now()->format('Y-m-d')){
+
+                                        $data[$i] =  Carbon::parse($detail->date_from)->addDays($i)->format('Y-m-d') ;
+                                        $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = 1,$i);
+                                        break ;
+
+                                    }
+
+                                    $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = 1,$i);
+                                    $data[$i] =  Carbon::parse($detail->date_from)->addDays($i)->format('Y-m-d') ;
+
+
+                                }
+
+
+                            }
+
+                        }
+
+                    }else{
+
+                        $max_date_end        = Carbon::parse($max_date);
+                        $count_else = $max_date_end->diffInDays($end) ;
+                        if ($count_else > 1){
+
+                            for ($i ; $i <= $count_else; $i++){
+                                if ($i == 0){
+                                    $i = $i+1;
+                                }
+
+                                if (Carbon::parse($max_date)->addDays($i)->format('Y-m-d') <= now()->format('Y-m-d')){
+
+                                    $data[$i] =  Carbon::parse($detail->date_to)->addDays($i)->format('Y-m-d') ;
+                                    $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = 3,$i,Carbon::parse($max_date)->addDays($i)->format('Y-m-d'));
+                                    break ;
+                                }
+
+//                                $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = 3,$i,Carbon::parse($max_date)->addDays($i)->format('Y-m-d'));
+//                                $data[$i] =  Carbon::parse($max_date)->addDays($i)->format('Y-m-d') ;
+
+
+                            }
+
+                        }else{
+                            if (Carbon::parse($detail->date_to)->format('Y-m-d')  >= now()->format('Y-m-d')){
+
+
+                                if (Carbon::parse($detail->date_to)->format('Y-m-d')  != $max){
+                                    if (now()->format('Y-m-d')  != $max){
+
+                                        $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = 2,0);
+                                        $data[$i] = now()->format('Y-m-d') ;
+
+                                    }
+                                }
+                            }
+                        }
+
+
+                    }
+
+                }
+
+
+
+            }
+
+            return responseJson(200, "Success");
+        }
+        return responseJson(400, "Time Expires");
+
+    }
+
+    public function checkInCustomer()
+    {
+         $models = $this->model->where('document_id','33')->whereDoesntHave('documentNumber')->whereHas('documentHeaderDetails',function ($q){
+            $q->whereDate('date_to','<=',now()->format('Y-m-d'));
+        })->with(['customer','documentHeaderDetails'=>function($q){
+            $q->with('unit');
+         }])->get();
+
+       return  $models;
+    }
+
+    public function updateCheckInCustomer($request)
+    {
+        $models = $this->model->with(['documentHeaderDetails'=>function ($q) use ($request){
+            $q->whereIn('id',$request->detail_ids);
+        }])->find($request->header_id);
+
+            $sum_total       = 0;
+            $sum_discount    = 0;
+
+            foreach ($models->documentHeaderDetails as $details){
+
+                $start      = Carbon::parse($details->date_from);
+                $end        = Carbon::parse($request->date);
+                $count      = $start->diffInDays($end);
+                $invoice_discount = 0;
+
+                if ($details['invoice_discount'] != 0){
+
+                    $price_discount   =  $details['invoice_discount']  / $details['rent_days'];
+                    $invoice_discount = $price_discount * $count ;
+                }
+
+                $total       = $count  * $details['price_per_uint'] ;
+                $net_invoice = $total  -  $invoice_discount ;
+
+                $details->update([
+                    'rent_days'        =>  $count,
+                    'quantity'         =>  $count,
+                    'total'            =>  $total,
+                    'date_to'          =>  $request->date,
+                    'net_invoice'      =>  $net_invoice,
+                    'discount'         =>  $invoice_discount,
+                    'invoice_discount' =>  $invoice_discount,
+                ]);
+
+                $sum_total       +=  $total;
+                $sum_discount    +=  $invoice_discount;
+
+
+            }
+            $discount_header = $invoice_discount != 0 ? $invoice_discount  :$models['invoice_discount'] ;
+
+            $models->update([
+                'total_invoice'      => $sum_total,
+                'invoice_discount'   => $discount_header,
+                'net_invoice'        => $sum_total - $discount_header,
+
+            ]);
+        return responseJson(200, "Success");
+    }
+
+    public function createDailyCheckInCustomer()
+    {
+
+        $booking = Setting::find([2,3]);
+
+        // check Time Setting  == || >=   Time now
+        if (Carbon::parse($booking[0]->value)->format('H:i:s') <= now()->format('H:i:s') && $booking[1]->value == 1 ){
+
+            $models = $this->model->where('document_id','33')->whereDoesntHave('documentNumber')->whereHas('documentHeaderDetails',function ($q){
+                $q->whereDate('date_to','<=',now()->format('Y-m-d'));
+            })->with('documentHeaderDetails')->get();
+
+            foreach ($models as $model) {
+
+                $sum_total       = 0;
+                $sum_discount    = 0;
+
+                foreach ($model->documentHeaderDetails as $details){
+
+                    if ($details->date_to < now()->format('Y-m-d')){
+                        $start      = Carbon::parse($details->date_from);
+                        $end        = Carbon::parse($details->date_to)->addDay()->format('Y-m-d');
+
+                        $count      = $start->diffInDays($end);
+
+                        $invoice_discount = 0;
+
+                        if ($details['invoice_discount'] != 0){
+
+                            $price_discount   =  $details['invoice_discount']  / $details['rent_days'];
+                            $invoice_discount = $price_discount * $count ;
+                        }
+
+                        $total       = $count  * $details['price_per_uint'] ;
+                        $net_invoice = $total  -  $invoice_discount ;
+
+                        $details->update([
+                            'rent_days'        =>  $count,
+                            'quantity'         =>  $count,
+                            'total'            =>  $total,
+                            'date_to'          =>  Carbon::parse($details->date_to)->addDay()->format('Y-m-d') ,
+                            'net_invoice'      =>  $net_invoice,
+                            'discount'         =>  $invoice_discount,
+                            'invoice_discount' =>  $invoice_discount,
+                        ]);
+
+                        $sum_total       +=  $total;
+                        $sum_discount    +=  $invoice_discount;
+
+                    }
+
+
+                }
+
+
+                if ($sum_total != 0){
+                    $discount_header = $sum_discount != 0 ? $sum_discount  : $model['invoice_discount'] ;
+                    $model->update([
+                        'total_invoice'      => $sum_total,
+                        'invoice_discount'   => $discount_header,
+                        'net_invoice'        => $sum_total - $discount_header,
+
+                    ]);
+                }
+
+
+            }
+            return responseJson(200, "Success");
+
+        }
+
+        return 500;
+
+    }
+
+
+
+    public function createDailyInvoice()
     {
         return DB::transaction(function () {
 
             // object Check_Out Booking
             $booking = Setting::find(2);
-
+            $number = 0;
             // check Time Setting  == || >=   Time now
             if ($booking->value >= now()->format('H:i:s')){
 
                 // check in model DocumentHeader -> document_id == 33 &&  related_document_id == null all()
                 $models_document_header = $this->model->with('documentHeaderDetails')->where('document_id',33)->whereNull('related_document_id')->get();
+
                 foreach ($models_document_header as   $model){
+
                     $check_header_details_date = $model->documentHeaderDetails()->whereDate('date_to','>=',now()->format('Y-m-d'))->get();
+
                     if ($check_header_details_date->count() > 0)
                     {
                         $columns_create_document_header =  collect($model)->except(['id','complete_status','deleted_at','created_at','updated_at','date','related_document_id','related_document_prefix','related_document_number','serial_number','prefix','document_id','serial_id']);
@@ -410,7 +917,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                     'unit_type'          => $HeaderDetails['unit_type'] ,
                     'price_per_uint'     => $HeaderDetails['price_per_uint'] ,
                     'unit_id'            => $HeaderDetails['unit_id'],
-                    'note'            => $HeaderDetails['note'],
+                    'note'               => $HeaderDetails['note'],
                 ]);
             endforeach;
         }
@@ -423,17 +930,18 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     }
 
-    public function getDocumentsCustomer($id)
+    public function getDocumentsCustomer($id,$request)
     {
+//        return $request->units;
         $documentIgnore = [33,34];
         $data = [];
-        $data['details'] = $this->modelDetail->with(['unit','documentHeader'])->where('unit_type','Booking')->whereHas('documentHeader',function ($q) use ($id,$documentIgnore){
+        $data['details'] = $this->modelDetail->whereIn('unit_id',explode(",", $request->units))->with(['unit','documentHeader'])->where('unit_type','Booking')->whereHas('documentHeader',function ($q) use ($id,$documentIgnore){
             $q->where('customer_id',$id)
                 ->where('complete_status','UnDelivered')
                 ->whereNotIn('document_id',$documentIgnore);
         })->get();
 
-        $data['header'] = $this->modelDetail->with(['documentHeader'=>function($q){
+        $header = $this->modelDetail->whereIn('unit_id',explode(",", $request->units))->with(['documentHeader'=>function($q){
            $q->with('attendantsDocument');
        }])->where('unit_type','Booking')->whereHas('documentHeader',function ($q) use ($id,$documentIgnore){
            $q->where('customer_id',$id)
@@ -441,7 +949,99 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                ->where('document_id',35);
        })->first();
 
+        $data['header'] = $header;
+
+        $data['checkin'] = $header ? $this->modelDetail->where('document_header_id',$header['documentHeader']['related_document_number'])
+            ->select('id','rent_days','discount','document_header_id')->with(['documentHeader:id,invoice_discount'])->first() : null;
+
+        $data['voucher'] = VoucherHeader::with(['document:id,name,name_e,attributes'])
+            ->where('customer_id',$id)->whereIn('module_type_id',explode(",", $request->units))->get();
+
+
         return $data;
+    }
+
+    public function createDailyInvoiceOnline($request)
+    {
+
+        $model =  $this->model->
+        with('documentHeaderDetails')->
+        where('document_id',33)->
+        whereNull('related_document_id')->
+        where('customer_id',$request->customer_id)->
+        whereRelation('documentHeaderDetails','unit_id',$request->unit_id)->
+        first();
+
+        $sum_discount    = 0;
+        $sum_total       = 0;
+        $sum_net_invoice = 0;
+
+        $columns_create_document_header =  collect($model)->except(['id','complete_status','deleted_at','created_at','updated_at','date','related_document_id','related_document_prefix','related_document_number','serial_number','prefix','document_id','serial_id']);
+
+        $serial = Serial::where([['branch_id',$model['branch_id']],['document_id',35]])->first();
+        $serial_id = $serial ? $serial->id:null;
+
+        // Create Document Header
+        $document_header = $this->model->create(array_merge($columns_create_document_header->all(),[
+            'date' => $request->date ,
+            'document_id'         => 35,
+            'related_document_id' => 33,
+            'related_document_number' => $model['id'],
+            'related_document_prefix' => $model['serial_number'],
+            'serial_id'               => $serial_id,
+        ]));
+        if ($model->attendants){
+            $document_header->attendants()->attach($model->attendants->pluck('id')->toArray());
+        }
+
+        $document_header->refresh();
+        $this->createSerial($document_header);
+//
+        // Create Document Header Detail
+        $detail = $model->documentHeaderDetails()->first();
+
+        $item_discount = $detail['discount']  /  $detail['rent_days'];
+        if ($model['invoice_discount'] > 0 && $detail['discount'] == 0)
+        {
+            $sum_discount = $model['invoice_discount'];
+        }else{
+            $sum_discount += $item_discount;
+        }
+
+        $total        = $detail['price_per_uint']  *  1 ;
+        $sum_total   += $total;
+
+        $net_invoice      = $total  -  $item_discount  ;
+        $sum_net_invoice += $net_invoice;
+
+
+
+        $this->modelDetail->create([
+
+            'document_header_id' => $document_header->id,
+            'date_from'          => $request->date ,
+            'date_to'            => $request->date ,
+            'check_in_time'      => now()->format('H:i'),
+            'rent_days'          => 1,
+            'quantity'           => 1,
+            'discount'           => $item_discount,
+            'total'              => $total ,
+            'invoice_discount'   => $item_discount ,
+            'net_invoice'        => $total  -  $item_discount  ,
+            'unit_type'          => $detail['unit_type'] ,
+            'price_per_uint'     => $detail['price_per_uint'] ,
+            'unit_id'            => $detail['unit_id'],
+            'note'               => $detail['note'],
+        ]);
+
+        $document_header->update([
+            "total_invoice"    => $sum_total,
+            "invoice_discount" => $sum_discount,
+            "net_invoice"      => $sum_net_invoice,
+        ]);
+
+        return $document_header;
+
     }
 
 }

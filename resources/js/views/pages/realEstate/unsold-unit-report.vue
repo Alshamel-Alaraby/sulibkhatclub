@@ -45,23 +45,30 @@ export default {
   },
   data() {
     return {
+      allOwners: [],
       owners: [],
       to_date: "",
       from_date: "",
-      owner_id: null,
+      owner_id: [],
+      allBuildings: [],
       buildings: [],
-      building_id: null,
+      building_id: [],
+      allWallets: [],
       wallets: [],
-      wallet_id: null,
+      wallet_id: [],
       properties: [],
       property_id: null,
+      allCountries: [],
       countries: [],
-      country_id: null,
+      country_id: [],
+      allGovernorates: [],
       governorates: [],
-      governorate_id: null,
+      governorate_id: [],
+      allCities: [],
       cities: [],
-      city_id: null,
-      unit_ty: "",
+      city_id: [],
+      unit_ty: [],
+      unit_ty_id: null,
       unit_area: "",
       rooms: "",
       path: "",
@@ -85,13 +92,15 @@ export default {
       company_id: null,
       errors: {},
       isCheckAll: false,
+      isBuilding: false,
       checkAll: [],
       current_page: 1,
       setting: {
-        unit: true,
         building: true,
-        unit_status: true,
+        country: true,
         owner: true,
+        governorate: true,
+        city: true,
         wallet: true,
         unit_ty: true,
         unit_area: true,
@@ -104,6 +113,7 @@ export default {
       printObj: {
         id: "printData",
       },
+      isAll: true
     };
   },
   validations: {},
@@ -139,27 +149,108 @@ export default {
     },
   },
   mounted() {
-    this.company_id = this.$store.getters["auth/company_id"];
+    this.getData();
     this.getWallets();
+    this.getAllOwners();
+    this.getAllBuildings();
     this.getCountries();
+    this.getGovernorates();
+    this.getCities();
+    this.company_id = this.$store.getters["auth/company_id"];
     this.getProperties();
+    this.getUnitType();
   },
-    beforeRouteEnter(to, from, next) {
-          next((vm) => {
-      return permissionGuard(vm, "Unsold Unit Report", "all unSold_Unit RealState");
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(
+        vm,
+        "Unsold Unit Report",
+        "all unSold_Unit RealState"
+      );
     });
-
+  },
+  methods: {
+    async getAllOwners() {
+      this.isLoader = true;
+      try {
+        const res = await adminApi.get(`/real-estate/owners/get-drop-down`);
+        let l = res.data.data;
+        this.owners = l;
+        if(this.isAll){
+            this.allOwners = l;
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: `${this.$t("general.Error")}`,
+          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+        });
+      } finally {
+        this.isLoader = false;
+      }
     },
-    methods: {
-    onOwnerSelected(wallet_id) {
-      this.owner_id = null;
-      this.building_id = null;
-      this.getOwners(wallet_id);
-      this.getBuildings(wallet_id);
+    async getAllBuildings() {
+      this.isLoader = true;
+      try {
+        let filter = "";
+        for (let i = 0; i < this.country_id.length; ++i) {
+            filter += `country_ids[${i}]=${this.country_id[i]}&`;
+        }
+        for (let i = 0; i < this.governorate_id.length; ++i) {
+            filter += `governorate_ids[${i}]=${this.governorate_id[i]}&`;
+        }
+        for (let i = 0; i < this.city_id.length; ++i) {
+            filter += `city_ids[${i}]=${this.city_id[i]}&`;
+        }
+        const res = await adminApi.get(`/real-estate/buildings/get-drop-down?${filter}`);
+        const buildings = res.data.data;
+        this.buildings = buildings;
+        if(this.isAll){
+            this.allBuildings = buildings;
+        }else {
+            this.countries = this.allCountries;
+            this.cities = this.allCities;
+            this.governorates = this.allGovernorates;
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: `${this.$t("general.Error")}`,
+          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+        });
+      } finally {
+        this.isLoader = false;
+      }
     },
+    async getWalletOwnersBuliding(e) {
+          if(e){
+              this.isLoader = true;
+              try {
+                  this.wallet_id =[];
+                  this.building_id =[]
+                  const res = await adminApi.post(`/real-estate/units/building-wallet`,{
+                      wallet_ids: this.wallet_id
+                  });
+                  let l = res.data.data;
+                  let own = [],bui = [];
+                  l.forEach(el => own.push(...el.owners));
+                  l.forEach(el => bui.push(...el.buildings));
+                  this.owners = own;
+                  this.buildings = bui;
+              } catch (err) {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              } finally {
+                  this.isLoader = false;
+              }
+          }
+      },
     showReport() {
       this.$bvModal.hide(`filter`);
-      this.getData(1);
+      this.getFilter();
     },
     createBackup() {
       setTimeout(() => {
@@ -192,7 +283,6 @@ export default {
           });
       }, 500);
     },
-
     formatDate(value) {
       return formatDateOnly(value);
     },
@@ -203,22 +293,21 @@ export default {
         filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
-        .get(
-          `/real-estate/units/general-filter?page=${page}&per_page=${
-            this.per_page
-          }${this.building_id ? `&building_id=${this.building_id}` : ""}
-          ${this.unit_ty ? `&unit_ty=${this.unit_ty}` : ""}
-          ${this.unit_area ? `&unit_area=${this.unit_area}` : ""}
-          ${this.rooms ? `&rooms=${this.rooms}` : ""}
-          ${this.path ? `&path=${this.path}` : ""}
-          ${this.property_id ? `&properties=${this.property_id}` : ""}
-          ${this.wallet_id ? `&wallet_id=${this.wallet_id}` : ""}
-          ${this.owner_id ? `&owner_id=${this.owner_id}` : ""}
-          ${this.country_id ? `&country_id=${this.country_id}` : ""}
-          ${this.city_id ? `&city_id=${this.city_id}` : ""}
-          ${this.governorate_id ? `&governorate_id=${this.governorate_id}` : ""}
-          `
-        )
+        .post(`/real-estate/un-sold-unit-report`, {
+                page,
+                per_page: this.per_page,
+                wallet_id: this.wallet_id,
+                building_id: this.building_id,
+                owner_id: this.owner_id,
+                property_id: this.property_id,
+                city_id: this.city_id,
+                country_id: this.country_id,
+                governorate_id: this.governorate_id,
+                rooms: this.rooms,
+                unit_ty_id: this.unit_ty_id,
+                unit_area: this.unit_area,
+                path: this.path,
+        })
         .then((res) => {
           let l = res.data;
           this.items = l.data;
@@ -249,24 +338,22 @@ export default {
         }
 
         adminApi
-          .get(
-            `/real-estate/units/general-filter?page=${
-              this.current_page
-            }&per_page=${this.per_page}${
-              this.building_id ? `&building_id=${this.building_id}` : ""
-            }
-          ${this.unit_ty ? `&unit_ty=${this.unit_ty}` : ""}
-          ${this.unit_area ? `&unit_area=${this.unit_area}` : ""}
-          ${this.rooms ? `&rooms=${this.rooms}` : ""}
-          ${this.path ? `&path=${this.path}` : ""}
-          ${this.property_id ? `&properties=${this.property_id}` : ""}
-          ${this.wallet_id ? `&wallet_id=${this.wallet_id}` : ""}
-          ${this.owner_id ? `&owner_id=${this.owner_id}` : ""}
-          ${this.country_id ? `&country_id=${this.country_id}` : ""}
-          ${this.city_id ? `&city_id=${this.city_id}` : ""}
-          ${this.governorate_id ? `&governorate_id=${this.governorate_id}` : ""}
-          `
-          )
+          .post(
+            `/real-estate/un-sold-unit-report`,{
+                page: this.current_page,
+                per_page: this.per_page,
+                wallet_id: this.wallet_id,
+                building_id: this.building_id,
+                owner_id: this.owner_id,
+                property_id: this.property_id,
+                city_id: this.city_id,
+                country_id: this.country_id,
+                governorate_id: this.governorate_id,
+                rooms: this.rooms,
+                unit_ty_id: this.unit_ty_id,
+                unit_area: this.unit_area,
+                path: this.path,
+           })
           .then((res) => {
             let l = res.data;
             this.items = l.data;
@@ -285,53 +372,17 @@ export default {
           });
       }
     },
-    async getOwners(wallet_id) {
-      this.isLoader = true;
-      await adminApi
-        .get(`real-estate/units/owner-wallet/${wallet_id}`)
-        .then((res) => {
-          let l = res.data.data.owners;
-          this.owners = l;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
-        });
-    },
-    async getBuildings(wallet_id) {
-      this.isLoader = true;
-
-      await adminApi
-        .get(`/real-estate/units/building-wallet/${wallet_id}`)
-        .then((res) => {
-          let l = res.data.data.buildings;
-          this.buildings = l;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
-        });
-    },
     async getWallets() {
       this.isLoader = true;
 
       await adminApi
-        .get(`/real-estate/wallets`)
+        .get(`/real-estate/wallets/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           this.wallets = l;
+          if(this.isAll){
+              this.allWallets = l;
+          }
         })
         .catch((err) => {
           Swal.fire({
@@ -368,7 +419,7 @@ export default {
       this.isLoader = true;
 
       await adminApi
-        .get(`/salesmen`)
+        .get(`/salesmen/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
           this.sales = l;
@@ -386,32 +437,37 @@ export default {
     },
     async getCountries() {
       this.isLoader = true;
-      await adminApi
-        .get(`/countries`)
-        .then((res) => {
-          let l = res.data.data;
-          this.countries = l;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
+      try {
+        const res = await adminApi.get(`/countries/get-drop-down`);
+        let countries = res.data.data;
+        this.countries = countries;
+          if(this.isAll){
+              this.allCountries = countries;
+          }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: `${this.$t("general.Error")}`,
+          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
         });
+      } finally {
+        this.isLoader = false;
+      }
     },
-    async getGovernorates(countryId) {
+    async getGovernorates() {
       this.isLoader = true;
-      this.governorate_id = null;
-      this.city_id = null;
+        let filter = "";
+        for (let i = 0; i < this.country_id.length; ++i) {
+            filter += `country_ids[${i}]=${this.country_id[i]}&`;
+        }
       await adminApi
-        .get(`/governorates?country_id=${countryId}`)
+        .get(`/governorates/get-drop-down?${filter}`)
         .then((res) => {
           let l = res.data.data;
           this.governorates = l;
+            if(this.isAll){
+                this.allGovernorates = l;
+            }
         })
         .catch((err) => {
           Swal.fire({
@@ -424,15 +480,24 @@ export default {
           this.isLoader = false;
         });
     },
-    async getCities(governate_id) {
+    async getCities() {
       this.isLoader = true;
-      this.city_id = null;
+        let filter = "";
+        for (let i = 0; i < this.country_id.length; ++i) {
+            filter += `country_ids[${i}]=${this.country_id[i]}&`;
+        }
+        for (let i = 0; i < this.governorate_id.length; ++i) {
+            filter += `governorate_ids[${i}]=${this.governorate_id[i]}&`;
+        }
       await adminApi
         .get(
-          `/cities?country_id=${this.country_id}&governorate_id=${governate_id}`
+          `/cities/get-drop-down?${filter}`
         )
         .then((res) => {
           let l = res.data.data;
+            if(this.isAll){
+                this.allCities = l;
+            }
           this.cities = l;
         })
         .catch((err) => {
@@ -444,7 +509,24 @@ export default {
         })
         .finally(() => {
           this.isLoader = false;
+          this.isAll = false;
         });
+    },
+    async getUnitType() {
+      this.isLoader = true;
+      try {
+        const res = await adminApi.get(`/real-estate/unit-type/get-drop-down`);
+        const units = res.data.data;
+        this.unit_ty = units;
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: `${this.$t("general.Error")}`,
+          text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+        });
+      } finally {
+          this.isLoader = false;
+      }
     },
     sortString(value) {
       return dynamicSortString(value);
@@ -452,9 +534,6 @@ export default {
     SortNumber(value) {
       return dynamicSortNumber(value);
     },
-    /**
-     *  start  ckeckRow
-     */
     checkRow(id) {
       if (!this.checkAll.includes(id)) {
         this.checkAll.push(id);
@@ -463,15 +542,6 @@ export default {
         this.checkAll.splice(index, 1);
       }
     },
-    /**
-     *  end  ckeckRow
-     */
-    moveInput(tag, c, index) {
-      document.querySelector(`${tag}[data-${c}='${index}']`).focus();
-    },
-    /**
-     *   Export Excel
-     */
     ExportExcel(type, fn, dl) {
       this.enabled3 = false;
       setTimeout(() => {
@@ -488,6 +558,95 @@ export default {
         this.enabled3 = true;
       }, 100);
     },
+    clearFilter() {
+      // Clear all filter input values
+      this.wallet_id = null;
+      this.owner_id = null;
+      this.building_id = null;
+      this.country_id = null;
+      this.governorate_id = null;
+      this.city_id = null;
+      this.property_id = null;
+      this.unit_ty_id = null;
+      this.unit_area = "";
+      this.rooms = "";
+      this.path = "";
+      this.getData(); // Uncomment if you want to refresh data after clearing filters
+    },
+    showModelBuilding(building){
+        if(this.building_id.length > 0 && this.building_id){
+            this.isBuilding = true;
+            this.building_id.forEach(el => {
+                let build = this.buildings.find(e => e.id == el);
+                if(build){
+                    if(!this.country_id.includes(build.country_id) && build.country_id){
+                        this.country_id.push(build.country_id);
+                    }
+                    if(!this.city_id.includes(build.city_id) && build.city_id){
+                        this.city_id.push(build.city_id);
+                    }
+                    if(!this.governorate_id.includes(build.governorate_id) && build.governorate_id){
+                        this.governorate_id.push(build.governorate_id);
+                    }
+                }
+            });
+        }else {
+            this.isBuilding = false;
+            this.country_id = [];
+            this.city_id = [];
+            this.governorate_id = [];
+        }
+    },
+    showCountryModel(countries){
+        if(countries.length > 0){
+            this.getGovernorates();
+            this.getAllBuildings();
+        }
+    },
+    showGovernorateModel(governorates){
+        if(governorates.length > 0){
+            this.city_id = [];
+            governorates.forEach(el => {
+                let governorate = this.governorates.find(e => e.id == el);
+                if(!this.country_id.includes(governorate.country_id) && governorate.country_id){
+                    this.country_id.push(governorate.country_id);
+                }
+            });
+            this.getCities();
+            this.getAllBuildings();
+        }else {
+            this.city_id = [];
+        }
+    },
+    showCityModel(cities){
+        if(cities.length > 0){
+            cities.forEach(el => {
+                let city = this.cities.find(e => e.id == el);
+                if(!this.country_id.includes(city.country_id) && city.country_id){
+                    this.country_id.push(city.country_id);
+                }
+                if(!this.governorate_id.includes(city.governorate_id) && city.governorate_id){
+                    this.governorate_id.push(city.governorate_id);
+                }
+            });
+            this.getAllBuildings();
+        }
+    },
+    getFilter (){
+        this.setting = {
+            building: this.building_id.length > 0 ? true: false,
+            country: this.country_id.length > 0 ? true: false,
+            owner: this.owner_id.length > 0 ? true: false,
+            governorate: this.governorate_id.length > 0 ? true: false,
+            city: this.city_id.length > 0 ? true: false,
+            wallet: this.wallet_id.length > 0 ? true: false,
+            unit_ty: this.unit_ty_id ? true: false,
+            unit_area: this.unit_area ? true: false,
+            rooms: this.rooms? true: false,
+            path: this.path ? true: false,
+        };
+        this.getData();
+    }
   },
 };
 </script>
@@ -508,13 +667,14 @@ export default {
           <label>{{ $t("general.wallet") }}</label>
           <multiselect
             v-model="wallet_id"
-            @input="onOwnerSelected"
+            @input="getWalletOwnersBuliding"
+            :multiple="true"
             :options="wallets.map((type) => type.id)"
             :custom-label="
-              (opt) =>
+              (opt) => wallets.find((x) => x.id == opt) ?
                 $i18n.locale == 'ar'
                   ? wallets.find((x) => x.id == opt).name
-                  : wallets.find((x) => x.id == opt).name_e
+                  : wallets.find((x) => x.id == opt).name_e : null
             "
           >
           </multiselect>
@@ -523,12 +683,18 @@ export default {
           <label>{{ $t("general.owner") }}</label>
           <multiselect
             v-model="owner_id"
+            :multiple="true"
             :options="owners.map((type) => type.id)"
             :custom-label="
-              (opt) =>
-                $i18n.locale == 'ar'
-                  ? owners.find((x) => x.id == opt).name
-                  : owners.find((x) => x.id == opt).name_e
+              (opt) => {
+                const owner = owners.find((x) => x.id == opt);
+                if (owner) {
+                  return $i18n.locale == 'ar' ? owner.name : owner.name_e;
+                } else {
+                  // Handle the case where no matching owner is found
+                  return null;
+                }
+              }
             "
           >
           </multiselect>
@@ -537,12 +703,19 @@ export default {
           <label>{{ $t("general.building") }}</label>
           <multiselect
             v-model="building_id"
+            :multiple="true"
+            @input="showModelBuilding"
             :options="buildings.map((type) => type.id)"
             :custom-label="
-              (opt) =>
-                $i18n.locale == 'ar'
-                  ? buildings.find((x) => x.id == opt).name
-                  : buildings.find((x) => x.id == opt).name_e
+              (opt) => {
+                const building = buildings.find((x) => x.id == opt);
+                if (building) {
+                  return $i18n.locale == 'ar' ? building.name : building.name_e;
+                } else {
+                  // Handle the case where no matching building is found
+                  return null;
+                }
+              }
             "
           >
           </multiselect>
@@ -550,14 +723,16 @@ export default {
         <div class="col-md-2">
           <label>{{ $t("general.country") }}</label>
           <multiselect
-            @input="getGovernorates"
+            @input="showCountryModel"
+            :multiple="true"
+            :disabled="isBuilding"
             v-model="country_id"
             :options="countries.map((type) => type.id)"
             :custom-label="
-              (opt) =>
+              (opt) => countries.find((x) => x.id == opt)?
                 $i18n.locale == 'ar'
                   ? countries.find((x) => x.id == opt).name
-                  : countries.find((x) => x.id == opt).name_e
+                  : countries.find((x) => x.id == opt).name_e : null
             "
           >
           </multiselect>
@@ -565,14 +740,16 @@ export default {
         <div class="col-md-2">
           <label>{{ $t("general.governorate") }}</label>
           <multiselect
-            @input="getCities"
+            @input="showGovernorateModel"
             v-model="governorate_id"
+            :disabled="isBuilding"
+            :multiple="true"
             :options="governorates.map((type) => type.id)"
             :custom-label="
-              (opt) =>
+              (opt) => governorates.find((x) => x.id == opt)?
                 $i18n.locale == 'ar'
                   ? governorates.find((x) => x.id == opt).name
-                  : governorates.find((x) => x.id == opt).name_e
+                  : governorates.find((x) => x.id == opt).name_e: null
             "
           >
           </multiselect>
@@ -582,11 +759,14 @@ export default {
           <multiselect
             v-model="city_id"
             :options="cities.map((type) => type.id)"
+            :multiple="true"
+            @input="showCityModel"
+            :disabled="isBuilding"
             :custom-label="
-              (opt) =>
+              (opt) => cities.find((x) => x.id == opt)?
                 $i18n.locale == 'ar'
                   ? cities.find((x) => x.id == opt).name
-                  : cities.find((x) => x.id == opt).name_e
+                  : cities.find((x) => x.id == opt).name_e :null
             "
           >
           </multiselect>
@@ -600,17 +780,26 @@ export default {
             v-model="property_id"
             :options="properties.map((type) => type.id)"
             :custom-label="
-              (opt) =>
+              (opt) => properties.find((x) => x.id == opt)?
                 $i18n.locale == 'ar'
                   ? properties.find((x) => x.id == opt).name
-                  : properties.find((x) => x.id == opt).name_e
+                  : properties.find((x) => x.id == opt).name_e: null
             "
           >
           </multiselect>
         </div>
         <div class="col-md-2">
           <label>{{ $t("general.Unit_type") }}</label>
-          <input class="form-control" type="text" v-model="unit_ty" />
+          <multiselect
+            v-model="unit_ty_id"
+            :options="unit_ty.map((type) => type.id)"
+            :custom-label="
+              (opt) =>
+                $i18n.locale == 'ar'
+                  ? unit_ty.find((x) => x.id == opt).name
+                  : unit_ty.find((x) => x.id == opt).name_e
+            "
+          ></multiselect>
         </div>
         <div class="col-md-2">
           <label>{{ $t("general.Unit_area") }}</label>
@@ -640,6 +829,12 @@ export default {
           <b-spinner small></b-spinner>
           <span class="sr-only">{{ $t("login.Loading") }}...</span>
         </b-button>
+      </div>
+      <!-- "Clear Filter" button -->
+      <div class="text-center">
+        <b-button variant="danger" @click="clearFilter">{{
+          $t("general.clearFilter")
+        }}</b-button>
       </div>
     </b-modal>
 
@@ -893,39 +1088,14 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.unit">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("unit") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="items.sort(sortString('name'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="items.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
+                    <th>
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("realEstate_unit_name_ar") }}</span>
+                          </div>
                     </th>
                     <th v-if="setting.building">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("building") }}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="items.sort(sortString('name'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="items.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
-                    <th v-if="setting.unit_status">
-                      <div class="d-flex justify-content-center">
-                        <span>{{ getCompanyKey("unit_status") }}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -968,6 +1138,21 @@ export default {
                         </div>
                       </div>
                     </th>
+                    <th v-if="setting.country">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("country") }}</span>
+                          </div>
+                      </th>
+                    <th v-if="setting.governorate">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("governorate") }}</span>
+                          </div>
+                      </th>
+                    <th v-if="setting.city">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("city") }}</span>
+                          </div>
+                      </th>
                     <th v-if="setting.unit_ty">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("admin_report_unit_ty") }}</span>
@@ -1054,47 +1239,82 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.unit">
-                      {{ $i18n.locale == "ar" ? data.name : data.name_e }}
+                    <td>
+                          <template>
+                              {{
+                                      $i18n.locale == "ar"
+                                      ? data.name
+                                      : data.name_e
+
+                              }}
+                          </template>
                     </td>
                     <td v-if="setting.building">
                       <template v-if="data.building">
                         {{
-                              data.building?
-                          $i18n.locale == "ar"
-                            ? data.building.name
-                            : data.building.name_e:''
-                        }}
-                      </template>
-                    </td>
-                    <td v-if="setting.unit_status">
-                      <template v-if="data.unit_status">
-                        {{
-                              data.unit_status?
-                          $i18n.locale == "ar"
-                            ? data.unit_status.name
-                            : data.unit_status.name_e:''
+                          data.building
+                            ? $i18n.locale == "ar"
+                              ? data.building.name
+                              : data.building.name_e
+                            : ""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.owner">
                       <template v-if="data.owner">
                         {{
-                              data.owner?$i18n.locale == "ar"
-                            ? data.owner.name
-                            : data.owner.name_e:""
+                          data.owner
+                            ? $i18n.locale == "ar"
+                              ? data.owner.name
+                              : data.owner.name_e
+                            : ""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.wallet">
                       <template v-if="data.wallet">
                         {{
-                              data.wallet?$i18n.locale == "ar"
-                            ? data.wallet.name
-                            : data.wallet.name_e:""
+                          data.wallet
+                            ? $i18n.locale == "ar"
+                              ? data.wallet.name
+                              : data.wallet.name_e
+                            : ""
                         }}
                       </template>
                     </td>
+                    <td v-if="setting.country">
+                          <template v-if="data.country">
+                              {{
+                                  data.country
+                                      ? $i18n.locale == "ar"
+                                      ? data.country.name
+                                      : data.country.name_e
+                                      : "-"
+                              }}
+                          </template>
+                      </td>
+                    <td v-if="setting.governorate">
+                          <template v-if="data.governorate">
+                              {{
+                                  data.governorate
+                                      ? $i18n.locale == "ar"
+                                      ? data.governorate.name
+                                      : data.governorate.name_e
+                                      : ""
+                              }}
+                          </template>
+                      </td>
+                    <td v-if="setting.city">
+                          <template v-if="data.city">
+                              {{
+                                  data.city
+                                      ? $i18n.locale == "ar"
+                                      ? data.city.name
+                                      : data.city.name_e
+                                      : ""
+                              }}
+                          </template>
+                      </td>
                     <td v-if="setting.unit_ty">{{ data.unit_ty }}</td>
                     <td v-if="setting.unit_area">{{ data.unit_area }}</td>
                     <td v-if="setting.rooms">{{ data.rooms }}</td>
@@ -1118,7 +1338,7 @@ export default {
 </template>
 
 <style scoped>
-@media print {
+    @media print {
   .do-not-print {
     display: none;
   }
@@ -1127,7 +1347,7 @@ export default {
     display: none;
   }
 }
-hr {
+    hr {
   border-bottom: 1px solid #fff;
 }
 </style>

@@ -18,6 +18,21 @@ class DocumentIRepository implements DocumentInterface
         if ($request->document) {
             $models->where('id', '!=', 1);
         }
+        if ($request->document_detail_type)
+        {
+            $models->where('document_detail_type',$request->document_detail_type);
+        }
+
+        if ($request->ModuleStatuses)
+        {
+            $models->whereHas('documentCompanyModuleStatuses');
+        }
+        if ($request->is_busy)
+        {
+            $models->whereHas('documentCompanyModuleStatuses',function ($q){
+                $q->whereNull('status_id');
+            });
+        }
 
         if ($request->employee_id){
             $models->whereHas('employees',function ($q) use ($request){
@@ -25,6 +40,18 @@ class DocumentIRepository implements DocumentInterface
             })->where('need_approve',0);
 
         }
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+
+    }
+
+    public function documentMoney($request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC')
+        ->where('document_detail_type', 'document_money');
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -91,5 +118,15 @@ class DocumentIRepository implements DocumentInterface
     {
         $model = $this->model->find($id);
         $model->delete();
+    }
+
+    public function getName($request){
+        $models = $this->model->select('id', 'name', 'name_e');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
     }
 }

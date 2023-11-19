@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
-            $table->unsignedInteger('roletype_id')->nullable()->default(0);
+            $table->unsignedInteger('roletype_id')->index()->nullable()->default(0);
             $table->timestamps();
         });
     }

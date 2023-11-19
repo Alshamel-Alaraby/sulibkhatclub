@@ -9,7 +9,7 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import adminApi from "../../../../api/adminAxios";
 import Swal from "sweetalert2";
 import {dynamicSortString} from "../../../../helper/tableSort";
-import PrintInvoice from "../print-invoice";
+import AccountStatementPrint from "../print/account-statement-booking";
 import transactionBreak from "../../../create/receivablePayment/transactionBreak/transactionBreak";
 
 
@@ -31,6 +31,9 @@ export default {
         id: {
             default:'create'
         },
+        other_data:{
+            default:null,
+        },
     },
     mixins: [translation],
     components: {
@@ -38,13 +41,14 @@ export default {
         loader,
         DatePicker,
         Multiselect,
-        PrintInvoice,
+        AccountStatementPrint,
         transactionBreak
     },
     data() {
         return {
             financial_years_validate:true,
             customer_data_edit: "",
+            customer_data_create: "",
             openingBreak:'',
             debounce: {},
             customers: [],
@@ -58,10 +62,13 @@ export default {
             rooms: [{rooms: []}],
             services: [],
             escorts: [],
+            clientRooms: [],
+            roomsFilter: [],
             enabled3: true,
             isLoader: false,
             create: {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: null,
                 reason:'',
                 branch_id: null,
@@ -72,10 +79,12 @@ export default {
                 employee_id: null,
                 customer_id: null,
                 attendants: [],
+                attendans_num:0,
                 company_id: null,
                 customer_type:1,
-                payment_method_id: null,
+                payment_method_id: 1,
                 total_invoice: 0,
+                paid: 0,
                 invoice_discount: 0,
                 net_invoice: 0,
                 sell_method_discount: 0,
@@ -88,6 +97,7 @@ export default {
                     quantity: 0,
                     price_per_uint: 0,
                     total: 0,
+                    payment: 0,
                     unit_type: "Booking",
                     date_from: this.formatDate(new Date()),
                     rent_days:0,
@@ -95,9 +105,18 @@ export default {
                     check_in_time:'',
                     discount: 0,
                     is_stripe: 0,
+                    note:'',
                     sell_method_discount: 0,
                     prefix_related:''
-                }]
+                }],
+                break_settlement:[
+                    {
+                        document_id: this.document_id,
+                        affect:1,
+                        amount:0
+                    }
+                ],
+                voucher_headers:[]
             },
             errors: {},
             branches: [],
@@ -106,6 +125,7 @@ export default {
             printObj: {
                 id: "printReservation",
             },
+            dataOfRow:''
         };
     },
     validations: {
@@ -133,59 +153,76 @@ export default {
             invoice_discount: { required },
             net_invoice: { required },
             sell_method_discount: {  },
+            attendans_num: {  },
             unrelaized_revenue: {  },
             header_details: {
                 required,
                 $each: {
                     unit_id: {},
                     item_id: {},
-                    quantity: { required, minValue: minValue(0) },
-                    date_from: {required},
+                    quantity: {  },
+                    date_from: {},
                     rent_days:{},
-                    date_to: {required},
+                    date_to: {},
                     check_in_time:{},
-                    unit_type: {required},
-                    price_per_uint: {required, minValue: minValue(0)},
-                    total: {required},
+                    unit_type: {},
+                    price_per_uint: {},
+                    total: {},
                     discount: {},
-                    is_stripe: {required},
+                    is_stripe: {},
                     sell_method_discount: {},
                     prefix_related: {},
+                    note: {},
                 }
             }
         },
+        roomsFilter:{required},
     },
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
         this.$store.dispatch('locationIp/getIp');
     },
     methods: {
-        resetModalCreateOrUpdate()
+       async resetModalCreateOrUpdate()
         {
             this.relatedDocuments = this.document.document_relateds;
             if (this.dataRow)
             {
-                 this.resetModalEdit(this.dataRow.id);
+                await this.getDataRow();
+                await this.resetModalEdit(this.dataRow.id);
             }else{
-                 this.resetModal();
+                await this.resetModal();
             }
         },
         resetModalHiddenCreateOrUpdate ()
         {
             if (this.dataRow)
             {
-                 this.resetModalHiddenEdit(this.dataRow.id);
+                this.resetModalHiddenEdit(this.dataRow.id);
             }else{
-                 this.resetModalHidden();
+                this.resetModalHidden();
             }
         },
         changeValue(index = null){
             let sum = 0;
+            let paid = 0;
             this.create.header_details.forEach(e => {
-                sum += e.price_per_uint * e.quantity;
+                sum += parseFloat(e.price_per_uint * e.quantity);
+                paid += parseFloat(e.payment);
             });
+
             this.create.total_invoice = sum;
-            this.create.net_invoice = sum - this.create.invoice_discount;
+            this.create.paid = paid;
+            let net_invoice = (sum - this.create.invoice_discount);
+            this.create.net_invoice = parseFloat(net_invoice).toFixed(3);
+            let remaining = this.create.net_invoice - this.create.paid
+            this.create.break_settlement = [
+                {
+                    document_id: this.document_id,
+                    affect:remaining >= 0 ? 1 : -1,
+                    amount:remaining
+                }
+            ]
             // this.calculateDiscountLine();
         },
         calculateDiscountLine()
@@ -206,11 +243,13 @@ export default {
                 date_to: this.formatDate(new Date()),
                 check_in_time:'',
                 total: 0,
+                payment: 0,
                 discount: 0,
                 unit_type: "Booking",
                 is_stripe: 0,
                 sell_method_discount: 0,
                 prefix_related: '',
+                note: '',
             });
             this.changeValue();
         },
@@ -227,10 +266,13 @@ export default {
         dataCreate()
         {
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.serial_number = "";
+            this.roomsFilter = [];
             this.financial_years_validate = true;
             this.create = {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: parseInt(this.document.need_approve) == 0 ? 5 : 1,
                 reason:'',
                 branch_id: null,
@@ -242,14 +284,16 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
                 attendants: [],
                 total_invoice: 0,
+                paid: 0,
                 invoice_discount: 0,
+                attendans_num: 0,
                 net_invoice: 0,
                 check_in_time:'',
-                check_out_time:'',
+                check_out_time:this.currentTime(),
                 sell_method_discount: 0,
                 unrelaized_revenue: 0,
                 header_details: [{
@@ -258,6 +302,7 @@ export default {
                     quantity: 0,
                     price_per_uint: 0,
                     total: 0,
+                    payment: 0,
                     unit_type: "Booking",
                     date_from: this.formatDate(new Date()),
                     rent_days:0,
@@ -266,8 +311,17 @@ export default {
                     discount: 0,
                     is_stripe: 0,
                     sell_method_discount: 0,
-                    prefix_related: ''
-                }]
+                    prefix_related: '',
+                    note: '',
+                }],
+                break_settlement:[
+                    {
+                        document_id: this.document_id,
+                        affect:1,
+                        amount:0
+                    }
+                ],
+                voucher_headers:[]
             };
         },
         /**
@@ -284,11 +338,11 @@ export default {
         /**
          *  hidden Modal (create)
          */
-         resetModal() {
+       async resetModal() {
             this.rooms= [{rooms: []}];
             if (this.checkDocumentNeedApprove() )
             {
-                 this.getStatus();
+                this.getStatus();
             }
             this.dataCreate();
             this.getBranches();
@@ -297,6 +351,11 @@ export default {
             this.getServices();
             if(parseInt(this.document.required) == 1 && this.relatedDocuments.length == 1){
                 this.create.related_document_id = this.relatedDocuments[0].id;
+            }
+            if (this.other_data)
+            {
+                this.roomsFilter = [this.other_data.unit_id];
+                this.getCustomerInRoom();
             }
             this.is_disabled = false;
             this.$nextTick(() => {
@@ -352,10 +411,37 @@ export default {
                     this.create.is_break = 0;
                 }
                 this.create.company_id = this.company_id;
-                adminApi.post(`document-headers`, {...this.create})
+                let header_details = this.create.header_details
+                let data_create = this.create;
+                data_create.header_details = [];
+                header_details.forEach((e,index) => {
+                    if (e.is_stripe != null )
+                    {
+                        data_create.header_details.push({
+                            unit_id:e.unit_id, //for rooms
+                            item_id:e.item_id, //for service
+                            date_from: this.formatDate(e.date_from),
+                            rent_days: e.rent_days,
+                            date_to: this.formatDate(e.date_to),
+                            check_in_time:e.check_in_time,
+                            unit_type: e.unit_type,
+                            quantity: e.quantity,
+                            price_per_uint: e.price_per_uint,
+                            total: e.total,
+                            payment: e.payment,
+                            discount: e.discount,
+                            is_stripe: e.is_stripe,
+                            sell_method_discount: e.sell_method_discount,
+                            note: e.note,
+                            prefix_related: e.prefix_related,
+                        });
+                    }
+                });
+                adminApi.post(`document-headers`, {...data_create})
                     .then((res) => {
                         this.$emit("created");
                         this.is_disabled = true;
+                        this.create.id = res.data.data.id;
                         setTimeout(() => {
                             Swal.fire({
                                 icon: "success",
@@ -366,7 +452,6 @@ export default {
                         }, 500);
                         if(this.document.attributes && parseInt(this.document.attributes.customer) != 0 && is_break == true)
                         {
-                            this.create.id = res.data.data.id;
                             this.showBreakCreate();
                         }
                     })
@@ -444,10 +529,45 @@ export default {
         /**
          *  get workflows
          */
-         getStatus(){
+        getCustomerInRoom() {
+            this.isLoader = true;
+            adminApi
+                .get(`/document-headers/customer-room?unit_id=${this.other_data.unit_id}&date_from=${this.other_data.date_from}&date_to=${this.other_data.date_to}`)
+                .then((res) => {
+                    let l = res.data;
+                    if (l)
+                    {
+                        this.create.employee_id = l.employee_id;
+                        if (l.employee_id)
+                        {
+                            setTimeout(() => {
+                                this.customer_data_create = l.customer;
+                                this.getCustomerSalesman(l.employee_id);
+                                this.create.customer_id = l.customer_id;
+                                this.customers.push(this.customer_data_create);
+                                this.getCustomerRooms(this.create.customer_id);
+                                this.getDocumentCustomer();
+                                // لو فى بريك افتحها لان مع ديفونا لا يوجد بريك
+                                // this.getBreakCustomer(l.customer_id);
+                            }, 500);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getStatus(){
             this.isLoader = true;
 
-             adminApi
+            adminApi
                 .get(`/document-statuses`)
                 .then((res) => {
                     let l = res.data.data;
@@ -464,14 +584,21 @@ export default {
                     this.isLoader = false;
                 });
         },
-         getBranches() {
+        getBranches() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/branches?document_id=${this.document_id}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
                     this.branches = l;
+                    if (!this.dataRow){
+                        if (this.branches.length == 1)
+                        {
+                            this.create.branch_id = this.branches[0].id;
+                            this.getSerialNumber(this.create.branch_id);
+                        }
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -481,7 +608,7 @@ export default {
                     });
                 });
         },
-         getSerialNumber(e)
+        getSerialNumber(e)
         {
             let date = this.create.date;
             let shortYear =new Date(date).getFullYear();
@@ -494,12 +621,12 @@ export default {
             let branch_id = this.create.branch_id;
             if (document_id && branch_id)
             {
-                 this.handelRelatedDocument()
+                this.handelRelatedDocument()
             }
         },
-         getSalesmen() {
+        getSalesmen() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/employees?is_salesman=1&customer_handel=1`)
                 .then((res) => {
                     this.isLoader = false;
@@ -514,17 +641,17 @@ export default {
                     });
                 });
         },
-         getCustomerSalesman(e)
+        getCustomerSalesman(e)
         {
             let employee_id = e;
             if (employee_id)
             {
-               let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
-               this.getCustomers(customer_handel,employee_id);
-               if (parseInt(this.create.customer_type) == 0)
-               {
-                   this.getCompanies(customer_handel,employee_id);
-               }
+                let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
+                this.getCustomers(customer_handel,employee_id);
+                if (parseInt(this.create.customer_type) == 0)
+                {
+                    this.getCompanies(customer_handel,employee_id);
+                }
             }
         },
         getCompanies(customer_handel,employee_id=null,search='') {
@@ -546,7 +673,7 @@ export default {
         },
         getCustomers(customer_handel,employee_id=null,search='') {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/general-customer?limet=10&type=1&company_id=${this.company_id}&employee_id=${customer_handel=='his_customer'?employee_id:''}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
                 .then((res) => {
                     this.isLoader = false;
@@ -554,7 +681,17 @@ export default {
                     this.customers = l;
                     if (this.customer_data_edit)
                     {
-                        this.customers.push(this.customer_data_edit);
+                        if (!this.customers.find((e) => e.id == this.customer_data_edit.id))
+                        {
+                            this.customers.push(this.customer_data_edit);
+                        }
+                    }
+                    if (this.customer_data_create)
+                    {
+                        if (!this.customers.find((e) => e.id == this.customer_data_create.id))
+                        {
+                            this.customers.push(this.customer_data_create);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -582,22 +719,32 @@ export default {
                     });
                 });
         },
-        getDocumentCustomer(customer_id) {
+        getDocumentCustomer() {
+            if(!this.create.customer_id || this.roomsFilter.length == 0)
+            {
+                return 0;
+            }
             this.isLoader = true;
             adminApi
-                .get(`/document-headers/document-customer/${customer_id}`)
+                .get(`/document-headers/document-customer/${this.create.customer_id}?units=${this.roomsFilter}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data;
                     if (l.details.length > 0)
                     {
-                        this.displayDetailData(l);
+                        if (l.details.filter((x) => x.unit_id != null).length)
+                        {
+                            this.displayDetailData(l);
+                        }else{
+                            this.AddDailyInvoice();
+                        }
                     }else{
-                        Swal.fire({
-                            icon: "error",
-                            title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.ThereAreNoReservationsOrServicesForThisCustomer")}`,
-                        });
+                        this.AddDailyInvoice();
+                        // Swal.fire({
+                        //     icon: "error",
+                        //     title: `${this.$t("general.Error")}`,
+                        //     text: `${this.$t("general.ThereAreNoReservationsOrServicesForThisCustomer")}`,
+                        // });
                     }
 
                 })
@@ -608,6 +755,51 @@ export default {
                         text: `${this.$t("general.Thereisanerrorinthesystem")}`,
                     });
                 });
+        },
+        AddDailyInvoice() {
+            this.isLoader = true;
+            let data_create = {
+                unit_id: this.roomsFilter[0] ,
+                customer_id:this.create.customer_id,
+                date:this.create.date,
+            };
+            adminApi.post(`document-headers/create-daily-invoice-online`, {...data_create})
+                .then((res) => {
+                   this.getDocumentCustomer();
+                })
+                .catch((err) => {
+                    if (err.response.data) {
+                        this.errors = err.response.data.errors;
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    }
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+
+        },
+        getCustomerRooms(customer_id) {
+            this.isLoader = true;
+            adminApi
+                .get(`/booking/units/get-client-units?client_id=${customer_id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.clientRooms = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                }).finally(() => {
+                this.isLoader = false;
+            });
         },
         getPaymentMethod() {
             this.isLoader = true;
@@ -669,19 +861,20 @@ export default {
         /**
          *   show Modal (edit)
          */
-         resetModalEdit(id) {
+        async resetModalEdit(id) {
             this.rooms = [];
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.isLoader = true;
             this.financial_years_validate = true;
             if (this.checkDocumentNeedApprove()) {
-                 this.getStatus();
+                this.getStatus();
             }
             this.getBranches();
             this.getPaymentMethod();
             this.getSalesmen();
             this.getServices();
-            let reservation = this.dataRow;
+            let reservation = this.dataOfRow;
             this.customer_data_edit = reservation.customer;
 
             this.getCustomers(reservation.employee.customer_handel,reservation.employee_id);
@@ -693,7 +886,7 @@ export default {
             this.create.related_document_id = reservation.related_document_id;
             if(reservation.related_document_id)
             {
-                 this.handelRelatedDocument();
+                this.handelRelatedDocument();
             }
             if(reservation.document_number)
             {
@@ -715,7 +908,9 @@ export default {
             this.create.payment_method_id = reservation.payment_method_id;
             this.create.sell_method_id = reservation.sell_method_id;
             this.create.total_invoice = reservation.total_invoice;
+            this.create.paid = reservation.paid ? reservation.paid :0;
             this.create.invoice_discount = reservation.invoice_discount;
+            this.create.attendans_num = reservation.attendans_num;
             this.create.net_invoice = reservation.net_invoice;
             this.create.sell_method_discount = reservation.sell_method_discount;
             this.create.unrelaized_revenue = reservation.unrelaized_revenue;
@@ -742,9 +937,11 @@ export default {
                     price_per_uint: e.price_per_uint,
                     discount: e.discount,
                     total: e.total,
+                    payment: e.payment ? e.payment : 0,
                     is_stripe: e.is_stripe,
                     prefix_related: e.prefix_related,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
                 });
             });
             this.isLoader = false;
@@ -770,18 +967,39 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
                 attendants: [],
                 check_in_time:'',
-                check_out_time:'',
+                check_out_time:this.currentTime(),
                 total_invoice: 0,
+                paid: 0,
                 invoice_discount: 0,
+                attendans_num: 0,
                 net_invoice: 0,
                 sell_method_discount: 0,
                 unrelaized_revenue: 0,
                 header_details: [],
             };
+        },
+        async getDataRow(){
+            this.isLoader = true;
+            await adminApi
+                .get(`/document-headers/${this.id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.dataOfRow = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  start  dynamicSortString
@@ -792,7 +1010,7 @@ export default {
         },
 
         showPackageModal(index) {
-             if (this.create.header_details[index].package_id) {
+            if (this.create.header_details[index].package_id) {
                 this.create.header_details[index].price_per_uint = this.packages.find(el => el.id == this.create.header_details[index].package_id).price;
                 this.totalCreate(index);
             }
@@ -821,7 +1039,7 @@ export default {
             this.create.header_details[index].date_to = this.formatDate(new Date());
             this.create.header_details[index].check_in_time=''
         },
-         searchCustomer(e) {
+        searchCustomer(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -830,7 +1048,7 @@ export default {
             }, 500);
 
         },
-         searchCompany(e) {
+        searchCompany(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -898,7 +1116,8 @@ export default {
                         let shortYear =new Date(date).getFullYear();
                         let twoDigitYear = shortYear.toString().substr(-2);
                         let branch = this.branches.find((row) => branch_id == row.id);
-                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${branch.serials[0].perfix}`;
+                        let serial = branch.serials.find((row) => this.document_id == row.document_id);
+                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${serial.perfix}`;
                     }
                 })
                 .catch((err) => {
@@ -919,14 +1138,18 @@ export default {
             let branch_id = this.create.branch_id;
             await this.getRelatedDocument(related_document_id,branch_id,document_id);
         },
-         getRelatedDocument(related_document_id,branch_id,document_id)
+        getRelatedDocument(related_document_id,branch_id,document_id)
         {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/document-headers/check-related-document?related_document_id=${related_document_id}&document_id=${document_id}&branch_id=${branch_id}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.relatedDocumentNumbers = l;
+                    if (this.dataOfRow)
+                    {
+                        this.relatedDocumentNumbers.push(this.dataOfRow.document_number);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -955,8 +1178,9 @@ export default {
             let relatedDocument = this.relatedDocumentNumbers.find(el => el.id == related_document_number);
             this.create.header_details = [];
             this.customer_data_edit = relatedDocument.customer;
+            this.customer_data_create = relatedDocument.customer;
             this.getCustomers(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
-            this.getEscorts(reservation.customer_id)
+            this.getEscorts(relatedDocument.customer_id)
             this.create.related_document_prefix = relatedDocument.serial_number;
             this.create.customer_type = relatedDocument.customer_type;
             this.create.attendants = relatedDocument.attendants;
@@ -967,12 +1191,14 @@ export default {
             this.create.employee_id = relatedDocument.employee_id;
             if (relatedDocument.customer_type == 0)
             {
-               this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
+                this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
             }
             this.create.payment_method_id = relatedDocument.payment_method_id;
             this.create.sell_method_id = relatedDocument.sell_method_id;
             this.create.total_invoice = relatedDocument.total_invoice;
+            this.create.paid = relatedDocument.paid ? relatedDocument.paid : 0;
             this.create.invoice_discount = relatedDocument.invoice_discount;
+            this.create.attendans_num = relatedDocument.attendans_num;
             this.create.net_invoice = relatedDocument.net_invoice;
             this.create.sell_method_discount = relatedDocument.sell_method_discount;
             this.create.unrelaized_revenue = relatedDocument.unrelaized_revenue;
@@ -995,10 +1221,12 @@ export default {
                     quantity: e.quantity,
                     price_per_uint: e.price_per_uint,
                     total: e.total,
+                    payment: e.payment ? e.payment : 0,
                     discount: e.discount,
                     is_stripe: e.is_stripe,
                     prefix_related: e.prefix_related,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
                 });
             });
             this.isLoader = false;
@@ -1006,8 +1234,8 @@ export default {
 
         calcDateTo(index)
         {
-           let days = parseInt(this.create.header_details[index].rent_days);
-           let date_from = new Date(this.create.header_details[index].date_from);
+            let days = parseInt(this.create.header_details[index].rent_days);
+            let date_from = new Date(this.create.header_details[index].date_from);
             date_from.setDate(date_from.getDate() + days);
             this.create.header_details[index].date_to = new Date(date_from).toISOString().slice(0, 10);
             this.create.header_details[index].quantity = parseInt(this.create.header_details[index].rent_days);
@@ -1081,18 +1309,21 @@ export default {
         {
             this.rooms= [{rooms: []}];
             this.create.attendants =[];
+            this.roomsFilter = [];
             this.create.header_details =[];
+            this.customer_data_create = this.customers.find((e) => e.id == this.create.customer_id);
             if (this.create.customer_id)
             {
                 this.getEscorts(this.create.customer_id);
-                this.getDocumentCustomer(this.create.customer_id);
+                this.getCustomerRooms(this.create.customer_id);
+                // this.getDocumentCustomer(this.create.customer_id);
             }
         },
         discountLine()
         {
-            let sum = 0;
+            let sum = parseFloat(this.create.invoice_discount);
             this.create.header_details.forEach(e => {
-                sum += e.discount;
+                sum += parseFloat(e.discount);
             });
             this.create.invoice_discount = sum;
             this.changeValue();
@@ -1111,6 +1342,13 @@ export default {
                 attendants.push(e.id) ;
             });
             this.create.attendants = attendants ;
+            let calcDiscount = 0;
+            if(data.checkin.document_header.invoice_discount > 0 && parseInt(data.checkin.discount) == 0)
+            {
+               let dataDetailDiscount = data.details.filter((x) => x.item_id == null);
+                calcDiscount = (parseFloat(data.checkin.document_header.invoice_discount)/parseFloat(data.checkin.rent_days)) * dataDetailDiscount.length;
+                this.create.invoice_discount = parseFloat(calcDiscount).toFixed(3);
+            }
 
             data.details.forEach((e,index) => {
                 if (e.unit_id)
@@ -1130,23 +1368,62 @@ export default {
                     quantity: e.quantity,
                     price_per_uint: e.price_per_uint,
                     total: e.total,
+                    payment: e.payment ? e.payment : 0,
                     discount: e.discount,
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
                     prefix_related: e.document_header.prefix,
                 });
             });
+            data.voucher.forEach((e,index) => {
+                if (e.unit_id)
+                {
+                    this.rooms.push({rooms: [e.unit]});
+                }else{
+                    this.rooms.push({rooms: []});
+                }
+                this.create.voucher_headers.push(e.id);
+                this.create.header_details.push({
+                    unit_id:null, //for rooms
+                    item_id:null, //for service
+                    date_from: this.formatDate(e.date),
+                    rent_days: 1,
+                    date_to: this.formatDate(e.date),
+                    check_in_time:'',
+                    unit_type: this.$i18n.locale == 'ar' ? e.document.name : e.document.name_e,
+                    quantity: 0,
+                    price_per_uint: 1,
+                    total: parseInt(e.document.attributes.customer) == 1 ? parseFloat(e.amount) : 0,
+                    payment: parseInt(e.document.attributes.customer) == -1 ? parseFloat(e.amount) : 0,
+                    discount: 0,
+                    is_stripe: null,
+                    sell_method_discount: 0,
+                    note: '',
+                    prefix_related: e.prefix,
+                });
+            });
+
             this.discountLine();
             this.isLoader = false;
-        }
+        },
+        currentTime()
+        {
+            const currentTime = new Date();
+            const hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes();
+
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            return formattedTime;
+        },
     }
 };
 </script>
 
 <template>
     <div>
-        <div v-if="dataRow" style="display:none;">
-            <PrintInvoice :document_data="dataRow"/>
+        <div v-if="create.id" style="display:none;">
+            <AccountStatementPrint :id="'CreatePrintStatement'+'-'+create.id" :document_row_id="create.id"/>
         </div>
         <transactionBreak :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :opening="openingBreak"/>
         <!--  create   -->
@@ -1199,11 +1476,11 @@ export default {
                         </div>
                     </div>
                     <div :class="[ checkDocumentNeedApprove() ? 'col-md-6' : 'col-md-12','mb-3 d-flex justify-content-end',]">
-                        <b-button v-if="!dataRow" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
+                        <b-button v-if="create.id" @click="$bvModal.show(`${'CreatePrintStatement'+'-'+create.id}`)" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
                             {{ $t("general.print") }}
                             <i class="fe-printer"></i>
                         </b-button>
-                        <b-button v-else v-print="'#printReservation'" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
+                        <b-button v-else disabled variant="primary" type="button" class="font-weight-bold px-2 mx-1">
                             {{ $t("general.print") }}
                             <i class="fe-printer"></i>
                         </b-button>
@@ -1351,7 +1628,7 @@ export default {
 
                             <multiselect
                                 :show-labels="false"
-                                :disabled="!create.branch_id"
+                                :disabled="true"
                                 v-model="create.payment_method_id"
                                 :options="paymentMethods.map((type) => type.id)"
                                 :custom-label=" (opt) => paymentMethods.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? paymentMethods.find((x) => x.id == opt).name: paymentMethods.find((x) => x.id == opt).name_e :''"
@@ -1468,6 +1745,26 @@ export default {
                             </template>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{$t('general.room')}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <multiselect
+                                :show-labels="false"
+                                :multiple="true"
+                                @input="getDocumentCustomer"
+                                v-model="roomsFilter"
+                                :options="clientRooms.map((type) => type.id)"
+                                :custom-label="(opt) => clientRooms.find((x) => x.id == opt) ? $i18n.locale == 'ar'? clientRooms.find((x) => x.id == opt).name : clientRooms.find((x) => x.id == opt).name_e :''"
+                            >
+                            </multiselect>
+                            <div v-if="!$v.roomsFilter.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                        </div>
+                    </div>
                     <div v-if="create.customer_id" class="col-md-2">
                         <div class="form-group">
                             <label class="control-label">{{ $t('general.escorts') }} </label>
@@ -1568,14 +1865,14 @@ export default {
                                             <div
                                                 class="row text-600 text-white bgc-default-tp1 py-25">
                                                 <div class="col-2">{{ $t('general.serial_number') }}</div>
-                                                <div class="col-2">{{ $t('general.Date') }}</div>
-                                                <div class="col-1">{{ $t('general.room') }}</div>
-                                                <div class="col-1">{{ $t('general.service') }}</div>
-                                                <div class="col-2">{{ $t('general.PricePerDay') }} / {{$t('general.quantity')}}</div>
-                                                <div class="col-1">{{ $t('general.Total') }}</div>
-                                                <div class="col-1">{{ $t('general.discount') }}</div>
+                                                <div class="col-1">{{ $t('general.Date') }}</div>
+                                                <div class="col-2">{{ $t('general.BookingDiscription') }}</div>
                                                 <div class="col-2">{{ $t('general.typeService') }}</div>
-<!--                                                <div class="col-1">{{ $t('general.Action') }}</div>-->
+                                                <div class="col-2">{{ $t('general.note') }}</div>
+                                                <div class="col-1">{{ $t('general.totalDiscount') }}</div>
+                                                <div class="col-1">{{ $t('general.charges') }}</div>
+                                                <div class="col-1">{{ $t('general.payments') }}</div>
+
                                             </div>
                                             <div v-for="(item, gIndex) in create.header_details" class="text-95  text-secondary-d3">
                                                 <div class="row mb-2 mb-sm-0 py-25" :class="[gIndex % 2 == 0 ? 'bgc-default-l4' : '' ]" >
@@ -1585,13 +1882,9 @@ export default {
                                                             v-model.number="$v.create.header_details.$each[gIndex].prefix_related.$model"
                                                             class="form-control"
                                                             type="text"
-                                                            :class="{
-                                                                'is-invalid': $v.create.header_details.$each[gIndex].prefix_related.$error || errors.prefix_related,
-                                                                'is-valid': !$v.create.header_details.$each[gIndex].prefix_related.$invalid && !errors.prefix_related,
-                                                            }"
                                                         />
                                                     </div>
-                                                    <div class="col-2 p-0">
+                                                    <div class="col-1 p-0">
                                                         <div class="form-group">
                                                             <date-picker
                                                                 :disabled="true"
@@ -1606,8 +1899,7 @@ export default {
                                                             </date-picker>
                                                         </div>
                                                     </div>
-
-                                                    <div class="col-1 p-0">
+                                                    <div class="col-2 p-0" v-if="create.header_details[gIndex].is_stripe == 0">
                                                         <multiselect
                                                             :show-labels="false"
                                                             :disabled="true"
@@ -1620,7 +1912,7 @@ export default {
                                                         >
                                                         </multiselect>
                                                     </div>
-                                                    <div class="col-1 p-0">
+                                                    <div class="col-2 p-0" v-else-if="create.header_details[gIndex].is_stripe == 1">
                                                         <multiselect
                                                             :show-labels="false"
                                                             :disabled="true"
@@ -1632,32 +1924,31 @@ export default {
                                                         >
                                                         </multiselect>
                                                     </div>
-                                                    <div class="col-2 p-0">
+                                                    <div class="col-2 p-0" v-else>
                                                         <input
                                                             :disabled="true"
-                                                            @input="totalCreate(gIndex)"
-                                                            @keyup="addLineEnter($event)"
-                                                            v-model.number="$v.create.header_details.$each[gIndex].price_per_uint.$model"
-                                                            class="form-control" step="any"
-                                                            type="number"
-                                                            :class="{
-                                                                'is-invalid': $v.create.header_details.$each[gIndex].price_per_uint.$error || errors.price_per_uint,
-                                                                'is-valid': !$v.create.header_details.$each[gIndex].price_per_uint.$invalid && !errors.price_per_uint,
-                                                            }"
+                                                            v-model.number="create.header_details[gIndex].unit_type"
+                                                            class="form-control"
+                                                            type="text"
                                                         />
                                                     </div>
-                                                    <div class="col-1 p-0">
+                                                    <div class="col-2 p-0">
+                                                        <select
+                                                            :disabled="true"
+                                                            class="custom-select"
+                                                            v-model="$v.create.header_details.$each[gIndex].is_stripe.$model"
+                                                            @input="changeStrip(gIndex)"
+                                                        >
+                                                            <option value="0">{{ $t('general.accommodation') }}</option>
+                                                            <option value="1">{{ $t('general.ServiceRequest') }}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-2">
                                                         <input
                                                             :disabled="true"
-                                                            @input="PricePerUnitByTotal(gIndex)"
-                                                            @keyup="addLineEnter($event)"
-                                                            v-model.number="$v.create.header_details.$each[gIndex].total.$model"
-                                                            class="form-control" step="any"
-                                                            type="number"
-                                                            :class="{
-                                                                'is-invalid': $v.create.header_details.$each[gIndex].total.$error || errors.total,
-                                                                'is-valid': !$v.create.header_details.$each[gIndex].total.$invalid && !errors.total,
-                                                            }"
+                                                            v-model="$v.create.header_details.$each[gIndex].note.$model"
+                                                            class="form-control"
+                                                            type="text"
                                                         />
                                                     </div>
                                                     <div class="col-1 p-0">
@@ -1668,37 +1959,26 @@ export default {
                                                             v-model.number="$v.create.header_details.$each[gIndex].discount.$model"
                                                             class="form-control" step="any"
                                                             type="number"
-                                                            :class="{
-                                                                'is-invalid': $v.create.header_details.$each[gIndex].discount.$error || errors.discount,
-                                                                'is-valid': !$v.create.header_details.$each[gIndex].discount.$invalid && !errors.discount,
-                                                            }"
                                                         />
                                                     </div>
-                                                    <div class="col-2 p-0">
-                                                        <select
+                                                    <div class="col-1 p-0">
+                                                        <input
                                                             :disabled="true"
-                                                            class="custom-select"
-                                                            v-model="$v.create.header_details.$each[gIndex].is_stripe.$model"
-                                                            :class="{
-                                                                'is-invalid': $v.create.header_details.$each[gIndex].is_stripe.$error || errors.is_stripe,
-                                                                'is-valid': !$v.create.header_details.$each[gIndex].is_stripe.$invalid && !errors.is_stripe,
-                                                            }"
-                                                            @input="changeStrip(gIndex)"
-                                                        >
-                                                            <option value="0">{{ $t('general.RoomBooking') }}</option>
-                                                            <option value="1">{{ $t('general.ServiceRequest') }}</option>
-                                                        </select>
+                                                            @input="PricePerUnitByTotal(gIndex)"
+                                                            @keyup="addLineEnter($event)"
+                                                            v-model.number="$v.create.header_details.$each[gIndex].total.$model"
+                                                            class="form-control" step="any"
+                                                            type="number"
+                                                        />
                                                     </div>
-<!--                                                    <div class="col-1">-->
-<!--                                                        <button-->
-<!--                                                            v-if="create.header_details.length > 1"-->
-<!--                                                            type="button"-->
-<!--                                                            @click.prevent="removeNewField(gIndex)"-->
-<!--                                                            class="custom-btn-dowonload p-0"-->
-<!--                                                        >-->
-<!--                                                            <i class="fas fa-trash-alt"></i>-->
-<!--                                                        </button>-->
-<!--                                                    </div>-->
+                                                    <div class="col-1 p-0">
+                                                        <input
+                                                            :disabled="true"
+                                                            v-model.number="create.header_details[gIndex].payment"
+                                                            class="form-control" step="any"
+                                                            type="number"
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row border-b-2 brc-default-l2"></div>
@@ -1714,7 +1994,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.total_invoice ? '0.00' : create.total_invoice }}
+                                                                {{ !create.total_invoice ? '0.000' : parseFloat(create.total_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1724,7 +2004,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.invoice_discount ? '0.00' : create.invoice_discount }}
+                                                                {{ !create.invoice_discount ? '0.000' : parseFloat(create.invoice_discount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1734,7 +2014,27 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.net_invoice ? '0.00' : create.net_invoice }}
+                                                                {{ !create.net_invoice ? '0.000' : parseFloat(create.net_invoice).toFixed(3) }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row align-items-center bgc-primary-l3">
+                                                        <div class="col-7 text-right">
+                                                            {{ $t("general.paid") }}
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <span class="text-150 text-success-d3 opacity-2">
+                                                                {{ !create.paid ? '0.000' : parseFloat(create.paid).toFixed(3) }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row align-items-center bgc-primary-l3">
+                                                        <div class="col-7 text-right">
+                                                            {{ $t("general.remaining") }}
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <span class="text-150 text-success-d3 opacity-2">
+                                                                {{ parseFloat(create.break_settlement[0].amount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1744,9 +2044,9 @@ export default {
                                             <hr />
                                             <div>
                                                 <span class="text-secondary-d1 text-105">{{$t("general.Thank_you") }}</span>
-<!--                                                <a @click.prevent="addNewField" class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">-->
-<!--                                                    {{$t("general.AddNewLine") }}-->
-<!--                                                </a>-->
+                                                <!--                                                <a @click.prevent="addNewField" class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">-->
+                                                <!--                                                    {{$t("general.AddNewLine") }}-->
+                                                <!--                                                </a>-->
                                                 <div v-if="document && document.attributes && parseInt(document.attributes.customer) != 0" class="px-4 float-right mt-3 mt-lg-0">
                                                     <b-button v-if="!create.id && create.net_invoice > 0"
                                                               variant="primary"

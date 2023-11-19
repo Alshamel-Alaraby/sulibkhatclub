@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name_e', 100)->nullable();
             $table->string('phone', 50)->nullable();
             $table->string('email', 100)->nullable();
-            $table->unsignedInteger('country_id')->nullable()->default(0);
-            $table->unsignedInteger('city_id')->nullable()->default(0);
+            $table->unsignedInteger('country_id')->index()->nullable()->default(0);
+            $table->unsignedInteger('city_id')->index()->nullable()->default(0);
             $table->string('rp_code', 20)->nullable();
             $table->string('nationality')->nullable();
             $table->unsignedInteger('bank_account_id')->nullable();

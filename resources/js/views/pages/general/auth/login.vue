@@ -77,45 +77,58 @@ export default {
               );
               _companies.value = l.partner.companies;
               this.$store.commit("auth/editType", "admin");
-              this.isSuccess = true;
 
               if (l.partner.companies.length > 1 && l.partner.companies) {
+                this.isSuccess = true;
                 this.$router.push({ name: "company" });
               } else if (l.partner.companies.length == 1) {
-                this.$store.commit(
-                  "auth/editCompanyId",
-                  l.partner.companies[0].id
-                );
-                allRoutes.value = l.partner.companies[0].Program;
-                localStorage.setItem(
-                  "allRoutes",
-                  JSON.stringify(l.partner.companies[0].Program)
-                );
-                if (l.partner.companies[0].Program) {
-                  // routeModules.value = [l.partner.companies[0].Program[0]];
-                  // localStorage.setItem(
-                  //   "routeModules",
-                  //   JSON.stringify([l.partner.companies[0].Program[0]])
-                  // );
-                  let parent = [];
-                  l.partner.companies[0].Program.forEach((e) => {
-                    if (!parent.find((el) => el.id == e.Parent.id)) {
-                      parent.push(e.Parent);
+                if(l.partner.companies[0].is_active == 1){
+                    this.isSuccess = true;
+                    this.$store.commit(
+                        "auth/editCompanyId",
+                        l.partner.companies[0].id
+                    );
+                    allRoutes.value = l.partner.companies[0].Program;
+                    localStorage.setItem(
+                        "allRoutes",
+                        JSON.stringify(l.partner.companies[0].Program)
+                    );
+                    if (l.partner.companies[0].Program) {
+                        let parent = [];
+                        l.partner.companies[0].Program.forEach((e) => {
+                            if (!parent.find((el) => el.id == e.Parent.id)) {
+                                parent.push(e.Parent);
+                            }
+                        });
+                        this.$store.commit("auth/editParentModule", parent);
                     }
-                  });
-                  this.$store.commit("auth/editParentModule", parent);
+                    this.getWorkflows();
+                    this.$router.push({ name: "home" });
+                    this.getDefaultKeys();
+                    this.getCompanyKeys(l.partner.companies[0].id);
+                }else {
+                    this.isSuccess = false;
+                    this.$store.commit("auth/logoutToken");
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t(`general.Error`)}`,
+                        text: `${this.$t('general.contactTheAdministration')}`,
+                    });
                 }
-                // await this.companyId(l.partner.companies[0].id);
-                this.getWorkflows();
-                this.$router.push({ name: "home" });
-                this.getDefaultKeys();
-                this.getCompanyKeys(l.partner.companies[0].id);
               } else {
                 this.submitted = false;
               }
             })
             .catch((err) => {
-              this.isError = true;
+                if (err.response.status == 422) {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t(`general.Error`)}`,
+                        text: `${err.response.data.message}`,
+                    });
+                } else {
+                    this.isError = true;
+                }
             })
             .finally(() => {
               this.submitted = false;
@@ -133,6 +146,7 @@ export default {
               this.$store.commit("auth/editType", "user");
               this.isSuccess = true;
               await this.workflowUser(l.user.permissions);
+              await this.getProgCompanyId(l.user.company_id)
               this.$router.push({ name: "home" });
               this.getDefaultKeys();
               this.getCompanyKeys(l.user.company_id);
@@ -146,99 +160,40 @@ export default {
         }
       }
     },
-    async companyId(id) {
-      await axios
-        .get(
-          `${process.env.MIX_APP_URL_OUTSIDE}api/everything_about_the_company/${id}`
-        )
-        .then((res) => {
-          let l = res.data.data;
-          let name = [];
-          l.work_flow_trees.forEach((parent) => {
-            // name.push(parent.name_e);
-            if (parent.programFolders) {
-              parent.programFolders.forEach((child1) => {
-                // name.push(child1.name_e);
-                if (child1.menu_folder) {
-                  child1.menu_folder.forEach((child2) => {
-                    // name.push(child2.name_e);
-                    if (child2.subMenus) {
-                      child2.subMenus.forEach((child3) => {
-                        // name.push(child3.name_e);
-                        if (child3.screens) {
-                          child3.screens.forEach((child4) => {
-                            name.push(child4.name_e);
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-          this.$store.commit("auth/editWorkFlowTrees", [
-            "dictionary",
-            "home",
-            "company",
-            ...name,
-          ]);
-          if (l.document_company_module.length > 0) {
-            let documents = [];
-            l.document_company_module.forEach((e) => {
-              if (e.document_types.length > 0) {
-                e.document_types.forEach((w) => {
-                  documents.push({
-                    id: w.id,
-                    name: w.name,
-                    name_e: w.name_e,
-                    is_admin: w.is_admin,
-                    is_default: 0,
-                    company_id: id,
-                    document_relateds: w.document_relateds.map((el) => el.id),
-                  });
-                });
-              }
-            });
-            if (documents.length > 0) {
-              documents.forEach((e) => (e.is_admin = 1));
-              adminApi
-                .post(`/document/from_admin`, { documents })
-                .then((res) => {})
-                .catch((err) => {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                  });
-                });
-            }
-          }
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        });
-    },
     async getWorkflows() {
       let name = [];
+      let modules = ['General'];
       allRoutes.value.forEach((parent) => {
-        // name.push(parent.name_e);
         if (parent.programFolders) {
           parent.programFolders.forEach((child1) => {
-            // name.push(child1.name_e);
-            // name.push(child2.name_e);
+            if (child1.screens) {
+                if (child1.screens.length > 0) {
+                    child1.screens.forEach((child3) => {
+                        if(!name.includes(child3.name_e)){
+                            name.push(child3.name_e);
+                        }
+                        if(child3.module_id){
+                            let mod = child3.module;
+                            if(!modules.includes(mod.name_e)){
+                                modules.push(mod.name_e);
+                            }
+                        }
+                    });
+                }
+            }
             if (child1.subMenus) {
               child1.subMenus.forEach((child2) => {
-                // name.push(child2.name_e);
                 if (child2.screens) {
                   child2.screens.forEach((child3) => {
                     if(!name.includes(child3.name_e)){
                         name.push(child3.name_e);
                     }
+                      if(child3.module_id){
+                          let mod = child3.module;
+                          if(!modules.includes(mod.name_e)){
+                              modules.push(mod.name_e);
+                          }
+                      }
                   });
                 }
               });
@@ -252,19 +207,13 @@ export default {
         "company",
         ...name,
       ]);
+      this.$store.commit("auth/editCustomModules",modules);
     },
     async workflowUser(permissions) {
       let workflowTree = [];
       permissions.forEach((el) => {
-        if (el.category.length > 0 && el.category) {
-          el.category.forEach((e) => {
-            if (!workflowTree.includes(e) && e != "") {
-              workflowTree.push(e);
-            }
-          });
-        }
-        if (!workflowTree.includes(el.workflow)) {
-          workflowTree.push(el.workflow);
+        if (!workflowTree.includes(el.crud_name)) {
+          workflowTree.push(el.crud_name);
         }
       });
       this.$store.commit("auth/editPermission", permissions);
@@ -320,6 +269,32 @@ export default {
               })
               .finally(() => {
                   this.isLoader = false;
+              });
+      },
+    async getProgCompanyId(id) {
+          await axios
+              .get(
+                  `${process.env.MIX_APP_URL_OUTSIDE}api/project-program-modules/find-company-program/${id}`
+              )
+              .then((res) => {
+                  let l = res.data.data;
+                  this.$store.commit("auth/editCompanyId", id);
+                  allRoutes.value = l.Program;
+                  localStorage.setItem("allRoutes", JSON.stringify(l.Program));
+                  let parent = [];
+                  l.Program.forEach((e) => {
+                      if (!parent.find((el) => el.id == e.Parent.id)) {
+                          parent.push(e.Parent);
+                      }
+                  });
+                  this.$store.commit("auth/editParentModule", parent);
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
               });
       },
   },

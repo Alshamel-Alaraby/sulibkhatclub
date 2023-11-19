@@ -116,9 +116,9 @@
                             href="javascript:void(0)"
                             :style="{
                           'pointer-events':
-                            objPagination.current_page == 1 ? 'none' : '',
+                            parseInt(objPagination.current_page == 1) ? 'none' : '',
                         }"
-                            @click.prevent="$emit('perviousOrNext',objPagination.current_page - 1)"
+                            @click.prevent="$emit('perviousOrNext',parseInt(objPagination.current_page) - 1)"
                         >
                             <span>&lt;</span>
                         </a>
@@ -133,11 +133,11 @@
                             :style="{
                           'pointer-events':
                             objPagination.last_page ==
-                            objPagination.current_page
+                            parseInt(objPagination.current_page)
                               ? 'none'
                               : '',
                         }"
-                            @click.prevent="$emit('perviousOrNext',objPagination.current_page + 1)"
+                            @click.prevent="$emit('perviousOrNext',parseInt(objPagination.current_page) + 1)"
                         >
                             <span>&gt;</span>
                         </a>

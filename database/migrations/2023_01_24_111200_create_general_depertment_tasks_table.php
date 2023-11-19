@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name_e')->nullable();
             $table->text('description')->nullable();
             $table->text('description_e')->nullable();
-            $table->unsignedBigInteger('department_id')->nullable();
+            $table->unsignedBigInteger('department_id')->index()->nullable();
             $table->json('estimate_task_duration')->nullable();
             $table->timestamps();
         });

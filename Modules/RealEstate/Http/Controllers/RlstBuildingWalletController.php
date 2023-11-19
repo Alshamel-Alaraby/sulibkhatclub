@@ -3,6 +3,7 @@
 namespace Modules\RealEstate\Http\Controllers;
 
 use App\Http\Requests\AllRequest;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstBuildingWallet;
 use Modules\RealEstate\Http\Requests\RlstBuildingWalletRequest;
@@ -18,7 +19,7 @@ class RlstBuildingWalletController extends Controller
 
     public function find($id)
     {
-        $model = $this->model->data()->find($id);
+        $model = $this->model->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -28,7 +29,7 @@ class RlstBuildingWalletController extends Controller
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -39,13 +40,16 @@ class RlstBuildingWalletController extends Controller
         return responseJson(200, 'success', RlstBuildingWalletResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
+
     public function create(RlstBuildingWalletRequest $request)
     {
-        $model = $this->model->create($request->validated());
+       //return $request['building-wallet'][0];
+
+        foreach ($request['building-wallet'] as $building_wallet) {
+            $model = $this->model->create($building_wallet);
+        }
         $model->refresh();
-
-        return responseJson(200, 'created', new RlstBuildingWalletResource($model));
-
+        return responseJson(200, 'success');
     }
 
     public function update($id, RlstBuildingWalletRequest $request)
@@ -55,11 +59,14 @@ class RlstBuildingWalletController extends Controller
             return responseJson(404, 'not found');
         }
 
-        $model->update($request->validated());
-        $model->refresh();
-
+        if ($request['building-wallet']) {
+            foreach ($request['building-wallet'] as $building_wallet) {
+               $model->update($building_wallet);
+            }
+        }
         return responseJson(200, 'updated', new RlstBuildingWalletResource($model));
     }
+
 
     public function logs($id)
     {
@@ -78,7 +85,9 @@ class RlstBuildingWalletController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
-        $model->delete();
+
+        $model->deleted_at = now();
+        $model->save();
         return responseJson(200, 'deleted');
     }
 
@@ -94,8 +103,25 @@ class RlstBuildingWalletController extends Controller
             return responseJson(404, 'not found');
         }
         $models->each(function ($model) {
-            $model->delete();
+            $model->deleted_at = now();
+            $model->save();
         });
         return responseJson(200, 'deleted');
+    }
+
+    public function UpdateBuildingArray($wallet_id,Request $request)
+    {
+        $building = $this->model->where('wallet_id',$wallet_id)->get();
+
+        foreach ($building as $item)
+        {
+            $item->delete();
+        }
+
+        foreach ($request['building-wallet'] as $data_create)
+        {
+            $this->model->create($data_create);
+        }
+
     }
 }

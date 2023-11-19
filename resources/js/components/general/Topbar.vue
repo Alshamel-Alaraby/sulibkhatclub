@@ -5,6 +5,7 @@ import Notification from "./notification";
 import allRoutes from "../../helper/allRoute.js";
 import routeModules from "../../helper/Rule.js";
 import { selectedParents } from "../../helper/global.js";
+import Swal from "sweetalert2";
 /**
  * Topbar component
  */
@@ -52,14 +53,53 @@ export default {
     this.allRouteModule = allRoutes.value;
   },
   methods: {
-    getMenu(item1, item2) {
-      console.log(routeModules.value);
-      routeModules.value = allRoutes.value.find(
-        (e) => e.id == item2.id
-      ).programFolders;
-      selectedParents.value = [item1.id, item2.id];
-      localStorage.setItem("routeModules", JSON.stringify(routeModules.value));
-      localStorage.setItem("selectedParents", JSON.stringify(selectedParents.value));
+    getMenu(item1, item2)  {
+        let programFolders = allRoutes.value.find(
+            (e) => e.id == item2.id
+        );
+        if(programFolders.status == 1){
+            this.$store.commit("auth/editIsWeb", programFolders.is_web);
+            let folder = this.$store.state.auth.type == 'user' ? this.getWorkflows(programFolders.programFolders) : programFolders.programFolders;
+            routeModules.value = folder;
+            selectedParents.value = [item1.id, item2.id];
+            localStorage.setItem("routeModules", JSON.stringify(folder));
+            localStorage.setItem("selectedParents", JSON.stringify(selectedParents.value));
+        }else {
+            Swal.fire({
+                icon: "error",
+                title: `${this.$t(`general.Error`)}`,
+                text: `${this.$t(`general.contactTheAdministration`)}`,
+            });
+        }
+    },
+    getWorkflows(folders){
+        // start check user menu subMenus
+        folders.forEach((child1) => {
+            if (child1.subMenus) {
+                let menusCheck = []
+                child1.subMenus.forEach((child2) => {
+                    if (child2.screens) {
+                        let subMenusCheck = [];
+                        child2.screens.forEach((child3) => {
+                            if(this.$store.state.auth.work_flow_trees.includes(child3.name_e))
+                                subMenusCheck.push(true);
+                            else
+                                subMenusCheck.push(false);
+                        });
+                        if(subMenusCheck.length > 0){
+                            child2.isUserMenu = subMenusCheck.some(el => el);
+                        }
+                    }
+
+                    menusCheck.push(child2.isUserMenu);
+                });
+                child1.isUserMenu = menusCheck.some(el => el);
+            }
+
+        });
+        // end check user menu subMenus
+
+        return folders;
     },
     /**
      * Toggle menu

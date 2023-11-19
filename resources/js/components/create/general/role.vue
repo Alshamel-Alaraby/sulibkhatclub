@@ -269,8 +269,8 @@ export default {
                             this.modules.push(el.module);
                             this.checkAllPermission.push('');
                         }
-                        if( !this.tables.find(e => e.table == el.table) ){
-                            this.tables.push({table: el.table,module: el.module});
+                        if( !this.tables.find(e => e.table == el.crud_name) ){
+                            this.tables.push({table: el.crud_name,module: el.module});
                         }
                     });
                     this.permissions = l;
@@ -434,7 +434,7 @@ export default {
             }
         },
         filterPermission(table){
-            let data = this.permissions.filter(el => el.table == table);
+            let data = this.permissions.filter(el => el.crud_name == table);
             return data;
         },
         selectAll(module,data,index){

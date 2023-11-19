@@ -87,6 +87,7 @@ Route::prefix('recievable-payable')->group(function () {
     Route::resource('rp_break_down', 'RpBreakDownController')->except('edit', 'create');
     Route::get('rp_break_down/logs/{id}', 'RpBreakDownController@logs');
     Route::get('filterBreak', 'RpBreakDownController@filterBreak');
+    Route::get('all-break-customer-money-details', 'RpBreakDownController@getBreakCustomerMoneyDetails');
     Route::post('rp_break_down/logs/bulk-delete', 'RpBreakDownController@bulkDelete');
     Route::post('rp_break_down/update_break', 'RpBreakDownController@updateBreak');
 

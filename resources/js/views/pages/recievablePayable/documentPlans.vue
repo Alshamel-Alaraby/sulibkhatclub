@@ -20,11 +20,11 @@ export default {
     meta: [{ name: "description", content: "Document Plan" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(vm, "Document Plan RP", "all documentPlan RP");
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Document Plan RP", "all documentPlan RP");
+    });
+  },
   components: {
     Layout,
     PageHeader,

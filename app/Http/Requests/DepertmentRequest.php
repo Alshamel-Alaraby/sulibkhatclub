@@ -28,12 +28,12 @@ class DepertmentRequest extends FormRequest
             'id' => 'nullable',
             'name' => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
             'name_e' => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
-            'supervisors' => ['nullable', 'array'],
-            'attentions' => ['nullable', 'array'],
-            'supervisors.*'
-            => ['required_with:supervisors', 'exists:general_employees,id'],
-            'attentions.*'
-            => ['required_with:attentions', 'exists:general_employees,id'],
+            //'supervisors' => ['nullable', 'array'],
+            //'attentions' => ['nullable', 'array'],
+            //'supervisors.*'
+            //=> ['required_with:supervisors', 'exists:general_employees,id'],
+            //'attentions.*'
+            //=> ['required_with:attentions', 'exists:general_employees,id'],
             "company_id"=>'nullable',
 
         ];

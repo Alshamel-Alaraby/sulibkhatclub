@@ -9,7 +9,7 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import adminApi from "../../../../api/adminAxios";
 import Swal from "sweetalert2";
 import {dynamicSortString} from "../../../../helper/tableSort";
-import PrintInvoice from "../print-invoice";
+import PrintInvoice from "../print/print-general-item-invoice";
 import transactionBreak from "../../../create/receivablePayment/transactionBreak/transactionBreak";
 
 
@@ -31,6 +31,9 @@ export default {
         id: {
             default:'create'
         },
+        other_data:{
+            default:null,
+        },
     },
     mixins: [translation],
     components: {
@@ -45,12 +48,15 @@ export default {
         return {
             financial_years_validate:true,
             customer_data_edit: "",
+            customer_data_create: "",
             openingBreak:'',
+            unit_id:null,
             debounce: {},
             customers: [],
             companies: [],
             salesmen: [],
             statuses: [],
+            rooms: [],
             serial_number:"",
             relatedDocumentNumbers: [],
             relatedDocuments: [],
@@ -60,6 +66,7 @@ export default {
             isLoader: false,
             create: {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: null,
                 reason:'',
                 branch_id: null,
@@ -71,7 +78,7 @@ export default {
                 customer_id: null,
                 company_id: null,
                 customer_type:1,
-                payment_method_id: null,
+                payment_method_id: 1,
                 total_invoice: 0,
                 invoice_discount: 0,
                 net_invoice: 0,
@@ -79,7 +86,7 @@ export default {
                 unrelaized_revenue: 0,
                 header_details: [{
                     item_id:null, //for service
-                    quantity: 0,
+                    quantity: 1,
                     price_per_uint: 0,
                     total: 0,
                     unit_type: "Booking",
@@ -90,6 +97,7 @@ export default {
                     discount: 0,
                     is_stripe: 1,
                     sell_method_discount: 0,
+                    note:'',
                 }]
             },
             errors: {},
@@ -99,6 +107,7 @@ export default {
             printObj: {
                 id: "printReservation",
             },
+            dataOfRow:''
         };
     },
     validations: {
@@ -139,32 +148,35 @@ export default {
                     discount: {},
                     is_stripe: {required},
                     sell_method_discount: {},
+                    note: {},
                 }
             }
         },
+        unit_id:{ required },
     },
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
         this.$store.dispatch('locationIp/getIp');
     },
     methods: {
-        resetModalCreateOrUpdate()
+        async resetModalCreateOrUpdate()
         {
             this.relatedDocuments = this.document.document_relateds;
             if (this.dataRow)
             {
-                 this.resetModalEdit(this.dataRow.id);
+                await this.getDataRow();
+                await this.resetModalEdit(this.dataRow.id);
             }else{
-                 this.resetModal();
+                await this.resetModal();
             }
         },
         resetModalHiddenCreateOrUpdate ()
         {
             if (this.dataRow)
             {
-                 this.resetModalHiddenEdit(this.dataRow.id);
+                this.resetModalHiddenEdit(this.dataRow.id);
             }else{
-                 this.resetModalHidden();
+                this.resetModalHidden();
             }
         },
         changeValue(index = null){
@@ -185,7 +197,7 @@ export default {
         addNewField(){
             this.create.header_details.push({
                 item_id:null, //for service
-                quantity: 0,
+                quantity: 1,
                 price_per_uint: 0,
                 date_from: this.formatDate(new Date()),
                 rent_days:0,
@@ -196,6 +208,7 @@ export default {
                 unit_type: "Booking",
                 is_stripe: 1,
                 sell_method_discount: 0,
+                note: '',
             });
             this.changeValue();
         },
@@ -211,10 +224,13 @@ export default {
         dataCreate()
         {
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.serial_number = "";
+            this.unit_id = null;
             this.financial_years_validate = true;
             this.create = {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: parseInt(this.document.need_approve) == 0 ? 5 : 1,
                 reason:'',
                 branch_id: null,
@@ -226,7 +242,7 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
                 total_invoice: 0,
                 invoice_discount: 0,
@@ -235,7 +251,7 @@ export default {
                 unrelaized_revenue: 0,
                 header_details: [{
                     item_id:null, //for service
-                    quantity: 0,
+                    quantity: 1,
                     price_per_uint: 0,
                     total: 0,
                     unit_type: "Booking",
@@ -245,7 +261,8 @@ export default {
                     check_in_time:'',
                     discount: 0,
                     is_stripe: 1,
-                    sell_method_discount: 0
+                    sell_method_discount: 0,
+                    note: '',
                 }]
             };
         },
@@ -263,10 +280,10 @@ export default {
         /**
          *  hidden Modal (create)
          */
-         resetModal() {
+        async resetModal() {
             if (this.checkDocumentNeedApprove() )
             {
-                 this.getStatus();
+                this.getStatus();
             }
             this.dataCreate();
             this.getBranches();
@@ -275,6 +292,12 @@ export default {
             this.getServices();
             if(parseInt(this.document.required) == 1 && this.relatedDocuments.length == 1){
                 this.create.related_document_id = this.relatedDocuments[0].id;
+            }
+            if (this.other_data)
+            {
+                this.unit_id = this.other_data.unit_id;
+                this.addRoomDetails();
+                this.getCustomerInRoom();
             }
             this.is_disabled = false;
             this.$nextTick(() => {
@@ -421,10 +444,59 @@ export default {
         /**
          *  get workflows
          */
-         getStatus(){
+        getCustomerInRoom() {
+            this.isLoader = true;
+            adminApi
+                .get(`/document-headers/customer-room?unit_id=${this.other_data.unit_id}&date_from=${this.other_data.date_from}&date_to=${this.other_data.date_to}`)
+                .then((res) => {
+                    let l = res.data;
+                    if (l)
+                    {
+                        this.create.employee_id = l.employee_id;
+                        if (l.employee_id)
+                        {
+                            this.customer_data_create = l.customer;
+                            this.getCustomers(l.employee_id);
+                            this.create.customer_id = l.customer_id;
+                            this.customers.push(this.customer_data_create);
+                            this.getRooms();
+                        }
+                    }
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getRooms(){
+            this.isLoader = true;
+            adminApi
+                .get(`/booking/units/get-client-units?client_id=${this.create.customer_id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.rooms = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getStatus(){
             this.isLoader = true;
 
-             adminApi
+            adminApi
                 .get(`/document-statuses`)
                 .then((res) => {
                     let l = res.data.data;
@@ -441,14 +513,21 @@ export default {
                     this.isLoader = false;
                 });
         },
-         getBranches() {
+        getBranches() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/branches?document_id=${this.document_id}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
                     this.branches = l;
+                    if (!this.dataRow){
+                        if (this.branches.length == 1)
+                        {
+                            this.create.branch_id = this.branches[0].id;
+                            this.getSerialNumber(this.create.branch_id);
+                        }
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -458,7 +537,7 @@ export default {
                     });
                 });
         },
-         getSerialNumber(e)
+        getSerialNumber(e)
         {
             let date = this.create.date;
             let shortYear =new Date(date).getFullYear();
@@ -471,12 +550,12 @@ export default {
             let branch_id = this.create.branch_id;
             if (document_id && branch_id)
             {
-                 this.handelRelatedDocument()
+                this.handelRelatedDocument()
             }
         },
-         getSalesmen() {
+        getSalesmen() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/employees?is_salesman=1&customer_handel=1`)
                 .then((res) => {
                     this.isLoader = false;
@@ -491,17 +570,17 @@ export default {
                     });
                 });
         },
-         getCustomerSalesman(e)
+        getCustomerSalesman(e)
         {
             let employee_id = e;
             if (employee_id)
             {
-               let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
-               this.getCustomers(customer_handel,employee_id);
-               if (parseInt(this.create.customer_type) == 0)
-               {
-                   this.getCompanies(customer_handel,employee_id);
-               }
+                let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
+                this.getCustomers(customer_handel,employee_id);
+                if (parseInt(this.create.customer_type) == 0)
+                {
+                    this.getCompanies(customer_handel,employee_id);
+                }
             }
         },
         getCompanies(customer_handel,employee_id=null,search='') {
@@ -523,7 +602,7 @@ export default {
         },
         getCustomers(customer_handel,employee_id=null,search='') {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/general-customer?limet=10&type=1&company_id=${this.company_id}&employee_id=${customer_handel=='his_customer'?employee_id:''}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
                 .then((res) => {
                     this.isLoader = false;
@@ -531,7 +610,17 @@ export default {
                     this.customers = l;
                     if (this.customer_data_edit)
                     {
-                        this.customers.push(this.customer_data_edit);
+                        if (!this.customers.find((e) => e.id == this.customer_data_edit.id))
+                        {
+                            this.customers.push(this.customer_data_edit);
+                        }
+                    }
+                    if (this.customer_data_create)
+                    {
+                        if (!this.customers.find((e) => e.id == this.customer_data_create.id))
+                        {
+                            this.customers.push(this.customer_data_create);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -582,18 +671,20 @@ export default {
         /**
          *   show Modal (edit)
          */
-         resetModalEdit(id) {
+        async resetModalEdit(id) {
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.isLoader = true;
             this.financial_years_validate = true;
             if (this.checkDocumentNeedApprove()) {
-                 this.getStatus();
+                this.getStatus();
             }
             this.getBranches();
             this.getPaymentMethod();
             this.getSalesmen();
             this.getServices();
-            let reservation = this.dataRow;
+
+            let reservation = this.dataOfRow;
             this.customer_data_edit = reservation.customer;
 
             this.getCustomers(reservation.employee.customer_handel,reservation.employee_id);
@@ -603,9 +694,10 @@ export default {
             this.create.branch_id = reservation.branch_id;
             this.create.date = reservation.date;
             this.create.related_document_id = reservation.related_document_id;
+            this.create.document_module_type_id= this.document?this.document.document_module_type_id:null;
             if(reservation.related_document_id)
             {
-                 this.handelRelatedDocument();
+                this.handelRelatedDocument();
             }
             if(reservation.document_number)
             {
@@ -629,6 +721,7 @@ export default {
             this.create.unrelaized_revenue = reservation.unrelaized_revenue;
             this.create.related_document_number = reservation.related_document_number;
             this.create.related_document_prefix = reservation.related_document_prefix;
+            this.unit_id =  reservation.header_details[0].unit_id
             this.create.header_details = [];
             reservation.header_details.forEach((e,index) => {
                 this.create.header_details.push({
@@ -644,9 +737,12 @@ export default {
                     total: e.total,
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
                 });
             });
             this.isLoader = false;
+            this.getRooms();
+            this.addRoomDetails();
         },
         /**
          *  hidden Modal (edit)
@@ -668,7 +764,7 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
                 total_invoice: 0,
                 invoice_discount: 0,
@@ -677,6 +773,25 @@ export default {
                 unrelaized_revenue: 0,
                 header_details: [],
             };
+        },
+        async getDataRow(){
+            this.isLoader = true;
+            await adminApi
+                .get(`/document-headers/${this.id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.dataOfRow = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  start  dynamicSortString
@@ -687,7 +802,7 @@ export default {
         },
 
         showPackageModal(index) {
-             if (this.create.header_details[index].package_id) {
+            if (this.create.header_details[index].package_id) {
                 this.create.header_details[index].price_per_uint = this.packages.find(el => el.id == this.create.header_details[index].package_id).price;
                 this.totalCreate(index);
             }
@@ -705,7 +820,7 @@ export default {
         changeStrip(index)
         {
             this.create.header_details[index].item_id = null;
-            this.create.header_details[index].quantity = 0;
+            this.create.header_details[index].quantity = 1;
             this.create.header_details[index].price_per_uint = 0;
             this.create.header_details[index].total = 0;
             this.create.header_details[index].discount = 0;
@@ -715,7 +830,7 @@ export default {
             this.create.header_details[index].date_to = this.formatDate(new Date());
             this.create.header_details[index].check_in_time=''
         },
-         searchCustomer(e) {
+        searchCustomer(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -724,7 +839,7 @@ export default {
             }, 500);
 
         },
-         searchCompany(e) {
+        searchCompany(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -792,7 +907,8 @@ export default {
                         let shortYear =new Date(date).getFullYear();
                         let twoDigitYear = shortYear.toString().substr(-2);
                         let branch = this.branches.find((row) => branch_id == row.id);
-                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${branch.serials[0].perfix}`;
+                        let serial = branch.serials.find((row) => this.document_id == row.document_id);
+                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${serial.perfix}`;
                     }
                 })
                 .catch((err) => {
@@ -813,14 +929,18 @@ export default {
             let branch_id = this.create.branch_id;
             await this.getRelatedDocument(related_document_id,branch_id,document_id);
         },
-         getRelatedDocument(related_document_id,branch_id,document_id)
+        getRelatedDocument(related_document_id,branch_id,document_id)
         {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/document-headers/check-related-document?related_document_id=${related_document_id}&document_id=${document_id}&branch_id=${branch_id}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.relatedDocumentNumbers = l;
+                    if (this.dataOfRow)
+                    {
+                        this.relatedDocumentNumbers.push(this.dataOfRow.document_number);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -848,6 +968,7 @@ export default {
             let relatedDocument = this.relatedDocumentNumbers.find(el => el.id == related_document_number);
             this.create.header_details = [];
             this.customer_data_edit = relatedDocument.customer;
+            this.customer_data_create = relatedDocument.customer;
             this.getCustomers(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
             this.create.related_document_prefix = relatedDocument.serial_number;
             this.create.customer_type = relatedDocument.customer_type;
@@ -856,7 +977,7 @@ export default {
             this.create.employee_id = relatedDocument.employee_id;
             if (relatedDocument.customer_type == 0)
             {
-               this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
+                this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
             }
             this.create.payment_method_id = relatedDocument.payment_method_id;
             this.create.sell_method_id = relatedDocument.sell_method_id;
@@ -880,6 +1001,7 @@ export default {
                     discount: e.discount,
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
                 });
             });
             this.isLoader = false;
@@ -938,6 +1060,27 @@ export default {
             });
             this.create.invoice_discount = sum;
             this.changeValue();
+        },
+        addRoomDetails()
+        {
+            if (this.unit_id)
+            {
+                this.create.header_details.forEach((e,index) => {
+                    e.unit_id = this.unit_id
+                });
+            }else{
+                this.create.header_details.forEach((e,index) => {
+                    e.unit_id = null
+                });
+            }
+        },
+        addCustomerDataCreate()
+        {
+            if (this.create.customer_id)
+            {
+                this.customer_data_create = this.customers.find((e) => e.id == this.create.customer_id);
+                this.getRooms();
+            }
         }
     }
 };
@@ -945,8 +1088,8 @@ export default {
 
 <template>
     <div>
-        <div v-if="dataRow" style="display:none;">
-            <PrintInvoice :document_data="dataRow"/>
+        <div v-if="dataOfRow" style="display:none;">
+            <PrintInvoice :document_data="dataOfRow"/>
         </div>
         <transactionBreak :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :opening="openingBreak"/>
         <!--  create   -->
@@ -1151,7 +1294,7 @@ export default {
 
                             <multiselect
                                 :show-labels="false"
-                                :disabled="!create.branch_id"
+                                :disabled="true"
                                 v-model="create.payment_method_id"
                                 :options="paymentMethods.map((type) => type.id)"
                                 :custom-label=" (opt) => paymentMethods.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? paymentMethods.find((x) => x.id == opt).name: paymentMethods.find((x) => x.id == opt).name_e :''"
@@ -1250,6 +1393,7 @@ export default {
                                 :disabled="!create.branch_id"
                                 :internalSearch="false"
                                 @search-change="searchCustomer"
+                                @input="addCustomerDataCreate"
                                 v-model="create.customer_id"
                                 :options="customers.map((type) => type.id)"
                                 :custom-label="(opt) => customers.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name: customers.find((x) => x.id == opt).name_e:''"
@@ -1291,6 +1435,25 @@ export default {
                             </template>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{$t('general.room')}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <multiselect
+                                :show-labels="false"
+                                @input="addRoomDetails"
+                                v-model="unit_id"
+                                :options="rooms.map((type) => type.id)"
+                                :custom-label="(opt) => rooms.find((x) => x.id == opt) ? $i18n.locale == 'ar'? rooms.find((x) => x.id == opt).name : rooms.find((x) => x.id == opt).name_e :''"
+                            >
+                            </multiselect>
+                            <div v-if="!$v.unit_id.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="col-md-12 p-0 m-0">
                         <div class="page-content">
@@ -1303,10 +1466,11 @@ export default {
                                             <div
                                                 class="row text-600 text-white bgc-default-tp1 py-25">
                                                 <div class="col-2">{{ $t('general.service') }}</div>
-                                                <div class="col-2">{{ $t('general.quantity') }}</div>
-                                                <div class="col-2">{{ $t('general.PricePerDay') }}</div>
+                                                <div class="col-1">{{ $t('general.quantity') }}</div>
+                                                <div class="col-2">{{ $t('general.Price') }}</div>
                                                 <div class="col-2">{{ $t('general.Total') }}</div>
-                                                <div class="col-2">{{ $t('general.discount') }}</div>
+                                                <div class="col-1">{{ $t('general.discount') }}</div>
+                                                <div class="col-2">{{ $t('general.note') }}</div>
                                                 <div class="col-2">{{ $t('general.Action') }}</div>
                                             </div>
                                             <div v-for="(item, gIndex) in create.header_details" class="text-95  text-secondary-d3">
@@ -1322,7 +1486,7 @@ export default {
                                                         >
                                                         </multiselect>
                                                     </div>
-                                                    <div class="col-2">
+                                                    <div class="col-1">
                                                         <input
                                                             @input="totalCreate(gIndex)"
                                                             @keyup="addLineEnter($event)"
@@ -1358,7 +1522,7 @@ export default {
                                                             }"
                                                         />
                                                     </div>
-                                                    <div class="col-2">
+                                                    <div class="col-1">
                                                         <input
                                                             @input="discountLine(gIndex)"
                                                             @keyup="addLineEnter($event)"
@@ -1368,6 +1532,17 @@ export default {
                                                             :class="{
                                                                 'is-invalid': $v.create.header_details.$each[gIndex].discount.$error || errors.discount,
                                                                 'is-valid': !$v.create.header_details.$each[gIndex].discount.$invalid && !errors.discount,
+                                                            }"
+                                                        />
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <input
+                                                            v-model="$v.create.header_details.$each[gIndex].note.$model"
+                                                            class="form-control"
+                                                            type="text"
+                                                            :class="{
+                                                                'is-invalid': $v.create.header_details.$each[gIndex].note.$error || errors.note,
+                                                                'is-valid': !$v.create.header_details.$each[gIndex].note.$invalid && !errors.note,
                                                             }"
                                                         />
                                                     </div>
@@ -1396,7 +1571,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.total_invoice ? '0.00' : create.total_invoice }}
+                                                                {{ !create.total_invoice ? '0.00' : parseFloat(create.total_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1406,7 +1581,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.invoice_discount ? '0.00' : create.invoice_discount }}
+                                                                {{ !create.invoice_discount ? '0.00' : parseFloat(create.invoice_discount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1416,7 +1591,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.net_invoice ? '0.00' : create.net_invoice }}
+                                                                {{ !create.net_invoice ? '0.00' : parseFloat(create.net_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>

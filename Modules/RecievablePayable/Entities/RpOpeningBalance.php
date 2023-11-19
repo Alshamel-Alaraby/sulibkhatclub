@@ -2,6 +2,7 @@
 
 namespace Modules\RecievablePayable\Entities;
 
+use App\Models\DocumentModuleType;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ class RpOpeningBalance extends Model
     {
         return $this->hasMany(RpBreakDown::class,'break_id');
     }
+
 
 //    public function document()
 //    {

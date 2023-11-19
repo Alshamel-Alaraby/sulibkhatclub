@@ -61,11 +61,12 @@ class DocumentHeaderResource extends JsonResource
 //            'document'                => new DocumentResource($this->document),
 //            'related_document'        => new DocumentResource($this->relatedDocument),
 //            'sell_method'             => new SellMethodResource($this->sellMethod),
-            'employee' => new EmployeeResource($this->employee),
+            'employee' => $this->employee,
             'customer' => new GeneralCustomerResource($this->customer),
 //            'task'                    => new TaskResource($this->task),
 //            'external_salesmen'       => new ExternalSalesmenResource($this->externalSalesmen),
             'header_details' => DocumentHeaderDetailResource::collection($this->documentHeaderDetails),
+//            'header_details' => $this->documentHeaderDetails,
 
             'payment_method' => new PaymentMethodResource($this->paymentMethod),
             'customer_type' => $this->customer_type,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\FromAdminDocumentRequest;
 use App\Http\Requests\Document\EditDocumentRequest;
+use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Document\DocumentResource;
 use App\Models\Document;
 use Illuminate\Http\Request;
@@ -98,5 +99,17 @@ class DocumentController extends Controller
     {
          $this->modelInterface->createFromAdmin($request);
         return responseJson(200, 'success');
+    }
+
+    public function getDocumentMoney(Request $request)
+    {
+        $models = $this->modelInterface->documentMoney($request);
+        return responseJson(200, 'success', DocumentResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
+    }
+
+    public function getDropDown(Request $request){
+        $models = $this->modelInterface->getName($request);
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 }

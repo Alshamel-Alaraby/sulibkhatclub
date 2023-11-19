@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_employee_managers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('manager_id');
+            $table->unsignedBigInteger('employee_id')->index();
+            $table->unsignedBigInteger('manager_id')->index();
             $table->timestamps();
         });
     }

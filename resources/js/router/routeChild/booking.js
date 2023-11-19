@@ -45,12 +45,39 @@ export default [
 
     },
     {
-        path: '/dashboard/booking/Invoice-Temporarily',
-        name: 'Invoice Temporarily',
+        path: '/dashboard/booking/checkIn',
+        name: 'checkIn',
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/booking/InvoiceTemporarily'),
+        component: () => import('../../views/pages/booking/checkIn'),
+
+    },
+    {
+        path: '/dashboard/booking/BookingReservation',
+        name: 'Booking Reservation',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/reservation'),
+
+    },
+    {
+        path: '/dashboard/booking/BookingConfirmation',
+        name: 'Booking Confirmation',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/confirmation'),
+
+    },
+    {
+        path: '/dashboard/booking/BookingMaintenance',
+        name: 'Booking Maintenance',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/maintenance'),
 
     },
     {
@@ -131,5 +158,40 @@ export default [
         },
         component: () => import('../../views/pages/booking/floor'),
 
+    },
+    {
+        path: '/dashboard/booking/house-keeping-daily',
+        name: 'items report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/report/housekeeping-daily-report'),
+
+    },
+    {
+        path: '/dashboard/booking/daily-checked-in',
+        name: 'items report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/report/daily-checked-in'),
+
+    },
+    {
+        path: '/dashboard/booking/daily-checked-out',
+        name: 'items report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/report/daily-checked-out'),
+
+    },
+    {
+        path: '/dashboard/booking/daily-occupied',
+        name: 'items report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/report/occupied'),
     },
 ];

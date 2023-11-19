@@ -70,7 +70,6 @@ export default {
       },
     },
   },
-
   methods: {
     async getCustomTableFields() {
       this.isCustom = true;
@@ -115,6 +114,7 @@ export default {
         this.$v.$reset();
       });
       this.errors = {};
+      this.is_disabled = false;
     },
     resetModalHidden() {
       this.defaultData();

@@ -26,7 +26,8 @@ class MessageRequest extends FormRequest
         return [
             'content' => 'required|string|max:500',
             'content_e' => 'required|string|max:500',
-            'type' => 'required|integer|in:1,2,3',
+            'message_type_id' => 'nullable|integer|exists:general_message_types,id|unique:general_messages,message_type_id,' . ($this->method() == 'PUT' ? $this->id : ''),
+            'module' => 'nullable|string|max:255',
         ];
     }
 }

@@ -78,9 +78,14 @@ class GovernorateRepository implements GovernorateInterface
     public function getName($request)
     {
 
-        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 'active')->when($request->country_id, function ($q) use ($request) {
+        $models = $this->model->select('id', 'name', 'name_e','country_id')->where('is_active', 'active')
+        ->when($request->country_id, function ($q) use ($request) {
             $q->where('country_id', $request->country_id);
         });
+
+        if($request->country_ids){
+            $models->whereIn('country_id',$request->country_ids);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

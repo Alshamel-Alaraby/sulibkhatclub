@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_document_related', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_id');
-            $table->unsignedBigInteger('document_related_id');
+            $table->unsignedBigInteger('document_id')->index();
+            $table->unsignedBigInteger('document_related_id')->index();
             $table->timestamps();
         });
     }

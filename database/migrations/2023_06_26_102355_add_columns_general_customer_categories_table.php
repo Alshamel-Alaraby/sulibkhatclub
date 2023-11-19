@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('general_customer_categories', function (Blueprint $table) {
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedInteger('company_id')->index()->default(0);
         });
     }
 

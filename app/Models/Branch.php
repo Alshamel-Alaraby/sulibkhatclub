@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use App\Traits\LogTrait;
+use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\PointOfSale\Entities\Order;
-use Modules\PointOfSale\Entities\Product;
 use Spatie\Activitylog\LogOptions;
+use Spatie\MediaLibrary\HasMedia;
 
-class Branch extends Model
+class Branch extends Model implements HasMedia
 {
-    use HasFactory, LogTrait;
+    use HasFactory, LogTrait, MediaTrait;
     protected $table = 'general_branches';
 
     protected $guarded = [];
@@ -19,12 +20,13 @@ class Branch extends Model
     public function scopeData($query)
     {
         return $query
-            ->select('id', 'name', 'name_e', 'is_active', 'parent_id')
+            ->select('id', 'name', 'name_e', 'is_active', 'parent_id', 'code_country', 'phone', 'second_phone', 'fax', 'p_o_pox', 'address', 'email')
             ->with([
                 'parent:id,name,name_e',
                 'children',
                 'serials',
                 'stores',
+                'media',
             ]);
     }
 
@@ -45,12 +47,12 @@ class Branch extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Branch::class, 'parent_id');
+        return $this->belongsTo(Branch::class, 'parent_id', 'id');
     }
 
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(\Modules\PointOfSale\Entities\Product::class , 'branch_id', 'id');
     }
 
     public function orders()
@@ -60,47 +62,59 @@ class Branch extends Model
 
     public function hasChildren()
     {
-        $relationsWithChildren = [];
+        return $this->stores()->count() > 0 ||
+        $this->serials()->count() > 0 ||
+        $this->children()->count() > 0 ||
+        $this->orders()->count() > 0 ||
+        $this->products()->count() > 0 ;
 
-        if ($this->stores()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'stores',
-                'count' => $this->stores()->count(),
-                'ids' => $this->stores()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->serials()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'serials',
-                'count' => $this->serials()->count(),
-                'ids' => $this->serials()->pluck('id')->toArray(),
-            ];
-        }
-
-        if ($this->children()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'branches',
-                'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->products()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'products',
-                'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->orders()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'orders',
-                'count' => $this->orders()->count(),
-                'ids' => $this->orders()->pluck('id')->toArray(),
-            ];
-        }
-
-        return $relationsWithChildren;
     }
+
+
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->stores()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'stores',
+    //             'count' => $this->stores()->count(),
+    //             'ids' => $this->stores()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->serials()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'serials',
+    //             'count' => $this->serials()->count(),
+    //             'ids' => $this->serials()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     if ($this->children()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'branches',
+    //             'count' => $this->children()->count(),
+    //             'ids' => $this->children()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->products()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'products',
+    //             'count' => $this->products()->count(),
+    //             'ids' => $this->products()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->orders()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'orders',
+    //             'count' => $this->orders()->count(),
+    //             'ids' => $this->orders()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     return $relationsWithChildren;
+    // }
 
     public function company()
     {

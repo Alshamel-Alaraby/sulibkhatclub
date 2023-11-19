@@ -25,10 +25,13 @@ class OpeningBalanceResource extends JsonResource
               "local_credit"=>$this->local_credit,
               "count"=>$this->count,
               "rate"=>$this->rate,
+              "client_type_id" => $this->client_type_id,
+              "module_type_id" => $this->module_type_id,
               "net"=>$this->total_local_debit - $this->total_local_credit,
               "total_local_credit"=>$this->total_local_credit,
               "total_local_debit"=>$this->total_local_debit,
               "type_document"=>$this->type_document,
+              "document_module_type"=>$this->documentModuleType,
 
           ];
     }

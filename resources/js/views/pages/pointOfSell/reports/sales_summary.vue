@@ -144,17 +144,17 @@ export default {
 
     this.getGroupsBy();
     this.getBranches();
-    
+
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(
-  //       vm,
-  //       "POS sales summary report",
-  //       "all POS sales summary report"
-  //     );
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(
+        vm,
+        "POS sales summary report",
+        "all POS sales summary report"
+      );
+    });
+  },
 
   methods: {
     async getTotal() {

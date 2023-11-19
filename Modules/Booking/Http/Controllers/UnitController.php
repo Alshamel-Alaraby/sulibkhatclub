@@ -100,6 +100,10 @@ class UnitController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
+        if ($model->hasChildren()){
+            return responseJson(404, __('message. not Delete'));
+
+        }
 
         $model->delete();
 
@@ -118,7 +122,9 @@ class UnitController extends Controller
             return responseJson(404, 'not found');
         }
         $models->each(function ($model) {
-            $model->delete();
+            if (!$model->hasChildren()){
+                $model->delete();
+            }
         });
         return responseJson(200, 'deleted');
     }
@@ -134,6 +140,27 @@ class UnitController extends Controller
         }
 
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
+    public function getClientUnits(Request $request)
+    {
+        $models = $this->model->whereHas('documentHeaderDetails',function ($q) use ($request){
+            $q->where('unit_type','Booking')->whereHas('documentHeader',function ($q) use ($request){
+                $q->where('customer_id',$request->client_id)
+                    ->where('document_id',33)
+                    ->whereNull('related_document_id');
+            });
+
+        })->select('id', 'name', 'name_e');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+
     }
 
 }

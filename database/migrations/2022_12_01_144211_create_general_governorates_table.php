@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('general_governorates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id')->nullable();
+            $table->foreignId('country_id')->index()->nullable();
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
             $table->tinyInteger('is_default')->default(0);

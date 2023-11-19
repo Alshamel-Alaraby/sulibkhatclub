@@ -14,12 +14,13 @@ class RlstFinishing extends Model
 
     protected $table = 'rlst_finishings';
 
-    protected $fillable = ['id'];
+    protected $guarded = ['id'];
+    
     public function scopeData($query)
     {
         return $query->select('id', 'name', 'name_e');
     }
-
+    
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

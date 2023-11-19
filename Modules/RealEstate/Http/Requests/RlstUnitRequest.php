@@ -23,16 +23,16 @@ class RlstUnitRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => "nullable|string|max:20",
+            'code' => 'nullable|string|max:20|unique:rlst_units,code,'.($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
             'name' => "nullable|string|max:100",
             'name_e' => "nullable|string|max:100",
             'description' => "nullable|string",
             'description_e' => "nullable|string",
             'unit_ty' => "nullable|integer",
-            'unit_status_id' => "nullable|integer|exists:rlst_unit_statuses,id",
+            'unit_status_id' => 'nullable|integer|exists:rlst_unit_statuses,id,deleted_at,NULL',
             'unit_area' => "nullable|numeric",
             'unit_net_area' => "nullable|numeric",
-            'building_id' => "nullable|integer|exists:rlst_buildings,id",
+            'building_id' => 'nullable|integer|exists:rlst_buildings,id,deleted_at,NULL',
             'rooms' => "nullable|integer",
             'path' => "nullable|integer",
             'view' => "nullable|integer",

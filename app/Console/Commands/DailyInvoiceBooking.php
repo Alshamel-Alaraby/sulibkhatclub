@@ -37,6 +37,7 @@ class DailyInvoiceBooking extends Command
      */
     public function handle()
     {
+        $this->documentHeader->createDailyCheckInCustomer();
         $this->documentHeader->checkBooking();
         $this->info('Again command run successfully!');
 

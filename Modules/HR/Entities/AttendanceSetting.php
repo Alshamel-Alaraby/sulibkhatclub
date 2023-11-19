@@ -17,7 +17,17 @@ class AttendanceSetting extends Model
 
     public function scopeData($query)
     {
-        return $query->select('id', 'pre_in', 'post_in', 'absent_minutes', 'pre_out','post_out','max_out');
+        return $query->select('id', 'pre_in', 'post_in', 'absent_minutes', 'pre_out', 'post_out', 'max_out',
+            'location_fingerprint',
+            'mobile_id_fingerprint',
+            'pre_in_fingerprint',
+            'day_off_fingerprint',
+            'public_holiday_fingerprint',
+            'post_out_fingerprint',
+            'pre_out_fingerprint',
+            'holiday_fingerprint',
+            'Training_course_fingerprint',
+        );
     }
 
     public function getActivitylogOptions(): LogOptions

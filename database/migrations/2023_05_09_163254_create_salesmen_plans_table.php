@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('restart_period_id');
-            $table->unsignedBigInteger('salesmen_plans_source_id');
+            $table->unsignedBigInteger('restart_period_id')->index();
+            $table->unsignedBigInteger('salesmen_plans_source_id')->index();
             $table->timestamps();
         });
     }

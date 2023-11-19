@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('national_id')->nullable();
             $table->string('id_number')->nullable();
             $table->longText('notes')->nullable();
-            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('customer_id')->index()->nullable();
             $table->timestamps();
         });
     }

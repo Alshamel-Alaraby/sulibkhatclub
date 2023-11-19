@@ -6,33 +6,39 @@ use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
+use Modules\RealEstate\Entities\RlstBuilding;
+use Modules\RealEstate\Entities\RlstWallet;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RlstBuildingWallet extends Model
 {
-    use HasFactory, LogTrait;
+    use HasFactory, LogTrait, SoftDeletes;
 
     protected $table = 'rlst_building_wallet';
-    protected $fillable = [
-        'wallet_id',
-        'company_id',
-        'building_id',
-        'bu_ty',
-    ];
+    protected $guarded = ['id'];
 
-    public function scopeData($query)
+
+
+    public function scopeWallet($query)
     {
+        /*
         return $query
-            ->select('id',
-                'wallet_id',
-                'building_id',
-                'bu_ty')
+            ->select('id','wallet_id','building_id','building_type_id')
             ->with('wallet:id,name,name_e', 'building:id,name,name_e');
-//        ,'owner:id,name,name_e','currency:id,link,model_id,model_type'
+        */
+            return $query
+            ->select('id', 'wallet_id', 'building_id', 'building_type_id')
+            ->with(['wallet' => function ($query) {
+            $query->select('id', 'name', 'name_e');
+        }], 'building:id,name,name_e');
     }
+
+    //public function
 
     public function wallet()
     {
-        return $this->belongsTo(RlstWallet::class, 'wallet_id');
+        return $this->belongsTo(RlstWallet::class);
     }
 
     public function building()

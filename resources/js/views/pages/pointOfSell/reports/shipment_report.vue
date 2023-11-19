@@ -157,12 +157,12 @@ export default {
     this.getTypes();
     this.getData();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS shipment report", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS shipment report", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);

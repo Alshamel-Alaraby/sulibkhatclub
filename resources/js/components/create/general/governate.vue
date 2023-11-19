@@ -186,20 +186,22 @@
                                {{ getCompanyKey("governorate_default") }}
                                <span v-if="isRequired('is_default')" class="text-danger">*</span>
                            </label>
-                           <select
-                               class="custom-select mr-sm-2"
-                               id="field-11"
-                               data-create="5"
-                               v-model="$v.create.is_default.$model"
-                               :class="{
-                'is-invalid': $v.create.is_default.$error || errors.is_default,
-                'is-valid': !$v.create.is_default.$invalid && !errors.is_default,
-              }"
-                           >
-                               <option value="" selected>{{ $t("general.Choose") }}...</option>
-                               <option value="1">{{ $t("general.Yes") }}</option>
-                               <option value="0">{{ $t("general.No") }}</option>
-                           </select>
+                           <b-form-group>
+                               <b-form-radio
+                                   class="d-inline-block"
+                                   v-model="$v.create.is_default.$model"
+                                   name="some-radios-is_default"
+                                   value="1"
+                               >{{ $t("general.Active") }}</b-form-radio
+                               >
+                               <b-form-radio
+                                   class="d-inline-block m-1"
+                                   v-model="$v.create.is_default.$model"
+                                   name="some-radios-is_default"
+                                   value="0"
+                               >{{ $t("general.Inactive") }}</b-form-radio
+                               >
+                           </b-form-group>
                            <template v-if="errors.is_default">
                                <ErrorMessage
                                    v-for="(errorMessage, index) in errors.is_default"
@@ -209,7 +211,7 @@
                            </template>
                        </div>
                    </div>
-                   <div class="col-md-12" v-if="isVisible('is_active')">
+                   <div class="col-md-6" v-if="isVisible('is_active')">
                        <div class="form-group">
                            <label class="mr-2">
                                {{ getCompanyKey("governorate_status") }}
@@ -393,6 +395,7 @@ export default {
           this.errors = {};
       },
       getCategory() {
+          this.countries = [];
       this.isLoader = true;
 
        adminApi

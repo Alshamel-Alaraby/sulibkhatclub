@@ -30,6 +30,22 @@ class TimeTablesHeader extends Model
         return $this->belongsTo(TimeTableType::class, 'timetable_types_id', 'id');
     }
 
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->timetablesDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'Time Tables Details',
+                'count' => $this->timetablesDetails()->count(),
+                'ids' => $this->timetablesDetails()->pluck('id')->toArray()
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

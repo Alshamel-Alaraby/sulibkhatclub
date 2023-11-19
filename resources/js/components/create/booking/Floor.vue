@@ -144,7 +144,7 @@ import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../helper/mixin/success&error";
 
 export default {
-    name: "brand",
+    name: "Floor",
     components: {
         ErrorMessage,
         loader,
@@ -186,7 +186,7 @@ export default {
         getCustomTableFields() {
             this.isCustom = true;
             adminApi
-                .get(`/customTable/table-columns/general_brands`)
+                .get(`/customTable/table-columns/booking_floors`)
                 .then((res) => {
                     this.fields = res.data;
                 })

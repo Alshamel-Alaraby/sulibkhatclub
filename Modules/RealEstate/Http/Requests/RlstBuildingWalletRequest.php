@@ -3,6 +3,9 @@
 namespace Modules\RealEstate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\RealEstate\Rules\UniqueBuildingWallet;
+use Illuminate\Validation\Rule;
+
 
 class RlstBuildingWalletRequest extends FormRequest
 {
@@ -23,17 +26,12 @@ class RlstBuildingWalletRequest extends FormRequest
      */
     public function rules()
     {
+        
         return [
-            'wallet_id' => [
-                'required', 'integer'
-                // ,'exists:rlst_wallets,id,deleted_at,null'
-            ],
-            'building_id' => [
-                'required', 'integer'
-                // ,'exists:rlst_wallets,id,deleted_at,null'
-            ],
-            'bu_ty' => 'required|in:1,2',
-            "company_id"=>'nullable',
+            "building-wallet" => 'required|array',
+            "building-wallet.*.building_id" => ['required','integer','exists:rlst_buildings,id,deleted_at,NULL'],
+            "building-wallet.*.wallet_id" => ['required','integer','exists:rlst_wallets,id', new UniqueBuildingWallet($this->id)],
+            "building-wallet.*.company_id"=>'nullable',
         ];
     }
 

@@ -45,7 +45,21 @@ export default {
                 {
                     isFilter: true,isSet: true,trans:"boardRent_package_price",isV: 'price',
                     type: 'string',sort: true,setting: {"price":true},isSetting: true
-                }
+                },
+                {
+                    isFilter: true,isSet: true,trans:"boardRent_package_governorate", isV: 'governorate_id',
+                    type: 'relation',name: 'governorate',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"governorate_id":true},isSetting: true
+                },
+                {
+                    isFilter: true,isSet: true,trans:"boardRent_package_category", isV: 'category_id',
+                    type: 'relation',name: 'category',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"category_id":true},isSetting: true
+                },
+                {
+                    isFilter: true,isSet: true,trans:"boardRent_package_note",isV: 'note',
+                    type: 'string',sort: true,setting: {"note":true},isSetting: true
+                },
             ],
             sendSetting: {},
             searchField: [],
@@ -64,9 +78,13 @@ export default {
     },
     methods: {
         filterSearch(fields){
+            let _filterSetting = [...fields];
+            let category = _filterSetting.indexOf("category_id");
+            let governorate = _filterSetting.indexOf("governorate_id");
+            if (category > -1) {_filterSetting[category] = this.$i18n.locale == "ar" ? "category.name" : "category.name_e";}
+            if (governorate > -1) {_filterSetting[governorate] = this.$i18n.locale == "ar" ? "governorate.name" : "governorate.name_e";}
             let filter = '';
-
-            for (let i = 0; i < fields.length; ++i) {
+            for (let i = 0; i < _filterSetting.length; ++i) {
                 filter += `columns[${i}]=${fields[i]}&`;
             }
             return filter;

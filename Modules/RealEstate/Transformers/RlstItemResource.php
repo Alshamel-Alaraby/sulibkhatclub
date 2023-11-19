@@ -22,9 +22,7 @@ class RlstItemResource extends JsonResource
             'code_number' => $this->code_number,
             'type' => $this->type,
             'price' => $this->price,
-            "unit_id" => $this->unit_id,
-            "unit" => $this->units,
-            "units" => $this->units,
+            "unit" => $this->whenLoaded('unit'),
             "categories" => $this->categories,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
         ];

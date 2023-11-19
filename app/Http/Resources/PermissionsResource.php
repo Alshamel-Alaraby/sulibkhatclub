@@ -19,7 +19,8 @@ class PermissionsResource extends JsonResource
             "name" => $this->name,
             'table' => $this->table,
             'module' => $this->module,
-            'title' => $this->title
+            'title' => $this->title,
+            'crud_name' => $this->crud_name
         ];
     }
 }

@@ -3,6 +3,10 @@
 namespace Modules\RealEstate\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\RealEstate\Transformers\RlstWalletResource;
+use Modules\RealEstate\Transformers\RlstBuildingResource;
+use Modules\RealEstate\Entities\RlstBuilding;
+use Modules\RealEstate\Entities\RlstWallet;
 
 class RlstBuildingWalletResource extends JsonResource
 {
@@ -15,11 +19,11 @@ class RlstBuildingWalletResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id"       => $this->id,
-            "wallet"   => $this->whenLoaded('wallet'),
-            "building" => $this->whenLoaded('building'),
-            "bu_ty"    => $this->bu_ty,
-
+            "id"                   => $this->id,
+            // "wallet"               => $this->whenLoaded('wallet'),
+            "wallet"                => RlstWallet::find($this->wallet_id)->only(['id','name','name_e']),
+            "building"              => RlstBuilding::find($this->building_id)->only(['id','name','name_e']),
+            // "building"             => $this->whenLoaded('building')
         ];
     }
 }

@@ -33,8 +33,15 @@ class VoucherHeaderRequest extends FormRequest
             'serial_id'               => 'nullable',
             'salesmen_id'             => 'required|integer|exists:general_employees,id',
             'customer_id'             => 'required|integer|exists:general_customers,id',
+            'client_type_id'          => 'nullable|integer|exists:general_client_types,id',
             'payment_method_id'       => 'nullable',
+            'module_type_id'          => 'nullable|integer',
             'amount'                  => 'required|numeric',
+            'notes'                   => 'nullable',
+
+//            'break_settlement.*.voucher_header_id'     => 'required|exists:general_voucher_headers,id',
+            'break_settlement.*.amount'          => 'required',
+            'break_settlement.*.break_id'        => 'required|exists:rp_break_downs,id',
 
         ];
     }

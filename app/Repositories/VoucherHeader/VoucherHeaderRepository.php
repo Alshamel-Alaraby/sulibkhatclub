@@ -2,6 +2,7 @@
 
 namespace App\Repositories\VoucherHeader;
 
+use App\Models\BreakSettlement;
 use App\Models\Serial;
 use Illuminate\Support\Facades\DB;
 
@@ -40,6 +41,14 @@ class VoucherHeaderRepository implements VoucherHeaderInterface
             $serial = Serial::where([['branch_id',$request['branch_id']],['document_id',$request['document_id']]])->first();
             $data_request['serial_id'] = $serial ? $serial->id:null;
             $data = $this->model->create($data_request);
+            if (isset($request['break_settlement'])){
+                foreach ($request['break_settlement'] as $settlement):
+                    BreakSettlement::create(array_merge($settlement,[
+                        "voucher_header_id" =>$data->id
+                    ]));
+                endforeach;
+            }
+
             return $data;
         });
     }
@@ -59,6 +68,10 @@ class VoucherHeaderRepository implements VoucherHeaderInterface
     public function delete($id)
     {
         $model = $this->model->find($id);
+        foreach ($model->breakSettlements as $settlement)
+        {
+            $settlement->delete();
+        }
         $model->delete();
     }
 

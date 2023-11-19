@@ -99,5 +99,37 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/hr/timeTableEmployee'),
+    },
+    {
+        path: '/dashboard/hr/report/attendance-and-departure',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/AttendanceAndDeparturReport'),
+    },
+    {
+        path: '/dashboard/hr/employee-location',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/employee-location'),
+    },
+    {
+        path: '/dashboard/hr/public-holiday-header',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/public-header'),
+    },
+    {
+        path: '/dashboard/hr/employee-fingerprint',
+        name: 'hr',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/hr/employee-fingerprint'),
     }
 ];

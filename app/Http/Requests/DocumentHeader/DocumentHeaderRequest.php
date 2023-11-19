@@ -25,6 +25,7 @@ class DocumentHeaderRequest extends FormRequest
     {
         return [
 
+            'document_module_type_id' => 'nullable',
             'document_status_id' => 'nullable|integer|exists:general_document_statuses,id',
             'reason' => 'nullable|string',
             'is_break' => 'nullable',
@@ -36,7 +37,7 @@ class DocumentHeaderRequest extends FormRequest
             'related_document_number' => 'nullable|numeric|integer',
             'sell_method_id' => 'nullable|integer|exists:boards_rent_sell_methods,id',
             'employee_id' => 'required|integer|exists:general_employees,id',
-            'customer_id' => 'required|integer|exists:general_customers,id',
+            'customer_id' => 'nullable|integer|exists:general_customers,id',
             'task_id' => 'nullable|integer|exists:general_tasks,id',
             'external_salesmen_id' => 'nullable|integer|exists:general_external_salesmen,id',
             'total_invoice' => 'nullable|numeric',
@@ -44,7 +45,7 @@ class DocumentHeaderRequest extends FormRequest
             'unrelaized_revenue' => 'nullable|numeric',
             'sell_method_discount' => 'nullable|numeric',
             'external_commission' => 'nullable|numeric',
-            'net_invoice' => 'required|nullable',
+            'net_invoice' => 'nullable',
             'remaining' => 'nullable|',
             'complete_status' => 'nullable|in:UnDelivered,partially,Delivered',
             "company_id" => 'nullable',
@@ -66,15 +67,22 @@ class DocumentHeaderRequest extends FormRequest
             'header_details.*.governorate_id' => 'nullable|exists:general_governorates,id',
             'header_details.*.package_id' => 'nullable|exists:boards_rent_packages,id',
             'header_details.*.quantity' => 'required|numeric|integer',
-            'header_details.*.price_per_uint' => 'required',
-            'header_details.*.total' => 'required',
+            'header_details.*.price_per_uint' => 'nullable',
+            'header_details.*.total' => 'nullable',
             'header_details.*.unit_type' => 'required|string',
             'header_details.*.break_downs' => 'nullable|array',
+            'header_details.*.category_booking' => 'nullable|in:single,family',
 
             'header_details.*.discount' => 'nullable|numeric',
             'header_details.*.check_in_time' => 'nullable|string',
             'header_details.*.note'     => 'nullable|string',
             'header_details.*.prefix_related'     => 'nullable|string',
+
+            'break_settlement.*.amount'          => 'required',
+            'break_settlement.*.document_id'        => 'nullable|exists:general_documents,id',
+            'break_settlement.*.affect'        => 'nullable|int:1,-1',
+
+            'voucher_headers'        => 'nullable|array',
 
 
             "payment_method_id" => 'nullable|integer|exists:general_payment_methods,id',

@@ -25,6 +25,7 @@ class RpInstallmentPaymentTypeResource extends JsonResource
             "is_passed_contract_plan"=>$this->is_passed_contract_plan,
             "auto_freq"=>$this->auto_freq,
             "freq_period"=>$this->freq_period,
+            "step"=>$this->step,
             "is_conditional"=>$this->is_conditional,
             "installment_condation_id"=>$this->installment_condation_id,
             "installment_condation"=>$this->installment_condation,

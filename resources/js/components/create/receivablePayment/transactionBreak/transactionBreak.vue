@@ -63,6 +63,7 @@ export default {
                 rate: {required},
                 instalment_type_id: {required},
                 customer_id: {required},
+                client_type_id: {},
                 currency_id: {required},
                 document_id: {},
                 debit: {},
@@ -72,6 +73,7 @@ export default {
                 terms: {},
                 installment_statu_id: {required},
                 details: {},
+                installment_amount: {},
             },
         },
     },
@@ -228,6 +230,7 @@ export default {
                         rate: el.rate,
                         currency_id: el.currency_id,
                         customer_id: el.customer_id,
+                        client_type_id: el.client_type_id,
                         break_id: el.break_id,
                         break_type:el.break_type,
                         instalment_type_id: el.instalment_type_id,
@@ -239,6 +242,7 @@ export default {
                         terms: el.terms,
                         installment_statu_id: el.installment_statu_id,
                         details: el.details,
+                        installment_amount: el.total,
                         id:el.id
 
                     });
@@ -252,6 +256,7 @@ export default {
                     rate: data.rate,
                     currency_id: data.currency_id,
                     customer_id: data.customer_id,
+                    client_type_id: data.client_type_id,
                     break_id: data.id,
                     instalment_type_id: 1,
                     break_type: data.break_type,
@@ -263,6 +268,7 @@ export default {
                     terms: '',
                     installment_statu_id: 1,
                     details: '',
+                    installment_amount: '',
                     id:null
                 });
             }
@@ -275,35 +281,47 @@ export default {
                 rate: data.rate,
                 currency_id: data.currency_id,
                 customer_id: data.customer_id,
+                client_type_id: data.client_type_id,
                 break_id: data.id,
                 instalment_type_id: null,
                 break_type: data.break_type,
                 document_id: data.document_id,
                 debit: 0,
                 credit: 0,
-                repate: '',
+                repate: 1,
                 total: 0,
                 terms: '',
                 installment_statu_id: 1,
                 details: '',
+                installment_amount: '',
                 id:null
 
             });
         },
         async removeNewField(index) {
-            if (this.create[index].id && this.opening.is_update)
-            {
-                await this.deleteModule(this.create[index].id,index);
-            }else {
-                if (this.create.length > 1) {
-                    this.create.splice(index, 1);
-                }
-                this.totalDivision = 0;
-                this.create.forEach((el) => {
-                    this.totalDivision += parseFloat(el.total);
-                });
-                this.residual = this.totalOpening - this.totalDivision;
+
+            if (this.create.length > 1) {
+                this.create.splice(index, 1);
             }
+            this.totalDivision = 0;
+            this.create.forEach((el) => {
+                this.totalDivision += parseFloat(el.total);
+            });
+            this.residual = this.totalOpening - this.totalDivision;
+
+            // if (this.create[index].id && this.opening.is_update)
+            // {
+            //     await this.deleteModule(this.create[index].id,index);
+            // }else {
+            //     if (this.create.length > 1) {
+            //         this.create.splice(index, 1);
+            //     }
+            //     this.totalDivision = 0;
+            //     this.create.forEach((el) => {
+            //         this.totalDivision += parseFloat(el.total);
+            //     });
+            //     this.residual = this.totalOpening - this.totalDivision;
+            // }
 
         },
         /**
@@ -413,6 +431,7 @@ export default {
                 rate: data.rate,
                 currency_id: data.currency_id,
                 customer_id: data.customer_id,
+                customer_id: data.client_type_id,
                 break_id: data.id,
                 break_type: data.break_type,
                 document_id: data.document_id,
@@ -424,6 +443,7 @@ export default {
                 terms: '',
                 installment_statu_id: 1,
                 details: '',
+                installment_amount: this.totalOpening,
                 id:null
 
             });
@@ -485,14 +505,16 @@ export default {
         },
         calcBreak(index) {
             this.totalDivision = 0;
-            this.calcTotal(index);
             if (!this.isDebit) {
-                this.calcTotal(index);
+                this.create[index].total = this.create[index].credit
+                this.create[index].installment_amount = (this.create[index].credit / this.create[index].repate).toFixed(3) ;
                 this.create.forEach((el) => {
                     this.totalDivision += parseFloat(el.total);
                 });
                 this.residual = this.totalOpening - this.totalDivision;
             } else {
+                this.create[index].total = this.create[index].debit
+                this.create[index].installment_amount = (this.create[index].debit / this.create[index].repate).toFixed(3) ;
                 this.create.forEach((el) => {
                     this.totalDivision += parseFloat(el.total);
                 });
@@ -673,20 +695,20 @@ export default {
                                     />
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">
-                                        {{ $t('general.Residual') }}
-                                    </label>
-                                    <input
-                                        :disabled="true"
-                                        type="number"
-                                        class="form-control"
-                                        step="any"
-                                        v-model="residual"
-                                    />
-                                </div>
-                            </div>
+<!--                            <div class="col-md-4">-->
+<!--                                <div class="form-group">-->
+<!--                                    <label class="control-label">-->
+<!--                                        {{ $t('general.Residual') }}-->
+<!--                                    </label>-->
+<!--                                    <input-->
+<!--                                        :disabled="true"-->
+<!--                                        type="number"-->
+<!--                                        class="form-control"-->
+<!--                                        step="any"-->
+<!--                                        v-model="residual"-->
+<!--                                    />-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
 
                     </div>
@@ -801,7 +823,7 @@ export default {
                         <div class="col-md-1 p-0">
                             <div class="form-group">
                                 <label v-if="index == 0" class="control-label" style="font-size: 12px">
-                                    {{ $t('general.debit') }}
+                                    {{ $t('general.totalDebit') }}
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
@@ -831,7 +853,7 @@ export default {
                         <div class="col-md-1 p-0">
                             <div class="form-group">
                                 <label v-if="index == 0" class="control-label" style="font-size: 12px">
-                                    {{ $t('general.credit') }}
+                                    {{ $t('general.totalCredit') }}
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
@@ -863,7 +885,7 @@ export default {
                                 <label v-if="index == 0"
                                        class="control-label">{{ getCompanyKey("installment_payment_type_id") }}</label>
                                 <multiselect
-                                    :disabled="create[index].installment_statu_id != 1 ? true : create[index].id?true:false"
+                                    :disabled="create[index].installment_statu_id != 1 ? true :false"
                                     @input="showInstallmentPaymentTypeModal(index)"
                                     v-model="create[index].instalment_type_id"
                                     :options="payment_types.map((type) => type.id)"
@@ -882,10 +904,7 @@ export default {
                                     {{ $t("general.fieldIsRequired") }}
                                 </div>
                                 <template v-if="errors.instalment_type_id">
-                                    <ErrorMessage
-                                        v-for="(
-                                        errorMessage, index
-                                      ) in errors.instalment_type_id"
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.instalment_type_id"
                                         :key="index"
                                     >{{ errorMessage }}
                                     </ErrorMessage>
@@ -899,7 +918,7 @@ export default {
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
-                                    :disabled="create[index].installment_statu_id != 1 ? true : opening.is_update?false:create[index].id?true:false"
+                                    :disabled="opening.is_update?true:create[index].installment_statu_id != 1 ? true : create[index].id?true:false"
                                     type="number"
                                     class="form-control"
                                     data-create="3"
@@ -911,12 +930,10 @@ export default {
                                   }"
                                 />
                                 <template v-if="errors.repate">
-                                    <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.repate"
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.repate"
                                         :key="index"
                                     >{{ errorMessage }}
-                                    </ErrorMessage
-                                    >
+                                    </ErrorMessage>
                                 </template>
                             </div>
                         </div>
@@ -950,34 +967,60 @@ export default {
                                 </template>
                             </div>
                         </div>
-                        <div class="col-md-1 p-0">
+                        <div class="col-md-1 p-0" v-if="!opening.is_update">
                             <div class="form-group">
                                 <label v-if="index == 0" class="control-label" style="font-size: 12px">
-                                    {{ $t('general.Total') }}
+                                    {{ $t('general.installmentAmount') }}
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
                                     :disabled="true"
                                     type="number"
+                                    step="any"
                                     class="form-control"
                                     style="padding: 0 0 0 5px"
                                     data-create="3"
-                                    v-model="$v.create.$each[index].total.$model"
+                                    v-model="$v.create.$each[index].installment_amount.$model"
                                     :class="{
-                                    'is-invalid': $v.create.$each[index].total.$error || errors.total,
-                                    'is-valid': !$v.create.$each[index].total.$invalid && !errors.total,
+                                    'is-invalid': $v.create.$each[index].installment_amount.$error || errors.installment_amount,
+                                    'is-valid': !$v.create.$each[index].installment_amount.$invalid && !errors.installment_amount,
                                   }"
                                 />
-                                <template v-if="errors.total">
-                                    <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.total"
-                                        :key="index"
-                                    >{{ errorMessage }}
-                                    </ErrorMessage
-                                    >
+                                <template v-if="errors.installment_amount">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.installment_amount" :key="index">
+                                        {{ errorMessage }}
+                                    </ErrorMessage>
                                 </template>
                             </div>
                         </div>
+<!--                        <div class="col-md-1 p-0">-->
+<!--                            <div class="form-group">-->
+<!--                                <label v-if="index == 0" class="control-label" style="font-size: 12px">-->
+<!--                                    {{ $t('general.Total') }}-->
+<!--                                    <span class="text-danger">*</span>-->
+<!--                                </label>-->
+<!--                                <input-->
+<!--                                    :disabled="true"-->
+<!--                                    type="number"-->
+<!--                                    class="form-control"-->
+<!--                                    style="padding: 0 0 0 5px"-->
+<!--                                    data-create="3"-->
+<!--                                    v-model="$v.create.$each[index].total.$model"-->
+<!--                                    :class="{-->
+<!--                                    'is-invalid': $v.create.$each[index].total.$error || errors.total,-->
+<!--                                    'is-valid': !$v.create.$each[index].total.$invalid && !errors.total,-->
+<!--                                  }"-->
+<!--                                />-->
+<!--                                <template v-if="errors.total">-->
+<!--                                    <ErrorMessage-->
+<!--                                        v-for="(errorMessage, index) in errors.total"-->
+<!--                                        :key="index"-->
+<!--                                    >{{ errorMessage }}-->
+<!--                                    </ErrorMessage-->
+<!--                                    >-->
+<!--                                </template>-->
+<!--                            </div>-->
+<!--                        </div>-->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label v-if="index == 0" class="control-label" style="font-size: 12px">
@@ -995,12 +1038,10 @@ export default {
                                   }"
                                 />
                                 <template v-if="errors.details">
-                                    <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.details"
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.details"
                                         :key="index"
                                     >{{ errorMessage }}
-                                    </ErrorMessage
-                                    >
+                                    </ErrorMessage>
                                 </template>
                             </div>
                         </div>
@@ -1028,12 +1069,10 @@ export default {
                                 </div>
 
                                 <template v-if="errors.installment_statu_id">
-                                    <ErrorMessage
-                                        v-for="(errorMessage, index) in errors.installment_statu_id"
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.installment_statu_id"
                                         :key="index"
                                     >{{ errorMessage }}
-                                    </ErrorMessage
-                                    >
+                                    </ErrorMessage>
                                 </template>
                             </div>
                         </div>

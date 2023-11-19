@@ -77,10 +77,16 @@ class StatuseSeeder extends Seeder
                 "module_type" => "panel",
                 "color" => "bg-primary text-white"
             ],
+            [
+                "name" => "فى مجموعة",
+                "name_e" => "In Strip",
+                "module_type" => "panel",
+                "color" => "bg-primary text-white"
+            ],
 
             [
                 "name" => "فارغة",
-                "name_e" => "Empty",
+                "name_e" => "Available",
                 "module_type" => "booking",
                 "color" => "bg-success text-white"
             ],
@@ -101,6 +107,12 @@ class StatuseSeeder extends Seeder
                 "name_e" => "Reservation confirmed",
                 "module_type" => "booking",
                 "color" => "bg-primary text-white"
+            ],
+            [
+                "name" => "مشغولة",
+                "name_e" => "Occupied",
+                "module_type" => "booking",
+                "color" => "bg-dark text-white"
             ],
         ]);
     }

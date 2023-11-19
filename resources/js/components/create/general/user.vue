@@ -5,6 +5,7 @@ import {
   maxLength,
   email,
   requiredIf,
+    required
 } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../widgets/errorMessage";
@@ -38,6 +39,7 @@ export default {
     idObjEdit: { default: null },
     isPermission: {},
     url: { default: "/users" },
+    tables: {default: []}
   },
   data() {
     return {
@@ -53,11 +55,13 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: 1,
+        is_active: 'active',
+          role_id: null,
       },
       errors: {},
       isCheckAll: false,
       checkAll: [],
+      roles: [],
       images: [],
       media: {},
       user_id: null,
@@ -81,6 +85,7 @@ export default {
           minLength: minLength(2),
           maxLength: maxLength(100),
         },
+        role_id: {required},
         name_e: {
           required: requiredIf(function (model) {
             return this.isRequired("name_e");
@@ -158,8 +163,9 @@ export default {
         email: "",
         password: "",
         employee_id: null,
-        is_active: 1,
+        is_active: 'active',
         media: null,
+          role_id: null
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -176,6 +182,21 @@ export default {
       this.defaultData();
       this.$bvModal.hide(this.id);
     },
+    getRoles() {
+           adminApi
+              .get(`/roles/get-drop-down`)
+              .then((res) => {
+                  let l = res.data.data;
+                  this.roles = l;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              });
+      },
     resetModal() {
       this.defaultData();
       setTimeout(async () => {
@@ -185,16 +206,17 @@ export default {
             this.$v.$reset();
           });
           this.getEmployees();
+          this.getRoles();
         } else {
           if (this.idObjEdit.dataObj) {
             let user = this.idObjEdit.dataObj;
             if (this.isVisible("employee_id")) this.getEmployees();
+            this.getRoles();
             this.user_id = user.id;
             this.create.name = user.name;
             this.create.name_e = user.name_e;
             this.create.email = user.email;
             this.create.employee_id = user.employee_id ?? null;
-            user.role.length > 0? this.getRoles(): true;
             this.create.role_id = user.role.length > 0? user.role[0].id : null;
             this.create.is_active = user.is_active;
             this.images = user.media ? user.media : [];
@@ -428,7 +450,7 @@ export default {
         }
       }
     },
-    deleteImageCreate(id, index) {
+    deleteImageCreate(id) {
       let old_media = [];
       this.images.forEach((e) => {
         if (e.id != id) {
@@ -438,6 +460,8 @@ export default {
       adminApi
         .put(`/users/${this.user_id}`, { old_media })
         .then((res) => {
+            let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
+            this.tables[index] = res.data.data;
           this.images = res.data.data.media ? res.data.data.media : [];
           if (this.images && this.images.length > 0) {
             this.showPhoto = this.images[this.images.length - 1].webp;
@@ -550,7 +574,7 @@ export default {
             <b-tab :title="$t('general.DataEntry')" active>
               <div class="col-lg-6">
                 <div class="row">
-                  <div class="col-md-12" v-if="isVisible('employee_id')">
+                  <div class="col-md-6" v-if="isVisible('employee_id')">
                     <div class="form-group">
                       <label
                         >{{ getCompanyKey("employee") }}
@@ -575,6 +599,25 @@ export default {
                       </multiselect>
                     </div>
                   </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label
+                            >{{ getCompanyKey('role_user') }}
+                                <span class="text-danger">*</span></label
+                            >
+                            <multiselect
+                                v-model="create.role_id"
+                                :options="roles.map((type) => type.id)"
+                                :custom-label="
+                                  (opt) => roles.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar'
+                                      ? roles.find((x) => x.id == opt).name
+                                      : roles.find((x) => x.id == opt).name_e: null
+                                "
+                            >
+                            </multiselect>
+                        </div>
+                    </div>
                   <div class="col-md-6" v-if="isVisible('email')">
                     <div class="form-group">
                       <label for="field-15" class="control-label">
@@ -768,14 +811,14 @@ export default {
                           class="d-inline-block"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="1"
+                          value="active"
                           >{{ $t("general.Active") }}</b-form-radio
                         >
                         <b-form-radio
                           class="d-inline-block m-1"
                           v-model="$v.create.is_active.$model"
                           name="some-radios"
-                          value="0"
+                          value="inactive"
                           >{{ $t("general.Inactive") }}</b-form-radio
                         >
                       </b-form-group>
@@ -866,7 +909,7 @@ export default {
                                   ]"
                                   data-dz-remove
                                   @click.prevent="
-                                    deleteImageCreate(photo.id, index)
+                                    deleteImageCreate(photo.id)
                                   "
                                 >
                                   <i class="fe-x"></i>
@@ -919,137 +962,42 @@ export default {
 form {
   position: relative;
 }
-.myUl-workflow {
-  ul,
-  #myUL {
-    list-style-type: none;
-  }
-  #myUL {
-    margin: 0;
-    padding: 0;
-    span {
-      i {
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        color: black;
-      }
-      span:hover,
-      i:hover {
-        cursor: pointer;
-      }
-    }
-  }
-  .nested {
-    display: block;
-  }
-  .active {
-    color: #1abc9c;
-  }
-  &.rtl {
-    #myUL {
-      .without-children {
-        padding-right: 10px;
-      }
-      .nested {
-        padding-right: 40px;
-      }
-    }
-  }
-  &.ltr {
-    #myUL {
-      .without-children {
-        padding-left: 10px;
-      }
-    }
-  }
-}
-.modal-dialog .card {
-  margin: 0 !important;
-}
-.workflow.modal-body {
-  padding: 0 !important;
-}
-.modal-dialog .card-body {
-  padding: 1.5rem 1.5rem 0 1.5rem !important;
-}
 .nav-bordered {
-  border: unset !important;
+    border: unset !important;
 }
+
 .nav {
-  background-color: #dff0fe;
+    background-color: #dff0fe;
 }
+
 .tab-content {
-  padding: 70px 60px 40px;
-  min-height: 300px;
-  background-color: #f5f5f5;
-  position: relative;
+    padding: 70px 60px 40px;
+    min-height: 300px;
+    background-color: #f5f5f5;
+    position: relative;
 }
+
 .nav-tabs .nav-link {
-  border: 1px solid #b7b7b7 !important;
-  background-color: #d7e5f2;
-  border-bottom: 0 !important;
-  margin-bottom: 1px;
+    border: 1px solid #b7b7b7 !important;
+    background-color: #d7e5f2;
+    border-bottom: 0 !important;
+    margin-bottom: 1px;
 }
 
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
-  color: #000;
-  background-color: hsl(0deg 0% 96%);
-  border-bottom: 0 !important;
+    color: #000;
+    background-color: hsl(0deg 0% 96%);
+    border-bottom: 0 !important;
 }
 
 .img-thumbnail {
-  max-height: 400px !important;
+    max-height: 400px !important;
 }
 .dropdown-menu-custom-company.dropdown .dropdown-menu {
   padding: 5px 10px !important;
   overflow-y: scroll;
   height: 300px;
-}
-
-.modal-body .card .tabs .tab-content {
-  padding: 20px 60px 40px !important;
-}
-.modal-dialog .card {
-  margin: 0 !important;
-}
-
-.country.modal-body {
-  padding: 0 !important;
-}
-
-.modal-dialog .card-body {
-  padding: 1.5rem 1.5rem 0 1.5rem !important;
-}
-
-.nav-bordered {
-  border: unset !important;
-}
-
-.nav {
-  background-color: #dff0fe;
-}
-
-.tab-content {
-  padding: 70px 60px 40px;
-  min-height: 300px;
-  background-color: #f5f5f5;
-  position: relative;
-}
-
-.nav-tabs .nav-link {
-  border: 1px solid #b7b7b7 !important;
-  background-color: #d7e5f2;
-  border-bottom: 0 !important;
-  margin-bottom: 1px;
-}
-
-.nav-tabs .nav-link.active,
-.nav-tabs .nav-item.show .nav-link {
-  color: #000;
-  background-color: hsl(0deg 0% 96%);
-  border-bottom: 0 !important;
 }
 
 .img-thumbnail {

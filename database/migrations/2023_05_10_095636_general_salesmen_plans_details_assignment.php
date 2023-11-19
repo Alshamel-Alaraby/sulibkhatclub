@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_salesmen_plans_details_assignment', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('plan_id');
+            $table->unsignedBigInteger('employee_id')->index();
+            $table->unsignedBigInteger('plan_id')->index();
             $table->timestamps();
         });
     }

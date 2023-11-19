@@ -38,6 +38,7 @@ export default {
         is_conditional: 0,
         Condition_id: null,
         installmentPaymentType_freq: 0,
+        step: 'D',
         is_passed_contract_plan: 0,
       },
       errors: {},
@@ -69,6 +70,9 @@ export default {
               }) },
           installmentPaymentType_freq: {required: requiredIf(function (model) {
                   return this.isRequired("installmentPaymentType_freq");
+              }) },
+          step: {required: requiredIf(function (model) {
+                  return this.isRequired("step");
               }) },
           is_passed_contract_plan: { required: requiredIf(function (model) {
                   return this.isRequired("is_passed_contract_plan");
@@ -164,6 +168,7 @@ export default {
               is_conditional: 0,
               Condition_id: null,
               installmentPaymentType_freq: 0,
+              step: 'D',
               is_passed_contract_plan: 0,
           };
           this.$nextTick(() => {
@@ -194,6 +199,7 @@ export default {
                       this.create.is_passed_all = module.is_passed_all;
                       this.create.Freq_period = module.freq_period;
                       this.create.installmentPaymentType_freq = module.installment_payment_type_freq;
+                      this.create.step = module.step;
                       this.create.is_passed_contract_plan = module.is_passed_contract_plan;
                       this.create.is_conditional = module.is_conditional;
                       this.create.Condition_id = module.installment_condation_id;
@@ -509,7 +515,26 @@ export default {
                   </div>
               </div>
               <template v-if="create.installmentPaymentType_freq == 1">
-                <div class="col-md-6" v-if="isVisible('freq_period')">
+                  <div class="col-md-3" v-if="isVisible('step')">
+                      <div class="form-group position-relative">
+                          <label class="control-label">
+                              {{ getCompanyKey("installmentPaymentTyp_step") }}
+                              <span v-if="isRequired('step')" class="text-danger">*</span>
+                          </label>
+                          <select class="custom-select" v-model="create.step">
+                              <option value="D">{{ $t('general.daily') }}</option>
+                              <option value="M">{{ $t('general.Monthly') }}</option>
+                              <option value="Y">{{ $t('general.yearly') }}</option>
+                          </select>
+
+                          <template v-if="errors.step">
+                              <ErrorMessage v-for="(errorMessage, index) in errors.step" :key="index">
+                                  {{ errorMessage }}
+                              </ErrorMessage>
+                          </template>
+                      </div>
+                  </div>
+                <div class="col-md-3" v-if="isVisible('freq_period')">
                   <div class="form-group">
                     <label class="control-label">
                       {{ getCompanyKey("freq_period") }}
@@ -619,7 +644,7 @@ export default {
               </div>
               <!-- <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="mr-2" for="field-12">
+                                        <label class="mr-2">
                                             {{ getCompanyKey("is_passed_all") }}
                                         </label>
                                         <b-form-group id="create-11" :class="{
@@ -650,7 +675,7 @@ export default {
                                 </div> -->
               <!-- <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="mr-2" for="field-12">
+                                        <label class="mr-2" >
                                             {{ getCompanyKey("is_passed_contract_plan") }}
                                         </label>
                                         <b-form-group id="create-11" :class="{
@@ -687,7 +712,7 @@ export default {
                                 </div> -->
               <!-- <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="mr-2" for="field-11">
+                                        <label class="mr-2">
                                             {{ getCompanyKey("installment_payment_auto_freq") }}
                                         </label>
                                         <b-form-group id="edit-11" :class="{

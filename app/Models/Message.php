@@ -10,7 +10,7 @@ class Message extends Model
 {
     use HasFactory, LogTrait;
     protected $table = 'general_messages';
-    
+
     protected $guarded = ['id'];
 
     public function scopeData($query)
@@ -20,10 +20,16 @@ class Message extends Model
                 'id',
                 'content',
                 'content_e',
-                'type'
-            );
+                'module',
+                'message_type_id'
+            )->with('messageType:id,name,name_e');
     }
 
+
+    public function messageType()
+    {
+        return $this->belongsTo(MessageType::class, 'message_type_id');
+    }
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

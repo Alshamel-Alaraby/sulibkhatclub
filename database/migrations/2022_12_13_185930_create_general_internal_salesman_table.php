@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('general_internal_salesman', function (Blueprint $table) {
             $table->id();
-            $table->integer("employee_id")->nullable();
+            $table->integer("employee_id")->index()->nullable();
             $table->string("is_active")->default('active');
             $table->softDeletes();
             $table->timestamps();

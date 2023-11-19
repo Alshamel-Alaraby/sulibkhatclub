@@ -23,7 +23,11 @@ class PackageRequest extends FormRequest
             'price' => 'sometimes|regex:/^\d+(\.\d{1,2})?$/',
             "panels" => "sometimes|array",
             "panels.*" => "required_with:panels|exists:boards_rent_panels,id",
-            "company_id"=>'nullable',
+
+            "category_id"    => "nullable|exists:general_categories,id",
+            "governorate_id" => "nullable|exists:general_governorates,id",
+            "company_id"     => 'nullable',
+            "note"           => 'nullable|string',
         ];
 
     }

@@ -452,8 +452,10 @@ export default {
         let data = null;
         if (this.edit.key == "Check-in") {
           data = { "Check-in": this.edit.value };
-        } else {
-          data = { "Check-out": this.edit.value };
+        } else if(this.edit.key == "Check-out"){
+            data = { "Check-out": this.edit.value };
+        } else if(this.edit.key == "extend_automatically") {
+            data = { "extend_automatically": this.edit.value };
         }
         adminApi
           .put(`booking/Settings/update`, data)
@@ -1056,7 +1058,8 @@ export default {
                       <h5 class="m-0 font-weight-normal">{{ data.key }}</h5>
                     </td>
                     <td v-if="setting.value && isVisible('value')">
-                      <h5 class="m-0 font-weight-normal">{{ tConvert(data.value) }}</h5>
+                      <h5 v-if="data.id == 1 || data.id == 2" class="m-0 font-weight-normal">{{ tConvert(data.value) }}</h5>
+                      <h5 v-else-if="data.id == 3" class="m-0 font-weight-normal">{{ parseInt(data.value) == 1 ? $t('general.Yes') : $t('general.No') }}</h5>
                     </td>
                     <td v-if="enabled3" class="do-not-print">
                       <div class="btn-group">
@@ -1174,7 +1177,7 @@ export default {
                                 />
                               </div>
                             </div>
-                            <div class="col-md-12" v-if="isVisible('value')">
+                            <div class="col-md-12" v-if="isVisible('value') && (data.id == 1 || data.id == 2)">
                               <div class="form-group">
                                 <label for="edit-2" class="control-label">
                                   {{ getCompanyKey("value") }}
@@ -1197,6 +1200,24 @@ export default {
                                   }"
                                   id="edit-2"
                                 />
+                              </div>
+                            </div>
+                            <div class="col-md-12" v-if="isVisible('value') && data.id == 3">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  {{ getCompanyKey("value") }}
+                                  <span v-if="isRequired('value')" class="text-danger">*</span>
+                                </label>
+                                  <select class="form-control"
+                                          v-model="edit.value"
+                                          :class="{
+                                              'is-invalid': $v.edit.value.$error || errors.value,
+                                              'is-valid':
+                                                !$v.edit.value.$invalid && !errors.value,
+                                            }">
+                                      <option value="1">{{$t('general.Yes')}}</option>
+                                      <option value="0">{{$t('general.No')}}</option>
+                                  </select>
                               </div>
                             </div>
                           </div>

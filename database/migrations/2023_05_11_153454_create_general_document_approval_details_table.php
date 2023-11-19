@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->time('approval_time')->nullable();
             $table->date('decision_date')->nullable();
-            $table->unsignedBigInteger('employee_id')->nullable();
-            $table->unsignedBigInteger('decision_id')->nullable()->comment('from general_documents_statuses');
+            $table->unsignedBigInteger('employee_id')->index()->nullable();
+            $table->unsignedBigInteger('decision_id')->index()->nullable()->comment('from general_documents_statuses');
             $table->timestamps();
         });
     }

@@ -64,10 +64,13 @@
                                            :disabled="type == 'edit'"
                                            class="form-control arabicInput"
                                            v-model="$v.create.name.$model"
-                                           @keyup="arabicValueName(create.name)" :class="{
-                                                                                    'is-invalid': $v.create.name.$error || errors.name,
-                                                                                    'is-valid': !$v.create.name.$invalid && !errors.name,
-                                                                                }" id="field-u-1" />
+                                           @keyup="arabicValueName(create.name)"
+                                           :class="{
+                                                'is-invalid': $v.create.name.$error || errors.name,
+                                                'is-valid': !$v.create.name.$invalid && !errors.name,
+                                           }"
+                                           id="field-u-1"
+                                    />
                                 </div>
                                 <div v-if="!$v.create.name.minLength"
                                      class="invalid-feedback">
@@ -101,12 +104,14 @@
                                            :disabled="type == 'edit'"
                                            @keyup="englishValueName(create.name_e)"
                                            class="form-control englishInput"
-                                           v-model="$v.create.name_e.$model" :class="{
-                                                                                    'is-invalid':
-                                                                                        $v.create.name_e.$error || errors.name_e,
-                                                                                    'is-valid':
-                                                                                        !$v.create.name_e.$invalid && !errors.name_e,
-                                                                                }" id="field-u-2" />
+                                           v-model="$v.create.name_e.$model"
+                                           :class="{
+                                                'is-invalid':
+                                                    $v.create.name_e.$error || errors.name_e,
+                                                'is-valid':
+                                                    !$v.create.name_e.$invalid && !errors.name_e,
+                                            }" id="field-u-2"
+                                    />
                                 </div>
                                 <div v-if="!$v.create.name_e.minLength"
                                      class="invalid-feedback">
@@ -140,21 +145,19 @@
                                           class="text-danger">*</span>
                                 </label>
                                 <b-form-group :class="{
-                                                                            'is-invalid':
-                                                                                $v.create.required.$error || errors.required,
-                                                                            'is-valid':
-                                                                                !$v.create.required.$invalid && !errors.required,
-                                                                        }">
-                                    <b-form-radio class="d-inline-block"
-                                                  v-model="$v.create.required.$model"
-                                                  name="some-radios" value="1">{{
-                                            $t("general.Yes")
-                                        }}</b-form-radio>
-                                    <b-form-radio class="d-inline-block m-1"
-                                                  v-model="$v.create.required.$model"
-                                                  name="some-radios" value="0">{{
-                                            $t("general.No")
-                                        }}</b-form-radio>
+                                        'is-invalid':$v.create.required.$error || errors.required,
+                                        'is-valid':!$v.create.required.$invalid && !errors.required,
+                                    }"
+                                >
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.required.$model" name="some-radios" value="2">
+                                        {{$t("general.yesAndNo")}}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.required.$model" name="some-radios" value="1">
+                                        {{$t("general.Yes")}}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block m-1" v-model="$v.create.required.$model" name="some-radios" value="0">
+                                        {{ $t("general.No") }}
+                                    </b-form-radio>
                                 </b-form-group>
                                 <template v-if="errors.required">
                                     <ErrorMessage
@@ -172,11 +175,11 @@
                                           class="text-danger">*</span>
                                 </label>
                                 <b-form-group :class="{
-                                                                            'is-invalid':
-                                                                                $v.create.need_approve.$error || errors.need_approve,
-                                                                            'is-valid':
-                                                                                !$v.create.need_approve.$invalid && !errors.need_approve,
-                                                                        }">
+                                                'is-invalid':
+                                                    $v.create.need_approve.$error || errors.need_approve,
+                                                'is-valid':
+                                                    !$v.create.need_approve.$invalid && !errors.need_approve,
+                                            }">
                                     <b-form-radio class="d-inline-block"
                                                   v-model="$v.create.need_approve.$model"
                                                   name="need_approve" value="1">{{
@@ -199,31 +202,52 @@
                         <div class="col-md-6" v-if="isVisible('is_copy')">
                             <div class="form-group">
                                 <label class="mr-2">
-                                    {{ $t("general.is_copy") }}
+                                    {{ getCompanyKey("document_need_is_copy") }}
                                     <span v-if="isRequired('is_copy')"
                                           class="text-danger">*</span>
                                 </label>
                                 <b-form-group :class="{
-                                                                            'is-invalid':
-                                                                                $v.create.is_copy.$error || errors.is_copy,
-                                                                            'is-valid':
-                                                                                !$v.create.is_copy.$invalid && !errors.is_copy,
-                                                                        }">
-                                    <b-form-radio class="d-inline-block"
-                                                  v-model="$v.create.is_copy.$model"
-                                                  name="is_copy" value="1">{{
-                                            $t("general.Yes")
-                                        }}</b-form-radio>
-                                    <b-form-radio class="d-inline-block m-1"
-                                                  v-model="$v.create.is_copy.$model"
-                                                  name="is_copy" value="0">{{
-                                            $t("general.No")
-                                        }}</b-form-radio>
+                                            'is-invalid': $v.create.is_copy.$error || errors.is_copy,
+                                            'is-valid': !$v.create.is_copy.$invalid && !errors.is_copy,
+                                        }">
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.is_copy.$model" name="is_copy" value="2">
+                                        {{$t("general.yesAndNo")}}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.is_copy.$model" name="is_copy" value="1">
+                                        {{ $t("general.Yes") }}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block m-1" v-model="$v.create.is_copy.$model" name="is_copy" value="0">
+                                        {{$t("general.No") }}
+                                    </b-form-radio>
                                 </b-form-group>
                                 <template v-if="errors.is_copy">
                                     <ErrorMessage
                                         v-for="(errorMessage, index) in errors.is_copy"
                                         :key="index">{{ errorMessage }}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="col-md-6" v-if="isVisible('is_partially')">
+                            <div class="form-group">
+                                <label class="mr-2">
+                                    {{ getCompanyKey("document_need_is_partially") }}
+                                    <span v-if="isRequired('is_partially')" class="text-danger">*</span>
+                                </label>
+                                <b-form-group :class="{
+                                            'is-invalid': $v.create.is_partially.$error || errors.is_partially,
+                                            'is-valid': !$v.create.is_partially.$invalid && !errors.is_partially,
+                                        }">
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.is_partially.$model" name="is_partially" value="1">
+                                        {{ $t("general.Yes") }}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block m-1" v-model="$v.create.is_partially.$model" name="is_partially" value="0">
+                                        {{$t("general.No") }}
+                                    </b-form-radio>
+                                </b-form-group>
+                                <template v-if="errors.is_partially">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.is_partially" :key="index">
+                                        {{ errorMessage }}
                                     </ErrorMessage>
                                 </template>
                             </div>
@@ -254,21 +278,68 @@
                                 </template>
                             </div>
                         </div>
+                        <div class="col-md-6" v-if="isVisible('is_break')">
+                            <div class="form-group">
+                                <label class="mr-2">
+                                    {{ getCompanyKey("document_need_is_break") }}
+                                    <span v-if="isRequired('is_break')" class="text-danger">*</span>
+                                </label>
+                                <b-form-group :class="{
+                                            'is-invalid': $v.create.is_break.$error || errors.is_break,
+                                            'is-valid': !$v.create.is_break.$invalid && !errors.is_break,
+                                        }">
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.is_break.$model" name="is_break" value="2">
+                                        {{$t("general.yesAndNo")}}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block" v-model="$v.create.is_break.$model" name="is_break" value="1">
+                                        {{ $t("general.Yes") }}
+                                    </b-form-radio>
+                                    <b-form-radio class="d-inline-block m-1" v-model="$v.create.is_break.$model" name="is_break" value="0">
+                                        {{$t("general.No") }}
+                                    </b-form-radio>
+                                </b-form-group>
+                                <template v-if="errors.is_break">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.is_break" :key="index">
+                                        {{ errorMessage }}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="col-md-6" v-if="isVisible('document_module_type_id')">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    {{ getCompanyKey("document_document_module_type") }}
+                                </label>
+                                <multiselect
+                                     v-model="create.document_module_type_id"
+                                     :options="moduleTypes.map((type) => type.id)"
+                                     :custom-label="
+                                        (opt) => moduleTypes.find((x) => x.id == opt)
+                                        ? $i18n.locale == 'ar'
+                                        ? moduleTypes.find((x) => x.id == opt).name
+                                        : moduleTypes.find((x) => x.id == opt).name_e: null
+                                    "
+                                >
+                                </multiselect>
+                                <template v-if="errors.document_module_type_id">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.document_module_type_id" :key="index">
+                                        {{errorMessage}}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </b-tab>
                 <b-tab :disabled="!document_id" :title="$t('general.effects')">
-                    <div v-if="$store.state.auth.user.type == 'super_admin'"
-                         class="d-flex justify-content-end">
-                        <b-button
-                            variant="success" v-if="!isLoader"
+                    <div  class="d-flex justify-content-end">
+                        <b-button variant="success" v-if="!isLoader"
                             class="mx-1" @click.prevent="addEffects(type)"
                         >
                             {{ type != 'edit'? $t("general.Add"): $t("general.edit") }}
                         </b-button>
                         <b-button variant="success" class="mx-1" disabled v-else>
                             <b-spinner small></b-spinner>
-                            <span class="sr-only">{{ $t("login.Loading")
-                                }}...</span>
+                            <span class="sr-only">{{ $t("login.Loading")}}...</span>
                         </b-button>
                     </div>
                     <div class="row">
@@ -279,6 +350,7 @@
                                     <span class="text-danger">*</span>
                                 </label>
                                 <select class="custom-select"
+                                        :disabled="parseInt(create.relation_voucher_header) == 1 ? true : false"
                                         v-model="create_effects.cash">
                                     <option value="0" selected>{{
                                             $t("general.noeffect") }}...</option>
@@ -292,37 +364,33 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>
-                                    {{ $t("general.customer") }}
+                                    {{ $t("general.client?") }}
                                     <span class="text-danger">*</span>
                                 </label>
-                                <select class="custom-select"
-                                        v-model="create_effects.customer">
-                                    <option value="0" selected>{{
-                                            $t("general.noeffect") }}...</option>
-                                    <option value="1">{{ $t("general.increase") }}
-                                    </option>
-                                    <option value="-1">{{ $t("general.decrease") }}
-                                    </option>
+                                <select :disabled="parseInt(create.relation_voucher_header) == 1 ? true : false" class="custom-select" v-model="create_effects.customer">
+                                    <option value="0" selected>{{$t("general.noeffect") }}...</option>
+                                    <option value="1">{{ $t("general.increase") }}</option>
+                                    <option value="-1">{{ $t("general.decrease") }}</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    {{ $t("general.supplier") }}
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <select class="custom-select"
-                                        v-model="create_effects.supplier">
-                                    <option value="0" selected>{{
-                                            $t("general.noeffect") }}...</option>
-                                    <option value="1">{{ $t("general.increase") }}
-                                    </option>
-                                    <option value="-1">{{ $t("general.decrease") }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
+<!--                        <div class="col-md-4">-->
+<!--                            <div class="form-group">-->
+<!--                                <label>-->
+<!--                                    {{ $t("general.clientCredit") }}-->
+<!--                                    <span class="text-danger">*</span>-->
+<!--                                </label>-->
+<!--                                <select class="custom-select"-->
+<!--                                        v-model="create_effects.supplier">-->
+<!--                                    <option value="0" selected>{{-->
+<!--                                            $t("general.noeffect") }}...</option>-->
+<!--                                    <option value="1">{{ $t("general.increase") }}-->
+<!--                                    </option>-->
+<!--                                    <option value="-1">{{ $t("general.decrease") }}-->
+<!--                                    </option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>
@@ -626,6 +694,7 @@ export default {
             employees: [],
             create_linked_with_docs: [],
             create_approve_employee: [],
+            moduleTypes: [],
             docsList: [],
             create: {
                 name: "",
@@ -634,6 +703,10 @@ export default {
                 required: 0,
                 need_approve: 0,
                 is_copy: 0,
+                is_break: 0,
+                is_partially: 0,
+                relation_voucher_header: 0,
+                document_module_type_id: null,
             },
             create_effects: {
                 cash: 0,
@@ -691,6 +764,16 @@ export default {
                     return this.isRequired("is_copy");
                 })
             },
+            is_break: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("is_break");
+                })
+            },
+            is_partially: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("is_partially");
+                })
+            },
         },
         branchFormCreate: {
             branche_id: { required },
@@ -739,7 +822,7 @@ export default {
         defaultData(){
             this.create = {
                 name: "", name_e: "", document_detail_type: "normal",
-                required: 0, need_approve: 0, is_copy: 0
+                required: 0, need_approve: 0, is_copy: 0,is_break: 0,is_partially: 0,relation_voucher_header:0,document_module_type_id:null
             };
             this.create_linked_with_docs = [];
             this.$nextTick(() => {
@@ -801,7 +884,11 @@ export default {
                         this.create.required = module.required;
                         this.create.need_approve = module.need_approve;
                         this.create.is_copy = module.is_copy;
+                        this.create.is_break = module.is_break;
+                        this.create.is_partially = module.is_partially;
                         this.create.document_detail_type = module.document_detail_type;
+                        this.create.relation_voucher_header = module.relation_voucher_header;
+                        this.create.document_module_type_id = module.document_module_type_id;
                         if (module.attributes) {
                             this.create_effects.cash = module.attributes.cash;
                             this.create_effects.customer = module.attributes.customer;
@@ -817,6 +904,7 @@ export default {
                         }
                         this.docType();
                         this.getEmployees();
+                        this.getModuleTypes();
                         // await this.getBranches();
                         // await this.getSerials();
                         // this.branchFormEdit.branche_id = module.branche_id;
@@ -849,6 +937,11 @@ export default {
                     this.errorFun('Error', 'PleaseSelectAtLeastOneEmployee');
                     return ;
                 }
+            }
+            if (this.create.document_detail_type == 'document_money' && parseInt(this.create_effects.cash) == 0)
+            {
+                this.errorFun('Error','YouMustAddAnEffectToTheCacheFirst');
+                return;
             }
 
             this.$v.create.$touch();
@@ -888,9 +981,9 @@ export default {
                         });
                 }else {
 
-                    let { name, name_e, required, need_approve,is_copy, document_detail_type } = this.create;
+                    let { name, name_e, required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id } = this.create;
                     adminApi
-                        .put(`${this.url}/${this.idObjEdit.idEdit}`, { name, name_e,required, need_approve,is_copy, document_detail_type })
+                        .put(`${this.url}/${this.idObjEdit.idEdit}`, { name, name_e,required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id })
                         .then((res) => {
                             this.$bvModal.hide(this.id);
                             this.$emit("getDataTable");
@@ -920,6 +1013,17 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.employees = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+                });
+        },
+        getModuleTypes() {
+             adminApi
+                .get(`/document-module-type/get-drop-down`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.moduleTypes = l;
                 })
                 .catch((err) => {
                     this.errorFun('Error','Thereisanerrorinthesystem');
@@ -1085,6 +1189,11 @@ export default {
                 });
         },
         addEffects(method) {
+            if (parseInt(this.create_effects.cash) == parseInt(this.create_effects.customer))
+            {
+                this.errorFun('Error','TheEffectOnTheCashMustNotBeEqualToTheEffectOnTheCustomer');
+                return;
+            }
             let form = null;
              form = { id: this.document_id, attributes: this.create_effects };
 

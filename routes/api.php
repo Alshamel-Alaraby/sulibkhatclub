@@ -24,11 +24,6 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-
-
-
-
-
 Route::group(['prefix' => 'users'], function () {
     Route::controller(\App\Http\Controllers\User\UserController::class)->group(function () {
         Route::post("login", 'login');
@@ -98,7 +93,9 @@ Route::middleware(['authorize.user'])->group(function () {
     });
 
     Route::group(['prefix' => 'countries'], function () {
+
         Route::controller(\App\Http\Controllers\Country\CountryController::class)->group(function () {
+
             Route::get('/get-drop-down', 'getDropDown')->name('countries.getDropDown');
             Route::get('/', 'all')->name('countries.index');
             Route::get('seeder', 'getCountrySeeder');
@@ -108,10 +105,9 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::put('/{id}', 'update')->name('countries.update');
             Route::delete('/{id}', 'delete')->name('countries.destroy');
             Route::post("bulk-delete", "bulkDelete");
+
         });
     });
-
-
 
     Route::group(['prefix' => 'governorates'], function () {
         Route::controller(\App\Http\Controllers\Governorate\GovernorateController::class)->group(function () {
@@ -195,6 +191,8 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'document'], function () {
         Route::controller(\App\Http\Controllers\Document\DocumentController::class)->group(function () {
+            Route::get('/get-drop-down', 'getDropDown')->name('document.getDropDown');
+            Route::get('/all-document-money', 'getDocumentMoney')->name('');
             Route::get('/', 'all')->name('document.index');
             Route::get('logs/{id}', 'logs')->name('document.logs');
             Route::get('/{id}', 'find');
@@ -257,12 +255,80 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::put('/{id}', 'update')->name('messages.update');
             Route::delete('/{id}', 'delete')->name('messages.destroy');
             Route::post("bulk-delete", "bulkDelete");
+            Route::post("send-message", "sendHRMessage");
+
+        });
+    });
+    Route::group(['prefix' => 'messages-var'], function () {
+        Route::controller(\App\Http\Controllers\MessageVarController::class)->group(function () {
+            Route::get('/', 'all')->name('messages-var.index');
+            Route::get('/{id}', 'find');
+
+        });
+    });
+
+    Route::group(['prefix' => 'messages-receiver-contacts'], function () {
+        Route::controller(\App\Http\Controllers\MessageReceiverContactController::class)->group(function () {
+            Route::get('/', 'all')->name('messages-receiver-contacts.index');
+            Route::get('logs/{id}', 'logs')->name('messages-receiver-contacts.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('messages-receiver-contacts.create');
+            Route::put('/{id}', 'update')->name('messages-receiver-contacts.update');
+            Route::delete('/{id}', 'delete')->name('messages-receiver-contacts.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+
+        });
+    });
+
+    Route::group(['prefix' => 'message-types'], function () {
+        Route::controller(\App\Http\Controllers\MessageTypeController::class)->group(function () {
+            Route::get('/', 'all')->name('message-types.index');
+            Route::get('logs/{id}', 'logs')->name('message-types.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('message-types.create');
+            Route::put('/{id}', 'update')->name('message-types.update');
+            Route::delete('/{id}', 'delete')->name('message-types.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+
+        });
+    });
+    Route::group(['prefix' => 'Lawyers'], function () {
+        Route::controller(\App\Http\Controllers\LawyerController::class)->group(function () {
+            Route::get('/', 'all')->name('Lawyers.index');
+            Route::get('logs/{id}', 'logs')->name('Lawyers.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('Lawyers.create');
+            Route::put('/{id}', 'update')->name('Lawyers.update');
+            Route::delete('/{id}', 'delete')->name('Lawyers.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+
+        });
+    });
+    Route::group(['prefix' => 'legal-procedures'], function () {
+        Route::controller(\App\Http\Controllers\LegalProceduresController::class)->group(function () {
+            Route::get('/', 'all')->name('legal-procedures.index');
+            Route::get('logs/{id}', 'logs')->name('legal-procedures.logs');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('legal-procedures.create');
+            Route::put('/{id}', 'update')->name('legal-procedures.update');
+            Route::delete('/{id}', 'delete')->name('legal-procedures.destroy');
+            Route::post("bulk-delete", "bulkDelete");
+
+        });
+    });
+
+    Route::group(['prefix' => 'filter-calender'], function () {
+        Route::controller(\App\Http\Controllers\FilterCalenderController::class)->group(function () {
+            Route::get('/get-rooms-floors', 'getRoomsByFloors');
+            Route::post('/', 'getRoomsCalender');
+            Route::post('/get-rooms-calender-filter', 'getRoomsCalenderFilter');
         });
     });
 
     Route::group(['prefix' => 'statuses'], function () {
         Route::controller(\App\Http\Controllers\Status\StatusController::class)->group(function () {
             Route::get('/get-drop-down', 'getDropDown')->name('statuses.getDropDown');
+            Route::get('/get-drop-down-calender', 'getDropDownCalender')->name('statuses.getDropDownCalender');
 
             Route::get('/', 'all')->name('statuses.index');
             Route::get('logs/{id}', 'logs')->name('statuses.logs');
@@ -469,7 +535,6 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::post("bulk-delete", "bulkDelete");
         });
     });
-
 
     Route::group(['prefix' => 'attendant'], function () {
         Route::controller(\App\Http\Controllers\AttendantController::class)->group(function () {
@@ -738,7 +803,11 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'document-headers'], function () {
         Route::controller(\App\Http\Controllers\DocumentHeader\DocumentHeaderController::class)->group(function () {
+            Route::get('createDailyCheckInCustomer', 'createDailyCheckInCustomer');
             Route::get("check-booking", "checkBooking");
+            Route::get("customer-room", "getCustomerRoom");
+            Route::get("check-in-customer", "getCheckInCustomer");
+            Route::get('check-out-print/{id}', 'getCheckOutPrint');
             Route::get('logs/{id}', 'logs')->name('document-headers.logs');
             Route::get('all-document-header', 'allDocumentHeader');
             Route::get('check-date', 'checkDateModelFinancialYear');
@@ -749,7 +818,9 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::put('/{id}', 'update')->name('document-headers.update');
             Route::delete('/{id}', 'delete')->name('document-headers.destroy');
             Route::post("bulk-delete", "bulkDelete");
+            Route::post("update-check-in-customer", "updateCheckInCustomer");
             Route::get('document-customer/{id}', 'getDocumentsCustomer');
+            Route::post('create-daily-invoice-online', 'createDailyInvoiceOnline');
         });
     });
 
@@ -924,6 +995,7 @@ Route::get('serial/branch', [SerialController::class, 'getSerialByBranchId']);
 Route::resource('branches', BranchController::class)->except('create', 'edit');
 Route::resource('serials', SerialController::class)->except('create', 'edit');
 Route::get('cities/get-drop-down', [CityController::class, 'getDropDown']);
+
 Route::resource('cities', CityController::class)->except('create', 'edit');
 Route::get('cities/logs/{id}', [CityController::class, 'logs']);
 Route::post('cities/bulk-delete', [CityController::class, 'bulkDelete']);
@@ -982,4 +1054,105 @@ Route::group(['prefix' => 'backups'], function () {
         Route::post('/', 'create')->name('backups.create');
     });
 });
+
+Route::group(['prefix' => 'client-types'], function () {
+    Route::controller(\App\Http\Controllers\ClientType\ClientTypeController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
+
+        Route::get('/', 'all')->name('client-types.index');
+        Route::get('logs/{id}', 'logs')->name('client-types.logs');
+    });
+});
+
+Route::group(['prefix' => 'document-module-type'], function () {
+    Route::controller(\App\Http\Controllers\DocumentModuleType\DocumentModuleTypeController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
+        Route::get('/get-drop-down-model', 'getDropDawnModel');
+        Route::get('/', 'all')->name('document-module-type.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-module-type.create');
+        Route::put('/{id}', 'update')->name('document-module-type.update');
+        Route::delete('/{id}', 'delete')->name('document-module-type.destroy');
+        Route::get('logs/{id}', 'logs')->name('document-module-type.logs');
+        Route::post("bulk-delete", "bulkDelete");
+
+    });
+});
+
+Route::group(['prefix' => 'break-settlements'], function () {
+    Route::controller(\App\Http\Controllers\BreakSettlement\BreakSettlementController::class)->group(function () {
+        Route::get('/', 'all')->name('break-settlements.index');
+        Route::get('logs/{id}', 'logs')->name('break-settlements.logs');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('break-settlements.create');
+        Route::put('/{id}', 'update')->name('break-settlements.update');
+        Route::delete('/{id}', 'delete')->name('break-settlements.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'document-company-module-status'], function () {
+    Route::controller(\App\Http\Controllers\DocumentCompanyModuleStatus\DocumentCompanyModuleStatusController::class)->group(function () {
+        Route::get('/', 'all')->name('document-company-module-status.index');
+        Route::get('logs/{id}', 'logs')->name('document-company-module-status.logs');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('document-company-module-status.create');
+        Route::put('/{id}', 'update')->name('document-company-module-status.update');
+        Route::delete('/{id}', 'delete')->name('document-company-module-status.destroy');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'general-accounts'], function () {
+    Route::controller(\App\Http\Controllers\GlChartController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
+        Route::get('/', 'all')->name('general-accounts.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('general-accounts.create');
+        Route::put('/{id}', 'update')->name('general-accounts.update');
+        Route::delete('/{id}', 'delete')->name('general-accounts.destroy');
+        Route::get('logs/{id}', 'logs')->name('general-accounts.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+});
+
+Route::group(['prefix' => 'general-main-cost-centers'], function () {
+    Route::controller(\App\Http\Controllers\GeneralMainCostCentersController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
+        Route::get('/', 'all')->name('general-main-cost-centers.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('general-main-cost-centers.create');
+        Route::put('/{id}', 'update')->name('general-main-cost-centers.update');
+        Route::delete('/{id}', 'delete')->name('general-main-cost-centers.destroy');
+        Route::get('logs/{id}', 'logs')->name('general-main-cost-centers.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+
+});
+
+
+Route::group(['prefix' => 'excel-filter'], function () {
+    Route::controller(\App\Http\Controllers\ExcelFilterController::class)->group(function () {
+        Route::get('/numeric', 'getNumericFilterTypes');
+        Route::get('/date', 'getDateFilterTypes');
+        Route::get('/text', 'getTextFilterTypes');
+    });
+
+});
+
+Route::group(['prefix' => 'contract-template'], function () {
+    Route::controller(\App\Http\Controllers\ContractTemplateController::class)->group(function () {
+        Route::get('/get-drop-down', 'getDropDown');
+        Route::get('/', 'all')->name('contract-template.index');
+        Route::get('/{id}', 'find');
+        Route::post('/', 'create')->name('contract-template.create');
+        Route::put('/{id}', 'update')->name('contract-template.update');
+        Route::delete('/{id}', 'delete')->name('contract-template.destroy');
+        Route::get('logs/{id}', 'logs')->name('contract-template.logs');
+        Route::post("bulk-delete", "bulkDelete");
+    });
+
+});
+    
+
 

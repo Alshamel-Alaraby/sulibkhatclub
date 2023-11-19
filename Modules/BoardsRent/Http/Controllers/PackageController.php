@@ -32,13 +32,12 @@ class PackageController extends Controller
     {
         $model = $this->model->find($id);
 
-
         return responseJson(200, 'success', new RelationBRentPackagePanelResourceResource($model));
     }
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

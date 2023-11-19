@@ -9,7 +9,7 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import adminApi from "../../../../api/adminAxios";
 import Swal from "sweetalert2";
 import {dynamicSortString} from "../../../../helper/tableSort";
-import PrintInvoice from "../print-invoice";
+import PrintInvoice from "../print/print-general-item-invoice";
 import FinancialDetails from "./financial-details";
 import transactionBreak from "../../../create/receivablePayment/transactionBreak/transactionBreak";
 
@@ -49,6 +49,7 @@ export default {
             financial_years_validate:true,
             customer_sub_category: "",
             customer_data_edit: "",
+            customer_data_create: "",
             openingBreak:'',
             debounce: {},
             customers: [],
@@ -69,6 +70,7 @@ export default {
             isLoader: false,
             create: {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: null,
                 reason:'',
                 branch_id: null,
@@ -102,6 +104,7 @@ export default {
                     sell_method_id: null,
                     sell_method_discount: 0,
                     note:'',
+                    package_note:'',
                     break_downs: []
                 }]
             },
@@ -116,7 +119,7 @@ export default {
             printLoading: true,
             date: new Date(),
             printObj: {
-                id: "printReservation",
+                id: "printPanelInvoice",
             },
             faces: ['A','B','Multi','One-Face'],
             cities: [{cities: []}],
@@ -131,6 +134,7 @@ export default {
             current_page_pans: [1],
             current_page_pans_packs: [1],
             CheckAllPanels: [[]],
+            dataOfRow:''
         };
     },
     validations: {
@@ -168,9 +172,10 @@ export default {
                     price_per_uint: {required, minValue: minValue(0)},
                     total: {required},
                     is_stripe: {required},
-                    sell_method_id: {required},
+                    sell_method_id: {},
                     sell_method_discount: {},
                     note: {},
+                    package_note: {},
                     break_downs: {}
                 }
             }
@@ -181,14 +186,15 @@ export default {
         this.$store.dispatch('locationIp/getIp');
     },
     methods: {
-        resetModalCreateOrUpdate()
+       async resetModalCreateOrUpdate()
         {
             this.relatedDocuments = this.document.document_relateds;
             if (this.dataRow)
             {
-                 this.resetModalEdit(this.dataRow.id);
+               await this.getDataRow();
+               await this.resetModalEdit(this.dataRow.id);
             }else{
-                 this.resetModal();
+                await this.resetModal();
             }
         },
         resetModalHiddenCreateOrUpdate ()
@@ -249,6 +255,7 @@ export default {
                 sell_method_id: null,
                 sell_method_discount: 0,
                 note: '',
+                package_note: '',
                 break_downs: []
             });
             this.changeValue();
@@ -279,10 +286,12 @@ export default {
         {
             this.customer_sub_category = '';
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.serial_number = "";
             this.financial_years_validate = true;
             this.create = {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: parseInt(this.document.need_approve) == 0 ? 5 : 1,
                 reason:'',
                 branch_id: null,
@@ -316,6 +325,7 @@ export default {
                     sell_method_id: null,
                     sell_method_discount: 0,
                     note: '',
+                    package_note: '',
                     break_downs: []
                 }]
             };
@@ -334,7 +344,7 @@ export default {
         /**
          *  hidden Modal (create)
          */
-         resetModal() {
+         async resetModal() {
             this.date = new Date();
             this.locations = [{city_id: null, avenue_id: null, street_id: null, face: '', code: ''}];
             this.cities= [{cities: []}];
@@ -631,7 +641,7 @@ export default {
          getSalesmen() {
             this.isLoader = true;
              adminApi
-                .get(`/employees?is_salesman=1&customer_handel=1`)
+                .get(`/employees/get-drop-down?is_salesman=1&customer_handel=1`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -664,7 +674,17 @@ export default {
                     this.customers = l;
                     if (this.customer_data_edit)
                     {
-                        this.customers.push(this.customer_data_edit);
+                        if (!this.customers.find((e) => e.id == this.customer_data_edit.id))
+                        {
+                            this.customers.push(this.customer_data_edit);
+                        }
+                    }
+                    if (this.customer_data_create)
+                    {
+                        if (!this.customers.find((e) => e.id == this.customer_data_create.id))
+                        {
+                            this.customers.push(this.customer_data_create);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -681,6 +701,7 @@ export default {
             if (this.create.customer_id&&this.create.employee_id)
             {
                 this.customer_sub_category=this.customers.find((e) => e.id == this.create.customer_id) ? this.customers.find((e) => e.id == this.create.customer_id).customer_sub_category.name :'';
+                this.customer_data_create = this.customers.find((e) => e.id == this.create.customer_id);
                  this.getTaskNumber(this.create.customer_id,this.create.employee_id);
             }
         },
@@ -928,11 +949,13 @@ export default {
         /**
          *   show Modal (edit)
          */
-         resetModalEdit(id) {
+        async resetModalEdit(id) {
             this.customer_sub_category = '';
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.isLoader = true;
             this.financial_years_validate = true;
+
             if (this.checkDocumentNeedApprove()) {
                  this.getStatus();
             }
@@ -959,7 +982,7 @@ export default {
             this.current_page_pans = [];
             this.current_page_pans_packs = [];
             this.CheckAllPanels = [];
-            let reservation = this.dataRow;
+            let reservation =this.dataOfRow;
             this.customer_data_edit = reservation.customer;
              this.getCustomers(reservation.employee_id);
             this.date = new Date(reservation.date);
@@ -969,14 +992,12 @@ export default {
             this.create.branch_id = reservation.branch_id;
             this.create.date = reservation.date;
             this.create.related_document_id = reservation.related_document_id;
+            this.create.document_module_type_id= this.document?this.document.document_module_type_id:null;
             if(reservation.related_document_id)
             {
                  this.handelRelatedDocument();
             }
-            if(reservation.document_number)
-            {
-                this.relatedDocumentNumbers.push(reservation.document_number);
-            }
+
             this.create.sell_method_id = reservation.sell_method_id;
             this.create.id = reservation.id;
             this.create.customer_id = reservation.customer_id;
@@ -992,9 +1013,14 @@ export default {
             this.create.related_document_number = reservation.related_document_number;
             this.create.related_document_prefix = reservation.related_document_prefix;
             this.create.task_id = reservation.task_id;
-            this.customer_sub_category=reservation.customer.customer_sub_category.name;
+            this.customer_sub_category=reservation.customer?reservation.customer.customer_sub_category?reservation.customer.customer_sub_category.name:'':'';
             this.create.header_details = [];
-            reservation.header_details.forEach((e,index) => {
+            if(reservation.document_number)
+            {
+              this.relatedDocumentNumbers.push(reservation.document_number);
+            }
+            let header_details =  reservation.header_details?reservation.header_details:[];
+            header_details.forEach((e,index) => {
                 this.locations.push({city_id: null, avenue_id: null, street_id: null, face: '', code: ''});
                 this.faceNumbers.push({'A': 0,'B': 0,'Multi': 0,'One-Face': 0});
                 this.cities.push({cities: []});
@@ -1016,23 +1042,26 @@ export default {
                         this.CheckAllPanels[index].push(el.panel.id);
                     });
                 }
-                this.create.header_details.push({
-                    category_id: e.category_id,
-                    governorate_id: e.governorate_id,
-                    package_id: e.package_id,
-                    date_from: this.formatDate(e.date_from),
-                    rent_days:e.rent_days,
-                    date_to: this.formatDate(e.date_to),
-                    unit_type: e.unit_type,
-                    quantity: e.quantity,
-                    price_per_uint: e.price_per_uint,
-                    total: e.total,
-                    is_stripe: e.is_stripe,
-                    sell_method_id: e.sell_method_id,
-                    sell_method_discount: e.sell_method_discount,
-                    note: e.note,
-                    break_downs: []
-                });
+                setTimeout( () => {
+                    this.create.header_details.push({
+                        category_id: e.category_id,
+                        governorate_id: e.governorate_id,
+                        package_id: e.package_id,
+                        date_from: this.formatDate(e.date_from),
+                        rent_days:e.rent_days,
+                        date_to: this.formatDate(e.date_to),
+                        unit_type: e.unit_type,
+                        quantity: e.quantity,
+                        price_per_uint: e.price_per_uint,
+                        total: e.total,
+                        is_stripe: e.is_stripe,
+                        sell_method_id: e.sell_method_id,
+                        sell_method_discount: e.sell_method_discount,
+                        note: e.note,
+                        package_note:parseInt(e.is_stripe) == 1 ? this.packages.find(el => el.id == e.package_id)?this.packages.find(el => el.id == e.package_id).note:'':'',
+                        break_downs: []
+                    });
+                },10);
 
                 this.paginate(1,index);
                 this.changeValuePanel(index);
@@ -1081,6 +1110,25 @@ export default {
                 unrelaized_revenue: 0,
                 header_details: [],
             };
+        },
+        async getDataRow(){
+          this.isLoader = true;
+         await adminApi
+              .get(`/document-headers/${this.id}`)
+              .then((res) => {
+                let l = res.data.data;
+                this.dataOfRow = l;
+              })
+              .catch((err) => {
+                Swal.fire({
+                  icon: "error",
+                  title: `${this.$t("general.Error")}`,
+                  text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                });
+              })
+              .finally(() => {
+                this.isLoader = false;
+              });
         },
         /**
          *  start  dynamicSortString
@@ -1155,6 +1203,9 @@ export default {
         showPackageModal(index) {
              if (this.create.header_details[index].package_id) {
                 this.create.header_details[index].price_per_uint = this.packages.find(el => el.id == this.create.header_details[index].package_id).price;
+                this.create.header_details[index].package_note = this.packages.find(el => el.id == this.create.header_details[index].package_id).note;
+                this.create.header_details[index].category_id = this.packages.find(el => el.id == this.create.header_details[index].package_id).category_id;
+                this.create.header_details[index].governorate_id = this.packages.find(el => el.id == this.create.header_details[index].package_id).governorate_id;
                 this.totalCreate(index);
             }
         },
@@ -1267,7 +1318,8 @@ export default {
                         let shortYear =new Date(date).getFullYear();
                         let twoDigitYear = shortYear.toString().substr(-2);
                         let branch = this.branches.find((row) => branch_id == row.id);
-                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${branch.serials[0].perfix}`;
+                        let serial = branch.serials.find((row) => this.document_id == row.document_id);
+                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${serial.perfix}`;
                     }
                 })
                 .catch((err) => {
@@ -1296,6 +1348,10 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.relatedDocumentNumbers = l;
+                    if (this.dataOfRow)
+                    {
+                      this.relatedDocumentNumbers.push(this.dataOfRow.document_number);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -1323,6 +1379,7 @@ export default {
             let relatedDocument = this.relatedDocumentNumbers.find(el => el.id == related_document_number);
             this.create.header_details = [];
             this.customer_data_edit = relatedDocument.customer;
+            this.customer_data_create = relatedDocument.customer;
             this.getCustomers(relatedDocument.employee_id);
             this.locations = [];
             this.cities = [];
@@ -1391,6 +1448,7 @@ export default {
                     sell_method_id: e.sell_method_id,
                     sell_method_discount: e.sell_method_discount,
                     note: e.note,
+                    package_note:parseInt(e.is_stripe) == 1 ? this.packages.find(el => el.id == e.package_id)?this.packages.find(el => el.id == e.package_id).note:'':'',
                     break_downs: []
                 });
                 if (parseInt(e.is_stripe) == 0)
@@ -1469,11 +1527,11 @@ export default {
 
 <template>
     <div>
-        <div v-if="dataRow" style="display:none;">
-            <PrintInvoice :document_data="dataRow"/>
+        <div v-if="create.id" style="display:none;">
+            <PrintInvoice :id="'PrintGeneralInvoice'+'-'+create.id" :document_row_id="create.id"/>
         </div>
-        <div v-if="dataRow" style="display:none;">
-            <FinancialDetails :id="id" :document="document" :data="dataRow" :categories="categories" :governorates="governorates" :packages="packages" />
+        <div v-if="dataOfRow" style="display:none;">
+            <FinancialDetails :id="id" :document="document" :data="dataOfRow" :categories="categories" :governorates="governorates" :packages="packages" />
         </div>
         <transactionBreak :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :opening="openingBreak"/>
         <!--  create   -->
@@ -1530,11 +1588,11 @@ export default {
                             {{ $t("general.FinancialDetails") }}
                             <i class="fas fa-dollar-sign"></i>
                         </b-button>
-                        <b-button v-if="!dataRow" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
+                        <b-button v-if="create.id" @click="$bvModal.show(`${'PrintGeneralInvoice'+'-'+create.id}`)" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
                             {{ $t("general.print") }}
                             <i class="fe-printer"></i>
                         </b-button>
-                        <b-button v-else v-print="'#printReservation'" variant="primary" type="button" class="font-weight-bold px-2 mx-1">
+                        <b-button v-else variant="primary" disabled type="button" class="font-weight-bold px-2 mx-1">
                             {{ $t("general.print") }}
                             <i class="fe-printer"></i>
                         </b-button>
@@ -1988,6 +2046,9 @@ export default {
                                                             </div>
                                                             <!-- end Pagination -->
                                                             <table class="table table-borderless table-hover table-centered m-0">
+                                                              <!--       start loader       -->
+                                                              <loader size="large" v-if="isLoader" />
+                                                              <!--       end loader       -->
                                                                 <thead>
                                                                 <tr>
                                                                     <th>
@@ -2130,6 +2191,9 @@ export default {
                                                             <!-- end Pagination -->
 
                                                             <table class="table table-borderless table-hover table-centered">
+                                                              <!--       start loader       -->
+                                                              <loader size="large" v-if="isLoader" />
+                                                              <!--       end loader       -->
                                                                 <thead>
                                                                 <tr>
                                                                     <th>
@@ -2553,6 +2617,23 @@ export default {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-3" v-if="item.is_stripe == 1">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">{{$t('general.package_note')}}</label>
+                                                            <div class="col-sm-10">
+                                                                <input
+                                                                    :disabled="true"
+                                                                    v-model="$v.create.header_details.$each[gIndex].package_note.$model"
+                                                                    class="form-control"
+                                                                    type="text"
+                                                                    :class="{
+                                                                        'is-invalid': $v.create.header_details.$each[gIndex].package_note.$error || errors.package_note,
+                                                                        'is-valid': !$v.create.header_details.$each[gIndex].package_note.$invalid && !errors.package_note,
+                                                                    }"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row border-b-2 brc-default-l2"></div>
@@ -2568,7 +2649,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.total_invoice ? '0.00' : create.total_invoice }}
+                                                                {{ !create.total_invoice ? '0.00' : parseFloat(create.total_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -2578,7 +2659,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.invoice_discount ? '0.00' : create.invoice_discount }}
+                                                                {{ !create.invoice_discount ? '0.00' : parseFloat(create.invoice_discount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -2588,7 +2669,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.net_invoice ? '0.00' : create.net_invoice }}
+                                                                {{ !create.net_invoice ? '0.00' : parseFloat(create.net_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -2598,7 +2679,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.sell_method_discount ? '0.00' : create.sell_method_discount }}
+                                                                {{ !create.sell_method_discount ? '0.00' : parseFloat(create.sell_method_discount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -2608,7 +2689,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.unrelaized_revenue ? '0.00' : create.unrelaized_revenue }}
+                                                                {{ !create.unrelaized_revenue ? '0.00' : parseFloat(create.unrelaized_revenue).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>

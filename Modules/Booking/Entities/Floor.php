@@ -12,8 +12,18 @@ class Floor extends Model
     use HasFactory, LogTrait;
 
     protected $table = 'booking_floors';
-    
+
     protected $guarded = ['id'];
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class, 'booking_floor_id');
+    }
+    public function hasChildren()
+    {
+        return$this->units()->count() > 0 ;
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

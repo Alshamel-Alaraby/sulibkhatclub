@@ -35,7 +35,7 @@ class DocumentRepository implements DocumentInterface
             cacheForget("archDocument");
             return $this->model->create($request->all());
 
-            
+
         });
     }
 
@@ -68,5 +68,9 @@ class DocumentRepository implements DocumentInterface
         foreach ($keys as $key) {
             cacheForget($key);
         }
+    }
+
+    public function getName($request){
+
     }
 }

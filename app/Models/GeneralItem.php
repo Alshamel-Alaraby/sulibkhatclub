@@ -21,6 +21,19 @@ class GeneralItem extends Model
     {
         return $this->belongsTo(Unit::class, 'unit_id');
     }
+
+
+    public function documentHeaderDetails()
+    {
+        return $this->hasMany(DocumentHeaderDetail::class, 'item_id');
+    }
+
+
+    public function hasChildren()
+    {
+        return$this->documentHeaderDetails()->count() > 0 ;
+    }
+
    public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_documents_approve_personal', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_id');
-            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('document_id')->index();
+            $table->unsignedBigInteger('employee_id')->index();
             $table->timestamps();
         });
     }

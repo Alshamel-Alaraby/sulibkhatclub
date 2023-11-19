@@ -41,6 +41,7 @@ class BreakDownResource extends JsonResource
             "terms"=>$this->terms,
             "invoice_id"=>$this->invoice_id,
             "amount_status"=>$this->amount_status,
+            "client_type_id"=>$this->client_type_id,
             "document"=>$this->document,
 
 

@@ -7,6 +7,8 @@ use App\Http\Requests\DocumentHeader\DocumentHeaderRequest;
 use App\Http\Requests\DocumentStatuse\DocumentStatuseRequest;
 use App\Http\Resources\DocumentHeader\AllDocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\DocumentHeaderResource;
+use App\Http\Resources\DocumentHeader\FindDocumentHeaderResource;
+use App\Http\Resources\DocumentHeader\NewDocumentHeaderResource;
 use App\Http\Resources\DocumentStatuse\DocumentStatuseResource;
 use App\Repositories\DocumentHeader\DocumentHeaderInterface;
 use Illuminate\Http\Request;
@@ -26,14 +28,14 @@ class DocumentHeaderController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        return responseJson(200, 'success', new DocumentHeaderResource($model));
+        return responseJson(200, 'success', new FindDocumentHeaderResource($model));
     }
 
 
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
-        return responseJson(200, 'success', DocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', NewDocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function allDocumentHeader(Request $request)
@@ -134,13 +136,46 @@ class DocumentHeaderController extends Controller
     {
         $models = $this->modelInterface->checkBooking();
         return $models;
+    }
+
+    public function getDocumentsCustomer($id,Request $request)
+    {
+        $data = $this->modelInterface->getDocumentsCustomer($id,$request);
+        return $data;
+    }
+
+    public function getCheckOutPrint($id)
+    {
+        return $data = $this->modelInterface->checkOutPrint($id);
+    }
+
+    public function getCustomerRoom(Request $request)
+    {
+        return $data = $this->modelInterface->customerRoom($request);
+    }
+
+    public function getCheckInCustomer()
+    {
+        return $data = $this->modelInterface->checkInCustomer();
 
     }
 
-    public function getDocumentsCustomer($id)
+    public function createDailyCheckInCustomer()
     {
-        $data = $this->modelInterface->getDocumentsCustomer($id);
-        return $data;
+        return $data = $this->modelInterface->createDailyCheckInCustomer();
+
+    }
+
+    public function updateCheckInCustomer(Request $request)
+    {
+        return $data = $this->modelInterface->updateCheckInCustomer($request);
+
+    }
+
+     public function createDailyInvoiceOnline(Request $request)
+    {
+        return $data = $this->modelInterface->createDailyInvoiceOnline($request);
+
     }
 
 }

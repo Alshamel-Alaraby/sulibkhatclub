@@ -13,21 +13,15 @@ class Depertment extends Model
 
     protected $table = 'general_departments';
 
-    protected $fillable = [
-        'id',
-        'name',
-        'name_e',
-        'supervisors',
-        'attentions',
-        'attentions',
-        'company_id',
-    ];
+    protected $guarded = ['id'];
 
+    /*
     public function scopeData($query)
     {
         return $query->select('id', 'name', 'name_e', 'supervisors', 'attentions');
     }
-
+    */
+    
     public function employees()
     {
         return $this->hasMany(Employee::class, 'department_id');
@@ -44,7 +38,6 @@ class Depertment extends Model
         return $Children;
     }
 
-    protected $guarded = ['id'];
 
     public function getActivitylogOptions(): LogOptions
     {

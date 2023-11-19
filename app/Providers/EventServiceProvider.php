@@ -7,6 +7,12 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
+use App\Models\MessageReceiverContact;
+use App\Observers\MessageReceiverContactObserver;
+
+use Modules\HR\Entities\Fingerprint;
+use App\Observers\HrFingerprintsObserver;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -27,7 +33,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        MessageReceiverContact::observe(MessageReceiverContactObserver::class);
+        Fingerprint::observe(HrFingerprintsObserver::class);
+
     }
 
     /**
@@ -37,6 +45,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-        return false;
+        return true;
     }
 }

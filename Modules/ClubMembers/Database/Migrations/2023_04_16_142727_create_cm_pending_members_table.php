@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_e');
             $table->string('status')->default('pending');
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

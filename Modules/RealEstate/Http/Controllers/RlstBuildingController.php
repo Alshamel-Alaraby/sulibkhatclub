@@ -2,7 +2,6 @@
 
 namespace Modules\RealEstate\Http\Controllers;
 
-use App\Http\Resources\AllDropListResource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +20,12 @@ class RlstBuildingController extends Controller
 
     public function find($id)
     {
+
+        //return $this->model->data()->find($id)->policies()->distinct()->get();
+
+
         $model = $this->model->data()->find($id);
+
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -45,12 +49,15 @@ class RlstBuildingController extends Controller
     public function create(RlstBuildingRequest $request)
     {
         return DB::transaction(function () use ($request) {
-            $model = $this->model->create($request->validated());
+            $requestData = $request->validated();
+            $requestData['governorate_id'] = $request->governorrate_id;
+            $model = $this->model->create($requestData);
             $model->refresh();
             if ($request->video_link) {
                 $model->video()->create([
                     'link' => $request->video_link,
                 ]);
+
             }
             if ($request->media) {
                 foreach ($request->media as $media) {
@@ -129,37 +136,6 @@ class RlstBuildingController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-    // public function delete($id)
-    // {
-    //     $model = $this->model->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, 'not found');
-    //     }
-
-    //     if ($model->hasChildren()) {
-    //         return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-    //     }
-    //     $model->delete();
-    //     return responseJson(200, 'deleted');
-    // }
-
-    // public function bulkDelete(Request $request)
-    // {
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->model->find($id);
-    //         $arr = [];
-    //         if ($model->hasChildren()) {
-    //             $arr[] = $id;
-    //             continue;
-    //         }
-    //         $this->model->delete($id);
-    //     }
-    //     if (count($arr) > 0) {
-    //         return responseJson(400, __('some items has relation can\'t delete'));
-    //     }
-    //     return responseJson(200, __('Done'));
-    // }
-
     public function delete($id)
     {
         $model = $this->model->find($id);
@@ -168,6 +144,8 @@ class RlstBuildingController extends Controller
         }
 
         $relationsWithChildren = $model->hasChildren();
+
+        //return $relationsWithChildren;
 
         if (!empty($relationsWithChildren)) {
             $errorMessages = [];
@@ -180,9 +158,10 @@ class RlstBuildingController extends Controller
             return responseJson(400, $errorMessages);
         }
 
-        $this->model->delete($id);
+        $model->deleted_at = now();
+        $model->save();
 
-        return responseJson(200, 'success');
+        return responseJson(200, 'deleted');
     }
 
     public function bulkDelete(Request $request)
@@ -201,7 +180,8 @@ class RlstBuildingController extends Controller
                 continue;
             }
 
-            $this->model->delete($id);
+            $model->deleted_at = now();
+            $model->save();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -235,15 +215,20 @@ class RlstBuildingController extends Controller
 
     public function getDropDown(Request $request)
     {
-        $models = $this->model->select('id', 'name', 'name_e');
-
-        if ($request->per_page) {
-            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
-        } else {
-            $models = ['data' => $models->get(), 'paginate' => false];
+        $models = $this->model->select('id', 'name', 'name_e','country_id','city_id');
+        if($request->country_ids){
+            $models->whereIn('country_id',$request->country_ids);
         }
 
-        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        if($request->city_ids){
+            $models->whereIn('city_id',$request->city_ids);
+        }
+
+//        if($request->governorate_ids){
+//            $models->whereIn('governorate_id',$request->governorate_ids);
+//        }
+
+        return responseJson(200, 'success', $models->get());
     }
 
 }

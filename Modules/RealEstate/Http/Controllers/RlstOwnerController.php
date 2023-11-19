@@ -19,7 +19,13 @@ class RlstOwnerController extends Controller
 
     public function find($id)
     {
+
+        //return $this->model->data()->find($id);
+        //return $this->model->data()->find($id)->wallets()->pluck('rlst_wallet_owners.wallet_id');
+        //return $this->model->data()->find($id)->distinct()->buildings();
+
         $model = $this->model->data()->find($id);
+
         if (!$model) {
             return responseJson(404, 'not found');
         }
@@ -27,9 +33,13 @@ class RlstOwnerController extends Controller
         return responseJson(200, 'success', new RlstOwnerResource($model));
     }
 
-    public function all(AllRequest $request)
+    public function all(Request $request)
     {
+        
         $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        
+        
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -42,8 +52,10 @@ class RlstOwnerController extends Controller
 
     public function create(RlstOwnerRequest $request)
     {
+
         $model = $this->model->create($request->validated());
-        $model->refresh();
+        return $model;
+
 
         return responseJson(200, 'created', new RlstOwnerResource($model));
 
@@ -73,29 +85,20 @@ class RlstOwnerController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-    // public function delete($id)
-    // {
-    //     $model = $this->model->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, 'not found');
-    //     }
-    //     if ($model->wallets()->count() > 0) {
-    //         return responseJson(400, 'this owner has wallet');
-    //     }
-    //     $model->delete();
-    //     return responseJson(200, 'deleted');
-    // }
-
     public function delete($id)
     {
         $model = $this->model->find($id);
+
         if (!$model) {
-            return responseJson(404, __('message.data not found'));
+            return responseJson(404, 'not found');
         }
+
 
         $relationsWithChildren = $model->hasChildren();
 
-        if (!empty($relationsWithChildren)) {
+        //return $relationsWithChildren;
+
+        if (sizeof($relationsWithChildren) > 0) {
             $errorMessages = [];
             foreach ($relationsWithChildren as $relation) {
                 $relationName = $this->getRelationDisplayName($relation['relation']);
@@ -106,36 +109,13 @@ class RlstOwnerController extends Controller
             return responseJson(400, $errorMessages);
         }
 
-        $this->model->delete($id);
+        $model->deleted_at = now();
+        $model->save();
 
         return responseJson(200, 'success');
     }
 
-    public function ownerWalletPercentage($wallet_id, $owner_id)
-    {
-        $model = \Modules\RealEstate\Entities\RlstWalletOwner::where('wallet_id', $wallet_id)->where('owner_id', $owner_id)->first();
-        if (!$model) {
-            return responseJson(404, 'not found');
-        }
-        return responseJson(200, 'success', new \Modules\RealEstate\Transformers\RlstWalletOwnerResource($model));
 
-    }
-
-    // public function bulkDelete()
-    // {
-    //     $ids = request()->ids;
-    //     $models = $this->model->whereIn('id', $ids)->get();
-    //     if ($models->count() != count($ids)) {
-    //         return responseJson(404, 'not found');
-    //     }
-    //     foreach ($models as $model) {
-    //         if ($model->walletOwner()->count() > 0) {
-    //             return responseJson(400, 'this owner has wallet');
-    //         }
-    //     }
-    //     $this->model->whereIn('id', $ids)->delete();
-    //     return responseJson(200, 'deleted');
-    // }
 
     public function bulkDelete(Request $request)
     {
@@ -153,7 +133,9 @@ class RlstOwnerController extends Controller
                 continue;
             }
 
-            $this->model->delete($id);
+            $model->deleted_at = now();
+            $model->save();
+            
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -183,5 +165,23 @@ class RlstOwnerController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function ownerWalletPercentage($wallet_id, $owner_id)
+    {
+        $model = \Modules\RealEstate\Entities\RlstWalletOwner::where('wallet_id', $wallet_id)->where('owner_id', $owner_id)->first();
+        if (!$model) {
+            return responseJson(404, 'not found');
+        }
+        return responseJson(200, 'success', new \Modules\RealEstate\Transformers\RlstWalletOwnerResource($model));
+
+    }
+
+    public function getDropDown()
+    {
+        $models = $this->model->select('id', 'name','name_e')->get();
+
+
+        return responseJson(200, 'success', $models);
     }
 }

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_cities', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('country_id')->nullable()->comment('PK- (from GEN_countries)');
-            $table->unsignedInteger('governorate_id')->nullable()->comment('PK- (from GEN_Governorates)');
+            $table->unsignedInteger('country_id')->index()->nullable()->comment('PK- (from GEN_countries)');
+            $table->unsignedInteger('governorate_id')->index()->nullable()->comment('PK- (from GEN_Governorates)');
             $table->string('name', 100)->nullable()->comment('name arabic')->unique();
             $table->string('name_e', 100)->nullable()->comment('name en')->unique();
             $table->unsignedTinyInteger('is_active')->nullable()->default(0)->comment('1=Active, 0=Not Active');

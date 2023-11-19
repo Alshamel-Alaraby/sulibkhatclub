@@ -24,8 +24,8 @@ class CategoriesItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_item_id' => 'sometimes|exists:rlst_category_item,id',
-            'item_id' => 'sometimes|exists:rlst_items,id',
+            'category_item_id' => 'sometimes|exists:rlst_category_item,id,deleted_at,NULL',
+            'item_id' => 'sometimes|exists:rlst_items,id,deleted_at,NULL',
             "company_id"=>'nullable',
         ];
     }

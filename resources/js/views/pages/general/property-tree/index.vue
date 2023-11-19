@@ -51,7 +51,7 @@ export default {
             },
             {
                 isFilter: false,isSet: true,trans:"required",isV: 'required',
-                type: 'boolean',setting: {"required":true},isSetting: true
+                type: 'boolean1',setting: {"required":true},isSetting: true
             },
         ],
         sendSetting: {},

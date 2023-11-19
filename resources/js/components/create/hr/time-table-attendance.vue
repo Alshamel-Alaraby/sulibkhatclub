@@ -422,13 +422,13 @@ export default {
             },
             time_details: [],
             week: [
-                {id:1,name:'السبت',name_e:'Saturday'},
-                {id:2,name:'الاحد',name_e:'Sundday'},
-                {id:3,name:'الاثنين',name_e:'Monday'},
-                {id:4,name:'الثلاثاء',name_e:'Tuesday'},
-                {id:5,name:'الاربعاء',name_e:'Wednesday'},
-                {id:6,name:'الخميس',name_e:'Thursday'},
-                {id:7,name:'الجمعه',name_e:'Friday'},
+                {id:6,name:'السبت',name_e:'Saturday'},
+                {id:7,name:'الاحد',name_e:'Sundday'},
+                {id:1,name:'الاثنين',name_e:'Monday'},
+                {id:2,name:'الثلاثاء',name_e:'Tuesday'},
+                {id:3,name:'الاربعاء',name_e:'Wednesday'},
+                {id:4,name:'الخميس',name_e:'Thursday'},
+                {id:5,name:'الجمعه',name_e:'Friday'},
             ],
             errors: {},
             is_disabled: false,
@@ -825,7 +825,7 @@ export default {
     },
 };
 </script>
-<style>
+<style scoped>
 form {
     position: relative;
 }

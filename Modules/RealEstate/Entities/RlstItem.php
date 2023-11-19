@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
+use Modules\RealEstate\Entities\RlstUnit;
+use Modules\RealEstate\Entities\RlstCategoryItem;
+
 
 class RlstItem extends Model implements HasMedia
 {
@@ -19,6 +22,7 @@ class RlstItem extends Model implements HasMedia
     public function scopeData($query)
     {
         return $query
+            /*
             ->select(
                 "id",
                 "name",
@@ -26,14 +30,15 @@ class RlstItem extends Model implements HasMedia
                 "code_number",
                 "type",
                 "price",
-                "unit_id"
-            )->with('units:id,name,name_e', 'media', 'categories');
+            )
+            */
+            ->with('unit:id,name,name_e', 'media', 'categories:id,name,name_e');
     }
 
     // relations
-    public function units()
+    public function unit()
     {
-        return $this->belongsTo(\App\Models\Unit::class, 'unit_id');
+        return $this->belongsTo(RlstUnit::class, 'unit_id');
     }
 
     // relations

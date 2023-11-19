@@ -21,15 +21,15 @@ export default {
     meta: [{ name: "description", content: "Building Wallet" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(
-  //       vm,
-  //       "Building Wallet",
-  //       "all building-wallet RealState"
-  //     );
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(
+        vm,
+        "Building Wallet",
+        "all building-wallet RealState"
+      );
+    });
+  },
   components: {
     Layout,
     PageHeader,
@@ -68,16 +68,6 @@ export default {
           col1: "name",
           col2: "name_e",
           setting: { wallet_id: true },
-          isSetting: true,
-        },
-
-        {
-          isFilter: false,
-          isSet: true,
-          trans: "building_wallet_bu_ty",
-          isV: "bu_ty",
-          type: "boolean",
-          setting: { bu_ty: true },
           isSetting: true,
         },
       ],
@@ -155,9 +145,15 @@ export default {
               :isCreate="true"
               :isEdit="true"
               :isDelete="true"
-              :permissionCreate="isPermission('create building-wallet RealState')"
-              :permissionUpdate="isPermission('update building-wallet RealState')"
-              :permissionDelete="isPermission('delete building-wallet RealState')"
+              :permissionCreate="
+                isPermission('create building-wallet RealState')
+              "
+              :permissionUpdate="
+                isPermission('update building-wallet RealState')
+              "
+              :permissionDelete="
+                isPermission('delete building-wallet RealState')
+              "
               :isExcl="true"
               :isPrint="true"
               :checkAll="checkAll"
@@ -224,8 +220,12 @@ export default {
                 :tables="tables"
                 :isEdit="true"
                 :isDelete="true"
-                :permissionUpdate="isPermission('update building-wallet RealState')"
-                :permissionDelete="isPermission('delete building-wallet RealState')"
+                :permissionUpdate="
+                  isPermission('update building-wallet RealState')
+                "
+                :permissionDelete="
+                  isPermission('delete building-wallet RealState')
+                "
                 :isVisible="isVisible"
                 :tableSetting="tableSetting"
                 :enabled3="enabled3"

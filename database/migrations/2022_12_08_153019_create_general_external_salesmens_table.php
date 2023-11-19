@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('is_active')->default('active');
             $table->integer('national_id')->nullable();
-            $table->bigInteger('country_id')->nullable();
+            $table->bigInteger('country_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

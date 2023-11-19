@@ -158,6 +158,8 @@ export default {
     this.workFlowTree = this.$store.state.auth.work_flow_trees;
     this.allWorkFlowTree = this.$store.state.auth.allWorkFlow;
     if (selectedParents.value.length) {
+      let is_web = allRoutes.value.find((e) => e.id == selectedParents.value[1]).is_web;
+      this.$store.commit("auth/editIsWeb", is_web);
       this.menuItems = routeModules.value;
     } else {
       this.menuItems = [];
@@ -278,12 +280,15 @@ export default {
       }
       return true;
     },
-    checkUserOrAdminPermission(item = null) {
+    checkUserOrAdminPermission(isUserMenu) {
       if (this.$store.state.auth.type == "user") {
-        return this.$store.state.auth.permissions.includes(item);
+        return isUserMenu;
       }
       return true;
     },
+    checkPermission(name){
+        return this.$store.state.auth.work_flow_trees.includes(name);
+    }
   },
 };
 </script>
@@ -363,14 +368,14 @@ export default {
       <div id="sidebar-menu">
         <!-- Left Menu Start -->
         <ul class="list-unstyled" id="side-menu">
-          <li>
+          <li v-if="$store.state.auth.type == 'admin'">
             <router-link to="/dashboard/company" class="side-nav-link-ref">
               <i class="fas fa-city"></i>
               <span>{{ $t("menuitems.company.text") }}</span>
             </router-link>
           </li>
           <template v-for="(item, i) in menuItems">
-            <li :key="i">
+            <li :key="i" v-if="checkUserOrAdminPermission(item.isUserMenu)">
               <a
                 href="javascript:void(0);"
                 @click="
@@ -399,14 +404,12 @@ export default {
                 id="sidebarTasks"
               >
                 <ul
-                  v-if="checkUserOrAdmin(item.menu_folder.name_e)"
                   class="sub-menu nav-second-level"
                   aria-expanded="false"
                 >
                   <template v-for="(subItem, index) of item.subMenus">
-                    <li :key="index">
+                    <li :key="index" v-if="checkUserOrAdminPermission(subItem.isUserMenu)">
                       <a
-                        v-if="checkUserOrAdmin(subItem.name)"
                         @click="
                           subItem.is_menu_collapsed =
                             subItem.is_menu_collapsed === '0' ||
@@ -426,37 +429,54 @@ export default {
                         }}
                         <span class="menu-arrow"></span>
                       </a>
-
                       <div
                         class="collapse"
                         :class="{ show: subItem.is_menu_collapsed === true }"
                       >
                         <ul
-                          v-if="checkUserOrAdmin(subItem.name)"
                           class="sub-menu"
                           aria-expanded="false"
                         >
-                          <li
-                            v-for="(subSubItem, index) of subItem.screens"
-                            :key="index"
-                          >
-                            <router-link
-                              @click.prevent="isRouteClicked = true"
-                              v-if="checkUserOrAdminPermission(subSubItem.name)"
-                              :to="`/dashboard/${subSubItem.url}`"
-                              class="side-nav-link-ref"
-                            >
-                              {{
-                                $i18n.locale == "ar"
-                                  ? subSubItem.name
-                                  : subSubItem.name_e
-                              }}
-                            </router-link>
-                          </li>
+                            <template v-for="(subSubItem, index) of subItem.screens">
+                                <li
+                                    :key="index"
+                                    v-if="checkPermission(subSubItem.name_e)"
+                                >
+                                      <router-link
+                                          @click.prevent="isRouteClicked = true"
+                                          :to="`/dashboard/${subSubItem.url}`"
+                                          class="side-nav-link-ref"
+                                       >
+                                              {{
+                                              $i18n.locale == "ar"
+                                              ? subSubItem.title
+                                              : subSubItem.title_e
+                                              }}
+                                      </router-link>
+                                </li>
+                           </template>
                         </ul>
                       </div>
                     </li>
                   </template>
+                  <template v-for="(subSubItem, sub) of item.screens">
+                        <li
+                            :key="subSubItem.id"
+                            v-if="checkPermission(subSubItem.name_e)"
+                        >
+                            <router-link
+                                @click.prevent="isRouteClicked = true"
+                                :to="`/dashboard/${subSubItem.url}`"
+                                class="side-nav-link-ref"
+                            >
+                                {{
+                                $i18n.locale == "ar"
+                                ? subSubItem.title
+                                : subSubItem.title_e
+                                }}
+                            </router-link>
+                        </li>
+                    </template>
                 </ul>
               </div>
             </li>

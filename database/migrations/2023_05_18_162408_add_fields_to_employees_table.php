@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('general_employees', function (Blueprint $table) {
-            $table->unsignedBigInteger('job_id')->nullable();
-            $table->unsignedBigInteger('branch_id')->nullable();
+            $table->unsignedBigInteger('job_id')->index()->nullable();
+            $table->unsignedBigInteger('branch_id')->index()->nullable();
             $table->boolean('manage_others')->default(0);
             $table->renameColumn('manger_id', 'manager_id');
         });

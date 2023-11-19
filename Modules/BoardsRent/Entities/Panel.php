@@ -47,6 +47,17 @@ class Panel extends Model implements HasMedia
     ];
     protected $table = "boards_rent_panels";
 
+
+    public function scopeData($query)
+    {
+        return $query
+            ->select('id','name','name_e','description','description_e','price','code','new_code','size','note','face','unit_status_id','category_id','country_id','governorate_id','city_id','avenue_id','street_id','lat','lng','price_year','price_6month','price_3month','price_month','price_2week','is_double_face','is_active','is_multi','company_id')
+            ->with([
+                'unitStatus:id,name,name_e','category:id,name,name_e','country:id,name,name_e','governorate:id,name,name_e',
+                'city:id,name,name_e','avenue:id,name,name_e','street:id,name,name_e',
+            ]);
+    }
+
     protected $casts = [
         'price' => 'array',
     ];

@@ -32,10 +32,12 @@ class RlstOwnerResource extends JsonResource
             "whatsapp" => $this->whatsapp,
             "categories" => $this->categories,
             "attachments" => $this->attachments,
-            "country" => $this->country,
-            "city" => $this->city,
-            "nationality" => $this->nationality,
-            "bank_account" => $this->bankAccount,
+            "country" => $this->whenLoaded('country'),
+            "city" => $this->whenLoaded('city'),
+            "nationality" => $this->whenLoaded('country'),
+            "bank_account" => $this->whenLoaded('bankAccount')->only(['id','bank_id','account_number']),
+            "bank" => $this->bank,
+           
 
         ];
     }

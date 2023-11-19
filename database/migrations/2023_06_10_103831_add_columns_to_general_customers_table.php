@@ -26,9 +26,9 @@ return new class extends Migration
             $table->string('snapchat')->nullable();
             $table->string('twitter')->nullable();
             $table->string('website')->nullable();
-            $table->unsignedInteger('salesman_id')->nullable();
-            $table->unsignedInteger('sector_id')->nullable();
-            $table->unsignedInteger('customer_source_id')->nullable();
+            $table->unsignedInteger('salesman_id')->index()->nullable();
+            $table->unsignedInteger('sector_id')->index()->nullable();
+            $table->unsignedInteger('customer_source_id')->index()->nullable();
 
         });
     }

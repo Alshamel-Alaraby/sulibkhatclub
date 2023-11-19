@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('restart_period_id');
-            $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('restart_period_id')->index();
+            $table->unsignedBigInteger('task_id')->index();
+            $table->unsignedBigInteger('department_id')->index();
             $table->tinyInteger('is_active')->default(false);
             $table->timestamps();
         });

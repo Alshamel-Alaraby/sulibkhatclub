@@ -148,15 +148,18 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Request Type", "all requestTypes Hr");
+            return permissionGuard(vm, "Request Type", "all requestTypes hr");
         });
   },
   methods: {
     isPermission(item) {
-      if (this.$store.state.auth.type == "user") {
-        return this.$store.state.auth.permissions.includes(item);
-      }
-      return true;
+        if (this.$store.state.auth.type == "admin") {
+            return this.$store.state.auth.is_web == 1;
+        }
+        if (this.$store.state.auth.type == "user") {
+            return this.$store.state.auth.permissions.includes(item);
+        }
+        return true;
     },
     arabicValue(txt) {
       this.create.name = arabicValue(txt);

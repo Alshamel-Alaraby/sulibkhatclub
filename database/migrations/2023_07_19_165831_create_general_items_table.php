@@ -20,8 +20,8 @@ return new class extends Migration
             $table->double('price')->nullable();
             $table->string('code_number')->nullable();
             $table->string('type')->default('service');
-            $table->foreignId('unit_id')->nullable();
-            $table->unsignedBigInteger('company_id')->nullable();
+            $table->foreignId('unit_id')->index()->nullable();
+            $table->unsignedBigInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_user_setting_screens', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('screen_id')->nullable();
+            $table->unsignedBigInteger('user_id')->index()->nullable();
+            $table->unsignedBigInteger('screen_id')->index()->nullable();
             $table->json('data_json');
             $table->timestamps();
         });

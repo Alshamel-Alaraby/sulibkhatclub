@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('company_id')->default(0);
+            $table->unsignedBigInteger('company_id')->index()->nullable();
 
             $table->timestamps();
         });

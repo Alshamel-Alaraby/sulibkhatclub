@@ -15,53 +15,53 @@ return new class extends Migration
     {
         Schema::create('cm_members', function (Blueprint $table) {
             $table->id();
-            $table->integer('applying_number')->nullable()->default(0);
-            $table->integer('membership_number')->nullable()->default(0);
-            $table->integer('acceptance')->nullable();
-            $table->string('home_address')->nullable();
-            $table->date('membership_date')->nullable();
-            $table->string('national_id')->nullable();
-            $table->string('nationality_class')->nullable(); // changed from nationality_number
-            $table->string('first_name')->nullable();
-            $table->string('second_name')->nullable();
-            $table->string('third_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('family_name')->nullable();
-            $table->longText('full_name')->nullable();
-            $table->date('birth_date')->nullable();
-            $table->boolean('accepted')->default(0);
-            $table->foreignId('sponsor_id')->nullable()->default(1);
-            $table->string('degree')->nullable();
-            $table->string('job')->nullable();
-            $table->string('work_phone')->nullable();
-            $table->string('work_address')->nullable();
-            $table->string('home_phone')->nullable();
-            $table->unsignedBigInteger('member_status_id')->nullable();
-            $table->date('last_transaction_date')->nullable();
-            $table->year('last_transaction_year')->nullable();
-            $table->string('last_transaction_id')->nullable();
-            $table->date('doc_date')->nullable();
-            $table->string('doc_no')->nullable();
-            $table->boolean('sponsership')->default(0);
+            /* 1 */ $table->integer('applying_number')->nullable()->default(0);
+            /* 2 */ $table->integer('membership_number')->nullable()->default(0);
+            /* 3 */$table->integer('acceptance')->nullable();
+            /* 4 */$table->string('home_address')->nullable();
+            /* 5 */$table->date('membership_date')->nullable();
+            /* 6 */$table->string('national_id')->nullable();
+            /* 7 */$table->string('nationality_class')->nullable(); // changed from nationality_number
+            /* 8 */$table->string('first_name')->nullable();
+            /* 9 */$table->string('second_name')->nullable();
+            /* 10 */$table->string('third_name')->nullable();
+            /* 11 */$table->string('last_name')->nullable();
+            /* 12 */$table->string('family_name')->nullable();
+            /* 13 */$table->longText('full_name')->nullable();
+            /* 14 */$table->date('birth_date')->nullable();
+            /* 15 */$table->boolean('accepted')->default(0);
+            /* 16 */$table->foreignId('sponsor_id')->index()->nullable()->default(1);
+            /* 17 */$table->string('degree')->nullable();
+            /* 18 */$table->string('job')->nullable();
+            /* 19 */$table->string('work_phone')->nullable();
+            /* 20 */$table->string('work_address')->nullable();
+            /* 21 */$table->string('home_phone')->nullable();
+            /* 22 */$table->unsignedBigInteger('member_status_id')->index()->nullable();
+            /* 23 */$table->date('last_transaction_date')->nullable();
+            /* 24 */$table->year('last_transaction_year')->nullable();
+            /* 25 */$table->string('last_transaction_id')->index()->nullable();
+            /* 26 */$table->date('doc_date')->nullable();
+            /* 27 */$table->string('doc_no')->nullable();
+            /* 28 */$table->boolean('sponsership')->default(0);
 
-            $table->date('session_date')->nullable();
-            $table->string('session_number')->nullable();
-            $table->foreignId('status_id')->nullable();
-            $table->foreignId('member_type_id')->default(1)->nullable();
-            $table->foreignId('financial_status_id')->default(2)->nullable();
-            $table->string('member_type')->default('pending')->nullable();
-            $table->string('notes')->nullable();
-            $table->boolean('gender')->nullable();
-            $table->unsignedBigInteger('financial_year_id')->nullable();
-            $table->date('applying_date')->nullable();
-            $table->string('phone_code')->nullable();
-            $table->foreignId('auto_member_type_id')->nullable();
+            /* 29 */$table->date('session_date')->nullable();
+            /* 30 */$table->string('session_number')->nullable();
+            /* 31 */$table->foreignId('status_id')->nullable();
+            /* 32 */$table->foreignId('member_type_id')->index()->default(1)->nullable();
+            /* 33 */$table->foreignId('financial_status_id')->index()->default(2)->nullable();
+            /* 34 */$table->string('member_type')->default('pending')->nullable();
+            /* 35 */$table->string('notes')->nullable();
+            /* 36 */$table->boolean('gender')->nullable();
+            /* 37 */$table->unsignedBigInteger('financial_year_id')->index()->nullable();
+            /* 38 */$table->date('applying_date')->nullable();
+            /* 39 */$table->string('phone_code')->nullable();
+            /* 40 */$table->foreignId('auto_member_type_id')->index()->nullable();
 
-            $table->unsignedBigInteger('member_kind_id')->nullable();
-            $table->unsignedBigInteger('discharge_reson_id')->nullable();
-            $table->unsignedBigInteger('members_permissions_id')->nullable();
-            $table->unsignedInteger('national_no')->nullable();
-            $table->unsignedInteger('company_id')->default(0);
+            /* 41 */$table->unsignedBigInteger('member_kind_id')->index()->nullable();
+            /* 42 */$table->unsignedBigInteger('discharge_reson_id')->index()->nullable();
+            /* 43 */$table->unsignedBigInteger('members_permissions_id')->index()->nullable();
+            /* 44 */$table->unsignedInteger('national_no')->nullable();
+            /* 45 */$table->unsignedInteger('company_id')->index()->nullable();
 
 
             $table->softDeletes();

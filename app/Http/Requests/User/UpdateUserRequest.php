@@ -26,7 +26,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'name_e' => 'nullable|string|max:255',
-            'is_active' => 'nullable|in:0,1',
+            'is_active' => 'nullable|in:active,inactive',
             "media" => "nullable|array",
             "media.*" => ["exists:media,id", new \App\Rules\MediaRule()],
             'old_media.*' => ['exists:media,id', new \App\Rules\MediaRule("App\Models\User")],

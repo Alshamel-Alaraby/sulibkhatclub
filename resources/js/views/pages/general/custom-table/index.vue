@@ -1,6 +1,6 @@
 <script>
 import permissionGuard from "../../../../helper/permission";
-    
+
 
 import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
@@ -43,8 +43,8 @@ export default {
       isLoader: false,
       Tooltip: "",
       mouseEnter: "",
-        mod: '',
-      modules: ['General','Board Rent','Club Members','Human Resources','Real Estate','Receivable Payable','Point Of Sale'],
+      mod: '',
+      modules: [],
       invisibleColumns: ["id", "company_id",'is_admin', "deleted_at", "created_at", "updated_at","email_verified_at"
           ,"remember_token"],
       create: {
@@ -108,6 +108,7 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.modules = this.$store.state.auth.customModules;
     this.getData('General');
   },
   beforeRouteEnter(to, from, next) {

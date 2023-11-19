@@ -20,6 +20,15 @@ class AttendanceSettingRequest extends FormRequest
             'pre_out' => 'required|integer|max_digits:11',
             'post_out' => 'required|integer|max_digits:11',
             'max_out' => 'required|integer|max_digits:11',
+            'location_fingerprint' => 'in:0,1',
+            'mobile_id_fingerprint' => 'in:0,1',
+            'pre_in_fingerprint' => 'in:0,1',
+            'day_off_fingerprint' => 'in:0,1',
+            'public_holiday_fingerprint' => 'in:0,1',
+            'post_out_fingerprint' => 'in:0,1',
+            'pre_out_fingerprint' => 'in:0,1',
+            'holiday_fingerprint' => 'in:0,1',
+            'Training_course_fingerprint' => 'in:0,1',
 
         ];
     }

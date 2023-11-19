@@ -136,7 +136,7 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "admin_report_path",
-                "default_en" => "Pathroom",
+                "default_en" => "Bathroom",
                 "default_ar" => "الحمام",
                 "new_ar" => "",
                 "new_en" => "",
@@ -294,6 +294,60 @@ class TranslationSeeder extends Seeder
                 "key" => "branch_parent",
                 "default_en" => "Parent",
                 "default_ar" => "الاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_email",
+                "default_en" => "Email",
+                "default_ar" => "الاميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_phone",
+                "default_en" => "Phone",
+                "default_ar" => "رقم الموبيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_second_phone",
+                "default_en" => "Second Phone",
+                "default_ar" => "رقم الموبيل التاني ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_address",
+                "default_en" => "Address",
+                "default_ar" => "عنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_fax",
+                "default_en" => "Fax",
+                "default_ar" => "فكس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "branch_p_o_pox",
+                "default_en" => "p.o.box",
+                "default_ar" => "ص.ب",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2613,8 +2667,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "employee_name_ar",
-                "default_en" => "Employee name (arabic)",
-                "default_ar" => "اسم الموظف (عربي)",
+                "default_en" => " name (arabic)",
+                "default_ar" => "اسم  (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2633,8 +2687,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "employee_name_en",
-                "default_en" => "Employee name (english)",
-                "default_ar" => "اسم الموظف (انجليزي)",
+                "default_en" => " name (english)",
+                "default_ar" => "اسم (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -2672,6 +2726,15 @@ class TranslationSeeder extends Seeder
                 "key" => "employee_sms",
                 "default_en" => "SMS Message",
                 "default_ar" => "رسائل sms",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "employees"
+            ],
+            [
+                "key" => "employee_mobile_id",
+                "default_en" => "Mobile (Serial)",
+                "default_ar" => "موبيل (سريل)",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -3736,6 +3799,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "building"
 
             ],
+
             [
                 "key" => "building_description_en",
                 "default_en" => "Building description (english)",
@@ -3816,6 +3880,252 @@ class TranslationSeeder extends Seeder
                 "screen" => "building"
 
             ],
+            [
+                "key" => "building_type",
+                "default_en" => "Building Type",
+                "default_ar" => " النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building"
+
+            ],
+            [
+                "key" => "company_ownership",
+                "default_en" => "Company Ownership",
+                "default_ar" => "ملكية الشركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "floors_number",
+                "default_en" => "Floors Number",
+                "default_ar" => "عدد الأدوار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "vaults_number",
+                "default_en" => "Vaults Number",
+                "default_ar" => "عدد السراديب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "ground_floors_number",
+                "default_en" => "Ground Floors Number",
+                "default_ar" => "عدد الأدوار الارضيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "mediums_number",
+                "default_en" => "Mediums Number",
+                "default_ar" => "عدد الميزانين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "elevators_number",
+                "default_en" => "Elevators Number",
+                "default_ar" => "عدد المصاعد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "electricity_meters_number",
+                "default_en" => "Electricity Meters Number",
+                "default_ar" => "عدد عدادات الكهرباء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "water_meters_number",
+                "default_en" => "Water Meters Number",
+                "default_ar" => "عدد عدادات المياه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "gas_meters_number",
+                "default_en" => "Gas Meters Number",
+                "default_ar" => "عدد عدادات الغاز",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "central_air_conditioning",
+                "default_en" => "Central Air Conditioning",
+                "default_ar" => "تكييف مركزي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "buying_price",
+                "default_en" => "Buying Price",
+                "default_ar" => "سعر الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "buying_date",
+                "default_en" => "Buying Date",
+                "default_ar" => "تاريخ الشراء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "middleman_cost",
+                "default_en" => "Middleman Cost",
+                "default_ar" => "تكلفة الوسيط",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "registration_cost",
+                "default_en" => "Registration Cost",
+                "default_ar" => "تكلفة التسجيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "building_currency",
+                "default_en" => "Building Currency",
+                "default_ar" => "عملة العقار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "Account_number",
+                "default_en" => "Account number ",
+                "default_ar" => "رقم الحساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+            ],
+
+            [
+                "key" => "accrued_revenues_account",
+                "default_en" => "Accrued Revenues Account",
+                "default_ar" => "حساب الإيرادات المستحقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "advance_revenues_account",
+                "default_en" => "Advance Revenues Account",
+                "default_ar" => "حساب الإيرادات المقدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "revenues_account",
+                "default_en" => "Revenues Account",
+                "default_ar" => "حساب الإيرادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+            [
+                "key" => "discounts_account",
+                "default_en" => "Discounts Account",
+                "default_ar" => "حساب الخصومات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "cash_account",
+                "default_en" => "Cash Account",
+                "default_ar" => "حساب الصندوق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "knet_account_id",
+                "default_en" => "Knet Account",
+                "default_ar" => "رقم حساب الكي نت",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "insurance_account_id",
+                "default_en" => "Insurance Account",
+                "default_ar" => "رقم حساب التأمين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "main_cost_center",
+                "default_en" => "Main Cost Center",
+                "default_ar" => "مركز التكلفه الرئيسي ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
+
+            [
+                "key" => "financial_period",
+                "default_en" => "Financial Period",
+                "default_ar" => "فترة التحصيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building",
+            ],
 
             [
                 "key" => "avenue",
@@ -3847,7 +4157,190 @@ class TranslationSeeder extends Seeder
                 "screen" => "building"
 
             ],
+
         ]);
+        //Policy
+        Translation::insert([
+            [
+                "key" => "policy_name_ar",
+                "default_en" => "Policy name (arabic)",
+                "default_ar" => "اسم السياسه (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+
+            ],
+            [
+                "key" => "policy_name_en",
+                "default_en" => "Policy name (english)",
+                "default_ar" => "اسم السياسه (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+
+            ],
+            [
+                "key" => "policy_description",
+                "default_en" => "Policy description ",
+                "default_ar" => "وصف السياسه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+
+            ],
+            [
+                "key" => "policy_after_expenses",
+                "default_en" => "After Expenses ",
+                "default_ar" => "بعد خصم المصاريف ام لا",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+
+            ],
+        ]);
+            //Account
+        Translation::insert([
+            [
+                "key" => "Account_name_ar",
+                "default_en" => "Account name (arabic)",
+                "default_ar" => "اسم الحساب (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Account"
+
+            ],
+            [
+                "key" => "Account_name_en",
+                "default_en" => "Account name (english)",
+                "default_ar" => "اسم الحساب (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Account"
+
+            ],
+            [
+                "key" => "Account_number",
+                "default_en" => "Account number ",
+                "default_ar" => "رقم الحساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Account"
+            ],
+
+        ]);
+        //Building-Policy
+        Translation::insert([
+            [
+                "key" => "policy",
+                "default_en" => "Policy name (arabic)",
+                "default_ar" => "اسم السياسه (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+
+            ],
+            [
+                "key" => "building_policy_year",
+                "default_en" => "Year",
+                "default_ar" => "سنه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+
+            ],
+            [
+                "key" => "building_policy_month",
+                "default_en" => "Month",
+                "default_ar" => "شهر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_amount",
+                "default_en" => "Amount",
+                "default_ar" => "المبلغ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_percent",
+                "default_en" => "Percent",
+                "default_ar" => "النسبه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_percent_amount",
+                "default_en" => "Percent Amount",
+                "default_ar" => "نسبه المبلغ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_after_expenses",
+                "default_en" => "After Expenses",
+                "default_ar" => "بعد الخصومات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_collected_rent_type",
+                "default_en" => "Collected Rent Type",
+                "default_ar" => "نوع الإيجار المجمع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_plus_extra_revenues",
+                "default_en" => "Plus Extra Revenues",
+                "default_ar" => " إيرادات إضافية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_company_pays_rest",
+                "default_en" => "Company Pays Rest",
+                "default_ar" => "الشركة تدفع الباقي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_owner_pays_rest",
+                "default_en" => "Owners Pays Rest",
+                "default_ar" => "المالك يدفع الباقي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+
+        ]);
+
         //Customers
         Translation::insert([
             [
@@ -4126,6 +4619,47 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
             ]
+        ]);
+        //BuildyingType
+        Translation::insert([
+            [
+                "key" => "buildingType_create_form",
+                "default_en" => "Add new Building Type",
+                "default_ar" => "اضافة نوع عقار جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "BuildyingType"
+            ],
+            [
+                "key" => "buildingType_edit_form",
+                "default_en" => "Edit Building Type form",
+                "default_ar" => "نموذج تعديل نوع عقار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "BuildyingType"
+
+            ],
+            [
+                "key" => "building_type_name_ar",
+                "default_en" => "Building Type name (arabic)",
+                "default_ar" => "اسم نوع العقار (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "BuildyingType"
+            ],
+            [
+                "key" => "building_type_name_en",
+                "default_en" => "Building Type name (english)",
+                "default_ar" => "اسم نوع العقار (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "BuildyingType"
+
+            ],
         ]);
         //Wallet
         Translation::insert([
@@ -7918,6 +8452,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "receivable payable"
             ],
             [
+                "key" => "installmentPaymentTyp_step",
+                "default_en" => "Step",
+                "default_ar" => "نوع التكرار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+            ],
+            [
                 "key" => "installmentPaymentType_per",
                 "default_en" => "Percent",
                 "default_ar" => "النسبة",
@@ -8810,9 +9353,38 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "document_need_is_partially",
+                "default_en" => "Is Partially",
+                "default_ar" => "يمكن التجزئه ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
+                "key" => "document_need_is_break",
+                "default_en" => "Is Break",
+                "default_ar" => "Is Break",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+
+            ],
+            [
                 "key" => "document_detail_type",
                 "default_en" => "document detail type",
                 "default_ar" => "نوع المستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document"
+            ],
+            [
+                "key" => "document_document_module_type",
+                "default_en" => "document module type",
+                "default_ar" => "البرنامج الفرعى للمستند",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -9087,6 +9659,16 @@ class TranslationSeeder extends Seeder
                 "screen" => "receivable payable"
 
             ],
+            [
+                "key" => "installment_opening_client_type",
+                "default_en" => "Client Type",
+                "default_ar" => "نوع العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "receivable payable"
+
+            ],
         ]);
         //Street
         Translation::insert([
@@ -9150,7 +9732,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "department_create_form",
                 "default_en" => "Add new department",
-                "default_ar" => "اضف قسم جديدة",
+                "default_ar" => "اضف اداره جديدة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -9207,7 +9789,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "department_edit_form",
                 "default_en" => "Edit department form",
-                "default_ar" => "نموذج تعديل القسم",
+                "default_ar" => "نموذج تعديل الاداره",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -9442,6 +10024,24 @@ class TranslationSeeder extends Seeder
 
             ],
             [
+                "key" => "boardRent_package_category",
+                "default_en" => "Category",
+                "default_ar" => "الفئات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+            ],
+            [
+                "key" => "boardRent_package_governorate",
+                "default_en" => "Governorate",
+                "default_ar" => "المحافظات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+            ],
+            [
                 "key" => "boardRent_package_name_ar",
                 "default_en" => "Package name (arabic)",
                 "default_ar" => "اسم الباقه (عربي)",
@@ -9475,6 +10075,16 @@ class TranslationSeeder extends Seeder
                 "key" => "boardRent_package_price",
                 "default_en" => "Package  price",
                 "default_ar" => "سعر الباقه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+
+            ],
+            [
+                "key" => "boardRent_package_note",
+                "default_en" => "Note",
+                "default_ar" => "ملاحظه",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -14597,7 +15207,7 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "attendance_times_name_en",
+                "key" => "attendance_times_name_ar",
                 "default_en" => " Name (arabic)",
                 "default_ar" => "الاسم (العربي)",
                 "new_ar" => "",
@@ -14607,7 +15217,7 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "attendance_times_name_ar",
+                "key" => "attendance_times_name_en",
                 "default_en" => " Name (english)",
                 "default_ar" =>  "الاسم (انجليزي)",
                 "new_ar" => "",
@@ -14768,7 +15378,88 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "attendance times"
-            ]
+            ],
+            [
+                "key" => "attendance_setting_location_fingerprint",
+                "default_en" => "Fingerprints are not accepted from places other than the specified location",
+                "default_ar" => "عدم قبول البصمة من غير المكان المحدد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_mobile_id_fingerprint",
+                "default_en" => "Not accepting fingerprint from other than the specified device",
+                "default_ar" => "عدم قبول البصمة من غير الجهاز المحدد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_pe_in_fingerprint",
+                "default_en" => "Fingerprint not being accepted after the permitted attendance date",
+                "default_ar" => "عدم قبول البصمة بعد موعد الحضور المسموح به",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_day_off_fingerprint",
+                "default_en" => "Fingerprinting is not accepted on weekends",
+                "default_ar" => "عدم قبول البصمة في الاجازات الاسبوعية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_public_holiday_fingerprint",
+                "default_en" => "Fingerprints are not accepted on official holidays",
+                "default_ar" => "عدم قبول البصمة في الاجازات الرسمية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_post_out_fingerprint",
+                "default_en" => "Not accepting the fingerprint before the permitted departure time",
+                "default_ar" => "عدم قبول البصمة قبل موعد الانصراف المسموح به",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_pre_out_fingerprint",
+                "default_en" => "Fingerprint not accepted after the permitted departure time",
+                "default_ar" => "عدم قبول البصمة بعد موعد الانصراف المسموح به",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_holiday_fingerprint",
+                "default_en" => "Accepting the fingerprint if the employee is on vacation",
+                "default_ar" => "قبول البصمة لو الموظف في اجازة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
+            [
+                "key" => "attendance_setting_training_course_fingerprint",
+                "default_en" => "Acceptance of fingerprint if the employee is in a course",
+                "default_ar" => "قبول البصمة لو الموظف في اجازة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ],
         ]);
 
         //employees timetables header
@@ -14936,7 +15627,884 @@ class TranslationSeeder extends Seeder
                 "screen" => "attendance times"
 
             ],
+            [
+                "key" => "attendance_and_departure_employees",
+                "default_en" => "employees",
+                "default_ar" => "الموظفين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "attendance times"
+            ]
         ]);
+
+        //money voucher
+        Translation::insert([
+            [
+                "key" => "money_voucher_create_form",
+                "default_en" => "Add new money voucher",
+                "default_ar" => "اضف مستند مالي ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+            ],
+            [
+                "key" => "money_voucher_edit_form",
+                "default_en" => "Edit money voucher form",
+                "default_ar" => "نموذج تعديل المستند المالي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_serial_number",
+                "default_en" => "Serial Number",
+                "default_ar" => "الرقم المسلسل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_customer",
+                "default_en" => "Client",
+                "default_ar" => "العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_amount",
+                "default_en" => "Amount",
+                "default_ar" => "المبلغ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_payment_method",
+                "default_en" => "Payment Method",
+                "default_ar" => "طريقة السداد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_salesmen",
+                "default_en" => "Salesmen",
+                "default_ar" => "موظف المبيعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_document",
+                "default_en" => "Document Type",
+                "default_ar" => "نوع المستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+            [
+                "key" => "money_voucher_client_type",
+                "default_en" => "Client Type",
+                "default_ar" => "نوع العميل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Money Voucher"
+
+            ],
+
+        ]);
+        //general message
+        Translation::insert([
+            [
+                "key" => "message_create_form",
+                "default_en" => "Add new Message",
+                "default_ar" => "اضف رساله جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ],
+            [
+                "key" => "message_edit_form",
+                "default_en" => "Edit Message form",
+                "default_ar" => "نموذج تعديل الرساله",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ],
+            [
+                "key" => "message_content_ar",
+                "default_en" => "Content (arabic)",
+                "default_ar" => "المحتوي (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ],
+            [
+                "key" => "message_content_en",
+                "default_en" => "Content (english)",
+                "default_ar" => "المحتوي (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ],
+            [
+                "key" => "message_type",
+                "default_en" => "type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ],
+            [
+                "key" => "message_variable",
+                "default_en" => "Variable",
+                "default_ar" => "المتغيرات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "avenue"
+            ]
+        ]);
+
+        //general lawyer
+        Translation::insert([
+            [
+                "key" => "lawyer_create_form",
+                "default_en" => "Add new lawyer",
+                "default_ar" => "اضف محامي جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "lawyer_edit_form",
+                "default_en" => "Edit lawyer form",
+                "default_ar" => "تعديل نموذج المحامي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "lawyer_name_ar",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "lawyer_name_en",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "lawyer_account_no",
+                "default_en" => "Account Number",
+                "default_ar" => "رقم الحساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+
+        //general lawyer
+        Translation::insert([
+            [
+                "key" => "legal_procedure_create_form",
+                "default_en" => "Add new lawyer",
+                "default_ar" => "اضف محامي جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "legal_procedure_edit_form",
+                "default_en" => "Edit lawyer form",
+                "default_ar" => "تعديل نموذج المحامي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "legal_procedure_name_ar",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+            [
+                "key" => "legal_procedure_name_en",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "branch"
+            ],
+        ]);
+
+        //general document linked categories
+        Translation::insert([
+            [
+                "key" => "document_linked_categories_create_form",
+                "default_en" => "Add new document linked categories",
+                "default_ar" => "اضافة تصنيفات مرتبطه بالمستندات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_edit_form",
+                "default_en" => "Edit document linked categories",
+                "default_ar" => "تعديل تصنيفات مرتبطه بالمستندات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_name_ar",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_name_en",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_title_ar",
+                "default_en" => "title (arabic)",
+                "default_ar" => "العنوان (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_title_en",
+                "default_en" => "title (english)",
+                "default_ar" => "العنوان (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+            [
+                "key" => "document_linked_categories_db_table",
+                "default_en" => "database table",
+                "default_ar" => "جدول قواعد البيانات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "document linked categories"
+            ],
+        ]);
+
+        //general link documents with status
+        Translation::insert([
+            [
+                "key" => "link_documents_with_status_create_form",
+                "default_en" => "Add new link documents with status",
+                "default_ar" => "اضافة ربط المستندات والحالات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "link documents with status"
+            ],
+            [
+                "key" => "link_documents_with_status_edit_form",
+                "default_en" => "Edit link documents with status",
+                "default_ar" => "تعديل ربط المستندات والحالات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "link documents with status"
+            ],
+            [
+                "key" => "link_documents_with_status_document",
+                "default_en" => "Document",
+                "default_ar" => "المستند",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "link documents with status"
+            ],
+            [
+                "key" => "link_documents_with_status_document_module_type",
+                "default_en" => "document linked categories",
+                "default_ar" => "تصنيفات مرتبطه بالمستندات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "link documents with status"
+            ],
+            [
+                "key" => "link_documents_with_status_status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "link documents with status"
+            ],
+        ]);
+
+        // House Keeping Daily
+        Translation::insert([
+            [
+                "key" => "houseKeepingDaily_rome",
+                "default_en" => "Rome.No",
+                "default_ar" => "رقم الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_category",
+                "default_en" => "Category",
+                "default_ar" => "الفئة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_nationality",
+                "default_en" => "Nationality",
+                "default_ar" => "الجنسية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_HouseKeeping_Name",
+                "default_en" => "HouseKeeping Name",
+                "default_ar" => "اسم موظف خدمة الغرف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_startingTime",
+                "default_en" => "Starting Time",
+                "default_ar" => "وقت البداية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_endingTime",
+                "default_en" => "Ending Time",
+                "default_ar" => "وقت النهايه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_cleaned",
+                "default_en" => "Cleaned ?",
+                "default_ar" => "تم تنظيفها ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+            [
+                "key" => "houseKeepingDaily_remarks",
+                "default_en" => "HouseKeeping Remarks",
+                "default_ar" => "ملاحظات خدمة الغرف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "houseKeepingDaily"
+            ],
+        ]);
+
+        //daily-checked-in
+        Translation::insert([
+            [
+                "key" => "dailyCheckedIn_rome",
+                "default_en" => "Rome.No",
+                "default_ar" => "رقم الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_guest_name",
+                "default_en" => "Guest Name",
+                "default_ar" => "اسم النزيل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_nationality",
+                "default_en" => "Nationality",
+                "default_ar" => "الجنسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_pax",
+                "default_en" => "PAX",
+                "default_ar" => "المرافقين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_type",
+                "default_en" => "Type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_Arrival",
+                "default_en" => "Arrival",
+                "default_ar" => "الوصول",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_departure",
+                "default_en" => "Departure",
+                "default_ar" => "المغادرة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_totalDays",
+                "default_en" => "Total Days",
+                "default_ar" => "عدد الايام",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_discount_on_rate",
+                "default_en" => "Discount On Rate",
+                "default_ar" => "الخصم على السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accomodationNetRate",
+                "default_en" => "Accomodation Net Rate",
+                "default_ar" => "صافي سعر الإقامه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_payments",
+                "default_en" => "Payments",
+                "default_ar" => "المدفوعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accommodation_net_rate",
+                "default_en" => "Accommodation Net Rate",
+                "default_ar" => "صافى سعر الاقامة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accommodation_total_income",
+                "default_en" => "Accommodation Total Income",
+                "default_ar" => "اجمالى دخل الاقامه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accommodation_service_income",
+                "default_en" => "Total Service Income",
+                "default_ar" => "اجمالى دخل الخدمات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accommodation_grand_total_income",
+                "default_en" => "Grand Total Income",
+                "default_ar" => "اجمالى الدخل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_invoice_number",
+                "default_en" => "Invoice Number",
+                "default_ar" => "رقم الفاتورة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_accommodation_rate",
+                "default_en" => "Accommodation Rate",
+                "default_ar" => "سعر الاقامة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_extra_guest",
+                "default_en" => "Extra Guest",
+                "default_ar" => "نزيل اضافى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_service_charge",
+                "default_en" => "Service Charge",
+                "default_ar" => "تكلفة الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_discount",
+                "default_en" => "Discount",
+                "default_ar" => "الخصم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+
+            [
+                "key" => "dailyCheckedIn_total_charges",
+                "default_en" => "Total Charges",
+                "default_ar" => "اجمالى التكاليف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_total_payment",
+                "default_en" => "Total Payments",
+                "default_ar" => "اجمالى المدفوعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+            [
+                "key" => "dailyCheckedIn_outstanding_balance",
+                "default_en" => "Outstanding Balance",
+                "default_ar" => "الرصيد المتبقى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "daily-checked-in"
+            ],
+        ]);
+
+        //employee location
+        Translation::insert([
+            [
+                "key" => "employee_location_create_form",
+                "default_en" => "Add new employee location",
+                "default_ar" => "اضف موقع للموظفين جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+            [
+                "key" => "employee_location_edit_form",
+                "default_en" => "Edit employee location form",
+                "default_ar" => "نموذج تعديل موقع موظفين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+
+            ],
+            [
+                "key" => "employee_location_name_ar",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "employee_location_name_en",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم  (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "em"
+            ],
+            [
+                "key" => "employee_location_longitude",
+                "default_en" => "Longitude",
+                "default_ar" => "خطوط طول ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building"
+
+            ],
+            [
+                "key" => "employee_location_latitude",
+                "default_en" => " Latitude",
+                "default_ar" => "خطوط عرض ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building"
+
+            ],
+            [
+                "key" => "location_date_create_form",
+                "default_en" => "start Date",
+                "default_ar" => "ابتداء من تاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+        ]);
+
+        //public header
+        Translation::insert([
+            [
+                "key" => "public_header_create_form",
+                "default_en" => "Add New Holiday",
+                "default_ar" => "اضف اجازه جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+            [
+                "key" => "public_header_edit_form",
+                "default_en" => "Edit Holiday form",
+                "default_ar" => "نموذج تعديل الاجازه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+            [
+                "key" => "public_header_name_ar",
+                "default_en" => "name (arabic)",
+                "default_ar" => "اسم  (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "public_header_name_en",
+                "default_en" => "name (english)",
+                "default_ar" => "اسم  (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "em"
+            ],
+        ]);
+
+        //employee Fingerprint
+        Translation::insert([
+            [
+                "key" => "employee_fingerprint_create_form",
+                "default_en" => "Add New Employee Fingerprint",
+                "default_ar" => "اضف بصمه للموظفين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+            [
+                "key" => "employee_fingerprint_edit_form",
+                "default_en" => "Edit Employee Fingerprint form",
+                "default_ar" => "نموذج تعديل بصمه الموظفين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "color"
+            ],
+            [
+                "key" => "employee_fingerprint_vdate",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "customer category"
+            ],
+            [
+                "key" => "employee_fingerprint_has_fingerprint",
+                "default_en" => "has fingerprint ?",
+                "default_ar" => "لديه بصمة ؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "em"
+            ],
+        ]);
+
+        // electoral committees
+        Translation::insert([
+            [
+                "key" => "club_electoral_committees_create_form",
+                "default_en" => "Add New electoral-committee",
+                "default_ar" => "اضف مجموعة لجنه انتخابيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+            ],
+            [
+                "key" => "club_electoral_committees_edit_form",
+                "default_en" => "Edit electoral-committee form",
+                "default_ar" => "تعديل لجنه انتخابيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "club_electoral_committees_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "club_electoral_committees_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+
+            ],
+            [
+                "key" => "club_electoral_committees_number_of_individuals",
+                "default_en" => " Number Of Individuals",
+                "default_ar" => "عدد الافراد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Group"
+            ]
+
+        ]);
+
     }
 }
 

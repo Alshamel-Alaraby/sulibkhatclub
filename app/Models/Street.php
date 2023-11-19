@@ -38,25 +38,25 @@ class Street extends Model
         return $this->hasMany(\App\Models\CustomerBranch::class);
     }
 
-    // public function hasChildren()
-    // {
-    //     return $this->customerBranches()->count() > 0 ;
-    // }
-
     public function hasChildren()
     {
-        $relationsWithChildren = [];
-
-        if ($this->customerBranches()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'customerBranches',
-                'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray(),
-            ];
-        }
-
-        return $relationsWithChildren;
+        return $this->customerBranches()->count() > 0 ;
     }
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->customerBranches()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'customerBranches',
+    //             'count' => $this->customerBranches()->count(),
+    //             'ids' => $this->customerBranches()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     return $relationsWithChildren;
+    // }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

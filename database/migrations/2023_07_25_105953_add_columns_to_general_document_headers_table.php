@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('general_document_headers', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_method_id')->nullable();
+            $table->unsignedBigInteger('payment_method_id')->index()->nullable();
             $table->boolean('customer_type')->default(1);
 
         });

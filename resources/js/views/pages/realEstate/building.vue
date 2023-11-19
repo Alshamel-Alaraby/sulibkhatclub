@@ -21,11 +21,11 @@ export default {
     meta: [{ name: "description", content: "Building" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(vm, "Building", "all building RealState");
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Building", "all building RealState");
+    });
+  },
   components: {
     Layout,
     PageHeader,
@@ -183,6 +183,286 @@ export default {
           setting: { avenue_id: true },
           isSetting: true,
         },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "building_type",
+          isV: "building_type_id",
+          type: "relation",
+          name: "building_type",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { building_type_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "company_ownership",
+          isV: "company_ownership",
+          type: "string",
+          sort: true,
+          setting: { company_ownership: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "floors_number",
+          isV: "floors_number",
+          type: "string",
+          sort: true,
+          setting: { floors_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "vaults_number",
+          isV: "vaults_number",
+          type: "string",
+          sort: true,
+          setting: { vaults_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "ground_floors_number",
+          isV: "ground_floors_number",
+          type: "string",
+          sort: true,
+          setting: { ground_floors_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "mediums_number",
+          isV: "mediums_number",
+          type: "string",
+          sort: true,
+          setting: { mediums_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "elevators_number",
+          isV: "elevators_number",
+          type: "string",
+          sort: true,
+          setting: { elevators_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "electricity_meters_number",
+          isV: "electricity_meters_number",
+          type: "string",
+          sort: true,
+          setting: { electricity_meters_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "water_meters_number",
+          isV: "water_meters_number",
+          type: "string",
+          sort: true,
+          setting: { water_meters_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "gas_meters_number",
+          isV: "gas_meters_number",
+          type: "string",
+          sort: true,
+          setting: { gas_meters_number: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "central_air_conditioning",
+          isV: "central_air_conditioning",
+          type: "string",
+          sort: true,
+          setting: { central_air_conditioning: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "buying_price",
+          isV: "buying_price",
+          type: "string",
+          sort: true,
+          setting: { buying_price: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "buying_date",
+          isV: "buying_date",
+          type: "string",
+          sort: true,
+          setting: { buying_date: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "middleman_cost",
+          isV: "middleman_cost",
+          type: "string",
+          sort: true,
+          setting: { middleman_cost: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "registration_cost",
+          isV: "registration_cost",
+          type: "string",
+          sort: true,
+          setting: { registration_cost: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "building_currency",
+          isV: "building_currency_id",
+          type: "relation",
+          name: "building_currency",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { building_currency_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "accrued_revenues_account",
+          isV: "accrued_revenues_account_id",
+          type: "relation",
+          name: "accrued_revenues_account",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { accrued_revenues_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "advance_revenues_account",
+          isV: "advance_revenues_account_id",
+          type: "relation",
+          name: "advance_revenues_account",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { advance_revenues_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "revenues_account",
+          isV: "revenues_account_id",
+          type: "relation",
+          name: "revenues_account",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { revenues_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "discounts_account",
+          isV: "discounts_account_id",
+          type: "relation",
+          name: "discounts_account",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { discounts_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "cash_account_id",
+          isV: "cash_account",
+          type: "relation",
+          name: "cash_account",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { cash_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "knet_account_id",
+          isV: "knet_account_id",
+          type: "relation",
+          name: "knet_account_id",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { knet_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "insurance_account_id",
+          isV: "insurance_account_id",
+          type: "relation",
+          name: "insurance_account_id",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { insurance_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "main_cost_center",
+          isV: "main_cost_center_id",
+          type: "relation",
+          name: "main_cost_center",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { main_cost_center_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "financial_period",
+          isV: "financial_period",
+          type: "string",
+          sort: true,
+          setting: { financial_period: true },
+          isSetting: true,
+        },
       ],
       sendSetting: {},
       searchField: [],
@@ -202,6 +482,16 @@ export default {
         indexG = fields.indexOf("country_id"),
         indexCty = fields.indexOf("city_id"),
         indexAven = fields.indexOf("avenue_id"),
+        indexB = fields.indexOf("building_type_id"),
+        indexcurrency = fields.indexOf("building_currency_id"),
+        indexaccrued = fields.indexOf("accrued_revenues_account_id"),
+        indexadvance = fields.indexOf("advance_revenues_account_id"),
+        indexrevenues = fields.indexOf("revenues_account_id"),
+        indexdiscounts = fields.indexOf("discounts_account_id"),
+        indexcash = fields.indexOf("cash_account_id"),
+        indexknet = fields.indexOf("knet_account_id"),
+        indexinsurance = fields.indexOf("insurance_account_id"),
+        indexmain = fields.indexOf("main_cost_center_id"),
         filter = "";
       if (indexC > -1) {
         fields[indexC] =
@@ -218,6 +508,66 @@ export default {
       if (indexAven > -1) {
         fields[indexAven] =
           this.$i18n.locale == "ar" ? "avenue.name" : "avenue.name_e";
+      }
+      if (indexB > -1) {
+        fields[indexB] =
+          this.$i18n.locale == "ar"
+            ? "building_type.name"
+            : "building_type.name_e";
+      }
+      if (indexcurrency > -1) {
+        fields[indexcurrency] =
+          this.$i18n.locale == "ar"
+            ? "building_currency.name"
+            : "building_currency.name_e";
+      }
+      if (indexaccrued > -1) {
+        fields[indexaccrued] =
+          this.$i18n.locale == "ar"
+            ? "accrued_revenues_account.name"
+            : "accrued_revenues_account.name_e";
+      }
+      if (indexadvance > -1) {
+        fields[indexadvance] =
+          this.$i18n.locale == "ar"
+            ? "advance_revenues_account.name"
+            : "advance_revenues_account.name_e";
+      }
+      if (indexrevenues > -1) {
+        fields[indexrevenues] =
+          this.$i18n.locale == "ar"
+            ? "revenues_account.name"
+            : "revenues_account.name_e";
+      }
+      if (indexdiscounts > -1) {
+        fields[indexdiscounts] =
+          this.$i18n.locale == "ar"
+            ? "discounts_account.name"
+            : "discounts_account.name_e";
+      }
+      if (indexcash > -1) {
+        fields[indexcash] =
+          this.$i18n.locale == "ar"
+            ? "cash_account.name"
+            : "cash_account.name_e";
+      }
+      if (indexknet > -1) {
+        fields[indexknet] =
+          this.$i18n.locale == "ar"
+            ? "knet_account.name"
+            : "knet_account.name_e";
+      }
+      if (indexinsurance > -1) {
+        fields[indexinsurance] =
+          this.$i18n.locale == "ar"
+            ? "insurance_account.name"
+            : "insurance_account.name_e";
+      }
+      if (indexmain > -1) {
+        fields[indexmain] =
+          this.$i18n.locale == "ar"
+            ? "main_cost_center.name"
+            : "main_cost_center.name_e";
       }
 
       for (let i = 0; i < fields.length; ++i) {

@@ -45,6 +45,7 @@ class EmployeeRequest extends FormRequest
             'whatsapp' => 'nullable',
             'sms' => 'nullable',
             'att_code' => 'nullable',
+            'mobile_id' => 'nullable|string|max:50',
             'manager_ids' => 'nullable|array',
             'manager_ids.*' => 'nullable|exists:general_employees,id',
 

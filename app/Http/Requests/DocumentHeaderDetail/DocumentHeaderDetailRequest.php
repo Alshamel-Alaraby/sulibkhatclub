@@ -39,6 +39,7 @@ class DocumentHeaderDetailRequest extends FormRequest
 
             "item_id"=>'nullable|integer|exists:general_items,id',
             "unit_id"=>'nullable|integer|exists:booking_units,id',
+            "unit_status_id"=>'nullable|integer|exists:booking_unit_statuses,id',
         ];
 
     }

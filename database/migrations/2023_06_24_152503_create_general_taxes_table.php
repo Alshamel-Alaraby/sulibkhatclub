@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name_e');
             $table->double('percentage')->default(0);
             $table->boolean('is_default')->default(0);
-            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('company_id')->index()->nullable();
             $table->timestamps();
         });
     }

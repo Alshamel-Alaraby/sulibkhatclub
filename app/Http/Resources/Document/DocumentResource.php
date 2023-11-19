@@ -25,11 +25,15 @@ class DocumentResource extends JsonResource
             'attributes' => $this->attributes,
             'branche_id' => $this->branche_id,
             'is_copy' => $this->is_copy,
+            'document_module_type_id' => $this->document_module_type_id,
 //            "contusion" => $this->getContusion(),
             "contusion" => $this->contusion,
             'serial_id' => $this->serial_id,
             'required' => $this->required,
             'need_approve' => $this->need_approve,
+            'is_partially' => $this->is_partially,
+            'is_break'     => $this->is_break,
+            'relation_voucher_header'     => $this->relation_voucher_header,
             'payment_plan_installments' => $this->payment_plan_installments,
 //            'document_Relateds' => $this->documentRelateds,
 //            'required' => $this->getRequired(),
@@ -39,6 +43,7 @@ class DocumentResource extends JsonResource
 
             'document_relateds' => $this->documentRelateds,
             'employees'         => $this->employees,
+            'document_module_type'   => $this->documentModuleType,
         ];
     }
 }

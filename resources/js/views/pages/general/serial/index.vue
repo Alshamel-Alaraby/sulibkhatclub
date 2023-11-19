@@ -129,7 +129,7 @@ export default {
           setting: { branch_id: true },
           isSetting: true,
         },
-        
+
       ],
       sendSetting: {},
       searchField: [],

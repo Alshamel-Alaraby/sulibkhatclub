@@ -51,7 +51,7 @@
                <div class="row">
                    <div class="col-md-12">
                        <div class="form-group">
-                           <label for="field-1" class="control-label">
+                           <label class="control-label">
                                {{ $t('general.Name') }}
                                <span class="text-danger">*</span>
                            </label>
@@ -65,7 +65,6 @@
                                         'is-invalid': $v.create.name.$error || errors.name,
                                         'is-valid': !$v.create.name.$invalid && !errors.name,
                                       }"
-                                   id="field-1"
                                />
                            </div>
                            <div v-if="!$v.create.name.minLength" class="invalid-feedback">
@@ -89,7 +88,7 @@
                    </div>
                    <div class="col-md-12">
                        <div class="form-group">
-                           <label for="field-2" class="control-label">
+                           <label class="control-label">
                                {{ $t('general.Name_en') }}
                                <span class="text-danger">*</span>
                            </label>
@@ -104,7 +103,6 @@
                                     'is-invalid': $v.create.name_e.$error || errors.name_e,
                                     'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
                                   }"
-                                   id="field-2"
                                />
                            </div>
                            <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">
@@ -198,7 +196,7 @@ export default {
             });
             this.errors = {};
             this.is_disabled = false;
-            this.$bvModal.hide(`job_create_form`);
+            this.$bvModal.hide(this.id);
         },
         /**
          *  hidden Modal (create)

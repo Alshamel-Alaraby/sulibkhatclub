@@ -15,7 +15,16 @@ interface DocumentHeaderInterface
 
     public function getDateRelatedDocumentId($request);
     public function allDocumentHeader($request);
+    public function customerRoom($request);
+    public function checkOutPrint($id);
     public function checkBooking();
+    public function checkInCustomer();
 
-    public function getDocumentsCustomer($id);
+    public function createDailyCheckInCustomer();
+
+    public function updateCheckInCustomer($request);
+
+    public function createDailyInvoiceOnline($request);
+
+    public function getDocumentsCustomer($id,$request);
 }

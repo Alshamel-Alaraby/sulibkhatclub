@@ -22,32 +22,6 @@ class UserController extends Controller
         $this->modelInterface = $modelInterface;
     }
 
-    public function ahmed(){
-        $client = new \Adyen\Client();
-        $client->setUsername('admin');
-        $client->setPassword('ELEsawy20?');
-        $client->setXApiKey('AQEpg3HecMiKG2Yd7nqxnH12guieaYhOAoZETFeB2TaCrIB625UaxUxdr+kQwV1bDb7kfNy1WIxIIkxgBw==-Em/UV3tHvE5P+nXAkGvocQkfmO5DxgqJt09bDMfjoiA=-v6<G_qm}>%~2Vy{b');
-        $client->setEnvironment(\Adyen\Environment::TEST);
-        $client->setTimeout(10000);
-        $service = new \Adyen\Service\Checkout\PaymentsApi($client);
-        $requestOptions['idempotencyKey'] = "YOUR_IDEMPOTENCY_KEY";
-
-        // Create a PaymentMethod object.
-        $paymentMethod = new CheckoutPaymentMethod();
-        $paymentMethod->setType("knet");
-
-        // Create the PaymentRequest object.
-        $paymentRequest = new PaymentRequest();
-        $paymentRequest
-            ->setMerchantAccount("report@Company.EleAccount")
-            ->setPaymentMethod($paymentMethod)
-            ->setReference("My first Adyen test payment with an API library/SDK")
-            ->setAmount(['value' => 1000,'currency' => 'KWD'])
-            ->setReturnUrl("https://www.google.com/");
-
-        return $service->payments($paymentRequest,$requestOptions);
-    }
-
     public function login(\App\Http\Requests\User\LoginUserRequest $request)
     {
         // login with sanctum using email and password
@@ -134,7 +108,6 @@ class UserController extends Controller
 
     public function getDropDown(Request $request)
     {
-
         $models = $this->modelInterface->getName($request);
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

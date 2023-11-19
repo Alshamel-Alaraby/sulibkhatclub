@@ -7,7 +7,7 @@ export default [
         path: '/dashboard/realEstate/unitstatus',
         name: 'realEstate-unitstatus',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/unit-status'),
     },
@@ -16,7 +16,7 @@ export default [
         path: '/dashboard/realEstate/admin-report',
         name: 'admin-report',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/admin-report'),
     },
@@ -25,7 +25,7 @@ export default [
         path: '/dashboard/realEstate/unsold-unit-report',
         name: 'unsold-unit-report',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/unsold-unit-report'),
     },
@@ -35,7 +35,7 @@ export default [
         path: '/dashboard/realEstate/contract',
         name: 'realEstate-contract',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/contract'),
     },
@@ -44,7 +44,7 @@ export default [
         path: '/dashboard/realEstate/invoice',
         name: 'realEstate-invoice',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/invoice'),
     },
@@ -53,7 +53,7 @@ export default [
         path: '/dashboard/realEstate/unit-type',
         name: 'unit-type',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/unit-type'),
     },
@@ -62,7 +62,7 @@ export default [
         path: '/dashboard/realEstate/view',
         name: 'view',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/view'),
     },
@@ -71,7 +71,7 @@ export default [
         path: '/dashboard/realEstate/finishing',
         name: 'finishing',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/finishing'),
     },
@@ -80,7 +80,7 @@ export default [
         path: '/dashboard/realEstate/building-wallet',
         name: 'realEstate-building-wallet',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/building-wallet'),
     },
@@ -89,7 +89,7 @@ export default [
         path: '/dashboard/realEstate/contractunit',
         name: 'realEstate-contractunit',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/contractunit'),
     },
@@ -98,7 +98,7 @@ export default [
         path: '/dashboard/realEstate/owner',
         name: 'realEstate-owner',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/owner'),
     },
@@ -107,7 +107,7 @@ export default [
         path: '/dashboard/realEstate/building',
         name: 'realEstate-building',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/building'),
     },
@@ -116,7 +116,7 @@ export default [
         path: '/dashboard/realEstate/wallet',
         name: 'realEstate-wallet',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/wallet'),
     },
@@ -125,7 +125,7 @@ export default [
         path: '/dashboard/realEstate/unit',
         name: 'realEstate-wallet-owner',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/unit'),
     },
@@ -134,7 +134,7 @@ export default [
         path: '/dashboard/realEstate/reservation',
         name: 'realEstate-reservation',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/reservation'),
     },
@@ -143,7 +143,7 @@ export default [
         path: '/dashboard/realEstate/category',
         name: 'realEstate-category',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/item-category'),
     },
@@ -152,7 +152,7 @@ export default [
         path: '/dashboard/realEstate/item',
         name: 'realEstate-item',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/item'),
     },
@@ -161,8 +161,32 @@ export default [
         path: '/dashboard/realEstate/invoice',
         name: 'realEstate-invoice',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/realEstate/invoice'),
+    },
+    {
+        path: '/dashboard/realEstate/policy',
+        name: 'Policy Realestate',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/policy'),
+    },
+    {
+        path: '/dashboard/realEstate/buildingType',
+        name: 'BuildingType',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/buildingType.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/buildingPolicy',
+        name: 'BuildingPolicy',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/buildingPolicy.vue'),
     },
 ];

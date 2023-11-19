@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->unsignedBigInteger('group_id')->nullable();
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedBigInteger('parent_id')->index()->nullable();
+            $table->unsignedBigInteger('group_id')->index()->nullable();
+            $table->unsignedInteger('cm_member_id')->index()->nullable()->comment('Entry');
+            $table->unsignedInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
 

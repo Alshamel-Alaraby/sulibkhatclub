@@ -31,9 +31,10 @@ import img from "../../../assets/images/img-1.png";
 
 export default {
   props: {
-        id: {default: "avenue-create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
-        isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
-        type: {default: 'create'}, idObjEdit: {default: null},isPermission: {},url: {default: '/general-customer'}
+      id: {default: "avenue-create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
+      isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
+      type: {default: 'create'}, idObjEdit: {default: null},isPermission: {},url: {default: '/general-customer'},
+      tables: {default: []}
   },
   mixins: [transMixinComp,successError],
   components: {
@@ -467,7 +468,7 @@ export default {
                     this.create.employee_id = build.employee_id ?? null;
                     if (this.isVisible("country_id"))  this.getCategory();
                     this.create.country_id = build.country ? build.country.id : null;
-                    if (this.isVisible("city_id"))  this.getCity(build.country.id);
+                    if (this.isVisible("city_id"))  this.getCity(build.country_id);
                     this.create.city_id = build.city ? build.city.id : null;
                     if (this.isVisible("salesman_id"))  this.getSalesmen();
                     this.create.salesman_id = build.salesman ? build.salesman.id : null;
@@ -653,7 +654,7 @@ export default {
                   } else {
                     this.showPhoto = img;
                   }
-                  this.getData();
+                  this.$emit("getDataTable");
                   this.uploadPhotoTitleHidden();
                 })
                 .catch((err) => {
@@ -715,7 +716,7 @@ export default {
                       } else {
                         this.showPhoto = img;
                       }
-                      this.getData();
+                      this.$emit("getDataTable");
                     })
                     .catch((err) => {
                       Swal.fire({
@@ -744,7 +745,7 @@ export default {
         }
       }
     },
-    deleteImageCreate(id, index) {
+    deleteImageCreate(id) {
       let old_media = [];
       this.images.forEach((e) => {
         if (e.id != id) {
@@ -754,7 +755,8 @@ export default {
       adminApi
         .put(`/general-customer/${this.customer_id}`, { old_media })
         .then((res) => {
-          this.customers[index] = res.data.data;
+          let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
+          this.tables[index] = res.data.data;
           this.images = res.data.data.media ?? [];
           if (this.images && this.images.length > 0) {
             this.showPhoto = this.images[this.images.length - 1].webp;
@@ -892,11 +894,11 @@ export default {
     },
      getCustomerResourse() {
        adminApi
-        .get(`/General_customer_source_resource`)
+        .get(`/customer-sources/get-drop-down`)
         .then((res) => {
           let l = res.data.data;
             if (this.isPermission("create Customer Resource")) {
-                l.unshift({ id: 0, name: "اضف مورد الزبون", name_e: "Add Customer Resource" });
+                l.unshift({ id: 0, name: "اضف موارد العملاء", name_e: "Add Customer Resource" });
             }
           this.customer_sources = l;
         })
@@ -918,7 +920,7 @@ export default {
       this.sub_customer_categories = [];
       this.create.customer_sub_category_id = null;
        adminApi
-        .get(`/customers-categories?parent_id=0`)
+        .get(`/customers-categories?parent_id=null`)
         .then((res) => {
           let l = res.data.data;
             if (this.isPermission("create Customer Category")) {
@@ -2482,7 +2484,7 @@ export default {
                                           ]"
                                                               data-dz-remove
                                                               @click.prevent="
-                                            deleteImageCreate(photo.id, index)
+                                            deleteImageCreate(photo.id)
                                           "
                                                           >
                                                               <i class="fe-x"></i>

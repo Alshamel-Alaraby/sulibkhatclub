@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();
-            $table->unsignedInteger('break_id');
+            $table->unsignedInteger('break_id')->index();
             $table->string('module_type');
             $table->string('serial_number')->nullable();
-            $table->string('document_header_detail_id');
+            $table->string('document_header_detail_id')->index();
             $table->softDeletes();
             $table->timestamps();
         });

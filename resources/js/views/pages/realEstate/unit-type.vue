@@ -51,7 +51,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
         next((vm) => {
-      return permissionGuard(vm, "Unit Type", "all Branch");
+      return permissionGuard(vm, "Unit Type RealEstate", "all Branch");
     });
 },
   methods: {

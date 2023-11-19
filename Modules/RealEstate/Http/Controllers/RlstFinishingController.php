@@ -9,6 +9,8 @@ use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstFinishing;
 use Modules\RealEstate\Http\Requests\RlstFinishingRequest;
 use Modules\RealEstate\Transformers\RlstFinishingResource;
+use Illuminate\Support\Facades\DB;
+
 
 class RlstFinishingController extends Controller
 {
@@ -43,8 +45,8 @@ class RlstFinishingController extends Controller
 
     public function create(RlstFinishingRequest $request)
     {
-        $model = $this->model->create($request->validated());
-        $model->refresh();
+
+        $model = RlstFinishing::create($request->validated());
 
         return responseJson(200, 'created', new RlstFinishingResource($model));
     }

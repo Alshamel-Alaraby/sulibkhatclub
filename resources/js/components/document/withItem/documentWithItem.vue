@@ -13,6 +13,9 @@ import CreateOrUpdatePanel from "./components/create-or-update-panel";
 import CreateOrUpdateBooking from "./components/create-or-update-booking";
 import CreateOrUpdateItems from "./components/create-or-update-items";
 import CreateOrUpdateCheckout from "./components/create-or-update-checkout";
+import CreateOrUpdateMaintenance from "./components/create-or-update-maintenance";
+import AccountStatementPrint from "./print/account-statement-booking";
+import PrintInvoice from "./print/print-general-item-invoice";
 
 
 /**
@@ -34,11 +37,14 @@ export default {
         CreateOrUpdatePanel,
         CreateOrUpdateBooking,
         CreateOrUpdateItems,
-        CreateOrUpdateCheckout
+        CreateOrUpdateCheckout,
+        CreateOrUpdateMaintenance,
+        AccountStatementPrint,
+        PrintInvoice
     },
     data() {
         return {
-            per_page: 20,
+            per_page: 50,
             search: "",
             debounce: {},
             reservationsPagination: {},
@@ -52,7 +58,6 @@ export default {
                 salesman_id: true,
                 branch_id: true,
                 serial_id: true,
-                complete_status: true,
             },
             filterSetting: [
                 'date',
@@ -428,7 +433,10 @@ export default {
         <template v-if="document && document.document_detail_type == 'booking' && document_id == 34">
             <CreateOrUpdateCheckout :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
         </template>
-        <template v-if="document && document.document_detail_type == 'booking' && document_id != 34">
+        <template v-if="document && document.document_detail_type == 'booking' && document_id == 40">
+            <CreateOrUpdateMaintenance :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
+        </template>
+        <template v-if="document && document.document_detail_type == 'booking' && document_id != 34 && document_id != 40">
             <CreateOrUpdateBooking :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
         </template>
         <template v-if="document && document.document_detail_type == 'normal'">
@@ -453,8 +461,8 @@ export default {
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
                                         <b-form-checkbox v-model="filterSetting" value="date" class="mb-1">{{ $t('general.Date') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="customer_id" class="mb-1">{{ $t('general.documentCustomer') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="employee_id" class="mb-1">{{document && document.document_detail_type == 'booking' ? $t('general.receptionist') : $t('general.documentSalesmen') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="customer_id" class="mb-1" v-if="document_id != 40">{{ $t('general.documentCustomer') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="employee_id" class="mb-1">{{document && document.document_detail_type == 'booking' ? document_id == 40 ? $t('general.employee') : $t('general.receptionist') : $t('general.documentSalesmen') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="branch_id" class="mb-1">{{ $t('general.Branch') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="prefix" class="mb-1">{{ $t('general.serial_number') }}</b-form-checkbox>
                                     </b-dropdown>
@@ -486,7 +494,7 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
+                                            v-if="checkAll.length == 1 && document_id != 34">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
@@ -518,12 +526,10 @@ export default {
                                                 :html="`${$t('general.setting')} <i class='fe-settings'></i>`" ref="dropdown"
                                                 class="dropdown-custom-ali">
                                         <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.Date') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{$t('general.documentCustomer') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.salesman_id" class="mb-1">{{ document && document.document_detail_type == 'booking' ? $t('general.receptionist') : $t('general.documentSalesmen') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="setting.customer_id" class="mb-1" v-if="document_id != 40">{{$t('general.documentCustomer') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="setting.salesman_id" class="mb-1">{{ document && document.document_detail_type == 'booking' ? document_id == 40 ? $t('general.employee') : $t('general.receptionist') : $t('general.documentSalesmen') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.branch_id" class="mb-1">{{ $t('general.Branch') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.serial_id" class="mb-1"> {{ $t('general.serial_number') }}</b-form-checkbox>
-                                        <b-form-checkbox v-if="document && document.document_detail_type == 'booking' && document_id == 33" v-model="setting.complete_status" class="mb-1"> {{ $t('general.status') }}</b-form-checkbox>
-
                                         <div class="d-flex justify-content-end">
                                             <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{
                                                 $t("general.Apply")
@@ -711,8 +717,7 @@ export default {
                             <loader size="large" v-if="isLoader" />
                             <!--       end loader       -->
 
-                            <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table"
-                                   >
+                            <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table" id="printReservation">
                                 <thead>
                                 <tr>
                                     <th scope="col" style="width: 0" v-if="enabled3" class="do-not-print">
@@ -730,7 +735,7 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.customer_id">
+                                    <th v-if="setting.customer_id && document_id != 40">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t('general.documentCustomer') }}</span>
                                             <div class="arrow-sort">
@@ -741,7 +746,7 @@ export default {
                                     </th>
                                     <th v-if="setting.salesman_id">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ document && document.document_detail_type == 'booking' ? $t('general.receptionist') : $t('general.documentSalesmen') }}</span>
+                                            <span>{{ document && document.document_detail_type == 'booking' ? document_id == 40 ? $t('general.employee') : $t('general.receptionist') : $t('general.documentSalesmen') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="reservations.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
                                                 <i class="fas fa-arrow-down" @click="reservations.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
@@ -766,15 +771,6 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.complete_status && document && document.document_detail_type == 'booking' && document_id == 33">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.status') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"  @click="reservations.sort(sortString('prefix'))"></i>
-                                                <i class="fas fa-arrow-down" @click="reservations.sort(sortString('-prefix'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
                                     <th v-if="enabled3" class="do-not-print">
                                         {{ $t("general.Action") }}
                                     </th>
@@ -783,7 +779,7 @@ export default {
                                 </thead>
                                 <tbody v-if="reservations.length > 0">
                                 <tr @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="$bvModal.show(`${data.id+''}`)"
+                                    @dblclick.prevent="document_id != 34 ? $bvModal.show(`${data.id+''}`) : $bvModal.show(`${'printStatement'+' '+data.id}`)"
                                     v-for="(data, index) in reservations" :key="data.id" class="body-tr-custom">
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="form-check custom-control" style="min-height: 1.9em">
@@ -796,7 +792,7 @@ export default {
                                             {{ data.date }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.customer_id">
+                                    <td v-if="setting.customer_id && document_id != 40">
                                         <h5 class="m-0 font-weight-normal">
                                             {{$i18n.locale == "ar" ? data.customer.name : data.customer.name_e}}
                                         </h5>
@@ -816,13 +812,6 @@ export default {
                                             {{ data.prefix }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.complete_status && document && document.document_detail_type == 'booking' && document_id == 33">
-                                        <h5 class="m-0 font-weight-normal">
-                                            <span :class="[ data.complete_status =='Delivered' ? 'text-success' : 'text-danger', 'badge',]">
-                                                {{ $t('general.'+data.complete_status) }}
-                                            </span>
-                                        </h5>
-                                    </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm dropdown-toggle dropdown-coustom"
@@ -831,12 +820,27 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#"
+                                                <a class="dropdown-item" href="#" v-if="document_id != 34"
                                                    @click="$bvModal.show(`${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
                                                         <span>{{ $t("general.edit") }}</span>
                                                         <i class="mdi mdi-square-edit-outline text-info"></i>
+                                                    </div>
+                                                </a>
+                                                <a class="dropdown-item" href="#" v-else
+                                                   @click="$bvModal.show(`${'printStatement'+' '+data.id}`)">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center text-black">
+                                                        <span>{{ $t("general.show") }}</span>
+                                                        <i class="fas fa-eye text-info"></i>
+                                                    </div>
+                                                </a>
+                                                <a v-if="document && data.id && document_id != 34"
+                                                   class="dropdown-item" href="#" @click="$bvModal.show(`${'PrintGeneralInvoice'+'-'+data.id}`)">
+                                                    <div class="d-flex justify-content-between align-items-center text-black">
+                                                        <span>{{ $t("general.print") }}</span>
+                                                        <i class="fe-printer text-info"></i>
                                                     </div>
                                                 </a>
                                                 <a class="dropdown-item text-black" href="#"
@@ -848,6 +852,16 @@ export default {
                                                     </div>
                                                 </a>
                                             </div>
+                                        </div>
+                                        <div style="display:none;">
+                                            <template v-if="document && data.id && document_id != 34">
+                                                <PrintInvoice :id="'PrintGeneralInvoice'+'-'+data.id" :document_row_id="data.id"/>
+                                            </template>
+                                        </div>
+                                        <div style="display:none;">
+                                            <template v-if="document && document.document_detail_type == 'booking'  && data.id && document_id == 34">
+                                                <AccountStatementPrint :id="'printStatement'+' '+data.id" :document_row_id="data.id" />
+                                            </template>
                                         </div>
 
                                         <div style="display:none;">
@@ -861,7 +875,12 @@ export default {
                                             </template>
                                         </div>
                                         <div style="display:none;">
-                                            <template v-if="document && document.document_detail_type == 'booking'  && data.id && document_id != 34">
+                                            <template v-if="document && document.document_detail_type == 'booking' && data.id && document_id == 40">
+                                                <CreateOrUpdateMaintenance :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :dataRow="data" :id="data.id+''" @created="getData()" />
+                                            </template>
+                                        </div>
+                                        <div style="display:none;">
+                                            <template v-if="document && document.document_detail_type == 'booking'  && data.id && document_id != 34 && document_id != 40">
                                                 <CreateOrUpdateBooking :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :dataRow="data" :id="data.id+''" @created="getData()" />
                                             </template>
                                         </div>

@@ -19,8 +19,7 @@ class SettingResource extends JsonResource
         return [
             'id' => $this->id,
             'key' => $this->key,
-            'value' => Carbon::createFromTimeString($this->value)->format('H:i'), // Format the time as "09:00"
-
+            'value' => $this->id == 1 || $this->id == 2 ? Carbon::createFromTimeString($this->value)->format('H:i') : $this->value, // Format the time as "09:00"
         ];
     }
 }

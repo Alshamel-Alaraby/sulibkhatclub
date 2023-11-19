@@ -276,4 +276,26 @@ Route::prefix('club-members')->group(function () {
         Route::get('/getOldMembers', 'CmOldMembersReportController@getOldMembers')->name('cm-old-status.all');
 
     });
+
+
+    // electoral-committee routes
+    Route::group(['prefix' => 'electoral-committee'], function () {
+
+        Route::get('/', 'ElectoralCommitteeController@all')->name('electoral-committee.all');
+        Route::get('/logs/{id}', 'ElectoralCommitteeController@logs')->name('electoral-committee.logs');
+        Route::get('/{id}', 'ElectoralCommitteeController@find')->name('electoral-committee.find');
+        Route::post('/', 'ElectoralCommitteeController@create')->name('electoral-committee.create');
+        Route::put('/{id}', 'ElectoralCommitteeController@update')->name('electoral-committee.update');
+        Route::post("/bulk-delete", "ElectoralCommitteeController@bulkDelete");
+        Route::delete('/{id}', 'ElectoralCommitteeController@delete')->name('electoral-committee.delete');
+    });
+
+
+    // reports routes
+    Route::group(['prefix' => 'reports'], function () {
+
+        Route::get('/members-permissions', 'CmReportController@membersByPermissions')->name('reports.membersByPermissions');
+        Route::get('/members-Committee', 'CmReportController@memberForCommittee')->name('reports.memberForCommittee');
+
+    });
 });

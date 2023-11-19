@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('general_document_header_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('unit_id')->nullable();
-            $table->unsignedBigInteger('item_id')->nullable();
+            $table->unsignedBigInteger('unit_id')->index()->nullable();
+            $table->unsignedBigInteger('item_id')->index()->nullable();
 
         });
     }

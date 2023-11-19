@@ -56,59 +56,59 @@ class Governorate extends Model
         return $this->hasMany(\Modules\BoardsRent\Entities\OrderDetails::class);
     }
 
-    // public function hasChildren()
-    // {
-    //     return $this->avenues()->count() > 0 ||
-    //     $this->cities()->count() > 0 ||
-    //     $this->panels()->count() > 0 ||
-    //     $this->customerBranches()->count() > 0 ||
-    //     $this->orderDetails()->count() > 0;
-
-    // }
-
     public function hasChildren()
     {
-        $relationsWithChildren = [];
+        return $this->avenues()->count() > 0 ||
+        $this->cities()->count() > 0 ||
+        $this->panels()->count() > 0 ||
+        $this->customerBranches()->count() > 0 ||
+        $this->orderDetails()->count() > 0;
 
-        if ($this->avenues()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'avenues',
-                'count' => $this->avenues()->count(),
-                'ids' => $this->avenues()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->cities()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'cities',
-                'count' => $this->cities()->count(),
-                'ids' => $this->cities()->pluck('id')->toArray(),
-            ];
-        }
-
-        if ($this->panels()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'panels',
-                'count' => $this->panels()->count(),
-                'ids' => $this->panels()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->customerBranches()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'customerBranches',
-                'count' => $this->customerBranches()->count(),
-                'ids' => $this->customerBranches()->pluck('id')->toArray(),
-            ];
-        }
-        if ($this->orderDetails()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'orderDetails',
-                'count' => $this->orderDetails()->count(),
-                'ids' => $this->orderDetails()->pluck('id')->toArray(),
-            ];
-        }
-
-        return $relationsWithChildren;
     }
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->avenues()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'avenues',
+    //             'count' => $this->avenues()->count(),
+    //             'ids' => $this->avenues()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->cities()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'cities',
+    //             'count' => $this->cities()->count(),
+    //             'ids' => $this->cities()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     if ($this->panels()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'panels',
+    //             'count' => $this->panels()->count(),
+    //             'ids' => $this->panels()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->customerBranches()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'customerBranches',
+    //             'count' => $this->customerBranches()->count(),
+    //             'ids' => $this->customerBranches()->pluck('id')->toArray(),
+    //         ];
+    //     }
+    //     if ($this->orderDetails()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'orderDetails',
+    //             'count' => $this->orderDetails()->count(),
+    //             'ids' => $this->orderDetails()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     return $relationsWithChildren;
+    // }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

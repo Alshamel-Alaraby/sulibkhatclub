@@ -8,6 +8,7 @@
       :isPage="false"
       type="create"
       :isPermission="isPermission"
+      :tables="[]"
     />
     <Country
       :companyKeys="companyKeys"
@@ -77,13 +78,12 @@
             {{ $t("general.Cancel") }}
           </b-button>
         </div>
-
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-4" v-if="isVisible('name')">
             <div class="form-group">
               <label for="field-1" class="control-label">
                 {{ getCompanyKey("owner_name_ar") }}
-                <span class="text-danger">*</span>
+                <span v-if="isRequired('name')" class="text-danger">*</span>
               </label>
               <div dir="rtl">
                 <input
@@ -117,11 +117,11 @@
               </template>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" v-if="isVisible('name_e')">
             <div class="form-group">
               <label for="field-2" class="control-label">
                 {{ getCompanyKey("owner_name_en") }}
-                <span class="text-danger">*</span>
+                <span v-if="isRequired('name_e')" class="text-danger">*</span>
               </label>
               <div dir="ltr">
                 <input
@@ -163,17 +163,22 @@
           "
         />
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-3" v-if="isVisible('nationality_id')">
             <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("owner_nationality") }}
-                <span class="text-danger">*</span>
+                <span v-if="isRequired('nationality_id')" class="text-danger"
+                  >*</span
+                >
               </label>
               <multiselect
                 v-model="$v.create.nationality_id.$model"
                 :options="nationalities.map((type) => type.id)"
                 :custom-label="
-                  (opt) => nationalities.find((x) => x.id == opt)?nationalities.find((x) => x.id == opt).name:''
+                  (opt) =>
+                    nationalities.find((x) => x.id == opt)
+                      ? nationalities.find((x) => x.id == opt).name
+                      : ''
                 "
               >
               </multiselect>
@@ -192,7 +197,7 @@
               </template>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" v-if="isVisible('country_id')">
             <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("country") }}
@@ -202,7 +207,12 @@
                 @input="showCountryModal"
                 v-model="$v.create.country_id.$model"
                 :options="countries.map((type) => type.id)"
-                :custom-label="(opt) => countries.find((x) => x.id == opt)?countries.find((x) => x.id == opt).name:''"
+                :custom-label="
+                  (opt) =>
+                    countries.find((x) => x.id == opt)
+                      ? countries.find((x) => x.id == opt).name
+                      : ''
+                "
               >
               </multiselect>
               <div
@@ -230,7 +240,12 @@
                 @input="getCity()"
                 v-model="$v.create.city_id.$model"
                 :options="cities.map((type) => type.id)"
-                :custom-label="(opt) => cities.find((x) => x.id == opt)?cities.find((x) => x.id == opt).name:''"
+                :custom-label="
+                  (opt) =>
+                    cities.find((x) => x.id == opt)
+                      ? cities.find((x) => x.id == opt).name
+                      : ''
+                "
               >
               </multiselect>
               <div
@@ -295,7 +310,10 @@
                 v-model="$v.create.bank_account_id.$model"
                 :options="bank_accounts.map((type) => type.id)"
                 :custom-label="
-                  (opt) => bank_accounts.find((x) => x.id == opt)?bank_accounts.find((x) => x.id == opt).account_number:''
+                  (opt) =>
+                    bank_accounts.find((x) => x.id == opt)
+                      ? bank_accounts.find((x) => x.id == opt).account_number
+                      : ''
                 "
               >
               </multiselect>
@@ -518,7 +536,6 @@ export default {
     isPermission: {},
     url: { default: "/real-estate/owners" },
   },
-
   components: {
     ErrorMessage,
     loader,
@@ -557,6 +574,7 @@ export default {
       errors: {},
       image: "",
       is_disabled: false,
+      fields: [],
     };
   },
   validations: {
@@ -664,6 +682,7 @@ export default {
         } else {
           if (this.idObjEdit.dataObj) {
             let build = this.idObjEdit.dataObj;
+            console.log("this is build for owner", build);
             this.errors = {};
             if (this.isVisible("country_id")) this.getCategory();
             if (this.isVisible("city_id")) this.getCity(build.country.id);
@@ -674,7 +693,7 @@ export default {
             this.create.phone = build.phone;
             this.create.city_id = build.city.id;
             this.create.country_id = build.country.id;
-            this.create.bank_account_id = build.ban1k_account.id;
+            this.create.bank_account_id = build.bank_account.id;
             this.create.nationality_id = build.nationality.id;
             this.create.email = build.email;
             this.create.rb_code = build.rb_code;
@@ -700,8 +719,10 @@ export default {
         this.create.name_e = this.create.name;
       }
 
-      this.$v.create.$touch();
+      console.log("this is create", this.create);
 
+      this.$v.create.$touch();
+      console.log(this.$v.create.$touch());
       if (this.$v.create.$invalid && !this.isVaildPhone) {
         return;
       } else {
@@ -852,6 +873,6 @@ export default {
 
 <style scoped>
 form {
-    position: relative;
+  position: relative;
 }
 </style>

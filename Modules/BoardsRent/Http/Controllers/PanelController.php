@@ -129,7 +129,7 @@ class PanelController extends Controller
                 });
             })->pluck('id')->toArray();
 
-        $models = $this->model->filter($request)->whereNotIn('id',$models_id);
+        $models = $this->model->filter($request)->data()->whereNotIn('id',$models_id);
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

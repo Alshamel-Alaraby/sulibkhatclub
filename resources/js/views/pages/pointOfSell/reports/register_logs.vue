@@ -158,12 +158,12 @@ export default {
     this.getCachRegisters();
     this.getData();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS register logs", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS register logs", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);

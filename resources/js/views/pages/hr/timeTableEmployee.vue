@@ -20,7 +20,7 @@ export default {
     mixins: [translation,customTable,successError,crudHelper],
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Time Employee", "all Time Employee Hr");
+            return permissionGuard(vm, "Time Employee", "all Time Employee hr");
         });
     },
     components: {

@@ -14,8 +14,8 @@ class RlstViewRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:100',
-            'name_e' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:rlst_views,name,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
+            'name_e' => 'required|string|max:100|unique:rlst_views,name_e,'.($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
             "company_id"=>'nullable',
         ];
     }

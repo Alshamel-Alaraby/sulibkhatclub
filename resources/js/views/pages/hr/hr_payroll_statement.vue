@@ -141,7 +141,7 @@ export default {
   },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Payroll Statement", "all payrollsStatement Hr");
+            return permissionGuard(vm, "Payroll Statement", "all payrollsStatement hr");
         });
     },
   methods: {

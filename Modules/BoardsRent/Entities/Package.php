@@ -2,6 +2,8 @@
 
 namespace Modules\BoardsRent\Entities;
 
+use App\Models\Category;
+use App\Models\Governorate;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,14 +19,36 @@ class Package extends Model
         'code',
         'price',
         'company_id',
+        'note',
+        'category_id',
+        'governorate_id',
     ];
     protected $table = "boards_rent_packages";
+
+    public function scopeData($query)
+    {
+        return $query->select('id','name','name_e','code','price','company_id','note','category_id','governorate_id')
+            ->with([
+                'category:id,name,name_e',
+                'governorate:id,name,name_e',
+            ]);
+    }
 
     // relations
 
     public function panels()
     {
         return $this->belongsToMany(\Modules\BoardsRent\Entities\Panel::class, 'boards_rent_package_panel', 'package_id', 'panel_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class,'category_id');
+    }
+
+    public function governorate()
+    {
+        return $this->belongsTo(Governorate::class,'governorate_id');
     }
 
     public function hasChildren()

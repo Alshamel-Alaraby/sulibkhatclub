@@ -43,7 +43,6 @@ export default {
       create: {
         wallet_id: null,
         building_id: null,
-        bu_ty: "active",
       },
       errors: {},
       is_disabled: false,
@@ -55,7 +54,6 @@ export default {
     create: {
       building_id: { required },
       wallet_id: { required },
-      bu_ty: { required },
     },
   },
 
@@ -107,7 +105,7 @@ export default {
       }
     },
     defaultData(edit = null) {
-      this.create = { wallet_id: null, building_id: null, bu_ty: "active" };
+      this.create = { wallet_id: null, building_id: null };
       this.$nextTick(() => {
         this.$v.$reset();
       });
@@ -135,8 +133,6 @@ export default {
             this.errors = {};
             this.create.building_id = buildingWallet.building.id;
             this.create.wallet_id = buildingWallet.wallet.id;
-            this.create.bu_ty =
-              buildingWallet.bu_ty == 1 ? "active" : "inactive";
             this.getBuildings();
             this.getWallets();
           }
@@ -155,12 +151,17 @@ export default {
         this.isLoader = true;
         this.errors = {};
         this.is_disabled = false;
+        const building_wallet = [
+          {
+            building_id: this.create.building_id,
+            wallet_id: this.create.wallet_id,
+          },
+        ];
 
         if (this.type != "edit") {
           adminApi
             .post(this.url, {
-              ...this.create,
-              bu_ty: this.create.bu_ty == "active" ? 1 : 2,
+              "building-wallet": building_wallet,
               company_id: this.$store.getters["auth/company_id"],
             })
             .then((res) => {
@@ -185,7 +186,7 @@ export default {
         } else {
           adminApi
             .put(`${this.url}/${this.idObjEdit.idEdit}`, {
-              ...this.create,
+              "building-wallet": building_wallet,
               company_id: this.$store.getters["auth/company_id"],
             })
             .then((res) => {
@@ -393,42 +394,6 @@ export default {
               <template v-if="errors.wallet_id">
                 <ErrorMessage
                   v-for="(errorMessage, index) in errors.wallet_id"
-                  :key="index"
-                  >{{ errorMessage }}</ErrorMessage
-                >
-              </template>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label class="mr-2">
-                {{ getCompanyKey("building_wallet_bu_ty") }}
-                <span class="text-danger">*</span>
-              </label>
-              <b-form-group
-                :class="{
-                  'is-invalid': $v.create.bu_ty.$error || errors.bu_ty,
-                  'is-valid': !$v.create.bu_ty.$invalid && !errors.bu_ty,
-                }"
-              >
-                <b-form-radio
-                  class="d-inline-block"
-                  v-model="$v.create.bu_ty.$model"
-                  name="some-radios"
-                  value="active"
-                  >{{ $t("general.Building") }}</b-form-radio
-                >
-                <b-form-radio
-                  class="d-inline-block m-1"
-                  v-model="$v.create.bu_ty.$model"
-                  name="some-radios"
-                  value="inactive"
-                  >{{ $t("general.Unit") }}</b-form-radio
-                >
-              </b-form-group>
-              <template v-if="errors.bu_ty">
-                <ErrorMessage
-                  v-for="(errorMessage, index) in errors.bu_ty"
                   :key="index"
                   >{{ errorMessage }}</ErrorMessage
                 >

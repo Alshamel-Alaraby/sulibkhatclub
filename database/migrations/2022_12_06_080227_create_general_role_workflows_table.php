@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('general_role_workflows', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('role_id')->nullable()->default(0)->comment('PK from GEN_Roles');
-            $table->unsignedInteger('workflow_id')->nullable()->default(0)->comment('PK from SYS_workflow');
-            $table->string("workflow_name")->nullable()->default("")->comment("Name of the workflow");
+            $table->unsignedInteger('role_id')->index()->nullable()->default(0)->comment('PK from GEN_Roles');
+            $table->unsignedInteger('workflow_id')->index()->nullable()->default(0)->comment('PK from SYS_workflow');
+            $table->string("workflow_name")->index()->nullable()->default("")->comment("Name of the workflow");
             $table->timestamps();
         });
     }

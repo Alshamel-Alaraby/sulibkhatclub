@@ -19,7 +19,8 @@ class RlstOwner extends Model
     public function scopeData($query)
     {
         return $query
-            ->select(
+        /*
+        ->select(
                 'id',
                 'name',
                 'name_e',
@@ -36,14 +37,16 @@ class RlstOwner extends Model
                 'nationality_id',
                 'bank_account_id',
                 'categories',
-                'attachments', )
+                'attachments' )
+            */
             ->with(
                 'country:id,name,name_e',
                 'city:id,name,name_e',
                 'nationality:id,name,name_e',
-                'bankAccount:id,bank_id',
-                'bankAccount.bank:id,name,name_e'
+                'bankAccount:id,bank_id,account_number',
+                'wallets:id,name,name_e',
             );
+
     }
 
     // relations
@@ -64,24 +67,43 @@ class RlstOwner extends Model
 
     public function bankAccount()
     {
-        return $this->belongsTo(\App\Models\BankAccount::class);
+        return $this->belongsTo(\App\Models\BankAccount::class, 'bank_account_id');
+    }
+
+    public function getBankAttribute()
+    {
+        return $this->bankAccount ? $this->bankAccount->bank->only(['id','name','name_e']) : null;
     }
 
     public function wallets()
     {
-        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstWallet::class, 'rlst_wallet_owners', 'wallet_id', 'owner_id')
-            ->withPivot('percentage');
+        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstWallet::class, 'rlst_wallet_owners', 'owner_id', 'wallet_id')
+            ->withPivot('percentage')->wherePivotNull('deleted_at');
+    }
+
+    public function walletOwner()
+    {
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstWalletOwner::class, "owner_id");
+    }
+
+    public function buildings()
+    {
+        $walletIds = $this->wallets()->pluck('rlst_wallet_owners.wallet_id');
+
+        return \Modules\RealEstate\Entities\RlstBuilding::whereHas('wallets', function ($query) use ($walletIds) {
+            $query->whereIn('wallet_id', $walletIds);
+        })->get();
     }
 
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
-        if ($this->wallets()->count() > 0) {
+        if ($this->walletOwner()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'wallets',
-                'count' => $this->wallets()->count(),
-                'ids' => $this->wallets()->pluck('id')->toArray(),
+                'relation' => 'walletOwner',
+                'count' => $this->walletOwner()->count(),
+                'ids' => $this->walletOwner()->pluck('id')->toArray(),
             ];
         }
         return $relationsWithChildren;
@@ -114,10 +136,6 @@ class RlstOwner extends Model
         return $percentage;
     }
 
-    public function walletOwner()
-    {
-        return $this->hasMany(RlstWalletOwner::class, "owner_id");
-    }
 
     public function getActivitylogOptions(): LogOptions
     {

@@ -24,7 +24,7 @@ class CreateGeneralUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string("is_active")->default('active');
             $table->string('password')->nullable();
-            $table->bigInteger('employee_id')->nullable();
+            $table->bigInteger('employee_id')->index()->nullable();
             $table->string('type')->nullable();
             $table->softDeletes();
             $table->rememberToken();

@@ -9,6 +9,7 @@ use App\Http\Resources\DocumentHeaderDetail\DocumentHeaderDetailResource;
 use App\Http\Resources\PanelUsageRateReportResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Booking\Transformers\Unit\RelationBookingUnitResource;
 use Modules\Booking\Transformers\UnitResource;
 
 class DocumentHeaderDetailController extends Controller
@@ -35,7 +36,6 @@ class DocumentHeaderDetailController extends Controller
 
     public function create(DocumentHeaderDetailRequest $request)
     {
-        return $request;
         $model = $this->modelInterface->create($request->validated());
 
         return responseJson(200, 'success', new DocumentHeaderDetailResource($model));

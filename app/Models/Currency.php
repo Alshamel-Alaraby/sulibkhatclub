@@ -20,6 +20,7 @@ class Currency extends Model
                 'id', 'name', 'name_e', 'code', 'code_e', 'fraction', 'fraction_e', 'fraction_no', 'symbol', 'symbol_e', 'is_default', 'is_active');
     }
 
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

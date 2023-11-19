@@ -9,8 +9,11 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import adminApi from "../../../../api/adminAxios";
 import Swal from "sweetalert2";
 import {dynamicSortString} from "../../../../helper/tableSort";
-import PrintInvoice from "../print-invoice";
+import PrintInvoice from "../print/print-general-item-invoice";
 import transactionBreak from "../../../create/receivablePayment/transactionBreak/transactionBreak";
+import Guest from "../../../create/booking/guest";
+import Company from "../../../create/booking/company";
+import Attendant from "../../../create/booking/attendant";
 
 
 /**
@@ -31,6 +34,9 @@ export default {
         id: {
             default:'create'
         },
+        other_data:{
+            default:null,
+        },
     },
     mixins: [translation],
     components: {
@@ -39,14 +45,22 @@ export default {
         DatePicker,
         Multiselect,
         PrintInvoice,
-        transactionBreak
+        transactionBreak,
+        Guest,
+        Company,
+        Attendant
     },
     data() {
         return {
             financial_years_validate:true,
             customer_data_edit: "",
+            customer_data_create: "",
             openingBreak:'',
+            guestModelId:'guest-create',
+            companyModelId:'company-create',
+            attendantModelId:'attendant-create',
             debounce: {},
+            isPermission: {},
             customers: [],
             companies: [],
             salesmen: [],
@@ -62,6 +76,7 @@ export default {
             isLoader: false,
             create: {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: null,
                 reason:'',
                 branch_id: null,
@@ -71,10 +86,11 @@ export default {
                 related_document_prefix: '',
                 employee_id: null,
                 customer_id: null,
+                attendans_num:0,
                 attendants: [],
                 company_id: null,
                 customer_type:1,
-                payment_method_id: null,
+                payment_method_id: 1,
                 total_invoice: 0,
                 invoice_discount: 0,
                 net_invoice: 0,
@@ -91,8 +107,11 @@ export default {
                     rent_days:0,
                     date_to: this.formatDate(new Date()),
                     check_in_time:'',
+                    discount_per_day: 0,
                     discount: 0,
                     is_stripe: 0,
+                    note:'',
+                    category_booking:'single',
                     sell_method_discount: 0,
                 }]
             },
@@ -103,6 +122,7 @@ export default {
             printObj: {
                 id: "printReservation",
             },
+            dataOfRow:''
         };
     },
     validations: {
@@ -126,6 +146,7 @@ export default {
             payment_method_id: { required },
             total_invoice: { required },
             invoice_discount: { required },
+            attendans_num: { required },
             net_invoice: { required },
             sell_method_discount: {  },
             unrelaized_revenue: {  },
@@ -142,9 +163,12 @@ export default {
                     unit_type: {required},
                     price_per_uint: {required, minValue: minValue(0)},
                     total: {required},
+                    discount_per_day: {},
                     discount: {},
                     is_stripe: {required},
                     sell_method_discount: {},
+                    note: {},
+                    category_booking:{},
                 }
             }
         },
@@ -154,23 +178,24 @@ export default {
         this.$store.dispatch('locationIp/getIp');
     },
     methods: {
-        resetModalCreateOrUpdate()
+        async resetModalCreateOrUpdate()
         {
             this.relatedDocuments = this.document.document_relateds;
             if (this.dataRow)
             {
-                 this.resetModalEdit(this.dataRow.id);
+                await this.getDataRow();
+                await this.resetModalEdit(this.dataRow.id);
             }else{
-                 this.resetModal();
+                await this.resetModal();
             }
         },
         resetModalHiddenCreateOrUpdate ()
         {
             if (this.dataRow)
             {
-                 this.resetModalHiddenEdit(this.dataRow.id);
+                this.resetModalHiddenEdit(this.dataRow.id);
             }else{
-                 this.resetModalHidden();
+                this.resetModalHidden();
             }
         },
         changeValue(index = null){
@@ -180,7 +205,7 @@ export default {
             });
             this.create.total_invoice = sum;
             this.create.net_invoice = sum - this.create.invoice_discount;
-            this.calculateDiscountLine();
+            // this.calculateDiscountLine();
         },
         calculateDiscountLine()
         {
@@ -198,11 +223,14 @@ export default {
                 date_from: this.formatDate(new Date()),
                 rent_days:0,
                 date_to: this.formatDate(new Date()),
-                check_in_time:'',
+                check_in_time:this.currentTime(),
                 total: 0,
+                discount_per_day: 0,
                 discount: 0,
                 unit_type: "Booking",
                 is_stripe: 0,
+                note: '',
+                category_booking:'single',
                 sell_method_discount: 0,
             });
             this.changeValue();
@@ -220,10 +248,12 @@ export default {
         dataCreate()
         {
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.serial_number = "";
             this.financial_years_validate = true;
             this.create = {
                 document_id: this.document_id,
+                document_module_type_id: this.document?this.document.document_module_type_id:null,
                 document_status_id: parseInt(this.document.need_approve) == 0 ? 5 : 1,
                 reason:'',
                 branch_id: null,
@@ -235,8 +265,9 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
+                attendans_num:0,
                 attendants: [],
                 total_invoice: 0,
                 invoice_discount: 0,
@@ -253,10 +284,13 @@ export default {
                     date_from: this.formatDate(new Date()),
                     rent_days:0,
                     date_to: this.formatDate(new Date()),
-                    check_in_time:'',
+                    check_in_time:this.currentTime(),
+                    discount_per_day: 0,
                     discount: 0,
                     is_stripe: 0,
-                    sell_method_discount: 0
+                    sell_method_discount: 0,
+                    note: '',
+                    category_booking:'single',
                 }]
             };
         },
@@ -274,11 +308,14 @@ export default {
         /**
          *  hidden Modal (create)
          */
-         resetModal() {
+        async resetModal() {
+            this.guestModelId = 'guest-create-'+this.id;
+            this.companyModelId = 'company-create-'+this.id;
+            this.attendantModelId = 'attendant-create-'+this.id;
             this.rooms= [{rooms: []}];
             if (this.checkDocumentNeedApprove() )
             {
-                 this.getStatus();
+                this.getStatus();
             }
             this.dataCreate();
             this.getBranches();
@@ -287,6 +324,14 @@ export default {
             // this.getServices();
             if(parseInt(this.document.required) == 1 && this.relatedDocuments.length == 1){
                 this.create.related_document_id = this.relatedDocuments[0].id;
+            }
+            if (this.other_data)
+            {
+                this.create.header_details[0].unit_id = this.other_data.unit_id;
+                this.create.header_details[0].date_from = this.other_data.date_from;
+                this.create.header_details[0].rent_days = this.other_data.rent_days;
+                this.create.header_details[0].date_to = this.other_data.date_to;
+                this.calcDateTo(0);
             }
             this.is_disabled = false;
             this.$nextTick(() => {
@@ -434,10 +479,10 @@ export default {
         /**
          *  get workflows
          */
-         getStatus(){
+        getStatus(){
             this.isLoader = true;
 
-             adminApi
+            adminApi
                 .get(`/document-statuses`)
                 .then((res) => {
                     let l = res.data.data;
@@ -454,14 +499,21 @@ export default {
                     this.isLoader = false;
                 });
         },
-         getBranches() {
+        getBranches() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/branches?document_id=${this.document_id}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
                     this.branches = l;
+                    if (!this.dataRow){
+                        if (this.branches.length == 1)
+                        {
+                            this.create.branch_id = this.branches[0].id;
+                            this.getSerialNumber(this.create.branch_id);
+                        }
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -471,7 +523,7 @@ export default {
                     });
                 });
         },
-         getSerialNumber(e)
+        getSerialNumber(e)
         {
             let date = this.create.date;
             let shortYear =new Date(date).getFullYear();
@@ -484,12 +536,12 @@ export default {
             let branch_id = this.create.branch_id;
             if (document_id && branch_id)
             {
-                 this.handelRelatedDocument()
+                this.handelRelatedDocument()
             }
         },
-         getSalesmen() {
+        getSalesmen() {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/employees?is_salesman=1&customer_handel=1`)
                 .then((res) => {
                     this.isLoader = false;
@@ -504,17 +556,17 @@ export default {
                     });
                 });
         },
-         getCustomerSalesman(e)
+        getCustomerSalesman(e)
         {
             let employee_id = e;
             if (employee_id)
             {
-               let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
-               this.getCustomers(customer_handel,employee_id);
-               if (parseInt(this.create.customer_type) == 0)
-               {
-                   this.getCompanies(customer_handel,employee_id);
-               }
+                let customer_handel = this.salesmen.find( (el) => el.id == employee_id ).customer_handel;
+                this.getCustomers(customer_handel,employee_id);
+                if (parseInt(this.create.customer_type) == 0)
+                {
+                    this.getCompanies(customer_handel,employee_id);
+                }
             }
         },
         getCompanies(customer_handel,employee_id=null,search='') {
@@ -524,6 +576,7 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف شركة", name_e: "Add Company" });
                     this.companies = l;
                 })
                 .catch((err) => {
@@ -536,15 +589,26 @@ export default {
         },
         getCustomers(customer_handel,employee_id=null,search='') {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/general-customer?limet=10&type=1&company_id=${this.company_id}&employee_id=${customer_handel=='his_customer'?employee_id:''}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
+                        l.unshift({ id: 0, name: "اضف نزيل", name_e: "Add Guest" });
                     this.customers = l;
                     if (this.customer_data_edit)
                     {
-                        this.customers.push(this.customer_data_edit);
+                        if (!this.customers.find((e) => e.id == this.customer_data_edit.id))
+                        {
+                            this.customers.push(this.customer_data_edit);
+                        }
+                    }
+                    if (this.customer_data_create)
+                    {
+                        if (!this.customers.find((e) => e.id == this.customer_data_create.id))
+                        {
+                            this.customers.push(this.customer_data_create);
+                        }
                     }
                 })
                 .catch((err) => {
@@ -562,6 +626,7 @@ export default {
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
+                    l.unshift({ id: 0, name: "اضف مرافق", name_e: "Add Attendant" });
                     this.escorts = l;
                 })
                 .catch((err) => {
@@ -598,6 +663,9 @@ export default {
                 .then((res) => {
                     let l = res.data.data;
                     this.rooms[index].rooms = l;
+                    if (this.other_data){
+                        this.addRoomPrice(0);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -632,19 +700,23 @@ export default {
         /**
          *   show Modal (edit)
          */
-         resetModalEdit(id) {
+        async resetModalEdit(id) {
             this.rooms = [];
+            this.guestModelId = 'guest-create-'+this.id;
+            this.companyModelId = 'company-create-'+this.id;
+            this.attendantModelId = 'attendant-create-'+this.id;
             this.customer_data_edit = '';
+            this.customer_data_create = '';
             this.isLoader = true;
             this.financial_years_validate = true;
             if (this.checkDocumentNeedApprove()) {
-                 this.getStatus();
+                this.getStatus();
             }
             this.getBranches();
             this.getPaymentMethod();
             this.getSalesmen();
             // this.getServices();
-            let reservation = this.dataRow;
+            let reservation = this.dataOfRow;
             this.customer_data_edit = reservation.customer;
 
             this.getCustomers(reservation.employee.customer_handel,reservation.employee_id);
@@ -654,9 +726,10 @@ export default {
             this.create.branch_id = reservation.branch_id;
             this.create.date = reservation.date;
             this.create.related_document_id = reservation.related_document_id;
+            this.create.document_module_type_id= this.document?this.document.document_module_type_id:null;
             if(reservation.related_document_id)
             {
-                 this.handelRelatedDocument();
+                this.handelRelatedDocument();
             }
             if(reservation.document_number)
             {
@@ -667,6 +740,7 @@ export default {
             this.create.customer_id = reservation.customer_id;
             this.create.company_id = reservation.company_id;
             this.create.customer_type = reservation.customer_type;
+            this.create.attendans_num = reservation.attendans_num;
             this.create.attendants = reservation.attendants;
             if(reservation.customer_type == 0)
             {
@@ -701,10 +775,13 @@ export default {
                     unit_type: e.unit_type,
                     quantity: e.quantity,
                     price_per_uint: e.price_per_uint,
+                    discount_per_day: e.discount / e.rent_days,
                     discount: e.discount,
                     total: e.total,
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
+                    category_booking:e.category_booking,
                 });
             });
             this.isLoader = false;
@@ -730,16 +807,36 @@ export default {
                 customer_id: null,
                 company_id: null,
                 sell_method_id: null,
-                payment_method_id: null,
+                payment_method_id: 1,
                 customer_type:1,
                 attendants: [],
                 total_invoice: 0,
                 invoice_discount: 0,
+                attendans_num:0,
                 net_invoice: 0,
                 sell_method_discount: 0,
                 unrelaized_revenue: 0,
                 header_details: [],
             };
+        },
+        async getDataRow(){
+            this.isLoader = true;
+            await adminApi
+                .get(`/document-headers/${this.id}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.dataOfRow = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
         },
         /**
          *  start  dynamicSortString
@@ -750,7 +847,7 @@ export default {
         },
 
         showPackageModal(index) {
-             if (this.create.header_details[index].package_id) {
+            if (this.create.header_details[index].package_id) {
                 this.create.header_details[index].price_per_uint = this.packages.find(el => el.id == this.create.header_details[index].package_id).price;
                 this.totalCreate(index);
             }
@@ -772,14 +869,15 @@ export default {
             this.create.header_details[index].quantity = 0;
             this.create.header_details[index].price_per_uint = 0;
             this.create.header_details[index].total = 0;
+            this.create.header_details[index].discount_per_day = 0;
             this.create.header_details[index].discount = 0;
             this.create.header_details[index].unit_type = "Booking";
             this.create.header_details[index].date_from = this.formatDate(new Date());
             this.create.header_details[index].rent_days = 0;
             this.create.header_details[index].date_to = this.formatDate(new Date());
-            this.create.header_details[index].check_in_time=''
+            this.create.header_details[index].check_in_time=this.currentTime()
         },
-         searchCustomer(e) {
+        searchCustomer(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -788,7 +886,7 @@ export default {
             }, 500);
 
         },
-         searchCompany(e) {
+        searchCompany(e) {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
@@ -856,7 +954,8 @@ export default {
                         let shortYear =new Date(date).getFullYear();
                         let twoDigitYear = shortYear.toString().substr(-2);
                         let branch = this.branches.find((row) => branch_id == row.id);
-                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${branch.serials[0].perfix}`;
+                        let serial = branch.serials.find((row) => this.document_id == row.document_id);
+                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${serial.perfix}`;
                     }
                 })
                 .catch((err) => {
@@ -877,14 +976,18 @@ export default {
             let branch_id = this.create.branch_id;
             await this.getRelatedDocument(related_document_id,branch_id,document_id);
         },
-         getRelatedDocument(related_document_id,branch_id,document_id)
+        getRelatedDocument(related_document_id,branch_id,document_id)
         {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/document-headers/check-related-document?related_document_id=${related_document_id}&document_id=${document_id}&branch_id=${branch_id}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.relatedDocumentNumbers = l;
+                    if (this.dataOfRow)
+                    {
+                        this.relatedDocumentNumbers.push(this.dataOfRow.document_number);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -913,8 +1016,9 @@ export default {
             let relatedDocument = this.relatedDocumentNumbers.find(el => el.id == related_document_number);
             this.create.header_details = [];
             this.customer_data_edit = relatedDocument.customer;
+            this.customer_data_create = relatedDocument.customer;
             this.getCustomers(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
-            this.getEscorts(reservation.customer_id)
+            this.getEscorts(relatedDocument.customer_id)
             this.create.related_document_prefix = relatedDocument.serial_number;
             this.create.customer_type = relatedDocument.customer_type;
             this.create.attendants = relatedDocument.attendants;
@@ -923,12 +1027,13 @@ export default {
             this.create.employee_id = relatedDocument.employee_id;
             if (relatedDocument.customer_type == 0)
             {
-               this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
+                this.getCompanies(relatedDocument.employee.customer_handel,relatedDocument.employee_id);
             }
             this.create.payment_method_id = relatedDocument.payment_method_id;
             this.create.sell_method_id = relatedDocument.sell_method_id;
             this.create.total_invoice = relatedDocument.total_invoice;
             this.create.invoice_discount = relatedDocument.invoice_discount;
+            this.create.attendans_num = relatedDocument.attendans_num;
             this.create.net_invoice = relatedDocument.net_invoice;
             this.create.sell_method_discount = relatedDocument.sell_method_discount;
             this.create.unrelaized_revenue = relatedDocument.unrelaized_revenue;
@@ -946,14 +1051,17 @@ export default {
                     date_from: this.formatDate(e.date_from),
                     rent_days: e.rent_days,
                     date_to: this.formatDate(e.date_to),
-                    check_in_time:'',
+                    check_in_time:this.currentTime(),
                     unit_type: e.unit_type,
                     quantity: e.quantity,
                     price_per_uint: e.price_per_uint,
                     total: e.total,
                     discount: e.discount,
+                    discount_per_day: e.discount / e.rent_days,
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
+                    note: e.note,
+                    category_booking: e.category_booking,
                 });
             });
             this.isLoader = false;
@@ -961,8 +1069,8 @@ export default {
 
         calcDateTo(index)
         {
-           let days = parseInt(this.create.header_details[index].rent_days);
-           let date_from = new Date(this.create.header_details[index].date_from);
+            let days = parseInt(this.create.header_details[index].rent_days);
+            let date_from = new Date(this.create.header_details[index].date_from);
             date_from.setDate(date_from.getDate() + days);
             this.create.header_details[index].date_to = new Date(date_from).toISOString().slice(0, 10);
             this.create.header_details[index].quantity = parseInt(this.create.header_details[index].rent_days);
@@ -1009,7 +1117,15 @@ export default {
         {
             if(this.create.header_details[index].unit_id)
             {
-                let price = this.rooms[index].rooms.find(el => el.id == this.create.header_details[index].unit_id) ? this.rooms[index].rooms.find(el => el.id == this.create.header_details[index].unit_id).price : 0;
+                let price = 0;
+                let room = this.rooms[index].rooms.find(el => el.id == this.create.header_details[index].unit_id);
+                let count_attendance = this.create.attendans_num ;
+                if ((parseInt(count_attendance))  > room.number_of_individuals)
+                {
+                    price = parseFloat(room.price) + parseFloat(room.extra_guest_price);
+                }else{
+                    price = room.price
+                }
                 this.create.header_details[index].price_per_uint = price;
             }else {
                 this.create.header_details[index].price_per_uint = 0 ;
@@ -1051,6 +1167,58 @@ export default {
             });
             this.create.invoice_discount = sum;
             this.changeValue();
+        },
+        calcTotalDiscount(index)
+        {
+            this.create.header_details[index].discount = this.create.header_details[index].discount_per_day * this.create.header_details[index].rent_days;
+            this.discountLine(index);
+        },
+        currentTime()
+        {
+            const currentTime = new Date();
+            const hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes();
+
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            return formattedTime;
+        },
+        emptyAttendanceArray()
+        {
+            this.create.attendants = [];
+            if (this.create.attendans_num && this.create.header_details[0].unit_id)
+            {
+                this.addRoomPrice(0)
+            }
+        },
+        checkAttendanceNumber()
+        {
+            if (this.create.attendants.length > this.create.attendans_num)
+            {
+                this.create.attendants.pop();
+            }
+        },
+        showGuestModal() {
+            if (this.create.customer_id == 0) {
+                this.$bvModal.show(this.guestModelId);
+                this.create.customer_id = null;
+            }else{
+                this.customer_data_create = this.customers.find((e) => e.id == this.create.customer_id);
+                this.escortsHandel();
+            }
+        },
+        showCompanyModal() {
+            if (this.create.company_id == 0) {
+                this.$bvModal.show(this.companyModelId);
+                this.create.company_id = null;
+            }
+        },
+        showAttendantModal() {
+            if (this.create.attendants.includes(0)) {
+                this.$bvModal.show(this.attendantModelId);
+                this.create.attendants = [];
+            }else{
+                this.checkAttendanceNumber();
+            }
         }
     }
 };
@@ -1058,8 +1226,29 @@ export default {
 
 <template>
     <div>
-        <div v-if="dataRow" style="display:none;">
-            <PrintInvoice :document_data="dataRow"/>
+        <div style="display:none;">
+            <Guest
+                :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
+                :isPage="false" type="create" :isPermission="isPermission"
+                :id="guestModelId" @created="getCustomers(salesmen.find( (el) => el.id == create.employee_id ).customer_handel,create.employee_id)"
+            />
+        </div>
+        <div style="display:none;">
+            <Company
+                :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
+                :isPage="false" type="create" :isPermission="isPermission"
+                :id="companyModelId" @created="getCompanies(salesmen.find( (el) => el.id == create.employee_id ).customer_handel,create.employee_id)"
+            />
+        </div>
+        <div style="display:none;">
+            <Attendant
+                :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
+                :isPage="false" type="create" :isPermission="isPermission"
+                :id="attendantModelId" @created="getEscorts(create.customer_id)"
+            />
+        </div>
+        <div v-if="dataOfRow" style="display:none;">
+            <PrintInvoice :document_data="dataOfRow"/>
         </div>
         <transactionBreak :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :opening="openingBreak"/>
         <!--  create   -->
@@ -1264,7 +1453,7 @@ export default {
 
                             <multiselect
                                 :show-labels="false"
-                                :disabled="!create.branch_id"
+                                :disabled="true"
                                 v-model="create.payment_method_id"
                                 :options="paymentMethods.map((type) => type.id)"
                                 :custom-label=" (opt) => paymentMethods.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? paymentMethods.find((x) => x.id == opt).name: paymentMethods.find((x) => x.id == opt).name_e :''"
@@ -1338,6 +1527,7 @@ export default {
                                 :disabled="!create.branch_id"
                                 :internalSearch="false"
                                 @search-change="searchCompany"
+                                @input="showCompanyModal"
                                 v-model="create.company_id"
                                 :options="companies.map((type) => type.id)"
                                 :custom-label="(opt) => companies.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? companies.find((x) => x.id == opt).name: companies.find((x) => x.id == opt).name_e:''"
@@ -1363,7 +1553,7 @@ export default {
                                 :disabled="!create.branch_id"
                                 :internalSearch="false"
                                 @search-change="searchCustomer"
-                                @input="escortsHandel"
+                                @input="showGuestModal"
                                 v-model="create.customer_id"
                                 :options="customers.map((type) => type.id)"
                                 :custom-label="(opt) => customers.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name: customers.find((x) => x.id == opt).name_e:''"
@@ -1381,13 +1571,37 @@ export default {
                             </template>
                         </div>
                     </div>
+                    <div  v-if="create.customer_id" class="col-md-2">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{$t('general.AttendanceNumber')}}
+                            </label>
+                            <input
+                                :disabled="!create.branch_id"
+                                @input="emptyAttendanceArray"
+                                type="number"
+                                class="form-control englishInput"
+                                v-model="$v.create.attendans_num.$model"
+                                :class="{
+                                    'is-invalid': $v.create.attendans_num.$error || errors.attendans_num,
+                                    'is-valid': !$v.create.attendans_num.$invalid && !errors.attendans_num,
+                                  }"
+                            />
+                            <template v-if="errors.attendans_num">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.attendans_num" :key="index">
+                                    {{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
                     <div v-if="create.customer_id" class="col-md-2">
                         <div class="form-group">
                             <label class="control-label">{{ $t('general.escorts') }} </label>
                             <multiselect
+                                @input="showAttendantModal"
                                 :multiple="true"
                                 :show-labels="false"
-                                :disabled="!create.branch_id"
+                                :disabled="!create.branch_id && create.attendants < create.attendans_num"
                                 v-model="create.attendants"
                                 :options="escorts.map((type) => type.id)"
                                 :custom-label="(opt) => escorts.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? escorts.find((x) => x.id == opt).name: escorts.find((x) => x.id == opt).name_e:''"
@@ -1442,12 +1656,15 @@ export default {
                                                 <div v-if="document_id != 35" class="col-1">{{ $t('general.bookingDays') }}</div>
                                                 <div v-if="document_id != 35" class="col-1">{{ $t('general.to_date') }}</div>
                                                 <div v-if="document_id != 35" class="col-1">{{document_id == 34 ? $t('general.check_out_time') :$t('general.check_in_time') }}</div>
-                                                <div class="col-2">{{ $t('general.room') }}</div>
-<!--                                                <div class="col-2">{{ $t('general.service') }}</div>-->
-                                                <div class="col-2">{{ $t('general.PricePerDay') }}</div>
-                                                <div class="col-2">{{ $t('general.Total') }}</div>
-                                                <div class="col-1">{{ $t('general.discount') }}</div>
-<!--                                                <div class="col-2">{{ $t('general.typeService') }}</div>-->
+                                                <div class="col-1">{{ $t('general.room') }}</div>
+                                                <!--                                                <div class="col-2">{{ $t('general.service') }}</div>-->
+                                                <div class="col-1">{{ $t('general.PricePerDay') }}</div>
+                                                <div class="col-1">{{ $t('general.Total') }}</div>
+                                                <div class="col-1">{{ $t('general.discountPerDay') }}</div>
+                                                <div class="col-1">{{ $t('general.totalDiscount') }}</div>
+                                                <!--                                                <div class="col-2">{{ $t('general.typeService') }}</div>-->
+                                                <div class="col-1">{{ $t('general.note') }}</div>
+                                                <div class="col-1">{{ $t('general.category') }}</div>
                                                 <div class="col-1">{{ $t('general.Action') }}</div>
                                             </div>
                                             <div v-for="(item, gIndex) in create.header_details" class="text-95  text-secondary-d3">
@@ -1517,7 +1734,7 @@ export default {
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-2 p-0">
+                                                    <div class="col-1 p-0">
                                                         <multiselect
                                                             :show-labels="false"
                                                             :disabled="item.is_stripe == 1"
@@ -1530,19 +1747,19 @@ export default {
                                                         >
                                                         </multiselect>
                                                     </div>
-<!--                                                    <div class="col-2 p-0">-->
-<!--                                                        <multiselect-->
-<!--                                                            :show-labels="false"-->
-<!--                                                            :disabled="item.is_stripe == 0"-->
-<!--                                                            @input="addServicePrice(gIndex)"-->
-<!--                                                            v-model="$v.create.header_details.$each[gIndex].item_id.$model"-->
-<!--                                                            :options="services.map((type) => type.id)"-->
-<!--                                                            :custom-label="(opt) => services.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? services.find((x) => x.id == opt).name: services.find((x) => x.id == opt).name_e : ''"-->
-<!--                                                            :class="{'is-invalid':$v.create.header_details.$each[gIndex].item_id.$error || errors.item_id,}"-->
-<!--                                                        >-->
-<!--                                                        </multiselect>-->
-<!--                                                    </div>-->
-                                                    <div class="col-2 p-0">
+                                                    <!--                                                    <div class="col-2 p-0">-->
+                                                    <!--                                                        <multiselect-->
+                                                    <!--                                                            :show-labels="false"-->
+                                                    <!--                                                            :disabled="item.is_stripe == 0"-->
+                                                    <!--                                                            @input="addServicePrice(gIndex)"-->
+                                                    <!--                                                            v-model="$v.create.header_details.$each[gIndex].item_id.$model"-->
+                                                    <!--                                                            :options="services.map((type) => type.id)"-->
+                                                    <!--                                                            :custom-label="(opt) => services.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? services.find((x) => x.id == opt).name: services.find((x) => x.id == opt).name_e : ''"-->
+                                                    <!--                                                            :class="{'is-invalid':$v.create.header_details.$each[gIndex].item_id.$error || errors.item_id,}"-->
+                                                    <!--                                                        >-->
+                                                    <!--                                                        </multiselect>-->
+                                                    <!--                                                    </div>-->
+                                                    <div class="col-1 p-0">
                                                         <input
                                                             @input="totalCreate(gIndex)"
                                                             @keyup="addLineEnter($event)"
@@ -1555,7 +1772,7 @@ export default {
                                                             }"
                                                         />
                                                     </div>
-                                                    <div class="col-2 p-0">
+                                                    <div class="col-1 p-0">
                                                         <input
                                                             @input="PricePerUnitByTotal(gIndex)"
                                                             @keyup="addLineEnter($event)"
@@ -1570,8 +1787,21 @@ export default {
                                                     </div>
                                                     <div class="col-1 p-0">
                                                         <input
-                                                            @input="discountLine(gIndex)"
+                                                            @input="calcTotalDiscount(gIndex)"
                                                             @keyup="addLineEnter($event)"
+                                                            v-model.number="$v.create.header_details.$each[gIndex].discount_per_day.$model"
+                                                            class="form-control" step="any"
+                                                            type="number"
+                                                            :class="{
+                                                                'is-invalid': $v.create.header_details.$each[gIndex].discount_per_day.$error || errors.discount_per_day,
+                                                                'is-valid': !$v.create.header_details.$each[gIndex].discount_per_day.$invalid && !errors.discount_per_day,
+                                                            }"
+                                                        />
+                                                    </div>
+                                                    <div class="col-1 p-0">
+                                                        <input
+                                                            :disabled="true"
+                                                            @input="discountLine(gIndex)"
                                                             v-model.number="$v.create.header_details.$each[gIndex].discount.$model"
                                                             class="form-control" step="any"
                                                             type="number"
@@ -1581,20 +1811,44 @@ export default {
                                                             }"
                                                         />
                                                     </div>
-<!--                                                    <div class="col-2 p-0">-->
-<!--                                                        <select-->
-<!--                                                            class="custom-select"-->
-<!--                                                            v-model="$v.create.header_details.$each[gIndex].is_stripe.$model"-->
-<!--                                                            :class="{-->
-<!--                                                                'is-invalid': $v.create.header_details.$each[gIndex].is_stripe.$error || errors.is_stripe,-->
-<!--                                                                'is-valid': !$v.create.header_details.$each[gIndex].is_stripe.$invalid && !errors.is_stripe,-->
-<!--                                                            }"-->
-<!--                                                            @input="changeStrip(gIndex)"-->
-<!--                                                        >-->
-<!--                                                            <option value="0">{{ $t('general.RoomBooking') }}</option>-->
-<!--                                                            <option value="1">{{ $t('general.ServiceRequest') }}</option>-->
-<!--                                                        </select>-->
-<!--                                                    </div>-->
+                                                    <!--                                                    <div class="col-2 p-0">-->
+                                                    <!--                                                        <select-->
+                                                    <!--                                                            class="custom-select"-->
+                                                    <!--                                                            v-model="$v.create.header_details.$each[gIndex].is_stripe.$model"-->
+                                                    <!--                                                            :class="{-->
+                                                    <!--                                                                'is-invalid': $v.create.header_details.$each[gIndex].is_stripe.$error || errors.is_stripe,-->
+                                                    <!--                                                                'is-valid': !$v.create.header_details.$each[gIndex].is_stripe.$invalid && !errors.is_stripe,-->
+                                                    <!--                                                            }"-->
+                                                    <!--                                                            @input="changeStrip(gIndex)"-->
+                                                    <!--                                                        >-->
+                                                    <!--                                                            <option value="0">{{ $t('general.RoomBooking') }}</option>-->
+                                                    <!--                                                            <option value="1">{{ $t('general.ServiceRequest') }}</option>-->
+                                                    <!--                                                        </select>-->
+                                                    <!--                                                    </div>-->
+                                                    <div class="col-1 p-0">
+                                                        <input
+                                                            v-model="$v.create.header_details.$each[gIndex].note.$model"
+                                                            class="form-control"
+                                                            type="text"
+                                                            :class="{
+                                                                'is-invalid': $v.create.header_details.$each[gIndex].note.$error || errors.note,
+                                                                'is-valid': !$v.create.header_details.$each[gIndex].note.$invalid && !errors.note,
+                                                            }"
+                                                        />
+                                                    </div>
+                                                    <div class="col-1 p-0">
+                                                        <select
+                                                            class="custom-select"
+                                                            v-model="$v.create.header_details.$each[gIndex].category_booking.$model"
+                                                            :class="{
+                                                                'is-invalid': $v.create.header_details.$each[gIndex].category_booking.$error || errors.category_booking,
+                                                                'is-valid': !$v.create.header_details.$each[gIndex].category_booking.$invalid && !errors.category_booking,
+                                                            }"
+                                                        >
+                                                            <option value="single">{{ $t('general.single') }}</option>
+                                                            <option value="family">{{ $t('general.family') }}</option>
+                                                        </select>
+                                                    </div>
                                                     <div class="col-1">
                                                         <button
                                                             v-if="create.header_details.length > 1"
@@ -1620,7 +1874,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.total_invoice ? '0.00' : create.total_invoice }}
+                                                                {{ !create.total_invoice ? '0.00' : parseFloat(create.total_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1630,7 +1884,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.invoice_discount ? '0.00' : create.invoice_discount }}
+                                                                {{ !create.invoice_discount ? '0.00' : parseFloat(create.invoice_discount).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1640,7 +1894,7 @@ export default {
                                                         </div>
                                                         <div class="col-5">
                                                             <span class="text-150 text-success-d3 opacity-2">
-                                                                {{ !create.net_invoice ? '0.00' : create.net_invoice }}
+                                                                {{ !create.net_invoice ? '0.00' : parseFloat(create.net_invoice).toFixed(3) }}
                                                             </span>
                                                         </div>
                                                     </div>

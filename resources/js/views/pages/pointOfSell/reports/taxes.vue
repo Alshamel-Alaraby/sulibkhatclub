@@ -155,12 +155,12 @@ export default {
     this.getTypes();
     this.getBranches();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS taxes report", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS taxes report", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     async showReport() {
       this.$bvModal.hide(`filter`);

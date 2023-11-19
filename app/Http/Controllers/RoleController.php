@@ -109,7 +109,7 @@ class RoleController extends Controller
     {
         $permissions = \Spatie\Permission\Models\Permission::where(function ($q) use ($request) {
             if ($request->workflows) {
-                $q->whereIn('workflow',$request->workflows);
+                $q->whereIn('crud_name',$request->workflows);
             }
         })->get();
         return responseJson(200, 'success', PermissionsResource::collection($permissions));
@@ -118,7 +118,7 @@ class RoleController extends Controller
 
     public function getDropDown(Request $request)
     {
-        $models = $this->model->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->select('id', 'name', 'name_e');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];

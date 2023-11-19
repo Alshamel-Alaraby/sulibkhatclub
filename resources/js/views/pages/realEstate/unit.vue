@@ -10,6 +10,7 @@ import Unit from "../../../components/create/realEstate/unit";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component
@@ -25,12 +26,12 @@ export default {
     Layout, PageHeader, loader, searchPage,
     actionSetting, tableCustom, Unit
   },
-//   beforeRouteEnter(to, from, next) {
-//         next((vm) => {
-//       return permissionGuard(vm, "Unit Realestate", "all units RealState");
-//     });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+      return permissionGuard(vm, "Unit Realestate", "all units RealState");
+    });
 
-//  },
+ },
   data() {
     return {
         url: "/real-estate/units",
@@ -207,6 +208,7 @@ export default {
                       :isVisiblePage="isVisible"
                       :isRequiredPage="isRequired"
                       :url="url"
+                      :tables="tables"
                       :type="type"
                       :idObjEdit="
                         idEdit

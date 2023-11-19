@@ -26,6 +26,15 @@ class HrAttendanceSettingSeeder extends Seeder
                 'pre_out' => 0,
                 'post_out' => 30,
                 'max_out' => 120,
+                'location_fingerprint' => 0,
+                'mobile_id_fingerprint' => 0,
+                'pre_in_fingerprint' => 0,
+                'day_off_fingerprint' => 0,
+                'public_holiday_fingerprint' => 0,
+                'post_out_fingerprint' => 0,
+                'pre_out_fingerprint' => 0,
+                'holiday_fingerprint' => 0,
+                'Training_course_fingerprint' => 0
             ],
         ];
 

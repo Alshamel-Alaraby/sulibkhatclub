@@ -37,6 +37,13 @@ class PaymentMethod extends Model
         return $this->hasMany(Payment::class, 'payment_method_id');
     }
 
+    public function documentHeader()
+    {
+        return $this->hasMany(DocumentHeader::class, 'payment_method_id');
+
+    }
+
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -47,6 +54,14 @@ class PaymentMethod extends Model
                 'count' => $this->payments()->count(),
                 'ids' => $this->payments()->pluck('id')->toArray()
             ];
+        }
+
+        if ($this->documentHeader()->count() > 0) {
+                $relationsWithChildren[] = [
+                    'relation' => 'documentHeader',
+                    'count' => $this->documentHeader()->count(),
+                    'ids' => $this->documentHeader()->pluck('id')->toArray()
+                ];
         }
 
 

@@ -4,6 +4,8 @@ namespace Modules\RealEstate\Http\Requests;
 
 
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
+
 
 class RlstBuildingRequest extends FormRequest
 {
@@ -25,25 +27,54 @@ class RlstBuildingRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'              => 'sometimes|string|max:255',
-            'name_e'            => 'sometimes|string|max:255',
-            'description'       => "nullable|string",
-            'description_e'     => "nullable|string",
-            'land_area'         => "nullable",
-            'building_area'     => ['lt:land_area'],
-            'construction_year' => ['gt:1980'],
-            'country_id' => "sometimes|exists:general_countries,id",
-            'city_id' => "sometimes|exists:general_cities,id",
-            'avenue_id' => "sometimes|exists:general_avenues,id",
-            'lng' => "numeric|required_with:lat",
-            'lat' => "numeric|required_with:lng",
-            'properties' => "nullable|array",
-            'attachments' => "nullable|array",
-            'module' => "sometimes",
-            "media" => "nullable|array",
-            "video_link" =>"nullable|url|active_url|https" ,
-            "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
-            "company_id"=>'nullable',
+            'name'              => 'required|string|max:100|unique:rlst_buildings,name,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
+            'name_e'            => 'required|string|max:100|unique:rlst_buildings,name_e,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
+            'description'       => "sometimes|string",
+            'description_e'     => "sometimes|string",
+            'land_area'         => "sometimes|numeric|gt:0",
+            'building_area'     => 'sometimes|numeric|lt:land_area',
+            'construction_year' => ['sometimes','integer','between:1800,' . Carbon::now()->format('Y')],
+            'country_id'        => "required|exists:general_countries,id,deleted_at,NULL",
+            "governorrate_id"   => "required|exists:general_governorates,id,deleted_at,NULL",
+            'city_id'           => "required|exists:general_cities,id",
+            'avenue_id'         => "required|exists:general_avenues,id,deleted_at,NULL",
+            'street_id'         => "required|exists:general_streets,id",
+            'lng'               => "numeric|required_with:lat",
+            'lat'               => "numeric|required_with:lng",
+            'properties'        => "sometimes|array",
+            'attachments'       => "sometimes|array",
+            'module'            => "sometimes",
+            "media"             => "nullable|array",
+            "video_link"        =>"nullable|url|active_url|https" ,
+            "media.*"           => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
+            "company_id"        => 'nullable',
+            "building_type_id"  => "sometimes|exists:rlst_building_types,id",
+            "company_ownership" => "sometimes|in:0,1",
+            "floors_number"     => "required|integer|gt:0",
+            "vaults_number"     => "required|integer|min:0",
+            "ground_floors_number" => "required|integer|min:0",
+            "mediums_number"    => "required|integer|min:0",
+            "elevators_number"  => "required|integer|min:0",
+            "electricity_meters_number" => "required|integer|min:0",
+            "water_meters_number" => "required|integer|min:0",
+            "gas_meters_number" => "required|integer|min:0",
+            "central_air_conditioning" => "sometimes|in:0,1",
+            "buying_price" => "required|numeric|gt:0",
+            "buying_date" => "required|date|before:today",
+            "middleman_cost" => "sometimes|numeric|min:0",
+            "registration_cost" => "sometimes|numeric|min:0",
+            "building_currency_id" => "required|exists:general_currencies,id",
+            "accrued_revenues_account_id" => "sometimes|exists:general_accounts,id",
+            "advance_revenues_account_id" => "sometimes|exists:general_accounts,id",
+            "revenues_account_id" => "sometimes|exists:general_accounts,id",
+            "discounts_account_id" => "sometimes|exists:general_accounts,id",
+            "cash_account_id" => "sometimes|exists:general_accounts,id",
+            "knet_account_id" => "sometimes|exists:general_accounts,id",
+            "insurance_account_id" => "sometimes|exists:general_accounts,id",
+            "main_cost_center_id" => "sometimes|exists:general_main_cost_centers,id",
+            "financial_period" => "sometimes|in:monthly,yearly",
+            'building_category_id' => 'sometimes|exists:rlst_building_categories,id',  
+
         ];
     }
 

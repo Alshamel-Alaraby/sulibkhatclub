@@ -17,8 +17,9 @@ class PermissionLoginResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "category" =>  $this->category,
-            "workflow" =>  $this->workflow
+            "crud_name" =>  $this->crud_name,
+            "module" =>  $this->module,
+            "table" =>  $this->table,
         ];
     }
 }

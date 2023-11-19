@@ -22,6 +22,11 @@ class TreeProperty extends Model
         return $this->hasMany(\Modules\RealEstate\Entities\RlstUnitContract::class, 'unit_code');
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(TreeProperty::class, 'parent_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = @auth()->user()->id ?: "system";

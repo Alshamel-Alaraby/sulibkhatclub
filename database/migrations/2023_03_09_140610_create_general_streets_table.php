@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('avenue_id');
+            $table->unsignedBigInteger('avenue_id')->index();
             $table->string("is_active")->default('active');
             $table->timestamps();
         });

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('title_e');
             $table->double('discount')->default(0);
             $table->boolean('is_default')->default(0);
-            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

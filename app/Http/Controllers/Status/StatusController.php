@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StatusRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Status\StatusResource;
+use App\Models\Status;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class StatusController extends Controller
 {
@@ -41,9 +41,9 @@ class StatusController extends Controller
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
-            return responseJson( 404 , __('message.data not found'));
+            return responseJson(404, __('message.data not found'));
         }
-        $this->modelInterface->update($request->validated(),$id);
+        $this->modelInterface->update($request->validated(), $id);
         $model->refresh();
         return responseJson(200, 'success', new StatusResource($model));
 
@@ -58,14 +58,13 @@ class StatusController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-
     public function delete($id)
     {
         $model = $this->modelInterface->find($id);
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
-        if ($model->hasChildren()){
+        if ($model->hasChildren()) {
             return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
 
         }
@@ -90,11 +89,15 @@ class StatusController extends Controller
         return responseJson(200, __('Done'));
     }
 
-
     public function getDropDown(Request $request)
     {
         $models = $this->modelInterface->getName($request);
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
+    public function getDropDownCalender(Request $request)
+    {
+        $models = Status::where('module_type', 'booking')->where('id', '!=', 12)->get();
+        return responseJson(200, 'success', $models);
+    }
 }

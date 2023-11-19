@@ -159,11 +159,11 @@ export default {
     this.getCustomers();
     this.getEmployees();
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(vm, "POS sales report", "all POS sales report");
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "POS sales report", "all POS sales report");
+    });
+  },
   methods: {
     getItemsSumOf(items, field) {
       let sum = 0;

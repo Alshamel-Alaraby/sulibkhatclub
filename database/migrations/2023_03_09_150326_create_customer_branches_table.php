@@ -17,12 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedInteger('country_id');
-            $table->unsignedInteger('city_id');
-            $table->unsignedInteger('governorate_id');
-            $table->unsignedInteger('avenue_id');
-            $table->unsignedInteger('street_id');
+            $table->unsignedBigInteger('customer_id')->index();
+            $table->unsignedInteger('country_id')->index();
+            $table->unsignedInteger('city_id')->index();
+            $table->unsignedInteger('governorate_id')->index();
+            $table->unsignedInteger('avenue_id')->index();
+            $table->unsignedInteger('street_id')->index();
             $table->double('latitude');
             $table->double('longitude');
             $table->timestamps();

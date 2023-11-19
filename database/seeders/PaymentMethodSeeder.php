@@ -20,8 +20,8 @@ class PaymentMethodSeeder extends Seeder
         $payment_methods = [
             [
                 'id' => 1,
-                'name' => 'كاش',
-                'name_e' => 'Cash',
+                'name' => 'دائن',
+                'name_e' => 'Credit',
                 'is_default' => 1,
                 'type' => 'cash',
                 'status' => 'no_round',
@@ -29,6 +29,15 @@ class PaymentMethodSeeder extends Seeder
             ],
             [
                 'id' => 2,
+                'name' => 'كاش',
+                'name_e' => 'Cash',
+                'is_default' => 0,
+                'type' => 'cash',
+                'status' => 'no_round',
+
+            ],
+            [
+                'id' => 3,
                 'name' => 'فيزا',
                 'name_e' => 'Visa',
                 'is_default' => 0,

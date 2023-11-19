@@ -22,6 +22,8 @@ class EditOpeningBalanceRequest extends FormRequest
             'credit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'local_debit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
             'local_credit' => 'nullable|regex:/^\d+(\.\d{5,5})?$/',
+            'module_type_id' => 'nullable',
+
         ];
     }
 

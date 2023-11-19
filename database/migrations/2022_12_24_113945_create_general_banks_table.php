@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
-            $table->unsignedInteger('country_id')->nullable();
+            $table->unsignedInteger('country_id')->index()->nullable();
             $table->string('swift_code')->nullable();
             $table->softDeletes();
             $table->timestamps();

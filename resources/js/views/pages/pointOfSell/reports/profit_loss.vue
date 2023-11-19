@@ -157,12 +157,12 @@ export default {
 
     this.getGroupsBy();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS profit loss", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS profit loss", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     async showReport() {
       this.$bvModal.hide(`filter`);

@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('general_document_header_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_header_id');
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('document_header_id')->index();
+            $table->unsignedBigInteger('category_id')->index()->nullable();
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();
-            $table->unsignedInteger('governorate_id')->nullable();
-            $table->unsignedInteger('package_id')->nullable();
+            $table->unsignedInteger('governorate_id')->index()->nullable();
+            $table->unsignedInteger('package_id')->index()->nullable();
             $table->bigInteger('rent_days')->default(0);
             $table->string('unit_type')->nullable();
             $table->unsignedInteger('quantity')->default(1);
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->double('unrealized_commission')->default(0);
             $table->double('commission')->default(0);
             $table->double('sell_method_discount')->default(0);
-            $table->unsignedInteger('sell_method_id')->nullable();
+            $table->unsignedInteger('sell_method_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

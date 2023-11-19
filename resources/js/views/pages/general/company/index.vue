@@ -41,7 +41,7 @@ import allRoutes from "../../../../helper/allRoute.js";
 import { selectedParents, _companies } from "../../../../helper/global.js";
 export default {
   name: "index",
-  
+
 beforeRouteEnter(to, from, next) {
     next((vm) => {
       return permissionGuard(vm, "Company", "all Company");
@@ -64,46 +64,72 @@ beforeRouteEnter(to, from, next) {
   },
   methods: {
     changeCompany(id) {
-      localStorage.removeItem("selectedParents");
-      selectedParents.value=[];
-      this.$store.commit("auth/editCompanyId", id);
       let companies = _companies.value.find((el) => el.id == id);
-      allRoutes.value = companies.Program;
-      localStorage.setItem("allRoutes", JSON.stringify(companies.Program));
-      if (companies.Program) {
-        let parent = [];
-        companies.Program.forEach((e) => {
-          if (!parent.find((el) => el.id == e.Parent.id)) {
-            parent.push(e.Parent);
+      if(companies.is_active == 1){
+          localStorage.removeItem("selectedParents");
+          selectedParents.value=[];
+          this.$store.commit("auth/editCompanyId", id);
+          allRoutes.value = companies.Program;
+          localStorage.setItem("allRoutes", JSON.stringify(companies.Program));
+          if (companies.Program) {
+              let parent = [];
+              companies.Program.forEach((e) => {
+                  if (!parent.find((el) => el.id == e.Parent.id)) {
+                      parent.push(e.Parent);
+                  }
+              });
+              this.$store.commit("auth/editParentModule", parent);
+              this.getWorkflows();
           }
-        });
-        this.$store.commit("auth/editParentModule", parent);
-        this.getWorkflows();
+          this.getDefaultKeys();
+          this.getCompanyKeys(companies.id);
+          return this.$router.push({ name: "home" });
+      }else {
+          Swal.fire({
+              icon: "error",
+              title: `${this.$t(`general.Error`)}`,
+              text: `${this.$t(`general.contactTheAdministration`)}`,
+          });
       }
-      this.getDefaultKeys();
-      this.getCompanyKeys(companies.id);
-      return this.$router.push({ name: "home" });
     },
     async getWorkflows() {
       let name = [];
+      let modules = ['General'];
       allRoutes.value.forEach((parent) => {
-        // name.push(parent.name_e);
         if (parent.programFolders) {
           parent.programFolders.forEach((child1) => {
-            // name.push(child1.name_e);
-            // name.push(child2.name_e);
-            if (child1.subMenus) {
-              child1.subMenus.forEach((child2) => {
-                // name.push(child2.name_e);
-                if (child2.screens.length > 0) {
-                  child2.screens.forEach((child3) => {
-                      if(!name.includes(child3.name_e)){
-                          name.push(child3.name_e);
+              if (child1.screens) {
+                  if (child1.screens.length > 0) {
+                      child1.screens.forEach((child3) => {
+                          if(!name.includes(child3.name_e)){
+                              name.push(child3.name_e);
+                          }
+                          if(child3.module_id){
+                              let mod = child3.module;
+                              if(!modules.includes(mod.name_e)){
+                                  modules.push(mod.name_e);
+                              }
+                          }
+                      });
+                  }
+              }
+              if (child1.subMenus) {
+                  child1.subMenus.forEach((child2) => {
+                      if (child2.screens) {
+                          child2.screens.forEach((child3) => {
+                              if(!name.includes(child3.name_e)){
+                                  name.push(child3.name_e);
+                              }
+                              if(child3.module_id){
+                                  let mod = child3.module;
+                                  if(!modules.includes(mod.name_e)){
+                                      modules.push(mod.name_e);
+                                  }
+                              }
+                          });
                       }
                   });
-                }
-              });
-            }
+              }
           });
         }
       });
@@ -113,6 +139,7 @@ beforeRouteEnter(to, from, next) {
         "company",
         ...name,
       ]);
+      this.$store.commit("auth/editCustomModules",modules);
     },
     async getDefaultKeys() {
           this.isLoader = true;

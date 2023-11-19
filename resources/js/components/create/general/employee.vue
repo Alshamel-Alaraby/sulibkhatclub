@@ -123,7 +123,7 @@
           </div>
           <div class="col-md-3" v-if="isVisible('name_e')">
             <div class="form-group">
-              <label for="field-2" class="control-label">
+              <label  class="control-label">
                 {{ getCompanyKey("employee_name_en") }}
                 <span v-if="isRequired('name_e')" class="text-danger">*</span>
               </label>
@@ -138,7 +138,6 @@
                     'is-invalid': $v.create.name_e.$error || errors.name_e,
                     'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
                   }"
-                  id="field-2"
                 />
               </div>
               <div v-if="!$v.create.name_e.maxLength" class="invalid-feedback">
@@ -238,7 +237,7 @@
                         </ErrorMessage>
                     </template>
                 </div>
-            </div>
+          </div>
           <div v-if="isVisible('sms')" class="col-md-3">
                 <div class="form-group">
                     <label class="mr-2">
@@ -665,7 +664,7 @@
             </div>
             <div class="col-md-3" v-if="isVisible('att_code')">
                 <div class="form-group">
-                    <label for="field-1" class="control-label">
+                    <label class="control-label">
                         {{ getCompanyKey("employee_att_code") }}
                         <span v-if="isRequired('att_code')" class="text-danger">*</span>
                     </label>
@@ -675,15 +674,40 @@
                             class="form-control"
                             v-model="$v.create.att_code.$model"
                             :class="{
-                    'is-invalid': $v.create.att_code.$error || errors.att_code,
-                    'is-valid': !$v.create.att_code.$invalid && !errors.att_code,
-                  }"
-                            id="field-1"
+                                'is-invalid': $v.create.att_code.$error || errors.att_code,
+                                'is-valid': !$v.create.att_code.$invalid && !errors.att_code,
+                              }"
                         />
                     </div>
                     <template v-if="errors.att_code">
                         <ErrorMessage
                             v-for="(errorMessage, index) in errors.att_code"
+                            :key="index"
+                        >{{ errorMessage }}
+                        </ErrorMessage>
+                    </template>
+                </div>
+            </div>
+            <div class="col-md-3" v-if="isVisible('mobile_id')">
+                <div class="form-group">
+                    <label class="control-label">
+                        {{ getCompanyKey("employee_mobile_id") }}
+                        <span v-if="isRequired('mobile_id')" class="text-danger">*</span>
+                    </label>
+                    <div dir="rtl">
+                        <input
+                            type="text"
+                            class="form-control"
+                            v-model="$v.create.mobile_id.$model"
+                            :class="{
+                                'is-invalid': $v.create.mobile_id.$error || errors.mobile_id,
+                                'is-valid': !$v.create.mobile_id.$invalid && !errors.mobile_id,
+                              }"
+                        />
+                    </div>
+                    <template v-if="errors.mobile_id">
+                        <ErrorMessage
+                            v-for="(errorMessage, index) in errors.mobile_id"
                             :key="index"
                         >{{ errorMessage }}
                         </ErrorMessage>
@@ -768,13 +792,14 @@ export default {
         salesman_type_id: null,
         manager_ids: [],
         plan_id: [],
-          att_code: '',
-          sms: '',
+        att_code: '',
+        sms: '',
         manage_others: 0,
         mobile: "",
         email: "",
         whatsapp: "",
         code_country: "",
+        mobile_id: ''
       },
       errors: {},
       current_page: 1,
@@ -821,7 +846,7 @@ export default {
                 return this.isRequired("sms");
             }),
         },
-        att_code: {
+      att_code: {
             required: requiredIf(function (model) {
                 return this.isRequired("att_code");
             }),
@@ -870,10 +895,17 @@ export default {
         }),
         maxLength: maxLength(100),
       },
+      mobile_id: {
+            required: requiredIf(function (model) {
+                return this.isRequired("mobile_id");
+            }),
+            maxLength: maxLength(100),
+        },
     },
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.$store.dispatch('locationIp/getIp');
   },
   methods: {
     getEmployeeChildren(id) {
@@ -968,7 +1000,7 @@ export default {
     },
     getJobs() {
       this.isLoader = true;
-
+      this.jobs = [];
       adminApi
         .get(`hr/job-title`)
         .then((res) => {
@@ -1099,6 +1131,7 @@ export default {
           email: "",
           whatsapp: "",
           code_country: "",
+          mobile_id: ''
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -1120,7 +1153,7 @@ export default {
           if (this.isVisible("department_id")) this.getDepartnent();
           if (this.isVisible("job_id")) this.getJobs();
           if (this.isVisible("branch_id")) this.getBranches();
-          if (this.isVisible("plan_id")) this.getPlans();
+          this.getPlans();
           if (this.isVisible("salesman_type_id")) this.getSaleMenType();
         } else {
           if (this.idObjEdit.dataObj) {
@@ -1132,6 +1165,7 @@ export default {
             this.create.customer_handel = employee.customer_handel;
             this.create.sms= employee.sms;
             this.create.att_code = employee.att_code;
+            this.create.mobile_id = employee.mobile_id;
             this.getDepartnent();
             this.create.department_id = employee.department? employee.department.id: null;
             this.getJobs();
@@ -1149,11 +1183,11 @@ export default {
             this.getPlans();
             this.create.plan_id =  employee.plans.length  > 0? employee.plans.map((plan) => plan.id):null;
             employee.department?this.getManagers():null;
-            this.managers.push(employee.manager);
             this.create.manager_id = employee.manager
               ? employee.manager.id
               : null;
             if(employee.managers.length > 0){
+                employee.manager? this.managers.push(employee.manager) : null;
                 employee.managers.forEach(el => this.create.manager_ids.push(el.id));
             }
             this.create.manage_others = employee.manage_others;
@@ -1198,7 +1232,6 @@ export default {
               is_salesman:
                 this.create.is_salesman == "active" ? "true" : "false",
               company_id: this.$store.getters["auth/company_id"],
-              code_country: this.codeCountry,
             })
             .then((res) => {
               this.is_disabled = true;
@@ -1255,10 +1288,10 @@ export default {
       this.create.name_e = englishValue(txt);
     },
     updatePhone(e) {
-      this.create.phone = e.mobile;
+      this.create.phone = e.phoneNumber;
     },
     updateSms(e) {
-      this.create.phone = e.mobile;
+      this.create.phone = e.phoneNumber;
     },
     updateWhatsapp(e) {
       this.create.whatsapp = e.phoneNumber;

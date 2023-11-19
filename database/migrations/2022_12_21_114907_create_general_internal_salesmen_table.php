@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('general_internal_salesmen', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('employee_id')->nullable();
+            $table->unsignedInteger('employee_id')->index()->nullable();
             $table->unsignedTinyInteger('is_active')->nullable()->default(1);
             $table->timestamps();
         });

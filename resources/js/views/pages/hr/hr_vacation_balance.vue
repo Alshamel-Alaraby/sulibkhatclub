@@ -124,7 +124,7 @@ export default {
   },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Vacation Balance", "all vacationsBalances Hr");
+            return permissionGuard(vm, "Vacation Balance", "all vacationsBalances hr");
         });
     },
   methods: {

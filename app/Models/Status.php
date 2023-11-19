@@ -26,10 +26,16 @@ class Status extends Model
         return $this->hasMany(\Modules\BoardsRent\Entities\Order::class);
     }
 
+    public function documentCompanyModuleStatuses()
+    {
+        return $this->hasMany(DocumentCompanyModuleStatus::class,'status_id');
+
+    }
+
     public function hasChildren()
     {
         return $this->unitStatuses()->count() > 0 ||
-            $this->orders()->count() > 0;
+            $this->orders()->count() > 0 ||  $this->documentCompanyModuleStatuses->count() > 0;
     }
 
     public function getActivitylogOptions(): LogOptions

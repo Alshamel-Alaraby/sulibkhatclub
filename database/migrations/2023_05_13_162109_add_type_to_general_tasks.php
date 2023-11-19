@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('general_tasks', function (Blueprint $table) {
             $table->string('type')->default('general');
-            $table->unsignedBigInteger('equipment_id')->nullable();
+            $table->unsignedBigInteger('equipment_id')->index()->nullable();
             $table->unsignedBigInteger('customer_id')->change()->nullable();
         });
     }

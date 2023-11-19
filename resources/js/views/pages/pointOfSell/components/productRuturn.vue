@@ -2,7 +2,7 @@
   <div>
     <div class="row control">
       <div class="col-lg-12">
-        <label class="sr-only" for="inlineFormInputGroup">{{ $t('general.searchOrder') }}</label>
+        <label class="sr-only" >{{ $t('general.searchOrder') }}</label>
         <div class="mb-2 d-flex">
           <div class="input-group-prepend">
             <div class="input-group-text"><i class="fa fa-search"></i></div>

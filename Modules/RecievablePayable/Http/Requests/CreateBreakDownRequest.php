@@ -26,6 +26,7 @@ class CreateBreakDownRequest extends FormRequest
             'break_downs.*.break_type' => 'nullable|string',
             'break_downs.*.instalment_type_id' => 'nullable|integer',
             'break_downs.*.parent_id' => 'nullable|integer',
+            'break_downs.*.client_type_id' => 'nullable|exists:general_client_types,id',
             'break_downs.*.module_type' => 'nullable|string',
             'break_downs.*.debit' => 'nullable',
             'break_downs.*.credit' => 'nullable',

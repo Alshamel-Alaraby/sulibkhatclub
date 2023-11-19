@@ -6,14 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\LogTrait;
 use Spatie\Activitylog\LogOptions;
+use App\Traits\sendMessage;
 
 class Fingerprint extends Model
 {
-    use HasFactory, LogTrait;
+    use HasFactory, LogTrait, sendMessage;
 
     protected $guarded = ['id'];
 
     protected $table = 'hr_fingerprint';
+
+    
+
 
     public function getActivitylogOptions(): LogOptions
     {

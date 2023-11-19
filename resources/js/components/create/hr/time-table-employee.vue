@@ -1,5 +1,14 @@
 <template>
     <div>
+        <TimeTableAttend
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            :id="'timetables-header-create-time-table'"
+            @created="getTimeHeder"
+        />
         <!--  search   -->
         <b-modal
             id="search"
@@ -164,12 +173,13 @@
                                             <span v-if="isRequired('timetables_header_id')" class="text-danger">*</span>
                                         </label>
                                         <multiselect
+                                            @input="showTimeHeaderModal"
                                             v-model="$v.create.timetables_header_id.$model"
                                             :options="types.map((type) => type.id)"
                                             :custom-label=" (opt) => types.find((x) => x.id == opt)?
-                                                                            $i18n.locale == 'ar' ? types.find((x) => x.id == opt).name : types.find((x) => x.id == opt).name_e
-                                                                            : null
-                                                                        "
+                                                $i18n.locale == 'ar' ? types.find((x) => x.id == opt).name : types.find((x) => x.id == opt).name_e
+                                                : null
+                                            "
                                             :class="{'is-invalid': $v.create.timetables_header_id.$error || errors.timetables_header_id,'is-valid': !$v.create.timetables_header_id.$invalid && !errors.timetables_header_id,}"
                                         >
                                         </multiselect>
@@ -485,13 +495,15 @@ import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../helper/mixin/success&error";
 import DatePicker from "vue2-datepicker";
 import {formatDateOnly} from "../../../helper/startDate";
+import TimeTableAttend from "./time-table-attendance";
 export default {
     name: "time-table-attendance",
     components: {
         ErrorMessage,
         loader,
         Multiselect,
-        DatePicker
+        DatePicker,
+        TimeTableAttend
     },
     mixins: [transMixinComp,successError],
     props: {
@@ -546,6 +558,12 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
+        showTimeHeaderModal() {
+            if (this.create.timetables_header_id == 0) {
+                this.$bvModal.show("timetables-header-create-time-table");
+                this.create.timetables_header_id = null;
+            }
+        },
         formatDate(value) {
             return formatDateOnly(value);
         },
@@ -626,7 +644,15 @@ export default {
             adminApi
                 .get(`/hr/time-tables-header/get-drop-down`)
                 .then((res) => {
-                    this.types = res.data.data;
+                    let l =res.data.data;
+                    if (this.isPermission("create City")) {
+                        l.unshift({
+                            id: 0,
+                            name: "اضف دوام جديد",
+                            name_e: "Add Time Table",
+                        });
+                    }
+                    this.types = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -945,7 +971,7 @@ export default {
     },
 };
 </script>
-<style>
+<style scoped>
 form {
     position: relative;
 }

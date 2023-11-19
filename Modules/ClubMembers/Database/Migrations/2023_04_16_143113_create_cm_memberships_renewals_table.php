@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->boolean('renewal_availability')->default(0);
             $table->unsignedDouble('renewal_cost');
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedInteger('company_id')->index()->nullable();
 
             $table->timestamps();
         });

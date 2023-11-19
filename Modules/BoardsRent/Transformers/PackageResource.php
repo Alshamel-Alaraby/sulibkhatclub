@@ -3,6 +3,7 @@
 namespace Modules\BoardsRent\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\BoardsRent\Transformers\Panel\RelationBRentPanelResource;
 
 class PackageResource extends JsonResource
 {

@@ -113,6 +113,22 @@
                           }}
                       </span>
                 </td>
+                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'boolean1'">
+                      <span
+                          :class="[
+                              data[item.isV] == 'active' || data[item.isV] == 1 || data[item.isV]
+                                ? 'text-success'
+                                : 'text-danger',
+                              'badge',
+                            ]"
+                      >
+                        {{
+                              data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV]
+                                  ? `${$t("general.Yes")}`
+                                  : `${$t("general.No")}`
+                          }}
+                      </span>
+                </td>
                 <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'date'">
                       {{ formatDate(data[item.isV]) }}
                 </td>

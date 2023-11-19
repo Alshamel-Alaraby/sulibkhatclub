@@ -431,7 +431,7 @@
                                           ]"
                                                                   data-dz-remove
                                                                   @click.prevent="
-                                            deleteImageCreate(photo.id, index)
+                                            deleteImageCreate(photo.id)
                                           "
                                                               >
                                                                   <i class="fe-x"></i>
@@ -501,7 +501,8 @@ export default {
   props: {
       id: {default: "create",}, companyKeys: {default: [],}, defaultsKeys: {default: [],},
       isPage: {default: true},isVisiblePage: {default: null},isRequiredPage: {default: null},
-      type: {default: 'create'}, idObjEdit: {default: null},isPermission:{},url: {default: '/bank-accounts'}
+      type: {default: 'create'}, idObjEdit: {default: null},isPermission:{},url: {default: '/bank-accounts'},
+      tables: {default: []}
     },
   data() {
     return {
@@ -853,7 +854,7 @@ export default {
         }
       }
     },
-    deleteImageCreate(id, index) {
+    deleteImageCreate(id) {
       let old_media = [];
       this.images.forEach((e) => {
         if (e.id != id) {
@@ -863,7 +864,8 @@ export default {
       adminApi
         .put(`/bank-accounts/${this.bankAccount_id}`, { old_media })
         .then((res) => {
-          this.bankAccounts[index] = res.data.data;
+            let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
+            this.tables[index] = res.data.data;
           this.images = res.data.data.media ?? [];
           if (this.images && this.images.length > 0) {
             this.showPhoto = this.images[this.images.length - 1].webp;

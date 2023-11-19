@@ -123,6 +123,7 @@ class BrandController extends Controller
         return responseJson(200, __('Done'));
     }
 
+
     private function getRelationDisplayName($relation)
     {
         $displayableName = str_replace('_', ' ', $relation);

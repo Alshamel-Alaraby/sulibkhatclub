@@ -74,7 +74,7 @@
                 @input="showAvenueModal"
                 v-model="create.avenue_id"
                 :options="avenues.map((type) => type.id)"
-                :custom-label="(opt) => avenues.find((x) => x.id == opt).name"
+                :custom-label="(opt) => avenues.find((x) => x.id == opt)?$i18n.locale == 'ar'?avenues.find((x) => x.id == opt).name:avenues.find((x) => x.id == opt).name_e:null"
               >
               </multiselect>
               <div
@@ -416,6 +416,7 @@ export default {
           if (this.isVisible("avenue_id")) this.getAvenue();
         } else {
           if (this.idObjEdit.dataObj) {
+              if (this.isVisible("avenue_id")) this.getAvenue();
             let avenues = this.idObjEdit.dataObj;
             this.errors = {};
             this.create.name = avenues.name;

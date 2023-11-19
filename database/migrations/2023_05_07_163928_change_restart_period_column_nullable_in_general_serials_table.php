@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('general_serials', function (Blueprint $table) {
             $table->string('restart_period')->nullable()->comment('Daily, monthly, yearly, open')->change();
-            $table->unsignedBigInteger('restart_period_id')->nullable();
+            $table->unsignedBigInteger('restart_period_id')->index()->nullable();
         });
     }
 

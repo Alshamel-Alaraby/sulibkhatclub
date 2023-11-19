@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name_e', 100)->nullable();
             $table->string('phone', 50)->nullable();
             $table->string('email', 100)->nullable();
-            $table->unsignedInteger('country_id')->nullable()->default(0);
-            $table->unsignedInteger('city_id')->nullable()->default(0);
+            $table->unsignedInteger('country_id')->index()->nullable()->default(0);
+            $table->unsignedInteger('city_id')->index()->nullable()->default(0);
             $table->string('rp_code', 20)->nullable();
             $table->string('nationality')->nullable();
             $table->unsignedInteger('bank_account_id')->nullable();
@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('national_id', 20)->nullable();
             $table->string('whatsapp', 20)->nullable();
             $table->string('passport_no', 20)->nullable();
-            $table->unsignedBigInteger('employee_id')->nullable();
-            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('employee_id')->index()->nullable();
+            $table->unsignedBigInteger('company_id')->index()->nullable();
             $table->string('note')->nullable();
             $table->string('code_country')->nullable();
             $table->string('facebook')->nullable();
@@ -39,13 +39,13 @@ return new class extends Migration
             $table->string('snapchat')->nullable();
             $table->string('twitter')->nullable();
             $table->string('website')->nullable();
-            $table->unsignedInteger('salesman_id')->nullable();
-            $table->unsignedInteger('sector_id')->nullable();
-            $table->unsignedInteger('customer_source_id')->nullable();
-            $table->unsignedInteger('customer_group_id')->nullable();
-            $table->unsignedInteger('customer_id')->nullable();
-            $table->unsignedInteger('customer_main_category_id')->nullable();
-            $table->unsignedInteger('customer_sub_category_id')->nullable();
+            $table->unsignedInteger('salesman_id')->index()->nullable();
+            $table->unsignedInteger('sector_id')->index()->nullable();
+            $table->unsignedInteger('customer_source_id')->index()->nullable();
+            $table->unsignedInteger('customer_group_id')->index()->nullable();
+            $table->unsignedInteger('customer_id')->index()->nullable();
+            $table->unsignedInteger('customer_main_category_id')->index()->nullable();
+            $table->unsignedInteger('customer_sub_category_id')->index()->nullable();
             $table->timestamps();
         });
     }

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('general_employee_task', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('task_id');
+            $table->unsignedBigInteger('employee_id')->index();
+            $table->unsignedBigInteger('task_id')->index();
             $table->enum('type', ['supervisor', 'attention']);
             $table->timestamps();
         });

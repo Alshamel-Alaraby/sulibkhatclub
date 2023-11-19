@@ -19,11 +19,9 @@ class RlstWalletResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
-            'owners' => RlstOwnerResource::collection($this->whenLoaded('owners')),
-            'create_owners' => RlstOwnerResource::collection($this->owners,$this->id),
-            "buildings" => RlstBuildingResource::collection($this->buildings),
-            
-
+            'owners' => $this->whenLoaded('owners'),
+            //'create_owners' => RlstOwnerResource::collection($this->whenLoaded('owners'))->only(['id', 'name', 'name_e']),
+            "buildings" => $this->whenLoaded('buildings'),
         ];
     }
 }

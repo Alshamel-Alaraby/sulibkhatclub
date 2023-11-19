@@ -54,7 +54,7 @@ export default {
         branch_id: null,
         document_id: null,
         type: "",
-          gender: "",
+          gender: 2,
       },
       company_id: null,
       errors: {},
@@ -174,7 +174,7 @@ export default {
         restart_period_id: null,
         branch_id: null,
         document_id: null,
-          gender: '',
+          gender: 2,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -636,6 +636,7 @@ export default {
       :isPermission="isPermission"
       :id="'branch-create'"
       @created="getBranch"
+      :tables="[]"
     />
     <!--  create   -->
     <b-modal
@@ -1039,22 +1040,7 @@ export default {
 </template>
 
 <style>
-@media print {
-  .do-not-print {
-    display: none;
-  }
-  .arrow-sort {
-    display: none;
-  }
-  .text-success {
-    background-color: unset;
-    color: #6c757d !important;
-    border: unset;
-  }
-  .text-danger {
-    background-color: unset;
-    color: #6c757d !important;
-    border: unset;
-  }
+form {
+    position: relative;
 }
 </style>

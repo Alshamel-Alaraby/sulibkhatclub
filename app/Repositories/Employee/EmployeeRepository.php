@@ -185,9 +185,9 @@ class EmployeeRepository implements EmployeeInterface
             $models->where('manager_id', $request->manager_id);
         }
 
-        if ($request->department_id) {
-            $models->where('department_id', $request->department_id);
-        }
+        // if ($request->department_id) {
+        //     $models->where('department_id', $request->department_id);
+        // }
         if ($request->manage_others) {
             $models->where('manage_others', $request->manage_others);
         }

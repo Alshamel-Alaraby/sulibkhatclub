@@ -121,7 +121,7 @@ export default [
         component: () => import('../../views/pages/club/multi_subscription'),
     },
     {
-        
+
         path: '/dashboard/club/multiSubscriptionMultiple',
         name: 'club-multi-subscription-multiple',
         meta: {
@@ -266,5 +266,45 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/club/report/old-members-report'),
+    },
+    {
+        path: '/dashboard/club/members-have-the-right-to-attend-the-assembly',
+        name: 'Members have the right to attend the assembly',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/members_have_the_right_to_attend_the_assembly'),
+    },
+    {
+        path: '/dashboard/club/invitation-letter-to-attend-the-association',
+        name: 'invitation Letter To Attend The Association',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/lnvitationLetterToAttendTheAssociation'),
+    },
+    {
+        path: '/dashboard/club/envelope-printing',
+        name: 'invitation Letter To Attend The Association',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/envelope-printing'),
+    },
+    {
+        path: '/dashboard/club/print-mail',
+        name: 'print mail',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/printMail'),
+    },
+    {
+        path: '/dashboard/club/print-committee-list',
+        name: 'Print Committee Lists',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/report/print-committee-lists'),
     },
 ];

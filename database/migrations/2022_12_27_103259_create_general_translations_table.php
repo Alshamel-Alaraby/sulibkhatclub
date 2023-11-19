@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string ('new_en')->nullable ();
             $table->string ('new_ar')->nullable ();
             $table->string ('screen')->nullable();
-            $table->unsignedInteger ('company_id')->nullable();
+            $table->unsignedInteger ('company_id')->index()->nullable();
             $table->timestamps();
         });
     }

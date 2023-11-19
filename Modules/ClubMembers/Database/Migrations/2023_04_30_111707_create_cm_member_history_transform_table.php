@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('cm_member_history_transform', function (Blueprint $table) {
             $table->id();
-            $table->integer('sponser_id_from');
-            $table->integer('sponser_id_to');
-            $table->integer('member_id');
+            $table->integer('sponser_id_from')->index();
+            $table->integer('sponser_id_to')->index();
+            $table->integer('member_id')->index();
             $table->date('date')->comment('date when the transform is process');
-            $table->unsignedInteger('company_id')->default(0);
+            $table->unsignedInteger('company_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

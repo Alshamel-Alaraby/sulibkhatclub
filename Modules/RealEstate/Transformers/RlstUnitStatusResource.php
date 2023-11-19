@@ -18,6 +18,7 @@ class RlstUnitStatusResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
+            'units' => $this->load('units')->only(['id','code','name','name_e']),
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,
 

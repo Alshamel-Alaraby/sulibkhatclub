@@ -39,7 +39,7 @@ export default {
         name: "",
         name_e: "",
         parent_id: null,
-        required: "active",
+        required: 1,
       },
       errors: {},
       is_disabled: false,
@@ -94,7 +94,7 @@ export default {
           }
       },
     defaultData(edit = null){
-        this.create = { name: "", name_e: "", parent_id: null, required: "active" };
+        this.create = { name: "", name_e: "", parent_id: null, required: 1 };
         this.$nextTick(() => {
             this.$v.$reset();
         });
@@ -117,7 +117,7 @@ export default {
                     this.errors = {};
                     this.create.name = propertyTree.name;
                     this.create.name_e = propertyTree.name_e;
-                    this.create.required = propertyTree.required == 1 ? "active" : "inactive";
+                    this.create.required = propertyTree.required;
                     if(this.isVisible("parent_id")) this.getRootNodes();
                     this.create.parent_id = propertyTree.parent_id;
                     this.errors = {};
@@ -706,14 +706,14 @@ export default {
                     class="d-inline-block"
                     v-model="$v.create.required.$model"
                     name="some-radios"
-                    value="active"
+                    value="1"
                     >{{ $t("general.Yes") }}</b-form-radio
                   >
                   <b-form-radio
                     class="d-inline-block m-1"
                     v-model="$v.create.required.$model"
                     name="some-radios"
-                    value="inactive"
+                    value="0"
                     >{{ $t("general.No") }}</b-form-radio
                   >
                 </b-form-group>

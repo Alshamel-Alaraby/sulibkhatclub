@@ -19,7 +19,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
-      return permissionGuard(vm, "Depit Note RP", "all creditNote RP");
+      return permissionGuard(vm, "Debit Note RP", "all creditNote RP");
     });
     },
 };

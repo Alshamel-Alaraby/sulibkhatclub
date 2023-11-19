@@ -59,6 +59,9 @@ class DatabaseSeeder extends Seeder
             BookingSettingTableSeeder::class,
             HrTimeTableTypesSeeder::class,
             HrAttendanceSettingSeeder::class,
+            MessageVarSeeder::class,
+            ClientTypeSeeder::class,
+            DocumentModuleTypeSeeder::class,
 
         ]);
         DB::unprepared(file_get_contents(public_path("country_lookup.sql")));

@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('general_voucher_headers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_id');
-            $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('document_id')->index();
+            $table->unsignedBigInteger('branch_id')->index();
             $table->date('date');
-            $table->unsignedBigInteger('serial_id')->nullable();
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('salesmen_id');
-            $table->unsignedBigInteger('payment_method_id');
+            $table->unsignedBigInteger('serial_id')->index()->nullable();
+            $table->unsignedBigInteger('customer_id')->index();
+            $table->unsignedBigInteger('salesmen_id')->index();
+            $table->unsignedBigInteger('payment_method_id')->index();
             $table->double('amount')->default(0);
             $table->string('serial_number')->nullable();
             $table->string('prefix')->nullable();

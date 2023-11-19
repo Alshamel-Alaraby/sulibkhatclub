@@ -18,38 +18,53 @@ class RlstUnit extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-
     public function scopeData($query)
     {
         return $query
-            ->select(
+
+        ->select(
                 'id',
                 'code',
                 'name',
                 'name_e',
                 'description',
                 'description_e',
-                'unit_ty',
                 'unit_area',
-                'building_id',
-                'unit_status_id',
                 'rooms',
                 "unit_net_area",
                 'path',
-                'view',
                 'floor',
-                'finishing',
-
                 'properties',
                 'module',
-            )->with('unitStatus:id,name,name_e','building:id,name,name_e', 'media');
+                'finishing',
+                'view',
+                'unit_ty',
+                'unit_status_id',
+                'building_id',
+                )
+        ->with('building:id,name,name_e','unitStatus:id,name,name_e','media','type:id,name,name_e','unitFinishing:id,name,name_e','unitView:id,name,name_e','items:id,name,name_e,code_number');
     }
 
     // relations
 
+    public function unitFinishing()
+    {
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstFinishing::class, 'finishing');
+    }
+
+    public function unitView()
+    {
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstView::class, 'view');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstUnitType::class, 'unit_ty');
+    }
+
     public function unitStatus()
     {
-        return $this->belongsTo(\Modules\RealEstate\Entities\RlstUnitStatus::class);
+        return $this->belongsTo(\Modules\RealEstate\Entities\RlstUnitStatus::class, 'unit_status_id');
     }
 
     public function building()
@@ -57,35 +72,47 @@ class RlstUnit extends Model implements HasMedia
         return $this->belongsTo(RlstBuilding::class);
     }
 
-    public function owner()
-    {
-        return $this->belongsTo(RlstOwner::class);
-    }
-
-    public function currency()
-    {
-        return $this->belongsTo(\App\Models\Currency::class);
-    }
 
     public function items()
     {
         return $this->hasMany(RlstItem::class, 'unit_id');
     }
 
+    public function tenant()
+    {
+        return $this->hasOne(RlstTenant::class, 'unit_id');
+    }
+
     public function hasChildren()
     {
-        $relationsWithChildren = [];
+        return $this->items()->count() > 0 ;
 
-        if ($this->items()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'items',
-                'count' => $this->items()->count(),
-                'ids' => $this->items()->pluck('id')->toArray(),
-            ];
-        }
-
-        return $relationsWithChildren;
     }
+
+
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->items()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'items',
+    //             'count' => $this->items()->count(),
+    //             'ids' => $this->items()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     if ($this->tenant()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'tenant',
+    //             'count' => $this->tenant()->count(),
+    //             'ids' => $this->tenant()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     return $relationsWithChildren;
+    // }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -177,11 +204,87 @@ class RlstUnit extends Model implements HasMedia
             })->where(function ($q) use ($request) {
                 $q->when($request->governorate_id, function ($q) use ($request) {
                     $q->whereHas('building', function ($q) use ($request) {
-                        $q->whereHas('city', function ($q) use ($request) {
                             $q->where('governorate_id', $request->governorate_id);
-                        });
                     });
 
+                });
+            });
+
+        });
+    }
+
+    public function scopeUnSoldFilter($query, $request)
+    {
+        return $query->where(function ($q) use ($request) {
+            $q->where(function ($q) use ($request) {
+                $q->when($request->unit_status_id, function ($q) use ($request) {
+                    $q->whereIn('unit_status_id', $request->unit_status_id);
+                });
+            })
+                ->where(function ($q) use ($request) {
+                    $q->when($request->wallet_id, function ($q) use ($request) {
+                        $q->whereHas('building', function ($q) use ($request) {
+                            $q->whereHas('buildingWallet', function ($q) use ($request) {
+                                $q->whereIn('wallet_id', $request->wallet_id);
+                            });
+                        });
+                    });
+                })->where(function ($q) use ($request) {
+                $q->when($request->owner_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereHas('buildingWallet', function ($q) use ($request) {
+                            $q->whereHas('wallet', function ($q) use ($request) {
+                                $q->whereHas('walletOwner', function ($q) use ($request) {
+                                    $q->whereIn('owner_id', $request->owner_id);
+                                });
+                            });
+                        });
+                    });
+                });
+            })
+                ->where(function ($q) use ($request) {
+                    $q->when($request->building_id, function ($q) use ($request) {
+                        $q->whereIn('building_id', $request->building_id);
+                    });
+                })->where(function ($q) use ($request) {
+                $q->when($request->country_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereIn('country_id', $request->country_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->city_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereIn('city_id', $request->city_id);
+                    });
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->governorate_id, function ($q) use ($request) {
+                    $q->whereHas('building', function ($q) use ($request) {
+                        $q->whereIn('governorate_id', $request->governorate_id);
+                    });
+
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->properties, function ($q) use ($request) {
+                    $q->whereJsonContains('properties', $request->properties);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->unit_area, function ($q) use ($request) {
+                    $q->where('unit_area', $request->unit_area);
+                });
+            })
+                ->where(function ($q) use ($request) {
+                    $q->when($request->unit_ty, function ($q) use ($request) {
+                        $q->where('unit_ty', $request->unit_ty);
+                    });
+                })->where(function ($q) use ($request) {
+                $q->when($request->rooms, function ($q) use ($request) {
+                    $q->where('rooms', $request->rooms);
+                });
+            })->where(function ($q) use ($request) {
+                $q->when($request->path, function ($q) use ($request) {
+                    $q->where('path', $request->path);
                 });
             });
 

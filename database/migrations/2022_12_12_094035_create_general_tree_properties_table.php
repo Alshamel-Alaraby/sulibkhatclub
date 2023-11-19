@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100)->nullable();
             $table->string('name_e', 100)->nullable();
-            $table->unsignedInteger('parent_id')->nullable()->default(0);
+            $table->unsignedInteger('parent_id')->index()->nullable()->default(0);
             //            $table->unsignedInteger ('screen_id')->nullable ()->default (0);
-            $table->unsignedTinyInteger('required')->nullable()->default(0);
+            $table->unsignedTinyInteger('required')->index()->nullable()->default(0);
             //            $table->string ('screen_node')->nullable ();
             $table->softDeletes();
             $table->timestamps();

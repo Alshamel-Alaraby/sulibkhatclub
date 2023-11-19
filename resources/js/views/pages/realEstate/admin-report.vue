@@ -137,12 +137,11 @@ export default {
     this.getSales();
     this.getUnits();
   },
-    beforeRouteEnter(to, from, next) {
-          next((vm) => {
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
       return permissionGuard(vm, "Admin Report", "all sold_Unit RealState");
     });
-
-     },
+  },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);
@@ -465,6 +464,34 @@ export default {
     >
       <div class="row mb-2 px-2">
         <div class="col-md-2">
+          <label>{{ $t("general.wallet") }}</label>
+          <multiselect
+            v-model="wallet_id"
+            :options="wallets.map((type) => type.id)"
+            :custom-label="
+              (opt) =>
+                $i18n.locale == 'ar'
+                  ? wallets.find((x) => x.id == opt).name
+                  : wallets.find((x) => x.id == opt).name_e
+            "
+          >
+          </multiselect>
+        </div>
+        <div class="col-md-2">
+          <label>{{ $t("general.owner") }}</label>
+          <multiselect
+            v-model="owner_id"
+            :options="owners.map((type) => type.id)"
+            :custom-label="
+              (opt) =>
+                $i18n.locale == 'ar'
+                  ? owners.find((x) => x.id == opt).name
+                  : owners.find((x) => x.id == opt).name_e
+            "
+          >
+          </multiselect>
+        </div>
+        <div class="col-md-2">
           <label>{{ $t("general.building") }}</label>
           <multiselect
             v-model="building_id"
@@ -492,34 +519,7 @@ export default {
           >
           </multiselect>
         </div>
-        <div class="col-md-2">
-          <label>{{ $t("general.owner") }}</label>
-          <multiselect
-            v-model="owner_id"
-            :options="owners.map((type) => type.id)"
-            :custom-label="
-              (opt) =>
-                $i18n.locale == 'ar'
-                  ? owners.find((x) => x.id == opt).name
-                  : owners.find((x) => x.id == opt).name_e
-            "
-          >
-          </multiselect>
-        </div>
-        <div class="col-md-2">
-          <label>{{ $t("general.wallet") }}</label>
-          <multiselect
-            v-model="wallet_id"
-            :options="wallets.map((type) => type.id)"
-            :custom-label="
-              (opt) =>
-                $i18n.locale == 'ar'
-                  ? wallets.find((x) => x.id == opt).name
-                  : wallets.find((x) => x.id == opt).name_e
-            "
-          >
-          </multiselect>
-        </div>
+
         <div class="col-md-2">
           <label>{{ $t("general.property") }}</label>
           <multiselect
@@ -1257,18 +1257,22 @@ export default {
                     <td v-if="setting.salesman">
                       <template v-if="data.salesman">
                         {{
-                              data.salesman?$i18n.locale == "ar"
-                            ? data.salesman.name
-                            : data.salesman.name_e: ''
+                          data.salesman
+                            ? $i18n.locale == "ar"
+                              ? data.salesman.name
+                              : data.salesman.name_e
+                            : ""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.customer">
                       <template v-if="data.customer">
                         {{
-                              data.customer? $i18n.locale == "ar"
-                            ? data.customer.name
-                            : data.customer.name_e: ''
+                          data.customer
+                            ? $i18n.locale == "ar"
+                              ? data.customer.name
+                              : data.customer.name_e
+                            : ""
                         }}
                       </template>
                     </td>
@@ -1285,27 +1289,33 @@ export default {
                     <td v-if="setting.branch">
                       <template v-if="data.branch">
                         {{
-                          data.branch?$i18n.locale == "ar"
-                            ? data.branch.name
-                            : data.branch.name_e: ''
+                          data.branch
+                            ? $i18n.locale == "ar"
+                              ? data.branch.name
+                              : data.branch.name_e
+                            : ""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.document">
                       <template v-if="data.document">
                         {{
-                         data.document?$i18n.locale == "ar"
-                            ? data.document.name
-                            : data.document.name_e: ''
+                          data.document
+                            ? $i18n.locale == "ar"
+                              ? data.document.name
+                              : data.document.name_e
+                            : ""
                         }}
                       </template>
                     </td>
                     <td v-if="setting.unit">
                       <template v-if="data.unit">
                         {{
-                              data.unit?$i18n.locale == "ar"
-                            ? data.unit.name
-                            : data.unit.name_e: ''
+                          data.unit
+                            ? $i18n.locale == "ar"
+                              ? data.unit.name
+                              : data.unit.name_e
+                            : ""
                         }}
                       </template>
                     </td>
@@ -1322,9 +1332,11 @@ export default {
                     <td v-if="setting.building">
                       <template v-if="data.building">
                         {{
-                              data.building ?$i18n.locale == "ar"
-                            ? data.building.name
-                            : data.building.name_e: ''
+                          data.building
+                            ? $i18n.locale == "ar"
+                              ? data.building.name
+                              : data.building.name_e
+                            : ""
                         }}
                       </template>
                     </td>
@@ -1341,9 +1353,11 @@ export default {
                     <td v-if="setting.city">
                       <template v-if="data.city">
                         {{
-                              data.city?$i18n.locale == "ar"
-                            ? data.city.name
-                            : data.city.name_e: ''
+                          data.city
+                            ? $i18n.locale == "ar"
+                              ? data.city.name
+                              : data.city.name_e
+                            : ""
                         }}
                       </template>
                     </td>

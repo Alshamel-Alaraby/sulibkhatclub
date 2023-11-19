@@ -21,15 +21,15 @@ export default {
     meta: [{ name: "description", content: "Installment Status" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
-//   beforeRouteEnter(to, from, next) {
-//     next((vm) => {
-//       return permissionGuard(
-//         vm,
-//         "Installment Status",
-//         "all installmentStatus RP"
-//       );
-//     });
-//   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(
+        vm,
+        "Installment Status",
+        "all installmentStatus RP"
+      );
+    });
+  },
   components: {
     Layout,
     PageHeader,

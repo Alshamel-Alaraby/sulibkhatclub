@@ -59,6 +59,14 @@ export default {
                 {
                     isFilter: false,isSet: true,trans:"document_need_is_copy",isV: 'is_copy',
                     type: 'boolean',setting: {"is_copy":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"document_need_is_partially",isV: 'is_partially',
+                    type: 'boolean',setting: {"is_partially":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"document_need_is_break",isV: 'is_break',
+                    type: 'boolean',setting: {"is_break":true},isSetting: true
                 }
             ],
         };
@@ -116,7 +124,7 @@ export default {
                         <!-- start setting -->
                         <actionSetting
                             :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :current_page="current_page"
-                            :isCreate="true" :isEdit="true" :isDelete="false"
+                            :isCreate="false" :isEdit="true" :isDelete="false"
                             :permissionCreate="isPermission('create document')"
                             :permissionUpdate="isPermission('update document')"
                             :permissionDelete="isPermission('delete document')" :isExcl="true"

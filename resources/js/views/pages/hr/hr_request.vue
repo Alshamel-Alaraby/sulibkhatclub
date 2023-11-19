@@ -317,7 +317,7 @@ export default {
   },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Online Request", "all onlineRequest Hr");
+            return permissionGuard(vm, "Online Request", "all onlineRequest hr");
         });
     },
   methods: {
@@ -406,10 +406,13 @@ export default {
           }
       },
     isPermission(item) {
-      if (this.$store.state.auth.type == "user") {
-        return this.$store.state.auth.permissions.includes(item);
-      }
-      return true;
+        if (this.$store.state.auth.type == "admin") {
+            return this.$store.state.auth.is_web == 1;
+        }
+        if (this.$store.state.auth.type == "user") {
+            return this.$store.state.auth.permissions.includes(item);
+        }
+        return true;
     },
     getRequestType(id) {
       let rt = this.requestTypes.filter((t) => t.id == id);
@@ -1551,10 +1554,8 @@ export default {
                   </button>
                   <button
                     class="custom-btn-dowonload"
+                    v-if="isPermission('update onlineRequest hr') && checkAll.length == 1"
                     @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="
-                      checkAll.length == 1
-                    "
                   >
                       <i class="mdi mdi-square-edit-outline"></i>
                   </button>
@@ -2729,7 +2730,11 @@ export default {
                 >
                   <tr
                     @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                    @dblclick.prevent="
+                          isPermission('update onlineRequest hr')
+                          ? $bvModal.show(`modal-edit-${data.id}`)
+                          : false
+                    "
                     v-for="(data, index) in onlineRequests"
                     :key="data.id"
                     class="body-tr-custom"
@@ -2842,6 +2847,7 @@ export default {
                           <a
                             class="dropdown-item"
                             href="#"
+                            v-if="isPermission('update onlineRequest hr')"
                             @click="$bvModal.show(`modal-edit-${data.id}`)"
                           >
                             <div
@@ -2854,7 +2860,7 @@ export default {
                           <a
                             class="dropdown-item text-black"
                             href="#"
-                            v-if="!manager"
+                            v-if="!manager&&isPermission('delete onlineRequest hr')"
                             @click.prevent="showModule(data.id,'delete')?deleteFinancialYear(data.id):false"
                           >
                             <div

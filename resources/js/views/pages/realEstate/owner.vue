@@ -18,11 +18,11 @@ import crudHelper from "../../../helper/mixin/crudHelper";
 export default {
   page: { title: "Owner", meta: [{ name: "description", content: "Owner" }] },
   mixins: [translation, customTable, successError, crudHelper],
-//   beforeRouteEnter(to, from, next) {
-//     next((vm) => {
-//       return permissionGuard(vm, "Owner RealEstate", "all owner RealState");
-//     });
-//   },
+  //   beforeRouteEnter(to, from, next) {
+  //     next((vm) => {
+  //       return permissionGuard(vm, "Owner RealEstate", "all owner RealState");
+  //     });
+  //   },
   components: {
     Layout,
     PageHeader,
@@ -110,19 +110,19 @@ export default {
           setting: { nationality_id: true },
           isSetting: true,
         },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "bank_account",
-          isV: "bank_account_id",
-          type: "relation",
-          name: "ban1k_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { bank_account_id: true },
-          isSetting: true,
-        },
+        // {
+        //   isFilter: true,
+        //   isSet: true,
+        //   trans: "bank_account",
+        //   isV: "bank_account_id",
+        //   type: "relation",
+        //   name: "bank_account",
+        //   sort: false,
+        //   col1: "name",
+        //   col2: "name_e",
+        //   setting: { bank_account_id: true },
+        //   isSetting: true,
+        // },
         {
           isFilter: true,
           isSet: true,
@@ -193,9 +193,11 @@ export default {
       }
       if (indexBankAccount > -1) {
         fields[indexBankAccount] =
-          this.$i18n.locale == "ar" ? "bankAccount.name" : "bankAccount.name_e";
+          this.$i18n.locale == "ar"
+            ? "bank_account.name"
+            : "bank_account.name_e";
       }
-      
+
       for (let i = 0; i < fields.length; ++i) {
         filter += `columns[${i}]=${fields[i]}&`;
       }

@@ -68,7 +68,7 @@ class Customer extends GeneralCustomer
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(\Modules\PointOfSale\Entities\Order::class);
     }
 
     public function hasChildren()

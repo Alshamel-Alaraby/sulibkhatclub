@@ -23,8 +23,8 @@ class RlstUnitStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:100',
-            'name_e' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:rlst_unit_statuses,name,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
+            'name_e' => 'required|string|max:100|unique:rlst_unit_statuses,name_e,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
             "is_active" => "nullable|in:active,inactive",
             "is_default" => "nullable|in:0,1",
             "company_id"=>'nullable',

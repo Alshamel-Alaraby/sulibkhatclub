@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\CustomTable;
 
+use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomTableRequest;
 use App\Http\Resources\CustomTable\CustomTableResource;
 use App\Models\GeneralCustomTable;
 use Database\Seeders\CustomTableSeeder;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Schema;
 class GeneralCustomTableController extends Controller
 {
 
@@ -76,19 +77,79 @@ class GeneralCustomTableController extends Controller
 
     public function getCustomTableFields($tableName)
     {
+        
+        $this->seeder();
+
+        $allColumns = Schema::getColumnListing($tableName);
+        $currentColumnsCount = count(Schema::getColumnListing($tableName));
+
         $company_id = request()->header('company-id');
-        $customTable = GeneralCustomTable::where([
-            ["table_name", $tableName],
-            ['company_id', $company_id],
-        ])
-            ->first();
-        if (!$customTable) {
-            $customTable = GeneralCustomTable::where([
-                ["table_name", $tableName],
-                ['company_id', 0],
-            ])->first();
+
+        $CompanyIdExists = true;
+        $CompanyIdValue = 0;
+
+        if (Schema::hasColumn($tableName, 'company_id')) {
+            // The `company_id` column exists in the `$tableName` table
+            $customTable = GeneralCustomTable::where('table_name', $tableName)
+        ->where(function ($query) use ($company_id) {
+            $query->where('company_id', null)
+                ->orWhere('company_id', $company_id)
+                ->orWhere('company_id', 0);
+        })->first();
+
+        $CompanyIdValue = $customTable['company_id'];
+
+        } else {
+            
+            $CompanyIdExists = false;
+            // The `company_id` column does not exist in the `$tableName` table
+            $customTable = GeneralCustomTable::where('table_name', $tableName)->first();
         }
+
+        
+        //return $customTable;
+
+        $recordedColumnsCount = count($customTable['columns']);
+
+
+        if ($currentColumnsCount != $recordedColumnsCount) {
+
+            $newColumnsArray = [];
+            $i =0;
+
+            $collection = new Collection(json_decode($customTable, true)['columns']);
+
+
+            foreach($allColumns as $column){
+
+                $columnFound = $collection->first(function ($value, $key) use ($column){
+                    return $value['column_name'] === $column;
+                });
+
+                if ($columnFound) {
+                    // The `column_name` value `"name"` was found in the JSON
+                    // The `$column` variable contains the matching column object
+
+                    $newColumnsArray[$i]['column_name'] = $column;
+                    $newColumnsArray[$i]['is_required'] = $columnFound['is_required'];
+                    $newColumnsArray[$i]['is_visible'] = $columnFound['is_visible'];
+
+                } else {
+                    // The `column_name` value `"name"` was not found in the JSON
+                    $newColumnsArray[$i]['column_name'] = $column;
+                    $newColumnsArray[$i]['is_required'] = 0;
+                    $newColumnsArray[$i]['is_visible'] = 1;
+                }
+
+                $i++;
+            }
+
+            $customTable['columns'] = $newColumnsArray;
+
+        }
+
         return $customTable ? $customTable->columns : [];
+
     }
 
     public function seeder()

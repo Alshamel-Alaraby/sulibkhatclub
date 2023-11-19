@@ -21,7 +21,7 @@ class AvenueRepository implements AvenueInterface
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
-            return ['data' => \App\Models\Avenue::get(), 'paginate' => false];
+            return ['data' => $models->get(), 'paginate' => false];
         }
     }
 

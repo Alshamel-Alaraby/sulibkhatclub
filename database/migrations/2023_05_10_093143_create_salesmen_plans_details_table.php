@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('general_salesmen_plans_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('plan_id');
+            $table->unsignedBigInteger('plan_id')->index();
             $table->string('amount_from');
             $table->string('amount_to');
             $table->integer('commission_percent');

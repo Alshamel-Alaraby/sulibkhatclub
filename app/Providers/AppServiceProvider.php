@@ -1,6 +1,14 @@
 <?php
 
 namespace App\Providers;
+use App\Repositories\BreakSettlement\BreakSettlementInterface;
+use App\Repositories\BreakSettlement\BreakSettlementRepository;
+use App\Repositories\ClientType\ClientTypeRepository;
+use App\Repositories\ClientType\ClientTypeRepositoryInterface;
+use App\Repositories\DocumentCompanyModuleStatus\DocumentCompanyModuleStatusInterface;
+use App\Repositories\DocumentCompanyModuleStatus\DocumentCompanyModuleStatusRepository;
+use App\Repositories\DocumentModuleType\DocumentModuleTypeInterface;
+use App\Repositories\DocumentModuleType\DocumentModuleTypeRepository;
 use Illuminate\Support\Facades\Validator;
 
 use App\Repositories\Attendant\AttendantInterface;
@@ -127,7 +135,9 @@ use App\Repositories\WorkflowHotfield\WorkflowHotfieldRepository;
 use App\Repositories\WorkflowHotfield\WorkflowHotfieldRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
-
+use Doctrine\DBAL\Types\Type;
+use App\DoctrineTypes\MediumIntegerType;
+use App\DoctrineTypes\EnumType;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -229,11 +239,26 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GeneralItemInterface::class, GeneralItemRepository::class);
 
         $this->app->bind(AttendantInterface::class, AttendantRepository::class);
+
         $this->app->bind(MessageInterface::class, MessageRepository::class);
 
 
 
+        $this->app->bind(ClientTypeRepositoryInterface::class, ClientTypeRepository::class);
+        $this->app->bind(BreakSettlementInterface::class, BreakSettlementRepository::class);
 
+
+        $this->app->bind(DocumentModuleTypeInterface::class, DocumentModuleTypeRepository::class);
+
+
+        $this->app->bind(DocumentCompanyModuleStatusInterface::class, DocumentCompanyModuleStatusRepository::class);
+
+
+
+
+        Type::addType('mediuminteger', MediumIntegerType::class);
+
+        Type::addType('enum', EnumType::class);
 
 
 
@@ -253,6 +278,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+
+        
         Schema::defaultStringLength(191);
 
 

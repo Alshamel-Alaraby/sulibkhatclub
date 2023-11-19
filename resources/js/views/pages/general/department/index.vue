@@ -29,7 +29,7 @@ export default {
             next((vm) => {
       return permissionGuard(vm, "Department", "all Department");
     });
-  },
+  }, 
   data() {
     return {
         url: '/depertments',

@@ -2,6 +2,7 @@
 
 namespace Modules\RecievablePayable\Entities;
 
+use App\Models\BreakSettlement;
 use App\Models\DocumentHeader;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,17 @@ class RpBreakDown extends Model
 
     protected $guarded = ['id'];
     protected $casts = ["terms" => "json"];
+
+    public function scopeData($query)
+    {
+        return $query
+            ->select(
+                'id','customer_id','break_id','break_type','debit','credit','instalment_date','total','document_id'
+            )
+            ->with([
+                'documentHeader:id,prefix','document:id,name,name_e'
+            ]);
+    }
 
 
 
@@ -83,9 +95,14 @@ class RpBreakDown extends Model
         return $this->belongsTo(RpBreakDown::class, 'parent_id');
     }
 
+    public function breakSettlements()
+    {
+        return  $this->hasMany(BreakSettlement::class, 'break_id');
+    }
+
     public function hisChildren()
     {
-        return $this->children()->count() > 0;
+        return $this->children()->count() > 0 || $this->breakSettlements() > 0;
     }
 
     public function scopeFilterBreak($query , $request)

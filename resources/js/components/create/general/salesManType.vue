@@ -54,7 +54,7 @@
             <div class="row">
                 <div class="col-md-12" v-if="isVisible('name')">
                     <div class="form-group">
-                        <label for="field-1" class="control-label">
+                        <label class="control-label">
                             {{ getCompanyKey("sale_man_type_name_ar") }}
                             <span v-if="isRequired('name')" class="text-danger">*</span>
                         </label>
@@ -70,7 +70,6 @@
                             'is-valid': !$v.create.name.$invalid && !errors.name,
                           }"
                                 @keyup="arabicValue(create.name)"
-                                id="field-1"
                             />
                         </div>
                         <div v-if="!$v.create.name.minLength" class="invalid-feedback">
@@ -95,7 +94,7 @@
                 </div>
                 <div class="col-md-12"  v-if="isVisible('name_e')">
                     <div class="form-group">
-                        <label for="field-2" class="control-label">
+                        <label class="control-label">
                             {{ getCompanyKey("sale_man_type_name_en") }}
                             <span  v-if="isRequired('name_e')" class="text-danger">*</span>
                         </label>
@@ -111,7 +110,6 @@
                             'is-valid': !$v.create.name_e.$invalid && !errors.name_e,
                           }"
                                 @keyup="englishValue(create.name_e)"
-                                id="field-2"
                             />
                         </div>
                         <div v-if="!$v.create.name_e.minLength" class="invalid-feedback">

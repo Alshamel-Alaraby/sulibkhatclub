@@ -18,8 +18,15 @@ class AllBRentPackageResource extends JsonResource
             'id'     => $this->id,
             'name'   => $this->name,
             'name_e' => $this->name_e,
-            'code'   => $this->code,
-            'price'  => $this->price,
+            'code'           => $this->code,
+            'price'          => $this->price,
+            'note'           => $this->note,
+            'category_id'    => $this->category_id,
+            'governorate_id' => $this->governorate_id,
+            'category' => collect($this->whenLoaded('category'))->only(['id','name','name_e']) ,
+            'governorate' => $this->whenLoaded('governorate'),
+
+
         ];
     }
 }

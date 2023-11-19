@@ -15,6 +15,8 @@ class Document extends Model
 
     protected $guarded = [''];
 
+    protected $appends = ['relation_voucher_header'];
+
 //    public function getRequired()
 //    {
 //        return $this->required == 1 ? 'Yes' : 'No';
@@ -56,6 +58,8 @@ class Document extends Model
 
     protected $casts = ["attributes" => "json"];
 
+
+
     public function payment_plan_installments()
     {
         return $this->hasMany(RpPaymentPlanInstallment::class, 'doc_type_id');
@@ -85,13 +89,33 @@ class Document extends Model
         return $this->belongsToMany(Employee::class, 'general_documents_approve_personal', 'document_id', 'employee_id','id','id');
     }
 
+    public function voucherHeader()
+    {
+        return $this->hasMany(VoucherHeader::class, 'document_id');
 
+    }
 
+    public function documentModuleType()
+    {
+        return $this->belongsTo(DocumentModuleType::class, 'document_module_type_id');
+
+    }
+
+    public function getRelationVoucherHeaderAttribute($key)
+    {
+        return $this->voucherHeader()->count() > 0 ? 1 : 0;
+    }
+
+    public function documentCompanyModuleStatuses()
+    {
+        return $this->hasMany(DocumentCompanyModuleStatus::class,'document_id');
+
+    }
 
     public function hasChildren()
     {
         return $this->orders->count() > 0 ||
-        $this->payment_plan_installments->count() > 0;
+        $this->payment_plan_installments->count() > 0 ||  $this->documentCompanyModuleStatuses->count() > 0;
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

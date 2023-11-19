@@ -29,6 +29,7 @@ class EmployeeResource extends JsonResource
             'email' => $this->email,
             'whatsapp' => $this->whatsapp,
             'sms' => $this->sms,
+            'mobile_id' => $this->mobile_id,
             'att_code' => $this->att_code,
             'company_id' => $this->company_id,
             'job_id' => $this->job_id,

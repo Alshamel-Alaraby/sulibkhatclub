@@ -192,7 +192,6 @@ Route::prefix('hr')->group(function () {
         });
     });
 
-
     Route::group(['prefix' => 'time-tables-types'], function () {
         Route::controller(\Modules\HR\Http\Controllers\TimeTableTypeController::class)->group(function () {
             Route::get('/', 'all')->name('time-tables-types.index');
@@ -211,7 +210,6 @@ Route::prefix('hr')->group(function () {
             Route::get('logs/{id}', 'logs')->name('attendance_settings.logs');
         });
     });
-
 
     Route::group(['prefix' => 'employees-time-tables-header'], function () {
         Route::controller(\Modules\HR\Http\Controllers\EmployeesTimeTablesHeaderController::class)->group(function () {
@@ -241,14 +239,104 @@ Route::prefix('hr')->group(function () {
         });
     });
 
-
-       //reports
-       Route::group(['prefix' => 'reports'], function () {
+    //reports
+    Route::group(['prefix' => 'reports'], function () {
         Route::controller(\Modules\HR\Http\Controllers\ReportController::class)->group(function () {
 
             Route::get('/attendance-departure', 'AttendanceDeparture')->name('reports.AttendanceDeparture');
 
         });
+    });
+
+    Route::group(['prefix' => 'statics'], function () {
+        Route::controller(\Modules\HR\Http\Controllers\StaticesController::class)->group(function () {
+            Route::get('/', 'all')->name('statics.index');
+
+        });
+    });
+
+    Route::group(['prefix' => 'locations'], function () {
+        Route::get('/', 'LocationController@all')->name('locations.all');
+        Route::get('/logs/{id}', 'LocationController@logs')->name('locations.logs');
+        Route::get('/{id}', 'LocationController@find')->name('locations.find');
+        Route::post('/', 'LocationController@create')->name('locations.create');
+        Route::put('/{id}', 'LocationController@update')->name('locations.update');
+        Route::post("/bulk-delete", "LocationController@bulkDelete");
+        Route::delete('/{id}', 'LocationController@delete')->name('locations.delete');
+    });
+
+    Route::group(['prefix' => 'location-dates'], function () {
+        Route::get('/', 'LocationDateController@all')->name('location-dates.all');
+        Route::get('/logs/{id}', 'LocationDateController@logs')->name('location-dates.logs');
+        Route::get('/{id}', 'LocationDateController@find')->name('location-dates.find');
+        Route::post('/', 'LocationDateController@create')->name('location-dates.create');
+        Route::put('/{id}', 'LocationDateController@update')->name('location-dates.update');
+        Route::post("/bulk-delete", "LocationDateController@bulkDelete");
+        Route::delete('/{id}', 'LocationDateController@delete')->name('location-dates.delete');
+    });
+
+    Route::group(['prefix' => 'Employee-location-date'], function () {
+
+        Route::get('/employees', 'EmployeeLocationDateController@employees')->name('Employee-location-date.employees');
+        Route::get('/', 'EmployeeLocationDateController@all')->name('Employee-location-date.all');
+        Route::get('/logs/{id}', 'EmployeeLocationDateController@logs')->name('Employee-location-date.logs');
+        Route::get('/{id}', 'EmployeeLocationDateController@find')->name('Employee-location-date.find');
+        Route::post('/', 'EmployeeLocationDateController@create')->name('Employee-location-date.create');
+        Route::post('/update', 'EmployeeLocationDateController@update')->name('Employee-location-date.update');
+        Route::post("/bulk-delete", "EmployeeLocationDateController@bulkDelete");
+        Route::delete('/{id}', 'EmployeeLocationDateController@delete')->name('Employee-location-date.delete');
+
+    });
+
+    Route::group(['prefix' => 'public-holiday-header'], function () {
+        Route::get('/', 'PublicHolidayHeaderController@all')->name('public-holiday-header.all');
+        Route::get('/logs/{id}', 'PublicHolidayHeaderController@logs')->name('public-holiday-header.logs');
+        Route::get('/{id}', 'PublicHolidayHeaderController@find')->name('public-holiday-header.find');
+        Route::post('/', 'PublicHolidayHeaderController@create')->name('public-holiday-header.create');
+        Route::put('/{id}', 'PublicHolidayHeaderController@update')->name('public-holiday-header.update');
+        Route::post("/bulk-delete", "PublicHolidayHeaderController@bulkDelete");
+        Route::delete('/{id}', 'PublicHolidayHeaderController@delete')->name('public-holiday-header.delete');
+    });
+
+    Route::group(['prefix' => 'employee-public-holiday-header'], function () {
+        Route::get('/', 'EmployeePublicHolidayHeaderController@all')->name('employee-public-holiday-header.all');
+        Route::get('/logs/{id}', 'EmployeePublicHolidayHeaderController@logs')->name('employee-public-holiday-header.logs');
+        Route::get('/{id}', 'EmployeePublicHolidayHeaderController@find')->name('employee-public-holiday-header.find');
+        Route::post('/', 'EmployeePublicHolidayHeaderController@create')->name('employee-public-holiday-header.create');
+        Route::put('/{id}', 'EmployeePublicHolidayHeaderController@update')->name('employee-public-holiday-header.update');
+        Route::post("/bulk-delete", "EmployeePublicHolidayHeaderController@bulkDelete");
+        Route::delete('/{id}', 'EmployeePublicHolidayHeaderController@delete')->name('employee-public-holiday-header.delete');
+    });
+
+
+    Route::group(['prefix' => 'Employee-public-holiday-detail'], function () {
+        Route::get('/', 'EmployeePublicHolidayDetailController@all')->name('EmployeePublicHolidayDetail.all');
+        Route::get('/logs/{id}', 'EmployeePublicHolidayDetailController@logs')->name('EmployeePublicHolidayDetail.logs');
+        Route::get('/{id}', 'EmployeePublicHolidayDetailController@find')->name('EmployeePublicHolidayDetail.find');
+        Route::post('/', 'EmployeePublicHolidayDetailController@create')->name('EmployeePublicHolidayDetail.create');
+        Route::post('/update', 'EmployeePublicHolidayDetailController@update')->name('EmployeePublicHolidayDetail.update');
+        Route::post("/bulk-delete", "EmployeePublicHolidayDetailController@bulkDelete");
+        Route::delete('/{id}', 'EmployeePublicHolidayDetailController@delete')->name('EmployeePublicHolidayDetail.delete');
+    });
+
+    Route::group(['prefix' => 'employee-fingerprint-headers'], function () {
+        Route::get('/', 'EmployeeFingerprintHeaderController@all')->name('employee-fingerprint-headers.all');
+        Route::get('/logs/{id}', 'EmployeeFingerprintHeaderController@logs')->name('employee-fingerprint-headers.logs');
+        Route::get('/{id}', 'EmployeeFingerprintHeaderController@find')->name('employee-fingerprint-headers.find');
+        Route::post('/', 'EmployeeFingerprintHeaderController@create')->name('employee-fingerprint-headers.create');
+        Route::put('/{id}', 'EmployeeFingerprintHeaderController@update')->name('employee-fingerprint-headers.update');
+        Route::post("/bulk-delete", "EmployeeFingerprintHeaderController@bulkDelete");
+        Route::delete('/{id}', 'EmployeeFingerprintHeaderController@delete')->name('employee-fingerprint-headers.delete');
+    });
+
+    Route::group(['prefix' => 'employee-fingerprint-details'], function () {
+        Route::get('/', 'EmployeeFingerprintDetailController@all')->name('employee-fingerprint-details.all');
+        Route::get('/logs/{id}', 'EmployeeFingerprintDetailController@logs')->name('employee-fingerprint-details.logs');
+        Route::get('/{id}', 'EmployeeFingerprintDetailController@find')->name('employee-fingerprint-details.find');
+        Route::post('/', 'EmployeeFingerprintDetailController@create')->name('employee-fingerprint-details.create');
+        Route::post('/update', 'EmployeeFingerprintDetailController@update')->name('employee-fingerprint-details.update');
+        Route::post("/bulk-delete", "EmployeeFingerprintDetailController@bulkDelete");
+        Route::delete('/{id}', 'EmployeeFingerprintDetailController@delete')->name('employee-fingerprint-details.delete');
     });
 
 

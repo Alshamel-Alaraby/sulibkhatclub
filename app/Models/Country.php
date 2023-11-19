@@ -15,7 +15,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Country extends Model implements HasMedia
 {
     use HasFactory, MediaTrait, SoftDeletes, LogTrait;
-    
+
     protected $table = "general_countries";
     protected $fillable = [
         'name',
@@ -182,4 +182,6 @@ class Country extends Model implements HasMedia
 
         return $relationsWithChildren;
     }
+
+ 
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->index()->nullable();
             $table->tinyInteger('is_valid')->default(false);
             $table->tinyInteger('is_default')->default(true);
             $table->timestamps();

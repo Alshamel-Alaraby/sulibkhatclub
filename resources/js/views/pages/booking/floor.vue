@@ -49,7 +49,7 @@ export default {
     mounted() {
         this.searchField = this.tableSetting.filter(e => e.isFilter ).map(el => el.isV);
         this.settingFun();
-        this.getCustomTableFields('general_brands');
+        this.getCustomTableFields('booking_floors');
         this.getData(1,this.url,this.filterSearch(this.searchField));
     },
     methods: {

@@ -27,7 +27,7 @@ class RlstWalletController extends Controller
         return responseJson(200, 'success', new RlstWalletResource($model));
     }
 
-    public function all(AllRequest $request)
+    public function all(Request $request)
     {
         $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
@@ -37,7 +37,7 @@ class RlstWalletController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', RlstWalletResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function create(RlstWalletRequest $request)
@@ -61,20 +61,6 @@ class RlstWalletController extends Controller
         return responseJson(200, 'updated', new RlstWalletResource($model));
     }
 
-    public function buTy($wallet_id, $building_id)
-    {
-        $model = \Modules\RealEstate\Entities\RlstBuildingWallet::where([
-            'building_id' => $building_id,
-            'wallet_id' => $wallet_id,
-        ])->first();
-        if (!$model) {
-            return responseJson(404, 'not found');
-        }
-
-        return responseJson(200, 'success', $model);
-
-    }
-
     public function logs($id)
     {
         $model = $this->model->find($id);
@@ -86,38 +72,6 @@ class RlstWalletController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-    // public function delete($id)
-    // {
-    //     $model = $this->model->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, __('message.data not found'));
-    //     }
-
-    //     if ($model->hasChildren()) {
-    //         return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-    //     }
-
-    //     $this->model->delete($id);
-
-    //     return responseJson(200, 'success');
-    // }
-
-    // public function bulkDelete(Request $request)
-    // {
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->model->find($id);
-    //         $arr = [];
-    //         if ($model->hasChildren()) {
-    //             $arr[] = $id;
-    //             continue;
-    //         }
-    //         $this->model->delete($id);
-    //     }
-    //     if (count($arr) > 0) {
-    //         return responseJson(400, __('some items has relation can\'t delete'));
-    //     }
-    //     return responseJson(200, __('Done'));
-    // }
 
     public function delete($id)
     {
@@ -127,6 +81,8 @@ class RlstWalletController extends Controller
         }
 
         $relationsWithChildren = $model->hasChildren();
+
+
 
         if (!empty($relationsWithChildren)) {
             $errorMessages = [];
@@ -139,9 +95,10 @@ class RlstWalletController extends Controller
             return responseJson(400, $errorMessages);
         }
 
-        $this->model->delete($id);
+        $model->deleted_at = now();
+        $model->save();
 
-        return responseJson(200, 'success');
+        return responseJson(200, 'deleted');
     }
 
     public function bulkDelete(Request $request)
@@ -160,7 +117,8 @@ class RlstWalletController extends Controller
                 continue;
             }
 
-            $this->model->delete($id);
+            $model->deleted_at = now();
+            $model->save();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -190,5 +148,13 @@ class RlstWalletController extends Controller
     {
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
+    }
+
+    public function getDropDown()
+    {
+        $models = $this->model->select('id', 'name','name_e')->get();
+
+
+        return responseJson(200, 'success', $models);
     }
 }

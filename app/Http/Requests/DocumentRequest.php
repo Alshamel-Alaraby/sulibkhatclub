@@ -30,12 +30,15 @@ class DocumentRequest extends FormRequest
             'is_default' => "nullable|in:1,0",
             'attributes' => "nullable|array",
             'branche_id' => "nullable",
+            'document_module_type_id' => "nullable|exists:general_document_module_types,id",
             'serial_id' => "nullable",
             "contusion" => "nullable|in:1,0",
-            "is_copy" => "nullable|in:1,0",
+            "is_copy" => "nullable|in:2,1,0",
+            "is_partially" => "nullable|in:2,1,0",
             'company_id' => 'nullable|integer',
             'document_relateds.*' => 'nullable|integer',
-            'required' => 'nullable',
+            'required' => "nullable|in:2,1,0",
+            'is_break' => "nullable|in:2,1,0",
             'need_approve' => 'nullable',
         ];
     }

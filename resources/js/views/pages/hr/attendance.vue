@@ -20,7 +20,7 @@ export default {
     mixins: [translation,customTable,successError,crudHelper],
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "Attendance", "all attendance Hr");
+            return permissionGuard(vm, "Attendance", "all attendance hr");
         });
     },
     components: {
@@ -106,9 +106,9 @@ export default {
                         <actionSetting
                             :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :current_page="current_page"
                             :isCreate="false" :isEdit="false" :isDelete="false"
-                            :permissionCreate="isPermission('create attendance Hr')"
-                            :permissionUpdate="isPermission('update attendance Hr')"
-                            :permissionDelete="isPermission('delete attendance Hr')" :isExcl="true"
+                            :permissionCreate="false"
+                            :permissionUpdate="false"
+                            :permissionDelete="false" :isExcl="true"
                             :isPrint="true" :checkAll="checkAll" :sideAction="true" :sidePaginate="true"
                             :isFilter="true" :group="true" :isGroup="true" :isVisible="isVisible"
                             :isSetting="true" :isPaginate="true" :settings="tableSetting"
@@ -139,8 +139,8 @@ export default {
                             <tableCustom
                                 :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                                 :tables="tables" :isEdit="false" :isDelete="false"
-                                :permissionUpdate="isPermission('update attendance Hr')"
-                                :permissionDelete="isPermission('delete attendance Hr')"
+                                :permissionUpdate="false"
+                                :permissionDelete="false"
                                 :isVisible="isVisible" :tableSetting="tableSetting"
                                 :enabled3="enabled3" :Tooltip="Tooltip" @logFire="(id) => log(id,url)"
                                 @delete="ids => deleteRow(ids,url)" @editRow="id => dbClickRow(id)"

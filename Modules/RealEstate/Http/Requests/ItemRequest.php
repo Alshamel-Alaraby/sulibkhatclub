@@ -24,18 +24,18 @@ class ItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'sometimes|string|max:255|unique:rlst_items,name' . ($this->method() == 'PUT' ? ',' . $this->id : ''),
-            'name_e'    => 'sometimes|string|max:255|unique:rlst_items,name_e' . ($this->method() == 'PUT' ? ','. $this->id : '') ,
+            'name' => 'required|string|max:255|unique:rlst_items,name,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
+            'name_e' => 'required|string|max:255|unique:rlst_items,name_e,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
             'code_number' => 'sometimes|string|max:255',
             'type'=> 'nullable|string',
             'price'=> 'numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
-            'unit_id'=>'nullable|exists:general_units,id',
+            'unit_id'=>'nullable|exists:rlst_units,id,deleted_at,NULL',
             "media" => "nullable|array",
             "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
             // "category-item" => 'required|array',
-            'category_item_id.*' => 'nullable|exists:rlst_category_item,id',
+            'category_item_id.*' => 'nullable|exists:rlst_category_item,id,deleted_at,NULL',
 
-            "company_id"=>'nullable',
+            "company_id" => 'nullable',
             // 'category-item.*.item_id'          => 'required|exists:rlst_items,id',
         ];
     }

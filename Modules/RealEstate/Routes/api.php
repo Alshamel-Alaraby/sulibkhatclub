@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('real-estate')->group(function () {
     // owners routes
     Route::group(['prefix' => 'owners'], function () {
+        Route::get('/get-drop-down', 'RlstOwnerController@getDropDown');
+
         Route::get('/', 'RlstOwnerController@all')->name('rlst-owners.all');
         Route::get('/ownerWalletPercentage/{wallet_id}/{owner_id}', 'RlstOwnerController@ownerWalletPercentage')->name('rlst-owners.ownerWalletPercentage');
         Route::get('/logs/{id}', 'RlstOwnerController@logs')->name('rlst-owners.logs');
@@ -38,6 +40,8 @@ Route::prefix('real-estate')->group(function () {
 
     // wallets routes
     Route::group(['prefix' => 'wallets'], function () {
+        Route::get('/get-drop-down', 'RlstWalletController@getDropDown')->name('wallets.getDropDown');
+
         Route::get('/', 'RlstWalletController@all')->name('rlst-wallets.all');
         Route::get("/bu-ty/{wallet_id}/{building_id}", 'RlstWalletController@buTy');
         Route::get('/logs/{id}', 'RlstWalletController@logs')->name('rlst-wallets.logs');
@@ -130,7 +134,7 @@ Route::prefix('real-estate')->group(function () {
 
         Route::get('/owner-wallet/{wallet_id}', 'RlstUnitController@getOwnerByWalletId');
 
-        Route::get('/building-wallet/{wallet_id}', 'RlstUnitController@getBuildingByWalletId');
+        Route::post('/building-wallet', 'RlstUnitController@getBuildingByWalletId');
 
         Route::get('/', 'RlstUnitController@all')->name('rlst-units.all');
         Route::get('/logs/{id}', 'RlstUnitController@logs')->name('rlst-units.logs');
@@ -189,6 +193,7 @@ Route::prefix('real-estate')->group(function () {
         Route::put('/{id}', 'RlstBuildingWalletController@update')->name('rlst-building-wallets.update');
         Route::post("/bulk-delete", "RlstBuildingWalletController@bulkDelete");
         Route::delete('/{id}', 'RlstBuildingWalletController@delete')->name('rlst-building-wallets.delete');
+        Route::put('/edit-building-wallet-array/{id}', 'RlstBuildingWalletController@UpdateBuildingArray')->name('edit-building-wallet-array.create');
     });
 
     //invoices
@@ -294,5 +299,168 @@ Route::prefix('real-estate')->group(function () {
 
         });
     });
+
+    // Building Type
+    Route::group(['prefix' => 'building-type'], function () {
+        //Route::get('/get-drop-down', 'RlstBuildingTypeController@getDropDown')->name('rlst-unit-type.getDropDown');
+
+        Route::get('/', 'RlstBuildingTypeController@all')->name('rlst-building-type.all');
+        Route::post('/', 'RlstBuildingTypeController@create')->name('rlst-building-type.create');
+        Route::put('/{id}', 'RlstBuildingTypeController@update')->name('rlst-building-type.update');
+        Route::get('/logs/{id}', 'RlstBuildingTypeController@logs')->name('rlst-building-type.logs');
+        Route::get('/{id}', 'RlstBuildingTypeController@find')->name('rlst-building-type.find');
+        Route::post("/bulk-delete", "RlstBuildingTypeController@bulkDelete");
+        Route::delete('/{id}', 'RlstBuildingTypeController@delete')->name('rlst-building-type.delete');
+    });
+
+    // Building Policy
+    Route::group(['prefix' => 'building-policy'], function () {
+        //Route::get('/get-drop-down', 'RlstFinishingController@getDropDown')->name('rlst-unit-type.getDropDown');
+        Route::get('/divide-owner-company-share', 'RlstBuildingPolicyController@divideOwnerCompanyShare')->name('rlst-building-policy.divideOwnerCompanyShare');
+        Route::get('/get-building-policies/{id}', 'RlstBuildingPolicyController@getBuildingPolicies')->name('rlst-building-policy.getBuildingPolicies');
+        Route::get('/', 'RlstBuildingPolicyController@all')->name('rlst-building-policy.all');
+        Route::post('/', 'RlstBuildingPolicyController@create')->name('rlst-building-policy.create');
+        Route::put('/{id}', 'RlstBuildingPolicyController@update')->name('rlst-building-policy.update');
+        Route::get('/logs/{id}', 'RlstBuildingPolicyController@logs')->name('rlst-building-policy.logs');
+        Route::get('/{id}', 'RlstBuildingPolicyController@find')->name('rlst-building-policy.find');
+        Route::post("/bulk-delete", "RlstBuildingPolicyController@bulkDelete");
+        Route::delete('/{id}', 'RlstBuildingPolicyController@delete')->name('rlst-building-policy.delete');
+    });
+
+    //  Policy
+    Route::group(['prefix' => 'policy'], function () {
+        //Route::get('/get-drop-down', 'RlstFinishingController@getDropDown')->name('rlst-unit-type.getDropDown');
+
+        Route::get('/', 'RlstPolicyController@all')->name('rlst-policy.all');
+        Route::post('/', 'RlstPolicyController@create')->name('rlst-policy.create');
+        Route::put('/{id}', 'RlstPolicyController@update')->name('rlst-policy.update');
+        Route::get('/logs/{id}', 'RlstPolicyController@logs')->name('rlst-policy.logs');
+        Route::get('/{id}', 'RlstPolicyController@find')->name('rlst-policy.find');
+        Route::post("/bulk-delete", "RlstPolicyController@bulkDelete");
+        Route::delete('/{id}', 'RlstPolicyController@delete')->name('rlst-policy.delete');
+    });
+
+    Route::group(['prefix' => 'un-sold-unit-report'], function () {
+
+        Route::post('/', 'RlstUnSoldUnitReportController@all');
+
+    });
+
+    Route::group(['prefix' => 'unit-reports'], function () {
+
+        Route::get('/get-lists', 'RlstUnitReportsController@getLists');
+        Route::get('/get-results', 'RlstUnitReportsController@getResults');
+        Route::get('/get-excel-results', 'RlstUnitReportsController@getExcelResults');
+        Route::get('/get-filtered-excel-results', 'RlstUnitReportsController@getFilteredExcelResults');
+
+    });
+
+    // tenants routes
+    Route::group(['prefix' => 'tenants'], function () {
+        Route::get('/get-drop-down', 'RlstTenantController@getDropDown');
+
+        Route::get('/', 'RlstTenantController@all')->name('rlst-tenants.all');
+        Route::get('/logs/{id}', 'RlstOwnerController@logs')->name('rlst-tenants.logs');
+        Route::get('/{id}', 'RlstTenantController@find')->name('rlst-tenants.find');
+        Route::post('/', 'RlstTenantController@create')->name('rlst-tenants.create');
+        Route::put('/{id}', 'RlstTenantController@update')->name('rlst-tenants.update');
+        Route::post("/bulk-delete", "RlstTenantController@bulkDelete");
+        Route::delete('/{id}', 'RlstTenantController@delete')->name('rlst-tenants.delete');
+    });
+    
+    // guards routes
+    Route::group(['prefix' => 'guards'], function () {
+        Route::get('/get-drop-down', 'RlstGuardController@getDropDown');
+
+        Route::get('/', 'RlstGuardController@all')->name('rlst-guards.all');
+        Route::get('/logs/{id}', 'RlstGuardController@logs')->name('rlst-guards.logs');
+        Route::get('/{id}', 'RlstGuardController@find')->name('rlst-guards.find');
+        Route::post('/', 'RlstGuardController@create')->name('rlst-guards.create');
+        Route::put('/{id}', 'RlstGuardController@update')->name('rlst-guards.update');
+        Route::post("/bulk-delete", "RlstGuardController@bulkDelete");
+        Route::delete('/{id}', 'RlstGuardController@delete')->name('rlst-guards.delete');
+    });
+
+
+    // building categories
+    Route::group(['prefix' => 'building-categories'], function () {
+        Route::get('/get-drop-down', 'RlstBuildingCategoryController@getDropDown');
+
+        Route::get('/', 'RlstBuildingCategoryController@all')->name('rlst-building-categories.all');
+        Route::get('/logs/{id}', 'RlstBuildingCategoryController@logs')->name('rlst-building-categories.logs');
+        Route::get('/{id}', 'RlstBuildingCategoryController@find')->name('rlst-building-categories.find');
+        Route::post('/', 'RlstBuildingCategoryController@create')->name('rlst-building-categories.create');
+        Route::put('/{id}', 'RlstBuildingCategoryController@update')->name('rlst-building-categories.update');
+        Route::post("/bulk-delete", "RlstBuildingCategoryController@bulkDelete");
+        Route::delete('/{id}', 'RlstBuildingCategoryController@delete')->name('rlst-building-categories.delete');
+    });
+    
+    // services
+    Route::group(['prefix' => 'services'], function () {
+        Route::get('/get-drop-down', 'RlstServiceController@getDropDown');
+
+        Route::get('/', 'RlstServiceController@all')->name('rlst-services.all');
+        Route::get('/logs/{id}', 'RlstServiceController@logs')->name('rlst-services.logs');
+        Route::get('/{id}', 'RlstServiceController@find')->name('rlst-services.find');
+        Route::post('/', 'RlstServiceController@create')->name('rlst-services.create');
+        Route::put('/{id}', 'RlstServiceController@update')->name('rlst-services.update');
+        Route::post("/bulk-delete", "RlstServiceController@bulkDelete");
+        Route::delete('/{id}', 'RlstServiceController@delete')->name('rlst-services.delete');
+    });
+
+    //  unit services
+
+    Route::group(['prefix' => 'unit-service'], function () {
+        Route::get('/', 'RlstUnitServiceController@all')->name('rlst-unit-services.all');
+        Route::get('/logs/{id}', 'RlstUnitServiceController@logs')->name('rlst-unit-services.logs');
+        Route::get('/{id}', 'RlstUnitServiceController@find')->name('rlst-unit-services.find');
+        Route::post('/', 'RlstUnitServiceController@create')->name('rlst-unit-services.create');
+        Route::put('/{id}', 'RlstUnitServiceController@update')->name('rlst-unit-services.update');
+        Route::post("/bulk-delete", "RlstUnitServiceController@bulkDelete");
+        Route::delete('/{id}', 'RlstUnitServiceController@delete')->name('rlst-unit-services.delete');
+        Route::put('/edit-unit-service-array/{id}', 'RlstUnitServiceController@updateUnitArray')->name('edit-unit-service-array.create');
+    });
+    
+
+        // evacuation types
+    Route::group(['prefix' => 'evacuation-types'], function () {
+        Route::get('/get-drop-down', 'RlstEvacuationTypeController@getDropDown');
+
+        Route::get('/', 'RlstEvacuationTypeController@all')->name('rlst-evacuation-types.all');
+        Route::get('/logs/{id}', 'RlstEvacuationTypeController@logs')->name('rlst-evacuation-types.logs');
+        Route::get('/{id}', 'RlstEvacuationTypeController@find')->name('rlst-evacuation-types.find');
+        Route::post('/', 'RlstEvacuationTypeController@create')->name('rlst-evacuation-types.create');
+        Route::put('/{id}', 'RlstEvacuationTypeController@update')->name('rlst-evacuation-types.update');
+        Route::post("/bulk-delete", "RlstEvacuationTypeController@bulkDelete");
+        Route::delete('/{id}', 'RlstEvacuationTypeController@delete')->name('rlst-evacuation-types.delete');
+    });
+
+    // expenses items
+    Route::group(['prefix' => 'expenses-items'], function () {
+        Route::get('/get-drop-down', 'RlstExpenseItemController@getDropDown');
+
+        Route::get('/', 'RlstExpenseItemController@all')->name('rlst-expenses-items.all');
+        Route::get('/logs/{id}', 'RlstExpenseItemController@logs')->name('rlst-expenses-items.logs');
+        Route::get('/{id}', 'RlstExpenseItemController@find')->name('rlst-expenses-items.find');
+        Route::post('/', 'RlstExpenseItemController@create')->name('rlst-expenses-items.create');
+        Route::put('/{id}', 'RlstExpenseItemController@update')->name('rlst-expenses-items.update');
+        Route::post("/bulk-delete", "RlstExpenseItemController@bulkDelete");
+        Route::delete('/{id}', 'RlstExpenseItemController@delete')->name('rlst-expenses-items.delete');
+    });
+
+    // revenues items
+    Route::group(['prefix' => 'revenues-items'], function () {
+        Route::get('/get-drop-down', 'RlstRevenueItemController@getDropDown');
+
+        Route::get('/', 'RlstRevenueItemController@all')->name('rlst-revenues-items.all');
+        Route::get('/logs/{id}', 'RlstRevenueItemController@logs')->name('rlst-revenues-items.logs');
+        Route::get('/{id}', 'RlstRevenueItemController@find')->name('rlst-revenues-items.find');
+        Route::post('/', 'RlstRevenueItemController@create')->name('rlst-revenues-items.create');
+        Route::put('/{id}', 'RlstRevenueItemController@update')->name('rlst-revenues-items.update');
+        Route::post("/bulk-delete", "RlstRevenueItemController@bulkDelete");
+        Route::delete('/{id}', 'RlstRevenueItemController@delete')->name('rlst-revenues-items.delete');
+    });
+    
+
 
 });

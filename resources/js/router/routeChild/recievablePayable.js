@@ -75,54 +75,54 @@ export default [
         component: () => import('../../views/pages/recievablePayable/documentPlans'),
     },
     //start transaction
-    {
-        path: '/dashboard/receivablePayable/openingBalance',
-        name: 'installment opening balance',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/openingBalance'),
-    },
-    {
-        path: '/dashboard/receivablePayable/reservation',
-        name: 'receivable-payable-reservation',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/reservation'),
-    },
-    {
-        path: '/dashboard/receivablePayable/contract',
-        name: 'receivable-payable-contract',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/contract'),
-    },
-    {
-        path: '/dashboard/receivablePayable/voucher',
-        name: 'receipt voucher',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/voucher'),
-    },
-    {
-        path: '/dashboard/receivablePayable/creditNote',
-        name: 'credit note',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/creditNote'),
-    },
-    {
-        path: '/dashboard/receivablePayable/debitNote',
-        name: 'debit note',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/transaction/debitNote'),
-    },
+    // {
+    //     path: '/dashboard/receivablePayable/openingBalance',
+    //     name: 'installment opening balance',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/openingBalance'),
+    // },
+    // {
+    //     path: '/dashboard/receivablePayable/reservation',
+    //     name: 'receivable-payable-reservation',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/reservation'),
+    // },
+    // {
+    //     path: '/dashboard/receivablePayable/contract',
+    //     name: 'receivable-payable-contract',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/contract'),
+    // },
+    // {
+    //     path: '/dashboard/receivablePayable/voucher',
+    //     name: 'receipt voucher',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/voucher'),
+    // },
+    // {
+    //     path: '/dashboard/receivablePayable/creditNote',
+    //     name: 'credit note',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/creditNote'),
+    // },
+    // {
+    //     path: '/dashboard/receivablePayable/debitNote',
+    //     name: 'debit note',
+    //     meta: {
+    //         middleware: [auth,checkAuth]
+    //     },
+    //     component: () => import('../../views/pages/recievablePayable/transaction/debitNote'),
+    // },
 
     //start report
 
@@ -144,22 +144,21 @@ export default [
     },
 
     //start document transaction
-
     {
-        path: '/dashboard/receivablePayable/documentWithMoney/openingBalance',
-        name: 'installment opening balance',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/recievablePayable/documentTransaction/openingBalance'),
-    },
-    {
-        path: '/dashboard/receivablePayable/documentWithMoney/voucher',
+        path: '/dashboard/receivablePayable/documentWithMoney/receiptVoucher',
         name: 'receipt voucher',
         meta: {
             middleware: [auth,checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/documentTransaction/voucher'),
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/receiptVoucher'),
+    },
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/paymentVoucher',
+        name: 'payment voucher',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/paymentVoucher'),
     },
     {
         path: '/dashboard/receivablePayable/documentWithMoney/creditNote',
@@ -176,5 +175,23 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/debitNote'),
+    },
+    /////////////////////////////
+    {
+        path: '/dashboard/receivablePayable/moneyVoucher',
+        name: 'Money Voucher',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/money-voucher'),
+    },
+
+    {
+        path: '/dashboard/receivablePayable/openingBalance',
+        name: 'installment opening balance',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/openingBalance'),
     },
 ];

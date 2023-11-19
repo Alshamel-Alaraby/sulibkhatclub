@@ -22,10 +22,10 @@ class VoucherHeader extends Model
         return $query
             ->select(
                 'id','document_id','branch_id','date','serial_id','customer_id','salesmen_id',
-                'payment_method_id','amount','serial_number','prefix'
+                'payment_method_id','amount','serial_number','prefix','notes'
             )
             ->with([
-                'branch:id,name,name_e','document:id,name,name_e','salesmen:id,name,name_e',
+                'document:id,name,name_e','salesmen:id,name,name_e',
                 'customer:id,name,name_e','serial:id,name,name_e','paymentMethod:id,name,name_e'
             ]);
     }
@@ -60,7 +60,10 @@ class VoucherHeader extends Model
         return $this->belongsTo(Serial::class,'serial_id');
     }
 
-
+    public function breakSettlements()
+    {
+        return  $this->hasMany(BreakSettlement::class, 'voucher_header_id');
+    }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

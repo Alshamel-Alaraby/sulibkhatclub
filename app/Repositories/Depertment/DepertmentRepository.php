@@ -14,7 +14,7 @@ class DepertmentRepository implements DepertmentInterface
 
     public function all($request)
     {
-        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->employees) {
             $models->whereHas('employees');
@@ -29,7 +29,7 @@ class DepertmentRepository implements DepertmentInterface
 
     public function find($id)
     {
-        $data = $this->model->data()->find($id);
+        $data = $this->model->find($id);
         return $data;
     }
 

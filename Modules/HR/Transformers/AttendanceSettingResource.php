@@ -22,6 +22,15 @@ class AttendanceSettingResource extends JsonResource
             'pre_out' => $this->pre_out,
             'post_out' => $this->post_out,
             'max_out' => $this->max_out,
+            'location_fingerprint' => $this->location_fingerprint,
+            'mobile_id_fingerprint' => $this->mobile_id_fingerprint,
+            'pre_in_fingerprint' => $this->pre_in_fingerprint,
+            'day_off_fingerprint' => $this->day_off_fingerprint,
+            'public_holiday_fingerprint' => $this->public_holiday_fingerprint,
+            'post_out_fingerprint' => $this->post_out_fingerprint,
+            'pre_out_fingerprint' => $this->pre_out_fingerprint,
+            'holiday_fingerprint' => $this->holiday_fingerprint,
+            'Training_course_fingerprint' => $this->Training_course_fingerprint,
         ];
     }
 }

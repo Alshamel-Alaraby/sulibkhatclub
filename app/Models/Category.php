@@ -35,29 +35,39 @@ class Category extends Model
         return $this->hasMany(\Modules\PointOfSale\Entities\Product::class, 'category_id');
     }
 
+
     public function hasChildren()
     {
-        $relationsWithChildren = [];
+        return $this->orderDetails()->count() > 0 ||
+            $this->products()->count() > 0
 
-        if ($this->orderDetails()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'orderDetails',
-                'count' => $this->orderDetails()->count(),
-                'ids' => $this->orderDetails()->pluck('id')->toArray()
-            ];
-        }
-        if ($this->products()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'products',
-                'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray()
-            ];
-        }
+            ;
 
-
-
-        return $relationsWithChildren;
     }
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->orderDetails()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'orderDetails',
+    //             'count' => $this->orderDetails()->count(),
+    //             'ids' => $this->orderDetails()->pluck('id')->toArray()
+    //         ];
+    //     }
+    //     if ($this->products()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'products',
+    //             'count' => $this->products()->count(),
+    //             'ids' => $this->products()->pluck('id')->toArray()
+    //         ];
+    //     }
+
+
+
+    //     return $relationsWithChildren;
+    // }
 
     public function getActivitylogOptions(): LogOptions
     {

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('name_e');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->unsignedBigInteger('location_id');
-            $table->unsignedBigInteger('periodic_maintenance_id');
+            $table->unsignedBigInteger('parent_id')->index()->nullable();
+            $table->unsignedBigInteger('location_id')->index();
+            $table->unsignedBigInteger('periodic_maintenance_id')->index();
             $table->timestamps();
         });
     }

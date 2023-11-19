@@ -6,6 +6,7 @@
             :title="type != 'edit' ?getCompanyKey('attendance_setting_edit_form'):getCompanyKey('attendance_setting_edit_form')"
             title-class="font-18"
             body-class="p-4 "
+            size="lg"
             :hide-footer="true"
             @show="resetModal"
             @hidden="resetModalHidden"
@@ -53,7 +54,7 @@
                     </b-button>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" v-if="isVisible('pre_in')">
+                    <div class="col-md-6" v-if="isVisible('pre_in')">
                         <div class="form-group">
                             <label class="control-label">
                                 {{ getCompanyKey('attendance_setting_pre_in') }}
@@ -79,7 +80,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('post_in')">
+                    <div class="col-md-6" v-if="isVisible('post_in')">
                         <div class="form-group">
                             <label  class="control-label">
                                 {{ getCompanyKey('attendance_setting_post_in') }}
@@ -105,7 +106,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('absent_minutes')">
+                    <div class="col-md-6" v-if="isVisible('absent_minutes')">
                         <div class="form-group">
                             <label class="control-label">
                                 {{ getCompanyKey('attendance_setting_absent_minutes') }}
@@ -131,7 +132,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('pre_out')">
+                    <div class="col-md-6" v-if="isVisible('pre_out')">
                         <div class="form-group">
                             <label  class="control-label">
                                 {{ getCompanyKey('attendance_setting_pre_out') }}
@@ -158,7 +159,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('post_out')">
+                    <div class="col-md-6" v-if="isVisible('post_out')">
                         <div class="form-group">
                             <label class="control-label">
                                 {{ getCompanyKey('attendance_setting_post_out') }}
@@ -184,7 +185,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12" v-if="isVisible('max_out')">
+                    <div class="col-md-6" v-if="isVisible('max_out')">
                         <div class="form-group">
                             <label for="field-2" class="control-label">
                                 {{ getCompanyKey('attendance_setting_max_out') }}
@@ -208,6 +209,285 @@
                                     :key="index"
                                 >{{ errorMessage }}</ErrorMessage
                                 >
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('location_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_location_fingerprint") }}
+                                <span v-if="isRequired('location_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group >
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.location_fingerprint.$model"
+                                    name="location_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.location_fingerprint.$model"
+                                    name="location_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.location_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.location_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('mobile_id_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_mobile_id_fingerprint") }}
+                                <span v-if="isRequired('mobile_id_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.mobile_id_fingerprint.$model"
+                                    name="mobile_id_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.mobile_id_fingerprint.$model"
+                                    name="mobile_id_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.mobile_id_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.mobile_id_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('pre_in_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_pe_in_fingerprint") }}
+                                <span v-if="isRequired('pre_in_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.pre_in_fingerprint.$model"
+                                    name="pre_in_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.pre_in_fingerprint.$model"
+                                    name="pre_in_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.pre_in_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.pre_in_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('day_off_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_day_off_fingerprint") }}
+                                <span v-if="isRequired('day_off_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.day_off_fingerprint.$model"
+                                    name="day_off_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.day_off_fingerprint.$model"
+                                    name="day_off_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.day_off_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.day_off_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('public_holiday_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_public_holiday_fingerprint") }}
+                                <span v-if="isRequired('public_holiday_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.public_holiday_fingerprint.$model"
+                                    name="public_holiday_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.public_holiday_fingerprint.$model"
+                                    name="public_holiday_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.location_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.location_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('post_out_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_post_out_fingerprint") }}
+                                <span v-if="isRequired('post_out_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.post_out_fingerprint.$model"
+                                    name="post_out_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.post_out_fingerprint.$model"
+                                    name="post_out_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.post_out_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.post_out_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('pre_out_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_pre_out_fingerprint") }}
+                                <span v-if="isRequired('pre_out_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.pre_out_fingerprint.$model"
+                                    name="pre_out_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.pre_out_fingerprint.$model"
+                                    name="pre_out_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.pre_out_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.pre_out_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('holiday_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_holiday_fingerprint") }}
+                                <span v-if="isRequired('holiday_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.holiday_fingerprint.$model"
+                                    name="holiday_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.holiday_fingerprint.$model"
+                                    name="holiday_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.holiday_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.holiday_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="isVisible('training_course_fingerprint')" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("attendance_setting_training_course_fingerprint") }}
+                                <span v-if="isRequired('training_course_fingerprint')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group>
+                                <b-form-radio
+                                    class="d-inline-block"
+                                    v-model="$v.create.training_course_fingerprint.$model"
+                                    name="training_course_fingerprint"
+                                    value="1"
+                                >{{ $t("general.Yes") }}
+                                </b-form-radio>
+                                <b-form-radio
+                                    class="d-inline-block m-1"
+                                    v-model="$v.create.training_course_fingerprint.$model"
+                                    name="training_course_fingerprint"
+                                    value="0"
+                                >{{ $t("general.No") }}
+                                </b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.training_course_fingerprint">
+                                <ErrorMessage
+                                    v-for="(errorMessage, index) in errors.training_course_fingerprint"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
                             </template>
                         </div>
                     </div>
@@ -252,6 +532,15 @@ export default {
                 pre_out: 0,
                 post_out: 0,
                 max_out: 0,
+                location_fingerprint: 0,
+                mobile_id_fingerprint: 0,
+                pre_in_fingerprint: 0,
+                day_off_fingerprint: 0,
+                public_holiday_fingerprint: 0,
+                post_out_fingerprint: 0,
+                pre_out_fingerprint: 0,
+                holiday_fingerprint: 0,
+                training_course_fingerprint: 0
             },
             errors: {},
             is_disabled: false,
@@ -276,6 +565,33 @@ export default {
                 }) },
             max_out: { required: requiredIf(function (model) {
                     return this.isRequired("max_out");
+                }), },
+            location_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("location_fingerprint");
+                }), },
+            mobile_id_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("mobile_id_fingerprint");
+                }), },
+            pre_in_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("pre_in_fingerprint");
+                }), },
+            day_off_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("day_off_fingerprint");
+                }), },
+            public_holiday_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("public_holiday_fingerprint");
+                }), },
+            post_out_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("post_out_fingerprint");
+                }), },
+            pre_out_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("pre_out_fingerprint");
+                }), },
+            holiday_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("holiday_fingerprint");
+                }), },
+            training_course_fingerprint: { required: requiredIf(function (model) {
+                    return this.isRequired("training_course_fingerprint");
                 }), },
         },
     },
@@ -325,6 +641,15 @@ export default {
                 pre_out: 0,
                 post_out: 0,
                 max_out: 0,
+                location_fingerprint: 0,
+                mobile_id_fingerprint: 0,
+                pre_in_fingerprint: 0,
+                day_off_fingerprint: 0,
+                public_holiday_fingerprint: 0,
+                post_out_fingerprint: 0,
+                pre_out_fingerprint: 0,
+                holiday_fingerprint: 0,
+                training_course_fingerprint: 0
             };
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -342,7 +667,6 @@ export default {
                 if(this.type != 'edit'){
                     if(!this.isPage) await  this.getCustomTableFields();
                 }else {
-                    console.log(this.idObjEdit)
                     if(this.idObjEdit.dataObj){
                         let group = this.idObjEdit.dataObj;
                         this.errors = {};
@@ -352,6 +676,15 @@ export default {
                         this.create.pre_out = group.pre_out;
                         this.create.post_out = group.post_out;
                         this.create.max_out = group.max_out;
+                        this.create.location_fingerprint= group.location_fingerprint;
+                        this.create.mobile_id_fingerprint = group.mobile_id_fingerprint;
+                        this.create.pre_in_fingerprint = group.pre_in_fingerprint;
+                        this.create.day_off_fingerprint = group.day_off_fingerprint;
+                        this.create.public_holiday_fingerprint = group.public_holiday_fingerprint;
+                        this.create.post_out_fingerprint = group.post_out_fingerprint;
+                        this.create.pre_out_fingerprint = group.pre_out_fingerprint;
+                        this.create.holiday_fingerprint = group.holiday_fingerprint;
+                        this.create.training_course_fingerprint = group.training_course_fingerprint;
                     }
                 }
             },50);

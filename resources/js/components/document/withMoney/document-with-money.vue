@@ -1,6 +1,6 @@
 <script>
 import adminApi from "../../../api/adminAxios";
-import {minValue, required} from "vuelidate/lib/validators";
+import {minValue, required, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../general/loader";
@@ -9,6 +9,8 @@ import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
+import CreateOrUpdateMoney from "./components/create-or-update-money";
+import AccountStatementPrint from "./print/account-statement-booking";
 
 export default {
     name: "documentWithMoney",
@@ -22,50 +24,21 @@ export default {
         ErrorMessage,
         loader,
         Multiselect,
-        DatePicker
+        DatePicker,
+        CreateOrUpdateMoney,
+        AccountStatementPrint
     },
     data() {
         return {
             document:null,
-            financial_years_validate : true,
             relatedDocuments: [],
             per_page: 50,
             search: "",
             debounce: {},
             invoicesPagination: {},
             invoices: [],
-            customers: [],
-            salesmen: [],
-            paymentMethods: [],
-            customerBreak:[],
-            breakTransactions:[],
-            totalOrderAmount: 0,
-            totalTransferAmount: 0,
-            openTransfer:false,
-            amountPaid:0,
-            remainingAmount:0,
-            transaction:[],
             enabled3: true,
             isLoader: false,
-            invoice_id: null,
-            create: {
-                branch_id: null,
-                date: this.formatDate(new Date()),
-                salesmen_id: null,
-                payment_method_id: null,
-                customer_id: null,
-                amount:0,
-                document_id:this.document_id,
-            },
-            edit: {
-                branch_id: null,
-                date: this.formatDate(new Date()),
-                salesmen_id: null,
-                payment_method_id: null,
-                customer_id: null,
-                amount:0,
-                document_id:this.document_id,
-            },
             setting: {
                 branch_id: true,
                 serial_number: true,
@@ -85,7 +58,6 @@ export default {
                 'salesmen_id',
             ],
             errors: {},
-            branches: [],
             isCheckAll: false,
             checkAll: [],
             is_disabled: false,
@@ -98,24 +70,6 @@ export default {
                 id: "printReservation",
             }
         };
-    },
-    validations: {
-        create: {
-            date: {required},
-            customer_id: {required},
-            branch_id: {required},
-            salesmen_id: {required},
-            payment_method_id: {required},
-            amount: {required},
-        },
-        edit: {
-            date: {required},
-            customer_id: {required},
-            branch_id: {required},
-            salesmen_id: {required},
-            payment_method_id: {required},
-            amount: {required},
-        },
     },
     watch: {
         /**
@@ -385,381 +339,6 @@ export default {
             }
         },
         /**
-         *  reset Modal (create)
-         */
-        resetModalHidden() {
-            this.serial_number = "";
-            this.customerBreak=[];
-            this.breakTransactions=[];
-            this.totalOrderAmount= 0;
-            this.totalTransferAmount= 0;
-            this.openTransfer=false;
-            this.amountPaid=0;
-            this.remainingAmount=0;
-            this.amount=0;
-            this.financial_years_validate = true;
-            this.create = {
-                branch_id: null,
-                date: this.formatDate(new Date()),
-                salesmen_id: null,
-                payment_method_id: null,
-                customer_id: null,
-                document_id: this.document_id,
-                amount: 0,
-            };
-            this.invoice_id = null;
-
-            this.$nextTick(() => {
-                this.$v.$reset();
-            });
-            this.is_disabled = false;
-            this.errors = {};
-        },
-        /**
-         *  hidden Modal (create)
-         */
-        async resetModal() {
-            await this.getBranches();
-            await this.getSalesmen();
-            await this.getPaymentMethod();
-            await this.resetModalHidden();
-            this.is_disabled = false;
-        },
-        /**
-         *  create screen
-         */
-        resetForm() {
-            this.resetModalHidden();
-            this.is_disabled = false;
-        },
-        AddSubmit() {
-            if (this.$v.create.$invalid && !this.financial_years_validate) {
-                this.$v.create.$touch();
-                return;
-            } else {
-                this.isLoader = true;
-                this.errors = {};
-                this.is_disabled = false;
-                adminApi
-                    .post(`voucher-headers`, {...this.create})
-                    .then((res) => {
-                        this.getData();
-                        this.invoice_id = res.data.data.id;
-                        this.is_disabled = true;
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: "success",
-                                text: `${this.$t("general.Addedsuccessfully")}`,
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }, 500);
-                    })
-                    .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        }
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
-            }
-        },
-        /**
-         *  edit screen
-         */
-        editSubmit(id) {
-            this.$v.edit.$touch();
-            if (this.$v.edit.$invalid  && !this.financial_years_validate) {
-                return;
-            } else {
-                this.isLoader = true;
-                this.errors = {};
-                adminApi
-                    .put(`voucher-headers/${id}`, {...this.edit})
-                    .then((res) => {
-                        this.$bvModal.hide(`modal-edit-${id}`);
-                        this.getData();
-                        setTimeout(() => {
-                            Swal.fire({
-                                icon: "success",
-                                text: `${this.$t("general.Editsuccessfully")}`,
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }, 500);
-                    })
-                    .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                            });
-                        }
-                    })
-                    .finally(() => {
-                        this.isLoader = false;
-                    });
-            }
-        },
-        /**
-         *  get data
-         */
-        async getBranches() {
-            this.isLoader = true;
-            await adminApi
-                .get(`/branches?document_id=${this.document_id}`)
-                .then((res) => {
-                    this.isLoader = false;
-                    let l = res.data.data;
-                    this.branches = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-        async getSalesmen() {
-            this.isLoader = true;
-            await adminApi
-                .get(`/employees?is_salesman=1&customer_handel=1`)
-                .then((res) => {
-                    this.isLoader = false;
-                    let l = res.data.data;
-                    this.salesmen = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-        async getCustomerSalesman(e)
-        {
-            let employee_id = e;
-            if (employee_id)
-            {
-                await this.getCustomers(employee_id);
-            }
-        },
-        async getCustomers(employee_id=null,search='') {
-            this.isLoader = true;
-            await adminApi
-                .get(`/general-customer?limet=10&company_id=${this.company_id}&employee_id=${employee_id}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
-                .then((res) => {
-                    this.isLoader = false;
-                    let l = res.data.data;
-                    this.customers = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-        async getPaymentMethod() {
-            this.isLoader = true;
-            await adminApi
-                .get(`/payment-methods`)
-                .then((res) => {
-                    this.isLoader = false;
-                    let l = res.data.data;
-                    this.paymentMethods = l;
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-        async getBreakCustomer(id) {
-            this.isLoader = true;
-            this.customerBreak = [];
-            await adminApi
-                .get(`/recievable-payable/document-with-money-details?customer_id=${id}`)
-                .then((res) => {
-                    this.isLoader = false;
-                    let l = res.data.data;
-                    l.forEach((e) => {
-                        this.customerBreak.push({
-                            id:e.id,
-                            break_type:e.break_type,
-                            document:e.document,
-                            amount:parseInt(e.total),
-                            instalment_date:e.instalment_date,
-                            salesman: this.handelSalesman(e),
-                            serial_number: this.handelSerial(e),
-                            amount_status:e.amount_status
-                        });
-                    });
-                    this.accountTotalAmount();
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                });
-        },
-        handelSalesman(e)
-        {
-            if (e.break_type == 'invoice')
-            {
-                if (e.invoice)
-                {
-                    if (e.invoice.salesman)
-                    {
-                        return this.$i18n.locale == "ar" ? e.invoice.salesman.name : e.invoice.salesman.name_e;
-                    }else {
-                        return '---';
-                    }
-                }else {
-                    return '---';
-                }
-            }
-            if (e.break_type == 'contract')
-            {
-                if (e.contract)
-                {
-                    if (e.contract.salesman)
-                    {
-                        return this.$i18n.locale == "ar" ? e.contract.salesman.name : e.contract.salesman.name_e;
-                    }else {
-                        return '---';
-                    }
-                }else {
-                    return '---';
-                }
-            }
-            if (e.break_type == 'documentHeader')
-            {
-                if (e.documentHeader)
-                {
-                    if (e.documentHeader.employee)
-                    {
-                        return this.$i18n.locale == "ar" ? e.documentHeader.employee.name : e.documentHeader.employee.name_e;
-                    }else {
-                        return '---';
-                    }
-                }else {
-                    return '---';
-                }
-            }
-
-            return '---';
-        },
-        handelSerial(e)
-        {
-            if (e.break_type == 'invoice')
-            {
-                if (e.invoice)
-                {
-                    return e.invoice.prefix;
-                }else {
-                    return '---';
-                }
-            }
-            if (e.break_type == 'contract')
-            {
-                if (e.contract)
-                {
-                    return e.contract.prefix;
-                }else {
-                    return '---';
-                }
-            }
-            if (e.break_type == 'documentHeader')
-            {
-                if (e.documentHeader)
-                {
-                    return e.documentHeader.prefix;
-                }else {
-                    return '---';
-                }
-            }
-
-            return '---';
-        },
-        /**
-         *   show Modal (edit)
-         */
-        async resetModalEdit(id) {
-            this.customerBreak=[];
-            this.breakTransactions=[];
-            this.totalOrderAmount= 0;
-            this.totalTransferAmount= 0;
-            this.openTransfer=false;
-            this.amountPaid=0;
-            this.remainingAmount=0;
-            this.amount=0;
-            let invoice = this.invoices.find((e) => id == e.id);
-            this.serial_number = invoice.prefix;
-            this.invoice_id = invoice.id;
-            await this.getCustomers(invoice.salesmen_id);
-            await this.getSalesmen();
-            await this.getPaymentMethod();
-            await this.getBranches();
-            this.edit.date = invoice.date;
-            this.edit.customer_id = invoice.customer_id;
-            this.edit.salesmen_id = invoice.salesmen_id;
-            this.edit.payment_method_id = invoice.payment_method_id;
-            this.edit.branch_id = invoice.branch_id;
-            this.edit.document_id = invoice.document_id;
-            this.edit.amount = invoice.amount;
-            if(this.document && this.document.attributes && this.parseInt(document.attributes.customer) == -1){
-                await this.getBreakCustomer(this.edit.customer_id);
-                await this.getTransactions(id);
-                this.amount= this.totalTransferAmount ;
-            }
-            this.errors = {};
-        },
-        /**
-         *  hidden Modal (edit)
-         */
-        resetModalHiddenEdit(id) {
-            this.customerBreak=[];
-            this.breakTransactions=[];
-            this.totalOrderAmount= 0;
-            this.totalTransferAmount= 0;
-            this.openTransfer=false;
-            this.amountPaid=0;
-            this.remainingAmount=0;
-            this.amount=0;
-            this.errors = {};
-            this.serial_number = "";
-            this.financial_years_validate = true;
-            this.edit = {
-                branch_id: null,
-                date: this.formatDate(new Date()),
-                salesmen_id: null,
-                payment_method_id: null,
-                document_id: this.document_id,
-                customer_id: null,
-                amount:0
-            };
-            this.invoice_id = null;
-        },
-
-        /**
          *  start  dynamicSortString
          */
         sortString(value) {
@@ -814,159 +393,15 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-
-        async getSerialNumber(type='create',e)
-        {
-            let date = type=='create'? this.create.date : this.edit.date;
-            let shortYear =new Date(date).getFullYear();
-            let twoDigitYear = shortYear.toString().substr(-2);
-            let branch = this.branches.find((row) => e == row.id);
-            let serial = branch.serials.find((row) => this.document_id == row.document_id);
-            this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${serial.perfix}`;
-        },
-        async changeDateDocument(type='create')
-        {
-            let date = type=='create' ? this.create.date : this.edit.date;
-            let branch_id = type=='create' ? this.create.branch_id : this.edit.branch_id;
-            await this.checkFinancialYears(date,branch_id);
-        },
-        async checkFinancialYears(date,branch_id) {
-            this.isLoader = true;
-            await adminApi
-                .get(`/document-headers/check-date?date=${date}`)
-                .then((res) => {
-                    let l = res.data;
-                    if(!l)
-                    {
-                        this.financial_years_validate= false;
-                        Swal.fire({
-                            icon: "error",
-                            title: `${this.$t("general.Error")}`,
-                            text: `${this.$t("general.The date is outside the permitted fiscal year")}`,
-                        });
-                        this.serial_number = '';
-                    }else{
-                        this.financial_years_validate= true;
-                        let shortYear =new Date(date).getFullYear();
-                        let twoDigitYear = shortYear.toString().substr(-2);
-                        let branch = this.branches.find((row) => branch_id == row.id);
-                        this.serial_number = `${twoDigitYear}-${branch.id}-${this.document_id}-${branch.serials[0].perfix}`;
-                    }
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
-        async searchCustomer(e) {
-            let search = e??'';
-            clearTimeout(this.debounce);
-            this.debounce = setTimeout(() => {
-                this.getCustomers(this.create.employee_id,search);
-            }, 500);
-
-        },
-        async searchCustomerEdit(e) {
-            let search = e??'';
-            clearTimeout(this.debounce);
-            this.debounce = setTimeout(() => {
-                this.getCustomers(this.edit.employee_id,search);
-            }, 500);
-
-        },
-        titleModelName(type='create')
-        {
-            if(this.document) {
-                if (type == 'create')
-                {
-                    return `${this.$t('general.addNew')} ${this.$i18n.locale == 'ar'?this.document.name:this.document.name_e} `;
-                }else {
-                    return `${this.$t('general.Edit')} ${this.$i18n.locale == 'ar'?this.document.name:this.document.name_e} `;
-                }
-            }
-        },
-        //Transfer break To Transactions
-        orderTransferToTransaction(index){
-            if (this.remainingAmount > 0){
-                let orderTransfer = "";
-                let endAmount = 0;
-                endAmount = parseInt(this.remainingAmount) - parseInt(this.customerBreak[index].amount);
-                if (endAmount >= 0){
-                    orderTransfer = this.customerBreak.splice(index,1);
-                    orderTransfer[0].amount_status = "Paid";
-                    this.breakTransactions.push(orderTransfer[0]);
-                }else {
-                    this.breakTransactions.push({
-                        id:this.customerBreak[index].id,
-                        break_type:this.customerBreak[index].break_type,
-                        document:this.customerBreak[index].document,
-                        instalment_date:this.customerBreak[index].instalment_date,
-                        serial_number:this.customerBreak[index].serial_number,
-                        salesman:this.customerBreak[index].salesman,
-                        amount:parseInt(this.remainingAmount),
-                        amount_status:"Paid_Partially",
-                    });
-                    this.customerBreak[index].amount = parseInt(this.customerBreak[index].amount) - parseInt(this.remainingAmount);
-                }
-
-                this.accountTotalAmount();
-
-                this.remainingAmount = parseInt(this.amountPaid) - parseInt(this.totalTransferAmount);
-            }
-        },
-        //return Transaction To customer Break
-        ReturnTransactionToOrder(index){
-            let orderTransfer = "";
-            let orderReturn = "";
-            this.remainingAmount += parseInt(this.breakTransactions[index].amount);
-            orderReturn = this.customerBreak.find(e => e.id == this.breakTransactions[index].id);
-            if (orderReturn){
-                orderReturn.amount += this.breakTransactions[index].amount;
-                this.breakTransactions.splice(index,1);
-            }else {
-                orderTransfer = this.breakTransactions.splice(index,1);
-                this.customerBreak.push(orderTransfer[0]);
-            }
-            this.accountTotalAmount();
-        },
-        // calculate total amount in customer Break and Transactions
-        accountTotalAmount(){
-            //account total amount order
-            this.totalOrderAmount = 0;
-            this.customerBreak.forEach((el,index)=>{
-                this.totalOrderAmount += parseInt(el.amount);
-            });
-
-            //account total amount transfer order
-            this.totalTransferAmount = 0;
-            this.breakTransactions.forEach((el,index)=>{
-                this.totalTransferAmount += parseInt(el.amount);
-            });
-        },
-        // change Status Transfer open or close
-        changeStatusTransfer(event){
-            let amount = 0 ;
-            amount = event.target.value;
-            if (amount > 0){
-                this.openTransfer = true;
-                this.amountPaid = parseInt(amount);
-                this.remainingAmount = parseInt(this.amountPaid) - parseInt(this.totalTransferAmount);
-            }else{
-                this.openTransfer = false;
-            }
-        }
     }
 }
 </script>
 
 <template>
     <div>
+        <template v-if="document">
+            <CreateOrUpdateMoney :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
+        </template>
         <div class="invoice-container row">
             <div class="col-12">
                 <div class="card">
@@ -982,7 +417,7 @@ export default {
                                         <b-form-checkbox v-model="filterSetting" value="branch_id" class="mb-1">{{ $t('general.Branch') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="prefix" class="mb-1">{{ $t('general.serial_number') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="date" class="mb-1">{{ $t('general.Date') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="customer_id" class="mb-1">{{ $t('general.documentCustomer') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="filterSetting" value="customer_id" class="mb-1">{{ $t('general.client') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="amount" class="mb-1">{{ $t('general.amount') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="payment_method_id" class="mb-1">{{ $t('general.paymentMethod') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="salesmen_id" class="mb-1">{{ $t('general.documentSalesmen') }}</b-form-checkbox>
@@ -1015,11 +450,11 @@ export default {
                                     <button v-print="'#printReservation'" class="custom-btn-dowonload">
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <button class="custom-btn-dowonload"
-                                            @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1">
-                                        <i class="mdi mdi-square-edit-outline"></i>
-                                    </button>
+<!--                                    <button class="custom-btn-dowonload"-->
+<!--                                            @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
+<!--                                            v-if="checkAll.length == 1">-->
+<!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
+<!--                                    </button>-->
                                     <!-- start mult delete  -->
                                     <button class="custom-btn-dowonload" v-if="checkAll.length > 1"
                                             @click.prevent="deleteScreenButton(checkAll)">
@@ -1052,7 +487,7 @@ export default {
                                         <b-form-checkbox v-model="setting.branch_id" class="mb-1">{{ $t('general.Branch') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.serial_number" class="mb-1"> {{ $t('general.serial_number') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.Date') }}</b-form-checkbox>
-                                        <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{$t('general.documentCustomer') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{$t('general.client') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.amount" class="mb-1">{{$t('general.amount') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.payment_method_id" class="mb-1">{{$t('general.paymentMethod') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.salesmen_id" class="mb-1">{{ $t('general.documentSalesmen') }}</b-form-checkbox>
@@ -1096,362 +531,6 @@ export default {
                         </div>
 
                         <!--  create   -->
-                        <b-modal dialog-class="modal-full-width" id="create"
-                                 :title="titleModelName('create')"
-                                 title-class="font-18" body-class="p-4 " :hide-footer="true" @show="resetModal"
-                                 @hidden="resetModalHidden">
-                            <form>
-                                <div class="mb-3 d-flex justify-content-end">
-                                    <b-button variant="success" :disabled="!is_disabled" @click.prevent="resetForm"
-                                              type="button"
-                                              :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
-                                        {{ $t("general.AddNewRecord") }}
-                                    </b-button>
-                                    <template v-if="!is_disabled">
-                                        <b-button variant="success" type="button" class="mx-1" v-if="!isLoader"
-                                                  @click.prevent="AddSubmit">
-                                            {{ $t("general.Add") }}
-                                        </b-button>
-
-                                        <b-button variant="success" class="mx-1" disabled v-else>
-                                            <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                        </b-button>
-                                    </template>
-
-                                    <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`create`)">
-                                        {{ $t("general.Cancel") }}
-                                    </b-button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">{{ $t('general.Branch') }} <span class="text-danger">*</span></label>
-
-                                            <multiselect
-                                                @input="getSerialNumber('create',$event)"
-                                                v-model="create.branch_id"
-                                                :options="branches.map((type) => type.id)"
-                                                :custom-label="(opt) => $i18n.locale == 'ar'? branches.find((x) => x.id == opt).name: branches.find((x) => x.id == opt).name_e"
-                                                :class="{'is-invalid': $v.create.branch_id.$error || errors.branch_id,}"
-                                            >
-                                            </multiselect>
-                                            <div v-if="!$v.create.branch_id.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-
-                                            <template v-if="errors.branch_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.branch_id"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.Date') }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                :disabled="!create.branch_id"
-                                                @input="changeDateDocument('create')"
-                                                type="date"
-                                                v-model="create.date"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{'is-invalid': !financial_years_validate}"
-
-                                            ></date-picker>
-                                            <div v-if="!financial_years_validate" class="invalid-feedback">
-                                                {{ $t("general.The date is outside the permitted fiscal year") }}
-                                            </div>
-                                            <template v-if="errors.date">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{$t('general.serial_number')}}
-                                            </label>
-                                            <input
-                                                :disabled="true"
-                                                type="text"
-                                                class="form-control"
-                                                v-model="serial_number"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">{{ $t('general.documentSalesmen') }} <span class="text-danger">*</span></label>
-
-                                            <multiselect
-                                                :disabled="!create.branch_id"
-                                                @input="getCustomerSalesman"
-                                                v-model="create.salesmen_id"
-                                                :options="salesmen.map((type) => type.id)"
-                                                :custom-label=" (opt) => $i18n.locale == 'ar' ? salesmen.find((x) => x.id == opt).name: salesmen.find((x) => x.id == opt).name_e"
-                                                :class="{'is-invalid':$v.create.salesmen_id.$error || errors.salesmen_id,}"
-                                            >
-                                            </multiselect>
-                                            <div v-if="!$v.create.salesmen_id.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.salesmen_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.salesmen_id"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">{{ $t('general.documentCustomer') }} <span class="text-danger">*</span></label>
-                                            <multiselect
-                                                :disabled="!create.branch_id"
-                                                :internalSearch="false"
-                                                @search-change="searchCustomer"
-                                                @input="getBreakCustomer(create.customer_id)"
-                                                v-model="create.customer_id"
-                                                :options="customers.map((type) => type.id)"
-                                                :custom-label="(opt) =>$i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name: customers.find((x) => x.id == opt).name_e"
-                                                :class="{'is-invalid':$v.create.customer_id.$error || errors.customer_id,}"
-                                            >
-                                            </multiselect>
-                                            <div v-if="!$v.create.customer_id.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-
-                                            <template v-if="errors.customer_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.customer_id"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ $t("general.paymentMethod") }}</label>
-                                            <multiselect
-                                                :disabled="!create.branch_id"
-                                                v-model="create.payment_method_id"
-                                                :options="paymentMethods.map((type) => type.id)" :custom-label="
-                                                (opt) => $i18n.locale == 'ar' ? paymentMethods.find((x) => x.id == opt).name : paymentMethods.find((x) => x.id == opt).name_e"
-                                                :class="{ 'is-invalid':$v.create.payment_method_id.$error || errors.payment_method_id,}"
-                                            >
-                                            </multiselect>
-                                            <div v-if="!$v.create.payment_method_id.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.payment_method_id">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.payment_method_id"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>{{ $t("general.amount") }}</label>
-                                            <input
-                                                :disabled="!create.branch_id"
-                                                type="number"
-                                                class="form-control"
-                                                step="any"
-                                                v-model="create.amount"
-                                                @input="changeStatusTransfer"
-                                                :class="{'is-invalid':$v.create.amount.$error || errors.amount,}"
-                                            />
-                                            <div v-if="!$v.create.amount.required" class="invalid-feedback">
-                                                {{ $t("general.fieldIsRequired") }}
-                                            </div>
-                                            <template v-if="errors.amount">
-                                                <ErrorMessage v-for="(errorMessage, index) in errors.amount"
-                                                              :key="index">{{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12" v-if="document && document.attributes && parseInt(document.attributes.customer) == -1">
-                                        <div class="page-content">
-                                            <div class="px-0">
-                                                <div class="row mt-4">
-                                                    <div class="col-12 col-lg-12">
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                <div class="text-center text-150">
-                                                                    <i style="font-size:20px" class="fa fa-book fa-2x text-success-m2 mr-1"></i>
-                                                                    <span class="text-default-d3">{{$t("general.invoice_details")}}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- .row -->
-                                                        <div class="mt-4">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="card-header p-0">
-                                                                        <h3 class="card-title float-left">
-                                                                            {{$t('general.CustomerDebts')}}
-                                                                        </h3>
-                                                                    </div>
-                                                                    <div class="table-responsive mb-3 custom-table-theme position-relative">
-                                                                        <!--       start loader       -->
-                                                                        <loader size="large" v-if="isLoader" />
-                                                                        <!--       end loader       -->
-
-                                                                        <table class="table table-borderless table-hover table-centered m-0" >
-                                                                            <thead>
-                                                                            <tr>
-                                                                                <th>{{ $t("general.invoiceSerial") }}</th>
-                                                                                <th>{{ $t("general.salesmen") }}</th>
-                                                                                <th>{{ $t("general.type") }}</th>
-                                                                                <th>{{ $t("general.Date") }}</th>
-                                                                                <th>{{ $t("general.amount") }}</th>
-                                                                                <th>{{ $t("general.Action") }}</th>
-                                                                            </tr>
-                                                                            </thead>
-                                                                            <tbody v-if="customerBreak.length > 0">
-                                                                            <tr v-for="(data, index) in customerBreak"
-                                                                                :key="data.id"
-                                                                                class="body-tr-custom"
-                                                                            >
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
-                                                                                    <h5 v-else class="m-0 font-weight-normal">---</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">
-                                                                                        {{ data.instalment_date }}
-                                                                                    </h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
-                                                                                </td>
-                                                                                <td v-if="openTransfer">
-                                                                                    <button @click.prevent="orderTransferToTransaction(index)" class="btn btn-primary btn-sm">>></button>
-                                                                                </td>
-                                                                                <td v-else><button :disabled="true" class="btn btn-secondary btn-sm">>></button></td>
-                                                                            </tr>
-                                                                            <tr v-if="customerBreak.length > 0" class="total-amount">
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td>{{$t('general.totalAmount')}}</td>
-                                                                                <td v-html="totalOrderAmount" class="amount-red"></td>
-                                                                                <td></td>
-                                                                            </tr>
-                                                                            </tbody>
-                                                                            <tbody v-else>
-                                                                            <tr>
-                                                                                <th class="text-center" colspan="6">
-                                                                                    {{ $t("general.notDataFound") }}
-                                                                                </th>
-                                                                            </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="card-header p-0">
-                                                                        <h3 class="card-title float-left">
-                                                                            {{$t('general.transactions')}}
-                                                                        </h3>
-                                                                    </div>
-                                                                    <div class="table-responsive mb-3 custom-table-theme position-relative">
-                                                                        <!--       start loader       -->
-                                                                        <loader size="large" v-if="isLoader" />
-                                                                        <!--       end loader       -->
-
-                                                                        <table class="table table-borderless table-hover table-centered m-0" >
-                                                                            <thead>
-                                                                            <tr>
-                                                                                <th>{{ $t("general.invoiceSerial") }}</th>
-                                                                                <th>{{ $t("general.salesmen") }}</th>
-                                                                                <th>{{ $t("general.type") }}</th>
-                                                                                <th>{{ $t("general.Date") }}</th>
-                                                                                <th>{{ $t("general.amount") }}</th>
-                                                                                <th>{{ $t("general.Action") }}</th>
-                                                                            </tr>
-                                                                            </thead>
-                                                                            <tbody v-if="breakTransactions.length > 0">
-                                                                            <tr v-for="(data, index) in breakTransactions"
-                                                                                :key="data.id"
-                                                                                class="body-tr-custom"
-                                                                            >
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
-                                                                                    <h5 v-else class="m-0 font-weight-normal">---</h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">
-                                                                                        {{ data.instalment_date }}
-                                                                                    </h5>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
-                                                                                </td>
-                                                                                <td v-if="openTransfer">
-                                                                                    <button @click.prevent="ReturnTransactionToOrder(index)" class="btn btn-primary btn-sm"><<</button>
-                                                                                </td>
-                                                                                <td v-else><button :disabled="true" class="btn btn-secondary btn-sm"><<</button></td>
-                                                                            </tr>
-                                                                            <tr v-if="breakTransactions.length > 0" class="total-amount">
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td><h5 class="m-0 font-weight-normal">{{$t('general.totalAmount')}}</h5></td>
-                                                                                <td v-html="totalTransferAmount" class="amount-red"></td>
-                                                                                <td></td>
-                                                                            </tr>
-
-                                                                            </tbody>
-                                                                            <tbody v-else>
-                                                                            <tr>
-                                                                                <th class="text-center" colspan="6">
-                                                                                    {{ $t("general.notDataFound") }}
-                                                                                </th>
-                                                                            </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label>{{$t('general.TheDifference')}}</label>
-                                                                    <input type="text"
-                                                                           class="form-control mb-1 input-Sender"
-                                                                           v-model="remainingAmount"
-                                                                           disabled
-                                                                    >
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </form>
-                        </b-modal>
                         <!--  /create   -->
 
                         <!-- start .table-responsive-->
@@ -1499,7 +578,7 @@ export default {
                                     </th>
                                     <th v-if="setting.customer_id">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.documentCustomer') }}</span>
+                                            <span>{{ $t('general.client') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="invoices.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
                                                 <i class="fas fa-arrow-down" @click="invoices.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
@@ -1579,12 +658,22 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#"
-                                                   @click="$bvModal.show(`modal-edit-${data.id}`)">
+<!--                                                <a class="dropdown-item" href="#"-->
+<!--                                                   @click="$bvModal.show(`modal-edit-${data.id}`)">-->
+<!--                                                    <div-->
+<!--                                                        class="d-flex justify-content-between align-items-center text-black">-->
+<!--                                                        <span>{{ $t("general.edit") }}</span>-->
+<!--                                                        <i class="mdi mdi-square-edit-outline text-info"></i>-->
+<!--                                                    </div>-->
+<!--                                                </a>-->
+                                                <a
+                                                   class="dropdown-item"
+                                                   href="#" @click="$bvModal.show(`${'printStatement'+' '+data.id}`)"
+                                                >
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
-                                                        <span>{{ $t("general.edit") }}</span>
-                                                        <i class="mdi mdi-square-edit-outline text-info"></i>
+                                                        <span>{{ $t("general.print") }}</span>
+                                                        <i class="fe-printer text-info"></i>
                                                     </div>
                                                 </a>
                                                 <a class="dropdown-item text-black" href="#"
@@ -1598,359 +687,8 @@ export default {
                                             </div>
                                         </div>
 
+                                        <AccountStatementPrint :id="'printStatement'+' '+data.id" :data="data" :document_row_id="data.id" />
                                         <!--  edit   -->
-                                        <b-modal dialog-class="modal-full-width" :id="`modal-edit-${data.id}`"
-                                                 :title="$t('general.editReceiptVoucher')" title-class="font-18"
-                                                 body-class="p-4" :ref="`edit-${data.id}`" :hide-footer="true"
-                                                 @show="resetModalEdit(data.id)"
-                                                 @hidden="resetModalHiddenEdit(data.id)">
-                                            <form>
-                                                <div class="mb-3 d-flex justify-content-end">
-                                                    <!-- Emulate built in modal footer ok and cancel button actions -->
-                                                    <b-button variant="success" type="button" class="mx-1"
-                                                              v-if="!isLoader" @click.prevent="editSubmit(data.id)">
-                                                        {{ $t("general.Edit") }}
-                                                    </b-button>
-
-                                                    <b-button variant="success" class="mx-1" disabled v-else>
-                                                        <b-spinner small></b-spinner>
-                                                        <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                                    </b-button>
-
-                                                    <b-button variant="danger" type="button"
-                                                              @click.prevent="$bvModal.hide(`modal-edit-${data.id}`)">
-                                                        {{ $t("general.Cancel") }}
-                                                    </b-button>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">{{ $t('general.Branch') }} <span class="text-danger">*</span></label>
-
-                                                            <multiselect
-                                                                @input="getSerialNumber('edit',$event)"
-                                                                v-model="edit.branch_id"
-                                                                :options="branches.map((type) => type.id)"
-                                                                :custom-label="(opt) => $i18n.locale == 'ar'? branches.find((x) => x.id == opt).name: branches.find((x) => x.id == opt).name_e"
-                                                                :class="{'is-invalid': $v.edit.branch_id.$error || errors.branch_id,}"
-                                                            >
-                                                            </multiselect>
-                                                            <div v-if="!$v.edit.branch_id.required" class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-
-                                                            <template v-if="errors.branch_id">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.branch_id"
-                                                                              :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">
-                                                                {{ $t('general.Date') }}
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-                                                            <date-picker
-                                                                :disabled="!edit.branch_id"
-                                                                @input="changeDateDocument('edit')"
-                                                                type="date"
-                                                                v-model="edit.date"
-                                                                format="YYYY-MM-DD"
-                                                                valueType="format"
-                                                                :confirm="false"
-                                                                :class="{'is-invalid': !financial_years_validate}"
-
-                                                            ></date-picker>
-                                                            <div v-if="!financial_years_validate" class="invalid-feedback">
-                                                                {{ $t("general.The date is outside the permitted fiscal year") }}
-                                                            </div>
-                                                            <template v-if="errors.date">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.date" :key="index">
-                                                                    {{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">
-                                                                {{$t('general.serial_number')}}
-                                                            </label>
-                                                            <input
-                                                                :disabled="true"
-                                                                type="text"
-                                                                class="form-control"
-                                                                v-model="serial_number"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">{{ $t('general.documentSalesmen') }} <span class="text-danger">*</span></label>
-
-                                                            <multiselect
-                                                                :disabled="!edit.branch_id"
-                                                                @input="getCustomerSalesman"
-                                                                v-model="edit.salesmen_id"
-                                                                :options="salesmen.map((type) => type.id)"
-                                                                :custom-label=" (opt) => $i18n.locale == 'ar' ? salesmen.find((x) => x.id == opt).name: salesmen.find((x) => x.id == opt).name_e"
-                                                                :class="{'is-invalid':$v.edit.salesmen_id.$error || errors.salesmen_id,}"
-                                                            >
-                                                            </multiselect>
-                                                            <div v-if="!$v.edit.salesmen_id.required" class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.salesmen_id">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.salesmen_id"
-                                                                              :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">{{ $t('general.documentCustomer') }} <span class="text-danger">*</span></label>
-                                                            <multiselect
-                                                                :disabled="!edit.branch_id"
-                                                                :internalSearch="false"
-                                                                @search-change="searchCustomer"
-                                                                v-model="edit.customer_id"
-                                                                :options="customers.map((type) => type.id)"
-                                                                :custom-label="(opt) =>$i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name: customers.find((x) => x.id == opt).name_e"
-                                                                :class="{'is-invalid':$v.edit.customer_id.$error || errors.customer_id,}"
-                                                            >
-                                                            </multiselect>
-                                                            <div v-if="!$v.edit.customer_id.required" class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-
-                                                            <template v-if="errors.customer_id">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.customer_id"
-                                                                              :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>{{ $t("general.paymentMethod") }}</label>
-                                                            <multiselect
-                                                                :disabled="!edit.branch_id"
-                                                                v-model="edit.payment_method_id"
-                                                                :options="paymentMethods.map((type) => type.id)"
-                                                                :custom-label=" (opt) => $i18n.locale == 'ar' ? paymentMethods.find((x) => x.id == opt).name : paymentMethods.find((x) => x.id == opt).name_e"
-                                                                :class="{ 'is-invalid':$v.edit.payment_method_id.$error || errors.payment_method_id,}"
-                                                            >
-                                                            </multiselect>
-                                                            <div v-if="!$v.edit.payment_method_id.required" class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.payment_method_id">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.payment_method_id"
-                                                                              :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>{{ $t("general.amount") }}</label>
-                                                            <input
-                                                                :disabled="!edit.branch_id"
-                                                                type="number"
-                                                                class="form-control"
-                                                                step="any"
-                                                                v-model="edit.amount"
-                                                                :class="{'is-invalid':$v.edit.amount.$error || errors.amount,}"
-                                                            />
-                                                            <div v-if="!$v.edit.amount.required" class="invalid-feedback">
-                                                                {{ $t("general.fieldIsRequired") }}
-                                                            </div>
-                                                            <template v-if="errors.amount">
-                                                                <ErrorMessage v-for="(errorMessage, index) in errors.amount"
-                                                                              :key="index">{{ errorMessage }}
-                                                                </ErrorMessage>
-                                                            </template>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12" v-if="document && document.attributes && parseInt(document.attributes.customer) == -1">
-                                                        <div class="page-content">
-                                                            <div class="px-0">
-                                                                <div class="row mt-4">
-                                                                    <div class="col-12 col-lg-12">
-                                                                        <div class="row">
-                                                                            <div class="col-12">
-                                                                                <div class="text-center text-150">
-                                                                                    <i style="font-size:20px" class="fa fa-book fa-2x text-success-m2 mr-1"></i>
-                                                                                    <span class="text-default-d3">{{$t("general.invoice_details")}}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <!-- .row -->
-                                                                        <div class="mt-4">
-                                                                            <div class="row">
-                                                                                <div class="col-md-6">
-                                                                                    <div class="card-header p-0">
-                                                                                        <h3 class="card-title float-left">
-                                                                                            {{$t('general.CustomerDebts')}}
-                                                                                        </h3>
-                                                                                    </div>
-                                                                                    <div class="table-responsive mb-3 custom-table-theme position-relative">
-                                                                                        <!--       start loader       -->
-                                                                                        <loader size="large" v-if="isLoader" />
-                                                                                        <!--       end loader       -->
-
-                                                                                        <table class="table table-borderless table-hover table-centered m-0" >
-                                                                                            <thead>
-                                                                                            <tr>
-                                                                                                <th>{{ $t("general.invoiceSerial") }}</th>
-                                                                                                <th>{{ $t("general.salesmen") }}</th>
-                                                                                                <th>{{ $t("general.type") }}</th>
-                                                                                                <th>{{ $t("general.Date") }}</th>
-                                                                                                <th>{{ $t("general.amount") }}</th>
-                                                                                                <th>{{ $t("general.Action") }}</th>
-                                                                                            </tr>
-                                                                                            </thead>
-                                                                                            <tbody v-if="customerBreak.length > 0">
-                                                                                            <tr v-for="(data, index) in customerBreak"
-                                                                                                :key="data.id"
-                                                                                                class="body-tr-custom"
-                                                                                            >
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
-                                                                                                    <h5 v-else class="m-0 font-weight-normal">---</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">
-                                                                                                        {{ data.instalment_date }}
-                                                                                                    </h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
-                                                                                                </td>
-                                                                                                <td v-if="openTransfer">
-                                                                                                    <button @click.prevent="orderTransferToTransaction(index)" class="btn btn-primary btn-sm">>></button>
-                                                                                                </td>
-                                                                                                <td v-else><button :disabled="true" class="btn btn-secondary btn-sm">>></button></td>
-                                                                                            </tr>
-                                                                                            <tr v-if="customerBreak.length > 0" class="total-amount">
-                                                                                                <td></td>
-                                                                                                <td></td>
-                                                                                                <td></td>
-                                                                                                <td>{{$t('general.totalAmount')}}</td>
-                                                                                                <td v-html="totalOrderAmount" class="amount-red"></td>
-                                                                                                <td></td>
-                                                                                            </tr>
-                                                                                            </tbody>
-                                                                                            <tbody v-else>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="6">
-                                                                                                    {{ $t("general.notDataFound") }}
-                                                                                                </th>
-                                                                                            </tr>
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-6">
-                                                                                    <div class="card-header p-0">
-                                                                                        <h3 class="card-title float-left">
-                                                                                            {{$t('general.transactions')}}
-                                                                                        </h3>
-                                                                                    </div>
-                                                                                    <div class="table-responsive mb-3 custom-table-theme position-relative">
-                                                                                        <!--       start loader       -->
-                                                                                        <loader size="large" v-if="isLoader" />
-                                                                                        <!--       end loader       -->
-
-                                                                                        <table class="table table-borderless table-hover table-centered m-0" >
-                                                                                            <thead>
-                                                                                            <tr>
-                                                                                                <th>{{ $t("general.invoiceSerial") }}</th>
-                                                                                                <th>{{ $t("general.salesmen") }}</th>
-                                                                                                <th>{{ $t("general.type") }}</th>
-                                                                                                <th>{{ $t("general.Date") }}</th>
-                                                                                                <th>{{ $t("general.amount") }}</th>
-                                                                                                <th>{{ $t("general.Action") }}</th>
-                                                                                            </tr>
-                                                                                            </thead>
-                                                                                            <tbody v-if="breakTransactions.length > 0">
-                                                                                            <tr v-for="(data, index) in breakTransactions"
-                                                                                                :key="data.id"
-                                                                                                class="body-tr-custom"
-                                                                                            >
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
-                                                                                                    <h5 v-else class="m-0 font-weight-normal">---</h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">
-                                                                                                        {{ data.instalment_date }}
-                                                                                                    </h5>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
-                                                                                                </td>
-                                                                                                <td v-if="openTransfer">
-                                                                                                    <button @click.prevent="ReturnTransactionToOrder(index)" class="btn btn-primary btn-sm"><<</button>
-                                                                                                </td>
-                                                                                                <td v-else><button :disabled="true" class="btn btn-secondary btn-sm"><<</button></td>
-                                                                                            </tr>
-                                                                                            <tr v-if="breakTransactions.length > 0" class="total-amount">
-                                                                                                <td></td>
-                                                                                                <td></td>
-                                                                                                <td></td>
-                                                                                                <td><h5 class="m-0 font-weight-normal">{{$t('general.totalAmount')}}</h5></td>
-                                                                                                <td v-html="totalTransferAmount" class="amount-red"></td>
-                                                                                                <td></td>
-                                                                                            </tr>
-
-                                                                                            </tbody>
-                                                                                            <tbody v-else>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="6">
-                                                                                                    {{ $t("general.notDataFound") }}
-                                                                                                </th>
-                                                                                            </tr>
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-6">
-                                                                                    <label>{{$t('general.TheDifference')}}</label>
-                                                                                    <input type="text"
-                                                                                           class="form-control mb-1 input-Sender"
-                                                                                           v-model="remainingAmount"
-                                                                                           disabled
-                                                                                    >
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </b-modal>
                                         <!--  /edit   -->
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">

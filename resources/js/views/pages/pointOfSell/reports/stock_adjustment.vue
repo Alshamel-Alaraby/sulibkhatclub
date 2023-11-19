@@ -158,12 +158,12 @@ export default {
     this.getAdjustmentTypes();
     this.getData();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS stock adjustment", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS stock adjustment", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);

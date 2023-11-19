@@ -19,6 +19,7 @@ class EditRpInstallmentPaymentTypeRequest extends FormRequest
         return [
             'name' => ['required','string','max:255','unique:rp_installment_payment_types,name,'.$this->rp_installment_payment_type],
             'name_e' => ['required','string','max:255','unique:rp_installment_payment_types,name_e,'.$this->rp_installment_payment_type],
+            'step' => 'nullable|string|max:255',
             'is_conditional' => [],
             'installment_condation_id' => ['required_if:is_conditional,==,1'],
             "installment_payment_type_freq" => '',

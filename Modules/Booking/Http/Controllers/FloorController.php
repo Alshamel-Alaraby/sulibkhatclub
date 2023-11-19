@@ -28,7 +28,7 @@ class FloorController extends Controller
 
     public function all(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request);
 
         if ($request->unit_status_id) {
             $models->where('unit_status_id', $request->unit_status_id);
@@ -82,6 +82,12 @@ class FloorController extends Controller
             return responseJson(404, __('message.data not found'));
         }
 
+        if ($model->hasChildren()) {
+            return responseJson(404, "not delete");
+        }
+
+
+
         $model->delete();
 
         return responseJson(200, 'success');
@@ -95,11 +101,13 @@ class FloorController extends Controller
             return responseJson(400, 'ids is required');
         }
         $models = $this->model->whereIn('id', $ids)->get();
-        if ($models->count() != count($ids)) {
-            return responseJson(404, 'not found');
-        }
+
+
         $models->each(function ($model) {
-            $model->delete();
+            if (!$model->hasChildren()) {
+                $model->delete();
+            }
+
         });
         return responseJson(200, 'deleted');
     }

@@ -18,11 +18,11 @@ import crudHelper from "../../../../helper/mixin/crudHelper";
 export default {
   page: { title: "Store", meta: [{ name: "description", content: "Store" }] },
   mixins: [translation, customTable, successError, crudHelper],
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     return permissionGuard(vm, "Store", "all Store");
-  //   });
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      return permissionGuard(vm, "Store", "all Store");
+    });
+  },
   components: {
     Layout,
     PageHeader,

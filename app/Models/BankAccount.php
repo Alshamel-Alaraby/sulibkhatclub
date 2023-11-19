@@ -19,7 +19,7 @@ class BankAccount extends Model implements HasMedia
     public function scopeData($query)
     {
         return $query
-            ->select('id', 'bank_id', 'account_number', 'phone', 'address', 'email', 'emp_id', 'rp_code')
+            //->select('id', 'bank_id', 'account_number', 'phone', 'address', 'email', 'emp_id', 'rp_code')
             ->with('bank:id,name,name_e', 'employee:id,name,name_e', 'media');
     }
 

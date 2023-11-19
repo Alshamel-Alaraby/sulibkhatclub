@@ -147,12 +147,12 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.getData();
   },
-  // beforeRouteEnter(to, from, next) {
-  //       next((vm) => {
-  //   return permissionGuard(vm, "POS sale purchase", "all sold_Unit RealState");
-  // });
+  beforeRouteEnter(to, from, next) {
+        next((vm) => {
+    return permissionGuard(vm, "POS sale purchase", "all sold_Unit RealState");
+  });
 
-  //  },
+   },
   methods: {
     showReport() {
       this.$bvModal.hide(`filter`);

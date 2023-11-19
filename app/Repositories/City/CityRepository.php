@@ -65,21 +65,11 @@ class CityRepository implements CityRepositoryInterface
         }
     }
 
-    private function forget($id)
-    {
-        $keys = [
-            "cities",
-            "cities_" . $id,
-        ];
-        foreach ($keys as $key) {
-            cacheForget($key);
-        }
 
-    }
 
     public function getName($request)
     {
-        $models = $this->model->select('id', 'name', 'name_e')->where('is_active', 1);
+        $models = $this->model->select('id', 'name', 'name_e','country_id','governorate_id')->where('is_active', 1);
 
         if ($request->country_id) {
             $models->where('country_id', $request->country_id);
@@ -87,6 +77,14 @@ class CityRepository implements CityRepositoryInterface
 
         if ($request->governorate_id) {
             $models->where('governorate_id', $request->governorate_id);
+        }
+
+        if($request->country_ids){
+            $models->whereIn('country_id',$request->country_ids);
+        }
+
+        if($request->governorate_ids){
+            $models->whereIn('governorate_id',$request->governorate_ids);
         }
 
         if ($request->per_page) {

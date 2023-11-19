@@ -67,6 +67,10 @@ class GeneralItemController extends Controller
         if (!$model) {
             return responseJson(404, 'not found');
         }
+
+        if ($model->hasChildren()) {
+            return responseJson(404, 'not delete');
+        }
         $model->delete();
 
         return responseJson(200, 'deleted');
@@ -75,7 +79,10 @@ class GeneralItemController extends Controller
     public function bulkDelete(Request $request)
     {
         foreach ($request->ids as $id) {
-            $this->modelInterface->delete($id);
+            $model = $this->modelInterface->find($id);
+            if (!$model->hasChildren()) {
+                $this->modelInterface->delete($id);
+            }
         }
         return responseJson(200, __('Done'));
     }

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('name_e')->nullable();
             $table->string('is_active')->default('active');
-            $table->unsignedBigInteger('country_id')->nullable();
-            $table->unsignedBigInteger('governorate_id')->nullable();
-            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('country_id')->index()->nullable();
+            $table->unsignedBigInteger('governorate_id')->index()->nullable();
+            $table->unsignedBigInteger('city_id')->index()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

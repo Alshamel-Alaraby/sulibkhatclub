@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('general_contacts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('model_id');
+            $table->unsignedBigInteger('model_id')->index();
             $table->string('model_type');
             $table->string('name');
             $table->string('name_e');
@@ -23,8 +23,8 @@ return new class extends Migration
             $table->text('description_e')->nullable();
             $table->json('socials')->nullable();
             $table->json('phones')->nullable();
-            $table->unsignedBigInteger('job_id');
-            $table->unsignedBigInteger('priority_id');
+            $table->unsignedBigInteger('job_id')->index();
+            $table->unsignedBigInteger('priority_id')->index();
             $table->timestamps();
         });
     }

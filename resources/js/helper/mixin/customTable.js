@@ -1,7 +1,7 @@
 import adminApi from "../../api/adminAxios";
 import successError from "./success&error.js";
 export default {
-    data(){
+    data() {
         return {
             fields: []
         }
@@ -9,17 +9,18 @@ export default {
     mixins: [successError],
     methods: {
         getCustomTableFields(table_name) {
-              adminApi
+            adminApi
                 .get(`/customTable/table-columns/${table_name}`)
                 .then((res) => {
                     this.fields = res.data;
                 })
                 .catch((err) => {
-                    errorFun('Error','Thereisanerrorinthesystem');
+                    errorFun('Error', 'Thereisanerrorinthesystem');
                 });
+
         },
         isVisible(fieldName) {
-            if(this.fields.length > 0){
+            if (this.fields.length > 0) {
                 let res = this.fields.filter((field) => {
                     return field.column_name == fieldName;
                 });
@@ -28,7 +29,7 @@ export default {
             return true;
         },
         isRequired(fieldName) {
-            if(this.fields.length > 0) {
+            if (this.fields.length > 0) {
                 let res = this.fields.filter((field) => {
                     return field.column_name == fieldName;
                 });
@@ -37,10 +38,14 @@ export default {
             return true;
         },
         isPermission(item) {
+            if (this.$store.state.auth.type == "admin") {
+                return this.$store.state.auth.is_web == 1;
+            }
             if (this.$store.state.auth.type == "user") {
                 return this.$store.state.auth.permissions.includes(item);
             }
             return true;
         },
+
     },
 }
