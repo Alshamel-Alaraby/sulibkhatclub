@@ -14,7 +14,7 @@ use Modules\ClubMembers\Entities\CmTransaction;
 class CmMemberRepository implements CmMemberInterface
 {
 
-    public function __construct(private CmMember $model, private CmHistoryTransform $modelCmHistoryTransform,private CmMemberRequest $modelRequest,private CmTransaction $modelTransaction)
+    public function __construct(private CmMember $model, private CmHistoryTransform $modelCmHistoryTransform, CmMemberRequest $modelRequest, CmTransaction $modelTransaction)
     {
         $this->model = $model;
         $this->modelRequest = $modelRequest;
@@ -277,13 +277,14 @@ class CmMemberRepository implements CmMemberInterface
 
         if ($request->members_permissions_id) {
             $year = Carbon::createFromFormat('d-m-Y',$request->dateOfYear)->format('Y') + 1;
-
-            DB::statement('call p_statistics(?)',["$year"]);
+            $date = Carbon::createFromFormat('d-m-Y',$request->dateOfYear)->format('Y-m-d'); ///2023-10-05
+            //dd($date);
+            DB::statement('call p_statistics(?)',["$date"]);
 
             $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', $year)->with('lastCmTransaction');
 
-            $new_year = Carbon::now()->format('Y') + 1;
-            DB::statement('call p_statistics(?)',["$new_year"]);
+            $new_date = Carbon::now()->format('Y-m-d');
+            DB::statement('call p_statistics(?)',["$new_date"]);
         }
 
         if ($request->per_page) {
@@ -337,7 +338,7 @@ class CmMemberRepository implements CmMemberInterface
 
             // all settings
             $settings =
-            DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
+                DB::table('cm_type_permissions')->where('cm_permissions_id', '>', 1)->orderBy('cm_permissions_id', 'asc')->get();
 
             // get the active financial year
 
@@ -370,8 +371,8 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
                 ->update
                 ([
-                'financial_status_id' => 3, //مسدد في الموعد
-            ]);
+                    'financial_status_id' => 3, //مسدد في الموعد
+                ]);
 
             $update_3ady_members_2 = $this->model
                 ->where('member_status_id', 1) // ساري
@@ -381,8 +382,8 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
                 ->update
                 ([
-                'financial_status_id' => 4, //مسدد بعد الموعد
-            ]);
+                    'financial_status_id' => 4, //مسدد بعد الموعد
+                ]);
 
             //return $update_3ady_members_2;
 
@@ -423,7 +424,7 @@ class CmMemberRepository implements CmMemberInterface
                     ) {
 
                         $member->update
-                            ([
+                        ([
                             'members_permissions_id' => $setting->cm_permissions_id,
                         ]);
                         //   }
@@ -433,7 +434,7 @@ class CmMemberRepository implements CmMemberInterface
 
                     } else {
                         $member->update
-                            ([
+                        ([
                             'members_permissions_id' => 1,
                         ]);
                     }
@@ -497,8 +498,8 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereDate('last_transaction_date', '<=', $date_allowed_vote_date)
                 ->update
                 ([
-                'financial_status_id' => 3, //مسدد في الموعد
-            ]);
+                    'financial_status_id' => 3, //مسدد في الموعد
+                ]);
 
             $update_3ady_members_2 = $this->model
                 ->where('member_status_id', 1) // ساري
@@ -508,8 +509,8 @@ class CmMemberRepository implements CmMemberInterface
                 ->whereDate('last_transaction_date', '>', $date_allowed_vote_date)
                 ->update
                 ([
-                'financial_status_id' => 4, //مسدد في الموعد
-            ])
+                    'financial_status_id' => 4, //مسدد في الموعد
+                ])
             ;
 
             foreach ($running_member_all as $member) {
@@ -521,7 +522,7 @@ class CmMemberRepository implements CmMemberInterface
                     if ($member->member_kind_id == $setting->cm_members_type_id && $setting->cm_financial_status_id == $member->financial_status_id && $diffYears >= $setting->membership_period) {
 
                         $member->update
-                            ([
+                        ([
                             'members_permissions_id' => $setting->cm_permissions_id,
                         ]);
                         //   }
@@ -531,7 +532,7 @@ class CmMemberRepository implements CmMemberInterface
 
                     } else {
                         $member->update
-                            ([
+                        ([
                             'members_permissions_id' => 1,
                         ]);
 
@@ -605,7 +606,7 @@ class CmMemberRepository implements CmMemberInterface
 
                             if ($Last_Member_transaction <= $yearGlued_allowed_vote_date) {
                                 $member->update
-                                    ([
+                                ([
                                     'financial_status_id' => 3, //مسدد في الموعد
                                 ]);
 
@@ -614,7 +615,7 @@ class CmMemberRepository implements CmMemberInterface
                             } else // ( $Last_Member_transaction > $yearGlued_allowed_vote_date )
                             {
                                 $member->update
-                                    ([
+                                ([
                                     'financial_status_id' => 4, // مسدد بعد الموعد
                                 ]);
 
@@ -633,7 +634,7 @@ class CmMemberRepository implements CmMemberInterface
                             //{
                             //   if ($member->member_kind_id == 1){
                             $member->update
-                                ([
+                            ([
                                 'members_permissions_id' => $setting->cm_permissions_id,
                             ]);
                             //   }
@@ -643,7 +644,7 @@ class CmMemberRepository implements CmMemberInterface
 
                         } else {
                             $member->update
-                                ([
+                            ([
                                 'members_permissions_id' => 1,
                             ]);
 
