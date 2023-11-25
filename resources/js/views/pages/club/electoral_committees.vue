@@ -5,7 +5,7 @@ import loader from "../../../components/general/loader";
 import translation from "../../../helper/mixin/translation-mixin";
 import customTable from "../../../helper/mixin/customTable";
 import crudHelper from "../../../helper/mixin/crudHelper";
-import ElectoralCommitteeCom from "../../../components/create/club/group";
+import ElectoralCommitteeCom from "../../../components/create/club/electoralCommitteeCom";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";
@@ -122,7 +122,7 @@ export default {
                         <!-- end setting -->
 
                         <!--  create   -->
-                        <GroupClub
+                        <ElectoralCommitteeCom
                             :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                             :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired" :url="url"
                             :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"

@@ -302,7 +302,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "branch_email",
                 "default_en" => "Email",
-                "default_ar" => "الاميل",
+                "default_ar" => "البريد الالكترونى",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,

@@ -20,7 +20,7 @@ class CmReportController extends Controller
 
     public function membersByPermissions(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'full_name', $request->sort ? $request->sort : 'ASC');
 
         if ($request->members_permissions_id) {
             $year = Carbon::createFromFormat('d-m-Y', $request->dateOfYear)->format('Y') + 1;
@@ -146,7 +146,7 @@ class CmReportController extends Controller
             $firstMemberName = count($members) > 0 ? $members[0]['full_name'] : null;
             $lastMemberName = count($members) > 0 ? $members[count($members) - 1]['full_name'] : null;
 
-            
+
             $committeeMembers = [
                 'id' => $committee['id'],
                 'name' => $committee['name'],

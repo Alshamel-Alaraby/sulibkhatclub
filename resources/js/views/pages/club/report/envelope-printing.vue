@@ -182,7 +182,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "invitation Letter To Attend The Association", "all Permission member club");
+            return permissionGuard(vm, "envelope printing", "all Permission member club");
         });
 
     },
@@ -352,7 +352,7 @@ export default {
         },
         getBranches() {
             adminApi
-                .get(`/branches/1`)
+                .get(`/branches/2`)
                 .then((res) => {
                     this.branch = res.data.data;
                 })

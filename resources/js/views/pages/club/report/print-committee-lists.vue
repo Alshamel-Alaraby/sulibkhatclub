@@ -283,7 +283,7 @@ export default {
         },
         getBranches() {
             adminApi
-                .get(`/branches/1`)
+                .get(`/branches/2`)
                 .then((res) => {
                     this.branch = res.data.data;
                 })

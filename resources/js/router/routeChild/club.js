@@ -268,6 +268,14 @@ export default [
         component: () => import('../../views/pages/club/report/old-members-report'),
     },
     {
+        path: '/dashboard/club/electoral-committees',
+        name: 'Electoral Committees',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/club/electoral_committees'),
+    },
+    {
         path: '/dashboard/club/members-have-the-right-to-attend-the-assembly',
         name: 'Members have the right to attend the assembly',
         meta: {
@@ -285,7 +293,7 @@ export default [
     },
     {
         path: '/dashboard/club/envelope-printing',
-        name: 'invitation Letter To Attend The Association',
+        name: 'envelope printing',
         meta: {
             middleware: [auth,checkAuth]
         },

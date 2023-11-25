@@ -1745,7 +1745,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_5__["default"])(vm, "invitation Letter To Attend The Association", "all Permission member club");
+      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_5__["default"])(vm, "envelope printing", "all Permission member club");
     });
   },
   watch: {
@@ -1917,7 +1917,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getBranches: function getBranches() {
       var _this7 = this;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches/1").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches/2").then(function (res) {
         _this7.branch = res.data.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_6___default().fire({
@@ -6357,7 +6357,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-7278d7d6] {\r\n    display: none;\n}\n.head-branch[data-v-7278d7d6] {\r\n    display: none;\n}\n.colPay[data-v-7278d7d6]{\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n@media print {\n.colPay[data-v-7278d7d6]{\r\n        color: #000;\n}\n.head-branch[data-v-7278d7d6] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-7278d7d6]{\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-7278d7d6]{\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-7278d7d6] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-7278d7d6] {\r\n        display: none;\n}\n.arrow-sort[data-v-7278d7d6] {\r\n        display: none;\n}\ntable thead tr th[data-v-7278d7d6] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-7278d7d6] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-7278d7d6] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-7278d7d6] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-7278d7d6] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-7278d7d6] {\r\n        display: block;\n}\n.signature h4[data-v-7278d7d6] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n}\n.quill-editor[data-v-7278d7d6] {\r\n    background-color: #fff;\n}\n.content[data-v-7278d7d6] {\r\n    min-height: 1270px;\r\n    padding: 20px;\r\n    border: 2px solid;\r\n    margin-bottom: 300px;\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-7278d7d6] {\n    display: none;\n}\n.head-branch[data-v-7278d7d6] {\n    display: none;\n}\n.colPay[data-v-7278d7d6]{\n    background-color: #3bafda;\n    color: #fff;\n    font-weight: 500;\n}\n@media print {\n.colPay[data-v-7278d7d6]{\n        color: #000;\n}\n.head-branch[data-v-7278d7d6] {\n        margin-top: 50px;\n        display: block;\n}\n.head-branch h2[data-v-7278d7d6]{\n        text-decoration: underline;\n}\n.head-branch img[data-v-7278d7d6]{\n        width: 100px;\n        height: 100px;\n}\n.head-branch span[data-v-7278d7d6] {\n        display: inline-block;\n        position: relative;\n        top: -49px;\n}\n.do-not-print[data-v-7278d7d6] {\n        display: none;\n}\n.arrow-sort[data-v-7278d7d6] {\n        display: none;\n}\ntable thead tr th[data-v-7278d7d6] {\n        color: #000;\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-7278d7d6] {\n        color: #000;\n        border: 1px solid #000;\n}\nhr[data-v-7278d7d6] {\n        transform: rotate(90deg);\n        background-color: #0000008a;\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-7278d7d6] {\n        border-top: 1px solid #000;\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-7278d7d6] {\n        border: 1px solid #000;\n}\n.signature[data-v-7278d7d6] {\n        display: block;\n}\n.signature h4[data-v-7278d7d6] {\n        text-decoration: underline;\n        margin: 3px;\n}\n}\n.quill-editor[data-v-7278d7d6] {\n    background-color: #fff;\n}\n.content[data-v-7278d7d6] {\n    min-height: 1270px;\n    padding: 20px;\n    border: 2px solid;\n    margin-bottom: 300px;\n    position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

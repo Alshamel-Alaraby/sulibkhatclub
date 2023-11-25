@@ -52,7 +52,7 @@
                         {{ $t("general.Cancel") }}
                     </b-button>
                 </div>
-                <div class="row">number_of_individuals
+                <div class="row">
                     <div class="col-md-12" v-if="isVisible('name')">
                         <div class="form-group">
                             <label for="field-1" class="control-label">
@@ -136,17 +136,17 @@
                                 {{ getCompanyKey('club_electoral_committees_number_of_individuals') }}
                                 <span v-if="isRequired('number_of_individuals')" class="text-danger">*</span>
                             </label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    data-create="2"
-                                    v-model="$v.create.number_of_individuals.$model"
-                                    :class="{
+                            <input
+                                type="number"
+                                class="form-control"
+                                data-create="2"
+                                v-model="$v.create.number_of_individuals.$model"
+                                :class="{
                                         'is-invalid': $v.create.number_of_individuals.$error || errors.number_of_individuals,
                                         'is-valid': !$v.create.number_of_individuals.$invalid && !errors.number_of_individuals,
                                       }"
-                                    id="field-3"
-                                />
+                                id="field-3"
+                            />
                             <template v-if="errors.number_of_individuals">
                                 <ErrorMessage
                                     v-for="(errorMessage, index) in errors.number_of_individuals"
