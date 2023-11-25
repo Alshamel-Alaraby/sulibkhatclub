@@ -1546,9 +1546,6 @@
         "totalDebit": "Total Debit",
         "totalCredit": "Total Credit",
         "installmentAmount": "Installment Amount",
-        "permissionsMember": "Members permissions",
-        "Theresultofsearchesfomembersrightsisbasedonhistory": "The result of searches for members' rights is based on history: ",
-        "execution": "Execution",
         "MoneyVoucher": "Money Voucher",
         "clientDebit": "Client Debit",
         "clientCredit": "Client Credit",
@@ -1690,6 +1687,13 @@
         "tel": "Tel",
         "POBox": "P.O.Box",
         "first_member": "First Member",
-        "second_member": "Second Member"
+        "second_member": "Second Member",
+        "permissionsMember": "Members permissions",
+        "Theresultofsearchesfomembersrightsisbasedonhistory":"The result of searches for members' rights is based on history: ",
+        "execution": "Execution",
+        "NoRightToAttend": "No Right To Attend",
+        "RightToAttend": "Right To Attend",
+        "RightToAttendAndVote": "Right To Attend And Vote",
+        "RightToAttendAndVoteAndRun": "Right To Attend And Vote And Run"
     }
 }

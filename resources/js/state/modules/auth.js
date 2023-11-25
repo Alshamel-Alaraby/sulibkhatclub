@@ -16,7 +16,9 @@ export const state = {
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")): []  || {},
     type: localStorage.getItem("type") ? JSON.parse(localStorage.getItem("type")): []  || "",
     parentModule: localStorage.getItem("parentModule") ? JSON.parse(localStorage.getItem("parentModule")):[],
-    notification: true
+    notification: true,
+    is_web: 1,
+    customModules: localStorage.getItem("customModules") ? JSON.parse(localStorage.getItem("customModules")):[]
 }
 
 // getters
@@ -32,6 +34,8 @@ export const getters = {
     user: state => state.user,
     type: state => state.type,
     parentModule: state => state.parentModule,
+    is_web: state => state.is_web,
+    customModules: state => state.customModules,
 }
 
 // mutations
@@ -116,6 +120,13 @@ export const mutations = {
     editParentModule(state,parentModule){
         state.parentModule = parentModule;
         localStorage.setItem('parentModule',JSON.stringify(parentModule));
+    },
+    editIsWeb(state,is_web){
+        state.is_web = is_web;
+    },
+    editCustomModules(state,modules){
+        state.customModules = modules;
+        localStorage.setItem('customModules',JSON.stringify(modules));
     }
 };
 

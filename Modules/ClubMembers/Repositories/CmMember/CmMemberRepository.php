@@ -283,8 +283,8 @@ class CmMemberRepository implements CmMemberInterface
             $models->whereIn('members_permissions_id', $request->members_permissions_id)->where('member_status_id', 1)->where('last_transaction_year', $year)->with('lastCmTransaction');
 
             $new_year = Carbon::now()->format('Y') + 1;
-            DB::statement('call p_statistics(?)',["$year"]);
-       }
+            DB::statement('call p_statistics(?)',["$new_year"]);
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];

@@ -1533,9 +1533,6 @@
         "totalDebit": "اجمالى المدين",
         "totalCredit": "اجمالى الدائن",
         "installmentAmount": "مبلغ القسط",
-        "permissionsMember": "صلحيات الاعضاء",
-        "Theresultofsearchesfomembersrightsisbasedonhistory": "نتيجه عمليات البحث لحقوق الاعضاء عن تاريخ: ",
-        "execution": "تنفيذ",
         "MoneyVoucher": "المستندات المالية",
         "clientDebit": "العميل المدين",
         "clientCredit": "العميل الدائن",
@@ -1665,6 +1662,9 @@
         "tel": "الهاتف",
         "POBox": "ص.ب",
         "first_member": "العضو الاول",
-        "second_member": "العضو الثاني"
+        "second_member": "العضو الثاني",
+        "permissionsMember": "صلاحيات الاعضاء",
+        "Theresultofsearchesfomembersrightsisbasedonhistory": "نتيجه عمليات البحث لحقوق الاعضاء عن تاريخ: ",
+        "execution": "تنفيذ"
     }
 }
