@@ -497,7 +497,7 @@ export default [
         meta: {
             middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/general/dashboard/sales/index')
+        component: () => import('../../views/pages/general/dashboard/index')
     },
     //**********************************************
     {
@@ -585,6 +585,13 @@ export default [
         },
         component: () => import('../../views/pages/general/testPolicy/index.vue'),
     },
-
+    {
+        path: '/dashboard/contractTemplates',
+        name: 'test',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/contractTemplates/index.vue'),
+    },
 
 ];

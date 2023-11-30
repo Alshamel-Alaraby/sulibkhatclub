@@ -122,7 +122,7 @@ export default {
         filter = "";
       if (indexC > -1) {
         fields[indexC] =
-          this.$i18n.locale == "ar" ? "units.name" : "units.name_e";
+          this.$i18n.locale == "ar" ? "unit.name" : "unit.name_e"; // the name of relation in the backend entity
       }
       for (let i = 0; i < fields.length; ++i) {
         filter += `columns[${i}]=${fields[i]}&`;

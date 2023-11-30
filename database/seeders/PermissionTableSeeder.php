@@ -703,6 +703,65 @@ class PermissionTableSeeder extends Seeder
 //            ]);
 //        }
 
+
+    $permissions[] = ['name' => 'all RoomsCategory',"title" => 'show','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'create RoomsCategory',"title" => 'create','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'update RoomsCategory',"title" => 'update','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'delete RoomsCategory',"title" => 'delete','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
+
+    $permissions[] = ['name' => 'all ServiceType',"title" => 'show','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'create ServiceType',"title" => 'create','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'update ServiceType',"title" => 'update','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'delete ServiceType',"title" => 'delete','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
+
+    $permissions[] = ['name' => 'all Specialty',"title" => 'show','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'create Specialty',"title" => 'create','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'update Specialty',"title" => 'update','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'delete Specialty',"title" => 'delete','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
+
+    $permissions[] = ['name' => 'all Room',"title" => 'show','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'create Room',"title" => 'create','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'update Room',"title" => 'update','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'delete Room',"title" => 'delete','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
+
+    $permissions[] = ['name' => 'all Prescription',"title" => 'show','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'create Prescription',"title" => 'create','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'update Prescription',"title" => 'update','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'delete Prescription',"title" => 'delete','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
+
+    $permissions[] = ['name' => 'all Patient',"title" => 'show','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'create Patient',"title" => 'create','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'update Patient',"title" => 'update','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'delete Patient',"title" => 'delete','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
+
+    $permissions[] = ['name' => 'all InsuranceCompany',"title" => 'show','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
+    $permissions[] = ['name' => 'create InsuranceCompany',"title" => 'create','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
+    $permissions[] = ['name' => 'update InsuranceCompany',"title" => 'update','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
+    $permissions[] = ['name' => 'delete InsuranceCompany',"title" => 'delete','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
+
+    $permissions[] = ['name' => 'all Drug',"title" => 'show','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'create Drug',"title" => 'create','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'update Drug',"title" => 'update','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'delete Drug',"title" => 'delete','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
+
+    $permissions[] = ['name' => 'all Doctor',"title" => 'show','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'create Doctor',"title" => 'create','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'update Doctor',"title" => 'update','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'delete Doctor',"title" => 'delete','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
+
+    $permissions[] = ['name' => 'all DiagnosisTest',"title" => 'show','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'create DiagnosisTest',"title" => 'create','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'update DiagnosisTest',"title" => 'update','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'delete DiagnosisTest',"title" => 'delete','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
+
+    $permissions[] = ['name' => 'all Appointment',"title" => 'show','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'create Appointment',"title" => 'create','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'update Appointment',"title" => 'update','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'delete Appointment',"title" => 'delete','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+
+    $permissions[] = ['name' => 'Upcoming Appointment',"title" => 'show','crud_name' => 'Upcoming Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'Waiting Room',"title" => 'show','crud_name' => 'Waiting Rooms','module' => 'HMS','table'=> 'h_m_s_appointments'];
+
         foreach ($permissions as $permission) {
             Permission::create([
                 "name" => $permission["name"],

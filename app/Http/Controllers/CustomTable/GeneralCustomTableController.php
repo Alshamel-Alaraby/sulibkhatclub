@@ -77,8 +77,8 @@ class GeneralCustomTableController extends Controller
 
     public function getCustomTableFields($tableName)
     {
-        
-        $this->seeder();
+
+        // $this->seeder();
 
         $allColumns = Schema::getColumnListing($tableName);
         $currentColumnsCount = count(Schema::getColumnListing($tableName));
@@ -100,13 +100,13 @@ class GeneralCustomTableController extends Controller
         $CompanyIdValue = $customTable['company_id'];
 
         } else {
-            
+
             $CompanyIdExists = false;
             // The `company_id` column does not exist in the `$tableName` table
             $customTable = GeneralCustomTable::where('table_name', $tableName)->first();
         }
 
-        
+
         //return $customTable;
 
         $recordedColumnsCount = count($customTable['columns']);
@@ -154,7 +154,6 @@ class GeneralCustomTableController extends Controller
 
     public function seeder()
     {
-
         GeneralCustomTable::where('company_id', 0)->delete();
 
         $seeder = new CustomTableSeeder();

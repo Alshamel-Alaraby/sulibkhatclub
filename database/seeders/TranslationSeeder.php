@@ -302,7 +302,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "branch_email",
                 "default_en" => "Email",
-                "default_ar" => "البريد الالكترونى",
+                "default_ar" => "الاميل",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -3073,6 +3073,7 @@ class TranslationSeeder extends Seeder
         ]);
         //Contract unit
         Translation::insert([
+
             [
                 "key" => "contractunit_create_form",
                 "default_en" => "Add new contract unit form",
@@ -3399,7 +3400,7 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "realEstate_unit_unit_ty",
-                "default_en" => "Unit Ty ",
+                "default_en" => "Unit Type ",
                 "default_ar" => "نوع الوحدة",
                 "new_ar" => "",
                 "new_en" => "",
@@ -4201,6 +4202,539 @@ class TranslationSeeder extends Seeder
                 "screen" => "policy"
 
             ],
+            [
+                "key" => "policy_create_form",
+                "default_en" => "Add new policy",
+                "default_ar" => "اضف سياسه جديده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+            ],
+            [
+                "key" => "policy_edit_form",
+                "default_en" => "Edit policy form",
+                "default_ar" => "نموذج تعديل السياسه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "policy"
+            ],
+        ]);
+        //Tenants
+
+        Translation::insert([
+            [
+                "key" => "tenants_name_ar",
+                "default_en" => "Tenant name (arabic)",
+                "default_ar" => "اسم المستأجر (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+
+            ],
+            [
+                "key" => "tenants_name_en",
+                "default_en" => "Tenant name (english)",
+                "default_ar" => "اسم المستأجر (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_create_form",
+                "default_en" => "Add New tenant",
+                "default_ar" => "اضف مستأجر جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_edit_form",
+                "default_en" => "Edit tenant form",
+                "default_ar" => "نموذج تعديل المستأجر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_blacklisted",
+                "default_en" => "Blacklisted",
+                "default_ar" => "محظور",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_mobile",
+                "default_en" => "Mobile",
+                "default_ar" => "موبايل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_gender",
+                "default_en" => "Gender",
+                "default_ar" => "الجنس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_marital_status",
+                "default_en" => "Marital Status",
+                "default_ar" => "الحالة الاجتماعية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_work_address",
+                "default_en" => "Work Address",
+                "default_ar" => "عنوان العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_home_address",
+                "default_en" => "Home Address",
+                "default_ar" => "عنوان المنزل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_civil_no",
+                "default_en" => "Civil Number",
+                "default_ar" => "الرقم المدني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_passport_no",
+                "default_en" => "Pasport Number",
+                "default_ar" => "رقم الجواز",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_residence_no",
+                "default_en" => "Residence Number",
+                "default_ar" => "رقم الإقامة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_email",
+                "default_en" => "Email",
+                "default_ar" => "البريد الإلكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+
+        ]);
+
+        //Guards
+        Translation::insert([
+            [
+                "key" => "guard_name_ar",
+                "default_en" => "Guard name (arabic)",
+                "default_ar" => "اسم الحارس (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "guards"
+
+            ],
+            [
+                "key" => "guard_name_en",
+                "default_en" => "Guard name (english)",
+                "default_ar" => "اسم الحارس (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "guards"
+
+            ],
+            [
+                "key" => "guard_create_form",
+                "default_en" => "Add new guard",
+                "default_ar" => "اضف حارس جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "guards"
+            ],
+            [
+                "key" => "guard_edit_form",
+                "default_en" => "Edit guard form",
+                "default_ar" => "نموذج تعديل الحارس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "guards"
+            ],
+        ]);
+        //Services Real Estate
+        Translation::insert([
+            [
+                "key" => "services_name_ar",
+                "default_en" => "Service name (arabic)",
+                "default_ar" => "اسم خدمة (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Services"
+
+            ],
+            [
+                "key" => "services_name_en",
+                "default_en" => "Service name (english)",
+                "default_ar" => "اسم خدمة (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Services"
+
+            ],
+            [
+                "key" => "services_create_form",
+                "default_en" => "Add New Service ",
+                "default_ar" => "اضف خدمه جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Services"
+            ],
+            [
+                "key" => "services_edit_form",
+                "default_en" => "Edit Service form",
+                "default_ar" => "نموذج تعديل خدمه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Services"
+
+            ],
+        ]);
+        //UnitServices Real Estate
+        Translation::insert([
+            [
+                "key" => "service",
+                "default_en" => "Service name ",
+                "default_ar" => "اسم الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "unitServices"
+
+            ],
+            [
+                "key" => "unitServices_price",
+                "default_en" => "Price",
+                "default_ar" => "السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "unitServices"
+
+            ],
+            [
+                "key" => "unit_service_create_form",
+                "default_en" => "Add  New Unit Service ",
+                "default_ar" => "اضف خدمه للوحده جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "unitServices"
+            ],
+            [
+                "key" => "unit_service_edit_form",
+                "default_en" => "Edit Unit Service form",
+                "default_ar" => "نموذج تعديل خدمه للوحده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "unitServices"
+
+            ],
+        ]);
+        //EvacuationType Real Estate
+        Translation::insert([
+            [
+                "key" => "evacuationType_name_ar",
+                "default_en" => "Evacuation Type name (arabic)",
+                "default_ar" => "اسم نوع الاخلاء (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ecacuationType"
+
+            ],
+            [
+                "key" => "evacuationType_name_en",
+                "default_en" => "Evacuation Type name (english)",
+                "default_ar" => "اسم نوع الاخلاء (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ecacuationType"
+
+            ],
+            [
+                "key" => "evacuationType_parent",
+                "default_en" => "Evacuation parnt name (english)",
+                "default_ar" => "اسم الاب (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ecacuationType"
+
+            ],
+            [
+                "key" => "evacuationType_create_form",
+                "default_en" => "Add New Evacuation Type ",
+                "default_ar" => "اضف  نوع الاخلاء جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ecacuationType"
+            ],
+            [
+                "key" => "evacuationType_edit_form",
+                "default_en" => "Edit Evacuation Typeform",
+                "default_ar" => "نموذج تعديل نوع الاخلاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ecacuationType"
+
+            ],
+        ]);
+        //ExpensesItems Real Estate
+        Translation::insert([
+            [
+                "key" => "expensesItems_name_ar",
+                "default_en" => "Expenses Item name (arabic)",
+                "default_ar" => "اسم بند المصاريف (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+
+            ],
+            [
+                "key" => "expensesItems_name_en",
+                "default_en" => "Expenses Item name (english)",
+                "default_ar" => "اسم بند المصاريف (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+
+            ],
+            [
+                "key" => "expensesItems_type",
+                "default_en" => "Expenses Item type",
+                "default_ar" => "نوع بند المصاريف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+            ],
+            [
+                "key" => "expensesItems_bank_account_number",
+                "default_en" => "Expenses Item bank account number",
+                "default_ar" => "رقم حساب بند المصاريف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+            ],
+            [
+                "key" => "expensesItems_create_form",
+                "default_en" => "Add New Expenses Item ",
+                "default_ar" => "اضف  بند المصاريف جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+            ],
+            [
+                "key" => "expensesItems_edit_form",
+                "default_en" => "Edit Expenses Item form",
+                "default_ar" => "نموذج تعديل بند المصاريف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "expensesItems"
+
+            ],
+        ]);
+        // Revenue Items
+        Translation::insert([
+            [
+                "key" => "revenueItems_name_ar",
+                "default_en" => "Revenue Item name (arabic)",
+                "default_ar" => "اسم بند الإيرادات (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+
+            ],
+            [
+                "key" => "revenueItems_name_en",
+                "default_en" => "Revenue Item name (english)",
+                "default_ar" => "اسم بند الإيرادات (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+
+            ],
+            [
+                "key" => "revenueItems_type",
+                "default_en" => "Revenue Item type",
+                "default_ar" => "نوع بند الإيرادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+            ],
+            [
+                "key" => "revenueItems_bank_account_number",
+                "default_en" => "Revenue Item bank account number",
+                "default_ar" => "رقم حساب بند الإيرادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+            ],
+            [
+                "key" => "revenueItems_create_form",
+                "default_en" => "Add New Revenue Item ",
+                "default_ar" => "اضف  بند الإيرادات جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+            ],
+            [
+                "key" => "revenueItems_edit_form",
+                "default_en" => "Edit Revenue Item form",
+                "default_ar" => "نموذج تعديل بند الإيرادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "revenueItems"
+
+            ],
+        ]);
+        //BuildingCategory
+        Translation::insert([
+            [
+                "key" => "building_categories_name_ar",
+                "default_en" => "Building Category name (arabic)",
+                "default_ar" => "اسم  فئة البناء (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building_categories"
+
+            ],
+            [
+                "key" => "building_categories_name_en",
+                "default_en" => "Building Category name (english)",
+                "default_ar" => "اسم  فئة البناء (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building_categories"
+
+            ],
+            [
+                "key" => "building_categories_create_form",
+                "default_en" => "Add New Building Category ",
+                "default_ar" => "اضف  فئة البناء جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building_categories"
+            ],
+            [
+                "key" => "building_categories_edit_form",
+                "default_en" => "Edit Building Category form",
+                "default_ar" => "نموذج تعديل فئة البناء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "building_categories"
+
+            ],
+        ]);
+        //Contract Template
+        Translation::insert([
+            [
+                "key" => "contractTemplates_name_ar",
+                "default_en" => "Contract Template name (arabic)",
+                "default_ar" => "اسم  نموذج العقد (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "contractTemplates"
+
+            ],
+            [
+                "key" => "contractTemplates_name_en",
+                "default_en" => "Contract Template name (english)",
+                "default_ar" => "اسم  نموذج العقد (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "contractTemplates"
+
+            ],
+            [
+                "key" => "contractTemplates_create_form",
+                "default_en" => "Add New Contract Template ",
+                "default_ar" => "اضف  نموذج العقد جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "contractTemplates"
+            ],
+            [
+                "key" => "contractTemplates_edit_form",
+                "default_en" => "Edit Contract Template form",
+                "default_ar" => "نموذج تعديل نموذج العقد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "contractTemplates"
+
+            ],
+
         ]);
             //Account
         Translation::insert([
@@ -4232,6 +4766,25 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "Account"
+            ],
+            [
+                "key" => "Account_create_form",
+                "default_en" => "Add New Account ",
+                "default_ar" => "اضف  حساب جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Account"
+            ],
+            [
+                "key" => "Account_edit_form",
+                "default_en" => "Edit Account form",
+                "default_ar" => "نموذج تعديل الحساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Account"
+
             ],
 
         ]);
@@ -4338,6 +4891,26 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "buildingPolicy"
             ],
+            [
+                "key" => "building_policy_create_form",
+                "default_en" => "Add New Building Policy ",
+                "default_ar" => "اضف  سياسه العقار جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+            ],
+            [
+                "key" => "building_policy_edit_form",
+                "default_en" => "Edit Building Policy form",
+                "default_ar" => "نموذج تعديل سياسه العقار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "buildingPolicy"
+
+            ],
+
 
         ]);
 
@@ -13455,7 +14028,7 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "brand_name_ar",
-                "default_en" => "Brand Name (arabic)",
+                "default_en" => "Name (arabic)",
                 "default_ar" => "الاسم (عربي)",
                 "new_ar" => "",
                 "new_en" => "",
@@ -13465,7 +14038,7 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "brand_name_en",
-                "default_en" => "Brand Name (english)",
+                "default_en" => "Name (english)",
                 "default_ar" => "الاسم (انجليزي)",
                 "new_ar" => "",
                 "new_en" => "",
@@ -16504,6 +17077,1574 @@ class TranslationSeeder extends Seeder
             ]
 
         ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_specialties_create_form",
+                "default_en" => "Add New Specialty",
+                "default_ar" => "اضف تخصص جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Specialties"
+            ],
+            [
+                "key" => "hms_specialties_edit_form",
+                "default_en" => "Edit Specialty form",
+                "default_ar" => "تعديل التخصص",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Specialties"
+
+            ],
+            [
+                "key" => "hms_specialties_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Specialties"
+
+            ],
+            [
+                "key" => "hms_specialties_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Specialties"
+
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_insurance_companies_create_form",
+                "default_en" => "Add New Insurance Company",
+                "default_ar" => "اضف شركة تأمين جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Insurance Companies"
+            ],
+            [
+                "key" => "hms_insurance_companies_edit_form",
+                "default_en" => "Edit Specialty form",
+                "default_ar" => "تعديل التخصص",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Insurance Companies"
+
+            ],
+            [
+                "key" => "hms_insurance_companies_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Insurance Companies"
+
+            ],
+            [
+                "key" => "hms_insurance_companies_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Insurance Companies"
+
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_diagnosis_tests_create_form",
+                "default_en" => "Add New Diagnosis Test",
+                "default_ar" => "اضف اختبار تشخيص جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "DiagnosisTests"
+            ],
+            [
+                "key" => "hms_diagnosis_tests_edit_form",
+                "default_en" => "Edit Diagnosis Test",
+                "default_ar" => "تعديل اختبار التشخيص",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "DiagnosisTests"
+
+            ],
+            [
+                "key" => "hms_diagnosis_tests_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "DiagnosisTests"
+
+            ],
+            [
+                "key" => "hms_diagnosis_tests_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "DiagnosisTests"
+
+            ],
+            [
+                "key" => "hms_diagnosis_tests_comment",
+                "default_en" => " Comment ",
+                "default_ar" => "تعليق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "DiagnosisTests"
+
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_drugs_create_form",
+                "default_en" => "Add New Drug",
+                "default_ar" => "اضف عنصر جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+            ],
+            [
+                "key" => "hms_drugs_edit_form",
+                "default_en" => "Edit Drug form",
+                "default_ar" => "تعديل العنصر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+
+            ],
+            [
+                "key" => "hms_drugs_trade_name_ar",
+                "default_en" => "Trade Name (arabic)",
+                "default_ar" => "الاسم التجاري (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+
+            ],
+            [
+                "key" => "hms_drugs_trade_name_en",
+                "default_en" => "Trade Name (english)",
+                "default_ar" => "الاسم التجاري (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+
+            ],
+            [
+                "key" => "hms_drugs_generic_name_ar",
+                "default_en" => "Generic Name (arabic)",
+                "default_ar" => "الاسم العام (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+
+            ],
+            [
+                "key" => "hms_drugs_generic_name_en",
+                "default_en" => "Generic Name (english)",
+                "default_ar" => "الاسم العام (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+
+            ],
+            [
+                "key" => "hms_drugs_sell_price",
+                "default_en" => "Sell Price",
+                "default_ar" => "سعر البيع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+            ],
+            [
+                "key" => "hms_drugs_note",
+                "default_en" => " Note ",
+                "default_ar" => "ملاحظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Drugs"
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_rooms_categories_create_form",
+                "default_en" => "Add New Room Category",
+                "default_ar" => "اضف قسم غرف جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+            ],
+            [
+                "key" => "hms_rooms_categories_edit_form",
+                "default_en" => "Edit Room Category form",
+                "default_ar" => "تعديل القسم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+
+            ],
+            [
+                "key" => "hms_rooms_categories_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+
+            ],
+            [
+                "key" => "hms_rooms_categories_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+
+            ],
+            [
+                "key" => "hms_rooms_categories_is_default",
+                "default_en" => "Is default",
+                "default_ar" => "افتراضي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+            ],
+            [
+                "key" => "hms_rooms_categories_parent",
+                "default_en" => "Parent",
+                "default_ar" => "الاب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_rooms_create_form",
+                "default_en" => "Add New Room",
+                "default_ar" => "اضف غرفة جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+            ],
+            [
+                "key" => "hms_rooms_edit_form",
+                "default_en" => "Edit Room form",
+                "default_ar" => "تعديل الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+
+            ],
+            [
+                "key" => "hms_rooms_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+
+            ],
+            [
+                "key" => "hms_rooms_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+
+            ],
+            [
+                "key" => "hms_rooms_category",
+                "default_en" => "Room Category",
+                "default_ar" => "قسم الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+            ],
+            [
+                "key" => "hms_rooms_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+            ],
+            [
+                "key" => "hms_rooms_note",
+                "default_en" => "Note",
+                "default_ar" => "الملاحظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms"
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_doctors_create_form",
+                "default_en" => "Add New Doctor",
+                "default_ar" => "اضف طبيب جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_edit_form",
+                "default_en" => "Edit Doctors form",
+                "default_ar" => "تعديل الطبيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+
+            ],
+            [
+                "key" => "hms_doctors_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+
+            ],
+            [
+                "key" => "hms_doctors_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+
+            ],
+            [
+                "key" => "hms_doctors_specialty",
+                "default_en" => "Doctor Specialty",
+                "default_ar" => "تخصص الطبيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_room",
+                "default_en" => "Room",
+                "default_ar" => "الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_from",
+                "default_en" => "From",
+                "default_ar" => "من",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_day",
+                "default_en" => "Day",
+                "default_ar" => "اليوم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_to",
+                "default_en" => "To",
+                "default_ar" => "الى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_email",
+                "default_en" => "Email",
+                "default_ar" => "البريد الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_mobile",
+                "default_en" => "Mobile",
+                "default_ar" => "الهاتف المحمول",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_whatsapp",
+                "default_en" => "Whatsapp",
+                "default_ar" => "الواتساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_password",
+                "default_en" => "Password",
+                "default_ar" => "الرقم السري",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_selling_items_commission",
+                "default_en" => "Selling Items Commission",
+                "default_ar" => "عمولة بيع العناصر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_medical_commission",
+                "default_en" => "Medical Commission",
+                "default_ar" => "العمولة الطبية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_transfer_patient_commission",
+                "default_en" => "Transfer Patient Commission",
+                "default_ar" => "عمولة نقل المرضى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_work_times",
+                "default_en" => "Work Times",
+                "default_ar" => "مواعيد العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+            [
+                "key" => "hms_doctors_is_active",
+                "default_en" => "الحالة",
+                "default_ar" => "Status",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
+            ],
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_patients_create_form",
+                "default_en" => "Add New Patient",
+                "default_ar" => "اضف مريض جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_edit_form",
+                "default_en" => "Edit Patient form",
+                "default_ar" => "تعديل المريض",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+
+            ],
+            [
+                "key" => "hms_patients_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+
+            ],
+            [
+                "key" => "hms_patients_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+
+            ],
+            [
+                "key" => "hms_patients_email",
+                "default_en" => "Email",
+                "default_ar" => "البريد الالكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_mobile",
+                "default_en" => "Mobile",
+                "default_ar" => "الهاتف المحمول",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_whatsapp",
+                "default_en" => "Whatsapp",
+                "default_ar" => "الواتساب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_password",
+                "default_en" => "Password",
+                "default_ar" => "الرقم السري",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_is_active",
+                "default_en" => "الحالة",
+                "default_ar" => "Status",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_address",
+                "default_en" => "Address",
+                "default_ar" => "العنوان",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_gender",
+                "default_en" => "Gender",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_blood",
+                "default_en" => "Blood type",
+                "default_ar" => "فصيلة الدم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_date_of_birth",
+                "default_en" => "Date of Birth",
+                "default_ar" => "عيد الميلاد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_patient_weight",
+                "default_en" => "Patient Weight",
+                "default_ar" => "وزن المريض",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_patient_height",
+                "default_en" => "Patient Height",
+                "default_ar" => "طول المريض",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_safe_number",
+                "default_en" => "Safe Number",
+                "default_ar" => "الرقم الامني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_info",
+                "default_en" => "New Medical Information",
+                "default_ar" => "اضف معلومات طبية جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_info_title",
+                "default_en" => "Title in Arabic",
+                "default_ar" => "العنوان باللغة العربية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_info_title_e",
+                "default_en" => "Title in English",
+                "default_ar" => "العنوان باللغة الانجليزية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_info_note",
+                "default_en" => "Note",
+                "default_ar" => "الملاحظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+
+
+            [
+                "key" => "hms_patients_new_medical_file",
+                "default_en" => "New Medical File",
+                "default_ar" => "اضف ملف طبي جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_file_title",
+                "default_en" => "Title in Arabic",
+                "default_ar" => "العنوان باللغة العربية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_file_title_e",
+                "default_en" => "Title in English",
+                "default_ar" => "العنوان باللغة الانجليزية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_file_note",
+                "default_en" => "Note",
+                "default_ar" => "الملاحظة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_new_medical_file_file",
+                "default_en" => "File",
+                "default_ar" => "ملف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+
+
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_prescriptions_create_form",
+                "default_en" => "Add New Prescription",
+                "default_ar" => "إضافة وصفة طبية جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_edit_form",
+                "default_en" => "Edit Prescription form",
+                "default_ar" => "تعديل الوصفة الطبية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+
+            ],
+            [
+                "key" => "hms_prescriptions_doctor",
+                "default_en" => "Doctor",
+                "default_ar" => "الطبيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+
+            ],
+            [
+                "key" => "hms_prescriptions_patient",
+                "default_en" => "Patient",
+                "default_ar" => "المريض",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+
+            ],
+            [
+                "key" => "hms_prescriptions_drug_list",
+                "default_en" => "Drug List",
+                "default_ar" => "الوصفة الطبية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_drugs",
+                "default_en" => "Drugs",
+                "default_ar" => "الادوية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_type",
+                "default_en" => "Type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_dose",
+                "default_en" => "Does",
+                "default_ar" => "الجرعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_duration",
+                "default_en" => "Duration",
+                "default_ar" => "الفترة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_drug_advice",
+                "default_en" => "Drug Advice",
+                "default_ar" => "النصيحة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_diagnosis_test",
+                "default_en" => "Diagnosis Tests",
+                "default_ar" => "اختبارات التشخيص",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_description",
+                "default_en" => "Description",
+                "default_ar" => "الوصف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_strength",
+                "default_en" => "Strength",
+                "default_ar" => "القوة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+            [
+                "key" => "hms_prescriptions_content",
+                "default_en" => "Content",
+                "default_ar" => "المحتوى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Prescriptions"
+            ],
+
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_appointments_create_form",
+                "default_en" => "Add New Appointment",
+                "default_ar" => "إضافة موعد جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_doctor",
+                "default_en" => "Doctor",
+                "default_ar" => "الطبيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_patient",
+                "default_en" => "Patient",
+                "default_ar" => "المريض",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_from_doctor",
+                "default_en" => "From Doctor",
+                "default_ar" => "من الطبيب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_branch",
+                "default_en" => "Branch",
+                "default_ar" => "الفرع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_room",
+                "default_en" => "Room",
+                "default_ar" => "الغرفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_created_at",
+                "default_en" => "Created At",
+                "default_ar" => "انشئت في",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_number_of_prescriptions",
+                "default_en" => "Number of Prescriptions",
+                "default_ar" => "عدد الوصفات الطبية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_times",
+                "default_en" => "Times",
+                "default_ar" => "المواعيد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_date",
+                "default_en" => "Date",
+                "default_ar" => "التاريخ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_number",
+                "default_en" => "Number",
+                "default_ar" => "الرقم",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+        ]);
+
+        Translation::insert([
+            [
+                "key" => "hms_service_types_price",
+                "default_en" => "Price",
+                "default_ar" => "السعر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+            ],
+            [
+                "key" => "hms_service_types_hours",
+                "default_en" => "Hours",
+                "default_ar" => "عدد الساعات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+            ],
+            [
+                "key" => "hms_service_types_minutes",
+                "default_en" => "Minutes",
+                "default_ar" => "عدد الدقايق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+            ],
+        ]);
+
+
+
+
+
+
+
+        Translation::insert([
+            [
+                "key" => "car_body_type_create_form",
+                "default_en" => "Add New Body Type",
+                "default_ar" => "اضف نوع الهيكل جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_body_type_edit_form",
+                "default_en" => "Edit Body Type form",
+                "default_ar" => "تعديل نوع اليكل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_body_type_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_body_type_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+
+        ]);
+
+        //fuel type car
+        Translation::insert([
+            [
+                "key" => "car_fuel_type_create_form",
+                "default_en" => "Add New Fuel Type",
+                "default_ar" => "اضف نوع الوقود جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_fuel_type_edit_form",
+                "default_en" => "Edit Fuel Type form",
+                "default_ar" => "تعديل نوع الوقود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_fuel_type_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_fuel_type_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //sun roofs car
+        Translation::insert([
+            [
+                "key" => "car_sun_roofs_create_form",
+                "default_en" => "Add New Sun Roof",
+                "default_ar" => "اضف فتحه السقف جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_sun_roofs_edit_form",
+                "default_en" => "Edit Sun Roof form",
+                "default_ar" => "تعديل فتحه السقف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_sun_roofs_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_sun_roofs_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //fuel transmission
+        Translation::insert([
+            [
+                "key" => "car_transmission_create_form",
+                "default_en" => "Add New transmission",
+                "default_ar" => "اضف ناقل الحركه جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_transmission_edit_form",
+                "default_en" => "Edit transmission form",
+                "default_ar" => "تعديل ناقل الحركه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_transmission_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_transmission_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //seats material
+        Translation::insert([
+            [
+                "key" => "car_seats_material_create_form",
+                "default_en" => "Add New Seats Material",
+                "default_ar" => "اضف نوع المقعد جديدة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_seats_material_edit_form",
+                "default_en" => "Edit Seats Material form",
+                "default_ar" => "تعديل نوع المقعد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_seats_material_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_seats_material_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //specifications
+        Translation::insert([
+            [
+                "key" => "car_specifications_create_form",
+                "default_en" => "Add New Specifications",
+                "default_ar" => "اضف نوع الصفة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_specifications_edit_form",
+                "default_en" => "Edit Specifications form",
+                "default_ar" => "تعديل الصفه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_specifications_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_specifications_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //Car
+        Translation::insert([
+            [
+                "key" => "car_car_create_form",
+                "default_en" => "Add New Car",
+                "default_ar" => "اضف سياره جديده",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_edit_form",
+                "default_en" => "Edit Car form",
+                "default_ar" => "تعديل سياره",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_plate_number",
+                "default_en" => "Plate Number",
+                "default_ar" => "رقم اللوحة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_brand",
+                "default_en" => "Brand",
+                "default_ar" => "الماركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_model",
+                "default_en" => "Model",
+                "default_ar" => "موديل السيارة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_year_manufacture",
+                "default_en" => "Year Manufacture",
+                "default_ar" => "سنة الصنع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_transmission",
+                "default_en" => "Transmission",
+                "default_ar" => "ناقل الحركة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_sunroof",
+                "default_en" => "Sunroof",
+                "default_ar" => "فتحة السقف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_body_type",
+                "default_en" => "Body Type",
+                "default_ar" => "نوع الهيكل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_cylinders",
+                "default_en" => "Cylinders",
+                "default_ar" => "عدد الاسطوانات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_country",
+                "default_en" => "Country",
+                "default_ar" => "بلد الصنع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_color_exterior",
+                "default_en" => "Color Exterior",
+                "default_ar" => "اللون الخارجى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_fuel_type",
+                "default_en" => "Fuel Type",
+                "default_ar" => "نوع الوقود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_color_interior",
+                "default_en" => "Color Interior",
+                "default_ar" => "اللون الداخلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_color_seats_material",
+                "default_en" => "Seats Material",
+                "default_ar" => "نوع المقاعد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_passengers",
+                "default_en" => "Passengers",
+                "default_ar" => "عدد المقاعد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_financial_value",
+                "default_en" => "Financial Value",
+                "default_ar" => "القيمة المالية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_current_odometer",
+                "default_en" => "Current Odometer",
+                "default_ar" => "عداد المسافات الحالي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_specifications",
+                "default_en" => "Specifications",
+                "default_ar" => "المواصفات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_depreciation_percentage",
+                "default_en" => "Depreciation Percentage",
+                "default_ar" => "نسبة الاهلاك",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_barcode",
+                "default_en" => "Barcode",
+                "default_ar" => "الباركود",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_jpscode",
+                "default_en" => "Jpscode",
+                "default_ar" => "Jpscode",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_chassis_number",
+                "default_en" => "Chassis Number",
+                "default_ar" => "رقم الشاسيه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+        ]);
+
+        //Car Model
+        Translation::insert([
+            [
+                "key" => "car_model_create_form",
+                "default_en" => "Add New Model",
+                "default_ar" => "اضف نوع مودل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_model_edit_form",
+                "default_en" => "Edit Model form",
+                "default_ar" => "تعديل المودل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+        ]);
+
+
 
     }
 }

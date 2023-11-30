@@ -1,4 +1,5 @@
 <script>
+import page_title from "../../../helper/PageTitle"
 import DatePicker from "vue2-datepicker";
 import Status from "../../../components/create/general/status.vue";
 import Sponsor from "../../../components/create/club/sponsor.vue";
@@ -61,6 +62,7 @@ export default {
   data() {
     return {
       transactions: [],
+      page_title: {},
       fields: [],
       per_page: 50,
       search: "",
@@ -217,7 +219,20 @@ export default {
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.page_title = page_title.value
     this.getData();
+  },
+  watch:{
+    pageTitle: {
+      handler(newV, old) {
+        this.page_title = page_title.value;
+      },
+    },
+  },
+  computed: {
+    pageTitle: function () {
+      return page_title.value;
+    },
   },
   methods: {
     resetModalTransation(id){
@@ -653,7 +668,7 @@ export default {
           <div class="card-body">
             <!-- start search -->
             <div class="row justify-content-between align-items-center mb-2">
-              <h4 class="header-title">{{ $t("general.membersTable") }}</h4>
+              <h4 class="header-title">{{ page_title && page_title.url == $route.fullPath ? ($i18n.locale == 'ar' ? page_title.title :page_title.title_e ): $t("general.membersTable")}}</h4>
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->

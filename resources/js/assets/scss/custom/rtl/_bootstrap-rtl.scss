@@ -1,4 +1,4 @@
-// 
+//
 // bootstrap-rtl.scss
 //
 
@@ -15,7 +15,6 @@
 .dropdown-menu {
     text-align: right;
     left: auto !important;
-    right: 0;
     bottom: auto;
 
     &.dropdown-megamenu {
@@ -109,7 +108,7 @@ ul {
     }
 }
 
-// Custom Checkbox-Radio 
+// Custom Checkbox-Radio
 
 .custom-control {
     padding-right: $custom-control-gutter + $custom-control-indicator-size;
@@ -165,7 +164,7 @@ ul {
     margin-right: 0;
 }
 
-// 
+//
 // accordions.scss
 //
 

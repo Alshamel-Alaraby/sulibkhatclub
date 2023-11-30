@@ -21,26 +21,48 @@ class Brand extends Model
 
     public function scopeData($query)
     {
-        return $query->select('id', 'name', 'name_e');
+        return $query->select(
+            'id',
+            'name',
+            'name_e',
+
+        )->with('products', 'carModels','carCars');
     }
     public function products()
     {
         return $this->hasMany(Product::class, 'brand_id');
     }
 
+    public function carModels()
+    {
+        return $this->hasMany(\Modules\CarRent\Entities\CarModel::class, 'brand_id');
+    }
+    public function carCars()
+    {
+        return $this->hasMany(\Modules\CarRent\Entities\CarCar::class, 'brand_id');
+    }
+
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
+
+    //     if ($this->products()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'products',
+    //             'count' => $this->products()->count(),
+    //             'ids' => $this->products()->pluck('id')->toArray(),
+    //         ];
+    //     }
+
+    //     return $relationsWithChildren;
+    // }
+
+
     public function hasChildren()
     {
-        $relationsWithChildren = [];
 
-        if ($this->products()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'products',
-                'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray(),
-            ];
-        }
+        return $this->products()->count() > 0 || $this->carModels()->count() > 0 || $this->carCars()->count() > 0;
 
-        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

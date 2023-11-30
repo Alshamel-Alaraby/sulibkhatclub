@@ -238,7 +238,7 @@ export default {
     getCustomTableFields() {
       this.isCustom = true;
       adminApi
-        .get(`/customTable/table-columns/general_accounts`)
+        .get(`/customTable/table-columns/gl_chart`)
         .then((res) => {
           this.fields = res.data;
         })

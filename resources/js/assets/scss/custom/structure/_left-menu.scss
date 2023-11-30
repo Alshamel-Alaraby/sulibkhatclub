@@ -140,11 +140,11 @@
             }
 
             ul {
-                padding-left: 34px;
+                padding-left: 20px;
                 list-style: none;
 
                 ul {
-                    padding-left: 20px;
+                    padding-left: 10px;
                 }
             }
         }
@@ -179,7 +179,7 @@
 .nav-second-level {
     li {
         a {
-            padding: 8px 20px;
+            padding: 8px 0px;
             color: $menu-item;
             display: block;
             position: relative;
@@ -289,7 +289,7 @@ body[data-sidebar-size="condensed"] {
                     white-space: nowrap;
 
                     >a {
-                        padding: 15px 20px;
+                        padding: 15px 10px;
                         min-height: 54px;
                         transition: none;
 

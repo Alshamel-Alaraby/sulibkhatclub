@@ -237,22 +237,32 @@ export default {
         getVoucherHeaders(items){
             let sumItem = 0;
 
-            if(items.length > 0){
-                sumItem = items.reduce((n, {amount}) => n + amount, 0);
-                return sumItem;
+            if(items){
+                items.customer.voucher_headers.forEach(e => {
+                    if (e.module_type_id == items.document_header_details[0].unit_id)
+                    {
+                        sumItem = parseFloat(sumItem) + parseFloat(e.amount)
+                    }
+                });
+                return parseFloat(sumItem).toFixed(3);
             }
-            return sumItem;
+            return parseFloat(sumItem).toFixed(3);
         },
         getVoucherHeadersTotal(items){
-            let sumItem = 0,didi= 0;
+            let sumItem = 0;
 
             items.forEach(el => {
                 if(el.customer){
-                    el.customer.voucher_headers.forEach(e => sumItem += e.amount);
+                    el.customer.voucher_headers.forEach(e => {
+                        if (e.module_type_id == el.document_header_details[0].unit_id)
+                        {
+                            sumItem = parseFloat(sumItem) + parseFloat(e.amount)
+                        }
+                    });
                 }
             });
 
-            this.total = sumItem ?? '0';
+            this.total = parseFloat(sumItem).toFixed(3) ?? '0';
         }
     },
 };
@@ -632,7 +642,7 @@ export default {
                                         <td>
                                             {{
                                                 data.customer ?
-                                                    getVoucherHeaders(data.customer.voucher_headers)
+                                                    getVoucherHeaders(data)
                                                     : '0'
                                             }}
                                         </td>

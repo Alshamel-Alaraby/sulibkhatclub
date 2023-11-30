@@ -26,7 +26,7 @@ class DocumentRequest extends FormRequest
         return [
             'name' => 'nullable',
             'name_e' => 'nullable',
-            'document_detail_type' => "nullable|in:normal,rent_unit,sell_unit,board_rent,document_money,booking",
+            'document_detail_type' => "nullable|in:normal,rent_unit,sell_unit,board_rent,document_money,booking,real_estate",
             'is_default' => "nullable|in:1,0",
             'attributes' => "nullable|array",
             'branche_id' => "nullable",

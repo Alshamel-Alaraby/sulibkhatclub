@@ -141,11 +141,11 @@
                                     v-model="create.parent_id"
                                     :options="parent.map((type) => type.id)"
                                     :custom-label="
-                (opt) => parent.find((x) => x.id == opt)?
-                  $i18n.locale == 'ar'
-                    ? parent.find((x) => x.id == opt).name
-                    : parent.find((x) => x.id == opt).name_e: null
-              "
+                                        (opt) => parent.find((x) => x.id == opt)?
+                                        $i18n.locale == 'ar'
+                                            ? parent.find((x) => x.id == opt).name
+                                            : parent.find((x) => x.id == opt).name_e: null
+                                    "
                                     :class="{ 'is-invalid': errors.parent_id }"
                                 >
                                 </multiselect>
@@ -911,7 +911,7 @@ export default {
           adminApi
               .put(`/branches/${this.branch_id}`, { old_media })
               .then((res) => {
-                  if(this.tables.length > 0){
+                  if(this.isPage){
                       let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
                       this.tables[index] = res.data.data;
                   }

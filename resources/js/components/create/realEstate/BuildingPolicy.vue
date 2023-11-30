@@ -586,7 +586,6 @@ export default {
       showAmountInput: false,
       showPercentInput: false,
       showPercentAmountInput: false,
-
       showCompanyPaysInput: false,
       showOwnerPaysInput: false,
       policies: [],
@@ -838,7 +837,6 @@ export default {
               this.isLoader = false;
             });
         } else {
-          console.log("this for edit", this.idObjEdit.idEdit);
           adminApi
             .put(`${this.url}/${this.idObjEdit.idEdit}`, {
               "building-policy": buildingPolicyData,

@@ -15,7 +15,7 @@ trait LogTrait
     {
         $activity->causer_id = @auth()->user()->id ?: 0;
         $activity->causer_type = @auth()->user()->role ?: "admin";
-        
+
     }
 
     public function getActivitylogOptions(): LogOptions

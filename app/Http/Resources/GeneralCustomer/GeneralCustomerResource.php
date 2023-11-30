@@ -53,6 +53,8 @@ class GeneralCustomerResource extends JsonResource
             'tax_record' => $this->tax_record,
             'passport_expiry_date' => $this->passport_expiry_date,
             'visa_no' => $this->visa_no,
+            'driving_license' => $this->driving_license,
+            'license_exp_date' => $this->license_exp_date,
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
 
             'sector' => $this->sector,

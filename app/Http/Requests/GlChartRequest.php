@@ -24,10 +24,10 @@ class GlChartRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:64|unique:general_accounts,name,' . ($this->method() == 'PUT' ?  $this->id : '') ,
-            'name_e' => 'required|string|max:64|unique:general_accounts,name_e,' . ($this->method() == 'PUT' ?  $this->id : '') ,
-            'account_number' => 'required|string|max:20|unique:general_accounts,account_number,' . ($this->method() == 'PUT' ?  $this->id : '') ,
-            'parent_id' => 'nullable|exists:general_accounts,id',
+            'name' => 'required|string|max:64|unique:gl_chart,name,' . ($this->method() == 'PUT' ?  $this->id : '') ,
+            'name_e' => 'required|string|max:64|unique:gl_chart,name_e,' . ($this->method() == 'PUT' ?  $this->id : '') ,
+            'account_number' => 'required|string|max:20|unique:gl_chart,account_number,' . ($this->method() == 'PUT' ?  $this->id : '') ,
+            'parent_id' => 'sometimes|exists:gl_chart,id',
         ];
     }
 }

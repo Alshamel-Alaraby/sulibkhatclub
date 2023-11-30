@@ -54,6 +54,4 @@ class BrandRepository implements BrandInterface
         $model->delete();
     }
 
-
-
 }

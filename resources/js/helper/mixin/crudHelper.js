@@ -201,10 +201,10 @@ export default {
             this.type = typeAction;
             this.idEdit = id;
         },
-        dbClickRow(id) {
+        dbClickRow(id,modal_id = 'create') {
             this.type = 'edit';
             this.idEdit = id;
-            this.$bvModal.show(`create`);
+            this.$bvModal.show(modal_id);
         }
     },
 }

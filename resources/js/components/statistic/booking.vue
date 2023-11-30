@@ -1,5 +1,5 @@
 <script>
-import Layout from "../../views/layouts/main";
+// import Layout from "../../views/layouts/main";
 import Swal from "sweetalert2";
 import WidgetChart from "../widgets/Widget-chart";
 import PageHeader from "../general/Page-header";
@@ -19,9 +19,9 @@ import DatePicker from "vue2-datepicker";
  * Sales-Dashboard component
  */
 export default {
-    name: "Statistics Booking",
+    name: "BookingStatistics",
   components: {
-    Layout,
+    // Layout,
     WidgetChart,
     PageHeader,
     RevenueReport,
@@ -253,8 +253,9 @@ export default {
 </script>
 
 <template>
-  <Layout>
-    <PageHeader :title="title" :items="items" />
+  <!-- <Layout> -->
+    <div >
+        <PageHeader :title="title" :items="items" />
       <div class="dashboard-fluid">
           <div class="row">
               <div class="col-xl-6">
@@ -388,7 +389,9 @@ export default {
 
 
       </div>
-  </Layout>
+    </div>
+
+  <!-- </Layout> -->
 </template>
 
 <style scoped>

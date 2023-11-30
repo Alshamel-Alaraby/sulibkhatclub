@@ -52,20 +52,20 @@
 
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">{{$t('general.InvoiceNO')}}:</span> {{dataPrint.prefix}}</div>
+                                    <div class="my-2 font-weight-bold"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">{{$t('general.InvoiceNO')}}:</span> {{dataPrint.prefix}}</div>
 
-                                    <div class="my-2">
+                                    <div class="my-2 font-weight-bold">
                                         <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                         <span class="text-600 text-90">{{$t('general.CompanyName')}}:</span>
                                         {{dataPrint.customer_type == 0? dataPrint.company ? $i18n.locale == "ar" ? dataPrint.company.name : dataPrint.company.name_e : '' :''}}
                                     </div>
 
-                                    <div class="my-2">
+                                    <div class="my-2 font-weight-bold">
                                         <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                         <span class="text-600 text-90">{{$t('general.GuestName')}}:</span>
                                         {{ dataPrint.customer ? $i18n.locale == "ar" ? dataPrint.customer.name : dataPrint.customer.name_e : ''}}
                                     </div>
-                                    <div class="my-2">
+                                    <div class="my-2 font-weight-bold">
                                         <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                         <span class="text-600 text-90">{{$t('general.Address')}}:</span>
                                         {{dataPrint.customer ? dataPrint.customer.address : ''}}
@@ -76,29 +76,29 @@
                                 <div class="text-95 col-sm-6 align-self-start d-sm-flex justify-content-end">
                                     <hr class="d-sm-none" />
                                     <div class="text-grey-m2">
-                                        <div class="my-2">
+                                        <div class="my-2 font-weight-bold">
                                             <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                             <span class="text-600 text-90">{{$t('general.LevelBooking')}}:</span>
                                             {{level ? $i18n.locale == "ar" ? level.name : level.name_e : ''}}
                                         </div>
 
-                                        <div class="my-2">
+                                        <div class="my-2 font-weight-bold">
                                             <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                             <span class="text-600 text-90">{{$t('general.NoOfPersons')}}:</span>
                                             {{dataPrint.attendans_num}}
                                         </div>
 
-                                        <div class="my-2">
+                                        <div class="my-2 font-weight-bold">
                                             <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                             <span class="text-600 text-90">{{$t('general.Arival')}}:</span>
                                             {{dataPrint.document_number ? dataPrint.document_number.date : ''}}
                                         </div>
-                                        <div class="my-2">
+                                        <div class="my-2 font-weight-bold">
                                             <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                             <span class="text-600 text-90">{{$t('general.Departure')}}:</span>
                                             {{dataPrint.date}}
                                         </div>
-                                        <div class="my-2">
+                                        <div class="my-2 font-weight-bold">
                                             <i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
                                             <span class="text-600 text-90">{{$t('general.TotalNights')}}:</span>
                                             {{total_nights}}
@@ -120,12 +120,12 @@
 
                                 <div class="text-95 text-secondary-d3">
                                     <div class="row mb-2 mb-sm-0 py-25" v-for="(data, index) in details">
-                                        <div class="d-none d-sm-block col-2">{{data.date}}</div>
-                                        <div class="d-none d-sm-block col-1">{{data.time}}</div>
-                                        <div class="col-8 col-sm-3">{{data.description}}</div>
-                                        <div class="d-none d-sm-block col-2 text-95">{{data.receipt}}</div>
-                                        <div class="d-none d-sm-block col-2 text-95">{{data.charges}} KD</div>
-                                        <div class="col-2 text-secondary-d2">{{data.payments}} KD</div>
+                                        <div class="d-none d-sm-block col-2"><h5>{{data.date}}</h5></div>
+                                        <div class="d-none d-sm-block col-1"><h5>{{data.time}}</h5></div>
+                                        <div class="col-8 col-sm-3"><h5>{{data.description}}</h5></div>
+                                        <div class="d-none d-sm-block col-2 text-95"><h5>{{data.receipt}}</h5></div>
+                                        <div class="d-none d-sm-block col-2 text-95"><h5>{{data.charges}} KD</h5></div>
+                                        <div class="col-2 text-secondary-d2"><h5>{{data.payments}} KD</h5></div>
                                     </div>
                                 </div>
 
@@ -133,43 +133,61 @@
 
                                 <div class="row mt-3">
                                     <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+                                        <h5>
                                         {{$t('general.Extra_note')}}
+                                        </h5>
                                     </div>
 
                                     <div class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
+                                                <h5>
                                                 {{$t('general.Total')}}
+                                                </h5>
                                             </div>
                                             <div class="col-5">
+                                                <h5>
                                                 <span class="text-150 text-success-d3 opacity-2">{{total}} KD</span>
+                                                </h5>
                                             </div>
                                         </div>
 
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
+                                                <h5>
                                                 {{$t('general.paid')}}
+                                                </h5>
                                             </div>
                                             <div class="col-5">
+                                                <h5>
                                                 <span class="text-150 text-success-d3 opacity-2">{{paid}} KD</span>
+                                                </h5>
                                             </div>
                                         </div>
 
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
+                                                <h5>
                                                 {{$t('general.discount')}}
+                                                </h5>
                                             </div>
                                             <div class="col-5">
+                                                <h5>
                                                 <span class="text-150 text-success-d3 opacity-2">{{dataPrint.invoice_discount}} KD</span>
+                                                </h5>
                                             </div>
                                         </div>
 
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
+                                                <h5>
                                                 {{$t('general.remaining')}}
+                                                </h5>
                                             </div>
                                             <div class="col-5">
+                                                <h5>
                                                 <span class="text-150 text-success-d3 opacity-2">{{parseFloat(total - paid - dataPrint.invoice_discount).toFixed(3)}} KD</span>
+                                                </h5>
                                             </div>
                                         </div>
                                     </div>
@@ -179,13 +197,19 @@
 
                                 <div class="row">
                                     <div class="col-4 mb-5 text-center">
+                                        <h4>
                                         <span class="text-secondary-d1 text-105">{{$t('general.GuestSignature')}}</span>
+                                        </h4>
                                     </div>
                                     <div class="col-4 mb-5 text-center">
+                                        <h4>
                                         <span class="text-secondary-d1 text-105">{{$t('general.ReceptionistSignature')}}</span>
+                                        </h4>
                                     </div>
                                     <div class="col-4 mb-5 text-center">
+                                        <h4>
                                         <span class="text-secondary-d1 text-105">{{$t('general.ManagerSignature')}}</span>
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
@@ -328,6 +352,12 @@ export default {
 </script>
 
 <style scoped>
+@media print {
+    .bgc-default-tp1{
+        background-color: unset !important;
+        color: #000 !important;
+    }
+}
 .text-secondary-d1 {
     color: #728299!important;
 }

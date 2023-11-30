@@ -57,6 +57,18 @@ class VoucherHeaderRepository implements VoucherHeaderInterface
     {
         $data = $this->model->find($id);
         $data->update($request);
+        if($data->breakSettlements){
+             foreach ($data->breakSettlements as $breakSettlement):
+                $breakSettlement->delete();
+            endforeach;
+        }
+        if (isset($request['break_settlement'])){
+            foreach ($request['break_settlement'] as $settlement):
+                BreakSettlement::create(array_merge($settlement,[
+                    "voucher_header_id" =>$data->id
+                ]));
+            endforeach;
+        }
         return $data;
     }
 

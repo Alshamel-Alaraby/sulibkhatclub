@@ -97,9 +97,9 @@ export default {
       this.$store.commit("auth/editPermission", permissions);
       this.$store.commit("auth/editWorkFlowTrees", ["home", ...workflowTree]);
     },
-    async getDefaultKeys() {
+     getDefaultKeys() {
       this.isLoader = true;
-      await adminApi
+       adminApi
         .post(`/translation-update`, {
           company_id: 0,
           translations: {},
@@ -127,9 +127,9 @@ export default {
           this.isLoader = false;
         });
     },
-    async getCompanyKeys() {
+     getCompanyKeys() {
       this.isLoader = true;
-      await adminApi
+       adminApi
         .post(`/translation-update`, {
           company_id: this.company_id,
           translations: {},

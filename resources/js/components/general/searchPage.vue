@@ -1,7 +1,7 @@
 <template>
     <div class="row justify-content-between align-items-center mb-2">
         <h4 class="header-title">
-            {{ $t(`${page}`) }}
+            {{ title ?? $t(`${page}`) }}
         </h4>
         <div v-if="isSearch" class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
             <div class="d-inline-block" style="width: 22.2%">
@@ -56,7 +56,7 @@ import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 
 export default {
     name: "searchPage",
-    props: ['page','filterSetting','isVisible','companyKeys','defaultsKeys','isSearch'],
+    props: ['page','filterSetting','isVisible','companyKeys','defaultsKeys','isSearch','title'],
     mixins: [transMixinComp],
     data(){
         return {

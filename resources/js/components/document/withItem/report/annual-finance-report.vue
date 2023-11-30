@@ -10,6 +10,7 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import translation from "../../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
+import page_title from "../../../../helper/PageTitle"
 
 /**
  * Advanced Table component
@@ -29,8 +30,21 @@ export default {
         DatePicker,
         Multiselect,
     },
+    watch:{
+        pageTitle: {
+        handler(newV, old) {
+            this.page_title = page_title.value;
+        },
+        },
+    },
+    computed: {
+        pageTitle: function () {
+        return page_title.value;
+        },
+    },
     data() {
         return {
+            page_title: {},
             per_page: 50,
             search: '',
             debounce: {},
@@ -467,7 +481,7 @@ export default {
 
                         <!-- start search -->
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title"> {{ $t('general.AnnualFinanceReportTable') }}</h4>
+                            <h4 class="header-title"> {{ page_title && page_title.url == $route.fullPath ? ($i18n.locale == 'ar' ? page_title.title :page_title.title_e ):  $t('general.AnnualFinanceReportTable') }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
 
                                 <div class="d-inline-block" style="width: 22.2%;">

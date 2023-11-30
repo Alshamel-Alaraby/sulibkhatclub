@@ -189,4 +189,77 @@ export default [
         },
         component: () => import('../../views/pages/realEstate/buildingPolicy.vue'),
     },
+    {
+        path: '/dashboard/realEstate/tenant',
+        name: 'tenant',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/tenants.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/guards',
+        name: 'guards',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/guards.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/buildingCategories',
+        name: 'buildingCategories',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/buildingCategories.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/services',
+        name: 'services',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/services.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/unitServices',
+        name: 'unitServices',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/unitServices.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/evacuationType',
+        name: 'evacuationType',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/evacuationType.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/expensesItems',
+        name: 'expensesItems',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/expensesItems.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/revenueItems',
+        name: 'revenueItems',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/revenueItems.vue'),
+    },
+    {
+        path: '/dashboard/realEstate/YearlyMaintenanceContract',
+        name: 'Yearly Maintenance Contract',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/yearlyMaintenanceContract'),
+    },
+
 ];

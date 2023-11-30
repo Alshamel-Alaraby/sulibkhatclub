@@ -83,7 +83,8 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     public function customerRoom($request)
     {
-     return   $models = $this->model->with('customer')->whereIn('document_id',[33,41,42])->whereHas('documentHeaderDetails',function ($q) use ($request){
+     return   $models = $this->model->with('customer')->where('document_id',33)->where('complete_status','UnDelivered')
+         ->whereHas('documentHeaderDetails',function ($q) use ($request){
             $q->where('unit_id',$request->unit_id)
                 ->where(function ($q) use ($request ) {
                     $q->where(function ($qu) use ($request) {
@@ -419,9 +420,15 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     public function delete($id){
 
         $model = $this->model->find($id);
+        $checkIn =  $this->model->where('document_id',33)->find($model->related_document_number);
+        if ($checkIn){
+            $checkIn->update([
+                "complete_status" => 'UnDelivered',
+            ]);
+        }
         if ($model->documentHeaderDetails){
             foreach ($model->documentHeaderDetails as $Details){
-                $prefix_related = $this->model->where('prefix',$Details['prefix_related'])->first();
+                  $prefix_related = $this->model->where('prefix',$Details['prefix_related'])->first();
                 if ($prefix_related){
                     $prefix_related->update([
                         "complete_status" => 'UnDelivered',
@@ -440,6 +447,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
             VoucherHeader::where('break_settlement_id',$model->break_settlement_id)->update(['break_settlement_id' => null]);
             BreakSettlement::where('id',$model->break_settlement_id)->delete();
         }
+
         $model->delete();
     }
 
@@ -561,7 +569,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                     $count_date = $start->diffInDays($end) ;
 
 
-                    $min_date = DocumentHeaderDetail::where('unit_id',$detail->unit_id)->whereHas('documentHeader',function ($q) use ($detail) {
+                     $min_date = DocumentHeaderDetail::where('unit_id',$detail->unit_id)->whereHas('documentHeader',function ($q) use ($detail) {
                         $q->where('related_document_number',$detail->document_header_id);
                     })->min('date_from');
 
@@ -586,11 +594,11 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                                     if (Carbon::parse($detail->date_from)->format('Y-m-d') == now()->format('Y-m-d')){
 
                                         $data[0] =  Carbon::parse($detail->date_from)->format('Y-m-d') ;
-                                        $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
+                                           $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
                                         break ;
 
                                     }
-                                    $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
+                                       $this->createDailyInvoiceDocumentHeaderDetail($model,$detail,$checkDate = null,0);
                                     $data[0] =  Carbon::parse($detail->date_from)->format('Y-m-d') ;
 
 
@@ -678,7 +686,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     public function checkInCustomer()
     {
-         $models = $this->model->where('document_id','33')->whereDoesntHave('documentNumber')->whereHas('documentHeaderDetails',function ($q){
+         $models = $this->model->where('document_id','33')->where('complete_status','UnDelivered')->whereHas('documentHeaderDetails',function ($q){
             $q->whereDate('date_to','<=',now()->format('Y-m-d'));
         })->with(['customer','documentHeaderDetails'=>function($q){
             $q->with('unit');
@@ -954,8 +962,8 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         $data['checkin'] = $header ? $this->modelDetail->where('document_header_id',$header['documentHeader']['related_document_number'])
             ->select('id','rent_days','discount','document_header_id')->with(['documentHeader:id,invoice_discount'])->first() : null;
 
-        $data['voucher'] = VoucherHeader::with(['document:id,name,name_e,attributes'])
-            ->where('customer_id',$id)->whereIn('module_type_id',explode(",", $request->units))->get();
+        $data['voucher'] = VoucherHeader::with(['document:id,name,name_e,attributes','paymentMethod:id,name,name_e'])
+            ->where('customer_id',$id)->whereIn('module_type_id',explode(",", $request->units))->whereNull('break_settlement_id')->get();
 
 
         return $data;
@@ -967,7 +975,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         $model =  $this->model->
         with('documentHeaderDetails')->
         where('document_id',33)->
-        whereNull('related_document_id')->
+        where('complete_status','UnDelivered')->
         where('customer_id',$request->customer_id)->
         whereRelation('documentHeaderDetails','unit_id',$request->unit_id)->
         first();
@@ -1001,6 +1009,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         $detail = $model->documentHeaderDetails()->first();
 
         $item_discount = $detail['discount']  /  $detail['rent_days'];
+
         if ($model['invoice_discount'] > 0 && $detail['discount'] == 0)
         {
             $sum_discount = $model['invoice_discount'];

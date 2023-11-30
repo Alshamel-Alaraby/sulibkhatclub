@@ -90,6 +90,8 @@ class GeneralCustomerRequest extends FormRequest
             'tax_record' => 'nullable|string|max:20',
             'passport_expiry_date' => 'nullable|date',
             'visa_no' => 'nullable|string|max:20',
+            'driving_license' => 'nullable|string|max:50|unique:general_customers,driving_license'. ($this->method() == 'PUT' ? ',' . $this->id : ''),
+            'license_exp_date' => 'nullable|date',
 
         ];
 

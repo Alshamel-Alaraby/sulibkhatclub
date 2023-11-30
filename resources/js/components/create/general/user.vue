@@ -460,8 +460,10 @@ export default {
       adminApi
         .put(`/users/${this.user_id}`, { old_media })
         .then((res) => {
-            let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
-            this.tables[index] = res.data.data;
+            if(this.isPage){
+                let index = this.tables.findIndex(el => el.id == this.idObjEdit.idEdit);
+                this.tables[index] = res.data.data;
+            }
           this.images = res.data.data.media ? res.data.data.media : [];
           if (this.images && this.images.length > 0) {
             this.showPhoto = this.images[this.images.length - 1].webp;

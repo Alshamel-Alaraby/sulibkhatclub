@@ -29,6 +29,9 @@
                         </div>
                     </th>
                 </template>
+                <th v-if="modalButton"  class="do-not-print">
+                    {{ $t('general.' + modalButton) }}
+                </th>
                 <th v-if="enabled3 && isAction"  class="do-not-print">
                     {{ $t("general.Action") }}
                 </th>
@@ -70,6 +73,14 @@
                         {{ data[item.isV] }}
                     </h5>
                 </td>
+
+                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'badge' && item.prop_type == 'array'">
+                    <label class="badge badge-primary text-white mx-1 p-2" style="border-radius:2rem" v-for="(badge,index) in data[item.isV]" :key="index">{{ $t(`general.${index}`) + " : " + badge}}</label>
+                </td>
+                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'badge' && item.prop_type != 'array'">
+                    <label class="badge badge-primary p-2" style="border-radius:2rem">{{ data[item.isV] }}</label>
+                </td>
+
                 <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'relation'">
                     {{
                         data[item.name]
@@ -136,6 +147,15 @@
                     <h5 class="m-0 font-weight-normal">{{ data[item.isV].slice(3) + '-' + data[item.isV].slice(0,2) }}</h5>
                 </td>
             </template>
+            <td v-if="modalButton"  class="do-not-print">
+                <b-button
+                @click.prevent="$emit(modalButton,data.id);$bvModal.show(modalButton);"
+                variant="warning"
+                class="btn-sm mx-1 font-weight-bold"
+            >
+                <i :class="modalButtonIcon"></i>
+            </b-button>
+            </td>
             <td v-if="enabled3 && isAction"  class="do-not-print">
                 <div class="btn-group">
                     <button
@@ -225,7 +245,7 @@ export default {
         }
     },
     props:[
-        'tables','permissionUpdate','permissionDelete','isEdit','isDelete',
+        'tables','permissionUpdate','permissionDelete','isEdit','isDelete','modalButton','modalButtonIcon',
         'isVisible','tableSetting','enabled3','Tooltip','isLog','isAction',
         'isInputCheck','isLogClick'
     ],

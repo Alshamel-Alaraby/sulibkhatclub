@@ -1,10 +1,29 @@
 <?php
 
+use App\Models\File;
 use Illuminate\Support\Facades\Cache;
 
 function uploadImage($id, array $value)
 {
     \Spatie\MediaLibrary\MediaCollections\Models\Media::where('id', $id)->update($value);
+}
+
+function createFile($files, $model)
+{
+    if ($model->getMedia('media')->count())
+        $model->clearMediaCollection('media');
+
+    $files = is_array($files) ? $files : [$files];
+    foreach ($files as $file) {
+        $media = File::create();
+        $ext = $file->getClientOriginalExtension();
+        $media->addMedia($file)->usingFileName(md5(uniqid()) . ".$ext")->toMediaCollection('media');
+        $file_data = $media->files[0];
+        uploadImage($file_data->id, [
+            'model_id' => $model->id,
+            'model_type' => get_class($model),
+        ]);
+    }
 }
 
 /**
@@ -56,7 +75,6 @@ function cachePut($key, $value, $minutes = null)
     } else {
         return Cache::put($key, $value);
     }
-
 }
 
 function cacheGet($key)
@@ -86,7 +104,7 @@ function get_trans()
         $translations = $translations->where('company_id', 0);
     }
     $translations = $translations->get();
-//    return \App\Http\Resources\TranslationResource::collection ($translations);
+    //    return \App\Http\Resources\TranslationResource::collection ($translations);
     $arr = [];
     foreach ($translations as $d) {
         $arr[$d->key] = [
@@ -99,7 +117,6 @@ function get_trans()
         ];
     }
     return $arr;
-
 }
 
 function checkIsDefaultGeneral($default, $model)
@@ -108,16 +125,14 @@ function checkIsDefaultGeneral($default, $model)
         return collect($model->all())->each(function ($item) {
             $item->update(["is_default" => 0]);
         });
-
     }
     return "fales";
-
 }
 
 function excelFilter($filterId, $collection, $columnName, $value1, $value2)
 {
     return $collection->filter(function ($item) use ($filterId, $columnName, $value1, $value2) {
-        switch($filterId){
+        switch ($filterId) {
             case 1: // equals(numeric/text)
                 return $item->$columnName == $value1;
                 break;
@@ -129,7 +144,7 @@ function excelFilter($filterId, $collection, $columnName, $value1, $value2)
                 break;
             case 4: // greater than or equal to(numeric)
                 return $item->$columnName >= $value1;
-                break; 
+                break;
             case 5: // less than(numeric)
                 return $item->$columnName < $value1;
                 break;
@@ -172,7 +187,7 @@ function excelFilter($filterId, $collection, $columnName, $value1, $value2)
                     $filterDate = \Carbon\Carbon::parse($value1);
                     return $date->gt($filterDate);
                 });
-                break;   
+                break;
             case 16: // to(date)
                 return $collection->filter(function ($item) use ($columnName, $value1) {
                     $date = \Carbon\Carbon::parse($item->$columnName);
@@ -188,11 +203,42 @@ function excelFilter($filterId, $collection, $columnName, $value1, $value2)
                     return $date->between($filterDate1, $filterDate2);
                 });
                 break;
-                     
-
         }
-
-        
     });
-    
+}
+function ColumnType($table, $columnName)
+{
+
+    $numericTypes = ['int', 'smallint', 'mediumint', 'bigint', 'decimal', 'float', 'double', 'real', 'bit', 'boolean', 'serial'];
+    $dateTypes = ['date', 'datetime', 'timestamp', 'time', 'year'];
+    $textTypes = ['char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'binary', 'varbinary', 'tinyblob', 'mediumblob', 'blob', 'longblob', 'enum', 'set'];
+
+
+    $dbName = env('DB_DATABASE');
+    $dbUsername = env('DB_USERNAME');
+    $dbPassword = env('DB_PASSWORD');
+
+    $dbh = new PDO('mysql:host=localhost;dbname=' . $dbName, $dbUsername, $dbPassword);
+
+    $sql = "SHOW COLUMNS FROM " . $table . " WHERE Field = '" . $columnName . "'";
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $dataType = $column ? $column['Type'] : null;
+
+    $dataType = preg_replace('/\(.*?\)/', '', $dataType);
+    $dataType = str_replace('unsigned', '', $dataType);
+    $dataType = str_replace(' ', '', $dataType);
+
+    if (in_array($dataType, $numericTypes)) {
+        return 'numeric';
+    } elseif (in_array($dataType, $dateTypes)) {
+        return 'date';
+    } elseif (in_array($dataType, $textTypes)) {
+        return 'text';
+    } else {
+        return 'unknown';
+    }
 }

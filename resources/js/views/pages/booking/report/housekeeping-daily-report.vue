@@ -216,6 +216,10 @@ export default {
                 .get(`/branches?notParent=1`)
                 .then((res) => {
                     this.member_types = res.data.data;
+                    if(res.data.data.length == 1){
+                        this.member_type_id = res.data.data[0].id;
+                        this.getData();
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({

@@ -110,19 +110,32 @@ export default {
           setting: { nationality_id: true },
           isSetting: true,
         },
-        // {
-        //   isFilter: true,
-        //   isSet: true,
-        //   trans: "bank_account",
-        //   isV: "bank_account_id",
-        //   type: "relation",
-        //   name: "bank_account",
-        //   sort: false,
-        //   col1: "name",
-        //   col2: "name_e",
-        //   setting: { bank_account_id: true },
-        //   isSetting: true,
-        // },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "bank_account_number",
+          isV: "bank_account_id",
+          type: "relation",
+          name: "bank_account",
+          sort: false,
+          col1: "account_number",
+          col2: "account_number",
+          setting: { bank_account_id: true },
+          isSetting: true,
+        },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "bank",
+          isV: "bank_id",
+          type: "relation",
+          name: "bank",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { bank_id: true },
+          isSetting: true,
+        },
         {
           isFilter: true,
           isSet: true,
@@ -178,6 +191,7 @@ export default {
         indexG = fields.indexOf("nationality_id"),
         indexCty = fields.indexOf("city_id"),
         indexBankAccount = fields.indexOf("bank_account_id"),
+        indexBank = fields.indexOf("bank_id"),
         filter = "";
       if (indexC > -1) {
         fields[indexC] =
@@ -194,8 +208,12 @@ export default {
       if (indexBankAccount > -1) {
         fields[indexBankAccount] =
           this.$i18n.locale == "ar"
-            ? "bank_account.name"
-            : "bank_account.name_e";
+            ? "bank_account.account_number"
+            : "bank_account.account_number";
+      }
+      if (indexBank > -1) {
+        fields[indexBank] =
+          this.$i18n.locale == "ar" ? "bank.name" : "bank.name_e";
       }
 
       for (let i = 0; i < fields.length; ++i) {

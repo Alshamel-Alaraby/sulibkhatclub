@@ -24,6 +24,23 @@ class Color extends Model
         'is_active' => '\App\Enums\IsActive',
     ];
 
+
+
+    public function colorExterior()
+    {
+        return $this->hasMany(CarCar::class, 'color_exterior_id');
+    }
+    public function colorInterior()
+    {
+        return $this->hasMany(CarCar::class, 'color_interior_id');
+    }
+    public function hasChildren()
+    {
+        return  $this->colorExterior()->count() > 0 || $this->colorInterior()->count() > 0;
+
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

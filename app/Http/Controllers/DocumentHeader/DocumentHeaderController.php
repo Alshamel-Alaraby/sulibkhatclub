@@ -60,6 +60,7 @@ class DocumentHeaderController extends Controller
             "prefix" => $serials['prefix'],
         ]);
         foreach ($model->documentHeaderDetails as $detail){
+
             foreach ($detail->itemBreakDowns as $break){
                 $break->update([
                     "serial_number" => $serials['prefix'],

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Supplier\SupplierRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\Supplier\SupplierResource;
+use App\Models\Supplier;
 use App\Repositories\Supplier\SupplierRepository;
 use App\Traits\BulkDeleteTrait;
 use App\Traits\CanDeleteTrait;
@@ -19,15 +20,26 @@ class SupplierController extends Controller
     protected $repository;
     protected $resource = SupplierResource::class;
 
-    public function __construct(SupplierRepository $repository)
+    public function __construct(SupplierRepository $repository,private Supplier $model)
     {
         $this->repository = $repository;
+        $this->model = $model;
     }
 
     public function index(Request $request)
     {
 
-        $models = $this->repository->all($request);
+        // $models = $this->repository->all($request);
+
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } elseif ($request->limit){
+            return ['data' => $models->take($request->limit)->get(), 'paginate' => false];
+        }else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
 
         return responseJson(200, 'success', ($this->resource)::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }

@@ -6,6 +6,7 @@ use App\Traits\LogTrait;
 use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\BoardsRent\Entities\CustomerSource;
 use Modules\PointOfSale\Entities\Order;
 use Modules\RecievablePayable\Entities\RpOpeningBalance;
 use Spatie\MediaLibrary\HasMedia;
@@ -21,17 +22,20 @@ class Supplier extends Model implements HasMedia
     {
         return $query
             ->select(
-                'id','name','name','phone','email','country_id','city_id','rp_code','nationality','bank_account_id',
-                'contact_person','contact_phone','national_id','whatsapp','passport_no','note','code_country','facebook',
-                'instagram','linkedin','snapchat','twitter','website','salesman_id','employee_id','customer_source_id',
-                'customer_group_id','is_supplier','sector_id','type','address','id_number','tax_record','passport_expiry_date',
-                'visa_no'
+                'id', 'name', 'name_e', 'phone', 'email', 'country_id', 'city_id', 'rp_code', 'nationality', 'bank_account_id',
+                'contact_person', 'contact_phone', 'national_id', 'whatsapp', 'passport_no',
+                'note', 'code_country', 'facebook', 'instagram', 'linkedin', 'snapchat', 'twitter', 'website', 'employee_id',
+                'salesman_id', 'customer_group_id', 'customer_id', 'sector_id', 'customer_source_id',
+                'customer_main_category_id','customer_sub_category_id',
+
+                // 'is_supplier','type','address','id_number','tax_record','passport_expiry_date',
+                // 'visa_no'
             )
             ->with([
-                'sector:id,name,name_e','customer_source:id,name,name_e','salesmen:id,name,name_e',
-                'employee:id,name,name_e','country:id,name,name_e','city:id,name,name_e',
-                'bankAccount:id,account_number','customerGroup:id,name,name_e',
-                'customer_main_category:id,name,name_e','customer_sub_category:id,name,name_e',
+                'sector:id,name,name_e', 'customer_source:id,name,name_e', 'salesmen:id,name,name_e',
+                'employee:id,name,name_e', 'country:id,name,name_e', 'city:id,name,name_e',
+                'bankAccount:id,account_number', 'customerGroup:id,title,title_e',
+                'customer_main_category:id,name,name_e', 'customer_sub_category:id,name,name_e',
             ]);
     }
 
@@ -48,6 +52,10 @@ class Supplier extends Model implements HasMedia
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+    public function customer_source()
+    {
+        return $this->belongsTo(GeneralCustomerSource::class);
     }
 
     public function bankAccount()
@@ -83,12 +91,12 @@ class Supplier extends Model implements HasMedia
 
     public function customerGroup()
     {
-        return $this->belongsTo(CustomerGroup::class,'customer_group_id');
+        return $this->belongsTo(CustomerGroup::class, 'customer_group_id');
     }
 
     public function customer()
     {
-        return $this->belongsTo(GeneralCustomer::class,'customer_id');
+        return $this->belongsTo(GeneralCustomer::class, 'customer_id');
 
     }
 
@@ -97,9 +105,8 @@ class Supplier extends Model implements HasMedia
         return $this->hasMany(Order::class, 'customer_id');
     }
 
-
     public function hasChildren()
     {
-       return $this->customer()->count() > 0;
+        return $this->customer()->count() > 0;
     }
 }

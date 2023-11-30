@@ -25,6 +25,7 @@ export default {
       isError: false,
       type: "password",
       login_as: "admin",
+      programs_and_modules:[]
     };
   },
   components: {
@@ -75,6 +76,12 @@ export default {
                 "companies",
                 JSON.stringify(l.partner.companies)
               );
+
+              this.$store.commit("auth/editWorkFlowTrees", [
+                        "dictionary",
+                        "home",
+                        "Company",
+                    ]);
               _companies.value = l.partner.companies;
               this.$store.commit("auth/editType", "admin");
 
@@ -88,21 +95,22 @@ export default {
                         "auth/editCompanyId",
                         l.partner.companies[0].id
                     );
-                    allRoutes.value = l.partner.companies[0].Program;
-                    localStorage.setItem(
-                        "allRoutes",
-                        JSON.stringify(l.partner.companies[0].Program)
-                    );
-                    if (l.partner.companies[0].Program) {
-                        let parent = [];
-                        l.partner.companies[0].Program.forEach((e) => {
-                            if (!parent.find((el) => el.id == e.Parent.id)) {
-                                parent.push(e.Parent);
-                            }
-                        });
-                        this.$store.commit("auth/editParentModule", parent);
-                    }
-                    this.getWorkflows();
+                    this.getProgramsAndModulesForCompany(l.partner.companies[0].id)
+                    // allRoutes.value = l.partner.companies[0].Program;
+                    // localStorage.setItem(
+                    //     "allRoutes",
+                    //     JSON.stringify(l.partner.companies[0].Program)
+                    // );
+                    // if (l.partner.companies[0].Program) {
+                    //     let parent = [];
+                    //     l.partner.companies[0].Program.forEach((e) => {
+                    //         if (!parent.find((el) => el.id == e.Parent.id)) {
+                    //             parent.push(e.Parent);
+                    //         }
+                    //     });
+
+                    // }
+
                     this.$router.push({ name: "home" });
                     this.getDefaultKeys();
                     this.getCompanyKeys(l.partner.companies[0].id);
@@ -146,7 +154,7 @@ export default {
               this.$store.commit("auth/editType", "user");
               this.isSuccess = true;
               await this.workflowUser(l.user.permissions);
-              await this.getProgCompanyId(l.user.company_id)
+              await this.getProgramsAndModulesForCompany(l.user.company_id)
               this.$router.push({ name: "home" });
               this.getDefaultKeys();
               this.getCompanyKeys(l.user.company_id);
@@ -160,56 +168,9 @@ export default {
         }
       }
     },
-    async getWorkflows() {
-      let name = [];
-      let modules = ['General'];
-      allRoutes.value.forEach((parent) => {
-        if (parent.programFolders) {
-          parent.programFolders.forEach((child1) => {
-            if (child1.screens) {
-                if (child1.screens.length > 0) {
-                    child1.screens.forEach((child3) => {
-                        if(!name.includes(child3.name_e)){
-                            name.push(child3.name_e);
-                        }
-                        if(child3.module_id){
-                            let mod = child3.module;
-                            if(!modules.includes(mod.name_e)){
-                                modules.push(mod.name_e);
-                            }
-                        }
-                    });
-                }
-            }
-            if (child1.subMenus) {
-              child1.subMenus.forEach((child2) => {
-                if (child2.screens) {
-                  child2.screens.forEach((child3) => {
-                    if(!name.includes(child3.name_e)){
-                        name.push(child3.name_e);
-                    }
-                      if(child3.module_id){
-                          let mod = child3.module;
-                          if(!modules.includes(mod.name_e)){
-                              modules.push(mod.name_e);
-                          }
-                      }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-      this.$store.commit("auth/editWorkFlowTrees", [
-        "dictionary",
-        "home",
-        "company",
-        ...name,
-      ]);
-      this.$store.commit("auth/editCustomModules",modules);
-    },
+
     async workflowUser(permissions) {
+
       let workflowTree = [];
       permissions.forEach((el) => {
         if (!workflowTree.includes(el.crud_name)) {
@@ -237,6 +198,26 @@ export default {
                   }
                   this.$store.commit('translation/editDefaultsKeys',keys);
                   this.$store.commit('translation/editFilterResult',{ ...keys });
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
+    async getProgramsAndModulesForCompany(company_id) {
+          this.isLoader = true;
+          await axios
+            .get(`${process.env.MIX_APP_URL_OUTSIDE}api/partners/get_programs_and_modules_for_company/${company_id}`)
+              .then((res) => {
+                console.log(res.data.data)
+                this.programs_and_modules = res.data.data
+                this.$store.commit("auth/editParentModule", res.data.data);
               })
               .catch((err) => {
                   Swal.fire({

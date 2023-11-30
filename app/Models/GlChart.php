@@ -10,6 +10,7 @@ use Spatie\Activitylog\LogOptions;
 class GlChart extends Model
 {
     use HasFactory, LogTrait;
+    
     protected $table = 'gl_chart';
 
     protected $guarded = ['id'];
@@ -18,9 +19,12 @@ class GlChart extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            if(!$model->parent_id)
+        static::created(function ($model) {
+            if(!$model->parent_id){
                 $model->parent_id = $model->id;
+                $model->save();
+            }
+            
         });
 
     }
@@ -55,12 +59,12 @@ class GlChart extends Model
 
     public function revenueItems()
     {
-        return $this->hasMany(\Modules\RealEstate\Entities\RlstRevenueItem::class, 'acc_no', 'account_number');
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstRevenueItem::class, 'chart_id');
     }
 
     public function expenseItems()
     {
-        return $this->hasMany(\Modules\RealEstate\Entities\RlstExpenseItem::class, 'acc_no', 'account_number');
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstExpenseItem::class, 'chart_id');
     }
 
     public function buildingAccruedRevenues()

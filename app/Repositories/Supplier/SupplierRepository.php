@@ -20,6 +20,8 @@ class SupplierRepository implements SupplierInterface
     {
         $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        return $models;
+
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -89,7 +91,7 @@ class SupplierRepository implements SupplierInterface
     public function delete($id)
     {
         $model = $this->find($id);
-        $this->forget($id);
+        // $this->forget($id);
         $model->delete();
     }
 

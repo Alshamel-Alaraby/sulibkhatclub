@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\HMS\Entities\HMSPatient;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -59,6 +60,11 @@ class User extends Authenticatable implements HasMedia
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(HMSPatient::class);
     }
 
 

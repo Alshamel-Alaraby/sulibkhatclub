@@ -349,97 +349,7 @@ export default {
           setting: { building_currency_id: true },
           isSetting: true,
         },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "accrued_revenues_account",
-          isV: "accrued_revenues_account_id",
-          type: "relation",
-          name: "accrued_revenues_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { accrued_revenues_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "advance_revenues_account",
-          isV: "advance_revenues_account_id",
-          type: "relation",
-          name: "advance_revenues_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { advance_revenues_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "revenues_account",
-          isV: "revenues_account_id",
-          type: "relation",
-          name: "revenues_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { revenues_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "discounts_account",
-          isV: "discounts_account_id",
-          type: "relation",
-          name: "discounts_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { discounts_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "cash_account_id",
-          isV: "cash_account",
-          type: "relation",
-          name: "cash_account",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { cash_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "knet_account_id",
-          isV: "knet_account_id",
-          type: "relation",
-          name: "knet_account_id",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { knet_account_id: true },
-          isSetting: true,
-        },
-        {
-          isFilter: true,
-          isSet: true,
-          trans: "insurance_account_id",
-          isV: "insurance_account_id",
-          type: "relation",
-          name: "insurance_account_id",
-          sort: false,
-          col1: "name",
-          col2: "name_e",
-          setting: { insurance_account_id: true },
-          isSetting: true,
-        },
+
         {
           isFilter: true,
           isSet: true,
@@ -478,101 +388,21 @@ export default {
   },
   methods: {
     filterSearch(fields) {
-      let indexC = fields.indexOf("module"),
-        indexG = fields.indexOf("country_id"),
-        indexCty = fields.indexOf("city_id"),
-        indexAven = fields.indexOf("avenue_id"),
-        indexB = fields.indexOf("building_type_id"),
-        indexcurrency = fields.indexOf("building_currency_id"),
-        indexaccrued = fields.indexOf("accrued_revenues_account_id"),
-        indexadvance = fields.indexOf("advance_revenues_account_id"),
-        indexrevenues = fields.indexOf("revenues_account_id"),
-        indexdiscounts = fields.indexOf("discounts_account_id"),
-        indexcash = fields.indexOf("cash_account_id"),
-        indexknet = fields.indexOf("knet_account_id"),
-        indexinsurance = fields.indexOf("insurance_account_id"),
-        indexmain = fields.indexOf("main_cost_center_id"),
-        filter = "";
-      if (indexC > -1) {
-        fields[indexC] =
-          this.$i18n.locale == "ar" ? "module.name" : "module.name_e";
-      }
-      if (indexG > -1) {
-        fields[indexG] =
-          this.$i18n.locale == "ar" ? "country.name" : "country.name_e";
-      }
-      if (indexCty > -1) {
-        fields[indexCty] =
-          this.$i18n.locale == "ar" ? "city.name" : "city.name_e";
-      }
-      if (indexAven > -1) {
-        fields[indexAven] =
-          this.$i18n.locale == "ar" ? "avenue.name" : "avenue.name_e";
-      }
-      if (indexB > -1) {
-        fields[indexB] =
-          this.$i18n.locale == "ar"
-            ? "building_type.name"
-            : "building_type.name_e";
-      }
-      if (indexcurrency > -1) {
-        fields[indexcurrency] =
-          this.$i18n.locale == "ar"
-            ? "building_currency.name"
-            : "building_currency.name_e";
-      }
-      if (indexaccrued > -1) {
-        fields[indexaccrued] =
-          this.$i18n.locale == "ar"
-            ? "accrued_revenues_account.name"
-            : "accrued_revenues_account.name_e";
-      }
-      if (indexadvance > -1) {
-        fields[indexadvance] =
-          this.$i18n.locale == "ar"
-            ? "advance_revenues_account.name"
-            : "advance_revenues_account.name_e";
-      }
-      if (indexrevenues > -1) {
-        fields[indexrevenues] =
-          this.$i18n.locale == "ar"
-            ? "revenues_account.name"
-            : "revenues_account.name_e";
-      }
-      if (indexdiscounts > -1) {
-        fields[indexdiscounts] =
-          this.$i18n.locale == "ar"
-            ? "discounts_account.name"
-            : "discounts_account.name_e";
-      }
-      if (indexcash > -1) {
-        fields[indexcash] =
-          this.$i18n.locale == "ar"
-            ? "cash_account.name"
-            : "cash_account.name_e";
-      }
-      if (indexknet > -1) {
-        fields[indexknet] =
-          this.$i18n.locale == "ar"
-            ? "knet_account.name"
-            : "knet_account.name_e";
-      }
-      if (indexinsurance > -1) {
-        fields[indexinsurance] =
-          this.$i18n.locale == "ar"
-            ? "insurance_account.name"
-            : "insurance_account.name_e";
-      }
-      if (indexmain > -1) {
-        fields[indexmain] =
-          this.$i18n.locale == "ar"
-            ? "main_cost_center.name"
-            : "main_cost_center.name_e";
-      }
+      const fieldMappings = {
+        module: "module.name",
+        country_id: "country.name",
+        city_id: "city.name",
+        avenue_id: "avenue.name",
+        building_type_id: "buildingType.name",
+        building_currency_id: "buildingCurrency.name",
+        main_cost_center_id: "mainCostCenter.name",
+      };
 
-      for (let i = 0; i < fields.length; ++i) {
-        filter += `columns[${i}]=${fields[i]}&`;
-      }
+      const filter = fields
+        .map((field, index) => fieldMappings[field] || field) // Map fields based on conditions
+        .map((mappedField, index) => `columns[${index}]=${mappedField}`)
+        .join("&");
+
       return filter;
     },
     settingFun(setting = null) {

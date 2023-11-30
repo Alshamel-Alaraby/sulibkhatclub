@@ -1,44 +1,52 @@
 <template>
-  <div class="container">
-    <div class="company d-flex align-items-center">
-      <div class="col-12">
-        <div class="mt-3 row justify-content-center align-items-center">
-          <div class="col-md-4" v-for="company in companies">
-            <div
-              class="text-center company-item"
-              @click="changeCompany(company.id)"
-            >
-              <img
-                v-if="company.media"
-                class="img-thumbnail"
-                :src="company.media[0].webp"
-                @error="src = '/images/img-1.png'"
-              />
-              <img
-                v-else
-                class="img-thumbnail"
-                src="/images/img-1.png"
-                @error="src = '/images/img-1.png'"
-              />
-              <h4 class="mt-3">
-                {{ $i18n.locale == "ar" ? company.name : company.name_e }}
-              </h4>
+    <div>
+        <loader size="large" v-if="isLoader"/>
+        <div class="container">
+
+            <div class="company d-flex align-items-center">
+            <div class="col-12">
+            <div class="mt-3 row justify-content-center align-items-center">
+                <div class="col-md-4" v-for="company in companies">
+                <div
+                    class="text-center company-item"
+                    @click="changeCompany(company.id)"
+                >
+                    <img
+                    v-if="company.media"
+                    class="img-thumbnail"
+                    :src="company.media[0].webp"
+                    @error="src = '/images/img-1.png'"
+                    />
+                    <img
+                    v-else
+                    class="img-thumbnail"
+                    src="/images/img-1.png"
+                    @error="src = '/images/img-1.png'"
+                    />
+                    <h4 class="mt-3">
+                    {{ $i18n.locale == "ar" ? company.name : company.name_e }}
+                    </h4>
+                </div>
+                </div>
             </div>
-          </div>
+            </div>
+            </div>
+
         </div>
-      </div>
     </div>
-  </div>
+
 </template>
 
 <script>
 import permissionGuard from "../../../../helper/permission";
-
 import Swal from "sweetalert2";
 import adminApi from "../../../../api/adminAxios";
 import routeModules from "../../../../helper/Rule.js";
 import allRoutes from "../../../../helper/allRoute.js";
 import { selectedParents, _companies } from "../../../../helper/global.js";
+import axios from 'axios';
+import loader from "../../../../components/general/loader";
+
 export default {
   name: "index",
 
@@ -47,9 +55,14 @@ beforeRouteEnter(to, from, next) {
       return permissionGuard(vm, "Company", "all Company");
     });
   },
+  components:{
+    loader,
+  },
   data() {
     return {
+      programs_and_modules: [],
       companies: [],
+      isLoader: false,
       company_id: null,
     };
   },
@@ -63,24 +76,25 @@ beforeRouteEnter(to, from, next) {
     this.companies = _companies.value;
   },
   methods: {
-    changeCompany(id) {
+   async changeCompany(id) {
       let companies = _companies.value.find((el) => el.id == id);
       if(companies.is_active == 1){
+        this.getProgramsAndModulesForCompany(id)
           localStorage.removeItem("selectedParents");
           selectedParents.value=[];
           this.$store.commit("auth/editCompanyId", id);
-          allRoutes.value = companies.Program;
-          localStorage.setItem("allRoutes", JSON.stringify(companies.Program));
-          if (companies.Program) {
-              let parent = [];
-              companies.Program.forEach((e) => {
-                  if (!parent.find((el) => el.id == e.Parent.id)) {
-                      parent.push(e.Parent);
-                  }
-              });
-              this.$store.commit("auth/editParentModule", parent);
-              this.getWorkflows();
-          }
+        //   allRoutes.value = companies.Program;
+        //   localStorage.setItem("allRoutes", JSON.stringify(companies.Program));
+        //   if (companies.Program) {
+        //       let parent = [];
+        //       companies.Program.forEach((e) => {
+        //           if (!parent.find((el) => el.id == e.Parent.id)) {
+        //               parent.push(e.Parent);
+        //           }
+        //       });
+            //   this.$store.commit("auth/editParentModule", parent);
+            //   this.getWorkflows();
+        //   }
           this.getDefaultKeys();
           this.getCompanyKeys(companies.id);
           return this.$router.push({ name: "home" });
@@ -92,6 +106,25 @@ beforeRouteEnter(to, from, next) {
           });
       }
     },
+    async getProgramsAndModulesForCompany(company_id) {
+          this.isLoader = true;
+          await axios
+              .get(`${process.env.MIX_APP_URL_OUTSIDE}api/partners/get_programs_and_modules_for_company/${company_id}`)
+              .then((res) => {
+                this.programs_and_modules = res.data.data
+                this.$store.commit("auth/editParentModule", res.data.data);
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
     async getWorkflows() {
       let name = [];
       let modules = ['General'];

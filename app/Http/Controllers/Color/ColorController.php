@@ -68,17 +68,48 @@ class ColorController extends Controller
         if (!$model) {
             return responseJson(404, __('message.data not found'));
         }
+       if ($model->hasChildren()) {
+           return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
+       }
         $this->modelInterface->delete($id);
-
         return responseJson(200, 'success');
     }
 
     public function bulkDelete(Request $request)
     {
+
         foreach ($request->ids as $id) {
+            $model = $this->modelInterface->find($id);
+            $arr = [];
+            if ($model->hasChildren()) {
+                $arr[] = $id;
+                continue;
+            }
             $this->modelInterface->delete($id);
+        }
+        if (count($arr) > 0) {
+            return responseJson(400, __('some items has relation cant delete'));
         }
         return responseJson(200, __('Done'));
     }
+
+    // public function delete($id)
+    // {
+    //     $model = $this->modelInterface->find($id);
+    //     if (!$model) {
+    //         return responseJson(404, __('message.data not found'));
+    //     }
+    //     $this->modelInterface->delete($id);
+
+    //     return responseJson(200, 'success');
+    // }
+
+    // public function bulkDelete(Request $request)
+    // {
+    //     foreach ($request->ids as $id) {
+    //         $this->modelInterface->delete($id);
+    //     }
+    //     return responseJson(200, __('Done'));
+    // }
 
 }

@@ -1,4 +1,4 @@
-// 
+//
 // structure-rtl.scss
 //
 
@@ -44,7 +44,7 @@
 }
 
 body[data-layout-mode="horizontal"] {
-    
+
     .logo-box {
         float: right;
     }
@@ -118,11 +118,11 @@ body[data-layout-mode="horizontal"] {
             }
 
             ul {
-                padding-right: 34px;
+                padding-right: 20px;
                 padding-left: 0;
 
                 ul {
-                    padding-right: 20px;
+                    padding-right: 10px;
                     padding-left: 0;
                 }
             }
@@ -298,7 +298,7 @@ body[data-sidebar-size=condensed] {
                         &:hover {
 
                             > .collapse {
-                                
+
                                 >ul {
                                     right: 190px;
                                     left: auto;
@@ -357,9 +357,9 @@ body[data-sidebar-size="condensed"] {
     }
 }
 
-// 
+//
 // Compact Menu (Small)
-// 
+//
 
 body[data-sidebar-size="compact"]:not([data-sidebar-size="condensed"]){
 
@@ -431,7 +431,7 @@ body[data-sidebar-size="compact"]:not([data-sidebar-size="condensed"]){
     }
 }
 
-// 
+//
 // Two Column Menu
 //
 body[data-layout-mode="two-column"] {
@@ -441,7 +441,7 @@ body[data-layout-mode="two-column"] {
 
         .nav-second-level,
         .nav-third-level {
-            padding-right: 20px;
+            padding-right: 10px;
             padding-left: 0;
         }
 
@@ -465,7 +465,7 @@ body[data-layout-mode="two-column"] {
             left: 0 !important;
             padding-left: 10px;
         }
-        
+
         .content-page {
             margin-right: calc(#{$twocolumn-sidebar-iconview-width} + #{$twocolumn-sidebar-width});
             margin-left: 0;

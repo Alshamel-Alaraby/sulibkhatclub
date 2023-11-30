@@ -263,7 +263,7 @@ export default {
             this.getItemCategories();
             this.create.name = item.name;
             this.create.name_e = item.name_e;
-            this.create.unit_id = item.unit_id;
+            this.create.unit_id = item.unit.id;
             this.create.code_number = item.code_number;
             this.create.price = item.price;
             this.create.type = item.type;

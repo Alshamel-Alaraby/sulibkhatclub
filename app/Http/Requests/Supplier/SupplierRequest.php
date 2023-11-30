@@ -83,6 +83,8 @@ class SupplierRequest extends FormRequest
             "customer_id" => "nullable|exists:general_customers,id",
             "sector_id" => "nullable|exists:general_sectors,id",
             "customer_source_id" => "nullable|exists:general_customer_sources,id",
+            "customer_main_category_id" => "nullable",
+            "customer_sub_category_id" => "nullable",
             "media" => "nullable|array",
             "media.*" => ["nullable", "exists:media,id", new \App\Rules\MediaRule()],
         ];

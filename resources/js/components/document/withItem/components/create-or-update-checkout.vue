@@ -1337,6 +1337,7 @@ export default {
             this.create.related_document_id = data.header.document_header.related_document_id;
             this.create.related_document_number = data.header.document_header.related_document_number;
             this.create.related_document_prefix = data.header.document_header.related_document_prefix;
+            this.create.attendans_num = data.header.document_header.attendans_num;
             let attendants =[];
             data.header.document_header.attendants_document.forEach((e,index) => {
                 attendants.push(e.id) ;
@@ -1345,7 +1346,7 @@ export default {
             let calcDiscount = 0;
             if(data.checkin.document_header.invoice_discount > 0 && parseInt(data.checkin.discount) == 0)
             {
-               let dataDetailDiscount = data.details.filter((x) => x.item_id == null);
+                let dataDetailDiscount = data.details.filter((x) => x.item_id == null);
                 calcDiscount = (parseFloat(data.checkin.document_header.invoice_discount)/parseFloat(data.checkin.rent_days)) * dataDetailDiscount.length;
                 this.create.invoice_discount = parseFloat(calcDiscount).toFixed(3);
             }
@@ -1399,8 +1400,9 @@ export default {
                     discount: 0,
                     is_stripe: null,
                     sell_method_discount: 0,
-                    note: '',
+                    note: e.notes ? e.notes : '',
                     prefix_related: e.prefix,
+                    payment_method:this.$i18n.locale == 'ar' ? e.payment_method.name : e.payment_method.name_e,
                 });
             });
 
@@ -1879,7 +1881,7 @@ export default {
                                                     <div class="col-2 p-0">
                                                         <input
                                                             :disabled="true"
-                                                            v-model.number="$v.create.header_details.$each[gIndex].prefix_related.$model"
+                                                            v-model="$v.create.header_details.$each[gIndex].prefix_related.$model"
                                                             class="form-control"
                                                             type="text"
                                                         />
@@ -1932,7 +1934,7 @@ export default {
                                                             type="text"
                                                         />
                                                     </div>
-                                                    <div class="col-2 p-0">
+                                                    <div class="col-2 p-0" v-if="create.header_details[gIndex].is_stripe == 0 || create.header_details[gIndex].is_stripe == 1">
                                                         <select
                                                             :disabled="true"
                                                             class="custom-select"
@@ -1942,6 +1944,14 @@ export default {
                                                             <option value="0">{{ $t('general.accommodation') }}</option>
                                                             <option value="1">{{ $t('general.ServiceRequest') }}</option>
                                                         </select>
+                                                    </div>
+                                                    <div class="col-2 p-0" v-else>
+                                                        <input
+                                                            :disabled="true"
+                                                            v-model="create.header_details[gIndex].payment_method"
+                                                            class="form-control"
+                                                            type="text"
+                                                        />
                                                     </div>
                                                     <div class="col-2">
                                                         <input

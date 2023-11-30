@@ -235,6 +235,24 @@ export default {
                 })
 
         },
+        calcExtraGuest(item){
+            let price = 0;
+
+            if ((parseInt(item.attendans_num))  > item.document_header_details[0].unit.number_of_individuals)
+            {
+                price = parseFloat(item.document_header_details[0].unit.extra_guest_price);
+            }
+            return price;
+        },
+        calcRoomPrice(item){
+            let price = item.document_header_details[0].price_per_uint;
+
+            if ((parseInt(item.attendans_num))  > item.document_header_details[0].unit.number_of_individuals)
+            {
+                price = item.document_header_details[0].price_per_uint - parseFloat(item.document_header_details[0].unit.extra_guest_price);
+            }
+            return price;
+        },
         getVoucherHeadersTotal(items){
             let sumItem = 0,service= 0,total = 0;
 
@@ -289,7 +307,24 @@ export default {
             return parseFloat( (this.getTotalCharge(data) - (data.customer ?
                 this.getVoucherHeaders(data.customer.voucher_headers)
                 : 0))).toFixed(3)
-        }
+        },
+        print(status)
+        {
+            if (status == true){
+                var style = document.createElement('style');
+                style.innerHTML = `
+                    @page {size: landscape}
+                      `;
+                document.head.appendChild(style);
+            }else{
+                var style = document.createElement('style');
+                style.innerHTML = `
+                    @page {size: unset}
+                      `;
+                document.head.appendChild(style);
+            }
+            this.$refs.clickPrint.click();
+        },
     },
 };
 </script>
@@ -385,9 +420,31 @@ export default {
                                     >
                                         <i class="fas fa-file-download"></i>
                                     </button>
-                                    <button v-print="'#printData'" class="custom-btn-dowonload">
+                                    <button style="display: none" ref="clickPrint" v-print="'#printData'" class="custom-btn-dowonload">
                                         <i class="fe-printer"></i>
                                     </button>
+                                    <div class="btn-group">
+                                        <button
+                                            type="button"
+                                            class="btn btn-lg dropdown-toggle"
+                                            data-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fe-printer"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-custom">
+                                            <a  class="dropdown-item" href="#"  @click="print(true)">
+                                                <div class="d-flex justify-content-between align-items-center text-black">
+                                                    <span>Landscape</span>
+                                                </div>
+                                            </a>
+                                            <a class="dropdown-item text-black" href="#" @click="print(false)">
+                                                <div class="d-flex justify-content-between align-items-center text-black">
+                                                    <span>Portrait</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
                                     <button
                                         class="custom-btn-dowonload"
                                         @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
@@ -686,17 +743,9 @@ export default {
                                             }}
                                         </td>
                                         <td>
-                                            {{
-                                                data.document_header_details?
-                                                    data.document_header_details.length > 0?
-                                                        data.document_header_details[0] ?
-                                                            data.document_header_details[0].price_per_uint
-                                                            : '-'
-                                                        : '-'
-                                                    : '-'
-                                            }}
+                                            {{calcRoomPrice(data)}}
                                         </td>
-                                        <td></td>
+                                        <td>{{calcExtraGuest(data)}}</td>
                                         <td>
                                             {{
                                                 data.customer ?

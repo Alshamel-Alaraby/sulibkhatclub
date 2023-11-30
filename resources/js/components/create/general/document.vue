@@ -269,6 +269,7 @@
                                     <option value="board_rent">{{ $t('general.board_rent') }}</option>
                                     <option value="document_money">{{ $t('general.document_money') }}</option>
                                     <option value="booking">{{ $t('general.booking') }}</option>
+                                    <option value="real_estate">{{ $t('general.realEstate') }}</option>
                                 </select>
                                 <template v-if="errors.document_detail_type">
                                     <ErrorMessage

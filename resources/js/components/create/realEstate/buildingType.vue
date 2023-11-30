@@ -128,12 +128,6 @@
           </div>
         </div>
       </div>
-      <hr
-        style="
-          margin: 10px 0 !important;
-          border-top: 1px solid rgb(141 163 159 / 42%);
-        "
-      />
     </form>
   </b-modal>
   <!--  /create   -->

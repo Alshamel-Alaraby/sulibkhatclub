@@ -61,6 +61,8 @@ class GeneralCustomer extends Model implements HasMedia
                 'tax_record',
                 'passport_expiry_date',
                 'visa_no',
+                'driving_license',
+                'license_exp_date',
                 'customer_main_category_id',
                 'customer_sub_category_id'
             )
@@ -72,8 +74,6 @@ class GeneralCustomer extends Model implements HasMedia
 
             );
     }
-
-
 
     public function opening_balances()
     {
@@ -113,7 +113,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function customer_sub_category()
     {
-        return $this->belongsTo(CustomerCategory::class, 'customer_sub_category_id','id');
+        return $this->belongsTo(CustomerCategory::class, 'customer_sub_category_id', 'id');
     }
 
     public function salesmen()
@@ -149,7 +149,6 @@ class GeneralCustomer extends Model implements HasMedia
         return $this->hasMany(DocumentHeader::class, 'customer_id');
     }
 
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -182,7 +181,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function getItemSoldAttribute($key)
     {
-        return 0 ;
+        return 0;
 
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
@@ -195,7 +194,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function getSubTotalAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return Order::where('order_type', 'sales')
@@ -207,7 +206,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function getTaxAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return Order::where('order_type', 'sales')
@@ -219,7 +218,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function getDiscountAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return Order::where('order_type', 'sales')
@@ -230,7 +229,7 @@ class GeneralCustomer extends Model implements HasMedia
     }
     public function getTotalAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return Order::where('order_type', 'sales')
@@ -242,7 +241,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function getItemPurchasedAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return OrderItem::where('type', 'receiving')->whereIn('order_id', $order_id)
@@ -254,7 +253,7 @@ class GeneralCustomer extends Model implements HasMedia
     }
     public function getTotalPurchasedAttribute($key)
     {
-        return 0 ;
+        return 0;
         $order_id = $this->orders->where('customer_id', $this->id)->pluck('id')->toArray();
 
         return Order::where('order_type', 'receiving')

@@ -192,6 +192,51 @@ class CustomTableSeeder extends Seeder
             ]);
         }
 
+
+        $hms= [];
+        foreach ($tables as $table) {
+            foreach ($table as $key => $value) {
+                if (str_contains($value, 'h_m_s_')) {
+                    array_push($hms, $value);
+                }
+            }
+        }
+        foreach ($hms as $item) {
+            $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
+            $hms2 = [];
+            foreach ($columns as $column) {
+                array_push($hms2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+            }
+            GeneralCustomTable::create([
+                'table_name' => $item,
+                'columns' => $hms2,
+                'company_id' => 0,
+                'type' => 'HMS',
+            ]);
+        }
+
+        $cars= [];
+        foreach ($tables as $table) {
+            foreach ($table as $key => $value) {
+                if (str_contains($value, 'car_')) {
+                    array_push($cars, $value);
+                }
+            }
+        }
+        foreach ($cars as $item) {
+            $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
+            $cars2 = [];
+            foreach ($columns as $column) {
+                array_push($cars2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+            }
+            GeneralCustomTable::create([
+                'table_name' => $item,
+                'columns' => $cars2,
+                'company_id' => 0,
+                'type' => 'Rent Car',
+            ]);
+        }
+
 //        $data = [];
 //        foreach ($tables as $table) {
 //            foreach ($table as $key => $value) {

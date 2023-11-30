@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row justify-content-between align-items-center mb-2">
-                            <h4 class="header-title">{{ $t("general.contractTable") }}</h4>
+                            <h4 class="header-title">{{ page_title && page_title.url == $route.fullPath ? ($i18n.locale == 'ar' ? page_title.title :page_title.title_e ):  $t("general.contractTable") }}</h4>
                             <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                                 <div class="d-inline-block" style="width: 22.2%">
                                     <!-- Basic dropdown -->
@@ -1396,6 +1396,8 @@
 </template>
 
 <script>
+import page_title from "../../helper/PageTitle"
+
 import adminApi from "../../api/adminAxios";
 import { minValue, required } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
@@ -1430,8 +1432,21 @@ export default {
         customerGeneral,
         TransactionBreak
     },
+    watch:{
+        pageTitle: {
+            handler(newV, old) {
+                this.page_title = page_title.value;
+            },
+        },
+    },
+    computed: {
+        pageTitle: function () {
+        return page_title.value;
+        },
+    },
     data() {
         return {
+            page_title: {},
             per_page: 50,
             search: "",
             debounce: {},

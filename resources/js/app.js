@@ -16,7 +16,7 @@ import VueStringFilter from 'vue-string-filter';
 import Lightbox from 'vue-easy-lightbox';
 import Print from 'vue-print-nb';
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
 
 Vue.use(vco);
 // As a plugin

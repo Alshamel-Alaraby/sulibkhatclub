@@ -69,7 +69,8 @@ class DocumentHeaderRequest extends FormRequest
             'header_details.*.quantity' => 'required|numeric|integer',
             'header_details.*.price_per_uint' => 'nullable',
             'header_details.*.total' => 'nullable',
-            'header_details.*.unit_type' => 'required|string',
+            'header_details.*.unit_type' => 'nullable|string',
+            'header_details.*.building_id' => 'required|numeric',
             'header_details.*.break_downs' => 'nullable|array',
             'header_details.*.category_booking' => 'nullable|in:single,family',
 

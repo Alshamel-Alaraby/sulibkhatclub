@@ -302,7 +302,7 @@
           <div class="col-md-3">
             <div class="form-group position-relative">
               <label class="control-label">
-                {{ getCompanyKey("bank_account") }}
+                {{ getCompanyKey("bank_account_number") }}
                 <span class="text-danger">*</span>
               </label>
               <multiselect
@@ -682,7 +682,6 @@ export default {
         } else {
           if (this.idObjEdit.dataObj) {
             let build = this.idObjEdit.dataObj;
-            console.log("this is build for owner", build);
             this.errors = {};
             if (this.isVisible("country_id")) this.getCategory();
             if (this.isVisible("city_id")) this.getCity(build.country.id);

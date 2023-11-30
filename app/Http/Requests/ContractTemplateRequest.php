@@ -26,7 +26,7 @@ class ContractTemplateRequest extends FormRequest
         return [
             'name' => 'required|string|max:100|unique:general_contract_templates,name,'.($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'required|string|max:100|unique:general_contract_templates,name_e,'.($this->method() == 'PUT' ? $this->id : ''),
-            'module' => 'required|string|max:50',
+            'module' => 'nullable|string|max:50',
         ];
     }
 }

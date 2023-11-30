@@ -70,9 +70,3 @@ export default {
         </div>
     </div>
 </template>
-
-<style scoped>
-.card-body{
-    background: #bee3fe !important;
-}
-</style>

@@ -45,7 +45,7 @@ export default {
   props: {
     id: { default: "create" },
     companyKeys: { default: [] },
-    tables: { default: [] },
+    // tables: { default: [] },
     defaultsKeys: { default: [] },
     isPage: { default: true },
     isVisiblePage: { default: null },
@@ -358,19 +358,19 @@ export default {
             this.create.properties = unit.properties;
             this.create.description = unit.description;
             this.create.description_e = unit.description_e;
-            this.create.building_id = unit.building_id;
-            this.create.unit_status_id = unit.unit_status_id;
+            this.create.building_id = unit.building.id;
+            this.create.unit_status_id = unit.unit_status.id;
             this.prevUnitStatusId = unit.unit_status_id;
             this.create.module = unit.name;
             this.create.code = unit.code;
-            this.create.unit_ty = unit.unit_ty;
-            this.create.finishing = unit.finishing;
+            this.create.unit_ty = unit.unit_ty.id;
+            this.create.finishing = unit.finishing.id;
             this.create.unit_area = unit.unit_area;
             this.create.floor = unit.floor;
             this.create.path = unit.path;
             this.create.unit_net_area = unit.unit_net_area;
             this.create.rooms = unit.rooms;
-            this.create.view = unit.view;
+            this.create.view = unit.view.id;
             this.images = unit.media ?? [];
             if (this.images && this.images.length > 0) {
               this.showPhoto = this.images[this.images.length - 1].url;
@@ -737,7 +737,7 @@ export default {
       adminApi
         .put(`/real-estate/units/${this.unit_id}`, { old_media })
         .then((res) => {
-          let index = this.tables.findIndex(el => el.id == this.unit_id);
+          let index = this.tables.findIndex((el) => el.id == this.unit_id);
           this.tables[index] = res.data.data;
           this.images = res.data.data.media ?? [];
           if (this.images && this.images.length > 0) {

@@ -135,6 +135,18 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
+    Route::group(['prefix' => 'insurance-types'], function () {
+        Route::controller(\App\Http\Controllers\GeneralInsuranceTypeController::class)->group(function () {
+            Route::get('/', 'all')->name('insurance-types.index');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('insurance-types.create');
+            Route::put('/{id}', 'update')->name('insurance-types.update');
+            Route::delete('/{id}', 'delete')->name('insurance-types.destroy');
+            Route::get('logs/{id}', 'logs');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
 // customer branches
     Route::group(['prefix' => 'customer-branches'], function () {
         Route::controller(\App\Http\Controllers\CustomerBranchController::class)->group(function () {
@@ -1106,9 +1118,9 @@ Route::group(['prefix' => 'document-company-module-status'], function () {
 Route::group(['prefix' => 'general-accounts'], function () {
     Route::controller(\App\Http\Controllers\GlChartController::class)->group(function () {
         Route::get('/get-drop-down', 'getDropDown');
+        Route::post('/', 'create')->name('general-accounts.create');
         Route::get('/', 'all')->name('general-accounts.index');
         Route::get('/{id}', 'find');
-        Route::post('/', 'create')->name('general-accounts.create');
         Route::put('/{id}', 'update')->name('general-accounts.update');
         Route::delete('/{id}', 'delete')->name('general-accounts.destroy');
         Route::get('logs/{id}', 'logs')->name('general-accounts.logs');
@@ -1117,7 +1129,7 @@ Route::group(['prefix' => 'general-accounts'], function () {
 });
 
 Route::group(['prefix' => 'general-main-cost-centers'], function () {
-    Route::controller(\App\Http\Controllers\GeneralMainCostCentersController::class)->group(function () {
+    Route::controller(\App\Http\Controllers\GlCostCenterController::class)->group(function () {
         Route::get('/get-drop-down', 'getDropDown');
         Route::get('/', 'all')->name('general-main-cost-centers.index');
         Route::get('/{id}', 'find');
@@ -1153,6 +1165,21 @@ Route::group(['prefix' => 'contract-template'], function () {
     });
 
 });
-    
 
+
+
+Route::group(['prefix' => 'column-type'], function () {
+    Route::controller(\App\Http\Controllers\ColumnTypeController::class)->group(function () {
+        Route::get('/', 'getColumnType');
+    });
+});
+
+
+
+Route::group(['prefix' => 'copy-data'], function () {
+    Route::controller(\App\Http\Controllers\CopyDataController::class)->group(function () {
+        Route::get('/sample-data', 'getSampleData');
+        Route::get('/full-data', 'getFullData');
+    });
+});
 

@@ -19,7 +19,7 @@ class GlChartResource extends JsonResource
             'name' => $this->name,
             'name_e' => $this->name_e,
             'account_number' => $this->account_number,
-            'parent_id' => $this->parent_id,
+            'parent_id' => $this->whenLoaded('parent'),
         ];
     }
 }

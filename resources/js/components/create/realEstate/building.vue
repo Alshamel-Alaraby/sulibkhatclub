@@ -407,8 +407,10 @@ export default {
             this.getAccounts();
             this.errors = {};
             if (this.isVisible("country_id")) this.getCategory();
-            if (this.isVisible("city_id")) this.getCity(build.country?build.country.id:null);
-            if (this.isVisible("street_id")) this.getStreets(build.avenue?build.avenue.id:null);
+            if (this.isVisible("city_id"))
+              this.getCity(build.country ? build.country.id : null);
+            if (this.isVisible("street_id"))
+              this.getStreets(build.avenue ? build.avenue.id : null);
             if (this.isVisible("building_currency_id")) this.getCurrencies();
             // if (this.isVisible("accounts_number_id")) this.getAccounts();
             if (this.isVisible("building_type_id")) this.getBuildingType();
@@ -423,10 +425,10 @@ export default {
             this.create.land_area = build.land_area ?? 0;
             this.create.construction_year = build.construction_year ?? "";
             this.create.module = build.module;
-            this.create.country_id = build.country?build.country.id:null;
+            this.create.country_id = build.country ? build.country.id : null;
             this.create.governorrate_id = build.governorate;
             if (this.isVisible("governorrate_id"))
-              this.getGovernorates(build.country?build.country.id:null);
+              this.getGovernorates(build.country ? build.country.id : null);
             this.create.city_id = build.city.id;
             this.create.avenue_id = build.avenue.id;
             if (this.isVisible("avenue_id")) this.getAvenue();
@@ -460,7 +462,9 @@ export default {
             this.create.buying_date = build.buying_date;
             this.create.middleman_cost = build.middleman_cost;
             this.create.registration_cost = build.registration_cost;
-            this.create.building_currency_id = build.building_currency?build.building_currency.id:null;
+            this.create.building_currency_id = build.building_currency
+              ? build.building_currency.id
+              : null;
 
             // building_type_id was giving error when it was null so i made this if statement
             if (build.building_type) {
@@ -470,20 +474,34 @@ export default {
             }
 
             this.create.accrued_revenues_account_id =
-                build.accrued_revenues_account?build.accrued_revenues_account.id:null;
+              build.accrued_revenues_account
+                ? build.accrued_revenues_account.id
+                : null;
 
             this.create.advance_revenues_account_id =
-                build.advance_revenues_account?build.advance_revenues_account.id:null;
+              build.advance_revenues_account
+                ? build.advance_revenues_account.id
+                : null;
 
-            this.create.revenues_account_id = build.revenues_account?build.revenues_account.id:null;
+            this.create.revenues_account_id = build.revenues_account
+              ? build.revenues_account.id
+              : null;
 
-            this.create.discounts_account_id = build.discounts_account?build.discounts_account.id:null;
+            this.create.discounts_account_id = build.discounts_account
+              ? build.discounts_account.id
+              : null;
 
-            this.create.cash_account_id = build.cash_account?build.cash_account.id:null;
+            this.create.cash_account_id = build.cash_account
+              ? build.cash_account.id
+              : null;
 
-            this.create.knet_account_id = build.knet_account_id?build.knet_account_id.id:null;
+            this.create.knet_account_id = build.knet_account_id
+              ? build.knet_account_id.id
+              : null;
 
-            this.create.insurance_account_id = build.insurance_account_id?build.insurance_account_id.id:null;
+            this.create.insurance_account_id = build.insurance_account_id
+              ? build.insurance_account_id.id
+              : null;
 
             // Make a GET request to fetch the building policy data
             adminApi

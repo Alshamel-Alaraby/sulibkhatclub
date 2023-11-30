@@ -1,14 +1,20 @@
 <script>
 import { mapState } from "vuex";
 import allRoutes from "../../helper/allRoute.js";
-import { selectedParents } from "../../helper/global.js";
+import { selectedParents,_companies } from "../../helper/global.js";
 import routeModules from "../../helper/Rule.js";
+
+import recursive_menu from "./recursive_menu.vue";
 
 export default {
   inject: ["isRouteClicked", "menuLoadedCounter"],
+  components:{
+    recursive_menu
+  },
   data() {
     return {
       menuItems: [],
+      companies: [],
       workFlowTree: [],
       allWorkFlowTree: [],
     };
@@ -111,7 +117,6 @@ export default {
     routeMod: {
       handler(newV, old) {
         this.menuItems = routeModules.value;
-        this.orderMenu();
       },
     },
     menu: {
@@ -155,63 +160,33 @@ export default {
     },
   },
   mounted() {
+    this.companies = _companies.value
     this.workFlowTree = this.$store.state.auth.work_flow_trees;
     this.allWorkFlowTree = this.$store.state.auth.allWorkFlow;
     if (selectedParents.value.length) {
-      let is_web = allRoutes.value.find((e) => e.id == selectedParents.value[1]).is_web;
+      let is_web = 0;
+      this.$store.state.auth.parentModule.forEach((program,index) => {
+            if(program.id == selectedParents.value[0]){
+                program.modules.forEach((module_node) => {
+                    if(module_node.project_program_module.id == selectedParents.value[1]){
+                        is_web = module_node.is_web;
+                    }
+                })
+            }
+      });
       this.$store.commit("auth/editIsWeb", is_web);
       this.menuItems = routeModules.value;
     } else {
       this.menuItems = [];
     }
-    if (!localStorage.getItem("menuLoaded") ?? false) {
-      this.orderMenu();
-    }
+
     localStorage.setItem("menuLoaded", true);
-    this._activateMenuDropdown();
-    this.$router.afterEach((routeTo, routeFrom) => {
-      this._activateMenuDropdown();
-    });
+    // this._activateMenuDropdown();
+    // this.$router.afterEach((routeTo, routeFrom) => {
+    //   this._activateMenuDropdown();
+    // });
   },
   methods: {
-    orderMenu() {
-      let orderedMenus = [...this.menuItems];
-
-      orderedMenus.sort((a, b) =>
-        parseInt(a.menu_folder.sort) > parseInt(b.menu_folder.sort) ? 1 : -1
-      );
-
-      orderedMenus.forEach((pf) => {
-        pf.subMenus.sort((a, b) =>
-          parseInt(a.sort) > parseInt(b.sort) ? 1 : -1
-        );
-      });
-      orderedMenus.forEach((pf) => {
-        pf.subMenus.forEach((sm) => {
-          sm.screens.sort((a, b) =>
-            parseInt(a.sort) > parseInt(b.sort) ? 1 : -1
-          );
-        });
-      });
-      this.menuItems = orderedMenus;
-    },
-    // showScreen(module, screen) {
-    //   return true;
-    //   // let filterRes = this.$store.state.auth.allWorkFlow.filter(
-    //   //   (workflow) => workflow.name_e == module.name
-    //   // );
-    //   // let _module = filterRes.length ? filterRes[0] : null;
-    //   // if (!_module) return false;
-    //   // return _module.screen ? _module.screen.name_e == screen.name : true;
-    // },
-    /**
-     * Returns true or false if given menu item has child or not
-     * @param item menuItem
-     */
-    hasItems(item) {
-      return item.subItems !== undefined ? item.subItems.length > 0 : false;
-    },
-
     _activateMenuDropdown() {
       const resetParent = (el) => {
         el.classList.remove("active");
@@ -274,21 +249,7 @@ export default {
         }
       }
     },
-    checkUserOrAdmin(item = null) {
-      if (this.$store.state.auth.type == "user") {
-        return this.$store.state.auth.work_flow_trees.includes(item);
-      }
-      return true;
-    },
-    checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
-        return isUserMenu;
-      }
-      return true;
-    },
-    checkPermission(name){
-        return this.$store.state.auth.work_flow_trees.includes(name);
-    }
+
   },
 };
 </script>
@@ -361,256 +322,20 @@ export default {
             </a>
           </div>
         </div>
-        <p class="text-reset">Admin Head</p>
+        <p class="text-reset" >Admin Head</p>
       </div>
 
       <!--- Sidemenu -->
+
       <div id="sidebar-menu">
         <!-- Left Menu Start -->
-        <ul class="list-unstyled" id="side-menu">
-          <li v-if="$store.state.auth.type == 'admin'">
-            <router-link to="/dashboard/company" class="side-nav-link-ref">
-              <i class="fas fa-city"></i>
-              <span>{{ $t("menuitems.company.text") }}</span>
-            </router-link>
-          </li>
-          <template v-for="(item, i) in menuItems">
-            <li :key="i" v-if="checkUserOrAdminPermission(item.isUserMenu)">
-              <a
-                href="javascript:void(0);"
-                @click="
-                  item.menu_folder.is_menu_collapsed =
-                    item.menu_folder.is_menu_collapsed === '0' ||
-                    item.menu_folder.is_menu_collapsed == false
-                      ? true
-                      : false
-                "
-                :class="['has-arrow', 'has-dropdown']"
-              >
-                <i
-                  :class="`${item.menu_folder.icon}`"
-                  v-if="item.menu_folder.icon"
-                ></i>
-                <span>{{
-                  $i18n.locale == "ar"
-                    ? item.menu_folder.name
-                    : item.menu_folder.name_e
-                }}</span>
-                <span class="menu-arrow"></span>
-              </a>
-              <div
-                class="collapse"
-                :class="{ show: item.menu_folder.is_menu_collapsed === true }"
-                id="sidebarTasks"
-              >
-                <ul
-                  class="sub-menu nav-second-level"
-                  aria-expanded="false"
-                >
-                  <template v-for="(subItem, index) of item.subMenus">
-                    <li :key="index" v-if="checkUserOrAdminPermission(subItem.isUserMenu)">
-                      <a
-                        @click="
-                          subItem.is_menu_collapsed =
-                            subItem.is_menu_collapsed === '0' ||
-                            subItem.is_menu_collapsed == false
-                              ? true
-                              : false
-                        "
-                        class="side-nav-link-a-ref has-arrow"
-                        href="javascript:void(0);"
-                      >
-                        {{
-                          subItem
-                            ? $i18n.locale == "ar"
-                              ? subItem.name
-                              : subItem.name_e
-                            : ""
-                        }}
-                        <span class="menu-arrow"></span>
-                      </a>
-                      <div
-                        class="collapse"
-                        :class="{ show: subItem.is_menu_collapsed === true }"
-                      >
-                        <ul
-                          class="sub-menu"
-                          aria-expanded="false"
-                        >
-                            <template v-for="(subSubItem, index) of subItem.screens">
-                                <li
-                                    :key="index"
-                                    v-if="checkPermission(subSubItem.name_e)"
-                                >
-                                      <router-link
-                                          @click.prevent="isRouteClicked = true"
-                                          :to="`/dashboard/${subSubItem.url}`"
-                                          class="side-nav-link-ref"
-                                       >
-                                              {{
-                                              $i18n.locale == "ar"
-                                              ? subSubItem.title
-                                              : subSubItem.title_e
-                                              }}
-                                      </router-link>
-                                </li>
-                           </template>
-                        </ul>
-                      </div>
-                    </li>
-                  </template>
-                  <template v-for="(subSubItem, sub) of item.screens">
-                        <li
-                            :key="subSubItem.id"
-                            v-if="checkPermission(subSubItem.name_e)"
-                        >
-                            <router-link
-                                @click.prevent="isRouteClicked = true"
-                                :to="`/dashboard/${subSubItem.url}`"
-                                class="side-nav-link-ref"
-                            >
-                                {{
-                                $i18n.locale == "ar"
-                                ? subSubItem.title
-                                : subSubItem.title_e
-                                }}
-                            </router-link>
-                        </li>
-                    </template>
-                </ul>
-              </div>
-            </li>
-          </template>
-          <!--          <template v-for="(item, i) in menuItems">-->
-          <!--            <li :key="i">-->
-          <!--              <a-->
-          <!--                href="javascript:void(0);"-->
-          <!--                @click="item.is_menu_collapsed = !item.is_menu_collapsed"-->
-          <!--                :class="['has-arrow', 'has-dropdown']"-->
-          <!--              >-->
-          <!--                <i :class="`${item.icon}`" v-if="item.icon"></i>-->
-          <!--                <span>{{-->
-          <!--                  $i18n.locale == "ar" ? item.name : item.name_e-->
-          <!--                }}</span>-->
-          <!--                <span class="menu-arrow"></span>-->
-          <!--              </a>-->
 
-          <!--              <div-->
-          <!--                class="collapse"-->
-          <!--                :class="{ show: item.is_menu_collapsed }"-->
-          <!--                id="sidebarTasks"-->
-          <!--              >-->
-          <!--                <ul-->
-          <!--                  v-if="checkUserOrAdmin(item.name_e)"-->
-          <!--                  class="sub-menu nav-second-level"-->
-          <!--                  aria-expanded="false"-->
-          <!--                >-->
-          <!--                  <template v-for="(subItem, index) of item.programFolders">-->
-          <!--                    <li :key="index">-->
-          <!--                      <a-->
-          <!--                        v-if="checkUserOrAdmin(subItem.name)"-->
-          <!--                        @click="-->
-          <!--                          subItem.is_menu_collapsed =-->
-          <!--                            !subItem.menu_folder.is_menu_collapsed-->
-          <!--                        "-->
-          <!--                        class="side-nav-link-a-ref has-arrow"-->
-          <!--                        href="javascript:void(0);"-->
-          <!--                      >-->
-          <!--                        {{-->
-          <!--                          subItem.menu_folder-->
-          <!--                            ? $i18n.locale == "ar"-->
-          <!--                              ? subItem.menu_folder.name-->
-          <!--                              : subItem.menu_folder.name_e-->
-          <!--                            : ""-->
-          <!--                        }}-->
-          <!--                        <span class="menu-arrow"></span>-->
-          <!--                      </a>-->
+            <recursive_menu :menuItems="menuItems" :companies="companies" />
 
-          <!--                      <div-->
-          <!--                        class="collapse"-->
-          <!--                        :class="{ show: subItem.menu_folder.is_menu_collapsed }"-->
-          <!--                      >-->
-          <!--                        <ul-->
-          <!--                          v-if="checkUserOrAdmin(subItem.name)"-->
-          <!--                          class="sub-menu"-->
-          <!--                          aria-expanded="false"-->
-          <!--                        >-->
-          <!--                          <li-->
-          <!--                            v-for="(subSubItem, index) of subItem.subMenus"-->
-          <!--                            :key="index"-->
-          <!--                          >-->
-          <!--                            <a-->
-          <!--                              @click="-->
-          <!--                                subSubItem.is_menu_collapsed =-->
-          <!--                                  !subSubItem.is_menu_collapsed-->
-          <!--                              "-->
-          <!--                              v-if="checkUserOrAdmin(subSubItem.name)"-->
-          <!--                              class="side-nav-link-a-ref has-arrow"-->
-          <!--                              href="javascript:void(0);"-->
-          <!--                              >{{-->
-          <!--                                $i18n.locale == "ar"-->
-          <!--                                  ? subSubItem.name-->
-          <!--                                  : subSubItem.name_e-->
-          <!--                              }}-->
-          <!--                              <span class="menu-arrow"></span>-->
-          <!--                            </a>-->
-          <!--                            <div-->
-          <!--                              class="collapse"-->
-          <!--                              :class="{ show: subSubItem.is_menu_collapsed }"-->
-          <!--                            >-->
-          <!--                              <ul-->
-          <!--                                v-if="checkUserOrAdmin(subSubItem.name)"-->
-          <!--                                class="sub-menu"-->
-          <!--                                aria-expanded="false"-->
-          <!--                              >-->
-          <!--                                <li-->
-          <!--                                  v-for="(-->
-          <!--                                    subSubSubItem, index-->
-          <!--                                  ) of subSubItem.screens"-->
-          <!--                                  :key="index"-->
-          <!--                                >-->
-          <!--                                  <router-link-->
-          <!--                                    v-if="-->
-          <!--                                      checkUserOrAdminPermission(-->
-          <!--                                        subSubSubItem.name-->
-          <!--                                      )-->
-          <!--                                    "-->
-          <!--                                    :to="`dashboard/${subSubSubItem.url}`"-->
-          <!--                                    class="side-nav-link-ref"-->
-          <!--                                  >-->
-          <!--                                    {{-->
-          <!--                                      $i18n.locale == "ar"-->
-          <!--                                        ? subSubSubItem.name-->
-          <!--                                        : subSubSubItem.name_e-->
-          <!--                                    }}-->
-          <!--                                  </router-link>-->
-          <!--                                </li>-->
-          <!--                              </ul>-->
-          <!--                            </div>-->
-          <!--                          </li>-->
-          <!--                        </ul>-->
-          <!--                      </div>-->
-          <!--                    </li>-->
-          <!--                  </template>-->
-          <!--                </ul>-->
-          <!--              </div>-->
-          <!--            </li>-->
-          <!--          </template>-->
-          <!--          <li v-if="$store.state.auth.user">-->
-          <!--            <router-link-->
-          <!--              v-if="$store.state.auth.user.type == 'super_admin'"-->
-          <!--              to="/dashboard/dictionary"-->
-          <!--              class="side-nav-link-ref"-->
-          <!--            >-->
-          <!--              <i class="fas fa-spell-check"></i>-->
-          <!--              <span>{{ $t("general.dictionary") }}</span>-->
-          <!--            </router-link>-->
-          <!--          </li>-->
-        </ul>
-      </div>
-      <!-- End Sidebar -->
+        </div>
+        <div class="clearfix"></div>
 
-      <div class="clearfix"></div>
+
     </simplebar>
     <!-- Sidebar -left -->
   </div>

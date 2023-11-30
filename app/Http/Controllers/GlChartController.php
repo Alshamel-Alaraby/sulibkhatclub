@@ -38,11 +38,13 @@ class GlChartController extends Controller
     }
 
     public function create(GlChartRequest $request)
-    {
+    {   
+        
         $model = $this->model->create($request->validated());
+
         $model->refresh();
 
-        return responseJson(200, 'created');
+        return responseJson(200, 'created', new GlChartResource($model));
 
     }
 
@@ -56,7 +58,7 @@ class GlChartController extends Controller
         $model->update($request->validated());
         $model->refresh();
 
-        return responseJson(200, 'updated');
+        return responseJson(200, 'updated', new GlChartResource($model));
     }
 
     public function delete($id)
@@ -139,5 +141,19 @@ class GlChartController extends Controller
         $displayableName = str_replace('_', ' ', $relation);
         return ucwords($displayableName);
     }
+
+    public function getDropDown(Request $request)
+    {
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if ($request->per_page) {
+            $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            $models = ['data' => $models->get(), 'paginate' => false];
+        }
+
+        return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
         
 }

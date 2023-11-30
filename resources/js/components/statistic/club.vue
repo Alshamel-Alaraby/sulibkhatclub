@@ -1,5 +1,5 @@
 <script>
-import Layout from "../../views/layouts/main";
+// import Layout from "../../views/layouts/main";
 import Swal from "sweetalert2";
 import WidgetChart from "../widgets/Widget-chart";
 import PageHeader from "../general/Page-header";
@@ -16,9 +16,9 @@ import CrmWidget from "../widgets/Crm-widget";
  * Sales-Dashboard component
  */
 export default {
-    name: "Statistics Club",
+    name: "ClubStatistics",
     components: {
-        Layout,
+        // Layout,
         WidgetChart,
         PageHeader,
         RevenueReport,
@@ -218,10 +218,12 @@ export default {
 </script>
 
 <template>
-    <Layout>
-        <PageHeader :title="title" :items="items" />
+    <!-- <Layout> -->
 
-        <div class="dashboard-fluid mb-3">
+        <div >
+            <PageHeader :title="title" :items="items" />
+
+<div class="dashboard-fluid mb-3">
 <!--            <div class="row mt-2">-->
 <!--                <div class="col-xl-3 col-md-6">-->
 <!--                    <CrmWidget-->
@@ -281,12 +283,14 @@ export default {
 <!--                </div>-->
 <!--                &lt;!&ndash; end col &ndash;&gt;-->
 <!--            </div>-->
-            <!-- end row -->
+    <!-- end row -->
 
-            <Projections :statices="statices"  />
+    <Projections :statices="statices"  />
+</div>
         </div>
 
-    </Layout>
+
+    <!-- </Layout> -->
 </template>
 
 <style scoped>

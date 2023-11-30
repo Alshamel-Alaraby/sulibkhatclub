@@ -854,7 +854,7 @@ export default {
             });
         } else {
           adminApi
-            .post(`/real-estate/wallet-owner/${this.wallet_id}`, {
+            .put(`/real-estate/wallet-owner/${this.wallet_id}`, {
               "wallet-owner": this.createOwner.wallet_owners,
             })
             .then((res) => {
