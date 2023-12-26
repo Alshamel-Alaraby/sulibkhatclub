@@ -261,5 +261,21 @@ export default [
         },
         component: () => import('../../views/pages/realEstate/yearlyMaintenanceContract'),
     },
+    {
+        path: '/dashboard/realEstate/UnitCreditInvoice',
+        name: 'Unit Credit Invoice',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/unitCreditInvoice'),
+    },
+    {
+        path: '/dashboard/realEstate/RentingUnits',
+        name: 'Renting Units',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/RentContract.vue'),
+    },
 
 ];

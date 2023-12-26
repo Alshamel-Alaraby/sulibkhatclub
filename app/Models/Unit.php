@@ -6,6 +6,7 @@ use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\PointOfSale\Entities\Product;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\LogOptions;
 
@@ -21,10 +22,6 @@ class Unit extends Model
         return $query->select('id','name', 'name_e','is_active');
     }
 
-    // protected $casts = [
-    //     'is_active' => '\App\Enums\IsActive',
-    // ];
-
     public function products()
     {
         return $this->hasMany(Product::class, 'unit_id');
@@ -38,7 +35,7 @@ class Unit extends Model
             $relationsWithChildren[] = [
                 'relation' => 'products',
                 'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray()
+                'ids' => $this->products()->pluck('title')->toArray()
             ];
         }
 

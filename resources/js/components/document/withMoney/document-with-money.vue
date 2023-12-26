@@ -44,6 +44,7 @@ export default {
                 serial_number: true,
                 date: true,
                 customer_id: true,
+                client_type_id: true,
                 amount: true,
                 payment_method_id: true,
                 salesmen_id: true,
@@ -487,6 +488,7 @@ export default {
                                         <b-form-checkbox v-model="setting.branch_id" class="mb-1">{{ $t('general.Branch') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.serial_number" class="mb-1"> {{ $t('general.serial_number') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.Date') }}</b-form-checkbox>
+                                        <b-form-checkbox v-model="setting.client_type_id" class="mb-1">{{$t('general.client_types') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{$t('general.client') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.amount" class="mb-1">{{$t('general.amount') }}</b-form-checkbox>
                                         <b-form-checkbox v-model="setting.payment_method_id" class="mb-1">{{$t('general.paymentMethod') }}</b-form-checkbox>
@@ -576,6 +578,15 @@ export default {
                                             </div>
                                         </div>
                                     </th>
+                                    <th v-if="setting.client_type_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.client_types') }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="invoices.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                                <i class="fas fa-arrow-down" @click="invoices.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.customer_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t('general.client') }}</span>
@@ -636,6 +647,9 @@ export default {
                                     </td>
                                     <td v-if="setting.date">
                                         <h5 class="m-0 font-weight-normal">{{ data.date }}</h5>
+                                    </td>
+                                    <td v-if="setting.client_type_id">
+                                        <h5 class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.clientType.name : data.clientType.name_e}}</h5>
                                     </td>
                                     <td v-if="setting.customer_id">
                                         <h5 class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.customer.name : data.customer.name_e}}</h5>

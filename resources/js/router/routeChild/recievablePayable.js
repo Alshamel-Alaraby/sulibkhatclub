@@ -176,6 +176,14 @@ export default [
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/debitNote'),
     },
+    {
+        path: '/dashboard/receivablePayable/documentWithMoney/issueVoucher',
+        name: 'Issue Voucher',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/documentTransaction/issueVoucher'),
+    },
     /////////////////////////////
     {
         path: '/dashboard/receivablePayable/moneyVoucher',

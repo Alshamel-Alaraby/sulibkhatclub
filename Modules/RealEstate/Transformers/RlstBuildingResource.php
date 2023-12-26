@@ -5,7 +5,7 @@ namespace Modules\RealEstate\Transformers;
 use App\Http\Resources\FileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Currency;
-use App\Models\GeneralMainCostCenters;
+use App\Models\GlCostCenter;
 use App\Models\Account;
 use App\Models\Country;
 use App\Models\City;
@@ -75,7 +75,6 @@ class RlstBuildingResource extends JsonResource
             "knet_account_id"             => $this->account($this->knet_account_id),
             "insurance_account_id"        => $this->account($this->insurance_account_id),
             "main_cost_center"            => $this->whenLoaded('mainCostCenter'),
-            //GeneralMainCostCenters::find($this->main_cost_center_id),
             "financial_period"            => $this->financial_period,
             'building_wallet'             => $this->buildingWallet,
         ];

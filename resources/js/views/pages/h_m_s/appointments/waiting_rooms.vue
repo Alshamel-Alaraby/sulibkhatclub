@@ -15,6 +15,14 @@ import page_title from "../../../../helper/PageTitle"
 import adminApi from '../../../../api/adminAxios';
 import successError from "../../../../helper/mixin/success&error";
 import patient_details from "../patients/patient_details.vue";
+import Swal from "sweetalert2";
+import ModalDrug from "../drugs/modal.vue";
+import ModalDiagnosisTest from "../diagnosis_tests/modal.vue";
+import ModalDoctor from "../doctors/modal.vue";
+import ModalPatient from "../patients/modal.vue";
+import ModalBranch from "../../../../components/create/general/branch.vue"
+import ModalService from "../services_types/modal.vue";
+import InsuranceCompany from "../../../../components/create/general/insuranceCompany.vue";
 
 /**
  * Advanced Table component
@@ -50,14 +58,14 @@ export default {
     },
     mixins: [translation, customTable, crudHelper, successError],
     components: {
-        Layout, PageHeader, loader, searchPage, appointmentTable,patient_details,
+        Layout, PageHeader, loader, searchPage, appointmentTable, patient_details,InsuranceCompany, ModalDrug, ModalDiagnosisTest, ModalDoctor, ModalPatient,ModalService, ModalBranch,
         actionSetting, tableCustom, Modal
     },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-              return permissionGuard(vm, "Waiting Rooms", "Waiting Rooms");
-            });
-       },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "Waiting Rooms", "Waiting Room");
+        });
+    },
     data() {
         return {
             url: '/h_m_s/appointments',
@@ -68,7 +76,8 @@ export default {
             per_page: 50,
             current_page: 1,
             search: '',
-            patient_id:null ,
+            patient_id: null,
+            doctor_can_show_next_button: 0,
             _interval: {},
             time_out: [],
             branches: [],
@@ -78,6 +87,9 @@ export default {
             next_patient_for_each_doctor: [],
             patients: [],
             appointments: [],
+            services: [],
+            paymentMethods: [],
+            companies_insurances: [],
         };
     },
     mounted() {
@@ -87,6 +99,9 @@ export default {
         this.getBranch();
         this.get_drugs();
         this.get_diagnosis_tests();
+        this.get_insurance_companies();
+        this.getPaymentMethod();
+        this.getServices();
         this.get_next_patient_for_each_doctor();
         this.page_title = page_title.value
         this.getCustomTableFields('h_m_s_appointments')
@@ -95,7 +110,89 @@ export default {
         this.destroyInterVal()
     },
     methods: {
+        get_insurance_companies() {
+            adminApi.get(`insurance_companies?drop_down=1&company_id=${this.company_id}`).then((res) => {
+                let data = res.data
+                        if (this.isPermission("create InsuranceCompany")) {
+                            data.unshift({ id: 0, name: "اضف شركة تأمين", name_e: "Add Insurance Company" });
+                    }
+                    this.companies_insurances = data
+            });
+        },
+        getPaymentMethod() {
+            this.isLoader = true;
+            adminApi.get(`/payment-methods`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.paymentMethods = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getServices() {
+            this.isLoader = true;
+            adminApi
+                .get(`/h_m_s/service_types`)
+                .then((res) => {
+                    let data = res.data.data
+                        if (this.isPermission("create ServiceType")) {
+                            data.unshift({ id: 0, name: "اضف خدمة", name_e: "Add Service" });
+                    }
+                    this.services = data
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        next_patient() {
+            this.isLoader = true;
 
+            Swal.fire({
+                title: `${this.$t("general.Areyousure")}`,
+                text: `${this.$t("general.Youwontbeabletoreverthis")}`,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: `${this.$t("general.YesChangeStatus")}`,
+                cancelButtonText: `${this.$t("general.Nocancel")}`,
+                confirmButtonClass: "btn btn-success mt-2",
+                cancelButtonClass: "btn btn-danger ml-2 mt-2",
+                buttonsStyling: false,
+            }).then((result) => {
+                if (result.value) {
+                    this.isLoader = true;
+
+                    adminApi
+                        .post(`h_m_s/next_patient`)
+                        .then((res) => {
+                            this.get_appointments();
+                            this.get_next_patient_for_each_doctor();
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            this.errorFun('Error', 'Thereisanerrorinthesystem');
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
+                }
+            })
+
+        },
         async get_appointments(page = 1) {
             this.isLoader = true
             await adminApi.get(`${this.url}?page_name=waiting_rooms&search=${this.search}&include_all_status=${this.include_all_status}&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}
@@ -112,13 +209,14 @@ export default {
         },
         get_next_patient_for_each_doctor() {
             adminApi.get(`h_m_s/get_next_patient_for_each_doctor?company_id=${this.company_id}`).then((res) => {
+                this.doctor_can_show_next_button = res.data.data.doctor_can_show_next_button
                 this.destroyInterVal()
-                if (res.data.data.length > 0) {
-                    let interval = 1000 * 15 * res.data.data.length;
+                if (res.data.data.appointments.length > 0) {
+                    let interval = 1000 * 15 * res.data.data.appointments.length;
                     let start = 0;
-                    let increment = interval / res.data.data.length;
+                    let increment = interval / res.data.data.appointments.length;
 
-                    res.data.data.forEach((element) => {
+                    res.data.data.appointments.forEach((element) => {
                         this.time_out.push(setTimeout(() => {
                             this.toast(element, increment)
                         }, start));
@@ -129,7 +227,7 @@ export default {
                     this._interval = setInterval(() => {
                         start = 0;
 
-                        res.data.data.forEach((element) => {
+                        res.data.data.appointments.forEach((element) => {
                             this.time_out.push(setTimeout(() => {
                                 this.toast(element, increment)
                             }, start));
@@ -142,43 +240,58 @@ export default {
         },
         get_doctors() {
             adminApi.get(`h_m_s/doctors?drop_down=1&company_id=${this.company_id}`).then((res) => {
-                this.doctors = res.data
+                let data = res.data
+                if (this.isPermission("create Doctor")) {
+                    data.unshift({ id: 0, name: "اضف طبيب", name_e: "Add Doctor" });
+                }
+                this.doctors = data
             });
         },
         get_patients() {
             adminApi.get(`h_m_s/patients?drop_down=1`).then((res) => {
-                this.patients = res.data
+                let data = res.data
+                if (this.isPermission("create Patient")) {
+                    data.unshift({ id: 0, name: "اضف مريض", name_e: "Add Patient" });
+                }
+                this.patients = data
             });
         },
         getBranch() {
-            this.isLoader = true;
-            adminApi
-                .get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
+            adminApi.get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
                 .then((res) => {
-                    this.branches = res.data.data;
+                    let data = res.data.data
+                    if (this.isPermission("create Branch")) {
+                        data.unshift({ id: 0, name: "اضف فرع", name_e: "Add Branch" });
+                    }
+                    this.branches = data
                 })
                 .catch((err) => {
-                    this.errorFun('Error', 'Thereisanerrorinthesystem');
+                    console.log(err)
                 })
-                .finally(() => {
-                    this.isLoader = false;
-                });
         },
         get_drugs() {
             adminApi.get(`/h_m_s/drugs?drop_down=1`).then((res) => {
-                this.drugs = res.data;
+                let data = res.data
+                if (this.isPermission("create Drug")) {
+                    data.unshift({ id: 0, trade_name: "اضف دواء", trade_name_e: "Add Drug" });
+                }
+                this.drugs = data
             })
-            .catch((err) => {
-                this.errorFun('Error','Thereisanerrorinthesystem');
-            })
+                .catch((err) => {
+                    console.log(err)
+                })
         },
         get_diagnosis_tests() {
             adminApi.get(`/h_m_s/diagnosis_tests?drop_down=1`).then((res) => {
-                this.diagnosis_tests = res.data;
+                let data = res.data
+                if (this.isPermission("create DiagnosisTest")) {
+                    data.unshift({ id: 0, name: "اضف اختبار تشخيص", name_e: "Add Diagnosis Test" });
+                }
+                this.diagnosis_tests = data
             })
-            .catch((err) => {
-                this.errorFun('Error','Thereisanerrorinthesystem');
-            })
+                .catch((err) => {
+                    console.log(err)
+                })
         },
         destroyInterVal() {
             clearInterval(this._interval)
@@ -186,7 +299,7 @@ export default {
                 clearTimeout(this.time_out[i]);
             }
         },
-        show_patient_details(id){
+        show_patient_details(id) {
             this.patient_id = id
             this.$bvModal.show(`patientDetails`)
         },
@@ -200,8 +313,8 @@ export default {
                 <div class="d-flex flex-wrap"><h5 class="mt-2 mb-0 col-6 px-0">${this.$t('general.Branch')} : <span style="font-size:15px">${this.$i18n.locale == 'ar' ? item.branch.name : item.branch.name_e}</span></h5>
               <h5 class="mt-2 mb-0 col-6 px-0">${this.$t('general.Room')} : <span style="font-size:15px">${this.$i18n.locale == 'ar' ? item.room.name : item.room.name_e}</span></h5>
               <h5 class="mt-2 mb-0 col-6 px-0">${this.$t('general.Number')} : <span style="font-size:15px">${item.number}</span></h5>
-              <h5 class="mt-2 mb-0 col-6 px-0">${this.$t('general.Time')} : <label class="badge badge-dark text-white  p-2 mx-1" style="border-radius:2rem;max-width:140px"><i class="fa fa-clock"></i>
-                     ${item.final_time.start + " - " + item.final_time.end }</label></h5></div>`,
+              <h5 class="mt-2 mb-0 col-6 px-0">${this.$t('general.Time')} : <label class="badge badge-dark text-white  p-2 " style="border-radius:2rem;max-width:140px"><i class="fa fa-clock"></i>
+                     ${item.final_time.start + " - " + item.final_time.end}</label></h5></div>`,
 
                 // success, info, warning, error   / optional parameter
                 type: "warning",
@@ -239,8 +352,8 @@ export default {
 
                         <div class="col-lg-4 d-flex my-2" style="font-weight: 500">
                             <div class="d-inline-block">
-                                <b-button @click.prevent="$bvModal.show(`create`);" variant="primary" v-if="isPermission('create Appointment')"
-                                    class="font-weight-bold">
+                                <b-button @click.prevent="$bvModal.show(`create`);" variant="primary"
+                                    v-if="isPermission('create Appointment')" class="font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -260,56 +373,89 @@ export default {
 
                         </div>
                         <div class="form-group d-inline mx-3">
-                            <input type="checkbox"  id="all_status" v-model="include_all_status" @change="get_appointments">
+                            <input type="checkbox" id="all_status" v-model="include_all_status" @change="get_appointments">
                             <label for="all_status">{{ $t('general.Show all status') }}</label>
                         </div>
                         <!-- start Pagination -->
-                        <div class="d-inline-flex align-items-center pagination-custom mb-2">
-                            <div class="d-inline-block" style="font-size: 13px">
-                                {{ objPagination.from }}-{{ objPagination.to }}
-                                /
-                                {{ objPagination.total }}
+
+                        <div class="row justify-content-between align-items-center mb-2">
+                            <div class="d-inline-flex align-items-center pagination-custom mb-2">
+                                <div class="d-inline-block" style="font-size: 13px">
+                                    {{ objPagination.from }}-{{ objPagination.to }}
+                                    /
+                                    {{ objPagination.total }}
+                                </div>
+                                <div class="d-inline-block">
+                                    <a href="javascript:void(0)" :style="{
+                                        'pointer-events':
+                                            parseInt(objPagination.current_page == 1) ? 'none' : '',
+                                    }" @click.prevent="current_page = (current_page - 1 <= 0 ? 1 : current_page - 1)">
+                                        <span>&lt;</span>
+                                    </a>
+                                    <input type="text" v-model="current_page" class="pagination-current-page" />
+                                    <a href="javascript:void(0)" :style="{
+                                        'pointer-events':
+                                            objPagination.last_page ==
+                                                parseInt(objPagination.current_page)
+                                                ? 'none'
+                                                : '',
+                                    }" @click.prevent="current_page = current_page + 1">
+                                        <span>&gt;</span>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="d-inline-block">
-                                <a href="javascript:void(0)" :style="{
-                                    'pointer-events':
-                                        parseInt(objPagination.current_page == 1) ? 'none' : '',
-                                }" @click.prevent="current_page = (current_page - 1 <= 0 ? 1 : current_page - 1)">
-                                    <span>&lt;</span>
-                                </a>
-                                <input type="text" v-model="current_page" class="pagination-current-page" />
-                                <a href="javascript:void(0)" :style="{
-                                    'pointer-events':
-                                        objPagination.last_page ==
-                                            parseInt(objPagination.current_page)
-                                            ? 'none'
-                                            : '',
-                                }" @click.prevent="current_page = current_page + 1">
-                                    <span>&gt;</span>
-                                </a>
-                            </div>
+
+                            <b-button @click.prevent="next_patient" variant="primary"
+                                v-if="$store.state.auth.user.type == 'doctor' && doctor_can_show_next_button"
+                                class="font-weight-bold mx-3">
+                                <i class="fa fa-arrow-right" v-if="$i18n.locale == 'ar'"></i>
+
+                                {{ $t("general.Next Patient") }}
+                                <i class="fa fa-arrow-left" v-if="$i18n.locale == 'en'"></i>
+                            </b-button>
                         </div>
+
                         <!-- end Pagination -->
 
                         <!-- end setting -->
 
-                        <appointmentTable :appointments="appointments" :drugs="drugs" :doctors="doctors" :patients="patients" :diagnosis_tests="diagnosis_tests"
-                            @getAppointments="get_appointments(); get_next_patient_for_each_doctor()"
+                        <appointmentTable :branches="branches" :appointments="appointments" :drugs="drugs"
+                            :doctors="doctors" :patients="patients" :diagnosis_tests="diagnosis_tests"
+                            :companies_insurances="companies_insurances" :paymentMethods="paymentMethods"
+                            :services="services" @getAppointments="get_appointments(); get_next_patient_for_each_doctor()"
                             @showPatientDetails="id => show_patient_details(id)"
                             :permissionUpdate="isPermission('update Appointment')"
                             :permissionDelete="isPermission('delete Appointment')"
                             :permissionCreatePrescription="isPermission('create Prescription')"
-                            :permissionCreateInvoice="isPermission('create AppointmentInvoice')"
-                             />
+                            :permissionCreateInvoice="isPermission('create HMS Invoice')" />
 
                         <!--  create   -->
-                        <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url" v-if="isPermission('create Appointment')"
-                            :doctors="doctors" :patients="patients" :branches="branches" :isPage="true"
-                            :isVisiblePage="isVisible" :isRequiredPage="isRequired" :type="type"
-                            @getDataTable="get_appointments(1)" :isPermission="isPermission" />
+                        <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url"
+                            v-if="isPermission('create Appointment')" :doctors="doctors" :patients="patients"
+                            :branches="branches" :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired"
+                            :type="type" @getDataTable="get_appointments(1)" :isPermission="isPermission" />
 
-                            <patient_details :patient_id="patient_id" />
+                        <patient_details :patient_id="patient_id" />
 
+                        <ModalBranch :tables="[]" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addAppointmentBranch"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="getBranch" />
+
+                        <ModalService :tables="[]" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addService"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="getServices" />
+
+                        <ModalDoctor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addDoctorFromAppointment" :isPage="false"
+                            type="create" :isPermission="isPermission" @created="get_doctors" />
+
+                        <ModalPatient :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addPatientFromAppointment"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_patients" />
+
+                        <ModalDrug :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addDrugFromPrescription" :isPage="false"
+                            type="create" :isPermission="isPermission" @created="get_drugs" />
+
+                        <ModalDiagnosisTest :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addDiagnosisTestFromPrescription"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_diagnosis_tests" />
+                        <InsuranceCompany :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addCompanyInsurance"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_insurance_companies" />
                         <!-- end .table-responsive-->
                     </div>
                 </div>

@@ -78,6 +78,7 @@ Route::prefix('booking')->group(function () {
     Route::group(['prefix' => 'report'], function () {
         Route::controller(\Modules\Booking\Http\Controllers\ReportController::class)->group(function () {
             Route::get('/house-keeping', 'houseKeeping');
+            Route::get('/sales-income', 'salesIncome');
             Route::get('/check-in', 'checkIn');
             Route::get('/check-out', 'checkOut');
             Route::get('/occupied-rooms-status', 'occupiedRoomsStatus');

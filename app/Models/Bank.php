@@ -23,18 +23,13 @@ class Bank extends Model
 
     public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id');
     }
 
     public function bankAccounts()
     {
         return $this->hasMany(BankAccount::class);
     }
-
-    // public function hasChildren()
-    // {
-    //     return $this->bankAccounts()->count() > 0;
-    // }
 
     public function hasChildren()
     {
@@ -44,7 +39,7 @@ class Bank extends Model
             $relationsWithChildren[] = [
                 'relation' => 'bankAccounts',
                 'count' => $this->bankAccounts()->count(),
-                'ids' => $this->bankAccounts()->pluck('id')->toArray(),
+                'ids' => $this->bankAccounts()->pluck('account_number')->toArray(),
             ];
         }
 

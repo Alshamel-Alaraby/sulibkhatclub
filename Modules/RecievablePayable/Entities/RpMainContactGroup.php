@@ -12,8 +12,5 @@ class RpMainContactGroup extends Model
 
     protected $guarded = ['id'];
 
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpMainContactGroupFactory::new();
-    }
+  
 }

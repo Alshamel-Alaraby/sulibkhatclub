@@ -43,24 +43,17 @@ class RlstUnitStatus extends Model
 
     public function hasChildren()
     {
-        return $this->units()->count() > 0;
+        $relationsWithChildren = [];
 
+        if ($this->units()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'units',
+                'count' => $this->units()->count(),
+                'ids' => $this->units()->pluck('name')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
     }
-
-    //     public function hasChildren()
-//     {
-//         $relationsWithChildren = [];
-
-//         if ($this->statusUnits()->count() > 0) {
-//             $relationsWithChildren[] = [
-//                 'relation' => 'units',
-//                 'count' => $this->units()->count(),
-//                 'ids' => $this->units()->pluck('id')->toArray(),
-//             ];
-//         }
-
-
-//     }
 
 
 public function getActivitylogOptions(): LogOptions

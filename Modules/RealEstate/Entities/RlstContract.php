@@ -84,29 +84,34 @@ class RlstContract extends Model implements HasMedia
         return $this->hasMany(RpBreakDown::class, 'break_id');
     }
 
-    // public function hasChildren()
-    // {
-    //     return $this->details()->count() > 0 ||
-    //     $this->breakDowns()->count() > 0;
-
-    // }
+    public function contractDetails()
+    {
+        return $this->hasMany(RlstContractDetail::class, 'contract_id');
+    }
 
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
+        if ($this->contractDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contractDetails',
+                'count' => $this->contractDetails()->count(),
+                'ids' => $this->contractDetails()->pluck('id')->toArray(),
+            ];
+        }
         if ($this->details()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'details',
                 'count' => $this->details()->count(),
-                'ids' => $this->details()->pluck('id')->toArray()
+                'ids' => $this->details()->pluck('reservation_value')->toArray(),
             ];
         }
         if ($this->breakDowns()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'breakDowns',
                 'count' => $this->breakDowns()->count(),
-                'ids' => $this->breakDowns()->pluck('id')->toArray()
+                'ids' => $this->breakDowns()->pluck('rate')->toArray(),
             ];
         }
 

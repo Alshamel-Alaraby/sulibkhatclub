@@ -147,6 +147,34 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
+
+    Route::group(['prefix' => 'insurance-settings'], function () {
+        Route::controller(\App\Http\Controllers\GeneralInsuranceSettingController::class)->group(function () {
+            Route::get('/', 'all')->name('insurance-settings.index');
+            Route::get("/tables", 'getTables');
+            Route::get("/columns/{table}", 'getColumns');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('insurance-settings.create');
+            Route::put('/{id}', 'update')->name('insurance-settings.update');
+            Route::delete('/{id}', 'delete')->name('insurance-settings.destroy');
+            Route::get('logs/{id}', 'logs');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
+    Route::group(['prefix' => 'insurance-documents'], function () {
+        Route::controller(\App\Http\Controllers\GeneralInsuranceDocumentController::class)->group(function () {
+            Route::get('/', 'all')->name('insurance-documents.index');
+            Route::get('/get-table-data', 'getTableData');
+            Route::get('/{id}', 'find');
+            Route::post('/', 'create')->name('insurance-documents.create');
+            Route::put('/{id}', 'update')->name('insurance-documents.update');
+            Route::delete('/{id}', 'delete')->name('insurance-documents.destroy');
+            Route::get('logs/{id}', 'logs');
+            Route::post("bulk-delete", "bulkDelete");
+        });
+    });
+
 // customer branches
     Route::group(['prefix' => 'customer-branches'], function () {
         Route::controller(\App\Http\Controllers\CustomerBranchController::class)->group(function () {
@@ -588,6 +616,10 @@ Route::middleware(['authorize.user'])->group(function () {
         });
     });
 
+
+    Route::apiResource('insurance_companies', \App\Http\Controllers\InsuranceCompany\InsuranceCompanyController::class);
+    Route::get('account-statement', [\App\Http\Controllers\AccountStatement\AccountStatementController::class,'index']);
+
     Route::group(['prefix' => 'banks'], function () {
         Route::controller(\App\Http\Controllers\Bank\BankController::class)->group(function () {
             Route::get('/get-drop-down', 'getDropDown')->name('banks.getDropDown');
@@ -816,6 +848,7 @@ Route::middleware(['authorize.user'])->group(function () {
     Route::group(['prefix' => 'document-headers'], function () {
         Route::controller(\App\Http\Controllers\DocumentHeader\DocumentHeaderController::class)->group(function () {
             Route::get('createDailyCheckInCustomer', 'createDailyCheckInCustomer');
+            Route::get('getDocumentRealEstateData/{id}', 'getDocumentRealEstateData');
             Route::get("check-booking", "checkBooking");
             Route::get("customer-room", "getCustomerRoom");
             Route::get("check-in-customer", "getCheckInCustomer");
@@ -1070,6 +1103,7 @@ Route::group(['prefix' => 'backups'], function () {
 Route::group(['prefix' => 'client-types'], function () {
     Route::controller(\App\Http\Controllers\ClientType\ClientTypeController::class)->group(function () {
         Route::get('/get-drop-down', 'getDropDown');
+        Route::get('/get-drop-down-model', 'getDropDownByTable');
 
         Route::get('/', 'all')->name('client-types.index');
         Route::get('logs/{id}', 'logs')->name('client-types.logs');

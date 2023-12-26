@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\BoardsRent\Entities\Package;
 use Modules\Booking\Entities\Unit;
 use Modules\Booking\Entities\UnitStatus;
+use Modules\HMS\Entities\HMSServiceType;
+use Modules\RealEstate\Entities\RlstBuilding;
+use Modules\RealEstate\Entities\RlstUnit;
 
 class DocumentHeaderDetail extends Model
 {
@@ -19,10 +22,6 @@ class DocumentHeaderDetail extends Model
 
     protected $guarded = ['id'];
 
-//    protected $casts = [
-//        "date_from" => 'date',
-//        "date_to" => 'date'
-//    ];
 
     public function setDateAttribute( $value ) {
         $this->attributes['date_from'] = (new Carbon($value))->format('Y-m-d');
@@ -30,7 +29,7 @@ class DocumentHeaderDetail extends Model
 
     public function unitStatus()
     {
-        return $this->belongsTo(\App\Models\Status::class);
+        return $this->belongsTo(\App\Models\Status::class, 'unit_status_id', 'id');
     }
 
     public function bookingUnitStatus()
@@ -75,10 +74,43 @@ class DocumentHeaderDetail extends Model
     {
         return $this->belongsTo(GeneralItem::class,'item_id');
     }
+    public function service()
+    {
+        return $this->belongsTo(HMSServiceType::class,'service_id');
+    }
     public function unit()
     {
         return $this->belongsTo(Unit::class,'unit_id');
     }
+
+    public function realEstateUnit()
+    {
+        return $this->belongsTo(RlstUnit::class,'unit_id');
+    }
+
+    public function building()
+    {
+        return $this->belongsTo(RlstBuilding::class,'building_id');
+    }
+
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->itemBreakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'itemBreakDowns',
+                'count' => $this->itemBreakDowns()->count(),
+                'ids' => $this->itemBreakDowns()->pluck('serial_number')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function scopeReportDetail($query, $request)
     {

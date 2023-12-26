@@ -13,7 +13,6 @@ class CustomerBranch extends Model
 
     protected $table = "general_customer_branches";
 
-
     protected $fillable = [
         'name',
         'name_e',
@@ -26,35 +25,34 @@ class CustomerBranch extends Model
         'longitude',
     ];
 
-
     public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function governorate()
     {
-        return $this->belongsTo(Governorate::class);
+        return $this->belongsTo(Governorate::class, 'governorate_id');
     }
 
     public function avenue()
     {
-        return $this->belongsTo(Avenue::class);
+        return $this->belongsTo(Avenue::class, 'avenue_id');
     }
 
     public function street()
     {
-        return $this->belongsTo(Street::class);
+        return $this->belongsTo(Street::class, 'street_id');
     }
 
     public function customer()
     {
-        return $this->belongsTo(GeneralCustomer::class);
+        return $this->belongsTo(GeneralCustomer::class, 'customer_id');
     }
 
 }

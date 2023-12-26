@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\PointOfSale\Entities\Order;
 use Modules\PointOfSale\Entities\OrderItem;
+use Modules\RealEstate\Entities\RlstContract;
+use Modules\RealEstate\Entities\RlstInvoice;
+use Modules\RealEstate\Entities\RlstReservation;
+use Modules\RecievablePayable\Entities\RpBreakDown;
 use Modules\RecievablePayable\Entities\RpOpeningBalance;
 use Spatie\MediaLibrary\HasMedia;
 
@@ -82,17 +86,17 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function bankAccount()
     {
-        return $this->belongsTo(BankAccount::class);
+        return $this->belongsTo(BankAccount::class, 'bank_account_id');
     }
 
     public function employee()
@@ -102,7 +106,7 @@ class GeneralCustomer extends Model implements HasMedia
 
     public function sector()
     {
-        return $this->belongsTo(Sector::class);
+        return $this->belongsTo(Sector::class, 'sector_id');
 
     }
 
@@ -149,35 +153,134 @@ class GeneralCustomer extends Model implements HasMedia
         return $this->hasMany(DocumentHeader::class, 'customer_id');
     }
 
+    public function attendants()
+    {
+        return $this->hasMany(Attendant::class, 'customer_id');
+    }
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'customer_id');
+    }
+
+    public function customerBranches()
+    {
+        return $this->hasMany(\App\Models\CustomerBranch::class, "customer_id");
+    }
+
+    public function rp_break_downs()
+    {
+        return $this->hasMany(RpBreakDown::class, 'customer_id');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(RlstContract::class, 'customer_id');
+    }
+
+    public function RlstInvoices()
+    {
+        return $this->hasMany(RlstInvoice::class, 'customer_id');
+    }
+    public function reservations()
+    {
+        return $this->hasMany(RlstReservation::class);
+    }
+
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
+        if ($this->reservations()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'reservations',
+                'count' => $this->reservations()->count(),
+                'ids' => $this->reservations()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->RlstInvoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstInvoices',
+                'count' => $this->RlstInvoices()->count(),
+                'ids' => $this->RlstInvoices()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->contracts()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contracts',
+                'count' => $this->contracts()->count(),
+                'ids' => $this->contracts()->pluck('date')->toArray(),
+            ];
+        }
+        if ($this->rp_break_downs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'rp_break_downs',
+                'count' => $this->rp_break_downs()->count(),
+                'ids' => $this->rp_break_downs()->pluck('rate')->toArray(),
+            ];
+        }
         if ($this->opening_balances()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'opening_balances',
                 'count' => $this->opening_balances()->count(),
-                'ids' => $this->opening_balances()->pluck('id')->toArray(),
+                'ids' => $this->opening_balances()->pluck('date')->toArray(),
             ];
         }
-//        if ($this->orders()->count() > 0) {
-//            $relationsWithChildren[] = [
-//                'relation' => 'orders',
-//                'count' => $this->orders()->count(),
-//                'ids' => $this->orders()->pluck('id')->toArray(),
-//            ];
-//        }
-
+        if ($this->supplier()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'supplier',
+                'count' => $this->supplier()->count(),
+                'ids' => $this->supplier()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->orders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orders',
+                'count' => $this->orders()->count(),
+                'ids' => $this->orders()->pluck('date')->toArray(),
+            ];
+        }
+        if ($this->voucherHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'voucherHeaders',
+                'count' => $this->voucherHeaders()->count(),
+                'ids' => $this->voucherHeaders()->pluck('prefix')->toArray(),
+            ];
+        }
         if ($this->documentHeader()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'documentHeader',
                 'count' => $this->documentHeader()->count(),
-                'ids' => $this->documentHeader()->pluck('id')->toArray(),
+                'ids' => $this->documentHeader()->pluck('prefix')->toArray(),
             ];
         }
 
+        if ($this->attendants()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'attendants',
+                'count' => $this->attendants()->count(),
+                'ids' => $this->attendants()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->customerBranches()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customerBranches',
+                'count' => $this->customerBranches()->count(),
+                'ids' => $this->customerBranches()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->tasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tasks',
+                'count' => $this->tasks()->count(),
+                'ids' => $this->tasks()->pluck('contact_person')->toArray(),
+            ];
+        }
+
+
         return $relationsWithChildren;
     }
+
 
     public function getItemSoldAttribute($key)
     {

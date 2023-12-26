@@ -6,6 +6,7 @@ use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\CarRent\Entities\CarCar;
 use Spatie\Activitylog\LogOptions;
 
 class Color extends Model
@@ -24,8 +25,6 @@ class Color extends Model
         'is_active' => '\App\Enums\IsActive',
     ];
 
-
-
     public function colorExterior()
     {
         return $this->hasMany(CarCar::class, 'color_exterior_id');
@@ -36,8 +35,24 @@ class Color extends Model
     }
     public function hasChildren()
     {
-        return  $this->colorExterior()->count() > 0 || $this->colorInterior()->count() > 0;
+        $relationsWithChildren = [];
 
+        if ($this->colorExterior()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'colorExterior',
+                'count' => $this->colorExterior()->count(),
+                'ids' => $this->colorExterior()->pluck('plate_number')->toArray(),
+            ];
+        }
+        if ($this->colorInterior()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'colorInterior',
+                'count' => $this->colorInterior()->count(),
+                'ids' => $this->colorInterior()->pluck('plate_number')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
 

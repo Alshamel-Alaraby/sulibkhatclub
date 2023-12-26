@@ -3,6 +3,7 @@
 namespace Modules\Booking\Entities;
 
 use App\Models\DocumentHeaderDetail;
+use App\Models\GeneralItem;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ class Unit extends Model
 
     public function unitStatus()
     {
-        return $this->belongsTo(\App\Models\Status::class);
+        return $this->belongsTo(\App\Models\Status::class, 'unit_status_id', 'id');
     }
     public function bookingUnitStatus()
     {
@@ -47,10 +48,49 @@ class Unit extends Model
         return $this->belongsTo(Floor::class, 'booking_floor_id');
     }
 
+    public function generalItems()
+    {
+        return $this->hasMany(GeneralItem::class, 'unit_id');
+    }
+
+
     public function hasChildren()
     {
-        return$this->documentHeaderDetails()->count() > 0 ;
+        $relationsWithChildren = [];
+
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'document Header Details',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('date_from')->toArray(),
+            ];
+        }
+        if ($this->Detail()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'Details',
+                'count' => $this->Detail()->count(),
+                'ids' => $this->Detail()->pluck('date_from')->toArray(),
+            ];
+        }
+        if ($this->DetailFilter()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'DetailFilter',
+                'count' => $this->DetailFilter()->count(),
+                'ids' => $this->DetailFilter()->pluck('date_from')->toArray(),
+            ];
+        }
+        if ($this->generalItems()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'general Items',
+                'count' => $this->generalItems()->count(),
+                'ids' => $this->generalItems()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

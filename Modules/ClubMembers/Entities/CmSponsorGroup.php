@@ -20,9 +20,25 @@ class CmSponsorGroup extends Model
     }
 
     public function totalSponsors()
-{
-    return $this->sponsors()->count();
-}
+    {
+        return $this->sponsors()->count();
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->sponsors()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'sponsors',
+                'count' => $this->sponsors()->count(),
+                'ids' => $this->sponsors()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

@@ -15,4 +15,25 @@ class StockSector extends Model
         'name_e',
         'company_id',
     ];
+
+    public function stocks(){
+
+        return $this->hasMany(Stock::class, 'sector_id', 'id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->stocks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'stocks',
+                'count' => $this->stocks()->count(),
+                'ids' => $this->stocks()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
 }

@@ -42,28 +42,42 @@ class Brand extends Model
         return $this->hasMany(\Modules\CarRent\Entities\CarCar::class, 'brand_id');
     }
 
-    // public function hasChildren()
-    // {
-    //     $relationsWithChildren = [];
-
-    //     if ($this->products()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'products',
-    //             'count' => $this->products()->count(),
-    //             'ids' => $this->products()->pluck('id')->toArray(),
-    //         ];
-    //     }
-
-    //     return $relationsWithChildren;
-    // }
-
-
     public function hasChildren()
     {
+        $relationsWithChildren = [];
 
-        return $this->products()->count() > 0 || $this->carModels()->count() > 0 || $this->carCars()->count() > 0;
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('title')->toArray(),
+            ];
+        }
+        if ($this->carModels()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'carModels',
+                'count' => $this->carModels()->count(),
+                'ids' => $this->carModels()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->carCars()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'carCars',
+                'count' => $this->carCars()->count(),
+                'ids' => $this->carCars()->pluck('plate_number')->toArray(),
+            ];
+        }
 
+        return $relationsWithChildren;
     }
+
+
+    // public function hasChildren()
+    // {
+
+    //     return $this->products()->count() > 0 || $this->carModels()->count() > 0 || $this->carCars()->count() > 0;
+
+    // }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

@@ -10,7 +10,7 @@
                 variant="primary"
                 class="btn-sm mx-1 font-weight-bold"
             >
-                {{ $t("general.Create") }}
+                {{ $t(`general.` + titleCreate) }}
                 <i class="fas fa-plus"></i>
             </b-button>
             <div class="d-inline-flex">
@@ -155,12 +155,16 @@ import transMixinComp from "../../helper/mixin/translation-comp-mixin";
 export default {
     name: "actionSetting",
     mixins: [transMixinComp],
-    props: [
-        'companyKeys','defaultsKeys','isCreate','permissionCreate','isExcl',
-        'isPrint','permissionUpdate','permissionDelete','isEdit','isDelete',
-        'checkAll','sideAction','sidePaginate','isFilter','isGroup','isSetting',
-        'settings','isVisible','isPaginate','objPagination','current_page'
-    ],
+    props: {
+        'companyKeys': {default: []}, 'defaultsKeys':{default: []},
+        'isCreate':{default: true}, 'permissionCreate':{default: true}, 'isExcl':{default: true},
+        'isPrint':{default: true}, 'permissionUpdate':{default: true}, 'permissionDelete':{default: true},
+        'isEdit':{default: true}, 'isDelete':{default: true}, 'checkAll':{default: []},
+        'sideAction':{default: true}, 'sidePaginate':{default: true}, 'isFilter':{default: true},
+        'isGroup':{default: true}, 'isSetting':{default: true}, 'settings':{default: []},
+        'isVisible':{default: []}, 'isPaginate':{default: true}, 'objPagination':{default: {}},
+        'current_page':{default: 1},'titleCreate': {default: 'Create'}
+    },
     data(){
         return {
             setting: [],

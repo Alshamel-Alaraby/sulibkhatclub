@@ -50,6 +50,8 @@ export default {
             customer_sub_category: "",
             customer_data_edit: "",
             customer_data_create: "",
+            date_from: "",
+            date_to: "",
             openingBreak:'',
             debounce: {},
             customers: [],
@@ -65,6 +67,7 @@ export default {
             countries: [],
             packages: [],
             governorates: [],
+            payment_types: [],
             faceNumbers: [{'A': 0,'B': 0,'Multi': 0,'One-Face': 0}],
             enabled3: true,
             isLoader: false,
@@ -89,6 +92,9 @@ export default {
                 net_invoice: 0,
                 sell_method_discount: 0,
                 unrelaized_revenue: 0,
+                installment_payment_type_id: null,
+                print_day: 1,
+                due_day: 1,
                 header_details: [{
                     category_id: null,
                     governorate_id: null,
@@ -138,6 +144,14 @@ export default {
         };
     },
     validations: {
+        date_from: {  required: requiredIf(function (model) {
+                return parseInt(this.create.document_id) == 43;
+            }),
+        },
+        date_to: {  required: requiredIf(function (model) {
+                return parseInt(this.create.document_id) == 43;
+            }),
+        },
         create: {
             document_id: { required },
             document_status_id: { required },
@@ -158,6 +172,18 @@ export default {
             net_invoice: { required },
             sell_method_discount: {  },
             unrelaized_revenue: {  },
+            installment_payment_type_id:  {  required: requiredIf(function (model) {
+                    return parseInt(this.create.document_id) == 43;
+                }),
+            },
+            print_day: {  required: requiredIf(function (model) {
+                    return parseInt(this.create.document_id) == 43;
+                }),
+            },
+            due_day: {  required: requiredIf(function (model) {
+                    return parseInt(this.create.document_id) == 43;
+                }),
+            },
             header_details: {
                 required,
                 $each: {
@@ -259,6 +285,11 @@ export default {
                 break_downs: []
             });
             this.changeValue();
+            if (this.document_id && parseInt(this.document_id) == 43)
+            {
+                this.changeAllFromDate();
+                this.changeAllToDate();
+            }
         },
         removeNewField(index){
             if(this.create.header_details.length > 1){
@@ -287,6 +318,8 @@ export default {
             this.customer_sub_category = '';
             this.customer_data_edit = '';
             this.customer_data_create = '';
+            this.date_from = "";
+            this.date_to = "";
             this.serial_number = "";
             this.financial_years_validate = true;
             this.create = {
@@ -304,6 +337,9 @@ export default {
                 customer_id: null,
                 task_id: null,
                 external_salesmen_id: null,
+                installment_payment_type_id: null,
+                print_day: 1,
+                due_day: 1,
                 external_commission: 0,
                 total_invoice: 0,
                 invoice_discount: 0,
@@ -371,6 +407,10 @@ export default {
             this.getCategory();
             this.getGovernorate();
             this.getPackage();
+            if(this.document_id && parseInt(this.document_id) == 43)
+            {
+                this.getInstallPaymentTypes();
+            }
             if(parseInt(this.document.required) == 1 && this.relatedDocuments.length == 1){
                 this.create.related_document_id = this.relatedDocuments[0].id;
             }
@@ -743,6 +783,25 @@ export default {
                     this.isLoader = false;
                 });
         },
+         getInstallPaymentTypes() {
+            this.isLoader = true;
+             adminApi
+                .get(`/recievable-payable/rp_installment_payment_types`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.payment_types = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
          getCategory(index = null) {
             this.isLoader = true;
              adminApi
@@ -889,7 +948,7 @@ export default {
 
              adminApi
                 .get(
-                    `/boards-rent/panels/filter-panel?date_from=${date_from}&date_to=${date_to}&page=${page}&per_page=${this.per_page_panel}&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}&code=${code}`
+                    `/boards-rent/panels/filter-panel?date_from=${date_from}&date_to=${date_to}&page=${page}&per_page=${this.per_page_panel}&category_id=${category_id}&governorate_id=${governorate_id}&city_id=${city_id}&avenue_id=${avenue_id}&street_id=${street_id}&face=${face}&code=${code}&is_active=1`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -983,6 +1042,18 @@ export default {
             this.current_page_pans_packs = [];
             this.CheckAllPanels = [];
             let reservation =this.dataOfRow;
+
+            // if contract yearly
+
+            if(this.document_id && parseInt(this.document_id) == 43){
+                this.getInstallPaymentTypes();
+                this.date_from = reservation.header_details ? this.formatDate(reservation.header_details[0].date_from) : "";
+                this.date_to = reservation.header_details ? this.formatDate(reservation.header_details[0].date_to) : "";
+                this.create.installment_payment_type_id = reservation.installmentPaymentType ? reservation.installmentPaymentType.id : null;
+                this.create.print_day = reservation.print_day;
+                this.create.due_day = reservation.due_day;
+            }
+
             this.customer_data_edit = reservation.customer;
              this.getCustomers(reservation.employee_id);
             this.date = new Date(reservation.date);
@@ -1004,6 +1075,9 @@ export default {
             this.create.employee_id = reservation.employee_id;
              this.getTasksCreate();
             this.create.external_salesmen_id = reservation.external_salesmen_id;
+            this.create.installment_payment_type_id = reservation.installment_payment_type_id;
+            this.create.print_day = reservation.print_day;
+            this.create.due_day = reservation.due_day;
             this.create.external_commission = reservation.external_commission;
             this.create.total_invoice = reservation.total_invoice;
             this.create.invoice_discount = reservation.invoice_discount;
@@ -1102,6 +1176,9 @@ export default {
                 customer_id: null,
                 task_id: null,
                 external_salesmen_id: null,
+                installment_payment_type_id: null,
+                print_day: 1,
+                due_day: 1,
                 external_commission: 0,
                 total_invoice: 0,
                 invoice_discount: 0,
@@ -1402,6 +1479,9 @@ export default {
             this.getTasksCreate();
 
             this.create.external_salesmen_id = relatedDocument.external_salesmen_id;
+            this.create.installment_payment_type_id = relatedDocument.installment_payment_type_id;
+            this.create.print_day = relatedDocument.print_day;
+            this.create.due_day = relatedDocument.due_day;
             this.create.external_commission = relatedDocument.external_commission;
             this.create.total_invoice = relatedDocument.total_invoice;
             this.create.invoice_discount = relatedDocument.invoice_discount;
@@ -1409,6 +1489,8 @@ export default {
             this.create.sell_method_discount = relatedDocument.sell_method_discount;
             this.create.unrelaized_revenue = relatedDocument.unrelaized_revenue;
             this.create.task_id = relatedDocument.task_id;
+            this.date_from = this.formatDate(relatedDocument.header_details[0].date_from);
+            this.date_to = this.formatDate(relatedDocument.header_details[0].date_from) ;
 
             relatedDocument.header_details.forEach((e,index) => {
                 this.pansPaginations.push({pansPaginations: []});
@@ -1501,6 +1583,7 @@ export default {
                 this.openingBreak = {
                     customer_id: this.create.customer_id,
                     currency_id: 1,
+                    client_type_id: 1,
                     document_id: this.document_id,
                     debit: (this.document.attributes && parseInt(this.document.attributes.customer) == 1)?this.create.net_invoice:0,
                     credit: (this.document.attributes && parseInt(this.document.attributes.customer) == -1)?this.create.net_invoice:0,
@@ -1520,6 +1603,55 @@ export default {
             {
                 this.addNewField();
             }
+        },
+        checkDayValue(is_print)
+        {
+            if (is_print)
+            {
+                if (this.create.print_day <= 0)
+                {
+                    this.create.print_day = 1;
+                }
+
+                if (this.create.print_day > 28)
+                {
+                    this.create.print_day = 28;
+                }
+
+            }else{
+                if (this.create.due_day <= 0)
+                {
+                    this.create.due_day = 1;
+                }
+
+                if (this.create.due_day > 28)
+                {
+                    this.create.due_day = 28;
+                }
+            }
+
+        },
+        changeAllFromDate()
+        {
+            this.create.header_details.forEach((el,index) => {
+                this.create.header_details[index].date_from = this.date_from;
+                this.create.header_details[index].rent_days = this.diffDays(index);
+            });
+        },
+        changeAllToDate()
+        {
+            this.create.header_details.forEach((el,index) => {
+                this.create.header_details[index].date_to = this.date_to;
+                this.create.header_details[index].rent_days = this.diffDays(index);
+            });
+        },
+        diffDays(index) {
+            const date1 = new Date(this.create.header_details[index].date_from);
+            const date2 = new Date(this.create.header_details[index].date_to);
+            const diffTime = Math.abs(date2 - date1);
+            const diffDaysPlus = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = diffDaysPlus;
+            return diffDays;
         },
     }
 };
@@ -1932,6 +2064,120 @@ export default {
                                     {{ errorMessage }}
                                 </ErrorMessage>
                             </template>
+                        </div>
+                    </div>
+                    <div class="col-md-2" v-if="document_id && parseInt(document_id) == 43">
+                        <div class="form-group">
+                            <label class="control-label">{{ $t("general.installment_payment_type_id") }} <span class="text-danger">*</span></label>
+                            <multiselect
+                                :show-labels="false"
+                                v-model="create.installment_payment_type_id"
+                                :options="payment_types.map((type) => type.id)"
+                                :class="{'is-invalid': $v.create.installment_payment_type_id.$error || errors.installment_payment_type_id,}"
+                                :custom-label="(opt) => payment_types.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? payment_types.find((x) => x.id == opt).name : payment_types.find((x) => x.id == opt).name_e :''"
+                            >
+                            </multiselect>
+                            <div v-if="!$v.create.installment_payment_type_id.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                            <template v-if="errors.installment_payment_type_id">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.installment_payment_type_id"
+                                              :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="document_id && parseInt(document_id) == 43" class="col-md-2">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{$t('general.PrintDay')}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                @input="checkDayValue(true)"
+                                type="number"
+                                class="form-control"
+                                v-model="$v.create.print_day.$model"
+                                :class="{
+                                    'is-invalid': $v.create.print_day.$error || errors.print_day,
+                                    'is-valid': !$v.create.print_day.$invalid && !errors.print_day,
+                                  }"
+                            />
+                            <div v-if="!$v.create.print_day.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                            <template v-if="errors.print_day">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.print_day" :key="index">
+                                    {{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="document_id && parseInt(document_id) == 43" class="col-md-2">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{$t('general.DueDay')}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                @input="checkDayValue(false)"
+                                class="form-control"
+                                v-model="$v.create.due_day.$model"
+                                :class="{
+                                    'is-invalid': $v.create.due_day.$error || errors.due_day,
+                                    'is-valid': !$v.create.due_day.$invalid && !errors.due_day,
+                                  }"
+                            />
+                            <div v-if="!$v.create.due_day.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                            <template v-if="errors.due_day">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.due_day" :key="index">
+                                    {{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div v-if="document_id && parseInt(document_id) == 43" class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">
+                                {{ $t('general.from_date') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <date-picker
+                                @input="changeAllFromDate"
+                                type="date"
+                                v-model="date_from"
+                                format="YYYY-MM-DD"
+                                valueType="format"
+                                :confirm="false"
+                                :class="{'is-invalid': $v.date_from.$error}"
+                            ></date-picker>
+                            <div v-if="!$v.date_from.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="document_id && parseInt(document_id) == 43" class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label">
+                                {{ $t('general.to_date') }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <date-picker
+                                @input="changeAllToDate"
+                                type="date"
+                                v-model="date_to"
+                                format="YYYY-MM-DD"
+                                valueType="format"
+                                :confirm="false"
+                                :class="{'is-invalid': $v.date_to.$error}"
+                            ></date-picker>
+                            <div v-if="!$v.date_to.required" class="invalid-feedback">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
                         </div>
                     </div>
 
@@ -2441,6 +2687,7 @@ export default {
                                                             <date-picker
                                                                 @input="calcDateTo(gIndex)"
                                                                 type="date"
+                                                                :disabled="(document_id && parseInt(document_id) == 43) ? true : false"
                                                                 v-model="$v.create.header_details.$each[gIndex].date_from.$model"
                                                                 format="YYYY-MM-DD"
                                                                 valueType="format"
@@ -2454,6 +2701,7 @@ export default {
                                                         <div class="form-group">
                                                             <input
                                                                 @input="calcDateTo(gIndex)"
+                                                                :disabled="(document_id && parseInt(document_id) == 43) ? true : false"
                                                                 type="number"
                                                                 class="form-control englishInput"
                                                                 v-model="$v.create.header_details.$each[gIndex].rent_days.$model"

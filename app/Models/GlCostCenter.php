@@ -23,11 +23,11 @@ class GlCostCenter extends Model
                 $model->parent_id = $model->id;
                 $model->save();
             }
-            
+
         });
 
     }
-    
+
     public function scopeData($query)
     {
         return $query
@@ -41,7 +41,7 @@ class GlCostCenter extends Model
                 'parent:id,name,name_e',
             ]);
 
-            
+
     }
 
     public function parent()
@@ -68,22 +68,21 @@ class GlCostCenter extends Model
             $relationsWithChildren[] = [
                 'relation' => 'children',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('gl_cost_centers.id')->toArray(),
+                'ids' => $this->children()->pluck('name')->toArray(),
             ];
         }
-
-
         if ($this->buildings()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'buildings',
                 'count' => $this->buildings()->count(),
-                'ids' => $this->buildings()->pluck('rlst_buildings.id')->toArray(),
+                'ids' => $this->buildings()->pluck('name')->toArray(),
             ];
         }
 
         return $relationsWithChildren;
+    }
 
-    }    
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

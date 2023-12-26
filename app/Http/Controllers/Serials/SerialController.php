@@ -196,16 +196,20 @@ class SerialController extends Controller
                 $relationName = $this->getRelationDisplayName($relation['relation']);
                 $childCount = $relation['count'];
                 $childIds = implode(', ', $relation['ids']);
-                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                ];
             }
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        $this->repository->delete($id);
-
+        $model->delete();
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -223,7 +227,7 @@ class SerialController extends Controller
                 continue;
             }
 
-            $this->repository->delete($id);
+            $model->delete();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -237,17 +241,25 @@ class SerialController extends Controller
                     $relationName = $this->getRelationDisplayName($relation['relation']);
                     $childCount = $relation['count'];
                     $childIds = implode(', ', $relation['ids']);
-                    $relationErrorMessages[] = "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                    ];
                 }
 
-                $errorMessages[] = implode(' ', $relationErrorMessages);
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
             }
 
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        return responseJson(200, __('Done'));
+        return responseJson(200, 'success');
     }
+
+
 
     private function getRelationDisplayName($relation)
     {

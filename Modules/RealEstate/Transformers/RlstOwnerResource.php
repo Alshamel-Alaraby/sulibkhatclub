@@ -35,10 +35,8 @@ class RlstOwnerResource extends JsonResource
             "country" => $this->whenLoaded('country'),
             "city" => $this->whenLoaded('city'),
             "nationality" => $this->whenLoaded('country'),
-            "bank_account" => $this->whenLoaded('bankAccount')->only(['id','bank_id','account_number']),
+            "bank_account" => $this->whenLoaded('bankAccount'),
             "bank" => $this->bank,
-           
-
         ];
     }
 }

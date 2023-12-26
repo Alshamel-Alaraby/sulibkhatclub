@@ -28,7 +28,7 @@ class ArchivingCustomTable extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Club Members Custom Table')
+            ->useLogName('Archiving Custom Table')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
     {
         Schema::table('rlst_building_policies', function (Blueprint $table) {
-            $table->dropColumn('date');
             $table->tinyInteger('year');
             $table->tinyInteger('month');
         });
@@ -30,7 +29,6 @@ return new class extends Migration
     public function down()
     {
         Schema::table('rlst_building_policies', function (Blueprint $table) {
-            $table->date('date');
             $table->dropColumn('year');
             $table->dropColumn('month');
         });

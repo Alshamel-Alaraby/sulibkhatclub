@@ -721,16 +721,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -880,7 +884,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -1227,13 +1231,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -1275,7 +1279,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -3285,7 +3289,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -3305,7 +3309,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -4794,7 +4798,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -5072,7 +5076,7 @@ var render = function render() {
   })])])]), _vm._v(" "), _c("div", {
     staticClass: "row justify-content-between align-items-center mb-2 px-1"
   }, [_c("div", {
-    staticClass: "col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0"
+    staticClass: "col-md-5 d-flex align-items-center mb-1 mt-2 mb-xl-0"
   }, [_c("b-button", {
     directives: [{
       name: "b-modal",
@@ -5123,7 +5127,19 @@ var render = function render() {
     staticClass: "custom-btn-dowonload"
   }, [_c("i", {
     staticClass: "fe-printer"
-  })]) : _vm._e()])], 1), _vm._v(" "), _c("div", {
+  })]) : _vm._e(), _vm._v(" "), _vm.items.length > 0 ? _c("b-button", {
+    directives: [{
+      name: "print",
+      rawName: "v-print",
+      value: "#printEnvelope",
+      expression: "'#printEnvelope'"
+    }],
+    attrs: {
+      variant: "info"
+    }
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.envelopePrinting")) + "\n                                    "), _c("i", {
+    staticClass: "fe-printer"
+  })]) : _vm._e()], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
   }, [_c("div", {
     staticClass: "d-fex"
@@ -5448,6 +5464,17 @@ var render = function render() {
   }), _vm._v(" "), _vm.$v.create.date.$error ? _c("div", {
     staticClass: "text-danger"
   }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)])])])]), _vm._v(" "), _c("div", {
+    staticClass: "head-branch",
+    attrs: {
+      id: "printEnvelope"
+    }
+  }, _vm._l(_vm.items, function (item) {
+    return _c("div", {
+      staticClass: "row justify-content-center align-items-center content text-center"
+    }, [_c("div", {
+      staticClass: "col-md-4 text-center"
+    }, [_c("p", [_vm._v(_vm._s(_vm.$t("general.memberName")) + ": " + _vm._s(item.full_name))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.$t("general.memberAddress")) + ": " + _vm._s(item.home_address))])])]);
+  }), 0), _vm._v(" "), _c("div", {
     ref: "exportable_table",
     staticClass: "table-responsive mb-3 custom-table-theme position-relative",
     attrs: {
@@ -6240,7 +6267,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-50cc5168] {\r\n    display: none;\n}\n.head-branch[data-v-50cc5168] {\r\n    display: none;\n}\n.colPay[data-v-50cc5168]{\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n.border-custom[data-v-50cc5168] {\r\n    width: 100px;\r\n    height: 100px;\r\n    border: 1px solid;\r\n    border-radius: 50%;\n}\n.finial-border[data-v-50cc5168] {\r\n    margin-bottom: 50%;\n}\n@media print {\n.colPay[data-v-50cc5168]{\r\n        color: #000;\n}\n.head-branch[data-v-50cc5168] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-50cc5168]{\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-50cc5168]{\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-50cc5168] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-50cc5168] {\r\n        display: none;\n}\n.arrow-sort[data-v-50cc5168] {\r\n        display: none;\n}\ntable thead tr th[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-50cc5168] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-50cc5168] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-50cc5168] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-50cc5168] {\r\n        display: block;\n}\n.signature h4[data-v-50cc5168] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-50cc5168] {\r\n    display: none;\n}\n.head-branch[data-v-50cc5168] {\r\n    display: none;\n}\n.colPay[data-v-50cc5168]{\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n.border-custom[data-v-50cc5168] {\r\n    width: 100px;\r\n    height: 100px;\r\n    border: 1px solid;\r\n    border-radius: 50%;\n}\n.finial-border[data-v-50cc5168] {\r\n    margin-bottom: 50%;\n}\n@media print {\n.colPay[data-v-50cc5168]{\r\n        color: #000;\n}\n.head-branch[data-v-50cc5168] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-50cc5168]{\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-50cc5168]{\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-50cc5168] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-50cc5168] {\r\n        display: none;\n}\n.arrow-sort[data-v-50cc5168] {\r\n        display: none;\n}\ntable thead tr th[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-50cc5168] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-50cc5168] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-50cc5168] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-50cc5168] {\r\n        display: block;\n}\n.signature h4[data-v-50cc5168] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n.content[data-v-50cc5168] {\r\n        min-height: 1270px;\r\n        padding: 20px;\r\n        border: 2px solid;\r\n        margin-bottom: 300px;\r\n        position: relative;\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

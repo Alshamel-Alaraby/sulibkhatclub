@@ -79,26 +79,80 @@ class UnitStatusController extends Controller
             return responseJson(404, __('message.data not found'));
         }
 
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                ];
+            }
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
+        }
 
         $model->delete();
+        return responseJson(200, 'success');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $itemsWithRelations = [];
+
+        foreach ($request->ids as $id) {
+            $model = $this->model->find($id);
+
+            $relationsWithChildren = $model->hasChildren();
+            if (!empty($relationsWithChildren)) {
+                $itemsWithRelations[] = [
+                    'id' => $id,
+                    'relations' => $relationsWithChildren,
+                ];
+                continue;
+            }
+
+            $model->delete();
+        }
+
+        if (count($itemsWithRelations) > 0) {
+            $errorMessages = [];
+            foreach ($itemsWithRelations as $item) {
+                $itemId = $item['id'];
+                $relations = $item['relations'];
+
+                $relationErrorMessages = [];
+                foreach ($relations as $relation) {
+                    $relationName = $this->getRelationDisplayName($relation['relation']);
+                    $childCount = $relation['count'];
+                    $childIds = implode(', ', $relation['ids']);
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                    ];
+                }
+
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
+            }
+
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
+        }
 
         return responseJson(200, 'success');
     }
 
-    public function bulkDelete()
+    private function getRelationDisplayName($relation)
     {
-
-        $ids = request()->ids;
-        if (!$ids) {
-            return responseJson(400, 'ids is required');
-        }
-        $models = $this->model->whereIn('id', $ids)->get();
-        if ($models->count() != count($ids)) {
-            return responseJson(404, 'not found');
-        }
-        $models->each(function ($model) {
-                $model->delete();
-        });
-        return responseJson(200, 'deleted');
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
     }
 }

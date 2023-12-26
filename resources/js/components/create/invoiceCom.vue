@@ -1181,10 +1181,11 @@ import Branch from "./general/branch"
 import Item from "../create/realEstate/item.vue";
 import transactionBreak from "../create/receivablePayment/transactionBreak/transactionBreak";
 import page_title from "../../helper/PageTitle"
+import successError from "../../helper/mixin/success&error";
 
 export default {
     name: "reservationCom",
-    mixins: [translation],
+    mixins: [translation,successError],
     components: {
         Branch,
         Saleman,
@@ -1654,7 +1655,6 @@ export default {
                     });
                 });
         },
-
         showSaleManModal() {
             if (this.create.salesman_id == 0) {
                 this.$bvModal.show("saleman-create");
@@ -1699,7 +1699,6 @@ export default {
                 // this.getSerialNumber(this.edit.branch_id);
             }
         },
-
         showItemModal(id, index) {
             if (id == 0) {
                 this.$bvModal.show("item-create");
@@ -1839,11 +1838,9 @@ export default {
                             })
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                     this.getData();
                                 } else {
                                     Swal.fire({
@@ -1889,11 +1886,9 @@ export default {
 
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                 } else {
                                     Swal.fire({
                                         icon: "error",

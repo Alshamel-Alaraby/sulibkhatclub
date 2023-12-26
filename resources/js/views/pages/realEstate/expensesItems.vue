@@ -143,8 +143,8 @@ import ExpensesItems from "../../../components/create/realEstate/expensesItems";
  */
 export default {
   page: {
-    title: "ExpensesItems",
-    meta: [{ name: "description", content: "ExpensesItems" }],
+    title: "Expenses Items",
+    meta: [{ name: "description", content: "Expenses Items" }],
   },
   mixins: [translation, customTable, successError, crudHelper],
   beforeRouteEnter(to, from, next) {

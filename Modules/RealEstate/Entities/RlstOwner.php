@@ -95,17 +95,21 @@ class RlstOwner extends Model
         })->get();
     }
 
+
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
         if ($this->walletOwner()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'walletOwner',
+                'relation' => 'wallet Owner',
                 'count' => $this->walletOwner()->count(),
-                'ids' => $this->walletOwner()->pluck('id')->toArray(),
+                'ids' => $this->walletOwner()->pluck('percentage')->toArray(),
             ];
         }
+
+
         return $relationsWithChildren;
     }
 

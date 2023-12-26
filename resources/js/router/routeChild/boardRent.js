@@ -113,5 +113,21 @@ export default [
         },
         component: () => import('../../views/pages/boardRent/sell-method'),
     },
-    
+    {
+        path: '/dashboard/boardRent/Yearly-Publishing-Contract',
+        name: 'Yearly Publishing Contract',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/YearlyPublishingContract'),
+    },
+    {
+        path: '/dashboard/boardRent/Yearly-Contract-Invoice',
+        name: 'Yearly Contract Invoice',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/boardRent/YearlyContractInvoice'),
+    },
+
 ];

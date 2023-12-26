@@ -40,15 +40,14 @@ export default {
     },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-              return permissionGuard(vm, "Rooms", "Rooms");
+              return permissionGuard(vm, "Rooms", "all Room");
             });
        },
     data() {
         return {
             url: '/h_m_s/rooms',
             page_title: {},
-            branches: [],
-            rooms_categories: [],
+            room_schedule: [],
             searchMain: '',
             tableSetting: [
                 {
@@ -82,31 +81,12 @@ export default {
         this.searchField = this.tableSetting.filter(e => e.isFilter).map(el => el.isV);
         this.settingFun();
         this.getCustomTableFields('h_m_s_rooms')
-        this.get_rooms_categories();
-        this.getBranch();
+
         this.page_title = page_title.value
         this.getData(1, this.url, this.filterSearch(this.searchField));
     },
     methods: {
-        getBranch() {
-            this.isLoader = true;
-            adminApi
-                .get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
-                .then((res) => {
-                    this.branches = res.data.data;
-                })
-                .catch((err) => {
-                    this.errorFun('Error', 'Thereisanerrorinthesystem');
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
-        get_rooms_categories() {
-            adminApi.get(`h_m_s/rooms_categories?company_id=${this.company_id}&type=children`).then((res) => {
-                this.rooms_categories = res.data.data
-            });
-        },
+
         filterSearch(fields) {
             let index_branch_id = fields.indexOf("branch_id")
             if (index_branch_id > -1) {
@@ -173,10 +153,11 @@ export default {
 
                         <!--  create   -->
                         <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url"
-                            :rooms_categories="rooms_categories" :branches="branches" :isPage="true"
+                            :isPage="true"
                             :isVisiblePage="isVisible" :isRequiredPage="isRequired" :type="type"
                             :idObjEdit="idEdit ? { idEdit, dataObj: this.tables.find(el => el.id == idEdit) } : null"
                             @getDataTable="getData(1, url, filterSearch(searchField))" :isPermission="isPermission" />
+
 
                         <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
                             id="printCustom">
@@ -184,6 +165,9 @@ export default {
 
                             <tableCustom :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :isLog="false"
                                 :tables="tables" :isEdit="true" :isDelete="true"
+                                :modalButtonIcon="'fa fa-clock'" :modalButton="'TimeSchedule'"
+                                :modalButtonCondition="{key:'has_schedule',value:true,default_val:'-'}"
+                                @TimeSchedule="schedule_times => room_schedule = schedule_times" :modalEmitAttribute="'schedule_times'"
                                 :permissionUpdate="isPermission('update Room')"
                                 :permissionDelete="isPermission('delete Room')" :isVisible="isVisible"
                                 :tableSetting="tableSetting" :enabled3="enabled3" :Tooltip="Tooltip"
@@ -192,7 +176,39 @@ export default {
                                 @checkRowTable="id => checkRow(id)" :isInputCheck="true" :isAction="true" />
 
                         </div>
-                        <!-- end .table-responsive-->
+
+                        <b-modal id="TimeSchedule" :title="$t('general.Time Schedule')" title-class="font-18"
+                            body-class="p-4 " size="lg" :hide-footer="true">
+                            <table class="table table-borderless table-hover table-centered m-0">
+                                <loader size="large" v-if="isLoader" />
+
+                                <thead>
+                                    <tr class="text-center">
+                                        <th>{{ getCompanyKey("hms_doctors_day") }}</th>
+                                        <th>{{ getCompanyKey("hms_doctors_from") }}</th>
+                                        <th>{{ getCompanyKey("hms_doctors_to") }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-if="room_schedule.length > 0">
+                                    <tr v-for="time in room_schedule" :key="time.id">
+                                        <td>{{ $i18n.locale == 'ar' ? time.day.name : time.day.name_e }}</td>
+                                        <td>
+                                            <label data-v-42f9c4a2="" class="badge badge-dark text-white p-2 mx-1 col"
+                                                style="border-radius: 2rem; max-width: 140px;">
+                                                <i class="fa fa-clock"></i>
+                                                {{ time.from }}</label>
+                                        </td>
+                                        <td>
+                                            <label data-v-42f9c4a2="" class="badge badge-dark text-white p-2 mx-1 col"
+                                                style="border-radius: 2rem; max-width: 140px;">
+                                                <i class="fa fa-clock"></i>
+                                                {{ time.to }}</label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </b-modal>
                     </div>
                 </div>
             </div>

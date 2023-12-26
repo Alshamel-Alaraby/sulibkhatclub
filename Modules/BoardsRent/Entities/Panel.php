@@ -109,11 +109,41 @@ class Panel extends Model implements HasMedia
     {
         return $this->belongsToMany(Package::class, 'boards_rent_package_panel', 'panel_id', 'package_id');
     }
+    public function packages_panels()
+    {
+        return $this->belongsToMany(Package::class, 'boards_rent_package_panel', 'panel_id', 'package_id')
+        ->select('boards_rent_package_panel.id');
+    }
 
     public function itemBreakDowns()
     {
         return $this->hasMany(\App\Models\ItemBreakDown::class, 'break_id')->where('module_type','panels');
     }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->packages_panels()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'packages_panels',
+                'count' => $this->packages_panels()->count(),
+                'ids' => $this->packages_panels()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->itemBreakDowns()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'item Break Downs',
+                'count' => $this->itemBreakDowns()->count(),
+                'ids' => $this->itemBreakDowns()->pluck('date_from')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

@@ -15,9 +15,13 @@ class RlstUnitServiceResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
+//            'unit_id' => $this->unit_id,
             'unit' => $this->whenLoaded('unit'),
             'service' => $this->whenLoaded('service'),
-            'price' => $this->price,
+            'price' => $this->default_price,
+            'from_date' => $this->from_date,
+
         ];
     }
 }

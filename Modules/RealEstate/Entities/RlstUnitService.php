@@ -2,9 +2,9 @@
 
 namespace Modules\RealEstate\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\LogTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 
 class RlstUnitService extends Model
@@ -15,13 +15,21 @@ class RlstUnitService extends Model
 
     protected $guarded = ['id'];
 
+    protected $appends = ['unit_name'];
+
+
     public function scopeData($query)
     {
-        return $query->select('id', 'unit_id', 'service_id', 'price')
+        return $query->select('id', 'unit_id', 'service_id', 'default_price', 'from_date')
             ->with([
-                'unit:id,name,name_e,code',
-                'service:id,name,name_e,code'
+                'unit:id,name,name_e',
+                'service:id,name,name_e'
             ]);
+    }
+
+    public function getUnitNameAttribute(){
+        $unit = $this->unit;
+        return ['name' => $unit->name , 'name_e' => $unit->name_e];
     }
 
 
@@ -34,7 +42,6 @@ class RlstUnitService extends Model
     {
         return $this->belongsTo(\Modules\RealEstate\Entities\RlstUnit::class, 'unit_id');
     }
-
 
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

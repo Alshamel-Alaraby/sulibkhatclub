@@ -51,18 +51,28 @@ class CmSponser extends Model
         return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponsorGroup::class, 'group_id', 'id');
     }
 
-    public function totalMembers()
-{
-    return $this->members()->where('member_status_id', 1)->count();
-}
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class, 'sponsor_id');
+    }
 
-public function totalMembersPermissions($permissions)
-{
-    return $this->members()
-        ->where('member_status_id', 1)
-        ->whereIn('members_permissions_id', $permissions->pluck('id'))
-        ->count();
-}
+    public function cm_transactions()
+    {
+        return $this->hasMany(CmTransaction::class, 'sponsor_id');
+    }
+
+    public function totalMembers()
+    {
+        return $this->members()->where('member_status_id', 1)->count();
+    }
+
+    public function totalMembersPermissions($permissions)
+    {
+        return $this->members()
+            ->where('member_status_id', 1)
+            ->whereIn('members_permissions_id', $permissions->pluck('id'))
+            ->count();
+    }
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -73,14 +83,46 @@ public function totalMembersPermissions($permissions)
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
+
+
     public function hasChildren()
     {
-        $h = $this->members()->count() > 0;
-        return $h;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->members()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'members',
+                'count' => $this->members()->count(),
+                'ids' => $this->members()->pluck('first_name')->toArray(),
+            ];
+        }
+        if ($this->transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'transactions',
+                'count' => $this->transactions()->count(),
+                'ids' => $this->transactions()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->cm_transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm_transactions',
+                'count' => $this->cm_transactions()->count(),
+                'ids' => $this->cm_transactions()->pluck('prefix')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     public function sponsorAsMember()
     {
-        return $this->has(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id','id');
+        return $this->has(\Modules\ClubMembers\Entities\CmMember::class, 'cm_member_id', 'id');
     }
 }

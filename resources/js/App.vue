@@ -165,7 +165,7 @@ export default {
     } else if (this.$store.state.auth.type == "admin") {
       this.getDefaultKeys();
       this.getCompanyKeys();
-      //this.companyId(this.$store.getters["auth/company_id"]);
+    //   this.companyId(this.$store.getters["auth/company_id"]);
     } else {
       this.$store.commit("auth/logoutToken");
       return this.$router.push({ name: "login" });

@@ -2,6 +2,7 @@
 
 namespace Modules\RealEstate\Entities;
 
+use App\Models\DocumentHeaderDetail;
 use App\Traits\LogTrait;
 use App\Traits\MediaTrait;
 use App\Traits\VideoLink;
@@ -83,36 +84,84 @@ class RlstUnit extends Model implements HasMedia
         return $this->hasOne(RlstTenant::class, 'unit_id');
     }
 
-    public function hasChildren()
-    {
-        return $this->items()->count() > 0 ;
+    // public function hasChildren()
+    // {
+    //     return $this->items()->count() > 0 ;
 
+    // }
+
+    public function documentHeaderDetails()
+    {
+        return $this->hasMany(DocumentHeaderDetail::class,'unit_id');
+    }
+
+    public function contractDetails()
+    {
+        return $this->hasMany(RlstContractDetail::class, 'unit_id');
+    }
+
+    public function RlstInvoices()
+    {
+        return $this->hasMany(RlstInvoice::class, 'unit_id');
+    }
+
+    public function unitService()
+    {
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstUnitService::class, 'unit_id');
     }
 
 
 
-    // public function hasChildren()
-    // {
-    //     $relationsWithChildren = [];
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
 
-    //     if ($this->items()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'items',
-    //             'count' => $this->items()->count(),
-    //             'ids' => $this->items()->pluck('id')->toArray(),
-    //         ];
-    //     }
+        if ($this->unitService()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'unitService',
+                'count' => $this->unitService()->count(),
+                'ids' => $this->unitService()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->RlstInvoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstInvoices',
+                'count' => $this->RlstInvoices()->count(),
+                'ids' => $this->RlstInvoices()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->contractDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contractDetails',
+                'count' => $this->contractDetails()->count(),
+                'ids' => $this->contractDetails()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->items()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'items',
+                'count' => $this->items()->count(),
+                'ids' => $this->items()->pluck('name')->toArray(),
+            ];
+        }
 
-    //     if ($this->tenant()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'tenant',
-    //             'count' => $this->tenant()->count(),
-    //             'ids' => $this->tenant()->pluck('id')->toArray(),
-    //         ];
-    //     }
+        if ($this->tenant()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tenant',
+                'count' => $this->tenant()->count(),
+                'ids' => $this->tenant()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'document-Header-Details',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('name')->toArray(),
+            ];
+        }
 
-    //     return $relationsWithChildren;
-    // }
+        return $relationsWithChildren;
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

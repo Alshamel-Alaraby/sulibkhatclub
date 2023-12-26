@@ -88,14 +88,6 @@ class RlstReservation extends Model implements HasMedia
         'reservation_id', 'id');
     }
 
-    // public function hasChildren()
-    // {
-    //     return $this->contracts()->count() > 0 ||
-    //     $this->units()->count() > 0 ||
-    //     $this->details()->count() > 0 ||
-    //     $this->breakDowns()->count() > 0 ;
-
-    // }
 
 
     public function hasChildren()
@@ -106,17 +98,9 @@ class RlstReservation extends Model implements HasMedia
             $relationsWithChildren[] = [
                 'relation' => 'contracts',
                 'count' => $this->contracts()->count(),
-                'ids' => $this->contracts()->pluck('id')->toArray()
+                'ids' => $this->contracts()->pluck('date')->toArray()
             ];
         }
-        if ($this->units()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'units',
-                'count' => $this->units()->count(),
-                'ids' => $this->units()->pluck('id')->toArray()
-            ];
-        }
-
         if ($this->details()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'details',

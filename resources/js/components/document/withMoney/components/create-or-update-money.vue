@@ -75,8 +75,9 @@ export default {
                 payment_method_id: null,
                 customer_id: null,
                 amount:0,
-                client_type_id:1,
-                notes:''
+                client_type_id:null,
+                notes:'',
+                manual_document_number:'',
             },
             errors: {},
             branches: [],
@@ -99,6 +100,7 @@ export default {
             document_id: {required},
             client_type_id: {required},
             notes: {},
+            manual_document_number: {},
         },
     },
     mounted() {
@@ -141,7 +143,7 @@ export default {
             this.openTransfer=false;
             this.amountPaid=0;
             this.amount=0;
-            this.open_invoice_details=false;
+            this.open_invoice_details= parseInt(this.document.is_break) == 1 ? true : false;
             this.financial_years_validate = true;
             this.with_paid = false;
             this.create = {
@@ -152,9 +154,10 @@ export default {
                 customer_id: null,
                 amount:0,
                 document_id:this.document_id,
-                client_type_id:1,
+                client_type_id:null,
                 module_type_id: null,
-                notes:''
+                notes:'',
+                manual_document_number:'',
             };
         },
         /**
@@ -329,11 +332,12 @@ export default {
                         if (l.employee_id)
                         {
                             this.customer_data_create = l.customer;
-                            this.getCustomers(l.employee_id);
+                            let table = this.clientTypes.find((e) => e.id == this.create.client_type_id) ? this.clientTypes.find((e) => e.id == this.create.client_type_id).db_table : '';
+                            if (table){
+                                this.getCustomers(table);
+                            }
                             this.create.customer_id = l.customer_id;
                             this.customers.push(this.customer_data_create);
-                            // لو فى بريك افتحها لان مع ديفونا لا يوجد بريك
-                            // this.getBreakCustomer(l.customer_id);
                         }
                     }
                 })
@@ -350,11 +354,20 @@ export default {
         },
         getClientType() {
             this.isLoader = true;
-             adminApi
-                .get(`/client-types/get-drop-down`)
+            adminApi
+                .get(`/client-types`)
                 .then((res) => {
                     let l = res.data.data;
-                    this.clientTypes = l;
+                    let documentTypesIds = [];
+                    this.document.clientTypes.forEach((e,index) => {
+                        documentTypesIds.push(parseInt(e))
+                    });
+                    this.clientTypes = l.filter((x) => documentTypesIds.includes(x.id));
+                    if (this.clientTypes.length == 1)
+                    {
+                        this.create.client_type_id = this.clientTypes[0].id;
+                        this.getCustomers(this.clientTypes[0].db_table);
+                    }
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -424,18 +437,18 @@ export default {
                     });
                 });
         },
-        getCustomerSalesman(e)
+        getCustomerData(e)
         {
-            let employee_id = e;
-            if (employee_id)
-            {
-                this.getCustomers(employee_id);
+            let type_id = e??'';
+            if (type_id){
+                let table = this.clientTypes.find((e) => e.id == type_id).db_table ;
+                this.getCustomers(table);
             }
         },
-        getCustomers(employee_id=null,search='') {
+        getCustomers(table=null,search='') {
             this.isLoader = true;
-             adminApi
-                .get(`/general-customer?limet=10&company_id=${this.company_id}&employee_id=${employee_id}&search=${search}&columns[0]=name&columns[1]=name_e&columns[2]=id`)
+            adminApi
+                .get(`/client-types/get-drop-down-model?db_table=${table}&limet=10&search=${search}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -481,14 +494,14 @@ export default {
                     this.isLoader = false;
                 });
         },
-        getBreakCustomer(id) {
+        getBreakCustomer(id,client_type_id) {
             this.isLoader = true;
             this.customerDebits = [];
             this.customerCredit = [];
             this.customer_data_create = this.customers.find((e) => e.id == this.create.customer_id);
             this.customer_data_edit = this.customers.find((e) => e.id == this.create.customer_id);
-             adminApi
-                .get(`/recievable-payable/document-with-money-details?customer_id=${id}&with_paid=${this.with_paid}`)
+            adminApi
+                .get(`/recievable-payable/document-with-money-details?customer_id=${id}&client_type_id=${client_type_id}&with_paid=${this.with_paid}`)
                 .then((res) => {
                     this.isLoader = false;
                     let l = res.data.data;
@@ -504,6 +517,7 @@ export default {
                                 // salesman: this.handelSalesman(e),
                                 serial_number: this.handelSerial(e),
                                 amount_status:e.amount_status,
+                                unit_statement:this.handelStatment(e),
                                 settlement_amount:0,
                                 prev_settlement:e.prev_settlement??0,
                             });
@@ -517,6 +531,7 @@ export default {
                                 // salesman: this.handelSalesman(e),
                                 serial_number: this.handelSerial(e),
                                 amount_status:e.amount_status,
+                                unit_statement:this.handelStatment(e),
                                 settlement_amount:0,
                                 prev_settlement:e.prev_settlement??0,
                             });
@@ -580,6 +595,22 @@ export default {
 
             return '---';
         },
+        handelStatment(e)
+        {
+            if (e.break_type == 'documentHeader')
+            {
+                if (e.documentHeader.document_header_details[0].unit_type == 'real_estate' && (e.documentHeader.document_id == 44 || e.documentHeader.document_id == 4))
+                {
+                    if (this.$i18n.locale == "ar")
+                    {
+                        return e.documentHeader.document_header_details[0].real_estate_unit.name;
+                    }else{
+                        return e.documentHeader.document_header_details[0].real_estate_unit.name_e;
+                    }
+                }
+            }
+            return '';
+        },
         handelSerial(e)
         {
             if (e.break_type == 'invoice')
@@ -614,7 +645,7 @@ export default {
         },
         getModuleType(db_table='') {
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/document-module-type/get-drop-down-model?db_table=${db_table}`)
                 .then((res) => {
                     let l = res.data.data;
@@ -646,7 +677,8 @@ export default {
             let invoice = this.invoices.find((e) => id == e.id);
             this.serial_number = invoice.prefix;
             this.invoice_id = invoice.id;
-            await this.getCustomers(invoice.salesmen_id);
+            let table = this.clientTypes.find((e) => e.id == this.create.client_type_id) ? this.clientTypes.find((e) => e.id == this.create.client_type_id).db_table : '';
+            await this.getCustomers(table);
             await this.getSalesmen();
             await this.getPaymentMethod();
             await this.getBranches();
@@ -655,12 +687,13 @@ export default {
             this.edit.salesmen_id = invoice.salesmen_id;
             this.edit.payment_method_id = invoice.payment_method_id;
             this.edit.notes = invoice.notes;
+            this.edit.manual_document_number = invoice.manual_document_number;
             this.edit.branch_id = invoice.branch_id;
             this.edit.document_id = invoice.document_id;
             this.edit.amount = invoice.amount;
             this.customer_data_edit = invoice.customer;
             if(this.document && this.document.attributes && this.parseInt(document.attributes.customer) == -1){
-                await this.getBreakCustomer(this.edit.customer_id);
+                await this.getBreakCustomer(this.edit.customer_id,this.edit.client_type_id);
                 await this.getTransactions(id);
                 this.amount= this.totalTransferAmount ;
             }
@@ -690,7 +723,8 @@ export default {
                 document_id: this.document_id,
                 customer_id: null,
                 amount:0,
-                notes:''
+                notes:'',
+                manual_document_number:'',
             };
             this.invoice_id = null;
         },
@@ -706,7 +740,11 @@ export default {
             let search = e??'';
             clearTimeout(this.debounce);
             this.debounce = setTimeout(() => {
-                this.getCustomers(this.create.salesmen_id,search);
+                let table = this.clientTypes.find((e) => e.id == this.create.client_type_id) ? this.clientTypes.find((e) => e.id == this.create.client_type_id).db_table : '';
+                if (table)
+                {
+                    this.getCustomers(table,search);
+                }
             }, 500);
 
         },
@@ -947,14 +985,14 @@ export default {
             <form>
                 <div class="row" >
                     <div :class="['col-md-12','mb-3 d-flex justify-content-end',]">
-<!--                        <b-button v-if="!dataRow" variant="primary" type="button" class="font-weight-bold px-2 mx-1">-->
-<!--                            {{ $t("general.print") }}-->
-<!--                            <i class="fe-printer"></i>-->
-<!--                        </b-button>-->
-<!--                        <b-button v-else v-print="'#printReservation'" variant="primary" type="button" class="font-weight-bold px-2 mx-1">-->
-<!--                            {{ $t("general.print") }}-->
-<!--                            <i class="fe-printer"></i>-->
-<!--                        </b-button>-->
+                        <!--                        <b-button v-if="!dataRow" variant="primary" type="button" class="font-weight-bold px-2 mx-1">-->
+                        <!--                            {{ $t("general.print") }}-->
+                        <!--                            <i class="fe-printer"></i>-->
+                        <!--                        </b-button>-->
+                        <!--                        <b-button v-else v-print="'#printReservation'" variant="primary" type="button" class="font-weight-bold px-2 mx-1">-->
+                        <!--                            {{ $t("general.print") }}-->
+                        <!--                            <i class="fe-printer"></i>-->
+                        <!--                        </b-button>-->
                         <b-button v-if="!dataRow" variant="success" :disabled="!is_disabled" @click.prevent="resetForm" type="button"
                                   :class="['font-weight-bold px-2 mx-1', is_disabled ? 'mx-2' : '']">
                             {{ $t("general.AddNewRecord") }}
@@ -1045,10 +1083,9 @@ export default {
 
                             <multiselect
                                 :disabled="!create.branch_id"
-                                @input="getCustomerSalesman"
                                 v-model="create.salesmen_id"
                                 :options="salesmen.map((type) => type.id)"
-                                :custom-label=" (opt) => $i18n.locale == 'ar' ? salesmen.find((x) => x.id == opt).name: salesmen.find((x) => x.id == opt).name_e"
+                                :custom-label=" (opt) => salesmen.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? salesmen.find((x) => x.id == opt).name: salesmen.find((x) => x.id == opt).name_e :''"
                                 :class="{'is-invalid':$v.create.salesmen_id.$error || errors.salesmen_id,}"
                             >
                             </multiselect>
@@ -1070,7 +1107,8 @@ export default {
                             </label>
 
                             <multiselect
-                                :disabled="true"
+                                :show-labels="false"
+                                @input="getCustomerData"
                                 v-model="create.client_type_id"
                                 :options="clientTypes.map((type) => type.id)"
                                 :custom-label=" (opt) => clientTypes.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? clientTypes.find((x) => x.id == opt).name: clientTypes.find((x) => x.id == opt).name_e:''"
@@ -1087,14 +1125,14 @@ export default {
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" v-if="create.client_type_id">
                         <div class="form-group">
                             <label class="control-label">{{ $t('general.client') }} <span class="text-danger">*</span></label>
                             <multiselect
                                 :disabled="!create.branch_id"
                                 :internalSearch="false"
                                 @search-change="searchCustomer"
-                                @input="getBreakCustomer(create.customer_id)"
+                                @input="getBreakCustomer(create.customer_id,create.client_type_id)"
                                 v-model="create.customer_id"
                                 :options="customers.map((type) => type.id)"
                                 :custom-label="(opt) =>customers.find((x) => x.id == opt)?$i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name: customers.find((x) => x.id == opt).name_e:''"
@@ -1192,6 +1230,23 @@ export default {
                             </template>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>{{ $t("general.manual_document_number") }}</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                step="any"
+                                v-model="create.manual_document_number"
+                                :class="{'is-invalid':$v.create.manual_document_number.$error || errors.manual_document_number,}"
+                            />
+                            <template v-if="errors.manual_document_number">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.manual_document_number"
+                                              :key="index">{{ errorMessage }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
                     <div class="col-md-3" v-if="document && parseInt(document.is_break) == 2">
                         <div class="form-check mt-3">
                             <input style="transform: scale(1.5);" type="checkbox" v-model="open_invoice_details" value="true" id="flexCheckDefault1">
@@ -1202,7 +1257,7 @@ export default {
                     </div>
                     <div class="col-md-3" v-if="create.customer_id && open_invoice_details">
                         <div class="form-check mt-3">
-                            <input style="transform: scale(1.5);" @change="getBreakCustomer(create.customer_id)" type="checkbox" v-model="with_paid" value="true" id="flexCheckDefault">
+                            <input style="transform: scale(1.5);" @change="getBreakCustomer(create.customer_id,create.client_type_id)" type="checkbox" v-model="with_paid" value="true" id="flexCheckDefault">
                             <label style="padding:9px" class="form-check-label">
                                 {{$t('general.showPayment')}}
                             </label>
@@ -1247,6 +1302,7 @@ export default {
                                                         <table class="table table-borderless table-hover table-centered m-0" >
                                                             <thead>
                                                             <tr>
+                                                                <th v-if="customerDebits.length > 0 && customerDebits[0].unit_statement">{{ $t("general.statement") }}</th>
                                                                 <th>{{ $t("general.documentSerial") }}</th>
                                                                 <!--                                                                <th>{{ $t("general.salesmen") }}</th>-->
                                                                 <th>{{ $t("general.type") }}</th>
@@ -1261,9 +1317,8 @@ export default {
                                                                 :key="data.id"
                                                                 class="body-tr-custom"
                                                             >
-                                                                <td>
-                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                </td>
+                                                                <td v-if="data.unit_statement"><h5 class="m-0 font-weight-normal">{{ data.unit_statement }}</h5></td>
+                                                                <td><h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5></td>
                                                                 <!--                                                                <td>-->
                                                                 <!--                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>-->
                                                                 <!--                                                                </td>-->
@@ -1325,8 +1380,9 @@ export default {
                                                         <table class="table table-borderless table-hover table-centered m-0" >
                                                             <thead>
                                                             <tr>
+                                                                <th v-if="customerCredit.length > 0 && customerCredit[0].unit_statement">{{ $t("general.statement") }}</th>
                                                                 <th>{{ $t("general.documentSerial") }}</th>
-                                                                <!--                                                                <th>{{ $t("general.salesmen") }}</th>-->
+                                                                <!--  <th>{{ $t("general.salesmen") }}</th>-->
                                                                 <th>{{ $t("general.type") }}</th>
                                                                 <th>{{ $t("general.Date") }}</th>
                                                                 <th>{{ $t("general.amount") }}</th>
@@ -1339,9 +1395,8 @@ export default {
                                                                 :key="data.id"
                                                                 class="body-tr-custom"
                                                             >
-                                                                <td>
-                                                                    <h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5>
-                                                                </td>
+                                                                <td v-if="data.unit_statement"><h5 class="m-0 font-weight-normal">{{ data.unit_statement }}</h5></td>
+                                                                <td><h5 class="m-0 font-weight-normal">{{ data.serial_number }}</h5></td>
                                                                 <!--                                                                <td>-->
                                                                 <!--                                                                    <h5 class="m-0 font-weight-normal">{{ data.salesman }}</h5>-->
                                                                 <!--                                                                </td>-->
@@ -1551,10 +1606,12 @@ hr {
 .align-bottom {
     vertical-align: bottom !important;
 }
-.amount-red{
+
+.amount-red {
     color: red;
 }
-.total-amount{
-    background-color: rgba(0,0,0,.075);
+
+.total-amount {
+    background-color: rgba(0, 0, 0, .075);
 }
 </style>

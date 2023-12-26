@@ -14,6 +14,7 @@ import Saleman from "../../../components/create/general/saleman.vue";
 import customerGeneral from "../../../components/create/general/customerGeneral";
 import Reservation from "../../../components/create/realEstate/reservation";
 import permissionGuard from "../../../helper/permission";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -30,7 +31,7 @@ export default {
 
 
   // },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Saleman,
     Layout,
@@ -396,11 +397,9 @@ export default {
               })
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                   this.getData();
                 } else {
                   Swal.fire({
@@ -446,11 +445,9 @@ export default {
 
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                 } else {
                   Swal.fire({
                     icon: "error",

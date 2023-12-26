@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CityRequest;
 use App\Http\Resources\AllDropListResource;
 use App\Http\Resources\ClientType\ClientTypeResource;
+use App\Http\Resources\DocumentModuleType\ModuleTypeResource;
 use App\Repositories\City\CityRepositoryInterface;
 use App\Repositories\ClientType\ClientTypeRepositoryInterface;
 use Illuminate\Http\Request;
@@ -45,4 +46,12 @@ class ClientTypeController extends Controller
         $models = $this->repository->getName($request);
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
+
+    public function getDropDownByTable(Request $request)
+    {
+        $models = $this->repository->getDropDownByTable($request);
+        return responseJson(200, 'success', ModuleTypeResource::collection($models));
+    }
+
+
 }

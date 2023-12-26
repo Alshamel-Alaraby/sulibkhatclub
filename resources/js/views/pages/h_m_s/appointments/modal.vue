@@ -1,5 +1,23 @@
 <template>
     <div>
+        <ModalDoctor
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addFromDoctorAppointmentModal"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="get_rooms_and_doctors_by_branch"
+        />
+        <ModalRoom
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addRoomFromAppointment"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="get_rooms_and_doctors_by_branch"
+        />
         <!--  create   -->
         <b-modal :id="id"
             :title="type != 'edit' ? getCompanyKey('hms_appointments_create_form') : getCompanyKey('hms_appointments_edit_form')"
@@ -30,60 +48,15 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5 row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    {{ getCompanyKey("hms_appointments_doctor") }}
-                                </label>
-                                <multiselect v-model="create.doctor_id" :options="doctors.map((type) => type.id)"
-                                    @select="get_available_times" :disabled="type == 'edit'" :custom-label="(opt) => doctors.find((x) => x.id == opt) ?
-                                        $i18n.locale == 'ar'
-                                            ? doctors.find((x) => x.id == opt).name
-                                            : doctors.find((x) => x.id == opt).name_e : null"
-                                    :class="{ 'is-invalid': errors.doctor_id || $v.create.doctor_id.$error }">
-                                </multiselect>
-                                <div v-if="$v.create.doctor_id.$error" class="invalid-feedback">
-                                    {{ $t("general.fieldIsRequired") }}
-                                </div>
-                                <template v-if="errors.doctor_id">
-                                    <ErrorMessage v-for="(errorMessage, index) in errors.doctor_id" :key="index">{{
-                                        errorMessage
-                                    }}
-                                    </ErrorMessage>
-                                </template>
-                            </div>
-                        </div>
-                        <div class="col-md-6" v-if="!patient_details_id">
-                            <div class="form-group">
-                                <label>
-                                    {{ getCompanyKey("hms_appointments_patient") }}
-                                </label>
-                                <multiselect v-model="create.patient_id" :options="patients.map((type) => type.id)"
-                                    :disabled="type == 'edit'" :custom-label="(opt) => patients.find((x) => x.id == opt) ?
-                                        $i18n.locale == 'ar'
-                                            ? patients.find((x) => x.id == opt).name
-                                            : patients.find((x) => x.id == opt).name_e : null"
-                                    :class="{ 'is-invalid': errors.patient_id || $v.create.patient_id.$error }">
-                                </multiselect>
-                                <div v-if="$v.create.patient_id.$error" class="invalid-feedback">
-                                    {{ $t("general.fieldIsRequired") }}
-                                </div>
-                                <template v-if="errors.patient_id">
-                                    <ErrorMessage v-for="(errorMessage, index) in errors.patient_id" :key="index">{{
-                                        errorMessage
-                                    }}
-                                    </ErrorMessage>
-                                </template>
-                            </div>
-                        </div>
+
 
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
                                     {{ getCompanyKey("hms_appointments_branch") }}
                                 </label>
-                                <multiselect v-model="create.branch_id" placeholder="" selectLabel="" deselectLabel=""
-                                    :options="branches.map((type) => type.id)" @select="get_rooms_by_branch()"
+                                <multiselect @input="showBranchModal" v-model="create.branch_id" placeholder="" selectLabel="" deselectLabel=""
+                                    :options="branches.map((type) => type.id)" @select="get_rooms_and_doctors_by_branch()"
                                     :custom-label="(opt) => branches.find((x) => x.id == opt) ?
                                         $i18n.locale == 'ar'
                                             ? branches.find((x) => x.id == opt).name
@@ -112,8 +85,9 @@
                                     v-if="create.room_id && Object.keys(create.room ?? []).length && rooms.length == 0"
                                     disabled>
                                 <template v-else>
-                                    <multiselect v-model="create.room_id" placeholder="" selectLabel="" deselectLabel=""
-                                        @select="get_available_times" :options="rooms.map((type) => type.id)" :custom-label="(opt) => rooms.find((x) => x.id == opt) ?
+                                    <multiselect @input="showRoomModal" v-model="create.room_id" placeholder="" selectLabel="" deselectLabel=""
+                                        @select="get_available_times(); get_rooms_and_doctors_by_branch()"
+                                        :options="rooms.map((type) => type.id)" :custom-label="(opt) => rooms.find((x) => x.id == opt) ?
                                             $i18n.locale == 'ar'
                                                 ? rooms.find((x) => x.id == opt).name
                                                 : rooms.find((x) => x.id == opt).name_e : null">
@@ -132,6 +106,55 @@
 
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    {{ getCompanyKey("hms_appointments_doctor") }}
+                                </label>
+                                <multiselect @input="showDoctorModal" v-model="create.doctor_id" :options="doctors.map((type) => type.id)"
+                                    @select="get_available_times(); get_rooms_and_doctors_by_branch()"
+                                    :disabled="type == 'edit'" :custom-label="(opt) => doctors.find((x) => x.id == opt) ?
+                                        $i18n.locale == 'ar'
+                                            ? doctors.find((x) => x.id == opt).name
+                                            : doctors.find((x) => x.id == opt).name_e : null"
+                                    :class="{ 'is-invalid': errors.doctor_id || $v.create.doctor_id.$error }">
+                                </multiselect>
+                                <div v-if="$v.create.doctor_id.$error" class="invalid-feedback">
+                                    {{ $t("general.fieldIsRequired") }}
+                                </div>
+                                <template v-if="errors.doctor_id">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.doctor_id" :key="index">{{
+                                        errorMessage
+                                    }}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="col-md-6" v-if="!patient_details_id">
+                            <div class="form-group">
+                                <label>
+                                    {{ getCompanyKey("hms_appointments_patient") }}
+                                </label>
+                                <multiselect @input="showPatientModal" v-model="create.patient_id" :options="patients.map((type) => type.id)"
+                                    :disabled="type == 'edit'" :custom-label="(opt) => patients.find((x) => x.id == opt) ?
+                                        $i18n.locale == 'ar'
+                                            ? patients.find((x) => x.id == opt).name
+                                            : patients.find((x) => x.id == opt).name_e : null"
+                                    :class="{ 'is-invalid': errors.patient_id || $v.create.patient_id.$error }">
+                                </multiselect>
+                                <div v-if="$v.create.patient_id.$error" class="invalid-feedback">
+                                    {{ $t("general.fieldIsRequired") }}
+                                </div>
+                                <template v-if="errors.patient_id">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.patient_id" :key="index">{{
+                                        errorMessage
+                                    }}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
@@ -157,7 +180,7 @@
                                 <label>
                                     {{ getCompanyKey("hms_appointments_from_doctor") }}
                                 </label>
-                                <multiselect v-model="create.from_doctor_id" :options="doctors.map((type) => type.id)"
+                                <multiselect @input="showFromDoctorModal" v-model="create.from_doctor_id" :options="doctors.map((type) => type.id)"
                                     :disabled="type == 'edit'" :custom-label="(opt) => doctors.find((x) => x.id == opt) ?
                                         $i18n.locale == 'ar'
                                             ? doctors.find((x) => x.id == opt).name
@@ -237,7 +260,8 @@
                         }}
                         </ErrorMessage>
                         <div class="row mb-2 myorders alert alert-warning  " v-if="available_times.length != 0">
-                            <div class="my-2" style="width: 20%;" v-for="(time, index) in available_times" :key="time.start">
+                            <div class="my-2" style="width: 20%;" v-for="(time, index) in available_times"
+                                :key="time.start">
                                 <button class="btn btn-secondary btn-sm"
                                     :class="[time.available ? 'btn-danger' : '', time.selected ? 'btn-success' : '']"
                                     @click.prevent="select_time(time, index)">{{ time.start + ' - ' + time.end }}</button>
@@ -271,11 +295,15 @@ import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../../helper/mixin/success&error";
 import Multiselect from "vue-multiselect";
 import DatePicker from "vue2-datepicker";
+import ModalRoom from "../rooms/modal.vue";
+import ModalDoctor from "../doctors/modal.vue";
 
 export default {
     name: "appointments_modal",
     components: {
         Multiselect,
+        ModalRoom,
+        ModalDoctor,
         DatePicker,
         ErrorMessage,
         loader,
@@ -285,12 +313,13 @@ export default {
         id: { default: "create", }, companyKeys: { default: [], }, defaultsKeys: { default: [], },
         isPage: { default: true }, isVisiblePage: { default: null }, isRequiredPage: { default: null },
         type: { default: 'create' }, idObjEdit: { default: null }, isPermission: {}, url: { default: '/h_m_s/appointments' }, branches: { Array, default: [] }
-        , doctors: { Array, default: [] }, patients: { Array, default: [] }, patient_details_id: { default: null }
+        , patients: { Array, default: [] }, patient_details_id: { default: null }
     },
     data() {
         return {
             fields: [],
             available_times: [],
+            doctors: [],
             rooms: [],
             isCustom: false,
             isLoader: false,
@@ -327,6 +356,36 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
+        showBranchModal() {
+            if (this.create.branch_id == 0) {
+                this.$bvModal.show("addAppointmentBranch");
+                this.create.branch_id = null;
+            }
+        },
+        showDoctorModal() {
+            if (this.create.doctor_id == 0) {
+                this.$bvModal.show("addFromDoctorAppointmentModal");
+                this.create.doctor_id = null;
+            }
+        },
+        showFromDoctorModal() {
+            if (this.create.from_doctor_id == 0) {
+                this.$bvModal.show("addFromDoctorAppointmentModal");
+                this.create.from_doctor_id = null;
+            }
+        },
+        showPatientModal() {
+            if (this.create.patient_id == 0) {
+                this.$bvModal.show("addPatientFromAppointment");
+                this.create.patient_id = null;
+            }
+        },
+        showRoomModal(index) {
+            if (this.create.room_id == 0) {
+                this.$bvModal.show("addRoomFromAppointment");
+                this.create.room_id = null;
+            }
+        },
         select_time(time, available_times_index) {
             let chech = 0, index;
             this.create.time.forEach((element, i) => {
@@ -369,16 +428,23 @@ export default {
                 this.available_times = []
             }
         },
-        get_rooms_by_branch() {
-            adminApi
-                .get(`/h_m_s/rooms?branch_id=${this.create.branch_id}`)
-                .then((res) => {
-                    this.rooms = res.data.data
-                })
-                .catch((err) => {
-                    this.errorFun('Error', 'Thereisanerrorinthesystem');
-                })
-
+        get_rooms_and_doctors_by_branch() {
+            if(this.create.branch_id)
+            adminApi.get(`/h_m_s/rooms?branch_id=${this.create.branch_id}&doctor_id=${this.create.doctor_id ??''}`).then((res) => {
+                let data = res.data.data
+                    if (this.isPermission("create Room")) {
+                        data.unshift({ id: 0, name: "اضف غرفة", name_e: "Add Room" });
+                }
+                this.rooms = data
+            })
+            if(this.create.branch_id)
+            adminApi.get(`h_m_s/doctors?drop_down=1&branch_id=${this.create.branch_id}&company_id=${this.company_id}&room_id=${this.create.room_id ??''}`).then((res) => {
+                let data = res.data
+                    if (this.isPermission("create Doctor")) {
+                        data.unshift({ id: 0, name: "اضف طبيب", name_e: "Add Doctor" });
+                }
+                this.doctors = data
+            });
         },
         getCustomTableFields() {
             this.isCustom = true;
@@ -443,7 +509,7 @@ export default {
         resetModal() {
             this.defaultData();
             if (!this.isPage && this.fields.length == 0)
-                 this.getCustomTableFields();
+                this.getCustomTableFields();
             // if (this.type != 'edit') {
             // }
         },

@@ -49,9 +49,9 @@ class AllBRentPanelResource extends JsonResource
             'city'           => new RelationCityResource($this->city),
             'avenue'         => new RelationAvenueResource($this->avenue),
             'street'         => new RelationStreetResource($this->street),
-
+            'is_update'     => $this->itemBreakDowns->count() > 0 ? 1 : 0,
+            'is_active'     => $this->is_active
 //            'itemBreakDowns' => $this->itemBreakDowns,
-
         ];
     }
 }

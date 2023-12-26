@@ -21,6 +21,29 @@ class RlstUnitType extends Model
         return $query->select('id', 'name', 'name_e');
     }
 
+    public function RlstUnits()
+    {
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstUnit::class, 'unit_ty');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->RlstUnits()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstUnits',
+                'count' => $this->RlstUnits()->count(),
+                'ids' => $this->RlstUnits()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

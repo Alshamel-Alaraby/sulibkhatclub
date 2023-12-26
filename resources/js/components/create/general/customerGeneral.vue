@@ -25,6 +25,9 @@ import customerGroup from "./customer_group";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../helper/mixin/success&error";
 import img from "../../../assets/images/img-1.png";
+import DatePicker from "vue2-datepicker";
+import {formatDateOnly} from "../../../helper/startDate";
+
 /**
  * Advanced Table component
  */
@@ -47,6 +50,7 @@ export default {
     bankAccount,
     employee,
     Salesman,
+    DatePicker,
   },
   data() {
     return {
@@ -99,7 +103,9 @@ export default {
         website: "",
         media: [],
         code_country: "",
-        old_media: []
+        old_media: [],
+        driving_license: '',
+        license_exp_date: this.formatDate(new Date())
       },
       codeCountry: "",
       customer_id: null,
@@ -284,6 +290,16 @@ export default {
           return this.isRequired("customer_source_id");
         }),
       },
+      driving_license: {
+          required: requiredIf(function (model) {
+              return this.isRequired("driving_license");
+          }),
+      },
+      license_exp_date: {
+          required: requiredIf(function (model) {
+              return this.isRequired("license_exp_date");
+          }),
+      },
     },
     titleFile: { required, minLength: minLength(2), maxLength: maxLength(100) },
     watsApp: {
@@ -419,7 +435,9 @@ export default {
             website: "",
             media: [],
             code_country: "",
-            old_media: []
+            old_media: [],
+            driving_license: '',
+            license_exp_date: this.formatDate(new Date())
         };
         this.countries = [];
         this.cities = [];
@@ -433,6 +451,9 @@ export default {
         this.media = {};
         this.codeCountry = this.$store.getters["locationIp/countryCode"];
         this.is_disabled = false;
+      },
+      formatDate(value) {
+          return formatDateOnly(value);
       },
     resetModalHidden() {
       this.defaultData();
@@ -461,6 +482,8 @@ export default {
                     this.bank_accounts = [];
                     this.create.name = build.name;
                     this.create.name_e = build.name_e;
+                    this.create.driving_license = build.driving_license;
+                    this.create.license_exp_date = build.license_exp_date;
                     this.create.is_supplier = build.is_supplier;
                     if (this.isVisible("bank_account_id"))  this.getBankAcount();
                     this.create.bank_account_id = build.bank_account_id ?? null;
@@ -2289,6 +2312,92 @@ export default {
                               <template v-if="errors.note">
                                   <ErrorMessage
                                       v-for="(errorMessage, index) in errors.note"
+                                      :key="index"
+                                  >{{ errorMessage }}</ErrorMessage
+                                  >
+                              </template>
+                          </div>
+                      </div>
+                  </div>
+                  <hr
+                      v-if="isVisible('driving_license') || isVisible('license_exp_date')"
+                      style="
+                          margin: 10px 0 !important;
+                          border-top: 1px solid rgb(141 163 159 / 42%);
+                        "
+                  />
+                  <div class="row">
+                      <div class="col-md-4" v-if="isVisible('driving_license')">
+                          <div class="form-group">
+                              <label for="field-144" class="control-label">
+                                  {{ getCompanyKey("general_customer_driving_license") }}
+                                  <span
+                                      v-if="isRequired('driving_license')"
+                                      class="text-danger"
+                                  >*</span>
+                              </label>
+                                  <input
+                                      type="text"
+                                      class="form-control"
+                                      v-model="$v.create.driving_license.$model"
+                                      :class="{
+                                  'is-invalid':
+                                    $v.create.driving_license.$error || errors.driving_license,
+                                  'is-valid':
+                                    !$v.create.driving_license.$invalid && !errors.driving_license,
+                                }"
+                                      id="field-144"
+                                  />
+                              <div
+                                  v-if="!$v.create.driving_license.minLength"
+                                  class="invalid-feedback"
+                              >
+                                  {{ $t("general.Itmustbeatleast") }}
+                                  {{ $v.create.driving_license.$params.minLength.min }}
+                                  {{ $t("general.letters") }}
+                              </div>
+                              <div
+                                  v-if="!$v.create.driving_license.maxLength"
+                                  class="invalid-feedback"
+                              >
+                                  {{ $t("general.Itmustbeatmost") }}
+                                  {{ $v.create.driving_license.$params.maxLength.max }}
+                                  {{ $t("general.letters") }}
+                              </div>
+                              <template v-if="errors.driving_license">
+                                  <ErrorMessage
+                                      v-for="(errorMessage, index) in errors.driving_license"
+                                      :key="index"
+                                  >{{ errorMessage }}</ErrorMessage
+                                  >
+                              </template>
+                          </div>
+                      </div>
+                      <div class="col-md-4" v-if="isVisible('license_exp_date')">
+                          <div class="form-group">
+                              <label class="control-label">
+                                  {{ getCompanyKey("general_customer_license_exp_date") }}
+                                  <span
+                                      v-if="isRequired('license_exp_date')"
+                                      class="text-danger"
+                                  >*</span
+                                  >
+                              </label>
+                              <date-picker
+                                  v-model="create.license_exp_date"
+                                  type="date"
+                                  format="YYYY-MM-DD"
+                                  valueType="format"
+                              ></date-picker>
+                              <div
+                                  v-if="!$v.create.license_exp_date.required"
+                                  class="invalid-feedback"
+                              >
+                                  {{ $t("general.fieldIsRequired") }}
+                              </div>
+                              <template v-if="errors.license_exp_date">
+                                  <ErrorMessage
+                                      v-for="(errorMessage, index) in errors.license_exp_date"
                                       :key="index"
                                   >{{ errorMessage }}</ErrorMessage
                                   >

@@ -39,12 +39,11 @@ class RlstBuildingCategory extends Model
             $relationsWithChildren[] = [
                 'relation' => 'buildings',
                 'count' => $this->buildings()->count(),
-                'ids' => $this->buildings()->pluck('rlst_buildings.id')->toArray(),
+                'ids' => $this->buildings()->pluck('name')->toArray(),
             ];
         }
-
+     
         return $relationsWithChildren;
-
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

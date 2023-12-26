@@ -35,16 +35,13 @@ class CmMemberReject extends Model
         return $this->belongsTo(Serial::class, 'serial_id');
     }
 
-
-
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('CmHistoryTransform')
+            ->useLogName('CmMember Reject')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

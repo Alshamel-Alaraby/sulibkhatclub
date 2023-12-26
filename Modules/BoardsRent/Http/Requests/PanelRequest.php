@@ -45,6 +45,7 @@ class PanelRequest extends FormRequest
             "lat" => "required|numeric",
             "lng" => "required|numeric",
             "company_id"=>'nullable',
+            "is_active"=>'nullable',
         ];
     }
 

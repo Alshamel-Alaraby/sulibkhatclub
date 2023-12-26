@@ -1093,6 +1093,7 @@ export default {
                 this.openingBreak = {
                     customer_id: this.create.customer_type == 0 ? this.create.company_id : this.create.customer_id,
                     currency_id: 1,
+                    client_type_id: 1,
                     document_id: this.document_id,
                     debit: (this.document.attributes && parseInt(this.document.attributes.customer) == 1)?this.create.net_invoice:0,
                     credit: (this.document.attributes && parseInt(this.document.attributes.customer) == -1)?this.create.net_invoice:0,

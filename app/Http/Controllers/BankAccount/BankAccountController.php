@@ -60,39 +60,6 @@ class BankAccountController extends Controller
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
     }
 
-    // public function delete($id)
-    // {
-    //     $model = $this->modelInterface->find($id);
-    //     if (!$model) {
-    //         return responseJson(404, __('message.data not found'));
-    //     }
-
-    //     if ($model->hasChildren()) {
-    //         return responseJson(400, __("this item has children and can't be deleted remove it's children first"));
-    //     }
-
-    //     $this->modelInterface->delete($id);
-
-    //     return responseJson(200, 'success');
-    // }
-
-    // public function bulkDelete(Request $request)
-    // {
-    //     foreach ($request->ids as $id) {
-    //         $model = $this->modelInterface->find($id);
-    //         $arr = [];
-    //         if ($model->hasChildren()) {
-    //             $arr[] = $id;
-    //             continue;
-    //         }
-    //         $this->modelInterface->delete($id);
-    //     }
-    //     if (count($arr) > 0) {
-    //         return responseJson(400, __('some items has relation can\'t delete'));
-    //     }
-    //     return responseJson(200, __('Done'));
-    // }
-
     public function delete($id)
     {
         $model = $this->modelInterface->find($id);
@@ -108,16 +75,20 @@ class BankAccountController extends Controller
                 $relationName = $this->getRelationDisplayName($relation['relation']);
                 $childCount = $relation['count'];
                 $childIds = implode(', ', $relation['ids']);
-                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first.",
+                ];
             }
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null,
+            ], 400);
         }
 
-        $this->modelInterface->delete($id);
-
+        $model->delete();
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -135,7 +106,7 @@ class BankAccountController extends Controller
                 continue;
             }
 
-            $this->modelInterface->delete($id);
+            $model->delete();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -149,16 +120,22 @@ class BankAccountController extends Controller
                     $relationName = $this->getRelationDisplayName($relation['relation']);
                     $childCount = $relation['count'];
                     $childIds = implode(', ', $relation['ids']);
-                    $relationErrorMessages[] = "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.",
+                    ];
                 }
 
-                $errorMessages[] = implode(' ', $relationErrorMessages);
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
             }
 
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null,
+            ], 400);
         }
 
-        return responseJson(200, __('Done'));
+        return responseJson(200, 'success');
     }
 
     private function getRelationDisplayName($relation)

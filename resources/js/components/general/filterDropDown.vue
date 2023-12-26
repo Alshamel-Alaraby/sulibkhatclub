@@ -13,7 +13,8 @@
               (options.find((x) => x.value == option) || {}).text || ''
           "
           class="custom-multiselect"
-          @input="updateSelectedValues"
+          @open="onDropDownOpen"
+          @close="onDropDownClose"
         >
         </multiselect>
       </div>
@@ -40,13 +41,23 @@ export default {
   data() {
     return {
       localSelectedValues: this.selectedValues,
+      selectedDropdownIds: [],
     };
   },
+
   methods: {
-    updateSelectedValues() {
-      // Emitting both the dropdownId (as a string) and the selected values array (ids)
-      console.log(this.dropdownId, this.localSelectedValues);
-      this.$emit("updateIds", this.dropdownId, this.localSelectedValues);
+    onDropDownOpen() {
+      this.$emit("dropdownOpened", {
+        dropdownId: this.dropdownId,
+        selectedValues: this.localSelectedValues,
+      });
+    },
+
+    onDropDownClose() {
+      this.$emit("dropdownClosed", {
+        dropdownId: this.dropdownId,
+        selectedValues: this.localSelectedValues,
+      });
     },
   },
 };

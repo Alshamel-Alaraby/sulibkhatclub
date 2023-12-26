@@ -9,7 +9,10 @@
         <template v-if="document && document.document_detail_type == 'booking' && document_id == 40">
             <CreateOrUpdateMaintenance :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :other_data="other_data" :id="'create'" @created="getData()" />
         </template>
-        <template v-if="document && document.document_detail_type == 'booking' && document_id != 34 && document_id != 40">
+        <template v-if="document && document.document_detail_type == 'booking' && document_id == 48">
+            <RoomTransfer :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :other_data="other_data" :id="'create'" @created="getData()" />
+        </template>
+        <template v-if="document && document.document_detail_type == 'booking' && document_id != 34 && document_id != 40 && document_id != 48">
             <CreateOrUpdateBooking :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :other_data="other_data" :id="'create'" @created="getData()" />
         </template>
         <template v-if="document && document.document_detail_type == 'normal'">
@@ -27,6 +30,7 @@ import CreateOrUpdateBooking from "./components/create-or-update-booking";
 import CreateOrUpdateItems from "./components/create-or-update-items";
 import CreateOrUpdateCheckout from "./components/create-or-update-checkout";
 import CreateOrUpdateMaintenance from "./components/create-or-update-maintenance";
+import RoomTransfer from "./components/room-transfer";
 import ErrorMessage from "../../widgets/errorMessage";
 import loader from "../../general/loader";
 import DatePicker from "vue2-datepicker";
@@ -54,7 +58,8 @@ export default {
         CreateOrUpdateItems,
         CreateOrUpdateCheckout,
         CreateOrUpdateMaintenance,
-        CreateOrUpdateMoney
+        CreateOrUpdateMoney,
+        RoomTransfer
     },
     methods: {
         getData(){

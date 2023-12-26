@@ -1,5 +1,32 @@
 <template>
     <div>
+        <ModalBranch :tables="[]"
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addBranchFromDoctor"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="getBranch"
+        />
+        <ModalSpecialties
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addSpecialtiesFromDoctor"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="get_specialties"
+        />
+        <ModalRoom
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addRoomFromDoctor"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="get_rooms_by_branch(create.work_times[add_room_index].branch_id,add_room_index)"
+        />
         <!--  create   -->
         <b-modal :id="id"
             :title="type != 'edit' ? getCompanyKey('hms_doctors_create_form') : getCompanyKey('hms_doctors_edit_form')"
@@ -97,7 +124,7 @@
                                 <div class="form-group">
                                     <label class="control-label">
                                         {{ getCompanyKey("hms_doctors_email") }}
-                                        <span v-if="isRequired('email')" class="text-danger">*</span>
+                                        <span v-if="create.type == 'outdoctor' ?false : isRequired('email')" class="text-danger">*</span>
                                     </label>
                                     <input type="text" class="form-control" data-create="9" v-model="$v.create.email.$model"
                                         :class="{
@@ -155,7 +182,7 @@
                                     <label>
                                         {{ getCompanyKey("hms_doctors_specialty") }}
                                     </label>
-                                    <multiselect v-model="create.specialty_id" :options="specialties.map((type) => type.id)"
+                                    <multiselect @input="showSpecialtiesModal" v-model="create.specialty_id" :options="specialties.map((type) => type.id)"
                                         :custom-label="(opt) => specialties.find((x) => x.id == opt) ?
                                             $i18n.locale == 'ar'
                                                 ? specialties.find((x) => x.id == opt).name
@@ -173,7 +200,7 @@
                                     </template>
                                 </div>
                             </div>
-                            <div class="col-md-4" v-if="isVisible('selling_items_commission')">
+                            <div class="col-md-4" v-if="isVisible('selling_items_commission') && create.type == 'indoctor'">
                                 <div class="form-group">
                                     <label for="field-302" class="control-label">
                                         {{
@@ -194,7 +221,7 @@
                                         }" id="field-302" />
                                 </div>
                             </div>
-                            <div class="col-md-4" v-if="isVisible('transfer_patient_commission')">
+                            <div class="col-md-4" v-if="isVisible('transfer_patient_commission') && create.type == 'indoctor'">
                                 <div class="form-group">
                                     <label for="field-303" class="control-label">
                                         {{
@@ -215,7 +242,7 @@
                                         }" id="field-303" />
                                 </div>
                             </div>
-                            <div class="col-md-4" v-if="isVisible('medical_commission')">
+                            <div class="col-md-4" v-if="isVisible('medical_commission') && create.type == 'indoctor'">
                                 <div class="form-group">
                                     <label for="field-304" class="control-label">
                                         {{
@@ -237,7 +264,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4" v-if="isVisible('password')">
+                            <div class="col-md-4" v-if="create.type == 'indoctor'">
                                 <div class="form-group">
                                     <label for="field-15" class="control-label">
                                         {{ getCompanyKey("hms_doctors_password") }}
@@ -263,7 +290,7 @@
                                 </div>
                             </div>
 
-                            <div v-if="isVisible('is_active')" class="col-md-4">
+                            <div v-if="create.type == 'indoctor'" class="col-md-4">
                                 <div class="form-group">
                                     <label class="mr-2">
                                         {{ getCompanyKey("hms_doctors_is_active") }}
@@ -285,11 +312,32 @@
                                     </template>
                                 </div>
                             </div>
-
+                            <div  class="col-md-6" v-if="isVisible('type') && !(type == 'edit' &&this.idObjEdit &&  this.idObjEdit.dataObj && this.idObjEdit.dataObj.type == 'indoctor')">
+                                <div class="form-group">
+                                    <label class="mr-2">
+                                        {{ getCompanyKey("hms_doctors_type") }}
+                                        <span v-if="isRequired('type')" class="text-danger">*</span>
+                                    </label>
+                                    <b-form-group :class="{
+                                        'is-invalid': $v.create.type.$error || errors.type,
+                                        'is-valid': !$v.create.type.$invalid && !errors.type,
+                                    }">
+                                        <b-form-radio class="d-inline-block" v-model="$v.create.type.$model" name="some-radios-1"
+                                            :value="'indoctor'">{{ $t("general.indoctor") }}</b-form-radio>
+                                        <b-form-radio class="d-inline-block m-1" v-model="$v.create.type.$model"
+                                            name="some-radios-1" :value="'outdoctor'">{{ $t("general.outdoctor") }}</b-form-radio>
+                                    </b-form-group>
+                                    <template v-if="errors.type">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.type" :key="index">{{
+                                            errorMessage
+                                        }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
 
                     </b-tab>
-                    <b-tab :title="$t('general.Work Times')">
+                    <b-tab :title="$t('general.Work Times')" v-if="create.type == 'indoctor'">
 
                         <div class="card shadow mb-4 col-12 p-2">
                             <div class="card-header d-flex justify-content-between">
@@ -333,8 +381,8 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
 
-                                            <multiselect v-model="create.work_times[index].branch_id" placeholder="" selectLabel="" selectLabel=""
-                                                :options="branches.map((type) => type.id)"
+                                            <multiselect @input="showBranchModal(index)" v-model="create.work_times[index].branch_id" placeholder=""
+                                                selectLabel="" selectLabel="" :options="branches.map((type) => type.id)"
                                                 @select="get_rooms_by_branch(i, index)" :custom-label="(opt) => branches.find((x) => x.id == opt) ?
                                                     $i18n.locale == 'ar'
                                                         ? branches.find((x) => x.id == opt).name
@@ -360,7 +408,8 @@
                                                 v-if="create.work_times[index].room_id && Object.keys(create.work_times[index].room ?? []).length && rooms[index].length == 0"
                                                 disabled>
                                             <template v-else>
-                                                <multiselect v-model="create.work_times[index].room_id" placeholder="" selectLabel="" deselectLabel=""
+                                                <multiselect @input="showRoomModal(index)" v-model="create.work_times[index].room_id" placeholder=""
+                                                    selectLabel="" deselectLabel=""
                                                     :options="rooms[index].map((type) => type.id)" :custom-label="(opt) => rooms[index].find((x) => x.id == opt) ?
                                                         $i18n.locale == 'ar'
                                                             ? rooms[index].find((x) => x.id == opt).name
@@ -382,8 +431,9 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
 
-                                            <multiselect v-model="create.work_times[index].day_id" placeholder="" selectLabel="" deselectLabel=""
-                                                :options="days.map((type) => type.id)" :custom-label="(opt) => days.find((x) => x.id == opt) ?
+                                            <multiselect v-model="create.work_times[index].day_id" placeholder=""
+                                                selectLabel="" deselectLabel="" :options="days.map((type) => type.id)"
+                                                :custom-label="(opt) => days.find((x) => x.id == opt) ?
                                                     $i18n.locale == 'ar'
                                                         ? days.find((x) => x.id == opt).name
                                                         : days.find((x) => x.id == opt).name_e : null">
@@ -424,8 +474,7 @@
 
                                     <div class="col-md-2 d-flex  justify-content-center align-items-center">
 
-                                        <button @click.prevent="delete_time(index)"
-                                            class="btn btn-danger mx-2 col-6">
+                                        <button @click.prevent="delete_time(index)" class="btn btn-danger mx-2 col-6">
                                             <i class="far fa-trash-alt"></i>
                                         </button>
                                     </div>
@@ -461,12 +510,18 @@ import { arabicValue, englishValue } from "../../../../helper/langTransform";
 import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../../helper/mixin/success&error";
 import ErrorMessage from "../../../../components/widgets/errorMessage.vue";
+import ModalBranch from "../../../../components/create/general/branch.vue"
+import ModalSpecialties from "../specialties/modal.vue";
+import ModalRoom from "../rooms/modal.vue";
 
 import Multiselect from "vue-multiselect";
 export default {
     name: "doctors_modal",
     components: {
         Multiselect,
+        ModalBranch,
+        ModalRoom,
+        ModalSpecialties,
         ErrorMessage,
         loader,
     },
@@ -474,15 +529,19 @@ export default {
     props: {
         id: { default: "create", }, companyKeys: { default: [], }, defaultsKeys: { default: [], },
         isPage: { default: true }, isVisiblePage: { default: null }, isRequiredPage: { default: null },
-        type: { default: 'create' }, idObjEdit: { default: null }, isPermission: {}, url: { default: '/h_m_s/doctors' }, specialties: { Array, default: [] }, branches: { Array, default: [] }, days: { Array, default: [] }
+        type: { default: 'create' }, idObjEdit: { default: null }, isPermission: {}, url: { default: '/h_m_s/doctors' }
     },
     data() {
         return {
             fields: [],
             rooms: [[]],
+            days: [],
+            branches: [],
+            specialties: [],
             codeCountry: "",
             isCustom: false,
             isLoader: false,
+            add_room_index: null,
             company_id: null,
             create: {
                 name: "",
@@ -497,6 +556,7 @@ export default {
                 transfer_patient_commission: 0,
                 medical_commission: 0,
                 is_active: false,
+                type: 'indoctor',
                 work_times: []
             },
             errors: {},
@@ -522,7 +582,7 @@ export default {
             },
             email: {
                 required: requiredIf(function (model) {
-                    return this.isRequired("email");
+                    return this.create.type =='outdoctor' ? false : this.isRequired("email") ;
                 }),
                 email,
             },
@@ -553,7 +613,13 @@ export default {
             },
             password: {
                 required: requiredIf(function (model) {
-                    return this.isRequired("password") && this.type != 'edit';
+                    return this.create.type == 'indoctor' && this.type != 'edit';
+                }),
+                minLength: minLength(8),
+            },
+            type: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("type") && this.type != 'edit';
                 }),
                 minLength: minLength(8),
             },
@@ -562,13 +628,61 @@ export default {
         },
     },
     mounted() {
+        this.get_specialties();
+        this.getBranch();
+        this.get_days();
         this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
+        showBranchModal(index) {
+            if (this.create.work_times[index].branch_id == 0) {
+                this.$bvModal.show("addBranchFromDoctor");
+                this.create.work_times[index].branch_id = null;
+            }
+        },
+        showSpecialtiesModal() {
+            if (this.create.specialty_id == 0) {
+                this.$bvModal.show("addSpecialtiesFromDoctor");
+                this.create.specialty_id = null;
+            }
+        },
+
+        showRoomModal(index) {
+            if (this.create.work_times[index].room_id == 0) {
+                this.$bvModal.show("addRoomFromDoctor");
+                this.add_room_index = index
+                this.create.work_times[index].room_id = null;
+            }
+        },
+        get_specialties() {
+            adminApi.get(`h_m_s/specialties?company_id=${this.company_id}`).then((res) => {
+                let data = res.data.data
+                    if (this.isPermission("create Specialty")) {
+                        data.unshift({ id: 0, name: "اضف تخصص", name_e: "Add Specialty" });
+                }
+                this.specialties = data
+            });
+        },
+        get_days() {
+            adminApi.get(`h_m_s/days`).then((res) => {
+                this.days = res.data.data
+            });
+        },
+        getBranch() {
+            adminApi.get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`).then((res) => {
+                let data = res.data.data
+                        if (this.isPermission("create Branch")) {
+                            data.unshift({ id: 0, name: "اضف فرع", name_e: "Add Branch" });
+                    }
+                    this.branches = data
+            })
+                .catch((err) => {
+                    this.errorFun('Error', 'Thereisanerrorinthesystem');
+                })
+        },
         add_new_time() {
             this.rooms.push([]);
             this.create.work_times.push({
-                day_id: null,
                 branch_id: null,
                 room_id: null,
                 day_id: null,
@@ -581,11 +695,14 @@ export default {
             this.rooms.splice(index, 1);
         },
         get_rooms_by_branch(i, index) {
-            console.log(i, index)
             adminApi
                 .get(`/h_m_s/rooms?branch_id=${this.create.work_times[index].branch_id}`)
                 .then((res) => {
-                    this.$set(this.rooms, index, res.data.data)
+                    let data = res.data.data
+                    if (this.isPermission("create Room")) {
+                        data.unshift({ id: 0, name: "اضف غرفة", name_e: "Add Room" });
+                    }
+                this.$set(this.rooms, index, data)
                 })
                 .catch((err) => {
                     this.errorFun('Error', 'Thereisanerrorinthesystem');
@@ -634,6 +751,7 @@ export default {
                 mobile: null,
                 email: "",
                 password: "",
+                type: "indoctor",
                 selling_items_commission: 0,
                 transfer_patient_commission: 0,
                 medical_commission: 0,
@@ -671,10 +789,11 @@ export default {
                         this.create.specialty_id = doctor.specialty_id;
                         this.create.is_active = doctor.is_active;
                         this.create.code_country = doctor.code_country;
-                        this.create.analytic_account = doctor.analytic_account;
-                        this.create.selling_items_commission = doctor.selling_items_commission;
-                        this.create.transfer_patient_commission = doctor.transfer_patient_commission;
-                        this.create.medical_commission = doctor.medical_commission;
+                        this.create.analytic_account =doctor.analytic_account == '-' ? 0 : doctor.analytic_account;
+                        this.create.selling_items_commission = doctor.selling_items_commission == '-' ? 0 : doctor.selling_items_commission;;
+                        this.create.transfer_patient_commission = doctor.transfer_patient_commission == '-' ? 0 :doctor.transfer_patient_commission;
+                        this.create.medical_commission = doctor.medical_commission == '-' ? 0 :doctor.medical_commission;
+                        this.create.type = doctor.type;
                         let work_times = []
                         doctor.work_times.forEach(element => {
                             this.rooms.push([])
@@ -683,7 +802,6 @@ export default {
                                 day_id: element.day_id,
                                 branch_id: element.branch_id,
                                 room_id: element.room_id,
-                                day_id: element.day_id,
                                 from: element.from,
                                 to: element.to,
                             })

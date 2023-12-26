@@ -103,6 +103,11 @@ class DocumentIRepository implements DocumentInterface
         if ( isset($request['document_relateds'] )){
             $data->documentRelateds()->sync($request['document_relateds']);
         }
+        if ( isset($request['clientTypes'] )){
+            $data->clientTypes()->sync($request['clientTypes']);
+        }
+
+
         if ( isset($request['employees'] )){
             $data->employees()->sync($request['employees']);
         }

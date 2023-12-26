@@ -57,6 +57,29 @@ class Order extends Model
         return $this->items->where('type', 'discount')->first()->price ?? 0;
     }
 
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->items()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'items',
+                'count' => $this->items()->count(),
+                'ids' => $this->items()->pluck('quantity')->toArray(),
+            ];
+        }
+        if ($this->payments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'payments',
+                'count' => $this->payments()->count(),
+                'ids' => $this->payments()->pluck('date')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
+
     public function scopeFilter($query, $request)
     {
         return $query->where(function ($q) use ($request) {

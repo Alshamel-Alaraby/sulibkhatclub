@@ -10,5 +10,6 @@ interface ClientTypeRepositoryInterface
 
     public function logs($id);
     public function getName($request);
+    public function getDropDownByTable($request);
 
 }

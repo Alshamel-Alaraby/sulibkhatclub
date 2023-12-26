@@ -176,7 +176,7 @@ export default {
           isFilter: true,
           isSet: true,
           trans: "account_number",
-          isV: "chart",
+          isV: "chart_id",
           type: "relation",
           name: "chart",
           sort: false,
@@ -198,6 +198,19 @@ export default {
           setting: { tenant_type_id: true },
           isSetting: true,
         },
+        {
+          isFilter: true,
+          isSet: true,
+          trans: "tenants_nationality",
+          isV: "country_id",
+          type: "relation",
+          name: "nationality",
+          sort: false,
+          col1: "name",
+          col2: "name_e",
+          setting: { country_id: true },
+          isSetting: true,
+        },
       ],
       sendSetting: {},
       searchField: [],
@@ -214,9 +227,9 @@ export default {
   methods: {
     filterSearch(fields) {
       const fieldMappings = {
-        unit: "unit.name",
         chart: "chart.account_number",
         tenantType: "tenantType.name",
+        nationality: "nationality.name",
       };
       const filter = fields
         .map((field, index) => fieldMappings[field] || field)

@@ -133,12 +133,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         avenue_id: null,
         street_id: null,
         lat: 0,
-        lng: 0
+        lng: 0,
+        is_active: 1
       },
       company_id: null,
       errors: {},
       current_page: 1,
-      is_disabled: false
+      is_disabled: false,
+      is_update: 0
     };
   },
   validations: {
@@ -268,6 +270,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           return this.isRequired("lng");
         }),
         decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_13__.decimal
+      },
+      is_active: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_13__.requiredIf)(function (model) {
+          return this.isRequired("is_active");
+        })
       }
     }
   },
@@ -350,6 +357,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         size: "",
         note: "",
         face: "A",
+        is_active: 1,
         unit_status_id: null,
         category_id: null,
         country_id: 1,
@@ -365,6 +373,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
       this.is_disabled = false;
       this.errors = {};
+      this.is_update = 0;
     },
     resetModalHidden: function resetModalHidden() {
       this.defaultData();
@@ -407,6 +416,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this3.create.code = panels.code;
                 _this3.create.new_code = panels.new_code;
                 _this3.create.face = panels.face;
+                _this3.create.is_active = panels.is_active;
+                _this3.is_update = panels.is_update;
                 if (_this3.isVisible('category_id')) _this3.getCategory();
                 _this3.create.category_id = panels.category_id;
                 if (_this3.isVisible('unit_status_id')) _this3.getUnitStatus();
@@ -4228,16 +4239,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -4387,7 +4402,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -4663,7 +4678,74 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "actionSetting",
   mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['companyKeys', 'defaultsKeys', 'isCreate', 'permissionCreate', 'isExcl', 'isPrint', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'checkAll', 'sideAction', 'sidePaginate', 'isFilter', 'isGroup', 'isSetting', 'settings', 'isVisible', 'isPaginate', 'objPagination', 'current_page'],
+  props: {
+    'companyKeys': {
+      "default": []
+    },
+    'defaultsKeys': {
+      "default": []
+    },
+    'isCreate': {
+      "default": true
+    },
+    'permissionCreate': {
+      "default": true
+    },
+    'isExcl': {
+      "default": true
+    },
+    'isPrint': {
+      "default": true
+    },
+    'permissionUpdate': {
+      "default": true
+    },
+    'permissionDelete': {
+      "default": true
+    },
+    'isEdit': {
+      "default": true
+    },
+    'isDelete': {
+      "default": true
+    },
+    'checkAll': {
+      "default": []
+    },
+    'sideAction': {
+      "default": true
+    },
+    'sidePaginate': {
+      "default": true
+    },
+    'isFilter': {
+      "default": true
+    },
+    'isGroup': {
+      "default": true
+    },
+    'isSetting': {
+      "default": true
+    },
+    'settings': {
+      "default": []
+    },
+    'isVisible': {
+      "default": []
+    },
+    'isPaginate': {
+      "default": true
+    },
+    'objPagination': {
+      "default": {}
+    },
+    'current_page': {
+      "default": 1
+    },
+    'titleCreate': {
+      "default": 'Create'
+    }
+  },
   data: function data() {
     return {
       setting: [],
@@ -4776,13 +4858,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -4852,7 +4934,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -4886,6 +4968,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
+/* harmony import */ var _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../helper/PageTitle */ "./resources/js/helper/PageTitle.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "searchPage",
@@ -4895,6 +4979,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       search: '',
       debounce: {},
+      page_title: {},
       fields: []
     };
   },
@@ -4906,6 +4991,16 @@ __webpack_require__.r(__webpack_exports__);
         _this.$emit('editSearch', _this.search);
         _this.$emit('dataSearch');
       }, 400);
+    },
+    pageTitle: {
+      handler: function handler(newV, old) {
+        this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
+      }
+    }
+  },
+  computed: {
+    pageTitle: function pageTitle() {
+      return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
     }
   },
   mounted: function mounted() {
@@ -4914,6 +5009,7 @@ __webpack_require__.r(__webpack_exports__);
     }).map(function (field) {
       return field.isV;
     });
+    this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
   }
 });
 
@@ -4948,7 +5044,7 @@ __webpack_require__.r(__webpack_exports__);
       isCheckAll: false
     };
   },
-  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'isInputCheck', 'isLogClick'],
+  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'modalEmitAttribute', 'isInputCheck', 'isLogClick', 'permissionPrint', 'isPrint'],
   watch: {
     /*** watch check All table*/isCheckAll: function isCheckAll(after, befour) {
       var _this = this;
@@ -5340,12 +5436,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_general_searchPage__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/general/searchPage */ "./resources/js/components/general/searchPage.vue");
 /* harmony import */ var _components_general_actionSetting__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/general/actionSetting */ "./resources/js/components/general/actionSetting.vue");
 /* harmony import */ var _components_general_tableCustom__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../components/general/tableCustom */ "./resources/js/components/general/tableCustom.vue");
+/* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_14__);
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
+
+
 
 
 
@@ -5378,7 +5482,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     Panel: _components_create_boardRent_panel__WEBPACK_IMPORTED_MODULE_8__["default"],
     searchPage: _components_general_searchPage__WEBPACK_IMPORTED_MODULE_9__["default"],
     actionSetting: _components_general_actionSetting__WEBPACK_IMPORTED_MODULE_10__["default"],
-    tableCustom: _components_general_tableCustom__WEBPACK_IMPORTED_MODULE_11__["default"]
+    tableCustom: _components_general_tableCustom__WEBPACK_IMPORTED_MODULE_11__["default"],
+    Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_14___default())
   },
   data: function data() {
     return {
@@ -5567,9 +5672,35 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           "street_id": true
         },
         isSetting: true
+      }, {
+        isFilter: false,
+        isSet: true,
+        trans: "branch_status",
+        isV: 'is_active',
+        type: 'boolean',
+        setting: {
+          "is_active": true
+        },
+        isSetting: true
       }],
       sendSetting: {},
-      searchField: []
+      searchField: [],
+      categories: [],
+      governorates: [],
+      cities: [],
+      avenues: [],
+      streets: [],
+      faces: ['A', 'B', 'Multi', 'One-Face'],
+      filterButton: '',
+      location: {
+        city_id: null,
+        governorate_id: null,
+        avenue_id: null,
+        category_id: null,
+        face: null,
+        street_id: null,
+        code: ''
+      }
     };
   },
   mounted: function mounted() {
@@ -5581,6 +5712,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.settingFun();
     this.getCustomTableFields('boards_rent_panels');
     this.getData(1, this.url, this.filterSearch(this.searchField));
+    this.getCategory();
+    this.getGovernorate();
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
@@ -5635,6 +5768,111 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         e['isSetting'] = l[e.isV];
       });
       this.sendSetting = l;
+    },
+    getCategory: function getCategory() {
+      var _this = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__["default"].get("/categories").then(function (res) {
+        var l = res.data.data;
+        _this.categories = l;
+      })["catch"](function (err) {
+        _this.errorFun('Error', 'Thereisanerrorinthesystem');
+      })["finally"](function () {
+        _this.isLoader = false;
+      });
+    },
+    showGovernorateModal: function showGovernorateModal() {
+      if (this.location.governorate_id > 0) {
+        this.getCity();
+      }
+    },
+    showCityModal: function showCityModal() {
+      if (this.location.city_id > 0) {
+        this.getAvnue();
+      }
+    },
+    showAvenueModal: function showAvenueModal() {
+      if (this.location.avenue_id > 0) {
+        this.getStreet();
+      }
+    },
+    getGovernorate: function getGovernorate() {
+      var _this2 = this;
+      this.governorates = [];
+      this.cities = [];
+      this.avenues = [];
+      this.streets = [];
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__["default"].get("/governorates?columns[0]=country.id&search=1").then(function (res) {
+        var l = res.data.data;
+        _this2.governorates = l;
+      })["catch"](function (err) {
+        _this2.errorFun('Error', 'Thereisanerrorinthesystem');
+      });
+    },
+    getCity: function getCity() {
+      var _this3 = this;
+      this.isLoader = true;
+      var governorate = this.location.governorate_id;
+      this.location.city_id = null;
+      this.location.avenue_id = null;
+      this.location.street_id = null;
+      this.cities = [];
+      this.avenues = [];
+      this.streets = [];
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__["default"].get("/cities?columns[0]=governorate.id&search=".concat(governorate)).then(function (res) {
+        var l = res.data.data;
+        _this3.cities = l;
+      })["catch"](function (err) {
+        _this3.errorFun('Error', 'Thereisanerrorinthesystem');
+      })["finally"](function () {
+        _this3.isLoader = false;
+      });
+    },
+    getAvnue: function getAvnue() {
+      var _this4 = this;
+      this.isLoader = true;
+      var city = this.location.city_id;
+      this.location.avenue_id = null;
+      this.location.street_id = null;
+      this.avenues = [];
+      this.streets = [];
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__["default"].get("/avenues?columns[0]=city.id&search=".concat(city)).then(function (res) {
+        var l = res.data.data;
+        _this4.avenues = l;
+      })["catch"](function (err) {
+        _this4.errorFun('Error', 'Thereisanerrorinthesystem');
+      })["finally"](function () {
+        _this4.isLoader = false;
+      });
+    },
+    getStreet: function getStreet() {
+      var _this5 = this;
+      this.isLoader = true;
+      var avenue = this.location.avenue_id;
+      this.location.street_id = null;
+      this.streets = [];
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_12__["default"].get("/streets?columns[0]=avenue.id&search=".concat(avenue)).then(function (res) {
+        var l = res.data.data;
+        _this5.streets = l;
+      })["catch"](function (err) {
+        _this5.errorFun('Error', 'Thereisanerrorinthesystem');
+      })["finally"](function () {
+        _this5.isLoader = false;
+      });
+    },
+    getPanel: function getPanel(page) {
+      this.isLoader = true;
+      this.current_page = 1;
+      var filter = '';
+      filter += this.location.category_id ? "&category_id=".concat(this.location.category_id) : '';
+      filter += this.location.governorate_id ? "&governorate_id=".concat(this.location.governorate_id) : '';
+      filter += this.location.city_id ? "&city_id=".concat(this.location.city_id) : '';
+      filter += this.location.avenue_id ? "&avenue_id=".concat(this.location.avenue_id) : '';
+      filter += this.location.face ? "&face=".concat(this.location.face) : '';
+      filter += this.location.street_id ? "&street_id=".concat(this.location.street_id) : '';
+      filter += this.location.code ? "&code=".concat(this.location.code) : '';
+      this.filterButton = filter;
+      this.getData(1, this.url, '', filter);
     }
   }
 });
@@ -5767,7 +6005,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\r\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -5779,7 +6017,7 @@ var render = function render() {
         return _vm.AddSubmit.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                    ")]) : _c("b-button", {
+  }, [_vm._v("\r\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\r\n                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -5802,7 +6040,7 @@ var render = function render() {
         return _vm.resetModalHidden.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\r\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\r\n                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_vm.isVisible("name") ? _c("div", {
     staticClass: "col-md-6"
@@ -5810,7 +6048,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_name_ar")) + "\n                            "), _vm.isRequired("name") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_name_ar")) + "\r\n                            "), _vm.isRequired("name") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -5846,9 +6084,9 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -5861,7 +6099,7 @@ var render = function render() {
     attrs: {
       "for": "field-2"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_name_en")) + "\n                            "), _vm.isRequired("name_e") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_name_en")) + "\r\n                            "), _vm.isRequired("name_e") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -5899,9 +6137,9 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name_e.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\r\n                            " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\r\n                            " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\r\n                            " + _vm._s(_vm.$t("general.letters")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -5921,7 +6159,7 @@ var render = function render() {
     attrs: {
       "for": "field-3"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_code")) + "\n                            "), _vm.isRequired("code") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_code")) + "\r\n                            "), _vm.isRequired("code") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -5936,6 +6174,7 @@ var render = function render() {
       "is-valid": !_vm.$v.create.code.$invalid && !_vm.errors.code
     },
     attrs: {
+      disabled: _vm.is_update == 1 && _vm.type == "edit",
       type: "text",
       id: "field-3"
     },
@@ -5961,7 +6200,7 @@ var render = function render() {
     attrs: {
       "for": "field-4"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_new_code")) + "\n                            "), _vm.isRequired("new_code") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_new_code")) + "\r\n                            "), _vm.isRequired("new_code") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -5976,6 +6215,7 @@ var render = function render() {
       "is-valid": !_vm.$v.create.new_code.$invalid && !_vm.errors.new_code
     },
     attrs: {
+      disabled: _vm.is_update == 1 && _vm.type == "edit",
       type: "text",
       id: "field-4"
     },
@@ -5998,7 +6238,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_face")) + "\n                            "), _vm.isRequired("face") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_face")) + "\r\n                            "), _vm.isRequired("face") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6013,7 +6253,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.face.$error || _vm.errors.face ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.face ? _vm._l(_vm.errors.face, function (errorMessage, index) {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.face ? _vm._l(_vm.errors.face, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -6026,7 +6266,7 @@ var render = function render() {
     attrs: {
       "for": "field-1"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_size")) + "\n                            "), _vm.isRequired("size") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_size")) + "\r\n                            "), _vm.isRequired("size") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -6074,10 +6314,11 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_category")) + "\n                            "), _vm.isRequired("category_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_category")) + "\r\n                            "), _vm.isRequired("category_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
+      disabled: _vm.is_update == 1 && _vm.type == "edit",
       options: _vm.categories.map(function (type) {
         return type.id;
       }),
@@ -6103,7 +6344,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.category_id.$error || _vm.errors.category_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.category_id ? _vm._l(_vm.errors.category_id, function (errorMessage, index) {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.category_id ? _vm._l(_vm.errors.category_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -6113,7 +6354,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_unit_status")) + "\n                            "), _vm.isRequired("unit_status_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_unit_status")) + "\r\n                            "), _vm.isRequired("unit_status_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6142,7 +6383,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.unit_status_id.$error || _vm.errors.unit_status_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.unit_status_id ? _vm._l(_vm.errors.unit_status_id, function (errorMessage, index) {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\r\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.unit_status_id ? _vm._l(_vm.errors.unit_status_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -6152,10 +6393,11 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_governorate")) + "\n                            "), _vm.isRequired("governorate_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_governorate")) + "\r\n                            "), _vm.isRequired("governorate_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
+      disabled: _vm.is_update == 1 && _vm.type == "edit",
       options: _vm.governorates.map(function (type) {
         return type.id;
       }),
@@ -6189,7 +6431,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_city")) + "\n                            "), _vm.isRequired("city_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_city")) + "\r\n                            "), _vm.isRequired("city_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6226,7 +6468,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_avenue")) + "\n                            "), _vm.isRequired("avenue_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_avenue")) + "\r\n                            "), _vm.isRequired("avenue_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6263,7 +6505,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_street")) + "\n                            "), _vm.isRequired("street_id") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_street")) + "\r\n                            "), _vm.isRequired("street_id") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     attrs: {
@@ -6300,7 +6542,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_lng")) + "\n                            "), _vm.isRequired("lng") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_lng")) + "\r\n                            "), _vm.isRequired("lng") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6337,7 +6579,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_lat")) + "\n                            "), _vm.isRequired("lat") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_lat")) + "\r\n                            "), _vm.isRequired("lat") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6379,7 +6621,45 @@ var render = function render() {
     on: {
       click: _vm.getLocation
     }
-  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.location")) + "\n                    ")])]) : _vm._e()]), _vm._v(" "), _vm.isVisible("price") ? _c("hr", {
+  }, [_vm._v("\r\n                        " + _vm._s(_vm.$t("general.location")) + "\r\n                    ")])]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_active") ? _c("div", {
+    staticClass: "col-md-3"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "mr-2"
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_status")) + "\r\n                            "), _vm.isRequired("is_active") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "some-radios",
+      value: 1
+    },
+    model: {
+      value: _vm.$v.create.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.is_active, "$model", $$v);
+      },
+      expression: "$v.create.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Active")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "some-radios",
+      value: 0
+    },
+    model: {
+      value: _vm.$v.create.is_active.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.is_active, "$model", $$v);
+      },
+      expression: "$v.create.is_active.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Inactive")))])], 1), _vm._v(" "), _vm.errors.is_active ? _vm._l(_vm.errors.is_active, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e()]), _vm._v(" "), _vm.isVisible("price") ? _c("hr", {
     staticStyle: {
       margin: "10px 0 !important",
       "border-top": "1px solid rgb(141 163 159 / 42%)"
@@ -6392,7 +6672,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_day")) + "\n                            "), _vm.isRequired("price") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_day")) + "\r\n                            "), _vm.isRequired("price") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6425,7 +6705,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_week")) + "\n                            "), _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_week")) + "\r\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6459,7 +6739,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_month")) + "\n                            "), _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_month")) + "\r\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6492,7 +6772,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_quarter_year")) + "\n                            "), _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_quarter_year")) + "\r\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6526,7 +6806,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_half_year")) + "\n                            "), _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_half_year")) + "\r\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6559,7 +6839,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_year")) + "\n                            "), _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_year")) + "\r\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6602,7 +6882,7 @@ var render = function render() {
     attrs: {
       "for": "field-6"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_note")) + "\n                            "), _vm.isRequired("note") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_note")) + "\r\n                            "), _vm.isRequired("note") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
@@ -6641,7 +6921,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_description")) + "\n                            "), _vm.isRequired("description") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_description")) + "\r\n                            "), _vm.isRequired("description") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("textarea", {
     directives: [{
@@ -6680,7 +6960,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_description_e")) + "\n                            "), _vm.isRequired("description_e") ? _c("span", {
+  }, [_vm._v("\r\n                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_description_e")) + "\r\n                            "), _vm.isRequired("description_e") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("textarea", {
     directives: [{
@@ -10909,7 +11189,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -10929,7 +11209,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -12248,7 +12528,7 @@ var render = function render() {
         _vm.$bvModal.show("create");
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Create")) + "\n            "), _c("i", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.titleCreate)) + "\n            "), _c("i", {
     staticClass: "fas fa-plus"
   })]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -12665,7 +12945,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -12706,7 +12986,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v("\n        " + _vm._s((_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
+  }, [_vm._v("\n        " + _vm._s(_vm.page_title && _vm.page_title.url == _vm.$route.fullPath ? _vm.$i18n.locale == "ar" ? _vm.page_title.title : _vm.page_title.title_e : (_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -12855,7 +13135,7 @@ var render = function render() {
       }
     }
   })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-    return [item.isSetting && _vm.isVisible(item.isV) ? _c("th", [_c("div", {
+    return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) ? _c("th", [_c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey(item.trans)))]), _vm._v(" "), item.sort ? _c("sortStringConponent", {
       attrs: {
@@ -12870,9 +13150,9 @@ var render = function render() {
     }) : _vm._e()], 1)]) : _vm._e()];
   }), _vm._v(" "), _vm.modalButton ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Action")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Action")) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
     staticClass: "do-not-print"
   }, [_c("i", {
     staticClass: "fas fa-ellipsis-v"
@@ -12936,9 +13216,9 @@ var render = function render() {
         }]
       }
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-      return [item.isSetting && _vm.isVisible(item.isV) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
+      return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -12946,27 +13226,27 @@ var render = function render() {
             "border-radius": "2rem"
           }
         }, [_vm._v(_vm._s(_vm.$t("general.".concat(index)) + " : " + badge))]);
-      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
         staticClass: "badge badge-primary p-2",
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, _vm._l(data[item.name], function (i, index) {
         return _c("span", {
           key: i.id
         }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean" ? _c("td", [_c("span", {
+      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean1" ? _c("td", [_c("span", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "date" ? _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "date" ? _c("td", [_vm._v("\n                " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, [_vm._v(_vm._s(data[item.isV].slice(3) + "-" + data[item.isV].slice(0, 2)))])]) : _vm._e()];
     }), _vm._v(" "), _vm.modalButton ? _c("td", {
       staticClass: "do-not-print"
-    }, [_c("b-button", {
+    }, [_vm.modalButtonCondition.value == data[_vm.modalButtonCondition.key] ? _c("b-button", {
       staticClass: "btn-sm mx-1 font-weight-bold",
       attrs: {
         variant: "warning"
@@ -12974,22 +13254,22 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.preventDefault();
-          _vm.$emit(_vm.modalButton, data.id);
+          _vm.$emit(_vm.modalButton, data[_vm.modalEmitAttribute]);
           _vm.$bvModal.show(_vm.modalButton);
         }
       }
     }, [_c("i", {
       "class": _vm.modalButtonIcon
-    })])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
+    })]) : _c("span", [_vm._v(_vm._s(_vm.modalButtonCondition.default_val))])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
     }, [_c("button", {
       staticClass: "btn btn-sm dropdown-toggle dropdown-coustom",
       attrs: {
-        type: "button",
+        "aria-expanded": "false",
         "data-toggle": "dropdown",
-        "aria-expanded": "false"
+        type: "button"
       }
     }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.commands")) + "\n                    "), _c("i", {
       staticClass: "fas fa-angle-down"
@@ -13024,25 +13304,40 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.delete")))]), _vm._v(" "), _c("i", {
       staticClass: "fas fa-times text-danger"
+    })])]) : _vm._e(), _vm._v(" "), _vm.isPrint ? _c("a", {
+      staticClass: "dropdown-item text-black",
+      attrs: {
+        href: "#"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.$emit("printRow", data.id);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-between align-items-center text-black"
+    }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.print")))]), _vm._v(" "), _c("i", {
+      staticClass: "fas fa-print"
     })])]) : _vm._e()])])]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("button", {
       staticClass: "btn",
       attrs: {
-        type: "button",
         id: "tooltip-".concat(data.id),
         "data-placement": _vm.$i18n.locale == "en" ? "left" : "right",
-        title: _vm.Tooltip
+        title: _vm.Tooltip,
+        type: "button"
       },
       on: {
+        click: function click($event) {
+          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
+        },
         mousemove: function mousemove($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
         },
         mouseover: function mouseover($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
-        },
-        click: function click($event) {
-          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
         }
       }
     }, [_c("i", {
@@ -13056,7 +13351,7 @@ var render = function render() {
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.notDataFound")) + "\n            ")])])])]);
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.notDataFound")) + "\n        ")])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -13359,7 +13654,7 @@ var render = function render() {
         return _vm.current_page = page;
       },
       DataCurrentPage: function DataCurrentPage(page) {
-        return _vm.getDataCurrentPage(page);
+        return _vm.getDataCurrentPage(page, _vm.filterButton);
       },
       actionChange: function actionChange(_ref) {
         var typeAction = _ref.typeAction,
@@ -13370,7 +13665,247 @@ var render = function render() {
         });
       }
     }
-  }), _vm._v(" "), _c("Panel", {
+  }), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "filter",
+      title: _vm.$t("general.Search"),
+      "title-class": "font-18",
+      "body-class": "p-4",
+      size: "lg",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "mb-3 d-flex justify-content-end"
+  }, [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getPanel.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Search")) + "\n                                ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1), _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("search");
+      }
+    }
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                                ")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_code")) + "\n                                        ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.location.code,
+      expression: "location.code"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.location.code
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.location, "code", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_category")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.categories.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.categories.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.categories.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.categories.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
+      }
+    },
+    model: {
+      value: _vm.location.category_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "category_id", $$v);
+      },
+      expression: "location.category_id"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_governorate")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.governorates.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.governorates.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.governorates.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.governorates.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
+      }
+    },
+    on: {
+      input: _vm.showGovernorateModal
+    },
+    model: {
+      value: _vm.location.governorate_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "governorate_id", $$v);
+      },
+      expression: "location.governorate_id"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_city")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.cities.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.cities.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.cities.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.cities.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
+      }
+    },
+    on: {
+      input: _vm.showCityModal
+    },
+    model: {
+      value: _vm.location.city_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "city_id", $$v);
+      },
+      expression: "location.city_id"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_avenue")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.avenues.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.avenues.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.avenues.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.avenues.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
+      }
+    },
+    on: {
+      input: _vm.showAvenueModal
+    },
+    model: {
+      value: _vm.location.avenue_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "avenue_id", $$v);
+      },
+      expression: "location.avenue_id"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_street")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.streets.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.streets.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.streets.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.streets.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
+      }
+    },
+    model: {
+      value: _vm.location.street_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "street_id", $$v);
+      },
+      expression: "location.street_id"
+    }
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("boardRent_panel_face")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.faces
+    },
+    model: {
+      value: _vm.location.face,
+      callback: function callback($$v) {
+        _vm.$set(_vm.location, "face", $$v);
+      },
+      expression: "location.face"
+    }
+  })], 1)])])])]), _vm._v(" "), _c("Panel", {
     attrs: {
       id: "create",
       companyKeys: _vm.companyKeys,
@@ -13684,9 +14219,9 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var url = arguments.length > 1 ? arguments[1] : undefined;
       var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain).concat(params ? params : "") : '').concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain) : '').concat(params).concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
         var l = res.data;
         _this.tables = l.data;
         _this.objPagination = l.pagination;
@@ -13729,7 +14264,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -13758,7 +14297,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -13929,6 +14472,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

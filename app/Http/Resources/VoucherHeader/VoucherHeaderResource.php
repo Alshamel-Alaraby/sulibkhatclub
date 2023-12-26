@@ -10,6 +10,7 @@ use App\Http\Resources\GeneralCustomer\RelationGeneralCustomerResource;
 use App\Http\Resources\PaymentMethod\RelationPaymentMethodResource;
 use App\Http\Resources\Serials\RelationSerialResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class VoucherHeaderResource extends JsonResource
 {
@@ -36,10 +37,12 @@ class VoucherHeaderResource extends JsonResource
             'module_type_id'    => $this->module_type_id,
             'prefix'            => $this->prefix,
             'notes'             => $this->notes,
+            'manual_document_number' => $this->manual_document_number,
             'branch'            => new BranchResource($this->branch),
+            'clientType'        => $this->clientType,
             'document'          => $this->document,
             'salesmen'          => $this->salesmen,
-            'customer'          => $this->customer,
+            'customer'          => DB::table($this->clientType->db_table)->select('id','name','name_e')->find($this->customer_id),
             'serial'            => $this->serial,
             'paymentMethod'     => $this->paymentMethod
 

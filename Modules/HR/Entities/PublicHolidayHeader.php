@@ -20,6 +20,33 @@ class PublicHolidayHeader extends Model
         return $this->hasMany(PublicHolidayDetail::class, 'public_holiday_header_id', 'id');
     }
 
+    public function employeePublicHolidayHeaders()
+    {
+        return $this->hasMany(EmployeePublicHolidayHeader::class, 'public_holiday_header_id', 'id');
+    }
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->PublicHolidayDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'Public Holiday Details',
+                'count' => $this->PublicHolidayDetails()->count(),
+                'ids' => $this->PublicHolidayDetails()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->employeePublicHolidayHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employeePublicHolidayHeaders',
+                'count' => $this->employeePublicHolidayHeaders()->count(),
+                'ids' => $this->employeePublicHolidayHeaders()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

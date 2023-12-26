@@ -69,6 +69,54 @@ class CmMember extends Model
         return $this->belongsTo(CmFinancialStatus::class, 'financial_status_id');
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class, 'cm_member_id');
+    }
+
+    public function cm_member_rejects()
+    {
+        return $this->hasMany(CmMemberReject::class, 'cm_member_id');
+    }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->cmTransaction()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cmTransaction',
+                'count' => $this->cmTransaction()->count(),
+                'ids' => $this->cmTransaction()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->lastCmTransaction()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'last CmTransaction',
+                'count' => $this->lastCmTransaction()->count(),
+                'ids' => $this->lastCmTransaction()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'transactions',
+                'count' => $this->transactions()->count(),
+                'ids' => $this->transactions()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->cm_member_rejects()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm member rejects',
+                'count' => $this->cm_member_rejects()->count(),
+                'ids' => $this->cm_member_rejects()->pluck('prefix')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -81,13 +129,6 @@ class CmMember extends Model
 
 
 
-    // public function scopeTransaction($query)
-    // {
-    //     return $query->with(['cmTransaction' => function ($query) {
-    //         return $query->orderBy('year_to', 'desc')->get();
-    //     }]);
-
-    // }
 
     public function scopeFilter($query, $request)
     {
@@ -142,19 +183,19 @@ class CmMember extends Model
 
 
     public function scopeWithValidLastTransactionDate(Builder $query)
-    {  
+    {
         return $query->whereHas('cmTransaction', function($q){
             $q->where("year", DB::table('general_financial_years')->where('is_active', 1)->pluck('year'));
         })->get();
     }
-    
-    
+
+
     public function lastTransactionDate()
     {
         return $this->whereHas('cmTransaction', function($q){
             $q->where('year', 2024);
         })->count();
-        
+
         //->where('year', DB::table('general_financial_years')
         //->where('is_active', 1)->year)->min('date')->pluck('date', 'year')->get();
         // DB::table('general_financial_years')->where('is_active', 1)->year
@@ -164,7 +205,7 @@ class CmMember extends Model
     public function memberLastTransactionYear()
     {
 
-        
+
 
     }
     */
@@ -176,10 +217,10 @@ class CmMember extends Model
         $timetables_header_id = EmployeesTimetablesHeader::where('id', employees_timetables_header_id);
 
         $id = TimetablesHeader::where('id', $timetables_header_id );
-        
+
         $details = TimetablesDetail::where('id', $id);
 
     }
     */
-    
+
 }

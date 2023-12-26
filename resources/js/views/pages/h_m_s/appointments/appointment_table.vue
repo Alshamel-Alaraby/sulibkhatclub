@@ -14,6 +14,7 @@
                 <th>{{ getCompanyKey("hms_appointments_number") }}</th>
                 <th>{{ getCompanyKey("hms_appointments_status") }}</th>
                 <th>{{ getCompanyKey("hms_appointments_created_at") }}</th>
+                <th>{{ getCompanyKey("hms_appointments_number_of_invoices") }}</th>
                 <th>{{ getCompanyKey("hms_appointments_number_of_prescriptions") }}</th>
 
                 <th>{{ $t('general.Actions') }}</th>
@@ -65,6 +66,7 @@
                     </label>
                 </td>
                 <td>{{ appointment.created_at }}</td>
+                <td>{{ appointment.number_of_invoices }}</td>
                 <td>{{ appointment.number_of_prescriptions }}</td>
                 <td>
                     <div class="btn-group" v-if="appointment.status != 'Cancelled'">
@@ -80,7 +82,7 @@
 
                                 {{ $t('general.Prescription') }} <i class="fas fa-fw fa-prescription"></i></a>
                             <a class="dropdown-item"
-                                @click.prevent="go_to_create_invoice(appointment.doctor_id, appointment.patient_id, appointment.from_doctor_id)"
+                                @click.prevent="go_to_create_invoice(appointment.doctor_id, appointment.patient_id,$i18n.locale == 'ar' ? appointment.patient.name :appointment.patient.name_e, appointment.from_doctor_id,appointment.id,appointment.branch.id)"
                                 v-if="appointment.status != 'Cancelled' && appointment.status != 'Pending' && permissionCreateInvoice" href="#">
                                 {{ $t('general.Create Invoice') }} <i class="fa fa-plus"></i></a>
 
@@ -132,7 +134,9 @@
             :isPage="false" :type="'create'" @created="$emit('getAppointments');$bvModal.hide(`createPrescription`)"
         />
 
-
+        <CreateOrUpdateItems :bill_holder="'patient'" v-if="permissionCreateInvoice" :companyKeys="companyKeys" :dataRow="{}" :appointment_data="appointment_data" :defaultsKeys="defaultsKeys" :modalId="'createInvoiceFromPatientDetails'"
+         :document="document" :paymentMethods="paymentMethods" :companies_insurances="companies_insurances"
+             :document_id="45"  @created="$emit('getAppointments')" :doctors="doctors"  :services="services"  />
     </table>
 </template>
 
@@ -144,22 +148,41 @@ import successError from "../../../../helper/mixin/success&error";
 import Swal from "sweetalert2";
 import translation from "../../../../helper/mixin/translation-mixin";
 import PrescriptionModal from "../prescriptions/modal.vue"
+import CreateOrUpdateItems from "../../../../components/document/h_m_s/components/create-or-update-items.vue";
+
 export default {
     data() {
         return {
             isLoader: false,
+            document: {},
+            appointment_data: {},
+            relatedDocuments: {},
             selected_appointment:{},
+
         }
     },
     mixins: [translation, successError],
-    props: ['appointments','doctors','drugs','diagnosis_tests','patient_details_id','patients','permissionUpdate','permissionDelete','permissionCreateInvoice','permissionCreatePrescription'],
-    components: { loader,PrescriptionModal },
+    props: ['appointments','doctors','companies_insurances','paymentMethods','services','branches','drugs','diagnosis_tests','patient_details_id','patients','permissionUpdate','permissionDelete','permissionCreateInvoice','permissionCreatePrescription'],
+    components: { loader,PrescriptionModal,CreateOrUpdateItems },
+    mounted(){
+        this.getDocumentData()
+    },
     methods: {
+        isPermission(item) {
+            if (this.$store.state.auth.type == "admin") {
+                return this.$store.state.auth.is_web == 1;
+            }
+            if (this.$store.state.auth.type == "user") {
+                return this.$store.state.auth.permissions.includes(item);
+            }
+            return true;
+        },
         show_patient_details(patientId){
-            if(!this.patient_details_id){
+            if(!this.patient_details_id && this.isPermission('show Patient Details')){
                 this.$emit('showPatientDetails',patientId)
             }
         },
+
         go_to_create_prescription(doctor_id, patient_id,appointment_id) {
             this.selected_appointment = {
                 doctor_id:doctor_id,
@@ -169,7 +192,41 @@ export default {
             this.$bvModal.show(`createPrescription`);
 
         },
-        go_to_create_invoice(doctor_id, patient_id, from_doctor_id) {
+
+        go_to_create_invoice(doctor_id, patient_id,patient_name, from_doctor_id,appointment_id,branch_id) {
+            this.appointment_data = {
+                patient_id,
+                patient_name,
+                doctor_id,
+                from_doctor_id,
+                appointment_id,
+                branch_id
+            }
+            if(this.branches.length > 0)
+            this.$bvModal.show(`createInvoiceFromPatientDetails`);
+        },
+
+
+
+        async getDocumentData() {
+            if(Object.keys(this.document).length == 0){
+                this.isLoader = true;
+                await adminApi
+                    .get(`/document/45`)
+                    .then((res) => {
+                        this.isLoader = false;
+                        let l = res.data.data;
+                        this.document = l;
+                        this.relatedDocuments = l.document_relateds;
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    });
+            }
 
         },
         take_action(appointment_id, action) {
@@ -238,4 +295,11 @@ export default {
     padding: 11px;
     font-size: 14px;
     border-radius: 2rem;
-}</style>
+}
+.dropdown-menu{
+    left:-111px!important;
+ }
+ .rtl .dropdown-menu{
+    left:auto !important;
+ }
+</style>

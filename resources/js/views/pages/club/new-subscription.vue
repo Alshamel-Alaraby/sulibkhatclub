@@ -14,6 +14,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import permissionGuard from "../../../helper/permission";
 import PrintSubscription from "./print/print-subscription";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -23,7 +24,7 @@ export default {
         title: "New Subscription",
         meta: [{name: "description", content: "New Subscription"}],
     },
-    mixins: [translation],
+    mixins: [translation,successError],
     components: {
         Layout,
         PageHeader,
@@ -417,11 +418,9 @@ export default {
                             })
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                     this.getData();
                                 } else {
                                     Swal.fire({
@@ -467,11 +466,9 @@ export default {
 
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                 } else {
                                     Swal.fire({
                                         icon: "error",

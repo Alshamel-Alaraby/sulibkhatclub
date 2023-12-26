@@ -30,6 +30,21 @@ class Role extends Model
         return $this->hasMany(RoleWorkflow::class);
     }
 
+    public function roleScreenHotFields()
+    {
+        return $this->hasMany(RoleScreenHotfield::class,'role_id','id');
+    }
+
+    public function roleUsers()
+    {
+        return $this->hasMany(RoleUser::class, 'role_id', 'id');
+    }
+
+    public function roleWorkFlowButtons()
+    {
+        return $this->hasMany(RoleWorkflowButton::class, 'role_id', 'id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";
@@ -40,10 +55,40 @@ class Role extends Model
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
-    public function hasChildren(){
-        if ($this->users ()){
-            return true;
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->workflows()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'workflows',
+                'count' => $this->workflows()->count(),
+                'ids' => $this->workflows()->pluck('workflow_name')->toArray(),
+            ];
         }
-        return false;
+        if ($this->roleWorkFlowButtons()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'role WorkFlow Buttons',
+                'count' => $this->roleWorkFlowButtons()->count(),
+                'ids' => $this->roleWorkFlowButtons()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->roleUsers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'role Users',
+                'count' => $this->roleUsers()->count(),
+                'ids' => $this->roleUsers()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->roleScreenHotFields()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'role Screen HotFields',
+                'count' => $this->roleScreenHotFields()->count(),
+                'ids' => $this->roleScreenHotFields()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
 }

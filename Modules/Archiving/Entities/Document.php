@@ -27,11 +27,33 @@ class Document extends Model
         return $this->hasMany(Document::class, 'parent_id');
     }
 
+    public function archDocumentStatuses()
+    {
+        return $this->hasMany(ArchDocumentStatus::class, 'document_id');
+    }
+
     public function hasChildren()
     {
-        return $this->departments()->count() > 0 ||
-        $this->children()->count() > 0 ||
-        $this->archDocType()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->archDocumentStatuses()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'arch Document Statuses',
+                'count' => $this->archDocumentStatuses()->count(),
+                'ids' => $this->archDocumentStatuses()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
+
 
 }

@@ -40,14 +40,13 @@ export default {
     },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-              return permissionGuard(vm, "ServicesTypes", "Services Types");
+              return permissionGuard(vm, "ServicesTypes", "all ServiceType");
             });
        },
     data() {
         return {
             url: '/h_m_s/service_types',
             page_title: {},
-            specialties: [],
             searchMain: '',
             tableSetting: [
                 {
@@ -88,16 +87,11 @@ export default {
         this.searchField = this.tableSetting.filter(e => e.isFilter).map(el => el.isV);
         this.settingFun();
         this.getCustomTableFields('h_m_s_service_types')
-        this.get_specialties();
         this.page_title = page_title.value
         this.getData(1, this.url, this.filterSearch(this.searchField));
     },
     methods: {
-        get_specialties(){
-            adminApi.get(`h_m_s/specialties?company_id=${this.company_id}`).then((res) => {
-            this.specialties = res.data.data
-            });
-        },
+
         filterSearch(fields) {
             let index_specialty_id = fields.indexOf("specialty_id")
             if (index_specialty_id > -1) {
@@ -158,10 +152,12 @@ export default {
 
                         <!--  create   -->
                         <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url"
-                            :specialties="specialties" :isPage="true"
+                            :isPage="true"
                             :isVisiblePage="isVisible" :isRequiredPage="isRequired" :type="type"
                             :idObjEdit="idEdit ? { idEdit, dataObj: this.tables.find(el => el.id == idEdit) } : null"
                             @getDataTable="getData(1, url, filterSearch(searchField))" :isPermission="isPermission" />
+
+
 
                         <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
                             id="printCustom">

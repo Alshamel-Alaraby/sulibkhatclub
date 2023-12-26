@@ -31,8 +31,19 @@ class GeneralItem extends Model
 
     public function hasChildren()
     {
-        return$this->documentHeaderDetails()->count() > 0 ;
+        $relationsWithChildren = [];
+
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentHeaderDetails',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 
    public function getActivitylogOptions(): LogOptions
     {
@@ -40,7 +51,7 @@ class GeneralItem extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Rlst Item')
+            ->useLogName('General Item')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

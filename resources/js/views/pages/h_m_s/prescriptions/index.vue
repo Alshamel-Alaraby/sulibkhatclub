@@ -10,6 +10,10 @@ import searchPage from "../../../../components/general/searchPage";
 import actionSetting from "../../../../components/general/actionSetting";
 import tableCustom from "../../../../components/general/tableCustom";
 import Modal from "./modal.vue";
+import ModalDoctor from "../doctors/modal.vue";
+import ModalPatient from "../patients/modal.vue";
+import ModalDrug from "../drugs/modal.vue";
+import ModalDiagnosisTest from "../diagnosis_tests/modal.vue";
 import page_title from "../../../../helper/PageTitle"
 import adminApi from '../../../../api/adminAxios';
 
@@ -35,20 +39,18 @@ export default {
     },
     mixins: [translation,customTable,crudHelper],
     components: {
-        Layout, PageHeader, loader, searchPage,
+        Layout, PageHeader, loader, searchPage,ModalDoctor,ModalPatient,ModalDrug,ModalDiagnosisTest,
         actionSetting, tableCustom, Modal
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-          return permissionGuard(vm, "Prescriptions", "Prescriptions");
+          return permissionGuard(vm, "Prescriptions", "all Prescription");
         });
    },
     data() {
         return {
             url: '/h_m_s/prescriptions',
             page_title: {},
-            days: [],
-            branches: [],
             doctors: [],
             patients: [],
             diagnosis_tests: [],
@@ -71,7 +73,7 @@ export default {
                     type: 'date',sort: true,setting: {"date":true},isSetting: true
                 },
                 {
-                    isFilter: false,isSet: true,trans:"hms_prescriptions_content",isV: 'content',
+                    isFilter: false,isSet: true,trans:"hms_prescriptions_content",isV: 'content',forceVisible:true,
                     type: 'badge',prop_type:'array',badge_color:'badge-primary',sort: false,setting: {"content":true},isSetting: true
                 },
 
@@ -93,19 +95,32 @@ export default {
 
     },
     methods: {
+
         get_doctors(){
             adminApi.get(`h_m_s/doctors?drop_down=1&company_id=${this.company_id}`).then((res) => {
-            this.doctors = res.data
+                let data = res.data
+                    if (this.isPermission("create Doctor")) {
+                        data.unshift({ id: 0, name: "اضف طبيب", name_e: "Add Doctor" });
+                }
+                this.doctors = data
             });
         },
         get_patients(){
             adminApi.get(`h_m_s/patients?drop_down=1`).then((res) => {
-            this.patients = res.data
+                let data = res.data
+                    if (this.isPermission("create Patient")) {
+                        data.unshift({ id: 0, name: "اضف مريض", name_e: "Add Patient" });
+                }
+                this.patients = data
             });
         },
         get_drugs() {
             adminApi.get(`/h_m_s/drugs?drop_down=1`).then((res) => {
-                this.drugs = res.data;
+                let data = res.data
+                    if (this.isPermission("create Drug")) {
+                        data.unshift({ id: 0, trade_name: "اضف دواء", trade_name_e: "Add Drug" });
+                    }
+                this.drugs = data
             })
             .catch((err) => {
                 this.errorFun('Error','Thereisanerrorinthesystem');
@@ -113,7 +128,11 @@ export default {
         },
         get_diagnosis_tests() {
             adminApi.get(`/h_m_s/diagnosis_tests?drop_down=1`).then((res) => {
-                this.diagnosis_tests = res.data;
+                let data = res.data
+                    if (this.isPermission("create DiagnosisTest")) {
+                        data.unshift({ id: 0, name: "اضف اختبار تشخيص", name_e: "Add Diagnosis Test" });
+                }
+                this.diagnosis_tests = data
             })
             .catch((err) => {
                 this.errorFun('Error','Thereisanerrorinthesystem');
@@ -227,6 +246,47 @@ export default {
                             :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
                             @getDataTable="getData(1,url,filterSearch(searchField))" :isPermission="isPermission"
                         />
+
+
+                        <ModalDoctor
+                                :companyKeys="companyKeys"
+                                :defaultsKeys="defaultsKeys"
+                                id="addDoctorFromPrescription"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission"
+                                @created="get_doctors"
+                            />
+
+                            <ModalPatient
+                                :companyKeys="companyKeys"
+                                :defaultsKeys="defaultsKeys"
+                                id="addPatientFromPrescription"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission"
+                                @created="get_patients"
+                            />
+
+                            <ModalDrug
+                                :companyKeys="companyKeys"
+                                :defaultsKeys="defaultsKeys"
+                                id="addDrugFromPrescription"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission"
+                                @created="get_drugs"
+                            />
+
+                            <ModalDiagnosisTest
+                                :companyKeys="companyKeys"
+                                :defaultsKeys="defaultsKeys"
+                                id="addDiagnosisTestFromPrescription"
+                                :isPage="false"
+                                type="create"
+                                :isPermission="isPermission"
+                                @created="get_diagnosis_tests"
+                            />
 
                     </div>
                 </div>

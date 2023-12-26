@@ -721,16 +721,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -880,7 +884,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -1156,7 +1160,74 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "actionSetting",
   mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['companyKeys', 'defaultsKeys', 'isCreate', 'permissionCreate', 'isExcl', 'isPrint', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'checkAll', 'sideAction', 'sidePaginate', 'isFilter', 'isGroup', 'isSetting', 'settings', 'isVisible', 'isPaginate', 'objPagination', 'current_page'],
+  props: {
+    'companyKeys': {
+      "default": []
+    },
+    'defaultsKeys': {
+      "default": []
+    },
+    'isCreate': {
+      "default": true
+    },
+    'permissionCreate': {
+      "default": true
+    },
+    'isExcl': {
+      "default": true
+    },
+    'isPrint': {
+      "default": true
+    },
+    'permissionUpdate': {
+      "default": true
+    },
+    'permissionDelete': {
+      "default": true
+    },
+    'isEdit': {
+      "default": true
+    },
+    'isDelete': {
+      "default": true
+    },
+    'checkAll': {
+      "default": []
+    },
+    'sideAction': {
+      "default": true
+    },
+    'sidePaginate': {
+      "default": true
+    },
+    'isFilter': {
+      "default": true
+    },
+    'isGroup': {
+      "default": true
+    },
+    'isSetting': {
+      "default": true
+    },
+    'settings': {
+      "default": []
+    },
+    'isVisible': {
+      "default": []
+    },
+    'isPaginate': {
+      "default": true
+    },
+    'objPagination': {
+      "default": {}
+    },
+    'current_page': {
+      "default": 1
+    },
+    'titleCreate': {
+      "default": 'Create'
+    }
+  },
   data: function data() {
     return {
       setting: [],
@@ -1269,13 +1340,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -1345,7 +1416,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -1379,6 +1450,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
+/* harmony import */ var _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../helper/PageTitle */ "./resources/js/helper/PageTitle.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "searchPage",
@@ -1388,6 +1461,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       search: '',
       debounce: {},
+      page_title: {},
       fields: []
     };
   },
@@ -1399,6 +1473,16 @@ __webpack_require__.r(__webpack_exports__);
         _this.$emit('editSearch', _this.search);
         _this.$emit('dataSearch');
       }, 400);
+    },
+    pageTitle: {
+      handler: function handler(newV, old) {
+        this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
+      }
+    }
+  },
+  computed: {
+    pageTitle: function pageTitle() {
+      return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
     }
   },
   mounted: function mounted() {
@@ -1407,6 +1491,7 @@ __webpack_require__.r(__webpack_exports__);
     }).map(function (field) {
       return field.isV;
     });
+    this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
   }
 });
 
@@ -1441,7 +1526,7 @@ __webpack_require__.r(__webpack_exports__);
       isCheckAll: false
     };
   },
-  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'isInputCheck', 'isLogClick'],
+  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'modalEmitAttribute', 'isInputCheck', 'isLogClick', 'permissionPrint', 'isPrint'],
   watch: {
     /*** watch check All table*/isCheckAll: function isCheckAll(after, befour) {
       var _this = this;
@@ -1916,7 +2001,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_4__["default"])(vm, "RoomsCategories", "Read Rooms Categories");
+      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_4__["default"])(vm, "RoomsCategories", "all RoomsCategory");
     });
   },
   data: function data() {
@@ -2032,7 +2117,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         name: ele.name,
         name_e: ele.name_e,
         parent_id: ele.parent_id,
-        is_default: ele.is_default
+        is_default: ele.is_default,
+        does_it_have_schedule: ele.does_it_have_schedule
       });
       if (ele.children.length > 0) {
         ele.children.forEach(function (item) {
@@ -2041,7 +2127,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             name: item.name,
             name_e: item.name_e,
             parent_id: item.parent_id,
-            is_default: item.is_default
+            is_default: item.is_default,
+            does_it_have_schedule: item.does_it_have_schedule
           });
         });
       }
@@ -2162,7 +2249,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         name: "",
         name_e: "",
         parent_id: null,
-        is_default: false
+        is_default: 0,
+        does_it_have_schedule: 0
       },
       errors: {},
       is_disabled: false
@@ -2184,7 +2272,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_7__.minLength)(2),
         maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_7__.maxLength)(100)
       },
-      is_default: {}
+      is_default: {},
+      does_it_have_schedule: {}
     }
   },
   mounted: function mounted() {
@@ -2240,6 +2329,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.create = {
         name: "",
         name_e: "",
+        is_default: 0,
+        does_it_have_schedule: 0,
         parent_id: (_this$create$parent_i = this.create.parent_id) !== null && _this$create$parent_i !== void 0 ? _this$create$parent_i : null
       };
       this.errors = {};
@@ -2266,6 +2357,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             _this3.create.name_e = rooms_category.name_e;
             _this3.create.parent_id = rooms_category.parent_id;
             _this3.create.is_default = rooms_category.is_default;
+            _this3.create.does_it_have_schedule = rooms_category.does_it_have_schedule;
           }
         }
       }, 50);
@@ -3673,7 +3765,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -3693,7 +3785,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -5012,7 +5104,7 @@ var render = function render() {
         _vm.$bvModal.show("create");
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Create")) + "\n            "), _c("i", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.titleCreate)) + "\n            "), _c("i", {
     staticClass: "fas fa-plus"
   })]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -5429,7 +5521,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -5470,7 +5562,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v("\n        " + _vm._s((_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
+  }, [_vm._v("\n        " + _vm._s(_vm.page_title && _vm.page_title.url == _vm.$route.fullPath ? _vm.$i18n.locale == "ar" ? _vm.page_title.title : _vm.page_title.title_e : (_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -5619,7 +5711,7 @@ var render = function render() {
       }
     }
   })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-    return [item.isSetting && _vm.isVisible(item.isV) ? _c("th", [_c("div", {
+    return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) ? _c("th", [_c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey(item.trans)))]), _vm._v(" "), item.sort ? _c("sortStringConponent", {
       attrs: {
@@ -5634,9 +5726,9 @@ var render = function render() {
     }) : _vm._e()], 1)]) : _vm._e()];
   }), _vm._v(" "), _vm.modalButton ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Action")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Action")) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
     staticClass: "do-not-print"
   }, [_c("i", {
     staticClass: "fas fa-ellipsis-v"
@@ -5700,9 +5792,9 @@ var render = function render() {
         }]
       }
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-      return [item.isSetting && _vm.isVisible(item.isV) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
+      return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -5710,27 +5802,27 @@ var render = function render() {
             "border-radius": "2rem"
           }
         }, [_vm._v(_vm._s(_vm.$t("general.".concat(index)) + " : " + badge))]);
-      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
         staticClass: "badge badge-primary p-2",
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, _vm._l(data[item.name], function (i, index) {
         return _c("span", {
           key: i.id
         }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean" ? _c("td", [_c("span", {
+      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean1" ? _c("td", [_c("span", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "date" ? _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "date" ? _c("td", [_vm._v("\n                " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, [_vm._v(_vm._s(data[item.isV].slice(3) + "-" + data[item.isV].slice(0, 2)))])]) : _vm._e()];
     }), _vm._v(" "), _vm.modalButton ? _c("td", {
       staticClass: "do-not-print"
-    }, [_c("b-button", {
+    }, [_vm.modalButtonCondition.value == data[_vm.modalButtonCondition.key] ? _c("b-button", {
       staticClass: "btn-sm mx-1 font-weight-bold",
       attrs: {
         variant: "warning"
@@ -5738,22 +5830,22 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.preventDefault();
-          _vm.$emit(_vm.modalButton, data.id);
+          _vm.$emit(_vm.modalButton, data[_vm.modalEmitAttribute]);
           _vm.$bvModal.show(_vm.modalButton);
         }
       }
     }, [_c("i", {
       "class": _vm.modalButtonIcon
-    })])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
+    })]) : _c("span", [_vm._v(_vm._s(_vm.modalButtonCondition.default_val))])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
     }, [_c("button", {
       staticClass: "btn btn-sm dropdown-toggle dropdown-coustom",
       attrs: {
-        type: "button",
+        "aria-expanded": "false",
         "data-toggle": "dropdown",
-        "aria-expanded": "false"
+        type: "button"
       }
     }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.commands")) + "\n                    "), _c("i", {
       staticClass: "fas fa-angle-down"
@@ -5788,25 +5880,40 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.delete")))]), _vm._v(" "), _c("i", {
       staticClass: "fas fa-times text-danger"
+    })])]) : _vm._e(), _vm._v(" "), _vm.isPrint ? _c("a", {
+      staticClass: "dropdown-item text-black",
+      attrs: {
+        href: "#"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.$emit("printRow", data.id);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-between align-items-center text-black"
+    }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.print")))]), _vm._v(" "), _c("i", {
+      staticClass: "fas fa-print"
     })])]) : _vm._e()])])]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("button", {
       staticClass: "btn",
       attrs: {
-        type: "button",
         id: "tooltip-".concat(data.id),
         "data-placement": _vm.$i18n.locale == "en" ? "left" : "right",
-        title: _vm.Tooltip
+        title: _vm.Tooltip,
+        type: "button"
       },
       on: {
+        click: function click($event) {
+          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
+        },
         mousemove: function mousemove($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
         },
         mouseover: function mouseover($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
-        },
-        click: function click($event) {
-          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
         }
       }
     }, [_c("i", {
@@ -5820,7 +5927,7 @@ var render = function render() {
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.notDataFound")) + "\n            ")])])])]);
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.notDataFound")) + "\n        ")])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -6573,6 +6680,49 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("does_it_have_schedule") && !_vm.create.parent_id ? _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "mr-2"
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("hms_rooms_categories_does_it_have_schedule")) + "\n                            "), _vm.isRequired("does_it_have_schedule") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", {
+    "class": {
+      "is-invalid": _vm.$v.create.does_it_have_schedule.$error || _vm.errors.does_it_have_schedule,
+      "is-valid": !_vm.$v.create.does_it_have_schedule.$invalid && !_vm.errors.does_it_have_schedule
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
+    attrs: {
+      name: "some-radios",
+      value: 1
+    },
+    model: {
+      value: _vm.$v.create.does_it_have_schedule.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.does_it_have_schedule, "$model", $$v);
+      },
+      expression: "$v.create.does_it_have_schedule.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "some-radios",
+      value: 0
+    },
+    model: {
+      value: _vm.$v.create.does_it_have_schedule.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.does_it_have_schedule, "$model", $$v);
+      },
+      expression: "$v.create.does_it_have_schedule.$model"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.does_it_have_schedule ? _vm._l(_vm.errors.does_it_have_schedule, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]) : _vm._e()])], 1)])], 1);
 };
 var staticRenderFns = [];
@@ -6820,9 +6970,9 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var url = arguments.length > 1 ? arguments[1] : undefined;
       var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain).concat(params ? params : "") : '').concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain) : '').concat(params).concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
         var l = res.data;
         _this.tables = l.data;
         _this.objPagination = l.pagination;
@@ -6865,7 +7015,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -6894,7 +7048,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -7065,6 +7223,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

@@ -512,7 +512,9 @@ class RlstUnitReportsController extends Controller
 
     public function getLists(Request $request){
 
+        //return $this->getColumnFKName($request->table_name, $request->column_name);  
         
+        //return $this->getDirectlyDependentTablesWithFKs();
 
         $this->prepareLists($request);
 
@@ -1362,6 +1364,43 @@ class RlstUnitReportsController extends Controller
              return $value !== null && $value !== 0; 
             });
         return empty($arrayNoNullOrZero);
+    }
+
+    public function getColumnFKName($tableName, $columnName)
+    {
+        $foreignKeyName = DB::selectOne("
+        SELECT 
+            CONSTRAINT_NAME 
+        FROM 
+            INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+        WHERE 
+            TABLE_SCHEMA = ? AND 
+            TABLE_NAME = ? AND 
+            COLUMN_NAME = ? AND 
+            REFERENCED_TABLE_NAME IS NOT NULL
+        ", [env('DB_DATABASE'), $tableName, $columnName])->CONSTRAINT_NAME; 
+    
+        return $foreignKeyName;
+    }
+
+    public function getDirectlyDependentTablesWithFKs()
+    {
+        $tables = DB::select("
+        SELECT 
+            TABLE_NAME, 
+            COLUMN_NAME, 
+            REFERENCED_TABLE_NAME, 
+            REFERENCED_COLUMN_NAME 
+        FROM 
+            INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+        WHERE 
+            TABLE_SCHEMA = ? AND 
+            REFERENCED_TABLE_NAME IS NOT NULL
+        ", [env('DB_DATABASE')]); 
+    
+        $tables = collect($tables)->groupBy('TABLE_NAME')->toArray();
+
+        return $tables;
     }
 
 }

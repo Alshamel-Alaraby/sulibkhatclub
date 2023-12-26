@@ -3,6 +3,7 @@
 namespace Modules\RealEstate\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Modules\RealEstate\Entities\RlstEvacuationType;
 
 class CheckSelectedParent implements Rule
 {
@@ -11,7 +12,7 @@ class CheckSelectedParent implements Rule
      *
      * @return void
      */
-    public function __construct($id) 
+    public function __construct($id)
     {
         $this->id = $id;
     }
@@ -25,21 +26,20 @@ class CheckSelectedParent implements Rule
      */
     public function passes($attribute, $value)
     {
-            
+
              // Log the $value and $attribute
              //Log::info('Validation Attribute: ' . $attribute);
              //Log::info('Validation Value: ' . json_encode($value));
-    
-             $requestData = request()->input(); // Get all request data
-    
-             //print_r("id in requestData =");
-             //print_r($this->id);
-            
+
+            $requestData = request()->input(); // Get all request data
+
+
             $count = RlstEvacuationType::where('id', '!=', $this->id)
-                ->where('parent_id', $value)
-                ->count();
-    
-            return $count === 0;
+                    ->where('id', $value)
+                    ->where('parent_id', '!=', $value)
+                    ->count();
+
+            return $count == 0;
     }
 
     /**
@@ -49,6 +49,6 @@ class CheckSelectedParent implements Rule
      */
     public function message()
     {
-        return 'grandparent evacuation type is not allowed.';
+        return 'grandchild evacuation type is not allowed.';
     }
 }

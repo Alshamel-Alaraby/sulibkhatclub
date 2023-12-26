@@ -18,6 +18,4 @@ class ClosedReference extends Model
         return $this->belongsTo(DocumentField::class, 'docfields_id', 'id');
     }
 
-
-
 }

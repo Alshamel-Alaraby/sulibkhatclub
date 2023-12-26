@@ -17,12 +17,6 @@ class ArchiveFile extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-    // protected $fillable = [
-    //     'arch_doc_type_id',
-    //     'data_type_value',
-    //     'arch_department_id',
-    // ];
-
     public function docType()
     {
         return $this->belongsTo(DocType::class, 'arch_doc_type_id');
@@ -44,5 +38,21 @@ class ArchiveFile extends Model implements HasMedia
             get:fn($value) => json_decode($value)
         );
     }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->favourites()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'favourites',
+                'count' => $this->favourites()->count(),
+                'ids' => $this->favourites()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 
 }

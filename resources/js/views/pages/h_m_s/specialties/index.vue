@@ -39,7 +39,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-          return permissionGuard(vm, "Specilaties", "Specialties");
+          return permissionGuard(vm, "Specialties", "all Specialty");
         });
    },
     data() {

@@ -12,6 +12,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import DocField from "../../../components/create/arch/doc-field";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -21,7 +22,7 @@ export default {
     title: "Archive Department",
     meta: [{ name: "description", content: "Archive Department" }],
   },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Layout,
     PageHeader,
@@ -271,11 +272,9 @@ export default {
             })
             .catch((err) => {
               if (err.response.status == 400) {
-                Swal.fire({
-                  icon: "error",
-                  title: `${this.$t("general.Error")}`,
-                  text: `${this.$t("general.CantDeleteRelation")}`,
-                });
+                  let text = '';
+                  err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                  this.errorFunChildren('Error', text);
               } else {
                 Swal.fire({
                   icon: "error",
@@ -324,11 +323,9 @@ export default {
             })
             .catch((err) => {
               if (err.response.status == 400) {
-                Swal.fire({
-                  icon: "error",
-                  title: `${this.$t("general.Error")}`,
-                  text: `${this.$t("general.CantDeleteRelation")}`,
-                });
+                  let text = '';
+                  err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                  this.errorFunChildren('Error', text);
               } else {
                 Swal.fire({
                   icon: "error",

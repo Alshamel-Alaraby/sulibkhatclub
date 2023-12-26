@@ -9,6 +9,8 @@ import loader from "../../../../components/general/loader";
 import { dynamicSortString } from "../../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../../helper/permission";
+import translation from "../../../../helper/mixin/translation-mixin";
+import successError from "../../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -25,6 +27,7 @@ export default {
     loader,
     Multiselect,
   },
+    mixins: [translation,successError],
     beforeRouteEnter(to, from, next) {
           next((vm) => {
       return permissionGuard(vm, "Archive Closed Reference", "all Store");
@@ -222,11 +225,17 @@ export default {
               });
             })
             .catch((err) => {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
+                if (err.response.status == 400) {
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                }
             })
             .finally(() => {
               this.isLoader = false;
@@ -267,11 +276,17 @@ export default {
               });
             })
             .catch((err) => {
-              Swal.fire({
-                icon: "error",
-                title: `${this.$t("general.Error")}`,
-                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-              });
+                if (err.response.status == 400) {
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                }
             })
             .finally(() => {
               this.isLoader = false;

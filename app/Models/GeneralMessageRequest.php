@@ -17,14 +17,19 @@ class GeneralMessageRequest extends Model
 
     protected $guarded = ['id'];
 
-    
+
     public function messageType()
     {
         return $this->belongsTo(MessageType::class, 'message_type_id');
     }
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'id');
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function messageReceiverContacts()
+    {
+        return $this->hasMany(MessageReceiverContact::class, 'message_request_id');
     }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

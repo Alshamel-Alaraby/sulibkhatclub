@@ -34,7 +34,7 @@
                 </template>
                 <template v-else>
                     <router-link @click="isRouteClicked = true" :data-title="item.page.title" :data-title_e="item.page.title_e" :data-url="`/dashboard/${item.page.middleware_url}`"
-                     :to="`/dashboard/${item.page.middleware_url}`"
+                     :to="`/dashboard/${item.page.middleware_url == '/' ? '' : item.page.middleware_url}`"
                         v-if="checkPermission(item.page.middleware ?? item.page.name_e)" class="side-nav-link-ref page_item">
 
                         <i class="fa fa-file" style="color:#000"></i> {{
@@ -67,7 +67,7 @@ export default {
     },
     methods: {
         checkUserOrAdminPermission(isUserMenu) {
-            if (this.$store.state.auth.type == "user") {
+            if (this.$store.state.auth.type != "admin") {
                 return isUserMenu;
             }
             return true;

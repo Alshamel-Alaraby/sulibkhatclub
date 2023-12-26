@@ -14,8 +14,6 @@ class Attendant extends Model
 
     protected $guarded = ['id'];
 
-
-
     public function customer()
     {
         return $this->belongsTo(GeneralCustomer::class, 'customer_id');
@@ -34,7 +32,7 @@ class Attendant extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Variant Attribute')
+            ->useLogName('Attendant')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

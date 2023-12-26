@@ -21,12 +21,9 @@ class RlstPolicy extends Model
             ->with([
                 'buildings:id,name,name_e',
             ]);
-            
     }
 
-
     // relations
-
     public function buildings()
     {
         return $this->belongsToMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'rlst_building_policies', 'policy_id', 'building_id')
@@ -47,11 +44,13 @@ class RlstPolicy extends Model
 
         if ($this->buildingPolicy()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'buildingPolicy',
+                'relation' => 'building Policy',
                 'count' => $this->buildingPolicy()->count(),
                 'ids' => $this->buildingPolicy()->pluck('id')->toArray(),
             ];
         }
+
+
         return $relationsWithChildren;
     }
 

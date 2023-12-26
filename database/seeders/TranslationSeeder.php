@@ -4298,6 +4298,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "tenants"
             ],
             [
+                "key" => "tenants_nationality",
+                "default_en" => "Nationality",
+                "default_ar" => "الجنسية",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
                 "key" => "tenants_work_address",
                 "default_en" => "Work Address",
                 "default_ar" => "عنوان العمل",
@@ -4346,6 +4355,24 @@ class TranslationSeeder extends Seeder
                 "key" => "tenants_email",
                 "default_en" => "Email",
                 "default_ar" => "البريد الإلكتروني",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "tenants_type",
+                "default_en" => "Tenant Type",
+                "default_ar" => "نوع المستأجر",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "tenants"
+            ],
+            [
+                "key" => "Is WhatsApp same as Mobile ?",
+                "default_en" => "Is WhatsApp same as Mobile ?",
+                "default_ar" => "هل رقم الواتساب نفس رقم الموبايل ؟",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -4488,7 +4515,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "ecacuationType"
+                "screen" => "evacuationType"
 
             ],
             [
@@ -4498,7 +4525,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "ecacuationType"
+                "screen" => "evacuationType"
 
             ],
             [
@@ -4508,7 +4535,7 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "ecacuationType"
+                "screen" => "evacuationType"
 
             ],
             [
@@ -4518,16 +4545,69 @@ class TranslationSeeder extends Seeder
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "ecacuationType"
+                "screen" => "evacuationType"
             ],
             [
                 "key" => "evacuationType_edit_form",
-                "default_en" => "Edit Evacuation Typeform",
+                "default_en" => "Edit Evacuation Type form",
                 "default_ar" => "نموذج تعديل نوع الاخلاء",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
-                "screen" => "ecacuationType"
+                "screen" => "evacuationType"
+
+            ],
+        ]);
+
+        //CostCenters
+        Translation::insert([
+            [
+                "key" => "costCenters_name_ar",
+                "default_en" => "Cost Center name (arabic)",
+                "default_ar" => "اسم مركز التسعير (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "costCenters"
+
+            ],
+            [
+                "key" => "costCenters_name_en",
+                "default_en" => "Cost Center name (english)",
+                "default_ar" => "اسممركز التسعير (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "costCenters"
+
+            ],
+            [
+                "key" => "costCenters_parent",
+                "default_en" => "Cost Center parnt name (english)",
+                "default_ar" => "اسم الاب (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "costCenters"
+
+            ],
+            [
+                "key" => "costCenters_create_form",
+                "default_en" => "Add New Cost Centers",
+                "default_ar" => "اضف  مركز التسعير جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "costCenters"
+            ],
+            [
+                "key" => "costCenters_edit_form",
+                "default_en" => "Edit Cost Center form",
+                "default_ar" => "نموذج تعديل مركز التسعير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "costCenters"
 
             ],
         ]);
@@ -11296,6 +11376,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "board rent"
             ],
+            [
+                "key" => "boardRent_panel_status",
+                "default_en" => "status",
+                "default_ar" => "حالة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "board rent"
+            ]
         ]);
         //board order
         Translation::insert([
@@ -17124,7 +17213,7 @@ class TranslationSeeder extends Seeder
 
         Translation::insert([
             [
-                "key" => "hms_insurance_companies_create_form",
+                "key" => "general_insurance_companies_create_form",
                 "default_en" => "Add New Insurance Company",
                 "default_ar" => "اضف شركة تأمين جديد",
                 "new_ar" => "",
@@ -17133,7 +17222,7 @@ class TranslationSeeder extends Seeder
                 "screen" => "Insurance Companies"
             ],
             [
-                "key" => "hms_insurance_companies_edit_form",
+                "key" => "general_insurance_companies_edit_form",
                 "default_en" => "Edit Specialty form",
                 "default_ar" => "تعديل التخصص",
                 "new_ar" => "",
@@ -17143,7 +17232,7 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "hms_insurance_companies_name_ar",
+                "key" => "general_insurance_companies_name_ar",
                 "default_en" => " Name (arabic)",
                 "default_ar" => "الاسم (عربي)",
                 "new_ar" => "",
@@ -17153,7 +17242,7 @@ class TranslationSeeder extends Seeder
 
             ],
             [
-                "key" => "hms_insurance_companies_name_en",
+                "key" => "general_insurance_companies_name_en",
                 "default_en" => " Name (english)",
                 "default_ar" => "الاسم (انجليزي)",
                 "new_ar" => "",
@@ -17352,6 +17441,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "Rooms Categories"
             ],
             [
+                "key" => "hms_rooms_categories_does_it_have_schedule",
+                "default_en" => "Does it have schedule?",
+                "default_ar" => "هل لديها مواعيد؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Rooms Categories"
+            ],
+            [
                 "key" => "hms_rooms_categories_parent",
                 "default_en" => "Parent",
                 "default_ar" => "الاب",
@@ -17436,6 +17534,52 @@ class TranslationSeeder extends Seeder
         ]);
 
         Translation::insert([
+
+            [
+                "key" => "hms_settings_edit_form",
+                "default_en" => "Edit Settings form",
+                "default_ar" => "تعديل الاعدادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Settings"
+
+            ],
+            [
+                "key" => "hms_settings_interval",
+                "default_en" => "Appointments Interval",
+                "default_ar" => "الوقت المستقطع بين المواعيد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Settings"
+
+            ],
+            [
+                "key" => "hms_settings_taxes",
+                "default_en" => "Taxes",
+                "default_ar" => "الضرايب",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Settings"
+
+            ],
+
+            [
+                "key" => "hms_settings_is_there_insurance",
+                "default_en" => "Is there insurance?",
+                "default_ar" => "هل يوجد تأمين؟",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Settings"
+
+            ],
+
+        ]);
+
+        Translation::insert([
             [
                 "key" => "hms_doctors_create_form",
                 "default_en" => "Add New Doctor",
@@ -17454,6 +17598,15 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "Doctors"
 
+            ],
+            [
+                "key" => "hms_doctors_type",
+                "default_en" => "Type",
+                "default_ar" => "النوع",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Doctors"
             ],
             [
                 "key" => "hms_doctors_name_ar",
@@ -17692,8 +17845,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "hms_patients_is_active",
-                "default_en" => "الحالة",
-                "default_ar" => "Status",
+                "default_en" => "Status",
+                "default_ar" => "الحالة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -17711,6 +17864,15 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "hms_patients_gender",
                 "default_en" => "Gender",
+                "default_ar" => "الجنس",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Patient"
+            ],
+            [
+                "key" => "hms_patients_type",
+                "default_en" => "Type",
                 "default_ar" => "النوع",
                 "new_ar" => "",
                 "new_en" => "",
@@ -18003,6 +18165,24 @@ class TranslationSeeder extends Seeder
                 "screen" => "Appointments"
             ],
             [
+                "key" => "hms_appointments_create_reservation_form",
+                "default_en" => "Add New Reservation",
+                "default_ar" => "إضافة حجز غرفة جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
+                "key" => "hms_appointments_opreations_rooms_categories",
+                "default_en" => "Rooms Categories",
+                "default_ar" => "فئات الغرف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
                 "key" => "hms_appointments_doctor",
                 "default_en" => "Doctor",
                 "default_ar" => "الطبيب",
@@ -18066,6 +18246,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "Appointments"
             ],
             [
+                "key" => "hms_appointments_number_of_invoices",
+                "default_en" => "Number of Invoices",
+                "default_ar" => "عدد الفواتير",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Appointments"
+            ],
+            [
                 "key" => "hms_appointments_number_of_prescriptions",
                 "default_en" => "Number of Prescriptions",
                 "default_ar" => "عدد الوصفات الطبية",
@@ -18103,7 +18292,46 @@ class TranslationSeeder extends Seeder
             ],
         ]);
 
+
         Translation::insert([
+            [
+                "key" => "hms_service_types_create_form",
+                "default_en" => "Add New Service",
+                "default_ar" => "إضافة خدمة جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+            ],
+            [
+                "key" => "hms_service_types_edit_form",
+                "default_en" => "Edit Service",
+                "default_ar" => "تعديل الخدمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+            ],
+            [
+                "key" => "hms_service_types_name_ar",
+                "default_en" => "Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+
+            ],
+            [
+                "key" => "hms_service_types_name_en",
+                "default_en" => "Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ServiceTypes"
+
+            ],
             [
                 "key" => "hms_service_types_price",
                 "default_en" => "Price",
@@ -18619,6 +18847,33 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "car"
             ],
+            [
+                "key" => "car_car_daily_price",
+                "default_en" => "Daily Price",
+                "default_ar" => "السعر اليومي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_weekly_price",
+                "default_en" => "Weekly Price",
+                "default_ar" => "السعر الاسبوعي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_monthly_price",
+                "default_en" => "Monthly Price",
+                "default_ar" => "السعر الشهري",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
         ]);
 
         //Car Model
@@ -18644,7 +18899,255 @@ class TranslationSeeder extends Seeder
             ],
         ]);
 
+        //insurance type
+        Translation::insert([
+            [
+                "key" => "insurance_type_create_form",
+                "default_en" => "Add New Insurance Type",
+                "default_ar" => "اضف نوع التامين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "insurance_type_edit_form",
+                "default_en" => "Edit Insurance Type form",
+                "default_ar" => "تعديل نوع التامين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
 
+            ],
+            [
+                "key" => "insurance_type_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "insurance_type_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //car driving
+        Translation::insert([
+            [
+                "key" => "car_car_drive_create_form",
+                "default_en" => "Add New Car Driver",
+                "default_ar" => "اضف سائق جديد",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_car_drive_edit_form",
+                "default_en" => "Edit Car Driver form",
+                "default_ar" => "تعديل سائق",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_drive_employee",
+                "default_en" => "Employee",
+                "default_ar" => "الموظف",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_drive_driving_license",
+                "default_en" => "Driving License",
+                "default_ar" => "رخصة القيادة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_car_drive_license_exp_date",
+                "default_en" => "License Expire Date",
+                "default_ar" => "تاريخ انتهاء رخصة القيادة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+        ]);
+
+        //insurance settings
+        Translation::insert([
+            [
+                "key" => "car_insurance_settings_create_form",
+                "default_en" => "Add New  Insurance Settings",
+                "default_ar" => "اضف اعدادات التامين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_insurance_settings_edit_form",
+                "default_en" => "Edit Insurance Settings form",
+                "default_ar" => "تعديل اعدادات التامين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_insurance_settings_title_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_settings_title_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_settings_db_table",
+                "default_en" => " DB Table",
+                "default_ar" => "جدول قواعد البيانات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_settings_db_field",
+                "default_en" => "DB Field",
+                "default_ar" => "الحقل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
+
+        //insurance document
+        Translation::insert([
+            [
+                "key" => "car_insurance_document_create_form",
+                "default_en" => "Add New  Insurance Document",
+                "default_ar" => "اضف وثيقة التأمين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_insurance_document_edit_form",
+                "default_en" => "Edit Insurance Document form",
+                "default_ar" => "تعديل وثيقة التأمين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+            ],
+            [
+                "key" => "car_insurance_document_related",
+                "default_en" => "Related",
+                "default_ar" => "وثيقة التامين بناءا على الاعدادات",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_insurance_type",
+                "default_en" => "Insurance  type",
+                "default_ar" => "نوع الوثيقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_insurance_company",
+                "default_en" => "Insurance Company",
+                "default_ar" => "جهة الاصدار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_insurance_number",
+                "default_en" => "Insurance Number",
+                "default_ar" => "رقم الوثيقة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_amount",
+                "default_en" => "Amount",
+                "default_ar" => "مبلغ التأمين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_from_date",
+                "default_en" => "From Date",
+                "default_ar" => "تاريخ الأصدار",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ],
+            [
+                "key" => "car_insurance_document_to_date",
+                "default_en" => "To Date",
+                "default_ar" => "تاريخ الأنتهاء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "car"
+
+            ]
+        ]);
 
     }
 }

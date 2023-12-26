@@ -1,0 +1,11 @@
+{
+    "name": "CarRent",
+    "alias": "carrent",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CarRent\\Providers\\CarRentServiceProvider"
+    ],
+    "files": []
+}

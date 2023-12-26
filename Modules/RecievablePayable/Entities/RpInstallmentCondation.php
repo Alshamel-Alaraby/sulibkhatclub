@@ -28,12 +28,11 @@ class RpInstallmentCondation extends Model
 
         if ($this->installment_payment_types()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'installment_payment_types',
+                'relation' => 'installment payment types',
                 'count' => $this->installment_payment_types()->count(),
-                'ids' => $this->installment_payment_types()->pluck('id')->toArray()
+                'ids' => $this->installment_payment_types()->pluck('name')->toArray(),
             ];
         }
-
 
         return $relationsWithChildren;
     }

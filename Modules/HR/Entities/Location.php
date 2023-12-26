@@ -20,6 +20,23 @@ class Location extends Model
         return $this->hasMany(LocationDate::class, 'location_id');
     }
 
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->locationDates()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'location Dates',
+                'count' => $this->locationDates()->count(),
+                'ids' => $this->locationDates()->pluck('vdate')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

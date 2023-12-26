@@ -3,6 +3,7 @@
 namespace Modules\BoardsRent\Entities;
 
 use App\Models\Category;
+use App\Models\DocumentHeaderDetail;
 use App\Models\Governorate;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,15 @@ class Package extends Model
     {
         return $this->belongsToMany(\Modules\BoardsRent\Entities\Panel::class, 'boards_rent_package_panel', 'package_id', 'panel_id');
     }
+    public function panels_packages()
+    {
+        return $this->belongsToMany(
+            \Modules\BoardsRent\Entities\Panel::class,
+            'boards_rent_package_panel',
+            'package_id',
+            'panel_id'
+        )->select('boards_rent_package_panel.id');
+    }
 
     public function category()
     {
@@ -51,10 +61,34 @@ class Package extends Model
         return $this->belongsTo(Governorate::class,'governorate_id');
     }
 
+    public function documentHeaderDetails()
+    {
+        return $this->hasMany(DocumentHeaderDetail::class,'package_id');
+    }
+
     public function hasChildren()
     {
-        return $this->panels()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->panels_packages()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'panels_packages',
+                'count' => $this->panels_packages()->count(),
+                'ids' => $this->panels_packages()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'document-Header-Details',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

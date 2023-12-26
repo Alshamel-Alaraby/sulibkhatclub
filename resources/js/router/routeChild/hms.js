@@ -67,20 +67,20 @@ export default [
         component: () => import('../../views/pages/h_m_s/patients/index.vue'),
     },
     {
-        path: '/dashboard/h_m_s/insurance_companies',
-        name: 'insurance_companies',
-        meta: {
-            middleware: [auth,checkAuth]
-        },
-        component: () => import('../../views/pages/h_m_s/insurance_companies/index.vue'),
-    },
-    {
         path: '/dashboard/h_m_s/prescriptions',
         name: 'prescriptions',
         meta: {
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/h_m_s/prescriptions/index.vue'),
+    },
+    {
+        path: '/dashboard/h_m_s/rooms_reservation',
+        name: 'rooms_reservation',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/h_m_s/rooms_reservation/index.vue'),
     },
     {
         path: '/dashboard/h_m_s/appointments',
@@ -105,5 +105,21 @@ export default [
             middleware: [auth,checkAuth]
         },
         component: () => import('../../views/pages/h_m_s/appointments/upcoming_appointments.vue'),
+    },
+    {
+        path: '/dashboard/h_m_s/settings',
+        name: 'hms_settings',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/h_m_s/settings/index.vue'),
+    },
+    {
+        path: '/dashboard/h_m_s/invoices',
+        name: 'hms_invoices',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/h_m_s/invoices/invoices.vue'),
     },
 ];

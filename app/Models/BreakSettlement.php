@@ -28,13 +28,11 @@ class BreakSettlement extends Model
     public function rpBreakDown()
     {
         return $this->belongsTo(RpBreakDown::class,'break_id','id');
-
     }
 
     public function rpBreakDownDocument()
     {
         return $this->belongsTo(RpBreakDown::class,'break_break_id','break_id');
-
     }
 
     public function scopeData($query)
@@ -47,9 +45,33 @@ class BreakSettlement extends Model
         return $this->hasMany(VoucherHeader::class,'break_settlement_id','id');
 
     }
+    public function DocumentHeaders()
+    {
+        return $this->hasMany(DocumentHeader::class,'break_settlement_id','id');
 
+    }
 
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
 
+        if ($this->breakVoucherHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'breakVoucherHeaders',
+                'count' => $this->breakVoucherHeaders()->count(),
+                'ids' => $this->breakVoucherHeaders()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->DocumentHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'DocumentHeaders',
+                'count' => $this->DocumentHeaders()->count(),
+                'ids' => $this->DocumentHeaders()->pluck('prefix')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
 
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

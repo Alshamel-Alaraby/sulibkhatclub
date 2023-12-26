@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\HMS\Entities\HMSDoctor;
 use Modules\HMS\Entities\HMSPatient;
+use Modules\PointOfSale\Entities\Product;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -32,6 +34,7 @@ class User extends Authenticatable implements HasMedia
         "type",
         "company_id",
     ];
+
 
     public function scopeData($query)
     {
@@ -62,10 +65,74 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsTo(Employee::class);
     }
 
+    public function doctor()
+    {
+        return $this->hasOne(HMSDoctor::class,'user_id');
+    }
+
     public function patient()
     {
-        return $this->belongsTo(HMSPatient::class);
+        return $this->hasOne(HMSPatient::class,'user_id');
     }
+
+    public function roleUsers()
+    {
+        return $this->hasMany(RoleUser::class, 'user_id');
+    }
+
+    public function taskLogs()
+    {
+        return $this->hasMany(TaskLog::class, 'user_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'created_by');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->doctor()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'doctor',
+                'count' => $this->doctor()->count(),
+                'ids' => $this->doctor()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('title')->toArray(),
+            ];
+        }
+        if ($this->patient()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'patient',
+                'count' => $this->patient()->count(),
+                'ids' => $this->patient()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->taskLogs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'task Logs',
+                'count' => $this->taskLogs()->count(),
+                'ids' => $this->taskLogs()->pluck('action')->toArray(),
+            ];
+        }
+        if ($this->roleUsers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'role Users',
+                'count' => $this->roleUsers()->count(),
+                'ids' => $this->roleUsers()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 
 
     public function getActivitylogOptions(): LogOptions

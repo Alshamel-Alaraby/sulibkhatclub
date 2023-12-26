@@ -62,9 +62,19 @@ class Store extends Model
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
-    // public function hasChildren()
-    // {
-    //     $h = $this->serials()->count() > 0;
-    //     return $h;
-    // }
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->serials()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'serials',
+                'count' => $this->serials()->count(),
+                'ids' => $this->serials()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 }

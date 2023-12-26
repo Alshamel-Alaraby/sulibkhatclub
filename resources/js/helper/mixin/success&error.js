@@ -8,6 +8,13 @@ export default {
                 text: `${this.$t(`general.${text}`)}`,
             });
         },
+        errorFunChildren(Error,text) {
+            Swal.fire({
+                icon: "error",
+                title: `${this.$t(`general.${Error}`)}`,
+                html: `${text}`,
+            });
+        },
         successFun(text,title = null) {
             if(title){
                 Swal.fire({

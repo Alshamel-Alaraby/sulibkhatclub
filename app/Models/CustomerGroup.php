@@ -24,10 +24,33 @@ class CustomerGroup extends Model
     {
         return $this->hasMany(GeneralCustomer::class, 'customer_group_id');
     }
+
+    public function suppliers()
+    {
+        return $this->hasMany(Supplier::class, 'customer_group_id');
+    }
     public function hasChildren()
     {
-        return $this->generalCustomers()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->generalCustomers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'generalCustomers',
+                'count' => $this->generalCustomers()->count(),
+                'ids' => $this->generalCustomers()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->suppliers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'suppliers',
+                'count' => $this->suppliers()->count(),
+                'ids' => $this->suppliers()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
@@ -35,7 +58,7 @@ class CustomerGroup extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Document Header')
+            ->useLogName('Customer Group')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 

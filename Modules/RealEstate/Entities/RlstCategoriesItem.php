@@ -16,8 +16,6 @@ class RlstCategoriesItem extends Model
 
     protected $table = 'rlst_categories_item';
 
-
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

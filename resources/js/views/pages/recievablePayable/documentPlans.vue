@@ -10,6 +10,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import customTable from "../../../helper/mixin/customTable";
 import successError from "../../../helper/mixin/success&error";
 import crudHelper from "../../../helper/mixin/crudHelper";
+import permissionGuard from "../../../helper/permission";
 
 /**
  * Advanced Table component

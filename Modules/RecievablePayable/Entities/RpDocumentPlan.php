@@ -12,10 +12,6 @@ class RpDocumentPlan extends Model
 
     protected $guarded = ['id'];
 
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpDocumentPlanFactory::new();
-    }
     public function installPaymentPlan(){
         return $this->belongsTo(RpInstallmentPaymentPlan::class,"plan_id");
     }

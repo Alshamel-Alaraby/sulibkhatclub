@@ -26,6 +26,26 @@ class EmployeePublicHolidayHeader extends Model
         return $this->belongsToMany(Employee::class, 'hr_employee_public_holiday_details', 'employee_public_holiday_header_id', 'employee_id');
     }
 
+    public function employeePublicHolidayDetails()
+    {
+        return $this->hasMany(EmployeePublicHolidayDetail::class, 'employee_public_holiday_header_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->employeePublicHolidayDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employeePublicHolidayDetails',
+                'count' => $this->employeePublicHolidayDetails()->count(),
+                'ids' => $this->employeePublicHolidayDetails()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

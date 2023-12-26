@@ -21,7 +21,7 @@ class Depertment extends Model
         return $query->select('id', 'name', 'name_e', 'supervisors', 'attentions');
     }
     */
-    
+
     public function employees()
     {
         return $this->hasMany(Employee::class, 'department_id');
@@ -32,10 +32,49 @@ class Depertment extends Model
         return $this->hasMany(DepertmentTask::class, 'department_id');
     }
 
+    public function periodicMaintenances()
+    {
+        return $this->hasMany(PeriodicMaintenance::class, 'department_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'department_id');
+    }
     public function hasChildren()
     {
-        $Children = $this->employees()->count() || $this->depertmentTasks()->count();
-        return $Children;
+        $relationsWithChildren = [];
+
+        if ($this->employees()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employees',
+                'count' => $this->employees()->count(),
+                'ids' => $this->employees()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->depertmentTasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'depertmentTasks',
+                'count' => $this->depertmentTasks()->count(),
+                'ids' => $this->depertmentTasks()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->periodicMaintenances()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'periodicMaintenances',
+                'count' => $this->periodicMaintenances()->count(),
+                'ids' => $this->periodicMaintenances()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->tasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tasks',
+                'count' => $this->tasks()->count(),
+                'ids' => $this->tasks()->pluck('contact_person')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
 

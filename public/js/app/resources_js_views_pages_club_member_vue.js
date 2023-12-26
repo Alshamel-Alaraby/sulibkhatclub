@@ -2102,16 +2102,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -2261,7 +2265,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -2608,13 +2612,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -2656,7 +2660,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -3056,17 +3060,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_create_general_branch_vue__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../components/create/general/branch.vue */ "./resources/js/components/create/general/branch.vue");
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../helper/startDate */ "./resources/js/helper/startDate.js");
 /* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../helper/langTransform */ "./resources/js/helper/langTransform.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-var _page$mixins$componen;
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
 
 
@@ -3093,7 +3086,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 /**
  * Advanced Table component
  */
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_page$mixins$componen = {
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   page: {
     title: "Members",
     meta: [{
@@ -3244,6 +3237,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   watch: {
+    pageTitle: {
+      handler: function handler(newV, old) {
+        this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_0__["default"].value;
+      }
+    },
     /**
      * watch per_page
      */
@@ -3280,390 +3278,384 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     this.company_id = this.$store.getters["auth/company_id"];
     this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_0__["default"].value;
     this.getData();
-  }
-}, _defineProperty(_page$mixins$componen, "watch", {
-  pageTitle: {
-    handler: function handler(newV, old) {
-      this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_0__["default"].value;
-    }
-  }
-}), _defineProperty(_page$mixins$componen, "computed", {
-  pageTitle: function pageTitle() {
-    return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_0__["default"].value;
-  }
-}), _defineProperty(_page$mixins$componen, "methods", {
-  resetModalTransation: function resetModalTransation(id) {
-    var _this3 = this;
-    var editTable = this.edit;
-    this.fullName = "".concat(editTable.first_name, " ").concat(editTable.second_name ? editTable.second_name : '', " ").concat(editTable.third_name ? editTable.third_name : '', " ").concat(editTable.last_name ? editTable.last_name : '', " ").concat(editTable.family_name ? editTable.family_name : '');
-    this.isLoader = true;
-    this.$bvModal.show("modal-transaction");
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/transactions/member-transaction/".concat(id)).then(function (res) {
-      var l = res.data;
-      console.log(l.data);
-      _this3.transactions = l.data;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this3.$t("general.Error")),
-        text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this3.isLoader = false;
-    });
   },
-  resetModalHiddenTransation: function resetModalHiddenTransation() {
-    this.transactions = [];
-    this.fullName = '';
-    this.$bvModal.hide("modal-transaction");
-  },
-  v_dateCreate: function v_dateCreate(e, name) {
-    if (e) {
-      this.create[name] = (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(e);
-    } else {
-      this.create[name] = null;
+  computed: {
+    pageTitle: function pageTitle() {
+      return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_0__["default"].value;
     }
   },
-  v_dateEdit: function v_dateEdit(e, name) {
-    if (e) {
-      this.edit[name] = (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(e);
-    } else {
-      this.edit[name] = null;
-    }
-  },
-  formatDate: function formatDate(value) {
-    return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(value);
-  },
-  log: function log(id) {
-    var _this4 = this;
-    if (this.mouseEnter != id) {
-      this.Tooltip = "";
-      this.mouseEnter = id;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members/logs/".concat(id)).then(function (res) {
-        var l = res.data.data;
-        l.forEach(function (e) {
-          _this4.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this4.formatDate(e.created_at), " \n");
-        });
+  methods: {
+    resetModalTransation: function resetModalTransation(id) {
+      var _this3 = this;
+      var editTable = this.edit;
+      this.fullName = "".concat(editTable.first_name, " ").concat(editTable.second_name ? editTable.second_name : '', " ").concat(editTable.third_name ? editTable.third_name : '', " ").concat(editTable.last_name ? editTable.last_name : '', " ").concat(editTable.family_name ? editTable.family_name : '');
+      this.isLoader = true;
+      this.$bvModal.show("modal-transaction");
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/transactions/member-transaction/".concat(id)).then(function (res) {
+        var l = res.data;
+        console.log(l.data);
+        _this3.transactions = l.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
           icon: "error",
-          title: "".concat(_this4.$t("general.Error")),
-          text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this3.$t("general.Error")),
+          text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
         });
+      })["finally"](function () {
+        _this3.isLoader = false;
       });
-    } else {}
-  },
-  /**
-   *  start get Data countrie && pagination
-   */
-  getData: function getData() {
-    var _this5 = this;
-    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    this.isLoader = true;
-    var _filterSetting = _toConsumableArray(this.filterSetting);
-    var index = this.filterSetting.indexOf("sponsor_id");
-    if (index > -1) {
-      _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
-    }
-    index = this.filterSetting.indexOf("member_status_id");
-    if (index > -1) {
-      _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
-    }
-    var filter = "";
-    for (var i = 0; i < _filterSetting.length; ++i) {
-      filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
-    }
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
-      var l = res.data;
-      _this5.members = l.data;
-      _this5.membersPagination = l.pagination;
-      _this5.current_page = l.pagination.current_page;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this5.$t("general.Error")),
-        text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this5.isLoader = false;
-    });
-  },
-  getDataCurrentPage: function getDataCurrentPage() {
-    var _this6 = this;
-    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    if (this.current_page <= this.membersPagination.last_page && this.current_page != this.membersPagination.current_page && this.current_page) {
+    },
+    resetModalHiddenTransation: function resetModalHiddenTransation() {
+      this.transactions = [];
+      this.fullName = '';
+      this.$bvModal.hide("modal-transaction");
+    },
+    v_dateCreate: function v_dateCreate(e, name) {
+      if (e) {
+        this.create[name] = (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(e);
+      } else {
+        this.create[name] = null;
+      }
+    },
+    v_dateEdit: function v_dateEdit(e, name) {
+      if (e) {
+        this.edit[name] = (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(e);
+      } else {
+        this.edit[name] = null;
+      }
+    },
+    formatDate: function formatDate(value) {
+      return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_19__.formatDateOnly)(value);
+    },
+    log: function log(id) {
+      var _this4 = this;
+      if (this.mouseEnter != id) {
+        this.Tooltip = "";
+        this.mouseEnter = id;
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members/logs/".concat(id)).then(function (res) {
+          var l = res.data.data;
+          l.forEach(function (e) {
+            _this4.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this4.formatDate(e.created_at), " \n");
+          });
+        })["catch"](function (err) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+            icon: "error",
+            title: "".concat(_this4.$t("general.Error")),
+            text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
+          });
+        });
+      } else {}
+    },
+    /**
+     *  start get Data countrie && pagination
+     */
+    getData: function getData() {
+      var _this5 = this;
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
-      var _filterSetting = _toConsumableArray(this.filterSetting);
       var index = this.filterSetting.indexOf("sponsor_id");
       if (index > -1) {
-        _filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
+        this.filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
       }
       index = this.filterSetting.indexOf("member_status_id");
       if (index > -1) {
-        _filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
+        this.filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
       }
       var filter = "";
-      for (var i = 0; i < _filterSetting.length; ++i) {
-        filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
+      for (var i = 0; i < this.filterSetting.length; ++i) {
+        filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
       }
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&company_id=").concat(this.company_id)).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
-        _this6.members = l.data;
-        _this6.membersPagination = l.pagination;
-        _this6.current_page = l.pagination.current_page;
+        _this5.members = l.data;
+        _this5.membersPagination = l.pagination;
+        _this5.current_page = l.pagination.current_page;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
           icon: "error",
-          title: "".concat(_this6.$t("general.Error")),
-          text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this5.$t("general.Error")),
+          text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this6.isLoader = false;
+        _this5.isLoader = false;
       });
-    }
-  },
-  /**
-   *  end get Data countrie && pagination
-   */
-  /**
-   *  edit countrie
-   */
-  /**
-   *   show Modal (edit)
-   */
-  resetModalEdit: function resetModalEdit(id) {
-    var _member$member_kind_i, _member$financial_sta, _member$member_status, _member$sponsor_id;
-    var member = this.members.find(function (e) {
-      return id == e.id;
-    });
-    this.getStatus();
-    this.getSponsors();
-    this.getFinancialStatus();
-    this.getMemberTypes();
-    this.birth_date = new Date(member.birth_date);
-    this.session_date = member.session_date ? new Date(member.session_date) : "";
-    this.membership_date = member.membership_date ? new Date(member.membership_date) : "";
-    this.applying_date = member.applying_date ? new Date(member.applying_date) : "";
-    this.edit.applying_number = member.applying_number;
-    this.edit.membership_number = member.membership_number;
-    this.edit.session_number = member.session_number;
-    this.edit.first_name = member.first_name;
-    this.edit.phone_code = member.phone_code;
-    this.edit.second_name = member.second_name;
-    this.edit.member_kind_id = (_member$member_kind_i = member.member_kind_id) !== null && _member$member_kind_i !== void 0 ? _member$member_kind_i : null;
-    this.edit.financial_status_id = (_member$financial_sta = member.financial_status_id) !== null && _member$financial_sta !== void 0 ? _member$financial_sta : null;
-    this.edit.member_type = member.member_type;
-    this.edit.third_name = member.third_name;
-    this.edit.last_name = member.last_name;
-    this.edit.family_name = member.family_name;
-    this.edit.member_status_id = (_member$member_status = member.member_status_id) !== null && _member$member_status !== void 0 ? _member$member_status : null;
-    this.edit.birth_date = member.birth_date;
-    this.edit.national_id = member.national_id;
-    this.edit.nationality_number = member.nationality_number;
-    this.edit.home_phone = member.home_phone;
-    this.edit.work_phone = member.work_phone;
-    this.edit.home_address = member.home_address;
-    this.edit.work_address = member.work_address;
-    this.edit.job = member.job;
-    this.edit.degree = member.degree;
-    this.edit.sponsor = member.sponsors;
-    this.edit.sponsor_id = (_member$sponsor_id = member.sponsor_id) !== null && _member$sponsor_id !== void 0 ? _member$sponsor_id : null;
-    this.edit.gender = member.gender;
-    this.errors = {};
-  },
-  /**
-   *  hidden Modal (edit)
-   */
-  resetModalHiddenEdit: function resetModalHiddenEdit(id) {
-    this.birth_date = "";
-    this.session_date = "";
-    this.applying_date = "";
-    this.membership_date = "";
-    this.errors = {};
-    this.edit = {
-      gender: 1,
-      applying_date: this.formatDate(new Date()),
-      applying_number: "",
-      first_name: "",
-      second_name: "",
-      third_name: "",
-      last_name: "",
-      family_name: "",
-      member_status_id: null,
-      birth_date: this.formatDate(new Date()),
-      national_id: "",
-      nationality_number: "",
-      home_phone: "",
-      work_phone: "",
-      home_address: "",
-      work_address: "",
-      job: "",
-      degree: "",
-      sponsor: "active",
-      sponsor_id: null,
-      member_type: "",
-      member_kind_id: null,
-      financial_status_id: null
-    };
-  },
-  /*
-   *  start  dynamicSortString
-   */
-  sortString: function sortString(value) {
-    return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_15__.dynamicSortString)(value);
-  },
-  SortNumber: function SortNumber(value) {
-    return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_15__.dynamicSortNumber)(value);
-  },
-  /**
-   *  start  ckeckRow
-   */
-  checkRow: function checkRow(id) {
-    if (!this.checkAll.includes(id)) {
-      this.checkAll.push(id);
-    } else {
-      var index = this.checkAll.indexOf(id);
-      this.checkAll.splice(index, 1);
-    }
-  },
-  /**
-   *  end  ckeckRow
-   */
-  getStatus: function getStatus() {
-    var _this7 = this;
-    this.isLoader = true;
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/cm-status").then(function (res) {
-      var l = res.data.data;
-      _this7.statuses = l;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this7.$t("general.Error")),
-        text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this7.isLoader = false;
-    });
-  },
-  getSponsors: function getSponsors() {
-    var _this8 = this;
-    this.isLoader = true;
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/sponsers").then(function (res) {
-      var l = res.data.data;
-      _this8.sponsors = l;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this8.$t("general.Error")),
-        text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this8.isLoader = false;
-    });
-  },
-  getMemberTypes: function getMemberTypes() {
-    var _this9 = this;
-    this.isLoader = true;
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members-types").then(function (res) {
-      _this9.memberTypes = res.data.data;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this9.$t("general.Error")),
-        text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this9.isLoader = false;
-    });
-  },
-  getFinancialStatus: function getFinancialStatus() {
-    var _this10 = this;
-    this.isLoader = true;
-    _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/financial-status").then(function (res) {
-      var l = res.data.data;
-      _this10.financialStatuses = l;
-    })["catch"](function (err) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-        icon: "error",
-        title: "".concat(_this10.$t("general.Error")),
-        text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
-      });
-    })["finally"](function () {
-      _this10.isLoader = false;
-    });
-  },
-  /**
-   *   Export Excel
-   */
-  ExportExcel: function ExportExcel(type, fn, dl) {
-    var _this11 = this;
-    this.enabled3 = false;
-    setTimeout(function () {
-      var elt = _this11.$refs.exportable_table;
-      var wb = XLSX.utils.table_to_book(elt, {
-        sheet: "Sheet JS"
-      });
-      if (dl) {
-        XLSX.write(wb, {
-          bookType: type,
-          bookSST: true,
-          type: "base64"
-        });
-      } else {
-        XLSX.writeFile(wb, fn || ("Stores" + "." || 0) + (type || "xlsx"));
-      }
-      _this11.enabled3 = true;
-    }, 100);
-  },
-  arabicValue: function arabicValue(txt) {
-    this.create.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.arabicValue)(txt);
-    this.edit.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.arabicValue)(txt);
-  },
-  englishValue: function englishValue(txt) {
-    this.create.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.englishValue)(txt);
-    this.edit.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.englishValue)(txt);
-  },
-  updatePhoneEdit: function updatePhoneEdit(e) {
-    this.edit.phone_code = e.countryCallingCode;
-  },
-  /**
-   *  edit
-   */
-  editSubmit: function editSubmit(id) {
-    var _this12 = this;
-    this.$v.edit.$touch();
-    if (this.$v.edit.$invalid) {
-      return;
-    } else {
-      this.isLoader = true;
-      this.errors = {};
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].put("/club-members/members/".concat(id), this.edit).then(function (res) {
-        _this12.$bvModal.hide("modal-edit-".concat(id));
-        _this12.getData();
-        setTimeout(function () {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-            icon: "success",
-            text: "".concat(_this12.$t("general.Editsuccessfully")),
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }, 500);
-      })["catch"](function (err) {
-        if (err.response.data) {
-          _this12.errors = err.response.data.errors;
-        } else {
+    },
+    getDataCurrentPage: function getDataCurrentPage() {
+      var _this6 = this;
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      if (this.current_page <= this.membersPagination.last_page && this.current_page != this.membersPagination.current_page && this.current_page) {
+        this.isLoader = true;
+        var index = this.filterSetting.indexOf("sponsor_id");
+        if (index > -1) {
+          this.filterSetting[index] = this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
+        }
+        index = this.filterSetting.indexOf("member_status_id");
+        if (index > -1) {
+          this.filterSetting[index] = this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
+        }
+        var filter = "";
+        for (var i = 0; i < this.filterSetting.length; ++i) {
+          filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
+        }
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&company_id=").concat(this.company_id)).then(function (res) {
+          var l = res.data;
+          _this6.members = l.data;
+          _this6.membersPagination = l.pagination;
+          _this6.current_page = l.pagination.current_page;
+        })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
             icon: "error",
-            title: "".concat(_this12.$t("general.Error")),
-            text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this6.$t("general.Error")),
+            text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
           });
-        }
-      })["finally"](function () {
-        _this12.isLoader = false;
+        })["finally"](function () {
+          _this6.isLoader = false;
+        });
+      }
+    },
+    /**
+     *  end get Data countrie && pagination
+     */
+    /**
+     *  edit countrie
+     */
+    /**
+     *   show Modal (edit)
+     */
+    resetModalEdit: function resetModalEdit(id) {
+      var _member$member_kind_i, _member$financial_sta, _member$member_status, _member$sponsor_id;
+      var member = this.members.find(function (e) {
+        return id == e.id;
       });
+      this.getStatus();
+      this.getSponsors();
+      this.getFinancialStatus();
+      this.getMemberTypes();
+      this.birth_date = new Date(member.birth_date);
+      this.session_date = member.session_date ? new Date(member.session_date) : "";
+      this.membership_date = member.membership_date ? new Date(member.membership_date) : "";
+      this.applying_date = member.applying_date ? new Date(member.applying_date) : "";
+      this.edit.applying_number = member.applying_number;
+      this.edit.membership_number = member.membership_number;
+      this.edit.session_number = member.session_number;
+      this.edit.first_name = member.first_name;
+      this.edit.phone_code = member.phone_code;
+      this.edit.second_name = member.second_name;
+      this.edit.member_kind_id = (_member$member_kind_i = member.member_kind_id) !== null && _member$member_kind_i !== void 0 ? _member$member_kind_i : null;
+      this.edit.financial_status_id = (_member$financial_sta = member.financial_status_id) !== null && _member$financial_sta !== void 0 ? _member$financial_sta : null;
+      this.edit.member_type = member.member_type;
+      this.edit.third_name = member.third_name;
+      this.edit.last_name = member.last_name;
+      this.edit.family_name = member.family_name;
+      this.edit.member_status_id = (_member$member_status = member.member_status_id) !== null && _member$member_status !== void 0 ? _member$member_status : null;
+      this.edit.birth_date = member.birth_date;
+      this.edit.national_id = member.national_id;
+      this.edit.nationality_number = member.nationality_number;
+      this.edit.home_phone = member.home_phone;
+      this.edit.work_phone = member.work_phone;
+      this.edit.home_address = member.home_address;
+      this.edit.work_address = member.work_address;
+      this.edit.job = member.job;
+      this.edit.degree = member.degree;
+      this.edit.sponsor = member.sponsors;
+      this.edit.sponsor_id = (_member$sponsor_id = member.sponsor_id) !== null && _member$sponsor_id !== void 0 ? _member$sponsor_id : null;
+      this.edit.gender = member.gender;
+      this.errors = {};
+    },
+    /**
+     *  hidden Modal (edit)
+     */
+    resetModalHiddenEdit: function resetModalHiddenEdit(id) {
+      this.birth_date = "";
+      this.session_date = "";
+      this.applying_date = "";
+      this.membership_date = "";
+      this.errors = {};
+      this.edit = {
+        gender: 1,
+        applying_date: this.formatDate(new Date()),
+        applying_number: "",
+        first_name: "",
+        second_name: "",
+        third_name: "",
+        last_name: "",
+        family_name: "",
+        member_status_id: null,
+        birth_date: this.formatDate(new Date()),
+        national_id: "",
+        nationality_number: "",
+        home_phone: "",
+        work_phone: "",
+        home_address: "",
+        work_address: "",
+        job: "",
+        degree: "",
+        sponsor: "active",
+        sponsor_id: null,
+        member_type: "",
+        member_kind_id: null,
+        financial_status_id: null
+      };
+    },
+    /*
+     *  start  dynamicSortString
+     */
+    sortString: function sortString(value) {
+      return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_15__.dynamicSortString)(value);
+    },
+    SortNumber: function SortNumber(value) {
+      return (0,_helper_tableSort__WEBPACK_IMPORTED_MODULE_15__.dynamicSortNumber)(value);
+    },
+    /**
+     *  start  ckeckRow
+     */
+    checkRow: function checkRow(id) {
+      if (!this.checkAll.includes(id)) {
+        this.checkAll.push(id);
+      } else {
+        var index = this.checkAll.indexOf(id);
+        this.checkAll.splice(index, 1);
+      }
+    },
+    /**
+     *  end  ckeckRow
+     */
+    getStatus: function getStatus() {
+      var _this7 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/cm-status").then(function (res) {
+        var l = res.data.data;
+        _this7.statuses = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+          icon: "error",
+          title: "".concat(_this7.$t("general.Error")),
+          text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this7.isLoader = false;
+      });
+    },
+    getSponsors: function getSponsors() {
+      var _this8 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/sponsers").then(function (res) {
+        var l = res.data.data;
+        _this8.sponsors = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+          icon: "error",
+          title: "".concat(_this8.$t("general.Error")),
+          text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this8.isLoader = false;
+      });
+    },
+    getMemberTypes: function getMemberTypes() {
+      var _this9 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members-types").then(function (res) {
+        _this9.memberTypes = res.data.data;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+          icon: "error",
+          title: "".concat(_this9.$t("general.Error")),
+          text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this9.isLoader = false;
+      });
+    },
+    getFinancialStatus: function getFinancialStatus() {
+      var _this10 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/financial-status").then(function (res) {
+        var l = res.data.data;
+        _this10.financialStatuses = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+          icon: "error",
+          title: "".concat(_this10.$t("general.Error")),
+          text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this10.isLoader = false;
+      });
+    },
+    /**
+     *   Export Excel
+     */
+    ExportExcel: function ExportExcel(type, fn, dl) {
+      var _this11 = this;
+      this.enabled3 = false;
+      setTimeout(function () {
+        var elt = _this11.$refs.exportable_table;
+        var wb = XLSX.utils.table_to_book(elt, {
+          sheet: "Sheet JS"
+        });
+        if (dl) {
+          XLSX.write(wb, {
+            bookType: type,
+            bookSST: true,
+            type: "base64"
+          });
+        } else {
+          XLSX.writeFile(wb, fn || ("Stores" + "." || 0) + (type || "xlsx"));
+        }
+        _this11.enabled3 = true;
+      }, 100);
+    },
+    arabicValue: function arabicValue(txt) {
+      this.create.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.arabicValue)(txt);
+      this.edit.name = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.arabicValue)(txt);
+    },
+    englishValue: function englishValue(txt) {
+      this.create.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.englishValue)(txt);
+      this.edit.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_20__.englishValue)(txt);
+    },
+    updatePhoneEdit: function updatePhoneEdit(e) {
+      this.edit.phone_code = e.countryCallingCode;
+    },
+    /**
+     *  edit
+     */
+    editSubmit: function editSubmit(id) {
+      var _this12 = this;
+      this.$v.edit.$touch();
+      if (this.$v.edit.$invalid) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].put("/club-members/members/".concat(id), this.edit).then(function (res) {
+          _this12.$bvModal.hide("modal-edit-".concat(id));
+          _this12.getData();
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: "success",
+              text: "".concat(_this12.$t("general.Editsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this12.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: "error",
+              title: "".concat(_this12.$t("general.Error")),
+              text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this12.isLoader = false;
+        });
+      }
     }
   }
-}), _page$mixins$componen);
+});
 
 /***/ }),
 
@@ -6284,7 +6276,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -6304,7 +6296,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -7793,7 +7785,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -10094,6 +10086,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

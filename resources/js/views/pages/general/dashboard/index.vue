@@ -3,7 +3,10 @@ import { selectedParents } from "../../../../helper/global.js";
 import Layout from "../../../layouts/main";
 import bookingDashboard from "../../../../components/statistic/booking.vue";
 import clubDashboard from "../../../../components/statistic/club.vue";
+import hmsDashboard from "../../../../components/statistic/h_m_s.vue";
 import defaultDashboard from "../../../../components/statistic/defaultDashboard.vue";
+import permissionGuard from "../../../../helper/permission";
+
 /**
  * Sales-Dashboard component
  */
@@ -11,6 +14,7 @@ export default {
     components: {
         Layout,
         clubDashboard,
+        hmsDashboard,
         bookingDashboard,
         defaultDashboard,
     },
@@ -20,7 +24,11 @@ export default {
         }
 
     },
-
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "Dashboard", "Dashboard");
+        });
+    },
     mounted(){
         // this.selectedParents = selectedParents.value
     },
@@ -42,6 +50,8 @@ export default {
 
 <template>
         <Layout>
+
+            <hmsDashboard v-if="selectedParents && selectedParents[2] == '4'" />
 
             <clubDashboard v-if="selectedParents && selectedParents[2] == '3'" />
 

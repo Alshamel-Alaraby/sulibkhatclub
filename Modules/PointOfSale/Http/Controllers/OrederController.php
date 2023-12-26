@@ -330,7 +330,6 @@ class OrederController extends Controller
     {
         // $request = $request->validated();
 
-
         $attributes = $this->calculateOrder($request);
         /** Create Order  */
 
@@ -514,18 +513,41 @@ class OrederController extends Controller
      * @param int $id
      * @return Renderable
      */
+
     public function delete($id)
     {
-        $model = $this->orderModel->where('status', 'hold')->find($id);
-
+        $model = $this->orderModel->find($id);
         if (!$model) {
-            return responseJson(404, 'not found');
+            return responseJson(404, __('message.data not found'));
+        }
+
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first.",
+                ];
+            }
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null,
+            ], 400);
         }
 
         $model->items()->delete();
         $model->delete();
-
-        return responseJson(200, 'deleted');
+        return responseJson(200, 'success');
+    }
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
     }
 
 }

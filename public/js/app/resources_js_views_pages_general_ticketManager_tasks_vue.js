@@ -1768,7 +1768,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
-/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _widgets_errorMessage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
@@ -1788,6 +1788,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
 /* harmony import */ var _assets_images_img_1_png__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../assets/images/img-1.png */ "./resources/js/assets/images/img-1.png");
 /* harmony import */ var _assets_images_img_1_png__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_assets_images_img_1_png__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/index.esm.js");
+/* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../helper/startDate */ "./resources/js/helper/startDate.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -1797,6 +1799,9 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
 
 
 
@@ -1865,7 +1870,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     Multiselect: (vue_multiselect__WEBPACK_IMPORTED_MODULE_10___default()),
     bankAccount: _bankAccount__WEBPACK_IMPORTED_MODULE_9__["default"],
     employee: _employee__WEBPACK_IMPORTED_MODULE_12__["default"],
-    Salesman: _saleman__WEBPACK_IMPORTED_MODULE_8__["default"]
+    Salesman: _saleman__WEBPACK_IMPORTED_MODULE_8__["default"],
+    DatePicker: vue2_datepicker__WEBPACK_IMPORTED_MODULE_17__["default"]
   },
   data: function data() {
     return {
@@ -1920,7 +1926,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         website: "",
         media: [],
         code_country: "",
-        old_media: []
+        old_media: [],
+        driving_license: '',
+        license_exp_date: this.formatDate(new Date())
       },
       codeCountry: "",
       customer_id: null,
@@ -1937,183 +1945,193 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   validations: {
     create: {
       name: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("name");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       name_e: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("name_e");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       phone: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("phone");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(20)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(20)
       },
       email: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("email");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100),
-        email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.email
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100),
+        email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.email
       },
       customer_group_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("customer_group_id");
         })
       },
       is_supplier: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("is_supplier");
         })
       },
       rp_code: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("rp_code");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(9)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(9)
       },
       nationality: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("nationality");
         })
       },
       contact_person: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("contact_person");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       contact_phone: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("contact_phone");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       national_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("national_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.integer,
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(20)
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer,
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(20)
       },
       country_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("country_id");
         })
       },
       city_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("city_id");
         })
       },
       bank_account_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("bank_account_id");
         })
       },
       employee_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("employee_id");
         })
       },
       whatsapp: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("whatsapp");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(20)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(20)
       },
       passport_no: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("passport_no");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.integer,
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(20)
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer,
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(20)
       },
       media: {},
       salesman_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("salesman_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       note: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("note");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(1000)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(1000)
       },
       facebook: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("facebook");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       instagram: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("instagram");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       linkedin: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("linkedin");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       snapchat: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("snapchat");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       twitter: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("twitter");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       website: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("website");
         }),
-        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.url
+        url: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.url
       },
       customer_main_category_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("customer_main_category_id");
         })
       },
       customer_sub_category_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("customer_sub_category_id");
         })
       },
       sector_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("sector_id");
         })
       },
       customer_source_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("customer_source_id");
+        })
+      },
+      driving_license: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
+          return this.isRequired("driving_license");
+        })
+      },
+      license_exp_date: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
+          return this.isRequired("license_exp_date");
         })
       }
     },
     titleFile: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required,
-      minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.minLength)(2),
-      maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+      minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+      maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
     },
     watsApp: {
       phone: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
       }
     }
   },
@@ -2247,7 +2265,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         website: "",
         media: [],
         code_country: "",
-        old_media: []
+        old_media: [],
+        driving_license: '',
+        license_exp_date: this.formatDate(new Date())
       };
       this.countries = [];
       this.cities = [];
@@ -2261,6 +2281,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.media = {};
       this.codeCountry = this.$store.getters["locationIp/countryCode"];
       this.is_disabled = false;
+    },
+    formatDate: function formatDate(value) {
+      return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_18__.formatDateOnly)(value);
     },
     resetModalHidden: function resetModalHidden() {
       this.defaultData();
@@ -2305,6 +2328,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this5.bank_accounts = [];
                 _this5.create.name = build.name;
                 _this5.create.name_e = build.name_e;
+                _this5.create.driving_license = build.driving_license;
+                _this5.create.license_exp_date = build.license_exp_date;
                 _this5.create.is_supplier = build.is_supplier;
                 if (_this5.isVisible("bank_account_id")) _this5.getBankAcount();
                 _this5.create.bank_account_id = (_build$bank_account_i = build.bank_account_id) !== null && _build$bank_account_i !== void 0 ? _build$bank_account_i : null;
@@ -8675,16 +8700,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -8834,7 +8863,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -9110,7 +9139,74 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "actionSetting",
   mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['companyKeys', 'defaultsKeys', 'isCreate', 'permissionCreate', 'isExcl', 'isPrint', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'checkAll', 'sideAction', 'sidePaginate', 'isFilter', 'isGroup', 'isSetting', 'settings', 'isVisible', 'isPaginate', 'objPagination', 'current_page'],
+  props: {
+    'companyKeys': {
+      "default": []
+    },
+    'defaultsKeys': {
+      "default": []
+    },
+    'isCreate': {
+      "default": true
+    },
+    'permissionCreate': {
+      "default": true
+    },
+    'isExcl': {
+      "default": true
+    },
+    'isPrint': {
+      "default": true
+    },
+    'permissionUpdate': {
+      "default": true
+    },
+    'permissionDelete': {
+      "default": true
+    },
+    'isEdit': {
+      "default": true
+    },
+    'isDelete': {
+      "default": true
+    },
+    'checkAll': {
+      "default": []
+    },
+    'sideAction': {
+      "default": true
+    },
+    'sidePaginate': {
+      "default": true
+    },
+    'isFilter': {
+      "default": true
+    },
+    'isGroup': {
+      "default": true
+    },
+    'isSetting': {
+      "default": true
+    },
+    'settings': {
+      "default": []
+    },
+    'isVisible': {
+      "default": []
+    },
+    'isPaginate': {
+      "default": true
+    },
+    'objPagination': {
+      "default": {}
+    },
+    'current_page': {
+      "default": 1
+    },
+    'titleCreate': {
+      "default": 'Create'
+    }
+  },
   data: function data() {
     return {
       setting: [],
@@ -9223,13 +9319,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -9299,7 +9395,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -9333,6 +9429,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
+/* harmony import */ var _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../helper/PageTitle */ "./resources/js/helper/PageTitle.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "searchPage",
@@ -9342,6 +9440,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       search: '',
       debounce: {},
+      page_title: {},
       fields: []
     };
   },
@@ -9353,6 +9452,16 @@ __webpack_require__.r(__webpack_exports__);
         _this.$emit('editSearch', _this.search);
         _this.$emit('dataSearch');
       }, 400);
+    },
+    pageTitle: {
+      handler: function handler(newV, old) {
+        this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
+      }
+    }
+  },
+  computed: {
+    pageTitle: function pageTitle() {
+      return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
     }
   },
   mounted: function mounted() {
@@ -9361,6 +9470,7 @@ __webpack_require__.r(__webpack_exports__);
     }).map(function (field) {
       return field.isV;
     });
+    this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
   }
 });
 
@@ -9395,7 +9505,7 @@ __webpack_require__.r(__webpack_exports__);
       isCheckAll: false
     };
   },
-  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'isInputCheck', 'isLogClick'],
+  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'modalEmitAttribute', 'isInputCheck', 'isLogClick', 'permissionPrint', 'isPrint'],
   watch: {
     /*** watch check All table*/isCheckAll: function isCheckAll(after, befour) {
       var _this = this;
@@ -13457,6 +13567,84 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _vm.errors.note ? _vm._l(_vm.errors.note, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e()]), _vm._v(" "), _vm.isVisible("driving_license") || _vm.isVisible("license_exp_date") ? _c("hr", {
+    staticStyle: {
+      margin: "10px 0 !important",
+      "border-top": "1px solid rgb(141 163 159 / 42%)"
+    }
+  }) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_vm.isVisible("driving_license") ? _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label",
+    attrs: {
+      "for": "field-144"
+    }
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("general_customer_driving_license")) + "\n                                "), _vm.isRequired("driving_license") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.driving_license.$model,
+      expression: "$v.create.driving_license.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.driving_license.$error || _vm.errors.driving_license,
+      "is-valid": !_vm.$v.create.driving_license.$invalid && !_vm.errors.driving_license
+    },
+    attrs: {
+      type: "text",
+      id: "field-144"
+    },
+    domProps: {
+      value: _vm.$v.create.driving_license.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.driving_license, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), !_vm.$v.create.driving_license.minLength ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                                " + _vm._s(_vm.$v.create.driving_license.$params.minLength.min) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.driving_license.maxLength ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                                " + _vm._s(_vm.$v.create.driving_license.$params.maxLength.max) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.driving_license ? _vm._l(_vm.errors.driving_license, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("license_exp_date") ? _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("general_customer_license_exp_date")) + "\n                                "), _vm.isRequired("license_exp_date") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format"
+    },
+    model: {
+      value: _vm.create.license_exp_date,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "license_exp_date", $$v);
+      },
+      expression: "create.license_exp_date"
+    }
+  }), _vm._v(" "), !_vm.$v.create.license_exp_date.required ? _c("div", {
+    staticClass: "invalid-feedback"
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.license_exp_date ? _vm._l(_vm.errors.license_exp_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -20579,7 +20767,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -20599,7 +20787,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -21918,7 +22106,7 @@ var render = function render() {
         _vm.$bvModal.show("create");
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Create")) + "\n            "), _c("i", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.titleCreate)) + "\n            "), _c("i", {
     staticClass: "fas fa-plus"
   })]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -22335,7 +22523,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -22376,7 +22564,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v("\n        " + _vm._s((_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
+  }, [_vm._v("\n        " + _vm._s(_vm.page_title && _vm.page_title.url == _vm.$route.fullPath ? _vm.$i18n.locale == "ar" ? _vm.page_title.title : _vm.page_title.title_e : (_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -22525,7 +22713,7 @@ var render = function render() {
       }
     }
   })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-    return [item.isSetting && _vm.isVisible(item.isV) ? _c("th", [_c("div", {
+    return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) ? _c("th", [_c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey(item.trans)))]), _vm._v(" "), item.sort ? _c("sortStringConponent", {
       attrs: {
@@ -22540,9 +22728,9 @@ var render = function render() {
     }) : _vm._e()], 1)]) : _vm._e()];
   }), _vm._v(" "), _vm.modalButton ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Action")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Action")) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
     staticClass: "do-not-print"
   }, [_c("i", {
     staticClass: "fas fa-ellipsis-v"
@@ -22606,9 +22794,9 @@ var render = function render() {
         }]
       }
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-      return [item.isSetting && _vm.isVisible(item.isV) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
+      return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -22616,27 +22804,27 @@ var render = function render() {
             "border-radius": "2rem"
           }
         }, [_vm._v(_vm._s(_vm.$t("general.".concat(index)) + " : " + badge))]);
-      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
         staticClass: "badge badge-primary p-2",
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, _vm._l(data[item.name], function (i, index) {
         return _c("span", {
           key: i.id
         }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean" ? _c("td", [_c("span", {
+      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean1" ? _c("td", [_c("span", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "date" ? _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "date" ? _c("td", [_vm._v("\n                " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, [_vm._v(_vm._s(data[item.isV].slice(3) + "-" + data[item.isV].slice(0, 2)))])]) : _vm._e()];
     }), _vm._v(" "), _vm.modalButton ? _c("td", {
       staticClass: "do-not-print"
-    }, [_c("b-button", {
+    }, [_vm.modalButtonCondition.value == data[_vm.modalButtonCondition.key] ? _c("b-button", {
       staticClass: "btn-sm mx-1 font-weight-bold",
       attrs: {
         variant: "warning"
@@ -22644,22 +22832,22 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.preventDefault();
-          _vm.$emit(_vm.modalButton, data.id);
+          _vm.$emit(_vm.modalButton, data[_vm.modalEmitAttribute]);
           _vm.$bvModal.show(_vm.modalButton);
         }
       }
     }, [_c("i", {
       "class": _vm.modalButtonIcon
-    })])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
+    })]) : _c("span", [_vm._v(_vm._s(_vm.modalButtonCondition.default_val))])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
     }, [_c("button", {
       staticClass: "btn btn-sm dropdown-toggle dropdown-coustom",
       attrs: {
-        type: "button",
+        "aria-expanded": "false",
         "data-toggle": "dropdown",
-        "aria-expanded": "false"
+        type: "button"
       }
     }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.commands")) + "\n                    "), _c("i", {
       staticClass: "fas fa-angle-down"
@@ -22694,25 +22882,40 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.delete")))]), _vm._v(" "), _c("i", {
       staticClass: "fas fa-times text-danger"
+    })])]) : _vm._e(), _vm._v(" "), _vm.isPrint ? _c("a", {
+      staticClass: "dropdown-item text-black",
+      attrs: {
+        href: "#"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.$emit("printRow", data.id);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-between align-items-center text-black"
+    }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.print")))]), _vm._v(" "), _c("i", {
+      staticClass: "fas fa-print"
     })])]) : _vm._e()])])]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("button", {
       staticClass: "btn",
       attrs: {
-        type: "button",
         id: "tooltip-".concat(data.id),
         "data-placement": _vm.$i18n.locale == "en" ? "left" : "right",
-        title: _vm.Tooltip
+        title: _vm.Tooltip,
+        type: "button"
       },
       on: {
+        click: function click($event) {
+          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
+        },
         mousemove: function mousemove($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
         },
         mouseover: function mouseover($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
-        },
-        click: function click($event) {
-          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
         }
       }
     }, [_c("i", {
@@ -22726,7 +22929,7 @@ var render = function render() {
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.notDataFound")) + "\n            ")])])])]);
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.notDataFound")) + "\n        ")])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -23488,9 +23691,9 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var url = arguments.length > 1 ? arguments[1] : undefined;
       var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain).concat(params ? params : "") : '').concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain) : '').concat(params).concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
         var l = res.data;
         _this.tables = l.data;
         _this.objPagination = l.pagination;
@@ -23533,7 +23736,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -23562,7 +23769,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -23733,6 +23944,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

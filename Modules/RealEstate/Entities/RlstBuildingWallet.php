@@ -18,17 +18,18 @@ class RlstBuildingWallet extends Model
     protected $table = 'rlst_building_wallet';
     protected $guarded = ['id'];
 
+    public function scopeData($query)
+    {
+        return $query
+        ->select('id', 'wallet_id', 'building_id')
+        ->with('wallet:id,name,name_e', 'building:id,name,name_e');
+    }
 
 
     public function scopeWallet($query)
     {
-        /*
-        return $query
-            ->select('id','wallet_id','building_id','building_type_id')
-            ->with('wallet:id,name,name_e', 'building:id,name,name_e');
-        */
             return $query
-            ->select('id', 'wallet_id', 'building_id', 'building_type_id')
+            ->select('id', 'wallet_id', 'building_id')
             ->with(['wallet' => function ($query) {
             $query->select('id', 'name', 'name_e');
         }], 'building:id,name,name_e');
@@ -38,7 +39,7 @@ class RlstBuildingWallet extends Model
 
     public function wallet()
     {
-        return $this->belongsTo(RlstWallet::class);
+        return $this->belongsTo(RlstWallet::class, 'wallet_id');
     }
 
     public function building()

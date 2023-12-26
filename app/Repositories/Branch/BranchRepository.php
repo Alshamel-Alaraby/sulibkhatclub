@@ -201,7 +201,7 @@ class BranchRepository implements BranchRepositoryInterface
         }
 
         if ($request->notParent) {
-            $models->whereNotNull('parent_id');
+            $models->where('parent_id','!=',0);
         }
 
         if ($request->products) {

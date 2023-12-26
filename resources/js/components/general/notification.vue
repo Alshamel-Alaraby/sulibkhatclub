@@ -118,12 +118,12 @@ export default {
         },
         pusherNotification(){
             if(localStorage.getItem("user")){
-                Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-                    .notification((notification) => {
-                        this.notifications.unshift(notification);
-                        this.count += 1;
-                        console.log(notification);
-                    });
+                // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+                //     .notification((notification) => {
+                //         this.notifications.unshift(notification);
+                //         this.count += 1;
+                //         console.log(notification);
+                //     });
             }
         }
     },

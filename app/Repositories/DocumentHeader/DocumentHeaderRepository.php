@@ -3,10 +3,12 @@
 
 namespace App\Repositories\DocumentHeader;
 use App\Http\Resources\Document\DocumentResource;
+use App\Jobs\YearlyContractInvoice;
 use App\Models\AttendantDocumentHeader;
 use App\Models\BreakSettlement;
 use App\Models\Document;
 use App\Models\DocumentCompanyModuleStatus;
+use App\Models\DocumentHeader;
 use App\Models\DocumentHeaderDetail;
 use App\Models\GeneralCustomTable;
 use App\Models\ItemBreakDown;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Booking\Entities\Setting;
 use Modules\RecievablePayable\Entities\RpBreakDown;
+use Modules\RecievablePayable\Entities\RpInstallmentPaymentType;
 use function Symfony\Component\HttpKernel\Log\format;
 
 class DocumentHeaderRepository implements DocumentHeaderInterface
@@ -32,6 +35,11 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     public function all($request)
     {
         $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if($request->patient_id )
+        {
+            $models->where('patient_id',$request->patient_id);
+        }
 
         if($request->document_id)
         {
@@ -48,10 +56,6 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
             });
         }
 
-        if($request->start_serial_number && $request->end_serial_number)
-        {
-            $models->where('serial_number', ">=", $request->start_serial_number)->where('serial_number', "<=", $request->end_serial_number);
-        }
 
         if($request->is_related_document)
         {
@@ -83,7 +87,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
     public function customerRoom($request)
     {
-     return   $models = $this->model->with('customer')->where('document_id',33)->where('complete_status','UnDelivered')
+     return   $models = $this->model->with(['customer','documentHeaderDetails'])->where('document_id',33)->where('complete_status','UnDelivered')
          ->whereHas('documentHeaderDetails',function ($q) use ($request){
             $q->where('unit_id',$request->unit_id)
                 ->where(function ($q) use ($request ) {
@@ -247,7 +251,165 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         return false;
     }
 
+    public function createArrayHeaderBreakDown($downs,$data){
+        foreach ($downs as $down){
+            RpBreakDown::create([
+                'instalment_date'       => $data['date'],
+                'rate'                  => 1,
+                'repate'                => 1,
+                'currency_id'           => 1,
+                'document_id'           => $data['document_id'],
+                'customer_id'           => $down['customer_id'],
+                'break_id'              => $data['id'],
+                'instalment_type_id'    => 1,
+                'break_type'            => 'documentHeader',
+                'debit'                 => ($data->document->attributes && $data->document->attributes['customer'] == 1)?$down['net_invoice']:0,
+                'credit'                => ($data->document->attributes && $data->document->attributes['customer'] == -1)?$down['net_invoice']:0,
+                'total'                 => $down['net_invoice'],
+                'installment_statu_id'  => 1,
+                'client_type_id'        => $down['client_type_id'],
+            ]);
+        }
+        return true;
+
+    }
+
+
+    public function CalculateDate($break_downs,$header)
+    {
+        $break_down_date_from  =  $break_downs['header_details'][0]['date_from'];
+        $break_down_date_to    =  $break_downs['header_details'][0]['date_to'];
+
+        $PaymentType = RpInstallmentPaymentType::find($break_downs['installment_payment_type_id']);
+        $date_instalment =  \Carbon\Carbon::parse($break_down_date_from);
+
+        if (strlen($break_downs['due_day']) == 1){
+            $date_old =    Carbon::parse($break_down_date_from)->format('Y-m').'-0'.$break_downs['due_day'];
+            $date_old_print =  Carbon::parse($break_down_date_from)->format('Y-m').'-0'.$break_downs['print_day'];
+            $date_old_end =    $break_down_date_to;
+            $date_instalment =  \Carbon\Carbon::parse($date_old);
+            $date_instalment_print =  \Carbon\Carbon::parse($date_old_print);
+
+
+        }else{
+            $date_old =    Carbon::parse($break_down_date_from)->format('Y-m').'-'.$break_downs['due_day'];
+            $date_old_print =    Carbon::parse($break_down_date_from)->format('Y-m').'-'.$break_downs['print_day'];
+            $date_old_end =    $break_down_date_to;
+            $date_instalment =  \Carbon\Carbon::parse($date_old);
+            $date_instalment_print =  \Carbon\Carbon::parse($date_old_print);
+        }
+
+
+//        $cont_date = 0;
+        $array_date= [];
+
+        $i = 0 ;
+        $x = 1 ;
+        for ($i;$i < $x;$i++){
+            if ($i == 0){
+
+                $date = $date_old;
+                $date_print = $date_old_print;
+            }else{
+                $cont_date  =  $PaymentType->freq_period ;
+
+                if($PaymentType->step == "D"){
+                    $date = $date_instalment->addDays($cont_date)->format('Y-m-d');
+
+                    $date_print = $date_instalment_print->addDays($cont_date)->format('Y-m-d');
+                }
+
+                if ($PaymentType->step == "M"){
+
+                    $date = $date_instalment->addMonths($cont_date)->format('Y-m-d');
+                    $date_print = $date_instalment_print->addMonths($cont_date)->format('Y-m-d');
+
+                }
+
+                if ($PaymentType->step == "Y"){
+
+                    $date = $date_instalment->addYears($cont_date)->format('Y-m-d');
+                    $date_print = $date_instalment_print->addYears($cont_date)->format('Y-m-d');
+
+                }
+            }
+
+
+
+
+                if ($date_old_end > $date){
+
+                    $x++;
+                    $array_date['date'][$i] = [ 'due_day' => $date ,'print_day' => $date_print ,'header_id' => $header->id];
+                }
+
+        }
+
+        return  $array_date;
+
+
+    }
+
+
+
+    public function createInvoiceHeaderBreakDown($request,$header){
+//        return floor(1000 / 12);
+
+
+        $array               =  $this->CalculateDate($request,$header);
+
+        $total_net_invoice   = $request['net_invoice'] / count($array['date']);
+        $total_total_invoice = $request['total_invoice'] / count($array['date']);
+
+        if ($request['invoice_discount'] != 0){
+            $total_invoice_discount  = $request['invoice_discount'] / count($array['date']);
+        }else{
+            $total_invoice_discount = 0;
+        }
+
+        $sub_net_invoice      = 0;
+        $sub_invoice_discount = 0;
+        $sub_total_invoice = 0;
+
+        $index_count  = count($array['date']) - 1;
+        $array_header = [];
+
+
+        foreach ($array['date'] as $index => $item){
+
+            if ($index != $index_count ){
+                $sub_net_invoice      +=  round($total_net_invoice,3);
+                $sub_invoice_discount +=  round($total_invoice_discount,3);
+                $sub_total_invoice    +=  round($total_total_invoice,3);
+            }
+
+            if ($index == $index_count ){
+
+                $total_net       = round($request['net_invoice']       - $sub_net_invoice ,3) ;
+                $total_discount  =  round($request['invoice_discount'] - $sub_invoice_discount,3);
+                $total_invoice   =  round($request['total_invoice']    - $sub_total_invoice,3);
+
+
+            }else{
+                $total_net       = round($total_net_invoice,3);
+                $total_discount  = round($total_invoice_discount,3);
+                $total_invoice   = round($total_total_invoice,3);
+            }
+
+            $item['total_net']      = $total_net;
+            $item['total_discount'] = $total_discount;
+            $item['total_invoice']  = $total_invoice;
+
+
+            YearlyContractInvoice::dispatch($item)->delay(Carbon::parse($item['print_day']));
+
+        }
+//        return  $array['date'];
+
+    }
+
     public function create($request){
+
 
         return DB::transaction(function () use ($request) {
 
@@ -267,14 +429,18 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
 
                 $data_request = $request;
+
                 $serial = Serial::where([['branch_id',$request['branch_id']],['document_id',$request['document_id']]])->first();
                 $data_request['serial_id'] = $serial ? $serial->id:null;
+
                 $data = $this->model->create(array_merge( $data_request,[ "break_settlement_id" => $break_Settlement_id  ] ));
+
+
                 if (isset($request['attendants'])){
                     $data->attendants()->attach($request['attendants']);
                 }
 
-                if (isset($data_request['related_document_number'])){
+                if (isset($data_request['related_document_number']) && $request['document_id'] != 48){
                     $model_find =  $this->find($data_request['related_document_number']);
                     if ($model_find){
                         $model_find->update([
@@ -282,6 +448,8 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         ]);
                     }
                 }
+
+
                 foreach ($request['header_details'] as $header_details ){
 
                     $general_document = $this->generalDocument($request,$header_details);
@@ -304,6 +472,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         }
                     }
                     if (isset($header_details['prefix_related'])){
+
                         $model_find =  $this->model->where('prefix',$header_details['prefix_related'])->first();
                         if ($model_find){
                             $model_find->update([
@@ -313,8 +482,14 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                                 "related_document_prefix" => $model_find['serial_number']??$data['serial_number'],
                             ]);
                         }
+
                     }
                 }
+
+                if ($request['document_id'] == 43){
+                     $this->createInvoiceHeaderBreakDown($request,$data);
+                }
+
                 if ($request['is_break'] == 1)
                 {
                     RpBreakDown::create([
@@ -331,12 +506,19 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1)?$data['net_invoice']:0,
                         'total' =>$data['net_invoice'],
                         'installment_statu_id' =>1,
+                        'client_type_id' =>1,
                     ]);
                 }
                 if ($request['document_id'] == 34){
                        $this->updateDocumentHeader($data);
                 }
 
+                if (isset($request['header_break_downs'])){
+                    $this->createArrayHeaderBreakDown($request['header_break_downs'],$data);
+                }
+                if ($request['document_id'] == 48){
+                    $this->updateCheckInDocument($data);
+                }
 
                 return $data;
 
@@ -344,7 +526,58 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
             return 'false';
         });
     }
+    public function updateCheckInDocument($data){
+        $transfer_header = $this->model->find($data['id']);
+        $transfer_detail = $transfer_header->documentHeaderDetails->last();
 
+        $chek_in_header = $this->model->find($data['related_document_number']);
+        $chek_in_detail = $chek_in_header->documentHeaderDetails->where('unit_id',$transfer_header->unit_id)->last();
+
+        $old_rent_days_handel = $transfer_detail['rent_days'] - $chek_in_detail['rent_days'];
+        $old_rent_days = $old_rent_days_handel < 0 ? $old_rent_days_handel * -1 : $old_rent_days_handel;
+        $old_discount =  $chek_in_detail['discount'] / $chek_in_detail['rent_days'];
+        $date_to = now();
+        if ( Setting::find(2)->value >= $transfer_detail['check_in_time'])
+        {
+            $date_to = Carbon::parse($date_to)->subDay()->format('Y-m-d');
+        }
+        $chek_in_detail->update([
+            'unit_status_id' => null,
+            'date_to' => $date_to,
+            'rent_days' => $old_rent_days,
+            'quantity' => $old_rent_days,
+            'invoice_discount' => $old_discount * $old_rent_days,
+            'discount' => $old_discount * $old_rent_days,
+            'total' => $old_rent_days * $chek_in_detail['price_per_uint'],
+            'net_invoice' => $old_discount ? ($old_rent_days * $chek_in_detail['price_per_uint']) / $old_discount : $old_rent_days * $chek_in_detail['price_per_uint'],
+        ]);
+
+        $this->modelDetail->create([
+            'document_header_id' => $chek_in_header['id'],
+            'date_from' => $transfer_detail['date_from'],
+            'date_to' => $transfer_detail['date_to'],
+            'rent_days' => $transfer_detail['rent_days'],
+            'unit_type' => $transfer_detail['unit_type'],
+            'quantity' => $transfer_detail['quantity'],
+            'price_per_uint' => $transfer_detail['price_per_uint'],
+            'total' => $transfer_detail['total'],
+            'invoice_discount' => $transfer_detail['invoice_discount'],
+            'net_invoice' => $transfer_detail['net_invoice'],
+            'unit_id' => $transfer_detail['unit_id'],
+            'check_in_time' => $transfer_detail['check_in_time'],
+            'discount' => $transfer_detail['discount'],
+            'note' => $transfer_detail['note'],
+            'category_booking' => $transfer_detail['category_booking'],
+            'unit_status_id' => 16
+        ]);
+        $total_invoice = $chek_in_header->documentHeaderDetails()->sum('total');
+        $invoice_discount = $chek_in_header->documentHeaderDetails()->sum('discount');
+        $chek_in_header->update([
+           'total_invoice' => $total_invoice,
+           'invoice_discount' => $invoice_discount,
+            'net_invoice' => $total_invoice - $invoice_discount,
+        ]);
+    }
 
     public function update($request,$id){
         if (generalCheckDateModelFinancialYear($request['date']) == "true"){
@@ -400,7 +633,11 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         }
                         if (isset($header_details['break_downs'])) {
                             foreach ($header_details['break_downs'] as $break) {
-                                $this->modelBreak->create(array_merge($break, ['document_header_detail_id' => $id->id, 'serial_number' => $data->prefix]));
+                                $this->modelBreak->create(array_merge($break, [
+                                    'document_header_detail_id' => $id->id,
+                                    'serial_number' => $data->prefix,
+                                    'client_type_id' =>1,
+                                ]));
                             }
                         }
                     }
@@ -553,7 +790,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         if (Carbon::parse($booking->value)->format('H:i:s') <= now()->format('H:i:s')){
 
             // check in model DocumentHeader -> document_id == 33 &&  related_document_id == null all()
-            $models_document_header =  $this->model->with('documentHeaderDetails')->where('document_id',33)->whereNull('related_document_id')->get();
+            $models_document_header =  $this->model->with('documentHeaderDetails')->where('document_id',33)->where('complete_status','UnDelivered')->get();
 
             foreach ($models_document_header as $index =>  $model) {
 
@@ -941,7 +1178,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     public function getDocumentsCustomer($id,$request)
     {
 //        return $request->units;
-        $documentIgnore = [33,34];
+        $documentIgnore = [33,34,48];
         $data = [];
         $data['details'] = $this->modelDetail->whereIn('unit_id',explode(",", $request->units))->with(['unit','documentHeader'])->where('unit_type','Booking')->whereHas('documentHeader',function ($q) use ($id,$documentIgnore){
             $q->where('customer_id',$id)
@@ -1051,6 +1288,12 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
         return $document_header;
 
+    }
+
+    public function documentRealEstateData($id)
+    {
+        $data = $this->model->relation()->find($id);
+        return $data;
     }
 
 }

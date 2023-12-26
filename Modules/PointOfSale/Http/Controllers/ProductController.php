@@ -6,7 +6,6 @@ use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\PointOfSale\Entities\Order;
 use Modules\PointOfSale\Entities\OrderItem;

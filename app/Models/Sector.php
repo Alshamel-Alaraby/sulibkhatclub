@@ -30,11 +30,6 @@ class Sector extends Model
         )->with(['parent:id,name,name_e']);
     }
 
-    // public function customers()
-    // {
-    //     return $this->hasMany(GeneralCustomer::class);
-    // }
-
     protected $appends = ['haveChildren'];
 
     // relations
@@ -54,19 +49,46 @@ class Sector extends Model
         return $this->hasMany(Sector::class, 'parent_id');
     }
 
+    public function customers()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'sector_id');
+    }
+
+    public function suppliers()
+    {
+        return $this->hasMany(Supplier::class, 'sector_id');
+    }
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
         if ($this->children()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'general sectors',
+                'relation' => 'children',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray(),
+                'ids' => $this->children()->pluck('name')->toArray(),
             ];
         }
+        if ($this->suppliers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'suppliers',
+                'count' => $this->suppliers()->count(),
+                'ids' => $this->suppliers()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->customers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customers',
+                'count' => $this->customers()->count(),
+                'ids' => $this->customers()->pluck('name')->toArray(),
+            ];
+        }
+
+
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

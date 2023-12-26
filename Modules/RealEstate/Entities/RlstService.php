@@ -17,12 +17,12 @@ class RlstService extends Model
 
     public function scopeData($query)
     {
-        return $query->select('id', 'name', 'name_e');        
+        return $query->select('id', 'name', 'name_e');
     }
 
     public function units()
     {
-        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstUnit::class, 'rlst_unit_services', 'service_id', 'unit_id');    
+        return $this->belongsToMany(\Modules\RealEstate\Entities\RlstUnit::class, 'rlst_unit_services', 'service_id', 'unit_id');
     }
 
     public function unitService()
@@ -36,12 +36,11 @@ class RlstService extends Model
 
         if ($this->unitService()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'units',
+                'relation' => 'unitService',
                 'count' => $this->unitService()->count(),
-                'ids' => $this->unitService()->pluck('rlst_unit_services.id')->toArray(),
+                'ids' => $this->unitService()->pluck('id')->toArray(),
             ];
         }
-
         return $relationsWithChildren;
     }
 

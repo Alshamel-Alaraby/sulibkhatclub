@@ -30,21 +30,34 @@ class TimeTablesHeader extends Model
         return $this->belongsTo(TimeTableType::class, 'timetable_types_id', 'id');
     }
 
+    public function employeesTimeTablesHeaders()
+    {
+        return $this->hasMany(EmployeesTimeTablesHeader::class, 'timetables_header_id', 'id');
+    }
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
         if ($this->timetablesDetails()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'Time Tables Details',
+                'relation' => 'time tables Details',
                 'count' => $this->timetablesDetails()->count(),
-                'ids' => $this->timetablesDetails()->pluck('id')->toArray()
+                'ids' => $this->timetablesDetails()->pluck('shift1_from')->toArray(),
+            ];
+        }
+        if ($this->employeesTimeTablesHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employeesTimeTablesHeaders',
+                'count' => $this->employeesTimeTablesHeaders()->count(),
+                'ids' => $this->employeesTimeTablesHeaders()->pluck('id')->toArray(),
             ];
         }
 
 
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

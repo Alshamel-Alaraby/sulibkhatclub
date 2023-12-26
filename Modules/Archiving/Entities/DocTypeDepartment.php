@@ -14,14 +14,14 @@ class DocTypeDepartment extends Model
 
     protected $guarded = ['id'];
 
-    public function department ()
+    public function department()
     {
-        return $this->belongsTo(Department::class,"arch_department_id");
+        return $this->belongsTo(Department::class, "arch_department_id");
     }
 
-    public function docType ()
+    public function docType()
     {
-        return $this->belongsTo(DocType::class,"arch_doc_type_id");
+        return $this->belongsTo(DocType::class, "arch_doc_type_id");
     }
 
 }

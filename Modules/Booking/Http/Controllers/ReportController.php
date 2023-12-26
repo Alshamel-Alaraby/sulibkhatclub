@@ -3,6 +3,7 @@
 namespace Modules\Booking\Http\Controllers;
 
 use App\Models\DocumentHeader;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Booking\Entities\Unit;
@@ -26,7 +27,7 @@ class ReportController extends Controller
                             $query->select('id', 'nationality');
                         }]);
                 }]);
-        }])->select('id', 'code')->get();
+        }])->select('id', 'code','booking_floor_id')->orderBy('booking_floor_id')->orderBy('code')->get();
 
         $response = [
             'message' => 'success',
@@ -48,7 +49,7 @@ class ReportController extends Controller
                     }]);
             }])->with(['customer' => function ($qq) {
             $qq->select('id', 'name', 'name_e', 'nationality')->with(['voucherHeaders' => function ($q) {
-                $q->select('id', 'customer_id', 'amount')->whereNull('break_settlement_id');
+                $q->select('id', 'customer_id', 'amount','module_type_id')->whereNull('break_settlement_id');
             }]);
         }])
             ->select('id', 'branch_id', 'document_id', 'customer_id', 'attendans_num', 'invoice_discount', 'net_invoice')
@@ -114,7 +115,7 @@ class ReportController extends Controller
                     ->whereDate('date_to', '>=', now())
                     ->select('id', 'document_header_id', 'date_from', 'date_to', 'unit_id', 'category_booking', 'price_per_uint','discount','rent_days')
                     ->with(['unit' => function ($query) {
-                        $query->select('id', 'code');
+                        $query->select('id', 'code','extra_guest_price','number_of_individuals');
                     }]);
 
             }])->with(['customer' => function ($qq) use ($request) {
@@ -131,6 +132,30 @@ class ReportController extends Controller
         }])
             ->select('id', 'branch_id', 'document_id', 'customer_id', 'attendans_num', 'invoice_discount', 'net_invoice', 'serial_number')
             ->get();
+
+        $response = [
+            'message' => 'success',
+            'data' => $models,
+        ];
+
+        return response()->json($response);
+    }
+
+    public function salesIncome(Request $request)
+    {
+
+        $models = PaymentMethod::whereHas('voucherHeader', function ($query) use ($request) {
+            $query->whereDate('date', '>=', $request->date_from)
+                ->whereDate('date', '<=', $request->date_to)
+                ->where('branch_id', $request->branch_id)
+                ->where('document_id',5);
+        })->with(['voucherHeader' => function ($query) use ($request) {
+            $query->whereDate('date', '>=', $request->date_from)
+                ->whereDate('date', '<=', $request->date_to)
+                ->where('branch_id', $request->branch_id)
+                ->where('document_id',5)
+            ->with(['room:id,name,name_e','customer:id,name,name_e','salesmen:id,name,name_e']);
+        }])->get();
 
         $response = [
             'message' => 'success',

@@ -48,10 +48,15 @@ class GeneralCustomerSource extends Model
         return $this->hasMany(GeneralCustomerSource::class, 'parent_id');
     }
 
-    //  public function hasChildren()
-    //  {
-    //      return $this->children()->count() > 0;
-    //  }
+    public function customers()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'customer_source_id');
+    }
+
+    public function suppliers()
+    {
+        return $this->hasMany(Supplier::class, 'customer_source_id');
+    }
 
     public function hasChildren()
     {
@@ -59,13 +64,30 @@ class GeneralCustomerSource extends Model
 
         if ($this->children()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'general customer sources',
+                'relation' => 'children',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray(),
+                'ids' => $this->children()->pluck('name')->toArray(),
             ];
         }
+        if ($this->customers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customers',
+                'count' => $this->customers()->count(),
+                'ids' => $this->customers()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->suppliers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'suppliers',
+                'count' => $this->suppliers()->count(),
+                'ids' => $this->suppliers()->pluck('name')->toArray(),
+            ];
+        }
+
+
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

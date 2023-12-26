@@ -25,7 +25,7 @@ class BankAccount extends Model implements HasMedia
 
     public function bank()
     {
-        return $this->belongsTo(Bank::class);
+        return $this->belongsTo(Bank::class, 'bank_id');
     }
 
     public function employee()
@@ -49,6 +49,17 @@ class BankAccount extends Model implements HasMedia
     //     $this->rlstOwners()->count() > 0 ;
     // }
 
+    public function customers()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'bank_account_id');
+    }
+
+    public function suppliers()
+    {
+        return $this->hasMany(Supplier::class, 'bank_account_id');
+    }
+
+
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -57,14 +68,29 @@ class BankAccount extends Model implements HasMedia
             $relationsWithChildren[] = [
                 'relation' => 'rlstCustomers',
                 'count' => $this->rlstCustomers()->count(),
-                'ids' => $this->rlstCustomers()->pluck('id')->toArray(),
+                'ids' => $this->rlstCustomers()->pluck('name')->toArray(),
             ];
         }
         if ($this->rlstOwners()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'rlstOwners',
                 'count' => $this->rlstOwners()->count(),
-                'ids' => $this->rlstOwners()->pluck('id')->toArray(),
+                'ids' => $this->rlstOwners()->pluck('name')->toArray(),
+            ];
+        }
+
+        if ($this->customers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customers',
+                'count' => $this->customers()->count(),
+                'ids' => $this->customers()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->suppliers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'suppliers',
+                'count' => $this->suppliers()->count(),
+                'ids' => $this->suppliers()->pluck('name')->toArray(),
             ];
         }
 

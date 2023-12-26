@@ -5,27 +5,20 @@ import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../../helper/permission";
-
 import {required, minLength, maxLength, integer, requiredIf,} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
-import {
-    dynamicSortString,
-    dynamicSortNumber,
-} from "../../../../helper/tableSort";
+import {dynamicSortString, dynamicSortNumber} from "../../../../helper/tableSort";
 import translation from "../../../../helper/mixin/translation-mixin";
 import {formatDateOnly} from "../../../../helper/startDate";
 import DatePicker from "vue2-datepicker";
 import {arabicValue, englishValue} from "../../../../helper/langTransform";
 
-// require styles
-import 'quill/dist/quill.core.css';
-import 'quill/dist/quill.snow.css';
-import 'quill/dist/quill.bubble.css';
 /**
  * Advanced Table component
  */
+
 export default {
     page: {
         title: "Members have the right to attend the assembly",
@@ -170,6 +163,26 @@ export default {
             printLoading: true,
             printObj: {
                 id: "printData",
+                beforeOpenCallback (vue) {
+                    vue.books = [];
+                    let branch = '',
+                        i = '';
+                    setTimeout(() => {
+                         branch = `<p style="border-top:2px solid;position: absolute;bottom: 0;width: 97%;">تليفون: ${vue.branch.code_country + vue.branch.phone},
+                            ${vue.branch.code_country + vue.branch.second_phone} -
+                           فاكس: ${vue.branch.fax} - ص.ب : ${vue.branch.p_o_pox}
+                        </p>`;
+
+                        i = vue.content + branch;
+                        vue.items.forEach(el => {
+                            if(vue.content.indexOf('{Name}') != -1 || vue.content.indexOf('{Address}') != -1){
+                                vue.books.push(i.replace('{Name}',el.full_name).replace('{Address}',el.home_address));
+                            }else {
+                                vue.books.push(i);
+                            }
+                        },10000);
+                    });
+                },
             },
             books: []
         };
@@ -236,7 +249,7 @@ export default {
                 let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                 adminApi
-                    .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${page}&per_page=50`, {
+                    .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}`, {
                         params: {
                             members_permissions_id: this.create.cm_permission_id,
                             dateOfYear: this.create.date
@@ -245,8 +258,8 @@ export default {
                     .then((res) => {
                         let l = res.data;
                         this.items = l.data;
-                        this.itemsPagination = l.pagination;
-                        this.current_page = l.pagination.current_page;
+                        // this.itemsPagination = l.pagination;
+                        // this.current_page = l.pagination.current_page;
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -275,7 +288,7 @@ export default {
                     let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                     adminApi
-                        .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
+                        .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&search=${this.search}&${filter}`, {
                             params: {
                                 members_permissions_id: this.create.cm_permission_id,
                                 dateOfYear: this.create.date
@@ -284,8 +297,8 @@ export default {
                         .then((res) => {
                             let l = res.data;
                             this.items = l.data;
-                            this.itemsPagination = l.pagination;
-                            this.current_page = l.pagination.current_page;
+                            // this.itemsPagination = l.pagination;
+                            // this.current_page = l.pagination.current_page;
                         })
                         .catch((err) => {
                             Swal.fire({
@@ -365,21 +378,24 @@ export default {
                 })
 
         },
-        onEditorChange({ quill, html, text }) {
+        changePrint(){
             this.books = [];
-            let i = '';
-            let branch = `<p style="border-top:2px solid;position: absolute;bottom: 0;width: 97%;">تليفون: ${this.branch.code_country + this.branch.phone},
-                ${this.branch.code_country + this.branch.second_phone} -
-               فاكس: ${this.branch.fax} - ص.ب : ${this.branch.p_o_pox}
-            </p>`;
+            let branch = '',
+                i = '';
+                branch = `<p style="border-top:2px solid;position: absolute;bottom: 0;width: 100%;"><span>تليفون: ${this.branch.code_country + this.branch.phone},</span><span>${this.branch.code_country + this.branch.second_phone} -</span><span> فاكس: ${this.branch.fax} - ص.ب : ${this.branch.p_o_pox}</span></p>`;
 
-            i = html + branch;
-            this.items.forEach(el => {
-                if(html.indexOf('{Name}') != -1 || html.indexOf('{Address}') != -1){
-                    this.books.push(i.replace('{Name}',el.full_name).replace('{Address}',el.home_address));
-                }else {
-                    this.books.push(i)
-                }
+                i = this.content + branch;
+                this.items.forEach(el => {
+                    if(this.content.indexOf('{Name}') != -1 || this.content.indexOf('{Address}') != -1){
+                        this.books.push(i.replace('{Name}',el.full_name).replace('{Address}',el.home_address));
+                    }else {
+                        this.books.push(i);
+                    }
+                });
+            $("#printDiv").printThis({
+                importCSS: true,
+                importStyle: true,
+                loadCss: `/css/printThis.css`
             });
         }
     },
@@ -506,7 +522,7 @@ export default {
                                     <!-- end filter and setting -->
 
                                     <!-- start Pagination -->
-                                    <div class="d-inline-flex align-items-center pagination-custom">
+                                    <div class="d-inline-flex align-items-center pagination-custom" v-if="0">
                                         <div class="d-inline-block" style="font-size: 13px">
                                             {{ itemsPagination.from }}-{{ itemsPagination.to }} /
                                             {{ itemsPagination.total }}
@@ -542,29 +558,28 @@ export default {
                             </div>
                         </div>
 
-                        <div id="printData" class="head-branch">
-                            <div class="text-center">
-                                  <h2 class="d-inline-block" style="width:20%">
+                        <div id="printDiv" class="head-branch">
+                            <template v-for="item in books">
+                                <div class="text-center">
+                                    <h2 class="d-inline-block" style="width:20%">
                                         <span v-if="branch">
                                             <template v-if="branch.media">
                                                 <img :src="branch.media[0].url" width="100" />
                                             </template>
                                         </span>
-                                        </h2>
-                                  <div class="d-inline-block" style="width:70%">
+                                    </h2>
+                                    <div class="d-inline-block" style="width:70%">
                                         <h1 class="text-center">
                                             {{ branch.name }}
                                         </h1>
                                         <h1 class="text-center">
                                             {{ branch.name_e }}
-                                         </h1>
-                                  </div>
-                            </div>
-                            <template v-for="item in books">
-                                <div v-html="item" class="content"></div>
+                                        </h1>
+                                    </div>
+                                </div>
+                                <div v-html="item" class="content ql-editor"></div>
                             </template>
                         </div>
-
                         <!--  book   -->
                         <b-modal
                             id="create_book"
@@ -581,7 +596,7 @@ export default {
                                             variant="success"
                                             type="button" class="mx-1"
                                             v-if="!isLoader"
-                                            v-print="'#printData'"
+                                            @click="changePrint"
                                         >
                                             {{ $t('general.execution') }}
                                         </b-button>
@@ -609,7 +624,6 @@ export default {
                                                 {{ $t('general.content') }}
                                             </label>
                                             <quill-editor
-                                                @change="onEditorChange($event)"
                                                 v-model="content"
                                                 :options="editorOption"
                                             />
@@ -619,7 +633,6 @@ export default {
                             </form>
                         </b-modal>
                         <!--  /book   -->
-
                         <!--  create   -->
                         <b-modal
                             id="create"
@@ -706,7 +719,6 @@ export default {
                             </form>
                         </b-modal>
                         <!--  /create   -->
-
                         <!-- start .table-responsive-->
                         <div  class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table">
                             <!--       start loader       -->
@@ -906,6 +918,16 @@ export default {
     color: #fff;
     font-weight: 500;
 }
+.quill-editor {
+    background-color: #fff;
+}
+.content {
+    min-height: 1270px;
+    padding: 20px;
+    border: 2px solid;
+    margin-bottom: 200px;
+    position: relative;
+}
 @media print {
     .colPay{
         color: #000;
@@ -960,15 +982,5 @@ export default {
         text-decoration: underline;
         margin: 3px;
     }
-}
-.quill-editor {
-    background-color: #fff;
-}
-.content {
-    min-height: 1270px;
-    padding: 20px;
-    border: 2px solid;
-    margin-bottom: 200px;
-    position: relative;
 }
 </style>

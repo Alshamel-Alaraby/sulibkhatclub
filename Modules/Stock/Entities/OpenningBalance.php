@@ -2,6 +2,7 @@
 
 namespace Modules\Stock\Entities;
 
+use App\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\LogTrait;
@@ -9,6 +10,7 @@ use App\Traits\LogTrait;
 class OpenningBalance extends Model
 {
     use HasFactory, LogTrait;
+    
     protected $fillable = [
         'stock_id',
         'wallet_id',

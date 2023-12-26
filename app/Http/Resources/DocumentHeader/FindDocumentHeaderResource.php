@@ -56,6 +56,8 @@ class FindDocumentHeaderResource extends JsonResource
             'check_out_time' => $this->check_out_time,
             'check_in_time' => $this->check_in_time,
             'attendans_num' => $this->attendans_num,
+            'print_day' => $this->print_day,
+            'due_day' => $this->due_day,
 
 
 
@@ -75,8 +77,7 @@ class FindDocumentHeaderResource extends JsonResource
             'company' => $this->company,
             'attendants' => collect($this->attendants)->pluck('id')->toArray(),
             'employee'   => collect($this->whenLoaded('employee'))->only(['id','name','name_e','customer_handel']),
-
-
+            'installmentPaymentType'   => $this->whenLoaded('installmentPaymentType'),
 
         ];
     }

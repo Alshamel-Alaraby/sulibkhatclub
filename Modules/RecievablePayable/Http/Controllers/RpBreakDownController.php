@@ -64,6 +64,11 @@ class RpBreakDownController extends Controller
                 $q->where('id', $request->break_id);
             })->where('parent_id',null);
         }
+        if ($request->break_id && $request->break_type == "contractHeader"){
+            $models->whereHas('documentHeader',function ($q) use ($request) {
+                $q->where('id', $request->break_id);
+            })->where('parent_id',null);
+        }
 
         if ($request->break_id && $request->break_type == "debitNote"){
             $models->whereHas('openingBalance',function ($q) use ($request){
@@ -251,11 +256,87 @@ class RpBreakDownController extends Controller
     public function destroy($id)
     {
         $model = $this->model->find($id);
-        if ($model->hisChildren()){
-            return responseJson(400, 'some items has relation cant delete');
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
         }
+
+        $relationsWithChildren = $model->hasChildren();
+
+        if (!empty($relationsWithChildren)) {
+            $errorMessages = [];
+            foreach ($relationsWithChildren as $relation) {
+                $relationName = $this->getRelationDisplayName($relation['relation']);
+                $childCount = $relation['count'];
+                $childIds = implode(', ', $relation['ids']);
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                ];
+            }
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
+        }
+
         $model->delete();
-        return responseJson(200, 'deleted');
+        return responseJson(200, 'success');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $itemsWithRelations = [];
+
+        foreach ($request->ids as $id) {
+            $model = $this->model->find($id);
+
+            $relationsWithChildren = $model->hasChildren();
+            if (!empty($relationsWithChildren)) {
+                $itemsWithRelations[] = [
+                    'id' => $id,
+                    'relations' => $relationsWithChildren,
+                ];
+                continue;
+            }
+
+            $model->delete();
+        }
+
+        if (count($itemsWithRelations) > 0) {
+            $errorMessages = [];
+            foreach ($itemsWithRelations as $item) {
+                $itemId = $item['id'];
+                $relations = $item['relations'];
+
+                $relationErrorMessages = [];
+                foreach ($relations as $relation) {
+                    $relationName = $this->getRelationDisplayName($relation['relation']);
+                    $childCount = $relation['count'];
+                    $childIds = implode(', ', $relation['ids']);
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                    ];
+                }
+
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
+            }
+
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
+        }
+
+        return responseJson(200, 'success');
+    }
+
+
+
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
     }
 
     public function filterBreak(Request $request)
@@ -294,8 +375,8 @@ class RpBreakDownController extends Controller
     public function getDocumentWithMoneyDetails(Request $request)
     {
         $models = $this->model->data()->whereHas('document',function ($q){
-            $q->where('attributes->customer',"1");
-        })->doesnthave('children')->where('customer_id',$request->customer_id)
+            $q->where('attributes->customer',1);
+        })->doesnthave('children')->where('customer_id',$request->customer_id)->where('client_type_id',$request->client_type_id)
             ->addSelect(['balance' => BreakSettlement::selectRaw('sum(amount) as total_sum')
             ->whereColumn('break_id', 'rp_break_downs.id')
         ])->orderBy('instalment_date', 'ASC');

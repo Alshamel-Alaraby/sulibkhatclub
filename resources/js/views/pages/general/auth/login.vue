@@ -25,7 +25,7 @@ export default {
       isError: false,
       type: "password",
       login_as: "admin",
-      programs_and_modules:[]
+      user_programs_and_modules:[],
     };
   },
   components: {
@@ -151,10 +151,10 @@ export default {
               let l = res.data.data;
               this.$store.commit("auth/editToken", l.token);
               this.$store.commit("auth/editUser", l.user);
-              this.$store.commit("auth/editType", "user");
+              this.$store.commit("auth/editType", 'user');
               this.isSuccess = true;
               await this.workflowUser(l.user.permissions);
-              await this.getProgramsAndModulesForCompany(l.user.company_id)
+              await this.getProgramsAndModulesForCompany(l.user.company_id,'user')
               this.$router.push({ name: "home" });
               this.getDefaultKeys();
               this.getCompanyKeys(l.user.company_id);
@@ -175,6 +175,9 @@ export default {
       permissions.forEach((el) => {
         if (!workflowTree.includes(el.crud_name)) {
           workflowTree.push(el.crud_name);
+        }
+        if (!this.user_programs_and_modules.includes(el.module)) {
+          this.user_programs_and_modules.push(el.module);
         }
       });
       this.$store.commit("auth/editPermission", permissions);
@@ -210,14 +213,37 @@ export default {
                   this.isLoader = false;
               });
       },
-    async getProgramsAndModulesForCompany(company_id) {
+    async getProgramsAndModulesForCompany(company_id, type) {
           this.isLoader = true;
           await axios
             .get(`${process.env.MIX_APP_URL_OUTSIDE}api/partners/get_programs_and_modules_for_company/${company_id}`)
               .then((res) => {
-                console.log(res.data.data)
-                this.programs_and_modules = res.data.data
-                this.$store.commit("auth/editParentModule", res.data.data);
+                if(type == 'user'){
+                    let filtered_prog_modules = []
+                    res.data.data.forEach((element) => {
+                        let counter = 0;
+                        element.modules.forEach((moduleItem,index) => {
+                            if(this.user_programs_and_modules.includes(moduleItem.project_program_module.name_e)){
+                                moduleItem.isUserTopBar = 1
+                                element.modules[index] = moduleItem
+                                counter++
+                            }
+
+                        })
+
+                        if(counter){
+                            filtered_prog_modules.push(element)
+                        }
+
+                    })
+
+                    this.$store.commit("auth/editParentModule", filtered_prog_modules);
+
+
+                }else{
+                    this.$store.commit("auth/editParentModule", res.data.data);
+                }
+
               })
               .catch((err) => {
                   Swal.fire({

@@ -19,15 +19,7 @@ class UnitController extends Controller
 
     public function find($id)
     {
-        // $model = cacheGet('units_' . $id);
-        // if (!$model) {
-        //     $model = $this->modelInterface->find($id);
-        //     if (!$model) {
-        //         return responseJson(404, __('message.data not found'));
-        //     } else {
-        //         cachePut('units_' . $id, $model);
-        //     }
-        // }
+
 
         $model = $this->modelInterface->find($id);
         if (!$model) {
@@ -39,15 +31,6 @@ class UnitController extends Controller
 
     public function all(Request $request)
     {
-        // if (count($_GET) == 0) {
-        //     $models = cacheGet('units');
-        //     if (!$models) {
-        //         $models = $this->modelInterface->all($request);
-        //         cachePut('units', $models);
-        //     }
-        // } else {
-        //     $models = $this->modelInterface->all($request);
-        // }
 
         $models = $this->modelInterface->all($request);
         return responseJson(200, 'success', UnitResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
@@ -110,16 +93,20 @@ class UnitController extends Controller
                 $relationName = $this->getRelationDisplayName($relation['relation']);
                 $childCount = $relation['count'];
                 $childIds = implode(', ', $relation['ids']);
-                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                ];
             }
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        $this->modelInterface->delete($id);
-
+        $model->delete();
         return responseJson(200, 'success');
     }
-
 
     public function bulkDelete(Request $request)
     {
@@ -137,7 +124,7 @@ class UnitController extends Controller
                 continue;
             }
 
-            $this->modelInterface->delete($id);
+            $model->delete();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -151,17 +138,25 @@ class UnitController extends Controller
                     $relationName = $this->getRelationDisplayName($relation['relation']);
                     $childCount = $relation['count'];
                     $childIds = implode(', ', $relation['ids']);
-                    $relationErrorMessages[] = "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                    ];
                 }
 
-                $errorMessages[] = implode(' ', $relationErrorMessages);
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
             }
 
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        return responseJson(200, __('Done'));
+        return responseJson(200, 'success');
     }
+
+
 
     private function getRelationDisplayName($relation)
     {

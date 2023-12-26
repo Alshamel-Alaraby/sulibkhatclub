@@ -25,8 +25,36 @@ class RestartPeriod extends Model
 
     public function salesmenPlans()
     {
-        return $this->hasMany(SalesmenPlan::class);
+        return $this->hasMany(SalesmenPlan::class, 'restart_period_id');
     }
+
+    public function periodicMaintenances()
+    {
+        return $this->hasMany(PeriodicMaintenance::class, 'restart_period_id');
+    }
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->salesmenPlans()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'salesmenPlans',
+                'count' => $this->salesmenPlans()->count(),
+                'ids' => $this->salesmenPlans()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->periodicMaintenances()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'periodic Maintenances',
+                'count' => $this->periodicMaintenances()->count(),
+                'ids' => $this->periodicMaintenances()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

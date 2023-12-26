@@ -3,7 +3,7 @@
 
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-primary btn-sm my-4" data-toggle="modal"
+                <button type="button" class="btn btn-primary btn-sm my-4" data-toggle="modal" v-if="createHealthHistory"
                     data-target="#MedicalHistoryModel"><i class="fa fa-plus"></i> {{ $t('general.Add New') }}</button>
             </div>
         </div>
@@ -12,7 +12,7 @@
             <p class="text-dark font-size-12" style="font-weight:bold;font-size: 24px;">
                 {{ $i18n.locale == 'ar' ? history.title : history.title_e }} <span class="badge badge-dark text-white"><i class="fas fa-calendar"></i> {{ history.created_at }}</span>
 
-                <span class="float-right btn btn-sm btn-danger" @click.prevent="delete_health_history(history.id)"><i
+                <span class="float-right btn btn-sm btn-danger" @click.prevent="delete_health_history(history.id)" v-if="deleteHealthHistory"><i
                         class="fa fa-trash"></i></span>
             </p>
             <div class="my-2 text-dark">
@@ -32,7 +32,7 @@
                         <h5 class="modal-title text-white" id="exampleModalLabel">{{
                             getCompanyKey('hms_patients_new_medical_info') }}
                         </h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close" >
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -172,7 +172,7 @@ import Swal from "sweetalert2";
 
 export default {
     name: 'HealthHistory',
-    props: ['patient_id', 'histories'],
+    props: ['patient_id', 'histories','createHealthHistory','deleteHealthHistory'],
     components: {
         loader, ErrorMessage
     },

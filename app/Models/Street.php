@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\BoardsRent\Entities\Panel;
+use Modules\RealEstate\Entities\RlstBuilding;
 
 class Street extends Model
 {
@@ -30,33 +32,55 @@ class Street extends Model
 
     public function avenue()
     {
-        return $this->belongsTo(Avenue::class);
+        return $this->belongsTo(Avenue::class, 'avenue_id');
     }
 
     public function customerBranches()
     {
-        return $this->hasMany(\App\Models\CustomerBranch::class);
+        return $this->hasMany(\App\Models\CustomerBranch::class, 'street_id');
     }
+
+    public function panels()
+    {
+        return $this->hasMany(Panel::class, 'street_id');
+    }
+
+    public function buildings()
+    {
+        return $this->hasMany(RlstBuilding::class, 'street_id');
+    }
+
+
 
     public function hasChildren()
     {
-        return $this->customerBranches()->count() > 0 ;
+        $relationsWithChildren = [];
+
+        if ($this->customerBranches()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customer-Branches',
+                'count' => $this->customerBranches()->count(),
+                'ids' => $this->customerBranches()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->panels()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'panels',
+                'count' => $this->panels()->count(),
+                'ids' => $this->panels()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->buildings()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'buildings',
+                'count' => $this->buildings()->count(),
+                'ids' => $this->buildings()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
-
-    // public function hasChildren()
-    // {
-    //     $relationsWithChildren = [];
-
-    //     if ($this->customerBranches()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'customerBranches',
-    //             'count' => $this->customerBranches()->count(),
-    //             'ids' => $this->customerBranches()->pluck('id')->toArray(),
-    //         ];
-    //     }
-
-    //     return $relationsWithChildren;
-    // }
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

@@ -15,6 +15,7 @@ import InstallmentPaymentType from "../../../components/create/receivablePayment
 import InstallmentPaymentPlan from "../../../components/create/receivablePayment/installmentPlan";
 import {arabicValue, englishValue} from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import successError from "../../../helper/mixin/success&error";
 
 
 /**
@@ -30,7 +31,7 @@ export default {
       },
     ],
   },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Layout,
     PageHeader,
@@ -300,11 +301,9 @@ export default {
               })
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                   this.getData();
                 } else {
                   Swal.fire({
@@ -350,11 +349,9 @@ export default {
 
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                 } else {
                   Swal.fire({
                     icon: "error",

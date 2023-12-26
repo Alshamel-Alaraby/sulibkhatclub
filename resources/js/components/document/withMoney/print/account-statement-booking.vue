@@ -64,6 +64,7 @@
                               <h5 v-if="data.customer">{{ $t('general.client') }} : {{ $i18n.locale == 'ar' ? data.customer.name : data.customer.name_e }}</h5>
                               <h3 class="text-center mb-2">{{$t('general.theDetails')}}</h3>
                               <h5>{{$t('general.paymentMethod')}} : {{$i18n.locale == 'ar' ? data.paymentMethod.name : data.paymentMethod.name_e}}</h5>
+                              <h5 v-if="data.manual_document_number">{{$t('general.manual_document_number')}} : {{data.manual_document_number}}</h5>
                               <h5 v-if="data.notes">{{$t('general.note')}} : {{data.notes}}</h5>
                               <h5>{{$t('general.amount')}} : {{data.amount}} KD</h5>
                         </div>

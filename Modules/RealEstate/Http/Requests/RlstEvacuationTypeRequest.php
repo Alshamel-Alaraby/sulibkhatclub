@@ -17,7 +17,7 @@ class RlstEvacuationTypeRequest extends FormRequest
         return [
             'name' =>'required|string|max:50|unique:rlst_evacuation_types,name,'.($this->method() == 'PUT' ? $this->id : ''),
             'name_e' =>'required|string|max:50|unique:rlst_evacuation_types,name_e,'.($this->method() == 'PUT' ? $this->id : ''),
-            'parent_id' =>['sometimes','integer','exists:rlst_evacuation_types,id', new CheckSelectedParent($this->id)],
+            'parent_id' =>['nullable','integer','exists:rlst_evacuation_types,id', new CheckSelectedParent($this->id)],
         ];
     }
 

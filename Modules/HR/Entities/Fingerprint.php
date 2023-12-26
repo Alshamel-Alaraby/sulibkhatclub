@@ -16,9 +16,6 @@ class Fingerprint extends Model
 
     protected $table = 'hr_fingerprint';
 
-    
-
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

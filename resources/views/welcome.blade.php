@@ -11,6 +11,7 @@
         <!-- Styles -->
         <link href="{{ mix('css/app.css') }}" rel="stylesheet">
         <link id="style_dashboard" href="{{ asset('css/custom.css') }}" rel="stylesheet">
+        <link id="style_dashboard" href="{{ asset('assets/printThis.js') }}" rel="stylesheet">
 
     </head>
     <body class="">
@@ -18,12 +19,11 @@
         {{-- page vue (single page application) --}}
         <div id="app"></div>
         <!-- script -->
-{{--        <script src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>--}}
+{{--  <script src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>  --}}
         <script src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
-
+        <script src="/assets/vanillatoasts.js"></script>
         <script src="{{ mix('js/app.js') }}"></script>
-
-        <script src="{{ asset('js/vanillatoasts.js') }}"></script>
+        <script src="{{ asset('assets/printThis.js') }}"></script>
 
     </body>
 </html>

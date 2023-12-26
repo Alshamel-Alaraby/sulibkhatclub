@@ -13,25 +13,23 @@ class RlstRevenueItem extends Model
     use HasFactory, LogTrait;
 
     protected $table = 'rlst_revenues_items';
-
     protected $guarded = ['id'];
 
 
     public function scopeData($query)
     {
-        return $query->select('id', 'name', 'name_e','acc_no','type')
+        return $query->select('id', 'name', 'name_e','chart_id','type')
             ->with([
-                'accountNo:id,name,name_e,account_number',
+                'chart:id,name,name_e,account_number'
             ]);
             
     }
 
-
     // relations
 
-    public function accountNo()
+    public function chart()
     {
-        return $this->belongsTo(GlChart::class, 'acc_no','account_number');
+        return $this->belongsTo(GlChart::class, 'chart_id');
 
     }
 

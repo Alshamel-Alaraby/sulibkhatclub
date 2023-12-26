@@ -168,7 +168,7 @@ export default {
                 let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                 adminApi
-                    .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${page}&per_page=50`, {
+                    .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}`, {
                         params: {
                             members_permissions_id: this.create.cm_permission_id,
                             dateOfYear: this.create.date
@@ -177,8 +177,6 @@ export default {
                     .then((res) => {
                         let l = res.data;
                         this.items = l.data;
-                        this.itemsPagination = l.pagination;
-                        this.current_page = l.pagination.current_page;
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -207,7 +205,7 @@ export default {
                     let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                     adminApi
-                        .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
+                        .get(`/club-members/reports/members-permissions?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&search=${this.search}&${filter}`, {
                             params: {
                                 members_permissions_id: this.create.cm_permission_id,
                                 dateOfYear: this.create.date
@@ -216,8 +214,6 @@ export default {
                         .then((res) => {
                             let l = res.data;
                             this.items = l.data;
-                            this.itemsPagination = l.pagination;
-                            this.current_page = l.pagination.current_page;
                         })
                         .catch((err) => {
                             Swal.fire({
@@ -415,7 +411,7 @@ export default {
                                     <!-- end filter and setting -->
 
                                     <!-- start Pagination -->
-                                    <div class="d-inline-flex align-items-center pagination-custom">
+                                    <div class="d-inline-flex align-items-center pagination-custom" v-if="0">
                                         <div class="d-inline-block" style="font-size: 13px">
                                             {{ itemsPagination.from }}-{{ itemsPagination.to }} /
                                             {{ itemsPagination.total }}

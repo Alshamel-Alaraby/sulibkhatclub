@@ -29,11 +29,33 @@ class SalesmenType extends Model
         return $this->hasMany(Salesman::class, 'salesman_type_id');
     }
 
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'salesman_type_id');
+    }
+
     public function hasChildren()
     {
-        $h = $this->salesmen()->count() > 0;
-        return $h;
+        $relationsWithChildren = [];
+
+        if ($this->salesmen()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'salesmen',
+                'count' => $this->salesmen()->count(),
+                'ids' => $this->salesmen()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->employees()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employees',
+                'count' => $this->employees()->count(),
+                'ids' => $this->employees()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

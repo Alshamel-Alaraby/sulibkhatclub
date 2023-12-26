@@ -45,9 +45,30 @@ class Equipment extends Model
         return $this->hasMany(Equipment::class, 'parent_id');
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'equipment_id');
+    }
+
     public function hasChildren()
     {
-        return $this->children()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->tasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tasks',
+                'count' => $this->tasks()->count(),
+                'ids' => $this->tasks()->pluck('contact_person')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
     }
 
     public function periodicMaintenance()

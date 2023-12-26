@@ -20,8 +20,6 @@ class ProductAttributeValue extends Model
         return $this->hasMany(Order::class, 'order_id');
     }
     
-
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

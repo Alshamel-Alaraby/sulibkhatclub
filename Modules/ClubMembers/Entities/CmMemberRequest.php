@@ -79,4 +79,20 @@ class CmMemberRequest extends Model
             }
         });
     }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->cmTransaction()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cmTransaction',
+                'count' => $this->cmTransaction()->count(),
+                'ids' => $this->cmTransaction()->pluck('prefix')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
 }

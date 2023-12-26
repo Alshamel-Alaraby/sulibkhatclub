@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\BoardsRent\Entities\Package;
+use Modules\BoardsRent\Entities\Panel;
 use Modules\PointOfSale\Entities\Order;
 use Modules\PointOfSale\Entities\OrderItem;
 use Spatie\Activitylog\LogOptions;
@@ -27,7 +29,7 @@ class Category extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(\Modules\BoardsRent\Entities\OrderDetail::class);
+        return $this->hasMany(\Modules\BoardsRent\Entities\OrderDetails::class);
     }
 
     public function products()
@@ -35,39 +37,63 @@ class Category extends Model
         return $this->hasMany(\Modules\PointOfSale\Entities\Product::class, 'category_id');
     }
 
+    public function documentHeaderDetails()
+    {
+        return $this->hasMany(DocumentHeaderDetail::class,'category_id');
+    }
+
+    public function packages()
+    {
+        return $this->hasMany(Package::class, 'category_id');
+    }
+    public function panels()
+    {
+        return $this->hasMany(Panel::class, 'category_id');
+    }
+
 
     public function hasChildren()
     {
-        return $this->orderDetails()->count() > 0 ||
-            $this->products()->count() > 0
+        $relationsWithChildren = [];
 
-            ;
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('title')->toArray(),
+            ];
+        }
+        if ($this->orderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orderDetails',
+                'count' => $this->orderDetails()->count(),
+                'ids' => $this->orderDetails()->pluck('price')->toArray(),
+            ];
+        }
+        if ($this->packages()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'packages',
+                'count' => $this->packages()->count(),
+                'ids' => $this->packages()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->panels()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'panels',
+                'count' => $this->panels()->count(),
+                'ids' => $this->panels()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'document-Header-Details',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('id')->toArray(),
+            ];
+        }
 
+        return $relationsWithChildren;
     }
-
-    // public function hasChildren()
-    // {
-    //     $relationsWithChildren = [];
-
-    //     if ($this->orderDetails()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'orderDetails',
-    //             'count' => $this->orderDetails()->count(),
-    //             'ids' => $this->orderDetails()->pluck('id')->toArray()
-    //         ];
-    //     }
-    //     if ($this->products()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'products',
-    //             'count' => $this->products()->count(),
-    //             'ids' => $this->products()->pluck('id')->toArray()
-    //         ];
-    //     }
-
-
-
-    //     return $relationsWithChildren;
-    // }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -134,8 +160,6 @@ class Category extends Model
                 $query->where('type', 'sales')->whereIn('product_id', $product_ids);
             })->sum('total');
     }
-
-
 
     public function getItemPurchasedAttribute($key)
     {

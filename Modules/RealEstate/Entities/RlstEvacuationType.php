@@ -19,8 +19,10 @@ class RlstEvacuationType extends Model
         parent::boot();
 
         static::created(function ($model) {
-            if(empty($model->parent_id))
-                $model->parent_id = $model->id;           
+            if(empty($model->parent_id) || !$model->parent_id){
+                $model->parent_id = $model->id;
+                $model->save();
+            }
         });
 
     }
@@ -32,7 +34,7 @@ class RlstEvacuationType extends Model
             ->with([
                 'parent:id,name,name_e',
             ]);
-            
+
     }
 
 
@@ -58,7 +60,7 @@ class RlstEvacuationType extends Model
             $relationsWithChildren[] = [
                 'relation' => 'children',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray(),
+                'ids' => $this->children()->pluck('name')->toArray(),
             ];
         }
         return $relationsWithChildren;

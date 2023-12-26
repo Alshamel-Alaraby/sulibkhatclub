@@ -21,6 +21,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import { formatDateOnly } from "../../../helper/startDate";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -30,7 +31,7 @@ export default {
     title: "HR job title",
     meta: [{ name: "description", content: "HR job title" }],
   },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Layout,
     PageHeader,
@@ -272,11 +273,9 @@ export default {
               })
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                   this.getData();
                 } else {
                   Swal.fire({
@@ -322,11 +321,9 @@ export default {
 
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                 } else {
                   Swal.fire({
                     icon: "error",

@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\LogTrait;
+use Modules\RealEstate\Entities\RlstTenant;
 use Spatie\Activitylog\LogOptions;
 
 class GlChart extends Model
 {
     use HasFactory, LogTrait;
-    
+
     protected $table = 'gl_chart';
 
     protected $guarded = ['id'];
@@ -24,7 +25,7 @@ class GlChart extends Model
                 $model->parent_id = $model->id;
                 $model->save();
             }
-            
+
         });
 
     }
@@ -98,11 +99,24 @@ class GlChart extends Model
         return $this->hasMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'insurance_account_id');
     }
 
+    public function RlstTenants()
+    {
+        return $this->hasMany(RlstTenant::class, 'chart_id');
+    }
+
+
 
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
+        if ($this->RlstTenants()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstTenants',
+                'count' => $this->RlstTenants()->count(),
+                'ids' => $this->RlstTenants()->pluck('id')->toArray(),
+            ];
+        }
         if ($this->children()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'children',

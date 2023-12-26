@@ -14,6 +14,7 @@ class DocumentStatuse extends Model
 
     protected $guarded = ['id'];
 
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

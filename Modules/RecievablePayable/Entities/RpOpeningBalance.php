@@ -2,7 +2,6 @@
 
 namespace Modules\RecievablePayable\Entities;
 
-use App\Models\DocumentModuleType;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,27 +26,6 @@ class RpOpeningBalance extends Model
         return $this->hasMany(RpBreakDown::class,'break_id');
     }
 
-
-//    public function document()
-//    {
-//        return $this->belongsTo(Document::class,'break_id');
-//    }
-    // public function hasChildren()
-    // {
-    //     return $this->details()->count() > 0  ;
-
-    // }
-
-    // public function hisChildren()
-    // {
-    //     return $this->breakDowns()->count() > 0;
-    // }
-
-    // protected static function newFactory()
-    // {
-    //     return \Modules\RecievablePayable\Database\factories\RpOpeningBalanceFactory::new();
-    // }
-
     public function hasChildren()
     {
         $relationsWithChildren = [];
@@ -56,7 +34,7 @@ class RpOpeningBalance extends Model
             $relationsWithChildren[] = [
                 'relation' => 'breakDowns',
                 'count' => $this->breakDowns()->count(),
-                'ids' => $this->breakDowns()->pluck('id')->toArray()
+                'ids' => $this->breakDowns()->pluck('rate')->toArray(),
             ];
         }
 

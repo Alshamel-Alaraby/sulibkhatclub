@@ -19,7 +19,7 @@ class AllDocumentHeaderResource extends JsonResource
             'id'                       => $this->id,
             'document_status_id'       => $this->document_status_id,
             'reason'                   => $this->reason,
-            'branch_id'               => $this->branch_id,
+            'branch_id'                => $this->branch_id,
             'date'                     => $this->date,
             'serial_number'            => $this->serial_number,
             'prefix'                   => $this->prefix,
@@ -44,6 +44,10 @@ class AllDocumentHeaderResource extends JsonResource
             'sell_method_discount'     => $this->sell_method_discount,
             'external_commission'      => $this->external_commission,
 
+            'installment_payment_type_id'  => $this->installment_payment_type_id,
+            'print_day'                    => $this->print_day,
+            'due_day'                      => $this->due_day,
+
             'revenue'                 => $this->revenue,
             'unrealized_commission'   => $this->unrealized_commission,
             'commission'              => $this->commission,
@@ -53,8 +57,7 @@ class AllDocumentHeaderResource extends JsonResource
             'branch'                  => collect($this->branch)->only(['id','name','name_e']),
             'employee'                => collect($this->employee)->only(['id','name','name_e']),
             'customer'                => collect($this->customer)->only(['id','name','name_e']),
-
-
+            'installmentPaymentType'  => $this->installmentPaymentType,
 
         ];
     }

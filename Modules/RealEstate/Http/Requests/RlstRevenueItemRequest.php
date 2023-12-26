@@ -16,8 +16,8 @@ class RlstRevenueItemRequest extends FormRequest
         return [
             'name' => 'required|string|max:100|unique:rlst_revenues_items,name,'.($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'required|string|max:100|unique:rlst_revenues_items,name_e,'.($this->method() == 'PUT' ? $this->id : ''),
-            'acc_no' => 'required|string|max:20|exists:gl_chart,account_number',
-            'type' => 'sometimes|integer|in:building,unit,unit/building',
+            'chart_id' => 'required|integer|exists:gl_chart,id',
+            'type' => 'sometimes|in:building,unit,unit/building',
         ];
     }
 

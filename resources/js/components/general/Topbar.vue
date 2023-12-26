@@ -68,6 +68,7 @@ export default {
                     await res.data.data.forEach((element) => {
                         folders_and_pages.push(element)
                     })
+                    if(this.$store.state.auth.type == 'admin')
                     await this.getWorkflows(folders_and_pages)
                     let folders_and_pages_after_appended_show_property = await this.appendShowProperty(folders_and_pages)
 
@@ -206,7 +207,7 @@ export default {
          *  Logout Dashboard
          */
         async logout() {
-            if (this.$store.state.auth.type == "user") {
+            if (this.$store.state.auth.type != "admin") {
                 await adminApi
                     .post(`/auth/logout`)
                     .then((res) => {
@@ -364,7 +365,7 @@ export default {
                                             :html="(prog.icon ? `<i class='${prog.icon}' style='background:none!important;color:#000'></i> ` : '')+($i18n.locale == 'ar' ? prog.name : prog.name_e)" ref="dropdown">
                                             <template v-for="(prog_module, index) in prog.modules" :index="prog_module.id">
 
-                                                <b-dropdown-item
+                                                <b-dropdown-item v-if="prog_module.isUserTopBar || $store.state.auth.type == 'admin'"
                                                     :class="selectedParents.value.length && selectedParents.value[1] == prog_module.project_program_module.id ? 'selected-program' : ''"
                                                     @click.prevent="getMenu(prog.id, prog_module.project_program_module.id,prog_module.project_program_module.module_dashboard_id)">
                                                      <i :class="prog_module.project_program_module.icon" v-show="prog_module.project_program_module.icon" style="background:none!important;color:#000"></i> {{ $i18n.locale == "ar" ? prog_module.project_program_module.name :

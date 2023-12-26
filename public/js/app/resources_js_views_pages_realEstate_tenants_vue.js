@@ -854,9 +854,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       fields: [],
       isLoader: false,
       codeCountry: "",
-      martialStatusOptions: ["single", "married", "divorced", "widowed", "other"],
+      martialStatusOptions: ["single", "married", "divorced", "widowed"],
       charts: [],
       countries: [],
+      tenantTypes: [],
       create: {
         name: "",
         name_e: "",
@@ -868,12 +869,12 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         marital_status: "",
         work_address: "",
         home_address: "",
-        nationality: null,
+        country_id: null,
         civil_no: null,
         passport_no: null,
         residence_no: null,
-        chart: null,
-        tenantType: null,
+        chart_id: null,
+        tenant_type_id: null,
         mobile_code: ""
       },
       company_id: null,
@@ -914,7 +915,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       gender: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
-      martialStatus: {
+      marital_status: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
       work_address: {
@@ -932,15 +933,16 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       residence_no: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
-      chart: {
+      chart_id: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
-      tenantType: {
+      tenant_type_id: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
-      nationality: {
+      country_id: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
-      }
+      },
+      mobile_code: {}
     }
   },
   mounted: function mounted() {
@@ -990,16 +992,16 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         is_whatsapp: "",
         email: "",
         gender: "",
-        martialStatus: "",
+        marital_status: "",
         work_address: "",
         home_address: "",
         civil_no: null,
         passport_no: null,
         residence_no: null,
-        chart: null,
-        tenantType: null,
+        chart_id: null,
+        tenant_type_id: null,
         mobile_code: "",
-        nationality: null
+        country_id: null
       };
       this.$nextTick(function () {
         _this2.$v.$reset();
@@ -1019,6 +1021,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           if (!_this3.isPage) _this3.getCustomTableFields();
           _this3.getAccounts();
           _this3.getCountries();
+          _this3.getTenantTypes();
         } else {
           if (_this3.idObjEdit.dataObj) {
             var tenants = _this3.idObjEdit.dataObj;
@@ -1030,18 +1033,19 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             _this3.create.is_whatsapp = tenants.is_whatsapp;
             _this3.create.email = tenants.email;
             _this3.create.gender = tenants.gender;
-            _this3.create.martial_status = tenants.martialStatus;
+            _this3.create.marital_status = tenants.marital_status;
             _this3.create.work_address = tenants.work_address;
             _this3.create.home_address = tenants.home_address;
             _this3.create.civil_no = tenants.civil_no;
             _this3.create.passport_no = tenants.passport_no;
             _this3.create.residence_no = tenants.residence_no;
-            _this3.create.chart = tenants.chart.id;
-            _this3.create.tenantType = tenants.tenantType.id;
+            _this3.create.chart_id = tenants.chart.id;
+            _this3.create.tenant_type_id = tenants.tenantType.id;
             _this3.create.mobile_code = tenants.mobile_code;
-            _this3.create.nationality = tenants.nationality.id;
+            _this3.create.country_id = tenants.nationality.id;
             _this3.getAccounts();
             _this3.getCountries();
+            _this3.getTenantTypes();
           }
         }
       }, 50);
@@ -1051,6 +1055,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     AddSubmit: function AddSubmit() {
       var _this4 = this;
+      console.log("this.create", this.create);
       if (!this.create.name) {
         this.create.name = this.create.name_e;
       }
@@ -1058,6 +1063,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         this.create.name_e = this.create.name;
       }
       this.$v.create.$touch();
+      console.log("this.$v.create.$invalid", this.$v.create, "this.isValidMobile", this.isValidMobile);
       if (this.$v.create.$invalid && !this.isValidMobile) {
         return;
       } else {
@@ -1183,6 +1189,42 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       if (this.create.nationality == 0) {
         this.$bvModal.show("country-create");
         this.create.nationality = null;
+      }
+    },
+    getTenantTypes: function getTenantTypes() {
+      var _this7 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.next = 2;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/real-estate/tenant-types/").then(function (res) {
+                res.data.data.unshift({
+                  id: 0,
+                  name: "اضافة نوع مستأجر",
+                  name_e: "Add Tenant Type"
+                });
+                _this7.tenantTypes = res.data.data;
+              })["catch"](function (err) {
+                Swal.fire({
+                  icon: "error",
+                  title: "".concat(_this7.$t("general.Error")),
+                  text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this7.isLoader = false;
+              });
+            case 2:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
+    },
+    showTenantTypeModal: function showTenantTypeModal() {
+      if (this.create.tenant_type_id == 0) {
+        this.$bvModal.show("tenantType-create");
+        this.create.tenant_type_id = null;
       }
     }
   }
@@ -1911,16 +1953,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -2070,7 +2116,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -2346,7 +2392,74 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "actionSetting",
   mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['companyKeys', 'defaultsKeys', 'isCreate', 'permissionCreate', 'isExcl', 'isPrint', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'checkAll', 'sideAction', 'sidePaginate', 'isFilter', 'isGroup', 'isSetting', 'settings', 'isVisible', 'isPaginate', 'objPagination', 'current_page'],
+  props: {
+    'companyKeys': {
+      "default": []
+    },
+    'defaultsKeys': {
+      "default": []
+    },
+    'isCreate': {
+      "default": true
+    },
+    'permissionCreate': {
+      "default": true
+    },
+    'isExcl': {
+      "default": true
+    },
+    'isPrint': {
+      "default": true
+    },
+    'permissionUpdate': {
+      "default": true
+    },
+    'permissionDelete': {
+      "default": true
+    },
+    'isEdit': {
+      "default": true
+    },
+    'isDelete': {
+      "default": true
+    },
+    'checkAll': {
+      "default": []
+    },
+    'sideAction': {
+      "default": true
+    },
+    'sidePaginate': {
+      "default": true
+    },
+    'isFilter': {
+      "default": true
+    },
+    'isGroup': {
+      "default": true
+    },
+    'isSetting': {
+      "default": true
+    },
+    'settings': {
+      "default": []
+    },
+    'isVisible': {
+      "default": []
+    },
+    'isPaginate': {
+      "default": true
+    },
+    'objPagination': {
+      "default": {}
+    },
+    'current_page': {
+      "default": 1
+    },
+    'titleCreate': {
+      "default": 'Create'
+    }
+  },
   data: function data() {
     return {
       setting: [],
@@ -2459,13 +2572,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -2535,7 +2648,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -2569,6 +2682,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../helper/mixin/translation-comp-mixin */ "./resources/js/helper/mixin/translation-comp-mixin.js");
+/* harmony import */ var _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../helper/PageTitle */ "./resources/js/helper/PageTitle.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "searchPage",
@@ -2578,6 +2693,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       search: '',
       debounce: {},
+      page_title: {},
       fields: []
     };
   },
@@ -2589,6 +2705,16 @@ __webpack_require__.r(__webpack_exports__);
         _this.$emit('editSearch', _this.search);
         _this.$emit('dataSearch');
       }, 400);
+    },
+    pageTitle: {
+      handler: function handler(newV, old) {
+        this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
+      }
+    }
+  },
+  computed: {
+    pageTitle: function pageTitle() {
+      return _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
     }
   },
   mounted: function mounted() {
@@ -2597,6 +2723,7 @@ __webpack_require__.r(__webpack_exports__);
     }).map(function (field) {
       return field.isV;
     });
+    this.page_title = _helper_PageTitle__WEBPACK_IMPORTED_MODULE_1__["default"].value;
   }
 });
 
@@ -2631,7 +2758,7 @@ __webpack_require__.r(__webpack_exports__);
       isCheckAll: false
     };
   },
-  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'isInputCheck', 'isLogClick'],
+  props: ['tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon', 'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'modalEmitAttribute', 'isInputCheck', 'isLogClick', 'permissionPrint', 'isPrint'],
   watch: {
     /*** watch check All table*/isCheckAll: function isCheckAll(after, befour) {
       var _this = this;
@@ -3215,7 +3342,7 @@ __webpack_require__.r(__webpack_exports__);
         isFilter: true,
         isSet: true,
         trans: "account_number",
-        isV: "chart",
+        isV: "chart_id",
         type: "relation",
         name: "chart",
         sort: false,
@@ -3239,6 +3366,20 @@ __webpack_require__.r(__webpack_exports__);
           tenant_type_id: true
         },
         isSetting: true
+      }, {
+        isFilter: true,
+        isSet: true,
+        trans: "tenants_nationality",
+        isV: "country_id",
+        type: "relation",
+        name: "nationality",
+        sort: false,
+        col1: "name",
+        col2: "name_e",
+        setting: {
+          country_id: true
+        },
+        isSetting: true
       }],
       sendSetting: {},
       searchField: []
@@ -3257,9 +3398,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     filterSearch: function filterSearch(fields) {
       var fieldMappings = {
-        unit: "unit.name",
         chart: "chart.account_number",
-        tenantType: "tenantType.name"
+        tenantType: "tenantType.name",
+        nationality: "nationality.name"
       };
       var filter = fields.map(function (field, index) {
         return fieldMappings[field] || field;
@@ -4421,45 +4562,6 @@ var render = function render() {
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_blacklisted")) + "\n              "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
-    staticClass: "d-flex align-items-center"
-  }, [_c("b-form-radio", {
-    staticClass: "mr-3",
-    attrs: {
-      name: "blacklisted",
-      value: "yes"
-    },
-    model: {
-      value: _vm.$v.create.blacklisted.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.blacklisted, "$model", $$v);
-      },
-      expression: "$v.create.blacklisted.$model"
-    }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Yes")) + "\n              ")]), _vm._v(" "), _c("b-form-radio", {
-    attrs: {
-      name: "blacklisted",
-      value: "no"
-    },
-    model: {
-      value: _vm.$v.create.blacklisted.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.blacklisted, "$model", $$v);
-      },
-      expression: "$v.create.blacklisted.$model"
-    }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.No")) + "\n              ")])], 1), _vm._v(" "), _vm.errors.blacklisted ? _vm._l(_vm.errors.blacklisted, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
@@ -4482,27 +4584,56 @@ var render = function render() {
       input: _vm.showCountryModal
     },
     model: {
-      value: _vm.$v.create.nationality.$model,
+      value: _vm.$v.create.country_id.$model,
       callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.nationality, "$model", $$v);
+        _vm.$set(_vm.$v.create.country_id, "$model", $$v);
       },
-      expression: "$v.create.nationality.$model"
+      expression: "$v.create.country_id.$model"
     }
-  }), _vm._v(" "), _vm.$v.create.nationality.$error || _vm.errors.nationality ? _c("div", {
+  }), _vm._v(" "), _vm.$v.create.country_id.$error || _vm.errors.country_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.nationality ? _vm._l(_vm.errors.nationality, function (errorMessage, index) {
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.country_id ? _vm._l(_vm.errors.country_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
-    staticClass: "mr-2"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_gender")) + "\n              "), _vm.isRequired("gender") ? _c("span", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_marital_status")) + "\n              "), _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", {
+  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+    "class": {
+      "is-invalid": _vm.$v.create.marital_status.$error || _vm.errors.marital_status,
+      "is-valid": !_vm.$v.create.marital_status.$invalid && !_vm.errors.marital_status
+    },
+    attrs: {
+      options: _vm.martialStatusOptions
+    },
+    model: {
+      value: _vm.$v.create.marital_status.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.marital_status, "$model", $$v);
+      },
+      expression: "$v.create.marital_status.$model"
+    }
+  }), _vm._v(" "), _vm.$v.create.marital_status.$error || _vm.errors.marital_status ? _c("div", {
+    staticClass: "text-danger"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.marital_status ? _vm._l(_vm.errors.marital_status, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group position-relative"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_gender")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
     "class": {
       "is-invalid": _vm.$v.create.gender.$error || _vm.errors.gender,
       "is-valid": !_vm.$v.create.gender.$invalid && !_vm.errors.gender
@@ -4511,7 +4642,7 @@ var render = function render() {
     staticClass: "d-inline-block",
     attrs: {
       name: "create_gender",
-      value: "male"
+      value: "m"
     },
     model: {
       value: _vm.$v.create.gender.$model,
@@ -4526,7 +4657,7 @@ var render = function render() {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "create_gender",
-      value: "female"
+      value: "f"
     },
     model: {
       value: _vm.$v.create.gender.$model,
@@ -4540,31 +4671,45 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group position-relative"
+    staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_marital_status")) + "\n              "), _c("span", {
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_blacklisted")) + "\n              "), _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
     "class": {
-      "is-invalid": _vm.$v.create.martialStatus.$error || _vm.errors.martialStatus,
-      "is-valid": !_vm.$v.create.martialStatus.$invalid && !_vm.errors.martialStatus
-    },
+      "is-invalid": _vm.$v.create.blacklisted.$error || _vm.errors.blacklisted,
+      "is-valid": !_vm.$v.create.blacklisted.$invalid && !_vm.errors.blacklisted
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "d-inline-block",
     attrs: {
-      options: _vm.martialStatusOptions
+      name: "blacklisted",
+      value: "yes"
     },
     model: {
-      value: _vm.$v.create.martialStatus.$model,
+      value: _vm.$v.create.blacklisted.$model,
       callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.martialStatus, "$model", $$v);
+        _vm.$set(_vm.$v.create.blacklisted, "$model", $$v);
       },
-      expression: "$v.create.martialStatus.$model"
+      expression: "$v.create.blacklisted.$model"
     }
-  }), _vm._v(" "), _vm.$v.create.martialStatus.$error || _vm.errors.martialStatus ? _c("div", {
-    staticClass: "text-danger"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.martialStatus ? _vm._l(_vm.errors.martialStatus, function (errorMessage, index) {
+  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Yes")) + "\n              ")]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "d-inline-block m-1",
+    attrs: {
+      name: "blacklisted",
+      value: "no"
+    },
+    model: {
+      value: _vm.$v.create.blacklisted.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.blacklisted, "$model", $$v);
+      },
+      expression: "$v.create.blacklisted.$model"
+    }
+  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.No")) + "\n              ")])], 1), _vm._v(" "), _vm.errors.blacklisted ? _vm._l(_vm.errors.blacklisted, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
@@ -4576,9 +4721,46 @@ var render = function render() {
   }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_type")) + "\n              "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.tenantTypes.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.tenantTypes.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.tenantTypes.find(function (x) {
+          return x.id == opt;
+        }).name : "";
+      }
+    },
+    on: {
+      input: _vm.showTenantTypeModal
+    },
+    model: {
+      value: _vm.$v.create.tenant_type_id.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.tenant_type_id, "$model", $$v);
+      },
+      expression: "$v.create.tenant_type_id.$model"
+    }
+  }), _vm._v(" "), _vm.$v.create.tenant_type_id.$error || _vm.errors.tenant_type_id ? _c("div", {
+    staticClass: "text-danger"
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.tenant_type_id ? _vm._l(_vm.errors.tenant_type_id, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_mobile")) + "\n              "), _c("span", {
@@ -4605,12 +4787,12 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n              Is WhatsApp same as Mobile ?\n            ")]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
+  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("Is WhatsApp same as Mobile ?")) + "\n            ")]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
     staticClass: "d-inline-block",
     attrs: {
       name: "manage_others_some-radios3",
@@ -4637,9 +4819,9 @@ var render = function render() {
       expression: "$v.create.is_whatsapp.$model"
     }
   }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n              ")])], 1)], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_email")) + "\n              "), _c("span", {
@@ -4680,9 +4862,9 @@ var render = function render() {
   }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_home_address")) + "\n              "), _c("span", {
@@ -4716,9 +4898,9 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_work_address")) + "\n              "), _c("span", {
@@ -4752,16 +4934,16 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("bank_account")) + "\n              "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
-      "is-invalid": _vm.$v.create.chart.$error || _vm.errors.chart
+      "is-invalid": _vm.$v.create.chart_id.$error || _vm.errors.chart_id
     },
     attrs: {
       options: _vm.charts.map(function (type) {
@@ -4781,22 +4963,22 @@ var render = function render() {
       input: _vm.showAccountModal
     },
     model: {
-      value: _vm.create.chart,
+      value: _vm.create.chart_id,
       callback: function callback($$v) {
-        _vm.$set(_vm.create, "chart", $$v);
+        _vm.$set(_vm.create, "chart_id", $$v);
       },
-      expression: "create.chart"
+      expression: "create.chart_id"
     }
-  }), _vm._v(" "), !_vm.$v.create.chart.required ? _c("div", {
+  }), _vm._v(" "), !_vm.$v.create.chart_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.chart ? _vm._l(_vm.errors.chart, function (errorMessage, index) {
+  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.chart_id ? _vm._l(_vm.errors.chart_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_civil_no")) + "\n              "), _c("span", {
@@ -4830,11 +5012,11 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
-    staticClass: "control-label"
+    staticClass: "form-group position-relative"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_passport_no")) + "\n              "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
@@ -4866,9 +5048,9 @@ var render = function render() {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n              ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
+    staticClass: "col-md-4"
   }, [_c("div", {
-    staticClass: "form-group"
+    staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
   }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("tenants_residence_no")) + "\n              "), _c("span", {
@@ -6244,7 +6426,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -6264,7 +6446,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -7583,7 +7765,7 @@ var render = function render() {
         _vm.$bvModal.show("create");
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Create")) + "\n            "), _c("i", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.titleCreate)) + "\n            "), _c("i", {
     staticClass: "fas fa-plus"
   })]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -8000,7 +8182,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -8041,7 +8223,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v("\n        " + _vm._s((_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
+  }, [_vm._v("\n        " + _vm._s(_vm.page_title && _vm.page_title.url == _vm.$route.fullPath ? _vm.$i18n.locale == "ar" ? _vm.page_title.title : _vm.page_title.title_e : (_vm$title = _vm.title) !== null && _vm$title !== void 0 ? _vm$title : _vm.$t("".concat(_vm.page))) + "\n    ")]), _vm._v(" "), _vm.isSearch ? _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -8190,7 +8372,7 @@ var render = function render() {
       }
     }
   })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-    return [item.isSetting && _vm.isVisible(item.isV) ? _c("th", [_c("div", {
+    return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) ? _c("th", [_c("div", {
       staticClass: "d-flex justify-content-center"
     }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey(item.trans)))]), _vm._v(" "), item.sort ? _c("sortStringConponent", {
       attrs: {
@@ -8205,9 +8387,9 @@ var render = function render() {
     }) : _vm._e()], 1)]) : _vm._e()];
   }), _vm._v(" "), _vm.modalButton ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general." + _vm.modalButton)) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Action")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.Action")) + "\n        ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("th", {
     staticClass: "do-not-print"
   }, [_c("i", {
     staticClass: "fas fa-ellipsis-v"
@@ -8271,9 +8453,9 @@ var render = function render() {
         }]
       }
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
-      return [item.isSetting && _vm.isVisible(item.isV) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
+      return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -8281,27 +8463,27 @@ var render = function render() {
             "border-radius": "2rem"
           }
         }, [_vm._v(_vm._s(_vm.$t("general.".concat(index)) + " : " + badge))]);
-      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type != "array" ? _c("td", [_c("label", {
         staticClass: "badge badge-primary p-2",
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, _vm._l(data[item.name], function (i, index) {
         return _c("span", {
           key: i.id
         }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean" ? _c("td", [_c("span", {
+      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "boolean1" ? _c("td", [_c("span", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.type == "date" ? _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && _vm.isVisible(item.isV) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
+      }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "".concat(_vm.$t("general.Yes")) : "".concat(_vm.$t("general.No"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "date" ? _c("td", [_vm._v("\n                " + _vm._s(_vm.formatDate(data[item.isV])) + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.columnCustom == "allowed_subscription_date" ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
       }, [_vm._v(_vm._s(data[item.isV].slice(3) + "-" + data[item.isV].slice(0, 2)))])]) : _vm._e()];
     }), _vm._v(" "), _vm.modalButton ? _c("td", {
       staticClass: "do-not-print"
-    }, [_c("b-button", {
+    }, [_vm.modalButtonCondition.value == data[_vm.modalButtonCondition.key] ? _c("b-button", {
       staticClass: "btn-sm mx-1 font-weight-bold",
       attrs: {
         variant: "warning"
@@ -8309,22 +8491,22 @@ var render = function render() {
       on: {
         click: function click($event) {
           $event.preventDefault();
-          _vm.$emit(_vm.modalButton, data.id);
+          _vm.$emit(_vm.modalButton, data[_vm.modalEmitAttribute]);
           _vm.$bvModal.show(_vm.modalButton);
         }
       }
     }, [_c("i", {
       "class": _vm.modalButtonIcon
-    })])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
+    })]) : _c("span", [_vm._v(_vm._s(_vm.modalButtonCondition.default_val))])], 1) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isAction ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
     }, [_c("button", {
       staticClass: "btn btn-sm dropdown-toggle dropdown-coustom",
       attrs: {
-        type: "button",
+        "aria-expanded": "false",
         "data-toggle": "dropdown",
-        "aria-expanded": "false"
+        type: "button"
       }
     }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.commands")) + "\n                    "), _c("i", {
       staticClass: "fas fa-angle-down"
@@ -8359,25 +8541,40 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.delete")))]), _vm._v(" "), _c("i", {
       staticClass: "fas fa-times text-danger"
+    })])]) : _vm._e(), _vm._v(" "), _vm.isPrint ? _c("a", {
+      staticClass: "dropdown-item text-black",
+      attrs: {
+        href: "#"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.$emit("printRow", data.id);
+        }
+      }
+    }, [_c("div", {
+      staticClass: "d-flex justify-content-between align-items-center text-black"
+    }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.print")))]), _vm._v(" "), _c("i", {
+      staticClass: "fas fa-print"
     })])]) : _vm._e()])])]) : _vm._e(), _vm._v(" "), _vm.enabled3 && _vm.isLog ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("button", {
       staticClass: "btn",
       attrs: {
-        type: "button",
         id: "tooltip-".concat(data.id),
         "data-placement": _vm.$i18n.locale == "en" ? "left" : "right",
-        title: _vm.Tooltip
+        title: _vm.Tooltip,
+        type: "button"
       },
       on: {
+        click: function click($event) {
+          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
+        },
         mousemove: function mousemove($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
         },
         mouseover: function mouseover($event) {
           !_vm.isLogClick ? _vm.$emit("logFire", data.id) : null;
-        },
-        click: function click($event) {
-          _vm.isLogClick ? _vm.$emit("logFire", data.id) : false;
         }
       }
     }, [_c("i", {
@@ -8391,7 +8588,7 @@ var render = function render() {
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.notDataFound")) + "\n            ")])])])]);
+  }, [_vm._v("\n            " + _vm._s(_vm.$t("general.notDataFound")) + "\n        ")])])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -9019,9 +9216,9 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var url = arguments.length > 1 ? arguments[1] : undefined;
       var filter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain).concat(params ? params : "") : '').concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(url, "?page=").concat(page, "&per_page=").concat(this.per_page).concat(this.searchMain ? "&search=".concat(this.searchMain) : '').concat(params).concat(this.searchField.length > 0 ? "&".concat(filter) : '')).then(function (res) {
         var l = res.data;
         _this.tables = l.data;
         _this.objPagination = l.pagination;
@@ -9064,7 +9261,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -9093,7 +9294,11 @@ __webpack_require__.r(__webpack_exports__);
               _this2.successFun('Yourrowhasbeendeleted', 'Deleted');
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                _this2.errorFun('Error', 'CantDeleteRelation');
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
+                });
+                _this2.errorFunChildren('Error', text);
               } else {
                 _this2.errorFun('Error', 'Thereisanerrorinthesystem');
               }
@@ -9264,6 +9469,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

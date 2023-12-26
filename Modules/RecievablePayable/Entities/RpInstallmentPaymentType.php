@@ -12,12 +12,6 @@ class RpInstallmentPaymentType extends Model
 
     protected $guarded = ['id'];
 
-
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpInstallmentPaymentTypeFactory::new();
-    }
-
     public function installment_condation()
     {
         return $this->belongsTo(RpInstallmentCondation::class, "installment_condation_id");
@@ -28,6 +22,10 @@ class RpInstallmentPaymentType extends Model
         return $this->hasOne(RpPaymentPlanInstallment::class,"installment_payment_type_id");
     }
 
+    public function rp_break_downs()
+    {
+        return $this->hasMany(RpBreakDown::class, 'instalment_type_id');
+    }
 
     public function hasChildren()
     {
@@ -35,11 +33,19 @@ class RpInstallmentPaymentType extends Model
 
         if ($this->payment_plan_installment()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'payment_plan_installment',
+                'relation' => 'payment plan installment',
                 'count' => $this->payment_plan_installment()->count(),
-                'ids' => $this->payment_plan_installment()->pluck('id')->toArray()
+                'ids' => $this->payment_plan_installment()->pluck('v_date')->toArray(),
             ];
         }
+        if ($this->rp_break_downs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'rp_break_downs',
+                'count' => $this->rp_break_downs()->count(),
+                'ids' => $this->rp_break_downs()->pluck('rate')->toArray(),
+            ];
+        }
+
 
         return $relationsWithChildren;
     }

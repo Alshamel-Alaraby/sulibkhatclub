@@ -14,9 +14,11 @@ class ScreenTreeProperty extends Model
     protected $table = 'general_screen_tree_properties';
 
     protected $guarded = ['id'];
+
+
     public function property()
     {
-        return $this->belongsTo(TreeProperty::class);
+        return $this->belongsTo(TreeProperty::class, 'property_id', 'id');
     }
 
     public function getActivitylogOptions(): LogOptions

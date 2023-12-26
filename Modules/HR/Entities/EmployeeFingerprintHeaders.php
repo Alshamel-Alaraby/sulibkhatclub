@@ -6,7 +6,6 @@ use App\Models\Employee;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\LogOptions;
 
 class EmployeeFingerprintHeaders extends Model
@@ -21,6 +20,28 @@ class EmployeeFingerprintHeaders extends Model
     {
         return $this->BelongsToMany(Employee::class, 'hr_employee_fingerprint_details', 'employee_fingerprint_header_id', 'employee_id');
     }
+
+    public function employeeFingerprintDetails()
+    {
+        return $this->hasMany(EmployeeFingerprintDetail::class, 'employee_fingerprint_header_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->employeeFingerprintDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employeeFingerprintDetails',
+                'count' => $this->employeeFingerprintDetails()->count(),
+                'ids' => $this->employeeFingerprintDetails()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

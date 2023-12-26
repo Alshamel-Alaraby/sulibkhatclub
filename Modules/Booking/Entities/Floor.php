@@ -21,8 +21,19 @@ class Floor extends Model
     }
     public function hasChildren()
     {
-        return$this->units()->count() > 0 ;
+        $relationsWithChildren = [];
+
+        if ($this->units()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'units',
+                'count' => $this->units()->count(),
+                'ids' => $this->units()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 
 
     public function getActivitylogOptions(): LogOptions
@@ -31,7 +42,7 @@ class Floor extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Setting')
+            ->useLogName('Floor')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 }

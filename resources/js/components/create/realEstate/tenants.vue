@@ -152,38 +152,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="form-group">
-              <label class="control-label">
-                {{ getCompanyKey("tenants_blacklisted") }}
-                <span class="text-danger">*</span>
-              </label>
-              <div class="d-flex align-items-center">
-                <b-form-radio
-                  class="mr-3"
-                  v-model="$v.create.blacklisted.$model"
-                  name="blacklisted"
-                  value="yes"
-                >
-                  {{ $t("general.Yes") }}
-                </b-form-radio>
-                <b-form-radio
-                  v-model="$v.create.blacklisted.$model"
-                  name="blacklisted"
-                  value="no"
-                >
-                  {{ $t("general.No") }}
-                </b-form-radio>
-              </div>
-              <template v-if="errors.blacklisted">
-                <ErrorMessage
-                  v-for="(errorMessage, index) in errors.blacklisted"
-                  :key="index"
-                  >{{ errorMessage }}</ErrorMessage
-                >
-              </template>
-            </div>
-          </div>
-          <div class="col-md-4">
             <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_nationality") }}
@@ -191,7 +159,7 @@
               </label>
               <multiselect
                 @input="showCountryModal"
-                v-model="$v.create.nationality.$model"
+                v-model="$v.create.country_id.$model"
                 :options="countries.map((type) => type.id)"
                 :custom-label="
                   (opt) =>
@@ -202,25 +170,59 @@
               >
               </multiselect>
               <div
-                v-if="$v.create.nationality.$error || errors.nationality"
+                v-if="$v.create.country_id.$error || errors.country_id"
                 class="text-danger"
               >
                 {{ $t("general.fieldIsRequired") }}
               </div>
-              <template v-if="errors.nationality">
+              <template v-if="errors.country_id">
                 <ErrorMessage
-                  v-for="(errorMessage, index) in errors.nationality"
+                  v-for="(errorMessage, index) in errors.country_id"
                   :key="index"
                   >{{ errorMessage }}</ErrorMessage
                 >
               </template>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="mr-2">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
+              <label class="control-label">
+                {{ getCompanyKey("tenants_marital_status") }}
+                <span class="text-danger">*</span>
+              </label>
+              <multiselect
+                v-model="$v.create.marital_status.$model"
+                :options="martialStatusOptions"
+                :class="{
+                  'is-invalid':
+                    $v.create.marital_status.$error || errors.marital_status,
+                  'is-valid':
+                    !$v.create.marital_status.$invalid &&
+                    !errors.marital_status,
+                }"
+              >
+              </multiselect>
+              <div
+                v-if="$v.create.marital_status.$error || errors.marital_status"
+                class="text-danger"
+              >
+                {{ $t("general.fieldIsRequired") }}
+              </div>
+              <template v-if="errors.marital_status">
+                <ErrorMessage
+                  v-for="(errorMessage, index) in errors.marital_status"
+                  :key="index"
+                  >{{ errorMessage }}</ErrorMessage
+                >
+              </template>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group position-relative">
+              <label class="control-label">
                 {{ getCompanyKey("tenants_gender") }}
-                <span v-if="isRequired('gender')" class="text-danger">*</span>
+                <span class="text-danger">*</span>
               </label>
               <b-form-group
                 :class="{
@@ -232,7 +234,7 @@
                   class="d-inline-block"
                   v-model="$v.create.gender.$model"
                   name="create_gender"
-                  value="male"
+                  value="m"
                   >{{ $t("general.male") }}
                   <span class="text-danger">*</span>
                 </b-form-radio>
@@ -240,7 +242,7 @@
                   class="d-inline-block m-1"
                   v-model="$v.create.gender.$model"
                   name="create_gender"
-                  value="female"
+                  value="f"
                   >{{ $t("general.female") }}
                 </b-form-radio>
               </b-form-group>
@@ -253,32 +255,40 @@
               </template>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group position-relative">
+          <div class="col-md-4">
+            <div class="form-group">
               <label class="control-label">
-                {{ getCompanyKey("tenants_marital_status") }}
+                {{ getCompanyKey("tenants_blacklisted") }}
                 <span class="text-danger">*</span>
               </label>
-              <multiselect
-                v-model="$v.create.martialStatus.$model"
-                :options="martialStatusOptions"
+              <b-form-group
                 :class="{
                   'is-invalid':
-                    $v.create.martialStatus.$error || errors.martialStatus,
+                    $v.create.blacklisted.$error || errors.blacklisted,
                   'is-valid':
-                    !$v.create.martialStatus.$invalid && !errors.martialStatus,
+                    !$v.create.blacklisted.$invalid && !errors.blacklisted,
                 }"
               >
-              </multiselect>
-              <div
-                v-if="$v.create.martialStatus.$error || errors.martialStatus"
-                class="text-danger"
-              >
-                {{ $t("general.fieldIsRequired") }}
-              </div>
-              <template v-if="errors.martialStatus">
+                <b-form-radio
+                  class="d-inline-block"
+                  v-model="$v.create.blacklisted.$model"
+                  name="blacklisted"
+                  value="yes"
+                >
+                  {{ $t("general.Yes") }}
+                </b-form-radio>
+                <b-form-radio
+                  class="d-inline-block m-1"
+                  v-model="$v.create.blacklisted.$model"
+                  name="blacklisted"
+                  value="no"
+                >
+                  {{ $t("general.No") }}
+                </b-form-radio>
+              </b-form-group>
+              <template v-if="errors.blacklisted">
                 <ErrorMessage
-                  v-for="(errorMessage, index) in errors.martialStatus"
+                  v-for="(errorMessage, index) in errors.blacklisted"
                   :key="index"
                   >{{ errorMessage }}</ErrorMessage
                 >
@@ -293,8 +303,41 @@
           "
         />
         <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
+              <label class="control-label">
+                {{ getCompanyKey("tenants_type") }}
+                <span class="text-danger">*</span>
+              </label>
+              <multiselect
+                @input="showTenantTypeModal"
+                v-model="$v.create.tenant_type_id.$model"
+                :options="tenantTypes.map((type) => type.id)"
+                :custom-label="
+                  (opt) =>
+                    tenantTypes.find((x) => x.id == opt)
+                      ? tenantTypes.find((x) => x.id == opt).name
+                      : ''
+                "
+              >
+              </multiselect>
+              <div
+                v-if="$v.create.tenant_type_id.$error || errors.tenant_type_id"
+                class="text-danger"
+              >
+                {{ $t("general.fieldIsRequired") }}
+              </div>
+              <template v-if="errors.tenant_type_id">
+                <ErrorMessage
+                  v-for="(errorMessage, index) in errors.tenant_type_id"
+                  :key="index"
+                  >{{ errorMessage }}</ErrorMessage
+                >
+              </template>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_mobile") }}
                 <span class="text-danger">*</span>
@@ -316,11 +359,10 @@
               </template>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="mr-2">
-                <!-- {{ getCompanyKey("employee_is_sms") }} -->
-                Is WhatsApp same as Mobile ?
+                {{ getCompanyKey("Is WhatsApp same as Mobile ?") }}
               </label>
               <b-form-group>
                 <b-form-radio
@@ -340,8 +382,8 @@
               </b-form-group>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_email") }}
                 <span class="text-danger">*</span>
@@ -372,8 +414,8 @@
           "
         />
         <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_home_address") }}
                 <span class="text-danger">*</span>
@@ -398,8 +440,8 @@
               </template>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_work_address") }}
                 <span class="text-danger">*</span>
@@ -424,15 +466,15 @@
               </template>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("bank_account") }}
                 <span class="text-danger">*</span>
               </label>
               <multiselect
                 @input="showAccountModal"
-                v-model="create.chart"
+                v-model="create.chart_id"
                 :options="charts.map((type) => type.id)"
                 :custom-label="
                   (opt) =>
@@ -443,17 +485,17 @@
                       : ''
                 "
                 :class="{
-                  'is-invalid': $v.create.chart.$error || errors.chart,
+                  'is-invalid': $v.create.chart_id.$error || errors.chart_id,
                 }"
               >
               </multiselect>
-              <div v-if="!$v.create.chart.required" class="invalid-feedback">
+              <div v-if="!$v.create.chart_id.required" class="invalid-feedback">
                 {{ $t("general.fieldIsRequired") }}
               </div>
 
-              <template v-if="errors.chart">
+              <template v-if="errors.chart_id">
                 <ErrorMessage
-                  v-for="(errorMessage, index) in errors.chart"
+                  v-for="(errorMessage, index) in errors.chart_id"
                   :key="index"
                   >{{ errorMessage }}</ErrorMessage
                 >
@@ -461,8 +503,8 @@
             </div>
           </div>
 
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_civil_no") }}
                 <span class="text-danger">*</span>
@@ -486,9 +528,9 @@
             </div>
           </div>
 
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="control-label">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
+              <label class="form-group position-relative">
                 {{ getCompanyKey("tenants_passport_no") }}
                 <span class="text-danger">*</span>
               </label>
@@ -513,8 +555,8 @@
             </div>
           </div>
 
-          <div class="col-md-3">
-            <div class="form-group">
+          <div class="col-md-4">
+            <div class="form-group position-relative">
               <label class="control-label">
                 {{ getCompanyKey("tenants_residence_no") }}
                 <span class="text-danger">*</span>
@@ -593,15 +635,10 @@ export default {
       fields: [],
       isLoader: false,
       codeCountry: "",
-      martialStatusOptions: [
-        "single",
-        "married",
-        "divorced",
-        "widowed",
-        "other",
-      ],
+      martialStatusOptions: ["single", "married", "divorced", "widowed"],
       charts: [],
       countries: [],
+      tenantTypes: [],
       create: {
         name: "",
         name_e: "",
@@ -613,12 +650,12 @@ export default {
         marital_status: "",
         work_address: "",
         home_address: "",
-        nationality: null,
+        country_id: null,
         civil_no: null,
         passport_no: null,
         residence_no: null,
-        chart: null,
-        tenantType: null,
+        chart_id: null,
+        tenant_type_id: null,
         mobile_code: "",
       },
       company_id: null,
@@ -638,15 +675,16 @@ export default {
       is_whatsapp: { required },
       email: { required, email },
       gender: { required },
-      martialStatus: { required },
+      marital_status: { required },
       work_address: { required },
       home_address: { required },
       civil_no: { required },
       passport_no: { required },
       residence_no: { required },
-      chart: { required },
-      tenantType: { required },
-      nationality: { required },
+      chart_id: { required },
+      tenant_type_id: { required },
+      country_id: { required },
+      mobile_code: {},
     },
   },
   mounted() {
@@ -697,16 +735,16 @@ export default {
         is_whatsapp: "",
         email: "",
         gender: "",
-        martialStatus: "",
+        marital_status: "",
         work_address: "",
         home_address: "",
         civil_no: null,
         passport_no: null,
         residence_no: null,
-        chart: null,
-        tenantType: null,
+        chart_id: null,
+        tenant_type_id: null,
         mobile_code: "",
-        nationality: null,
+        country_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -725,6 +763,7 @@ export default {
           if (!this.isPage) this.getCustomTableFields();
           this.getAccounts();
           this.getCountries();
+          this.getTenantTypes();
         } else {
           if (this.idObjEdit.dataObj) {
             let tenants = this.idObjEdit.dataObj;
@@ -736,18 +775,19 @@ export default {
             this.create.is_whatsapp = tenants.is_whatsapp;
             this.create.email = tenants.email;
             this.create.gender = tenants.gender;
-            this.create.martial_status = tenants.martialStatus;
+            this.create.marital_status = tenants.marital_status;
             this.create.work_address = tenants.work_address;
             this.create.home_address = tenants.home_address;
             this.create.civil_no = tenants.civil_no;
             this.create.passport_no = tenants.passport_no;
             this.create.residence_no = tenants.residence_no;
-            this.create.chart = tenants.chart.id;
-            this.create.tenantType = tenants.tenantType.id;
+            this.create.chart_id = tenants.chart.id;
+            this.create.tenant_type_id = tenants.tenantType.id;
             this.create.mobile_code = tenants.mobile_code;
-            this.create.nationality = tenants.nationality.id;
+            this.create.country_id = tenants.nationality.id;
             this.getAccounts();
             this.getCountries();
+            this.getTenantTypes();
           }
         }
       }, 50);
@@ -756,6 +796,7 @@ export default {
       this.defaultData();
     },
     AddSubmit() {
+      console.log("this.create", this.create);
       if (!this.create.name) {
         this.create.name = this.create.name_e;
       }
@@ -764,7 +805,12 @@ export default {
       }
 
       this.$v.create.$touch();
-
+      console.log(
+        "this.$v.create.$invalid",
+        this.$v.create,
+        "this.isValidMobile",
+        this.isValidMobile
+      );
       if (this.$v.create.$invalid && !this.isValidMobile) {
         return;
       } else {
@@ -882,6 +928,34 @@ export default {
       if (this.create.nationality == 0) {
         this.$bvModal.show("country-create");
         this.create.nationality = null;
+      }
+    },
+    async getTenantTypes() {
+      await adminApi
+        .get(`/real-estate/tenant-types/`)
+        .then((res) => {
+          res.data.data.unshift({
+            id: 0,
+            name: "اضافة نوع مستأجر",
+            name_e: "Add Tenant Type",
+          });
+          this.tenantTypes = res.data.data;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: `${this.$t("general.Error")}`,
+            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+          });
+        })
+        .finally(() => {
+          this.isLoader = false;
+        });
+    },
+    showTenantTypeModal() {
+      if (this.create.tenant_type_id == 0) {
+        this.$bvModal.show("tenantType-create");
+        this.create.tenant_type_id = null;
       }
     },
   },

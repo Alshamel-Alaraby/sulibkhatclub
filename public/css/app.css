@@ -78074,3 +78074,11 @@ td i.fe-info {
   left: 0px;
   right: unset;
 }
+
+.modal-xll {
+  max-width: 1500px;
+}
+
+.modal-xlll {
+  max-width: 1970px;
+}

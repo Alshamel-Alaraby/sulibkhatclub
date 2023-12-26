@@ -22,6 +22,9 @@ class PermissionTableSeeder extends Seeder
         //**************************** start General *****************************\\
         //*************************************************************************\\
         // start branch
+        $permissions[] = ['name' => 'Dashboard',"title" => 'show','crud_name' => 'Dashboard','module' => 'General','table'=> ''];
+        $permissions[] = ['name' => 'Account Statement',"title" => 'show','crud_name' => 'Account Statement','module' => 'General','table'=> ''];
+
         $permissions[] = ['name' => 'all Branch',"title" => 'show','crud_name' => 'Branch','module' => 'General','table'=> 'general_branches'];
         $permissions[] = ['name' => 'create Branch',"title" => 'create','crud_name' => 'Branch','module' => 'General','table'=> 'general_branches'];
         $permissions[] = ['name' => 'update Branch',"title" => 'update','crud_name' => 'Branch','module' => 'General','table'=> 'general_branches'];
@@ -704,63 +707,87 @@ class PermissionTableSeeder extends Seeder
 //        }
 
 
-    $permissions[] = ['name' => 'all RoomsCategory',"title" => 'show','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
-    $permissions[] = ['name' => 'create RoomsCategory',"title" => 'create','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
-    $permissions[] = ['name' => 'update RoomsCategory',"title" => 'update','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
-    $permissions[] = ['name' => 'delete RoomsCategory',"title" => 'delete','crud_name' => 'Read Rooms Categories','module' => 'HMS','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'all RoomsCategory',"title" => 'show','crud_name' => 'RoomsCategories','module' => 'Hospital Management System','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'create RoomsCategory',"title" => 'create','crud_name' => 'RoomsCategories','module' => 'Hospital Management System','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'update RoomsCategory',"title" => 'update','crud_name' => 'RoomsCategories','module' => 'Hospital Management System','table'=> 'h_m_s_rooms_categories'];
+    $permissions[] = ['name' => 'delete RoomsCategory',"title" => 'delete','crud_name' => 'RoomsCategories','module' => 'Hospital Management System','table'=> 'h_m_s_rooms_categories'];
 
-    $permissions[] = ['name' => 'all ServiceType',"title" => 'show','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
-    $permissions[] = ['name' => 'create ServiceType',"title" => 'create','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
-    $permissions[] = ['name' => 'update ServiceType',"title" => 'update','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
-    $permissions[] = ['name' => 'delete ServiceType',"title" => 'delete','crud_name' => 'Services Types','module' => 'HMS','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'all ServiceType',"title" => 'show','crud_name' => 'ServicesTypes','module' => 'Hospital Management System','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'create ServiceType',"title" => 'create','crud_name' => 'ServicesTypes','module' => 'Hospital Management System','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'update ServiceType',"title" => 'update','crud_name' => 'ServicesTypes','module' => 'Hospital Management System','table'=> 'h_m_s_service_types'];
+    $permissions[] = ['name' => 'delete ServiceType',"title" => 'delete','crud_name' => 'ServicesTypes','module' => 'Hospital Management System','table'=> 'h_m_s_service_types'];
 
-    $permissions[] = ['name' => 'all Specialty',"title" => 'show','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
-    $permissions[] = ['name' => 'create Specialty',"title" => 'create','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
-    $permissions[] = ['name' => 'update Specialty',"title" => 'update','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
-    $permissions[] = ['name' => 'delete Specialty',"title" => 'delete','crud_name' => 'Specialties','module' => 'HMS','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'all Specialty',"title" => 'show','crud_name' => 'Specialties','module' => 'Hospital Management System','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'create Specialty',"title" => 'create','crud_name' => 'Specialties','module' => 'Hospital Management System','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'update Specialty',"title" => 'update','crud_name' => 'Specialties','module' => 'Hospital Management System','table'=> 'h_m_s_specialties'];
+    $permissions[] = ['name' => 'delete Specialty',"title" => 'delete','crud_name' => 'Specialties','module' => 'Hospital Management System','table'=> 'h_m_s_specialties'];
 
-    $permissions[] = ['name' => 'all Room',"title" => 'show','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
-    $permissions[] = ['name' => 'create Room',"title" => 'create','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
-    $permissions[] = ['name' => 'update Room',"title" => 'update','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
-    $permissions[] = ['name' => 'delete Room',"title" => 'delete','crud_name' => 'Rooms','module' => 'HMS','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'all Room',"title" => 'show','crud_name' => 'Rooms','module' => 'Hospital Management System','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'create Room',"title" => 'create','crud_name' => 'Rooms','module' => 'Hospital Management System','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'update Room',"title" => 'update','crud_name' => 'Rooms','module' => 'Hospital Management System','table'=> 'h_m_s_rooms'];
+    $permissions[] = ['name' => 'delete Room',"title" => 'delete','crud_name' => 'Rooms','module' => 'Hospital Management System','table'=> 'h_m_s_rooms'];
 
-    $permissions[] = ['name' => 'all Prescription',"title" => 'show','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
-    $permissions[] = ['name' => 'create Prescription',"title" => 'create','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
-    $permissions[] = ['name' => 'update Prescription',"title" => 'update','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
-    $permissions[] = ['name' => 'delete Prescription',"title" => 'delete','crud_name' => 'Prescriptions','module' => 'HMS','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'all Prescription',"title" => 'show','crud_name' => 'Prescriptions','module' => 'Hospital Management System','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'create Prescription',"title" => 'create','crud_name' => 'Prescriptions','module' => 'Hospital Management System','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'update Prescription',"title" => 'update','crud_name' => 'Prescriptions','module' => 'Hospital Management System','table'=> 'h_m_s_prescriptions'];
+    $permissions[] = ['name' => 'delete Prescription',"title" => 'delete','crud_name' => 'Prescriptions','module' => 'Hospital Management System','table'=> 'h_m_s_prescriptions'];
 
-    $permissions[] = ['name' => 'all Patient',"title" => 'show','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
-    $permissions[] = ['name' => 'create Patient',"title" => 'create','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
-    $permissions[] = ['name' => 'update Patient',"title" => 'update','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
-    $permissions[] = ['name' => 'delete Patient',"title" => 'delete','crud_name' => 'Patients','module' => 'HMS','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'all Patient',"title" => 'Show All Patients','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'create Patient',"title" => 'Create New Patient','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'update Patient',"title" => 'Update Patient','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'delete Patient',"title" => 'Delete Patient','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patients'];
 
-    $permissions[] = ['name' => 'all InsuranceCompany',"title" => 'show','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
-    $permissions[] = ['name' => 'create InsuranceCompany',"title" => 'create','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
-    $permissions[] = ['name' => 'update InsuranceCompany',"title" => 'update','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
-    $permissions[] = ['name' => 'delete InsuranceCompany',"title" => 'delete','crud_name' => 'InsuranceCompanies','module' => 'HMS','table'=> 'h_m_s_insurance_companies'];
+    $permissions[] = ['name' => 'show Patient Details',"title" => 'Show Patient Details','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patients'];
+    $permissions[] = ['name' => 'show Health History',"title" => 'Show Health History','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_health_histories'];
+    $permissions[] = ['name' => 'create Health History',"title" => 'Create Health History','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_health_histories'];
+    $permissions[] = ['name' => 'delete Health History',"title" => 'Delete Health History','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_health_histories'];
+    $permissions[] = ['name' => 'show Medical Files',"title" => 'Show Medical Files','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_medical_files'];
+    $permissions[] = ['name' => 'create Medical Files',"title" => 'Create Medical Files','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_medical_files'];
+    $permissions[] = ['name' => 'delete Medical Files',"title" => 'Delete Medical Files','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_medical_files'];
+    $permissions[] = ['name' => 'show Patient Appointments',"title" => 'Show Patient Appointments','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'create Patient Appointments',"title" => 'Create Patient Appointments','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'show Patient Prescriptions',"title" => 'Show Patient Prescriptions','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'h_m_s_patient_medical_files'];
+    $permissions[] = ['name' => 'show Patient Invoices',"title" => 'Show Patient Invoices','crud_name' => 'Patients','module' => 'Hospital Management System','table'=> 'general_document_headers'];
 
-    $permissions[] = ['name' => 'all Drug',"title" => 'show','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
-    $permissions[] = ['name' => 'create Drug',"title" => 'create','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
-    $permissions[] = ['name' => 'update Drug',"title" => 'update','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
-    $permissions[] = ['name' => 'delete Drug',"title" => 'delete','crud_name' => 'Drugs','module' => 'HMS','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'all InsuranceCompany',"title" => 'show','crud_name' => 'Insurance Companies','module' => 'General','table'=> 'general_insurance_companies'];
+    $permissions[] = ['name' => 'create InsuranceCompany',"title" => 'create','crud_name' => 'Insurance Companies','module' => 'General','table'=> 'general_insurance_companies'];
+    $permissions[] = ['name' => 'update InsuranceCompany',"title" => 'update','crud_name' => 'Insurance Companies','module' => 'General','table'=> 'general_insurance_companies'];
+    $permissions[] = ['name' => 'delete InsuranceCompany',"title" => 'delete','crud_name' => 'Insurance Companies','module' => 'General','table'=> 'general_insurance_companies'];
 
-    $permissions[] = ['name' => 'all Doctor',"title" => 'show','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
-    $permissions[] = ['name' => 'create Doctor',"title" => 'create','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
-    $permissions[] = ['name' => 'update Doctor',"title" => 'update','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
-    $permissions[] = ['name' => 'delete Doctor',"title" => 'delete','crud_name' => 'Doctors','module' => 'HMS','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'all Drug',"title" => 'show','crud_name' => 'Drugs','module' => 'Hospital Management System','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'create Drug',"title" => 'create','crud_name' => 'Drugs','module' => 'Hospital Management System','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'update Drug',"title" => 'update','crud_name' => 'Drugs','module' => 'Hospital Management System','table'=> 'h_m_s_drugs'];
+    $permissions[] = ['name' => 'delete Drug',"title" => 'delete','crud_name' => 'Drugs','module' => 'Hospital Management System','table'=> 'h_m_s_drugs'];
 
-    $permissions[] = ['name' => 'all DiagnosisTest',"title" => 'show','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
-    $permissions[] = ['name' => 'create DiagnosisTest',"title" => 'create','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
-    $permissions[] = ['name' => 'update DiagnosisTest',"title" => 'update','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
-    $permissions[] = ['name' => 'delete DiagnosisTest',"title" => 'delete','crud_name' => 'DiagnosisTests','module' => 'HMS','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'all Doctor',"title" => 'show','crud_name' => 'Doctors','module' => 'Hospital Management System','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'create Doctor',"title" => 'create','crud_name' => 'Doctors','module' => 'Hospital Management System','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'update Doctor',"title" => 'update','crud_name' => 'Doctors','module' => 'Hospital Management System','table'=> 'h_m_s_doctors'];
+    $permissions[] = ['name' => 'delete Doctor',"title" => 'delete','crud_name' => 'Doctors','module' => 'Hospital Management System','table'=> 'h_m_s_doctors'];
 
-    $permissions[] = ['name' => 'all Appointment',"title" => 'show','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
-    $permissions[] = ['name' => 'create Appointment',"title" => 'create','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
-    $permissions[] = ['name' => 'update Appointment',"title" => 'update','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
-    $permissions[] = ['name' => 'delete Appointment',"title" => 'delete','crud_name' => 'All Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'all DiagnosisTest',"title" => 'show','crud_name' => 'DiagnosisTests','module' => 'Hospital Management System','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'create DiagnosisTest',"title" => 'create','crud_name' => 'DiagnosisTests','module' => 'Hospital Management System','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'update DiagnosisTest',"title" => 'update','crud_name' => 'DiagnosisTests','module' => 'Hospital Management System','table'=> 'h_m_s_diagnosis_tests'];
+    $permissions[] = ['name' => 'delete DiagnosisTest',"title" => 'delete','crud_name' => 'DiagnosisTests','module' => 'Hospital Management System','table'=> 'h_m_s_diagnosis_tests'];
 
-    $permissions[] = ['name' => 'Upcoming Appointment',"title" => 'show','crud_name' => 'Upcoming Appointments','module' => 'HMS','table'=> 'h_m_s_appointments'];
-    $permissions[] = ['name' => 'Waiting Room',"title" => 'show','crud_name' => 'Waiting Rooms','module' => 'HMS','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'all HMS Invoice',"title" => 'show','crud_name' => 'HMS Invoices','module' => 'Hospital Management System','table'=> 'general_document_headers'];
+    $permissions[] = ['name' => 'create HMS Invoice',"title" => 'create','crud_name' => 'HMS Invoices','module' => 'Hospital Management System','table'=> 'general_document_headers'];
+    $permissions[] = ['name' => 'update HMS Invoice',"title" => 'update','crud_name' => 'HMS Invoices','module' => 'Hospital Management System','table'=> 'general_document_headers'];
+    $permissions[] = ['name' => 'delete HMS Invoice',"title" => 'delete','crud_name' => 'HMS Invoices','module' => 'Hospital Management System','table'=> 'general_document_headers'];
+
+    $permissions[] = ['name' => 'all Appointment',"title" => 'show','crud_name' => 'All Appointments','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'create Appointment',"title" => 'create','crud_name' => 'All Appointments','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'update Appointment',"title" => 'update','crud_name' => 'All Appointments','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'delete Appointment',"title" => 'delete','crud_name' => 'All Appointments','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+
+    $permissions[] = ['name' => 'all Rooms Reservation',"title" => 'show','crud_name' => 'Rooms Reservation','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'create Rooms Reservation',"title" => 'create','crud_name' => 'Rooms Reservation','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'update Rooms Reservation',"title" => 'update','crud_name' => 'Rooms Reservation','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'delete Rooms Reservation',"title" => 'delete','crud_name' => 'Rooms Reservation','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+
+    $permissions[] = ['name' => 'Upcoming Appointment',"title" => 'show','crud_name' => 'Upcoming Appointments','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'Waiting Room',"title" => 'show','crud_name' => 'Waiting Rooms','module' => 'Hospital Management System','table'=> 'h_m_s_appointments'];
+    $permissions[] = ['name' => 'show HMS Settings',"title" => 'Show HMS Settings','crud_name' => 'HMSSettings','module' => 'Hospital Management System','table'=> 'h_m_s_settings'];
+    $permissions[] = ['name' => 'update HMS Settings',"title" => 'Update HMS Settings','crud_name' => 'HMSSettings','module' => 'Hospital Management System','table'=> 'h_m_s_settings'];
 
         foreach ($permissions as $permission) {
             Permission::create([

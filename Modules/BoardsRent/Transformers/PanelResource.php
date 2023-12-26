@@ -45,11 +45,7 @@ class PanelResource extends JsonResource
             'avenue'        => $this->whenLoaded('avenue') ,
             'street'        => $this->whenLoaded('street') ,
 
-//            'lat' => $this->lat,
-//            'lng' => $this->lng,
-//            'created_at' => $this->created_at,
-//            'updated_at' => $this->updated_at,
-//            'itemBreakDowns' => $this->itemBreakDowns,
+            
 
 
         ];

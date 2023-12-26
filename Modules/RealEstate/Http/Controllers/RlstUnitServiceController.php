@@ -31,6 +31,13 @@ class RlstUnitServiceController extends Controller
     {
         $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if ($request['unit_id']){
+            $models->whereIn('unit_id',$request['unit_id']);
+        }
+//        if ($request->last_date){
+//           return $last =  $this->model->selectRaw("unit_id,service_id,MAX(from_date),default_price")->groupBy(['unit_id','service_id'])->get();
+//        }
+
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -43,13 +50,23 @@ class RlstUnitServiceController extends Controller
 
     public function create(RlstUnitServiceRequest $request)
     {
-       //return $request['unit-service'][0];
+        $unitIds = $request->unit_ids;
+        $serviceIds = $request->service_ids;
 
-        foreach ($request['unit-service'] as $unit_service) {
-            $model = $this->model->create($unit_service);
+        $models = [];
+
+        foreach ($unitIds as $unitId) {
+            foreach ($serviceIds as $serviceId) {
+                $unitService = [
+                    'unit_id' => $unitId,
+                    'service_id' => $serviceId,
+                    'price' => $request->price,
+                    'from_date' => $request->from_date,
+                ];
+                $models[]= $this->model->create($unitService);
+            }
         }
-        $model->refresh();
-        return responseJson(200, 'success', new RlstUnitServiceResource($model));
+        return responseJson(200, 'success');
     }
 
     public function update($id, RlstUnitServiceRequest $request)
@@ -59,10 +76,18 @@ class RlstUnitServiceController extends Controller
             return responseJson(404, 'not found');
         }
 
-        if ($request['unit-service']) {
-            foreach ($request['unit-service'] as $unit_service) {
-               $model->update($unit_service);
-            }
+        if ($request) {
+            $serviceId = $request->service_ids[0];
+            $unitId = $request->unit_ids[0];
+
+            $unit_service = [
+                'unit_id' => $unitId,
+                'service_id' => $serviceId,
+                'from_date' => $request->from_date,
+            ];
+            $model->update($unit_service);
+            $model->refresh();
+
         }
         return responseJson(200, 'updated', new RlstUnitServiceResource($model));
     }
@@ -94,7 +119,6 @@ class RlstUnitServiceController extends Controller
     public function bulkDelete(Request $request)
     {
 
-       
         if (!$request->ids) {
             return responseJson(400, 'ids is required');
         }
@@ -109,20 +133,5 @@ class RlstUnitServiceController extends Controller
         return responseJson(200, 'deleted');
     }
 
-    public function updateUnitArray($unitId, Request $request)
-    {
-        $unitServices = $this->model->where('unit_id',$unitId)->get();
 
-        foreach ($unitServices as $unitService)
-        {
-            $unitService->delete();
-            $unitService->refresh();
-        }
-
-        foreach ($request['unit-service'] as $data_create)
-        {
-            $this->model->create($data_create);
-        }
-
-    }
 }

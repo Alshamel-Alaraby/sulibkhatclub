@@ -25,7 +25,6 @@ class Message extends Model
             )->with('messageType:id,name,name_e');
     }
 
-
     public function messageType()
     {
         return $this->belongsTo(MessageType::class, 'message_type_id');

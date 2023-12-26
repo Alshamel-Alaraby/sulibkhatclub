@@ -90,7 +90,7 @@
                         <div class="form-group">
                             <label class="control-label">
                                 {{ getCompanyKey("hms_patients_email") }}
-                                <span v-if="isRequired('email')" class="text-danger">*</span>
+                                <span v-if="create.type == 'outpatient' ?false : isRequired('email')" class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" data-create="9" v-model="$v.create.email.$model" :class="{
                                 'is-invalid': $v.create.email.$error || errors.email,
@@ -246,8 +246,8 @@
                                 'is-valid': !$v.create.gender.$invalid && !errors.gender,
                             }">
                                 <option value=""> ---- </option>
-                                <option value="Male">{{ $t('general.Male') }}</option>
-                                <option value="Female">{{ $t('general.Female') }}</option>
+                                <option value="Male">{{ $t("general.Male") }}</option>
+                                <option value="Female">{{ $t("general.Female") }}</option>
                             </select>
 
                             <template v-if="errors.gender">
@@ -283,7 +283,7 @@
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-6" v-if="isVisible('password')">
+                    <div class="col-md-6" v-if="create.type == 'inpatient'">
                         <div class="form-group">
                             <label for="field-15" class="control-label">
                                 {{ getCompanyKey("hms_patients_password") }}
@@ -308,7 +308,7 @@
                         </div>
                     </div>
 
-                    <div v-if="isVisible('is_active')" class="col-md-4">
+                    <div v-if="create.type == 'inpatient'" class="col-md-6">
                         <div class="form-group">
                             <label class="mr-2">
                                 {{ getCompanyKey("hms_patients_is_active") }}
@@ -318,13 +318,35 @@
                                 'is-invalid': $v.create.is_active.$error || errors.is_active,
                                 'is-valid': !$v.create.is_active.$invalid && !errors.is_active,
                             }">
-                                <b-form-radio class="d-inline-block" v-model="$v.create.is_active.$model" name="some-radios"
+                                <b-form-radio class="d-inline-block" v-model="$v.create.is_active.$model" name="some-radios-1"
                                     :value="1">{{ $t("general.Active") }}</b-form-radio>
                                 <b-form-radio class="d-inline-block m-1" v-model="$v.create.is_active.$model"
-                                    name="some-radios" :value="0">{{ $t("general.Inactive") }}</b-form-radio>
+                                    name="some-radios-1" :value="0">{{ $t("general.Inactive") }}</b-form-radio>
                             </b-form-group>
                             <template v-if="errors.is_active">
                                 <ErrorMessage v-for="(errorMessage, index) in errors.is_active" :key="index">{{
+                                    errorMessage
+                                }}</ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div  class="col-md-6" v-if="isVisible('type') && !(type == 'edit' && this.idObjEdit && this.idObjEdit.dataObj && this.idObjEdit.dataObj.type == 'inpatient')">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("hms_patients_type") }}
+                                <span v-if="isRequired('type')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group :class="{
+                                'is-invalid': $v.create.type.$error || errors.type,
+                                'is-valid': !$v.create.type.$invalid && !errors.type,
+                            }">
+                                <b-form-radio class="d-inline-block" v-model="$v.create.type.$model" name="some-radios"
+                                    :value="'inpatient'">{{ $t("general.inpatient") }}</b-form-radio>
+                                <b-form-radio class="d-inline-block m-1" v-model="$v.create.type.$model"
+                                    name="some-radios" :value="'outpatient'">{{ $t("general.outpatient") }}</b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.type">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.type" :key="index">{{
                                     errorMessage
                                 }}</ErrorMessage>
                             </template>
@@ -381,6 +403,7 @@ export default {
                 blood: "",
                 date_of_birth: "",
                 code_country: "",
+                type: "inpatient",
                 password: "",
             },
             errors: {},
@@ -411,7 +434,7 @@ export default {
             },
             email: {
                 required: requiredIf(function (model) {
-                    return this.isRequired("email");
+                    return this.create.type =='outpatient' ? false : this.isRequired("email") ;
                 }),
                 email,
             },
@@ -438,6 +461,11 @@ export default {
             blood: {
                 required: requiredIf(function (model) {
                     return this.isRequired("blood");
+                }),
+            },
+            type: {
+                required: requiredIf(function (model) {
+                    return this.isRequired("type");
                 }),
             },
             gender: {
@@ -513,6 +541,7 @@ export default {
                 address: "",
                 blood: "",
                 date_of_birth: "",
+                type: "inpatient",
                 password: "",
             };
             this.errors = {};
@@ -548,6 +577,7 @@ export default {
                         this.create.address = patient.address;
                         this.create.blood = patient.blood;
                         this.create.code_country = patient.code_country;
+                        this.create.type = patient.type;
                         this.create.is_active = patient.is_active;
                     }
                 }

@@ -2,15 +2,12 @@
 
 namespace Modules\RealEstate\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstBuildingPolicy;
-use Modules\RealEstate\Entities\RlstPolicy;
 use Illuminate\Support\Facades\Artisan;
 use Modules\RealEstate\Http\Requests\RlstBuildingPolicyRequest;
 use Modules\RealEstate\Transformers\RlstBuildingPolicyResource;
-use Modules\RealEstate\Http\Requests\RlstDivideOwnerCompanyShareRequest;
 
 class RlstBuildingPolicyController extends Controller
 {
@@ -114,16 +111,16 @@ class RlstBuildingPolicyController extends Controller
     public function getBuildingPolicies(Request $request, $id)
     {
         $models
-        = 
+        =
         $this->model
              ->data()
              ->where('building_id', $id)
              ->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        if ($request->per_page) 
+        if ($request->per_page)
                 $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         else $models = ['data' => $models->get(), 'paginate' => false];
-               
+
         return responseJson(200, 'success', RlstBuildingPolicyResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 

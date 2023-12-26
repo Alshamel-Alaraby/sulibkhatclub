@@ -38,7 +38,7 @@
                                     <label>
                                         {{ getCompanyKey("hms_prescriptions_doctor") }}
                                     </label>
-                                    <multiselect v-model="create.doctor_id" :options="doctors.map((type) => type.id)"
+                                    <multiselect @input="showDoctorhModal" v-model="create.doctor_id" :options="doctors.map((type) => type.id)"
                                         :disabled="type == 'edit'" :custom-label="(opt) => doctors.find((x) => x.id == opt) ?
                                             $i18n.locale == 'ar'
                                                 ? doctors.find((x) => x.id == opt).name
@@ -61,7 +61,7 @@
                                     <label>
                                         {{ getCompanyKey("hms_prescriptions_patient") }}
                                     </label>
-                                    <multiselect v-model="create.patient_id" :options="patients.map((type) => type.id)"
+                                    <multiselect @input="showPatientModal" v-model="create.patient_id" :options="patients.map((type) => type.id)"
                                         :disabled="type == 'edit'" :custom-label="(opt) => patients.find((x) => x.id == opt) ?
                                             $i18n.locale == 'ar'
                                                 ? patients.find((x) => x.id == opt).name
@@ -101,7 +101,7 @@
                                             <label>
                                                 {{ getCompanyKey("hms_prescriptions_drugs") }}
                                             </label>
-                                            <multiselect v-model="create.drug_list[index].drug_id"
+                                            <multiselect @input="showDrugModal(index)" v-model="create.drug_list[index].drug_id"
                                                 :options="drugs.map((type) => type.id)" :custom-label="(opt) => drugs.find((x) => x.id == opt) ?
                                                     $i18n.locale == 'ar'
                                                         ? drugs.find((x) => x.id == opt).trade_name
@@ -232,7 +232,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
 
-                                            <multiselect v-model="create.diagnosis_test_list[index].diagnosis_test_id"
+                                            <multiselect @input="showDiagnosistestModal(index)" v-model="create.diagnosis_test_list[index].diagnosis_test_id"
                                                 :options="diagnosis_tests.map((type) => type.id)" :custom-label="(opt) => diagnosis_tests.find((x) => x.id == opt) ?
                                                     $i18n.locale == 'ar'
                                                         ? diagnosis_tests.find((x) => x.id == opt).name
@@ -305,6 +305,7 @@ import { arabicValue, englishValue } from "../../../../helper/langTransform";
 import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../../helper/mixin/success&error";
 import Multiselect from "vue-multiselect";
+
 export default {
     name: "prescriptions_modal",
     components: {
@@ -368,6 +369,30 @@ export default {
         this.company_id = this.$store.getters["auth/company_id"];
     },
     methods: {
+        showDoctorhModal() {
+            if (this.create.doctor_id == 0) {
+                this.$bvModal.show("addDoctorFromPrescription");
+                this.create.doctor_id = null;
+            }
+        },
+        showPatientModal() {
+            if (this.create.patient_id == 0) {
+                this.$bvModal.show("addPatientFromPrescription");
+                this.create.patient_id = null;
+            }
+        },
+        showDrugModal(index) {
+            if (this.create.drug_list[index].drug_id == 0) {
+                this.$bvModal.show("addDrugFromPrescription");
+                this.create.drug_list[index].drug_id = null
+            }
+        },
+        showDiagnosistestModal(index) {
+            if (this.create.diagnosis_test_list[index].diagnosis_test_id == 0) {
+                this.$bvModal.show("addDiagnosisTestFromPrescription");
+                this.create.diagnosis_test_list[index].diagnosis_test_id = null
+            }
+        },
         add_new_drug() {
             this.create.drug_list.push({
                 type: '',

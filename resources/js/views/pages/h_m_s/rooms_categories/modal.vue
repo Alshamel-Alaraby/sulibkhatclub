@@ -111,6 +111,28 @@
                             </template>
                         </div>
                     </div>
+                    <div v-if="isVisible('does_it_have_schedule') && !create.parent_id" class="col-md-6">
+                        <div class="form-group">
+                            <label class="mr-2">
+                                {{ getCompanyKey("hms_rooms_categories_does_it_have_schedule") }}
+                                <span v-if="isRequired('does_it_have_schedule')" class="text-danger">*</span>
+                            </label>
+                            <b-form-group :class="{
+                                'is-invalid': $v.create.does_it_have_schedule.$error || errors.does_it_have_schedule,
+                                'is-valid': !$v.create.does_it_have_schedule.$invalid && !errors.does_it_have_schedule,
+                            }">
+                                <b-form-radio class="d-inline-block" v-model="$v.create.does_it_have_schedule.$model"
+                                    name="some-radios" :value="1">{{ $t("general.Yes") }}</b-form-radio>
+                                <b-form-radio class="d-inline-block m-1" v-model="$v.create.does_it_have_schedule.$model"
+                                    name="some-radios" :value="0">{{ $t("general.No") }}</b-form-radio>
+                            </b-form-group>
+                            <template v-if="errors.does_it_have_schedule">
+                                <ErrorMessage v-for="(errorMessage, index) in errors.does_it_have_schedule" :key="index">{{
+                                    errorMessage
+                                }}</ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
 
                 </div>
             </form>
@@ -151,7 +173,8 @@ export default {
                 name: "",
                 name_e: "",
                 parent_id: null,
-                is_default: false,
+                is_default: 0,
+                does_it_have_schedule: 0,
             },
             errors: {},
             is_disabled: false,
@@ -169,7 +192,8 @@ export default {
                     return this.isRequired("name_e");
                 }), minLength: minLength(2), maxLength: maxLength(100)
             },
-            is_default: {}
+            is_default: {},
+            does_it_have_schedule: {}
         },
     },
     mounted() {
@@ -226,6 +250,8 @@ export default {
             this.create = {
                 name: "",
                 name_e: "",
+                is_default: 0,
+                does_it_have_schedule: 0,
                 parent_id: this.create.parent_id ?? null,
             };
             this.errors = {};
@@ -251,6 +277,7 @@ export default {
                         this.create.name_e = rooms_category.name_e;
                         this.create.parent_id = rooms_category.parent_id;
                         this.create.is_default = rooms_category.is_default;
+                        this.create.does_it_have_schedule = rooms_category.does_it_have_schedule;
                     }
                 }
             }, 50);

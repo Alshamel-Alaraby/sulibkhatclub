@@ -44,6 +44,7 @@ class DocumentResource extends JsonResource
             'document_relateds' => $this->documentRelateds,
             'employees'         => $this->employees,
             'document_module_type'   => $this->documentModuleType,
+            'clientTypes'         => collect($this->clientTypes)->pluck('pivot.client_type_id')->toArray(),
         ];
     }
 }

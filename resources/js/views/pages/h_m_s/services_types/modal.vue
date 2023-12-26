@@ -1,8 +1,17 @@
 <template>
     <div>
+        <ModalSpecialties
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addSpecialtiesFromServiceTypes"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="get_specialties"
+        />
         <!--  create   -->
         <b-modal :id="id"
-            :title="type != 'edit' ? getCompanyKey('hms_rooms_categories_create_form') : getCompanyKey('hms_rooms_categories_edit_form')"
+            :title="type != 'edit' ? getCompanyKey('hms_service_types_create_form') : getCompanyKey('hms_service_types_edit_form')"
             title-class="font-18" body-class="p-4 " size="lg" :hide-footer="true" @show="resetModal"
             @hidden="resetModalHidden">
             <form>
@@ -32,7 +41,7 @@
                     <div class="col-md-6" v-if="isVisible('name')">
                         <div class="form-group">
                             <label for="field-1" class="control-label">
-                                {{ getCompanyKey('hms_rooms_categories_name_ar') }}
+                                {{ getCompanyKey('hms_service_types_name_ar') }}
                                 <span v-if="isRequired('name')" class="text-danger">*</span>
                             </label>
                             <div dir="rtl">
@@ -61,7 +70,7 @@
                     <div class="col-md-6" v-if="isVisible('name_e')">
                         <div class="form-group">
                             <label for="field-2" class="control-label">
-                                {{ getCompanyKey('hms_rooms_categories_name_en') }}
+                                {{ getCompanyKey('hms_service_types_name_en') }}
                                 <span v-if="isRequired('name_e')" class="text-danger">*</span>
                             </label>
                             <div dir="ltr">
@@ -92,7 +101,9 @@
                             <label>
                                 {{ getCompanyKey("hms_doctors_specialty") }}
                             </label>
-                            <multiselect v-model="create.specialty_id" :options="specialties.map((type) => type.id)"
+                            <multiselect
+                            @input="showSpecialtiesModal"
+                             v-model="create.specialty_id" :options="specialties.map((type) => type.id)"
                                 :custom-label="(opt) => specialties.find((x) => x.id == opt) ?
                                     $i18n.locale == 'ar'
                                         ? specialties.find((x) => x.id == opt).name
@@ -226,9 +237,12 @@ import { arabicValue, englishValue } from "../../../../helper/langTransform";
 import transMixinComp from "../../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../../helper/mixin/success&error";
 import Multiselect from "vue-multiselect";
+import ModalSpecialties from "../specialties/modal.vue";
+
 export default {
     name: "service_types_modal",
     components: {
+        ModalSpecialties,
         Multiselect,
         ErrorMessage,
         loader,
@@ -237,11 +251,12 @@ export default {
     props: {
         id: { default: "create", }, companyKeys: { default: [], }, defaultsKeys: { default: [], },
         isPage: { default: true }, isVisiblePage: { default: null }, isRequiredPage: { default: null },
-        type: { default: 'create' }, idObjEdit: { default: null }, isPermission: {}, url: { default: '/h_m_s/service_types' }, specialties: { Array, default: [] }
+        type: { default: 'create' }, idObjEdit: { default: null }, isPermission: {}, url: { default: '/h_m_s/service_types' }
     },
     data() {
         return {
             fields: [],
+            specialties: [],
             isCustom: false,
             isLoader: false,
             company_id: null,
@@ -289,8 +304,18 @@ export default {
     },
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
+        this.get_specialties()
     },
     methods: {
+        get_specialties(){
+            adminApi.get(`h_m_s/specialties?company_id=${this.company_id}`).then((res) => {
+                let data = res.data.data
+                if (this.isPermission("create Specialty")) {
+                    data.unshift({ id: 0, name: "اضف تخصص", name_e: "Add Specialty" });
+            }
+            this.specialties = data
+            });
+        },
         getCustomTableFields() {
             this.isCustom = true;
             adminApi

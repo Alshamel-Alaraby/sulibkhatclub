@@ -15,6 +15,11 @@ import page_title from "../../../../helper/PageTitle"
 import adminApi from '../../../../api/adminAxios';
 import successError from "../../../../helper/mixin/success&error";
 import patient_details from "../patients/patient_details.vue";
+import ModalDoctor from "../doctors/modal.vue";
+import ModalPatient from "../patients/modal.vue";
+import ModalBranch from "../../../../components/create/general/branch.vue"
+import ModalService from "../services_types/modal.vue";
+import InsuranceCompany from "../../../../components/create/general/insuranceCompany.vue";
 
 /**
  * Advanced Table component
@@ -50,14 +55,14 @@ export default {
     },
     mixins: [translation, customTable, crudHelper, successError],
     components: {
-        Layout, PageHeader, loader, searchPage, appointmentTable,patient_details,
+        Layout, PageHeader, loader, searchPage, appointmentTable, patient_details,InsuranceCompany , ModalDoctor, ModalPatient,ModalService, ModalBranch,
         actionSetting, tableCustom, Modal
     },
-        beforeRouteEnter(to, from, next) {
-            next((vm) => {
-              return permissionGuard(vm, "Upcoming Appointments", "Upcoming Appointments");
-            });
-       },
+    beforeRouteEnter(to, from, next) {
+        next((vm) => {
+            return permissionGuard(vm, "Upcoming Appointments", "Upcoming Appointment");
+        });
+    },
     data() {
         return {
             url: '/h_m_s/appointments',
@@ -73,6 +78,9 @@ export default {
             next_patient_for_each_doctor: [],
             patients: [],
             appointments: [],
+            services: [],
+            paymentMethods: [],
+            companies_insurances: [],
         };
     },
     mounted() {
@@ -80,11 +88,62 @@ export default {
         this.get_doctors();
         this.get_patients();
         this.getBranch();
+        this.get_insurance_companies();
+        this.getPaymentMethod();
+        this.getServices();
         this.page_title = page_title.value
         this.getCustomTableFields('h_m_s_appointments')
     },
     methods: {
-
+        get_insurance_companies() {
+            adminApi.get(`insurance_companies?drop_down=1&company_id=${this.company_id}`).then((res) => {
+                let data = res.data
+                        if (this.isPermission("create InsuranceCompany")) {
+                            data.unshift({ id: 0, name: "اضف شركة تأمين", name_e: "Add Insurance Company" });
+                    }
+                    this.companies_insurances = data
+            });
+        },
+        getPaymentMethod() {
+            this.isLoader = true;
+            adminApi.get(`/payment-methods`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.paymentMethods = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getServices() {
+            this.isLoader = true;
+            adminApi
+                .get(`/h_m_s/service_types`)
+                .then((res) => {
+                    let data = res.data.data
+                        if (this.isPermission("create ServiceType")) {
+                            data.unshift({ id: 0, name: "اضف خدمة", name_e: "Add Service" });
+                    }
+                    this.services = data
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         async get_appointments(page = 1) {
             this.isLoader = true
             await adminApi.get(`${this.url}?page_name=upcoming_rooms&search=${this.search}&page=${page}&per_page=${this.per_page}&company_id=${this.company_id}
@@ -102,32 +161,42 @@ export default {
 
         get_doctors() {
             adminApi.get(`h_m_s/doctors?drop_down=1&company_id=${this.company_id}`).then((res) => {
-                this.doctors = res.data
+                let data = res.data
+                if (this.isPermission("create Doctor")) {
+                    data.unshift({ id: 0, name: "اضف طبيب", name_e: "Add Doctor" });
+                }
+                this.doctors = data
             });
         },
         get_patients() {
             adminApi.get(`h_m_s/patients?drop_down=1`).then((res) => {
-                this.patients = res.data
+                let data = res.data
+                if (this.isPermission("create Patient")) {
+                    data.unshift({ id: 0, name: "اضف مريض", name_e: "Add Patient" });
+                }
+                this.patients = data
             });
         },
-        show_patient_details(id){
+        getBranch() {
+            adminApi.get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
+                .then((res) => {
+                    let data = res.data.data
+                    if (this.isPermission("create Branch")) {
+                        data.unshift({ id: 0, name: "اضف فرع", name_e: "Add Branch" });
+                    }
+                    this.branches = data
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        },
+
+
+        show_patient_details(id) {
             this.patient_id = id
             this.$bvModal.show(`patientDetails`)
         },
-        getBranch() {
-            this.isLoader = true;
-            adminApi
-                .get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
-                .then((res) => {
-                    this.branches = res.data.data;
-                })
-                .catch((err) => {
-                    this.errorFun('Error', 'Thereisanerrorinthesystem');
-                })
-                .finally(() => {
-                    this.isLoader = false;
-                });
-        },
+
 
     },
 };
@@ -151,8 +220,8 @@ export default {
 
                         <div class="col-lg-4 d-flex my-2" style="font-weight: 500">
                             <div class="d-inline-block">
-                                <b-button @click.prevent="$bvModal.show(`create`);" variant="primary" v-if="isPermission('create Appointment')"
-                                    class="font-weight-bold">
+                                <b-button @click.prevent="$bvModal.show(`create`);" variant="primary"
+                                    v-if="isPermission('create Appointment')" class="font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -202,21 +271,40 @@ export default {
                         <!-- end Pagination -->
                         <!-- end setting -->
 
-                        <appointmentTable :appointments="appointments" @getAppointments="get_appointments()" :doctors="[]" :patients="[]" :diagnosis_tests="[]" :drugs="[]"
-                            :permissionUpdate="isPermission('update Appointment')"
+                        <appointmentTable :branches="branches" :appointments="appointments"
+                            @getAppointments="get_appointments()" :doctors="[]" :patients="[]" :diagnosis_tests="[]"
+                            :drugs="[]" :companies_insurances="companies_insurances" :paymentMethods="paymentMethods"
+                            :services="services" :permissionUpdate="isPermission('update Appointment')"
                             @showPatientDetails="id => show_patient_details(id)"
                             :permissionDelete="isPermission('delete Appointment')"
                             :permissionCreatePrescription="isPermission('create Prescription')"
-                            :permissionCreateInvoice="isPermission('create AppointmentInvoice')"
-                        />
+                            :permissionCreateInvoice="isPermission('create HMS Invoice')" />
 
                         <!--  create   -->
-                        <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url" v-if="isPermission('create Appointment')"
-                            :doctors="doctors" :patients="patients" :branches="branches" :isPage="true"
-                            :isVisiblePage="isVisible" :isRequiredPage="isRequired" :type="type"
-                            @getDataTable="get_appointments(1)" :isPermission="isPermission" />
+                        <Modal :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :url="url"
+                            v-if="isPermission('create Appointment')" :doctors="doctors" :patients="patients"
+                            :branches="branches" :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired"
+                            :type="type" @getDataTable="get_appointments(1)" :isPermission="isPermission" />
 
-                            <patient_details :patient_id="patient_id" />
+                        <patient_details :patient_id="patient_id" />
+
+                        <InsuranceCompany :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addCompanyInsurance"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_insurance_companies" />
+
+
+
+                        <ModalBranch :tables="[]" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addAppointmentBranch"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="getBranch" />
+
+                        <ModalService :tables="[]" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addService"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="getServices" />
+
+                        <ModalDoctor :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addDoctorFromAppointment" :isPage="false"
+                            type="create" :isPermission="isPermission" @created="get_doctors" />
+
+                        <ModalPatient :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addPatientFromAppointment"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_patients" />
+
 
                         <!-- end .table-responsive-->
                     </div>

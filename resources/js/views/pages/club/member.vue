@@ -187,6 +187,11 @@ export default {
     },
   },
   watch: {
+      pageTitle: {
+          handler(newV, old) {
+              this.page_title = page_title.value;
+          },
+      },
     /**
      * watch per_page
      */
@@ -221,13 +226,6 @@ export default {
     this.company_id = this.$store.getters["auth/company_id"];
     this.page_title = page_title.value
     this.getData();
-  },
-  watch:{
-    pageTitle: {
-      handler(newV, old) {
-        this.page_title = page_title.value;
-      },
-    },
   },
   computed: {
     pageTitle: function () {
@@ -314,20 +312,19 @@ export default {
      */
     getData(page = 1) {
       this.isLoader = true;
-      let _filterSetting = [...this.filterSetting];
       let index = this.filterSetting.indexOf("sponsor_id");
       if (index > -1) {
-        _filterSetting[index] =
+          this.filterSetting[index] =
           this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
       }
       index = this.filterSetting.indexOf("member_status_id");
       if (index > -1) {
-        _filterSetting[index] =
+          this.filterSetting[index] =
           this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
       }
       let filter = "";
-      for (let i = 0; i < _filterSetting.length; ++i) {
-        filter += `columns[${i}]=${_filterSetting[i]}&`;
+      for (let i = 0; i < this.filterSetting.length; ++i) {
+        filter += `columns[${i}]=${this.filterSetting[i]}&`;
       }
       adminApi
         .get(
@@ -357,20 +354,19 @@ export default {
         this.current_page
       ) {
         this.isLoader = true;
-        let _filterSetting = [...this.filterSetting];
         let index = this.filterSetting.indexOf("sponsor_id");
         if (index > -1) {
-          _filterSetting[index] =
+            this.filterSetting[index] =
             this.$i18n.locale == "ar" ? "sponsors.name" : "sponsors.name_e";
         }
         index = this.filterSetting.indexOf("member_status_id");
         if (index > -1) {
-          _filterSetting[index] =
+            this.filterSetting[index] =
             this.$i18n.locale == "ar" ? "status.name" : "status.name_e";
         }
         let filter = "";
-        for (let i = 0; i < _filterSetting.length; ++i) {
-          filter += `columns[${i}]=${_filterSetting[i]}&`;
+        for (let i = 0; i < this.filterSetting.length; ++i) {
+          filter += `columns[${i}]=${this.filterSetting[i]}&`;
         }
 
         adminApi

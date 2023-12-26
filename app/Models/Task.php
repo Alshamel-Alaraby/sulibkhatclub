@@ -100,9 +100,10 @@ class Task extends Model implements HasMedia
     {
         return $this->hasMany(TaskLog::class, 'task_id');
     }
-
-
-
+    public function documentHeaders()
+    {
+        return $this->hasMany(DocumentHeader::class, 'task_id');
+    }
     public function supervisors()
     {
 
@@ -115,6 +116,52 @@ class Task extends Model implements HasMedia
 
         return $this->belongsToMany(Employee::class, 'general_employee_task', 'task_id', 'employee_id', 'id', 'id')->wherePivot('type', 'attention');
     }
+
+    public function periodicMaintenances()
+    {
+        return $this->hasMany(PeriodicMaintenance::class, 'task_id');
+    }
+    public function taskLogs()
+    {
+        return $this->hasMany(TaskLog::class, 'task_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->logs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'logs',
+                'count' => $this->logs()->count(),
+                'ids' => $this->logs()->pluck('action')->toArray(),
+            ];
+        }
+        if ($this->documentHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'document Headers',
+                'count' => $this->documentHeaders()->count(),
+                'ids' => $this->documentHeaders()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->periodicMaintenances()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'periodic Maintenances',
+                'count' => $this->periodicMaintenances()->count(),
+                'ids' => $this->periodicMaintenances()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->taskLogs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'task logs',
+                'count' => $this->taskLogs()->count(),
+                'ids' => $this->taskLogs()->pluck('action')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 
     // scopes
 

@@ -47,6 +47,39 @@ class ProductVariant extends Model implements HasMedia
         return $this->hasOne(OrderItem::class, 'variant_id', 'id');
     }
 
+
+
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->product_attribute_value()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'product_attribute_value',
+                'count' => $this->product_attribute_value()->count(),
+                'ids' => $this->product_attribute_value()->pluck('values')->toArray(),
+            ];
+        }
+        if ($this->orderItem()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orderItem',
+                'count' => $this->orderItem()->count(),
+                'ids' => $this->orderItem()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->orderItemQuantity()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'order Item Quantity',
+                'count' => $this->orderItemQuantity()->count(),
+                'ids' => $this->orderItemQuantity()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

@@ -26,6 +26,28 @@ class LocationDate extends Model
         return $this->belongsToMany(Employee::class, 'hr_employee_location_dates', 'location_date_id', 'employee_id');
     }
 
+    public function employeeLocationDates()
+    {
+        return $this->hasMany(EmployeeLocationDate::class, 'location_date_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->employeeLocationDates()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employeeLocationDates',
+                'count' => $this->employeeLocationDates()->count(),
+                'ids' => $this->employeeLocationDates()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

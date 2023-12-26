@@ -66,4 +66,20 @@ export default [
         },
         component: () => import('../../views/pages/rentCar/model-brand/index'),
     },
+    {
+        path: '/dashboard/rent-car/car-price',
+        name: 'rent car',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/rentCar/carPrice'),
+    },
+    {
+        path: '/dashboard/rent-car/car-driver',
+        name: 'rent car',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/rentCar/carDriver'),
+    },
 ];

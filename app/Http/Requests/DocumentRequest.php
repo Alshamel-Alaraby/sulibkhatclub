@@ -37,6 +37,7 @@ class DocumentRequest extends FormRequest
             "is_partially" => "nullable|in:2,1,0",
             'company_id' => 'nullable|integer',
             'document_relateds.*' => 'nullable|integer',
+            'clientTypes.*' => 'nullable|integer',
             'required' => "nullable|in:2,1,0",
             'is_break' => "nullable|in:2,1,0",
             'need_approve' => 'nullable',

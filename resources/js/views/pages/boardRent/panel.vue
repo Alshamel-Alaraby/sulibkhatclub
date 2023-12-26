@@ -11,6 +11,9 @@ import Panel from "../../../components/create/boardRent/panel";
 import searchPage from "../../../components/general/searchPage";
 import actionSetting from "../../../components/general/actionSetting";
 import tableCustom from "../../../components/general/tableCustom";
+import adminApi from "../../../api/adminAxios";
+import Swal from "sweetalert2";
+import Multiselect from "vue-multiselect";
 
 /**
  * Advanced Table component
@@ -23,7 +26,7 @@ export default {
     mixins: [translation,customTable,successError,crudHelper],
     components: {
         Layout, PageHeader, loader, Panel,
-        searchPage,actionSetting, tableCustom
+        searchPage,actionSetting, tableCustom,Multiselect
     },
     data() {
         return {
@@ -96,9 +99,21 @@ export default {
                     type: 'relation',name: 'street',sort: false,col1: 'name',col2: 'name_e',
                     setting: {"street_id":true},isSetting: true
                 },
+                {
+                    isFilter: false,isSet: true,trans:"branch_status",isV: 'is_active',
+                    type: 'boolean',setting: {"is_active":true},isSetting: true
+                }
             ],
             sendSetting: {},
             searchField: [],
+            categories: [],
+            governorates: [],
+            cities: [],
+            avenues: [],
+            streets: [],
+            faces: ['A','B','Multi','One-Face'],
+            filterButton: '',
+            location: {city_id: null,governorate_id: null,avenue_id: null,category_id: null,face: null,street_id: null,code: ''}
         };
     },
     mounted() {
@@ -106,6 +121,8 @@ export default {
         this.settingFun();
         this.getCustomTableFields('boards_rent_panels');
         this.getData(1,this.url,this.filterSearch(this.searchField));
+        this.getCategory();
+        this.getGovernorate();
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
@@ -143,6 +160,133 @@ export default {
                 e['isSetting'] = l[e.isV];
             });
             this.sendSetting = l;
+        },
+        getCategory() {
+            this.isLoader = true;
+
+            adminApi
+                .get(
+                    `/categories`
+                )
+                .then((res) => {
+                    let l = res.data.data;
+                    this.categories = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        showGovernorateModal() {
+            if (this.location.governorate_id > 0) {
+                this.getCity();
+            }
+        },
+        showCityModal() {
+            if (this.location.city_id > 0) {
+                this.getAvnue();
+            }
+        },
+        showAvenueModal() {
+            if (this.location.avenue_id > 0) {
+                this.getStreet();
+            }
+        },
+        getGovernorate() {
+
+            this.governorates = [];this.cities = [];this.avenues = [];this.streets = [];
+
+            adminApi
+                .get(`/governorates?columns[0]=country.id&search=1`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.governorates = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+
+                });
+        },
+        getCity() {
+            this.isLoader = true;
+            let governorate = this.location.governorate_id;
+            this.location.city_id = null;
+            this.location.avenue_id = null;
+            this.location.street_id = null;
+            this.cities = [];this.avenues = [];this.streets = [];
+
+            adminApi
+                .get(`/cities?columns[0]=governorate.id&search=${governorate}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.cities = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getAvnue() {
+            this.isLoader = true;
+            let city = this.location.city_id;
+            this.location.avenue_id = null;
+            this.location.street_id = null;
+            this.avenues = [];this.streets = [];
+
+            adminApi
+                .get(`/avenues?columns[0]=city.id&search=${city}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.avenues = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getStreet() {
+            this.isLoader = true;
+            let avenue = this.location.avenue_id;
+            this.location.street_id = null;
+            this.streets = [];
+
+            adminApi
+                .get(`/streets?columns[0]=avenue.id&search=${avenue}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.streets = l;
+                })
+                .catch((err) => {
+                    this.errorFun('Error','Thereisanerrorinthesystem');
+
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getPanel(page) {
+            this.isLoader = true;
+            this.current_page = 1;
+            let filter = '';
+            filter += this.location.category_id ? `&category_id=${this.location.category_id}` : '';
+            filter += this.location.governorate_id ? `&governorate_id=${this.location.governorate_id}` : '';
+            filter += this.location.city_id ? `&city_id=${this.location.city_id}` : '';
+            filter += this.location.avenue_id ? `&avenue_id=${this.location.avenue_id}` : '';
+            filter += this.location.face ? `&face=${this.location.face}` : '';
+            filter += this.location.street_id ? `&street_id=${this.location.street_id}` : '';
+            filter += this.location.code ? `&code=${this.location.code}` : '';
+            this.filterButton = filter;
+            this.getData(1,this.url,'',filter);
+
         },
     },
 };
@@ -187,12 +331,155 @@ export default {
                             :objPagination="objPagination"
                             @perviousOrNext="(current) => getData(current,url,filterSearch(searchField))"
                             @currentPage="(page) => current_page = page"
-                            @DataCurrentPage="(page) => getDataCurrentPage(page)"
+                            @DataCurrentPage="(page) => getDataCurrentPage(page,filterButton)"
                             @actionChange="({typeAction,id}) => changeType({typeAction,id})"
                         />
                         <!-- end setting -->
 
-                        <!--  create or edit   -->
+                        <!--  search   -->
+                        <b-modal
+                            id="filter"
+                            :title="$t('general.Search')"
+                            title-class="font-18"
+                            body-class="p-4"
+                            size="lg"
+                            :hide-footer="true"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <b-button
+                                        variant="success"
+                                        type="button" class="mx-1"
+                                        v-if="!isLoader"
+                                        @click.prevent="getPanel"
+                                    >
+                                        {{ $t('general.Search') }}
+                                    </b-button>
+
+                                    <b-button variant="success" class="mx-1" disabled v-else>
+                                        <b-spinner small></b-spinner>
+                                        <span class="sr-only">{{ $t('login.Loading') }}...</span>
+                                    </b-button>
+                                    <!-- Emulate built in modal footer ok and cancel button actions -->
+
+                                    <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`search`)">
+                                        {{ $t('general.Cancel') }}
+                                    </b-button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_code") }}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                v-model="location.code"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_category") }}
+                                            </label>
+                                            <multiselect
+                                                v-model="location.category_id"
+                                                :options="categories.map((type) => type.id)"
+                                                :custom-label="(opt) => categories.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? categories.find((x) => x.id == opt).name : categories.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_governorate") }}
+                                            </label>
+                                            <multiselect
+                                                @input="showGovernorateModal"
+                                                v-model="location.governorate_id"
+                                                :options="governorates.map((type) => type.id)"
+                                                :custom-label="(opt) => governorates.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? governorates.find((x) => x.id == opt).name : governorates.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_city") }}
+                                            </label>
+                                            <multiselect
+                                                @input="showCityModal"
+                                                v-model="location.city_id"
+                                                :options="cities.map((type) => type.id)"
+                                                :custom-label="(opt) => cities.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? cities.find((x) => x.id == opt).name : cities.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_avenue") }}
+                                            </label>
+                                            <multiselect
+                                                @input="showAvenueModal"
+                                                v-model="location.avenue_id"
+                                                :options="avenues.map((type) => type.id)"
+                                                :custom-label="(opt) => avenues.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? avenues.find((x) => x.id == opt).name : avenues.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_street") }}
+                                            </label>
+                                            <multiselect
+                                                v-model="location.street_id"
+                                                :options="streets.map((type) => type.id)"
+                                                :custom-label="(opt) => streets.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? streets.find((x) => x.id == opt).name : streets.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("boardRent_panel_face") }}
+                                            </label>
+                                            <multiselect
+                                                v-model="location.face"
+                                                :options="faces"
+                                            >
+                                            </multiselect>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /search   -->
+
+                        <!--  create or edit  -->
                         <Panel
                             :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                             :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired" :url="url"

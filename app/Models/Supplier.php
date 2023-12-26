@@ -46,31 +46,31 @@ class Supplier extends Model implements HasMedia
 
     public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
     }
     public function customer_source()
     {
-        return $this->belongsTo(GeneralCustomerSource::class);
+        return $this->belongsTo(GeneralCustomerSource::class, 'customer_source_id');
     }
 
     public function bankAccount()
     {
-        return $this->belongsTo(BankAccount::class);
+        return $this->belongsTo(BankAccount::class, 'bank_account_id');
     }
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
     public function sector()
     {
-        return $this->belongsTo(Sector::class);
+        return $this->belongsTo(Sector::class, 'sector_id');
 
     }
 
@@ -107,6 +107,25 @@ class Supplier extends Model implements HasMedia
 
     public function hasChildren()
     {
-        return $this->customer()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->opening_balances()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'opening_balances',
+                'count' => $this->opening_balances()->count(),
+                'ids' => $this->opening_balances()->pluck('date')->toArray(),
+            ];
+        }
+        if ($this->orders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orders',
+                'count' => $this->orders()->count(),
+                'ids' => $this->orders()->pluck('date')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 }

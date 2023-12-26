@@ -18,7 +18,7 @@ class RlstRevenueItemResource extends JsonResource
             'id'=>$this->id,
             'name'=>$this->name,
             'name_e'=>$this->name_e,
-            'account_no'=>$this->whenLoaded('accountNo'),
+            'chart' =>$this->whenLoaded('chart'),
             'type'=>$this->type,
         ];
     }

@@ -30,6 +30,11 @@ class EmployeesTimeTablesHeader extends Model
         return $this->hasMany(EmployeesTimeTablesDetail::class, 'employees_timetables_header_id', 'id');
     }
 
+    public function employeeTimeTablesDetails()
+    {
+        return $this->hasMany(EmployeesTimeTablesDetail::class, 'employees_timetables_header_id', 'id');
+    }
+
 
     public function hasChildren()
     {
@@ -39,13 +44,21 @@ class EmployeesTimeTablesHeader extends Model
             $relationsWithChildren[] = [
                 'relation' => 'Employees Time Tables Details',
                 'count' => $this->employeesTimeTablesDetails()->count(),
-                'ids' => $this->employeesTimeTablesDetails()->pluck('id')->toArray()
+                'ids' => $this->employeesTimeTablesDetails()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->employeeTimeTablesDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employee Time Tables Details',
+                'count' => $this->employeeTimeTablesDetails()->count(),
+                'ids' => $this->employeeTimeTablesDetails()->pluck('id')->toArray(),
             ];
         }
 
 
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

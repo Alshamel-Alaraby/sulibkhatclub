@@ -37,12 +37,13 @@ class Group extends Model
             $relationsWithChildren[] = [
                 'relation' => 'products',
                 'count' => $this->products()->count(),
-                'ids' => $this->products()->pluck('id')->toArray(),
+                'ids' => $this->products()->pluck('title')->toArray(),
             ];
         }
 
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

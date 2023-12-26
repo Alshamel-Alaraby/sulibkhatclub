@@ -4,7 +4,6 @@ namespace Modules\RealEstate\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\RealEstate\Rules\UniqueUnitService;
-
 class RlstUnitServiceRequest extends FormRequest
 {
     /**
@@ -15,10 +14,12 @@ class RlstUnitServiceRequest extends FormRequest
     public function rules()
     {
         return [
-                "unit-service" => 'required|array',
-                "unit-service.*.unit_id" => ['required','integer','exists:rlst_units,id'],
-                "unit-service.*.service_id" => ['required','integer','exists:rlst_services,id', new UniqueUnitService($this->id)],
-                "unit-service.*.company_id"=>'nullable',
+                "unit_ids"      => 'required|array',
+                "service_ids"   => 'required|array',
+                "unit_ids.*"    => ['required','integer','exists:rlst_units,id'],
+                "from_date"     => 'required|date',
+                "service_ids.*" => ['required','integer','exists:rlst_services,id', new UniqueUnitService($this->id)],
+                "price"         => ['required','numeric','gt:0'],
             ];
     }
 

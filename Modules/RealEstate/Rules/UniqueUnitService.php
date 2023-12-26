@@ -33,26 +33,48 @@ class UniqueUnitService implements Rule
      */
     public function passes($attribute, $value)
     {
-        // Check if the combination of unit_id and service_id is unique
+        // Check if the combination of unit_ids and service_ids is unique
         // in the rlst_unit_services table.
 
          // Log the $value and $attribute
          //Log::info('Validation Attribute: ' . $attribute);
          //Log::info('Validation Value: ' . json_encode($value));
 
-         $requestData = request()->input(); // Get all request data
+        $requestData = request()->input(); // Get all request data
 
-         //print_r("unitId =", $requestData['unit-service'][0]['unit_id']);
+        $unitIds = $requestData['unit_ids'];
+        $serviceIds = $requestData['service_ids'];
 
-         $unitId = $requestData['unit-service'][0]['unit_id'];
+        $unitServicePairs = [];
+
+        $i = 0;
+        foreach($unitIds as $unitIdx => $unitId){
+            foreach($serviceIds as $serviceIdx => $serviceId){
+                $unitServicePairs[$i] = $unitId . '-' . $serviceId;
+            }
+        }
+        $uniquePairsInRequest = count(array_unique($unitServicePairs)) === count($unitServicePairs);
+
+        if(!$uniquePairsInRequest){
+            return false;
+        }
 
 
-        $count = RlstUnitService::where('id', '!=', $this->id)
-            ->where('service_id', $value)
-            ->where('unit_id', $unitId)
-            ->count();
+        // Check if each unit_id and its corresponding service_id is unique in the rlst_unit_services table
+        foreach ($unitIds as $index => $unitId) {
+            $serviceId = $serviceIds[$index];
 
-        return $count === 0;
+            $count = RlstUnitService::where('id', '!=', $this->id)
+                ->where('unit_id', $unitId)
+                ->where('service_id', $serviceId)
+                ->count();
+
+            if ($count > 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -62,6 +84,6 @@ class UniqueUnitService implements Rule
      */
     public function message()
     {
-        return 'The combination of unit_id and service_id is not unique.';
+        return 'The combination of unit_id and service_id is not unique either among the request data or the database.';
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Modules\RealEstate\Entities;
 
-use App\Models\Country;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,6 +80,22 @@ class RlstCustomer extends Model
             get:fn($value) => json_decode($value),
             set:fn($value) => json_encode($value),
         );
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->reservations()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'reservations',
+                'count' => $this->reservations()->count(),
+                'ids' => $this->reservations()->pluck('prefix')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

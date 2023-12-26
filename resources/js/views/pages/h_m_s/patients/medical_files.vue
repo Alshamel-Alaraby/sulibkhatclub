@@ -3,7 +3,7 @@
 
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-primary btn-sm my-4 " data-toggle="modal"
+                <button type="button" class="btn btn-primary btn-sm my-4 " data-toggle="modal" v-if="createMedicalFiles"
                     data-target="#MedicalFilesModel"><i class="fa fa-plus"></i> {{ $t('general.Add New') }}</button>
             </div>
         </div>
@@ -23,7 +23,7 @@
                         <p class="font-size-12">{{ file.note }}</p>
                         <p class="font-size-11"><label class="badge badge-dark text-white"> <i class="fas fa-calendar"></i> {{ file.created_at }}</label></p>
                         <a :href="file.file.url" class="btn btn-primary btn-sm" download><i class="fa fa-cloud-download-alt"></i></a>
-                        <a @click.prevent="delete_medical_files(file.id)" class="btn btn-danger btn-sm"><i
+                        <a @click.prevent="delete_medical_files(file.id)" class="btn btn-danger btn-sm" v-if="deleteMedicalFiles"><i
                                 class="fa fa-trash"></i></a>
                     </div>
                 </div>
@@ -207,7 +207,7 @@ import Swal from "sweetalert2";
 
 export default {
     name: 'MedicalFiles',
-    props: ['patient_id', 'medical_files'],
+    props: ['patient_id', 'medical_files','createMedicalFiles','deleteMedicalFiles'],
     components: {
         loader, ErrorMessage
     },

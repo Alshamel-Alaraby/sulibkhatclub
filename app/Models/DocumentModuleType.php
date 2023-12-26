@@ -32,8 +32,20 @@ class DocumentModuleType extends Model
 
     public function hasChildren()
     {
-        return   $this->documentCompanyModuleStatuses->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->documentCompanyModuleStatuses()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentCompanyModuleStatuses',
+                'count' => $this->documentCompanyModuleStatuses()->count(),
+                'ids' => $this->documentCompanyModuleStatuses()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions

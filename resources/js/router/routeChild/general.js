@@ -414,6 +414,22 @@ export default [
         component: () => import('../../views/pages/general/users/index'),
     },
     {
+        path: '/dashboard/insurance-companies',
+        name: 'insurance_companies',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/general/insurance_companies/index.vue'),
+    },
+    {
+        path: '/dashboard/account_statement',
+        name: 'account_statement',
+        meta: {
+            middleware: [auth,checkAuth]
+        },
+        component: () => import('../../views/pages/general/account_statement/index.vue'),
+    },
+    {
 
         // checked by Delta
         path: '/dashboard/Variant-Attributes',
@@ -593,5 +609,36 @@ export default [
         },
         component: () => import('../../views/pages/general/contractTemplates/index.vue'),
     },
-
+    {
+        path: '/dashboard/costCenters',
+        name: 'costCenters',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/GlCostCenters/index.vue'),
+    },
+    {
+        path: '/dashboard/insurance-types',
+        name: 'test',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/insurance-types'),
+    },
+    {
+        path: '/dashboard/insurance-settings',
+        name: 'test',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/insurance-settings'),
+    },
+    {
+        path: '/dashboard/insurance-document',
+        name: 'test',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/insuranceDocument'),
+    },
 ];

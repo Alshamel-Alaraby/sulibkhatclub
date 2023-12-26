@@ -1,7 +1,7 @@
 <template>
     <div class="row justify-content-between align-items-center mb-2">
         <h4 class="header-title">
-            {{ title ?? $t(`${page}`) }}
+            {{ page_title && page_title.url == $route.fullPath ? ($i18n.locale == 'ar' ? page_title.title : page_title.title_e)  :(title ?? $t(`${page}`)) }}
         </h4>
         <div v-if="isSearch" class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
             <div class="d-inline-block" style="width: 22.2%">
@@ -53,6 +53,7 @@
 
 <script>
 import transMixinComp from "../../helper/mixin/translation-comp-mixin";
+import page_title from "../../helper/PageTitle"
 
 export default {
     name: "searchPage",
@@ -62,6 +63,7 @@ export default {
         return {
             search: '',
             debounce: {},
+            page_title: {},
             fields: []
         }
     },
@@ -72,12 +74,23 @@ export default {
                 this.$emit('editSearch',this.search);
                 this.$emit('dataSearch');
             }, 400);
-        }
+        },
+        pageTitle: {
+            handler(newV, old) {
+                this.page_title = page_title.value;
+            },
+        },
+    },
+    computed: {
+        pageTitle: function () {
+            return page_title.value;
+        },
     },
     mounted(){
         this.fields = this.filterSetting
         .filter(field => field.isFilter)
         .map(field => field.isV );
+        this.page_title = page_title.value
     }
 }
 </script>

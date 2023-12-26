@@ -106,6 +106,7 @@ export default {
                     discount: 0,
                     is_stripe: 0,
                     note:'',
+                    manual_document_number:'',
                     sell_method_discount: 0,
                     prefix_related:''
                 }],
@@ -173,6 +174,7 @@ export default {
                     sell_method_discount: {},
                     prefix_related: {},
                     note: {},
+                    manual_document_number: {},
                 }
             }
         },
@@ -207,7 +209,7 @@ export default {
             let sum = 0;
             let paid = 0;
             this.create.header_details.forEach(e => {
-                sum += parseFloat(e.price_per_uint * e.quantity);
+                sum += parseFloat(e.price_per_uint * (e.quantity ? e.quantity : 1));
                 paid += parseFloat(e.payment);
             });
 
@@ -250,6 +252,7 @@ export default {
                 sell_method_discount: 0,
                 prefix_related: '',
                 note: '',
+                manual_document_number: '',
             });
             this.changeValue();
         },
@@ -313,6 +316,7 @@ export default {
                     sell_method_discount: 0,
                     prefix_related: '',
                     note: '',
+                    manual_document_number: '',
                 }],
                 break_settlement:[
                     {
@@ -355,7 +359,7 @@ export default {
             if (this.other_data)
             {
                 this.roomsFilter = [this.other_data.unit_id];
-                this.getCustomerInRoom();
+               await this.getCustomerInRoom();
             }
             this.is_disabled = false;
             this.$nextTick(() => {
@@ -529,29 +533,13 @@ export default {
         /**
          *  get workflows
          */
-        getCustomerInRoom() {
+       async getCustomerInRoom() {
             this.isLoader = true;
-            adminApi
+           await adminApi
                 .get(`/document-headers/customer-room?unit_id=${this.other_data.unit_id}&date_from=${this.other_data.date_from}&date_to=${this.other_data.date_to}`)
                 .then((res) => {
                     let l = res.data;
-                    if (l)
-                    {
-                        this.create.employee_id = l.employee_id;
-                        if (l.employee_id)
-                        {
-                            setTimeout(() => {
-                                this.customer_data_create = l.customer;
-                                this.getCustomerSalesman(l.employee_id);
-                                this.create.customer_id = l.customer_id;
-                                this.customers.push(this.customer_data_create);
-                                this.getCustomerRooms(this.create.customer_id);
-                                this.getDocumentCustomer();
-                                // لو فى بريك افتحها لان مع ديفونا لا يوجد بريك
-                                // this.getBreakCustomer(l.customer_id);
-                            }, 500);
-                        }
-                    }
+                    this.handleData(l);
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -563,6 +551,27 @@ export default {
                 .finally(() => {
                     this.isLoader = false;
                 });
+        },
+       async handleData(data){
+            if (data)
+            {
+                this.create.employee_id = data.employee_id;
+                if (data.employee_id)
+                {
+                    this.customer_data_create = data.customer;
+                    await this.getCustomerSalesman(data.employee_id);
+                    this.create.customer_id = data.customer_id;
+                    this.customers.push(this.customer_data_create);
+                    await this.getCustomerRooms(this.create.customer_id);
+                    this.roomsFilter = [];
+                    this.clientRooms.forEach(e => {
+                        this.roomsFilter.push(e.id);
+                    });
+                    await this.getDocumentCustomer();
+                    // لو فى بريك افتحها لان مع ديفونا لا يوجد بريك
+                    // this.getBreakCustomer(l.customer_id);
+                }
+            }
         },
         getStatus(){
             this.isLoader = true;
@@ -719,13 +728,13 @@ export default {
                     });
                 });
         },
-        getDocumentCustomer() {
+       async getDocumentCustomer() {
             if(!this.create.customer_id || this.roomsFilter.length == 0)
             {
                 return 0;
             }
             this.isLoader = true;
-            adminApi
+           await adminApi
                 .get(`/document-headers/document-customer/${this.create.customer_id}?units=${this.roomsFilter}`)
                 .then((res) => {
                     this.isLoader = false;
@@ -783,9 +792,9 @@ export default {
                 });
 
         },
-        getCustomerRooms(customer_id) {
+       async getCustomerRooms(customer_id) {
             this.isLoader = true;
-            adminApi
+           await adminApi
                 .get(`/booking/units/get-client-units?client_id=${customer_id}`)
                 .then((res) => {
                     let l = res.data.data;
@@ -1227,6 +1236,7 @@ export default {
                     prefix_related: e.prefix_related,
                     sell_method_discount: e.sell_method_discount,
                     note: e.note,
+                    manual_document_number: '',
                 });
             });
             this.isLoader = false;
@@ -1254,6 +1264,7 @@ export default {
                 this.openingBreak = {
                     customer_id: this.create.customer_type == 0 ? this.create.company_id : this.create.customer_id,
                     currency_id: 1,
+                    client_type_id: 1,
                     document_id: this.document_id,
                     debit: (this.document.attributes && parseInt(this.document.attributes.customer) == 1)?this.create.net_invoice:0,
                     credit: (this.document.attributes && parseInt(this.document.attributes.customer) == -1)?this.create.net_invoice:0,
@@ -1338,6 +1349,7 @@ export default {
             this.create.related_document_number = data.header.document_header.related_document_number;
             this.create.related_document_prefix = data.header.document_header.related_document_prefix;
             this.create.attendans_num = data.header.document_header.attendans_num;
+            this.create.invoice_discount = 0 ;
             let attendants =[];
             data.header.document_header.attendants_document.forEach((e,index) => {
                 attendants.push(e.id) ;
@@ -1374,6 +1386,7 @@ export default {
                     is_stripe: e.is_stripe,
                     sell_method_discount: e.sell_method_discount,
                     note: e.note,
+                    manual_document_number: '',
                     prefix_related: e.document_header.prefix,
                 });
             });
@@ -1394,13 +1407,14 @@ export default {
                     check_in_time:'',
                     unit_type: this.$i18n.locale == 'ar' ? e.document.name : e.document.name_e,
                     quantity: 0,
-                    price_per_uint: 1,
-                    total: parseInt(e.document.attributes.customer) == 1 ? parseFloat(e.amount) : 0,
-                    payment: parseInt(e.document.attributes.customer) == -1 ? parseFloat(e.amount) : 0,
+                    price_per_uint: 0,
+                    total: 0,
+                    payment: parseInt(e.document.attributes.customer) == -1 ? parseFloat(e.amount) : parseFloat(e.amount) * -1,
                     discount: 0,
                     is_stripe: null,
                     sell_method_discount: 0,
                     note: e.notes ? e.notes : '',
+                    manual_document_number: e.manual_document_number ? e.manual_document_number : '',
                     prefix_related: e.prefix,
                     payment_method:this.$i18n.locale == 'ar' ? e.payment_method.name : e.payment_method.name_e,
                 });
@@ -1870,7 +1884,8 @@ export default {
                                                 <div class="col-1">{{ $t('general.Date') }}</div>
                                                 <div class="col-2">{{ $t('general.BookingDiscription') }}</div>
                                                 <div class="col-2">{{ $t('general.typeService') }}</div>
-                                                <div class="col-2">{{ $t('general.note') }}</div>
+                                                <div class="col-1">{{ $t('general.manual_document_number') }}</div>
+                                                <div class="col-1">{{ $t('general.note') }}</div>
                                                 <div class="col-1">{{ $t('general.totalDiscount') }}</div>
                                                 <div class="col-1">{{ $t('general.charges') }}</div>
                                                 <div class="col-1">{{ $t('general.payments') }}</div>
@@ -1953,7 +1968,15 @@ export default {
                                                             type="text"
                                                         />
                                                     </div>
-                                                    <div class="col-2">
+                                                    <div class="col-1 p-0">
+                                                        <input
+                                                            :disabled="true"
+                                                            v-model="$v.create.header_details.$each[gIndex].manual_document_number.$model"
+                                                            class="form-control"
+                                                            type="text"
+                                                        />
+                                                    </div>
+                                                    <div class="col-1 p-0">
                                                         <input
                                                             :disabled="true"
                                                             v-model="$v.create.header_details.$each[gIndex].note.$model"

@@ -21,12 +21,21 @@ class SalesmenPlansSource extends Model
 
     public function salesmenPlans()
     {
-        return $this->hasMany(SalesmenPlan::class);
+        return $this->hasMany(SalesmenPlan::class, 'salesmen_plans_source_id');
     }
 
     public function hasChildren()
     {
-        return false;
+        $relationsWithChildren = [];
+
+        if ($this->salesmenPlans()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'salesmen Plans',
+                'count' => $this->salesmenPlans()->count(),
+                'ids' => $this->salesmenPlans()->pluck('name')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

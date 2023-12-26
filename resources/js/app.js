@@ -15,6 +15,7 @@ import VueApexCharts from 'vue-apexcharts';
 import VueStringFilter from 'vue-string-filter';
 import Lightbox from 'vue-easy-lightbox';
 import Print from 'vue-print-nb';
+import countTo from 'vue-count-to';
 
 Vue.config.productionTip = true;
 
@@ -34,6 +35,7 @@ Vue.component('VuePhoneNumberInput', require('vue-phone-number-input'));
 Vue.component('VueSlideBar', VueSlideBar);
 Vue.component('pagination-laravel', require('laravel-vue-pagination'));
 Vue.component('apexchart', VueApexCharts);
+Vue.component('countTo', countTo);
 Vue.use(BootstrapVue);
 Vue.use(Vuelidate);
 Vue.use(require('vue-chartist'));

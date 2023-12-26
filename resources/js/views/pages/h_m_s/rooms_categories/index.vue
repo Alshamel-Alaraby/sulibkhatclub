@@ -43,7 +43,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-            return permissionGuard(vm, "RoomsCategories", "Read Rooms Categories");
+            return permissionGuard(vm, "RoomsCategories", "all RoomsCategory");
         });
     },
     data() {
@@ -144,6 +144,7 @@ export default {
                     name_e: ele.name_e,
                     parent_id: ele.parent_id,
                     is_default: ele.is_default,
+                    does_it_have_schedule: ele.does_it_have_schedule,
                 })
                 if (ele.children.length > 0) {
                     ele.children.forEach((item) => {
@@ -153,6 +154,7 @@ export default {
                             name_e: item.name_e,
                             parent_id: item.parent_id,
                             is_default: item.is_default,
+                            does_it_have_schedule: item.does_it_have_schedule,
                         })
                     })
                 }

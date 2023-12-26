@@ -167,6 +167,7 @@
                             <span v-if="isRequired('code')" class="text-danger">*</span>
                         </label>
                         <input
+                            :disabled="is_update == 1 && type == 'edit'"
                             type="text"
                             class="form-control"
                             v-model="$v.create.code.$model"
@@ -192,6 +193,7 @@
                             <span v-if="isRequired('new_code')" class="text-danger">*</span>
                         </label>
                         <input
+                            :disabled="is_update == 1 && type == 'edit'"
                             type="text"
                             class="form-control"
                             v-model="$v.create.new_code.$model"
@@ -270,6 +272,7 @@
                             <span  v-if="isRequired('category_id')" class="text-danger">*</span>
                         </label>
                         <multiselect
+                            :disabled="is_update == 1 && type == 'edit'"
                             @input="showeCategoryModal"
                             v-model="$v.create.category_id.$model"
                             :options="categories.map((type) => type.id)"
@@ -326,6 +329,7 @@
                             <span v-if="isRequired('governorate_id')" class="text-danger">*</span>
                         </label>
                         <multiselect
+                            :disabled="is_update == 1 && type == 'edit'"
                             @input="showGovernorateModal"
                             v-model="$v.create.governorate_id.$model"
                             :options="governorates.map((type) => type.id)"
@@ -478,6 +482,35 @@
                     >
                         {{ $t('general.location') }}
                     </button>
+                </div>
+                <div v-if="isVisible('is_active')" class="col-md-3">
+                    <div class="form-group">
+                        <label class="mr-2">
+                            {{ getCompanyKey("boardRent_panel_status") }}
+                            <span v-if="isRequired('is_active')" class="text-danger">*</span>
+                        </label>
+                        <b-form-group>
+                            <b-form-radio
+                                class="d-inline-block"
+                                v-model="$v.create.is_active.$model"
+                                name="some-radios"
+                                :value="1"
+                            >{{ $t("general.Active") }}</b-form-radio
+                            >
+                            <b-form-radio
+                                class="d-inline-block m-1"
+                                v-model="$v.create.is_active.$model"
+                                name="some-radios"
+                                :value="0"
+                            >{{ $t("general.Inactive") }}</b-form-radio>
+                        </b-form-group>
+                        <template v-if="errors.is_active">
+                            <ErrorMessage
+                                v-for="(errorMessage, index) in errors.is_active"
+                                :key="index"
+                            >{{ errorMessage }}</ErrorMessage>
+                        </template>
+                    </div>
                 </div>
             </div>
             <hr style="margin: 10px 0 !important;border-top: 1px solid rgb(141 163 159 / 42%)" v-if="isVisible('price')" />
@@ -753,11 +786,13 @@ export default {
                 street_id: null,
                 lat: 0,
                 lng: 0,
+                is_active: 1
             },
             company_id: null,
             errors: {},
             current_page: 1,
             is_disabled: false,
+            is_update: 0
         };
     },
     validations: {
@@ -826,6 +861,9 @@ export default {
             lng: { required: requiredIf(function (model) {
                     return this.isRequired("lng");
                 }) , decimal },
+            is_active: { required: requiredIf(function (model) {
+                    return this.isRequired("is_active");
+                }) },
         }
     },
     mounted() {
@@ -897,6 +935,7 @@ export default {
                 size: "",
                 note: "",
                 face: "A",
+                is_active: 1,
                 unit_status_id: null,
                 category_id: null,
                 country_id: 1,
@@ -912,6 +951,7 @@ export default {
             });
             this.is_disabled = false;
             this.errors = {};
+            this.is_update = 0;
         },
         resetModalHidden() {
             this.defaultData();
@@ -938,6 +978,8 @@ export default {
                         this.create.code = panels.code;
                         this.create.new_code = panels.new_code;
                         this.create.face = panels.face;
+                        this.create.is_active = panels.is_active;
+                        this.is_update = panels.is_update;
                         if(this.isVisible('category_id'))  this.getCategory();
                         this.create.category_id = panels.category_id;
                         if(this.isVisible('unit_status_id'))  this.getUnitStatus();

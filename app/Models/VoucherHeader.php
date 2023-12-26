@@ -22,11 +22,11 @@ class VoucherHeader extends Model
         return $query
             ->select(
                 'id','document_id','branch_id','date','serial_id','customer_id','salesmen_id',
-                'payment_method_id','amount','serial_number','prefix','notes'
+                'payment_method_id','client_type_id','amount','serial_number','prefix','notes','manual_document_number'
             )
             ->with([
                 'document:id,name,name_e','salesmen:id,name,name_e',
-                'customer:id,name,name_e','serial:id,name,name_e','paymentMethod:id,name,name_e'
+                'serial:id,name,name_e','paymentMethod:id,name,name_e','clientType'
             ]);
     }
 
@@ -60,10 +60,37 @@ class VoucherHeader extends Model
         return $this->belongsTo(Serial::class,'serial_id');
     }
 
+    public function clientType()
+    {
+        return $this->belongsTo(ClientType::class,'client_type_id');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(\Modules\Booking\Entities\Unit::class,'module_type_id');
+    }
+
     public function breakSettlements()
     {
         return  $this->hasMany(BreakSettlement::class, 'voucher_header_id');
     }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->breakSettlements()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'break Settlements',
+                'count' => $this->breakSettlements()->count(),
+                'ids' => $this->breakSettlements()->pluck('amount')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {

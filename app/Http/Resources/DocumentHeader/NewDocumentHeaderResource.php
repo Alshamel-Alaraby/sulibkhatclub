@@ -22,9 +22,12 @@ class NewDocumentHeaderResource extends JsonResource
             'employee_id' => $this->employee_id,
             'customer_id' => $this->customer_id,
             'company_id' => $this->company_id,
+            'print_day'                    => $this->print_day,
+            'due_day'                      => $this->due_day,
             'branch' => $this->whenLoaded('branch'),
             'employee' => $this->whenLoaded('employee'),
             'customer' => collect($this->whenLoaded('customer'))->only(['id', 'name', 'name_e']),
+            'installmentPaymentType'  => $this->installmentPaymentType,
             // 'details' => $this->documentHeaderDetails,
         ];
     }

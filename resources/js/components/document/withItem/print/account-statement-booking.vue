@@ -48,7 +48,7 @@
                             </div>
                             <!-- .row -->
 
-    <!--                        <hr class="row brc-default-l1 mx-n1 mb-4" />-->
+                            <!--                        <hr class="row brc-default-l1 mx-n1 mb-4" />-->
 
                             <div class="row">
                                 <div class="col-sm-6">
@@ -110,22 +110,28 @@
 
                             <div class="mt-4">
                                 <div class="row text-600 text-white bgc-default-tp1 py-25">
-                                    <div class="d-none d-sm-block col-2">{{$t('general.Date')}}</div>
+                                    <div class="d-none d-sm-block col-1">{{$t('general.Date')}}</div>
                                     <div class="d-none d-sm-block col-1">{{$t('general.time')}}</div>
-                                    <div class="col-8 col-sm-3">{{$t('general.DescriptionBooking')}}</div>
-                                    <div class="d-none d-sm-block col-4 col-sm-2">{{$t('general.Receipt')}}</div>
-                                    <div class="d-none d-sm-block col-sm-2">{{$t('general.charges')}}</div>
-                                    <div class="col-2">{{$t('general.payments')}}</div>
+                                    <div class="d-none d-sm-block col-1 p-0">{{$t('general.DescriptionBooking')}}</div>
+                                    <div class="d-none d-sm-block col-1 p-0 text-center">{{$t('general.paymentMethod')}}</div>
+                                    <div class="d-none d-sm-block col-1">{{$t('general.note')}}</div>
+                                    <div class="d-none d-sm-block col-2">{{$t('general.manual_document_number')}}</div>
+                                    <div class="d-none d-sm-block col-2">{{$t('general.Receipt')}}</div>
+                                    <div class="d-none d-sm-block col-1 p-0">{{$t('general.charges')}}</div>
+                                    <div class="d-none d-sm-block col-2">{{$t('general.payments')}}</div>
                                 </div>
 
                                 <div class="text-95 text-secondary-d3">
                                     <div class="row mb-2 mb-sm-0 py-25" v-for="(data, index) in details">
-                                        <div class="d-none d-sm-block col-2"><h5>{{data.date}}</h5></div>
+                                        <div class="d-none d-sm-block col-1 p-0"><h5>{{data.date}}</h5></div>
                                         <div class="d-none d-sm-block col-1"><h5>{{data.time}}</h5></div>
-                                        <div class="col-8 col-sm-3"><h5>{{data.description}}</h5></div>
+                                        <div class="d-none d-sm-block col-1 p-0"><h5>{{data.description}}</h5></div>
+                                        <div class="d-none d-sm-block col-1 p-0 text-center"><h5>{{data.payment_method}}</h5></div>
+                                        <div class="d-none d-sm-block col-1"><h5>{{data.note}}</h5></div>
+                                        <div class="d-none d-sm-block col-2"><h5>{{data.manual_document_number}}</h5></div>
                                         <div class="d-none d-sm-block col-2 text-95"><h5>{{data.receipt}}</h5></div>
-                                        <div class="d-none d-sm-block col-2 text-95"><h5>{{data.charges}} KD</h5></div>
-                                        <div class="col-2 text-secondary-d2"><h5>{{data.payments}} KD</h5></div>
+                                        <div class="d-none d-sm-block col-1 text-95 p-0"><h5>{{data.charges}} KD</h5></div>
+                                        <div class="d-none d-sm-block col-2 text-secondary-d2"><h5>{{data.payments}} KD</h5></div>
                                     </div>
                                 </div>
 
@@ -134,7 +140,7 @@
                                 <div class="row mt-3">
                                     <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
                                         <h5>
-                                        {{$t('general.Extra_note')}}
+                                            {{$t('general.Extra_note')}}
                                         </h5>
                                     </div>
 
@@ -142,12 +148,12 @@
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
                                                 <h5>
-                                                {{$t('general.Total')}}
+                                                    {{$t('general.Total')}}
                                                 </h5>
                                             </div>
                                             <div class="col-5">
                                                 <h5>
-                                                <span class="text-150 text-success-d3 opacity-2">{{total}} KD</span>
+                                                    <span class="text-150 text-success-d3 opacity-2">{{total}} KD</span>
                                                 </h5>
                                             </div>
                                         </div>
@@ -155,12 +161,12 @@
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
                                                 <h5>
-                                                {{$t('general.paid')}}
+                                                    {{$t('general.paid')}}
                                                 </h5>
                                             </div>
                                             <div class="col-5">
                                                 <h5>
-                                                <span class="text-150 text-success-d3 opacity-2">{{paid}} KD</span>
+                                                    <span class="text-150 text-success-d3 opacity-2">{{paid}} KD</span>
                                                 </h5>
                                             </div>
                                         </div>
@@ -168,12 +174,12 @@
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
                                                 <h5>
-                                                {{$t('general.discount')}}
+                                                    {{$t('general.discount')}}
                                                 </h5>
                                             </div>
                                             <div class="col-5">
                                                 <h5>
-                                                <span class="text-150 text-success-d3 opacity-2">{{dataPrint.invoice_discount}} KD</span>
+                                                    <span class="text-150 text-success-d3 opacity-2">{{dataPrint.invoice_discount}} KD</span>
                                                 </h5>
                                             </div>
                                         </div>
@@ -181,12 +187,12 @@
                                         <div class="row my-2">
                                             <div class="col-7 text-right">
                                                 <h5>
-                                                {{$t('general.remaining')}}
+                                                    {{$t('general.remaining')}}
                                                 </h5>
                                             </div>
                                             <div class="col-5">
                                                 <h5>
-                                                <span class="text-150 text-success-d3 opacity-2">{{parseFloat(total - paid - dataPrint.invoice_discount).toFixed(3)}} KD</span>
+                                                    <span class="text-150 text-success-d3 opacity-2">{{parseFloat(total - paid - dataPrint.invoice_discount).toFixed(3)}} KD</span>
                                                 </h5>
                                             </div>
                                         </div>
@@ -198,17 +204,17 @@
                                 <div class="row">
                                     <div class="col-4 mb-5 text-center">
                                         <h4>
-                                        <span class="text-secondary-d1 text-105">{{$t('general.GuestSignature')}}</span>
+                                            <span class="text-secondary-d1 text-105">{{$t('general.GuestSignature')}}</span>
                                         </h4>
                                     </div>
                                     <div class="col-4 mb-5 text-center">
                                         <h4>
-                                        <span class="text-secondary-d1 text-105">{{$t('general.ReceptionistSignature')}}</span>
+                                            <span class="text-secondary-d1 text-105">{{$t('general.ReceptionistSignature')}}</span>
                                         </h4>
                                     </div>
                                     <div class="col-4 mb-5 text-center">
                                         <h4>
-                                        <span class="text-secondary-d1 text-105">{{$t('general.ManagerSignature')}}</span>
+                                            <span class="text-secondary-d1 text-105">{{$t('general.ManagerSignature')}}</span>
                                         </h4>
                                     </div>
                                 </div>
@@ -274,9 +280,12 @@ export default {
                     date:e.date_from,
                     time:e.check_in_time,
                     description: parseInt(e.is_stripe) == 0 ? this.$t('general.accommodation') : this.$i18n.locale == "ar" ? e.item.name:e.item.name_e,
+                    payment_method:'',
                     receipt:e.prefix_related,
                     charges:parseFloat(e.total).toFixed(3),
                     payments:0,
+                    note:e.note,
+                    manual_document_number:'',
                 });
             });
 
@@ -287,9 +296,12 @@ export default {
                         date:e.date,
                         time: this.currentTime(e.created_at),
                         description: this.$i18n.locale == "ar" ? e.document.name : e.document.name_e,
+                        payment_method: this.$i18n.locale == "ar" ? e.payment_method.name : e.payment_method.name_e,
                         receipt:e.prefix,
-                        charges:parseInt(e.document.attributes.customer) == 1 ? parseFloat(e.amount).toFixed(3) : 0,
-                        payments:parseInt(e.document.attributes.customer) == -1 ? parseFloat(e.amount).toFixed(3) : 0,
+                        charges:0,
+                        payments:parseInt(e.document.attributes.customer) == -1 ? parseFloat(e.amount).toFixed(3) : parseFloat(e.amount * -1).toFixed(3),
+                        note:e.notes,
+                        manual_document_number:e.manual_document_number,
                     });
                 });
             };
@@ -326,7 +338,7 @@ export default {
             return formattedTime;
         },
 
-       async getDataPrint()
+        async getDataPrint()
         {
             this.isLoader = true;
             await adminApi

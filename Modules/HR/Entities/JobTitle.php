@@ -2,6 +2,7 @@
 
 namespace Modules\HR\Entities;
 
+use App\Models\Employee;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,6 +35,11 @@ class JobTitle extends Model
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'job_id');
     }
 
 }

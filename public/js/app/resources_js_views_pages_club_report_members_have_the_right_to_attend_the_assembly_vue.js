@@ -721,16 +721,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -880,7 +884,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -1227,13 +1231,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -1275,7 +1279,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -1832,7 +1836,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.isLoader = true;
         var dateStartArray = this.create.date.split("-");
         var startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/reports/members-permissions?members_permissions_id=".concat(this.create.cm_permission_id, "&dateOfYear=").concat(startDate, "&page=").concat(page, "&per_page=50"), {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/reports/members-permissions?members_permissions_id=".concat(this.create.cm_permission_id, "&dateOfYear=").concat(startDate), {
           params: {
             members_permissions_id: this.create.cm_permission_id,
             dateOfYear: this.create.date
@@ -1840,8 +1844,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }).then(function (res) {
           var l = res.data;
           _this3.items = l.data;
-          _this3.itemsPagination = l.pagination;
-          _this3.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_6___default().fire({
             icon: "error",
@@ -1864,7 +1866,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           this.isLoader = true;
           var dateStartArray = this.create.date.split("-");
           var startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/reports/members-permissions?members_permissions_id=".concat(this.create.cm_permission_id, "&dateOfYear=").concat(startDate, "&page=").concat(this.current_page, "&per_page=50&search=").concat(this.search, "&").concat(filter), {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/reports/members-permissions?members_permissions_id=".concat(this.create.cm_permission_id, "&dateOfYear=").concat(startDate, "&search=").concat(this.search, "&").concat(filter), {
             params: {
               members_permissions_id: this.create.cm_permission_id,
               dateOfYear: this.create.date
@@ -1872,8 +1874,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }).then(function (res) {
             var l = res.data;
             _this4.items = l.data;
-            _this4.itemsPagination = l.pagination;
-            _this4.current_page = l.pagination.current_page;
           })["catch"](function (err) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_6___default().fire({
               icon: "error",
@@ -3299,7 +3299,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -3319,7 +3319,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -4808,7 +4808,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -5348,66 +5348,7 @@ var render = function render() {
     attrs: {
       href: "javascript:void(0)"
     }
-  }, [_vm._v("\n                                                Apply\n                                            ")])])], 1)], 1), _vm._v(" "), _c("div", {
-    staticClass: "d-inline-flex align-items-center pagination-custom"
-  }, [_c("div", {
-    staticClass: "d-inline-block",
-    staticStyle: {
-      "font-size": "13px"
-    }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.itemsPagination.from) + "-" + _vm._s(_vm.itemsPagination.to) + " /\n                                        " + _vm._s(_vm.itemsPagination.total) + "\n                                    ")]), _vm._v(" "), _c("div", {
-    staticClass: "d-inline-block"
-  }, [_c("a", {
-    style: {
-      "pointer-events": _vm.itemsPagination.current_page == 1 ? "none" : ""
-    },
-    attrs: {
-      href: "javascript:void(0)"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.getData(_vm.itemsPagination.current_page - 1);
-      }
-    }
-  }, [_c("span", [_vm._v("<")])]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.current_page,
-      expression: "current_page"
-    }],
-    staticClass: "pagination-current-page",
-    attrs: {
-      type: "text"
-    },
-    domProps: {
-      value: _vm.current_page
-    },
-    on: {
-      keyup: function keyup($event) {
-        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
-        return _vm.getDataCurrentPage();
-      },
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.current_page = $event.target.value;
-      }
-    }
-  }), _vm._v(" "), _c("a", {
-    style: {
-      "pointer-events": _vm.itemsPagination.last_page == _vm.itemsPagination.current_page ? "none" : ""
-    },
-    attrs: {
-      href: "javascript:void(0)"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.getData(_vm.itemsPagination.current_page + 1);
-      }
-    }
-  }, [_c("span", [_vm._v(">")])])])])])])]), _vm._v(" "), _c("b-modal", {
+  }, [_vm._v("\n                                                Apply\n                                            ")])])], 1)], 1), _vm._v(" "),  false ? 0 : _vm._e()])])]), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "create",
       title: _vm.$t("general.execution"),

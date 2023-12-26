@@ -48,6 +48,26 @@ class RlstItem extends Model implements HasMedia
         return $this->belongsToMany(RlstCategoryItem::class, 'rlst_categories_item', 'item_id', 'category_item_id');
 
     }
+    public function invoiceItems()
+    {
+        return $this->hasMany(RlstInvoiceItem::class, 'item_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->invoiceItems()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'invoiceItems',
+                'count' => $this->invoiceItems()->count(),
+                'ids' => $this->invoiceItems()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
 
     // public function hasChildren()
     // {
@@ -55,20 +75,20 @@ class RlstItem extends Model implements HasMedia
     //     return $this->categories()->count() > 0;
     // }
 
-    public function hasChildren()
-    {
-        $relationsWithChildren = [];
+    // public function hasChildren()
+    // {
+    //     $relationsWithChildren = [];
 
-        if ($this->categories()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'categories',
-                'count' => $this->categories()->count(),
-                'ids' => $this->categories()->pluck('id')->toArray(),
-            ];
-        }
+    //     if ($this->categories()->count() > 0) {
+    //         $relationsWithChildren[] = [
+    //             'relation' => 'categories',
+    //             'count' => $this->categories()->count(),
+    //             'ids' => $this->categories()->pluck('id')->toArray(),
+    //         ];
+    //     }
 
-        return $relationsWithChildren;
-    }
+    //     return $relationsWithChildren;
+    // }
 
     // scopes
     public function getActivitylogOptions(): LogOptions

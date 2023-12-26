@@ -27,4 +27,6 @@ interface DocumentHeaderInterface
     public function createDailyInvoiceOnline($request);
 
     public function getDocumentsCustomer($id,$request);
+
+    public function documentRealEstateData($id);
 }

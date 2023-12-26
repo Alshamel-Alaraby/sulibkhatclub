@@ -1,8 +1,9 @@
 import adminApi from "../../api/adminAxios";
 import successError from "./success&error";
 import Swal from "sweetalert2";
-import { formatDateOnly } from "../startDate";
-import { dynamicSortNumber, dynamicSortString } from "../tableSort";
+import {formatDateOnly} from "../startDate";
+import {dynamicSortNumber, dynamicSortString} from "../tableSort";
+
 export default {
     data() {
         return {
@@ -29,11 +30,11 @@ export default {
         /**
          *  start get Data countrie && pagination
          */
-        getData(page = 1, url, filter = null, params = null) {
+        getData(page = 1, url, filter = null, params = '') {
             this.isLoader = true;
             adminApi
                 .get(
-                    `${url}?page=${page}&per_page=${this.per_page}${this.searchMain ? `&search=${this.searchMain}${params ? params : ""}` : ''}${this.searchField.length > 0 ? `&${filter}` : ''}`
+                    `${url}?page=${page}&per_page=${this.per_page}${this.searchMain ? `&search=${this.searchMain}` : ''}${params}${this.searchField.length > 0 ? `&${filter}` : ''}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -75,7 +76,7 @@ export default {
                     if (result.value) {
                         this.isLoader = true;
                         adminApi
-                            .post(`${url}/bulk-delete`, { ids: id })
+                            .post(`${url}/bulk-delete`, {ids: id})
                             .then((res) => {
                                 this.checkAll = [];
                                 this.getData(1, this.url);
@@ -83,7 +84,9 @@ export default {
                             })
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    this.errorFun('Error', 'CantDeleteRelation');
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                 } else {
                                     this.errorFun('Error', 'Thereisanerrorinthesystem');
                                 }
@@ -115,10 +118,13 @@ export default {
                                 this.getData(1, this.url);
                                 this.successFun('Yourrowhasbeendeleted', 'Deleted');
                             })
-
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    this.errorFun('Error', 'CantDeleteRelation');
+
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+
+                                    this.errorFunChildren('Error', text);
                                 } else {
                                     this.errorFun('Error', 'Thereisanerrorinthesystem');
                                 }
@@ -136,7 +142,7 @@ export default {
             this.enabled3 = false;
             setTimeout(() => {
                 let elt = this.$refs.exportable_table;
-                let wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
+                let wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
                 if (dl) {
                     XLSX.write(wb, {
                         bookType: type,
@@ -164,9 +170,9 @@ export default {
                         let l = res.data.data;
                         l.forEach((e) => {
                             this.Tooltip += `Created By: ${e.causer_type}; Event: ${e.event
-                                }; Description: ${e.description} ;Created At: ${this.formatDate(
-                                    e.created_at
-                                )} \n`;
+                            }; Description: ${e.description} ;Created At: ${this.formatDate(
+                                e.created_at
+                            )} \n`;
                         });
                         $(`#tooltip-${id}`).tooltip();
                     })
@@ -197,11 +203,11 @@ export default {
             }
         },
         /***  end  ckeckRow*/
-        changeType({ typeAction, id }) {
+        changeType({typeAction, id}) {
             this.type = typeAction;
             this.idEdit = id;
         },
-        dbClickRow(id,modal_id = 'create') {
+        dbClickRow(id, modal_id = 'create') {
             this.type = 'edit';
             this.idEdit = id;
             this.$bvModal.show(modal_id);

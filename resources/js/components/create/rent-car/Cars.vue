@@ -4,7 +4,7 @@
             :companyKeys="companyKeys"
             :defaultsKeys="defaultsKeys"
             :id="'country-create-car'"
-            @created="country"
+            @created="getCountry"
         />
         <Transmission
             :companyKeys="companyKeys"
@@ -193,6 +193,7 @@
                                             <span v-if="isRequired('country_id')" class="text-danger">*</span>
                                         </label>
                                         <multiselect
+                                            @input="showCountryModal"
                                             v-model="create.country_id"
                                             :options="countries.map((type) => type.id)"
                                             :custom-label="
@@ -447,7 +448,7 @@
                                             <span v-if="isRequired('color_exterior_id')" class="text-danger">*</span>
                                         </label>
                                         <multiselect
-                                            @input="showColorExteriorModal"
+                                            @input="showColorInteriorModal"
                                             v-model="create.color_exterior_id"
                                             :options="color_exteriors.map((type) => type.id)"
                                             :custom-label="
@@ -785,6 +786,54 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr
+                                style="
+                                    margin: 10px 0 !important;
+                                    border-top: 1px solid rgb(141 163 159 / 42%);
+                                "
+                                v-if="(isVisible('daily_price') || isVisible('weekly_price') || isVisible('monthly_price')) && type == 'edit'"
+                            />
+                            <div class="row">
+                                <div class="col-md-3" v-if="isVisible('daily_price') && type == 'edit'" >
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("car_car_daily_price") }}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            step="0.01"
+                                            v-model.number="daily_price"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-3" v-if="isVisible('weekly_price') && type == 'edit'" >
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("car_car_weekly_price") }}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            step="0.01"
+                                            v-model.number="weekly_price"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-3" v-if="isVisible('monthly_price') && type == 'edit'" >
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            {{ getCompanyKey("car_car_monthly_price") }}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            step="0.01"
+                                            v-model.number="monthly_price"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </b-tab>
                         <b-tab
                             :disabled="!car_id"
@@ -993,7 +1042,10 @@ export default {
             idDelete: null,
             images: [],
             media: {},
-            showPhoto: img
+            showPhoto: img,
+            daily_price: 0,
+            weekly_price: 0,
+            monthly_price: 0
         };
     },
     validations: {
@@ -1134,6 +1186,9 @@ export default {
             this.showPhoto = img;
             this.images = [];
             this.is_disabled = false;
+            this.daily_price = 0;
+            this.weekly_price = 0;
+            this.monthly_price = 0;
         },
         resetModalHidden() {
             this.defaultData();
@@ -1149,7 +1204,7 @@ export default {
                     if(this.isVisible('transmission_id')) this.getTransmission();
                     if(this.isVisible('sunroof_id')) this.getSunroof();
                     if(this.isVisible('body_type_id')) this.bodyType();
-                    if(this.isVisible('country_id')) this.country();
+                    if(this.isVisible('country_id')) this.getCountry();
                     if(this.isVisible('fuel_type_id')) this.fuelType();
                     if(this.isVisible('seats_material_id')) this.seatsMaterial();
                     if(this.isVisible('specifications')) this.specification();
@@ -1178,6 +1233,9 @@ export default {
                         this.create.depreciation_percentage= car.depreciation_percentage;
                         this.create.barcode= car.barcode;
                         this.create.jpscode= car.jpscode;
+                        this.daily_price = car.daily_price;
+                        this.weekly_price = car.weekly_price;
+                        this.monthly_price = car.monthly_price;
                         this.images = car.media ?? [];
                         if (this.images && this.images.length > 0) {
                             this.showPhoto = this.images[this.images.length - 1].webp;
@@ -1191,7 +1249,7 @@ export default {
                         if(this.isVisible('transmission_id')) this.getTransmission();
                         if(this.isVisible('sunroof_id')) this.getSunroof();
                         if(this.isVisible('body_type_id')) this.bodyType();
-                        if(this.isVisible('country_id')) this.country();
+                        if(this.isVisible('country_id')) this.getCountry();
                         if(this.isVisible('fuel_type_id')) this.fuelType();
                         if(this.isVisible('seats_material_id')) this.seatsMaterial();
                         if(this.isVisible('specifications')) this.specification();
@@ -1300,12 +1358,6 @@ export default {
                 this.create.body_type_id = null;
             }
         },
-        showColorExteriorModal(){
-            if (this.create.color_exterior_id == 0) {
-                this.$bvModal.show("color-exterior-create-car");
-                this.create.color_exterior_id = null;
-            }
-        },
         showFuelTypeModal(){
             if (this.create.fuel_type_id == 0) {
                 this.$bvModal.show("fuel-type-create-car");
@@ -1313,9 +1365,10 @@ export default {
             }
         },
         showColorInteriorModal(){
-            if (this.create.color_interior_id == 0 && this.create.color_exterior_id == 0) {
+            if (this.create.color_interior_id == 0 || this.create.color_exterior_id == 0) {
                 this.$bvModal.show("color-interior-create-car");
-                this.create.color_interior_id = null;
+                if(this.create.color_interior_id == 0) this.create.color_interior_id = null;
+                if(this.create.color_exterior_id == 0) this.create.color_exterior_id = null;
             }
         },
         showSeatsMaterialModal(){
@@ -1561,7 +1614,7 @@ export default {
                     this.isLoader = false;
                 });
         },
-        country(){
+        getCountry(){
             this.isLoader = true;
 
             adminApi

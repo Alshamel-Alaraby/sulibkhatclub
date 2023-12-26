@@ -1924,16 +1924,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -2083,7 +2087,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -2430,13 +2434,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -2478,7 +2482,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -2859,7 +2863,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/general/Page-header */ "./resources/js/components/general/Page-header.vue");
 /* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
 /* harmony import */ var vue_switches__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-switches */ "./node_modules/vue-switches/src/switches.vue");
-/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
@@ -2876,6 +2880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../helper/mixin/translation-mixin */ "./resources/js/helper/mixin/translation-mixin.js");
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
 /* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../helper/langTransform */ "./resources/js/helper/langTransform.js");
+/* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -2911,6 +2916,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 /**
  * Advanced Table component
  */
@@ -2923,7 +2929,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       content: "Product"
     }]
   },
-  mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_15__["default"]],
+  mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_15__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_18__["default"]],
   components: {
     Layout: _layouts_main__WEBPACK_IMPORTED_MODULE_0__["default"],
     PageHeader: _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -3039,201 +3045,201 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   validations: {
     create: {
       category_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("category_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       brand_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("brand_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       unit_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("unit_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       group_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("group_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       tax_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("tax_id");
         })
       },
       branch_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("branch_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       title: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("title");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       title_e: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("title_e");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       description: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("description");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(1000)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(1000)
       },
       description_e: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("description_e");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(1000)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(1000)
       },
       product_type: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("product_type");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       is_quantity: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("is_quantity");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       media: {}
     },
     edit: {
       category_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("category_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       brand_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("brand_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       unit_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("unit_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       group_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("group_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       tax_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("tax_id");
         })
       },
       branch_id: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("branch_id");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       title: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("title");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       title_e: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("title_e");
         }),
-        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minLength)(2),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(100)
+        minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minLength)(2),
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(100)
       },
       description: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("description");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(1000)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(1000)
       },
       description_e: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("description_e");
         }),
-        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(1000)
+        maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(1000)
       },
       product_type: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("product_type");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       is_quantity: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.requiredIf)(function (model) {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.requiredIf)(function (model) {
           return this.isRequired("is_quantity");
         }),
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       purchase_price: {
-        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
       },
       selling_price: {
-        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
       },
       sku: {},
       quantity: {
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       bar_code: {},
       re_order: {
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       media: {}
     },
     productStandard: {
       purchase_price: {
-        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
       },
       selling_price: {
-        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+        minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
       },
       sku: {},
       quantity: {
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       },
       bar_code: {},
       re_order: {
-        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+        integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
       }
     },
     productVariant: {
       $each: {
         purchase_price: {
-          minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+          minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
         },
         selling_price: {
-          minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(.00)
+          minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(.00)
         },
         sku: {},
         quantity: {
-          integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+          integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
         },
         bar_code: {},
         re_order: {
-          integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+          integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
         }
       }
     }
@@ -3745,11 +3751,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this14.$t("general.Error")),
-                  text: "".concat(_this14.$t("general.CantDeleteRelation"))
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
                 });
+                _this14.errorFunChildren('Error', text);
                 _this14.getData();
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
@@ -3789,11 +3795,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this14.$t("general.Error")),
-                  text: "".concat(_this14.$t("general.CantDeleteRelation"))
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
                 });
+                _this14.errorFunChildren('Error', text);
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
@@ -7084,7 +7090,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -7104,7 +7110,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -8593,7 +8599,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -9047,6 +9053,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

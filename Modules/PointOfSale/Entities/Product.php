@@ -79,12 +79,7 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Attribute::class, 'pos_product_attribute_values', 'product_id', 'attribute_id')->withPivot('values')
             ->withTimestamps();
     }
-    //    public function dataAttributes()
-    //    {
-    //        $branch = $this->branch()->get();
-    //        return $branch;
-    //
-    //    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'product_id');
@@ -110,6 +105,21 @@ class Product extends Model implements HasMedia
                 'relation' => 'orderItems',
                 'count' => $otherOrderItemsCount,
                 'ids' => $this->orderItems()->where('type', '<>', 'sales')->pluck('id')->toArray(),
+            ];
+        }
+
+        if ($this->product_variant()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'product_variant',
+                'count' => $this->product_variant()->count(),
+                'ids' => $this->product_variant()->pluck('sku')->toArray(),
+            ];
+        }
+        if ($this->product_attribute_value()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'product_attribute_value',
+                'count' => $this->product_attribute_value()->count(),
+                'ids' => $this->product_attribute_value()->pluck('values')->toArray(),
             ];
         }
 

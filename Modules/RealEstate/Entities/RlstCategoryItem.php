@@ -52,20 +52,14 @@ class RlstCategoryItem extends Model
     {
         $relationsWithChildren = [];
 
-        if ($this->items()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'items',
-                'count' => $this->items()->count(),
-                'ids' => $this->items()->pluck('id')->toArray()
-            ];
-        }
         if ($this->children()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'Category',
+                'relation' => 'children',
                 'count' => $this->children()->count(),
-                'ids' => $this->children()->pluck('id')->toArray()
+                'ids' => $this->children()->pluck('name')->toArray(),
             ];
         }
+
 
         return $relationsWithChildren;
     }

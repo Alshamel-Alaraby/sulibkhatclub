@@ -15,7 +15,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('rlst_buildings', function (Blueprint $table) {
-           
+
             $table->unsignedBigInteger('building_type_id')->change();
 
             // if there a problem, talk first to Ezzat & Mohamed before changing this code
@@ -38,7 +38,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('rlst_buildings', function (Blueprint $table) {
-            
+
             // if there a problem, talk first to Ezzat & Mohamed before changing this code
             $table->dropForeign('building_type_id_foreign');
             $table->dropIndex('building_type_id_index');

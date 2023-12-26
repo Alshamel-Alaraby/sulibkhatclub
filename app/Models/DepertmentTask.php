@@ -22,11 +22,14 @@ class DepertmentTask extends Model
             ->with('depertment:id,name,name_e');
     }
 
- 
-
     public function depertment()
     {
         return $this->belongsTo(Depertment::class, 'department_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'department_task_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -39,7 +42,6 @@ class DepertmentTask extends Model
             ->setDescriptionForEvent(fn (string $eventName) => "This model has been {$eventName} by ($user)");
     }
 
-    // json encode decode estimate_task_duration
 
     public function getEstimateTaskDurationAttribute($value)
     {
@@ -49,5 +51,21 @@ class DepertmentTask extends Model
     public function setEstimateTaskDurationAttribute($value)
     {
         $this->attributes['estimate_task_duration'] = json_encode($value);
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->tasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tasks',
+                'count' => $this->tasks()->count(),
+                'ids' => $this->tasks()->pluck('contact_person')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
 }

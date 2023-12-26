@@ -6,7 +6,14 @@ use App\Traits\LogTrait;
 use App\Traits\MediaTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\ClubMembers\Entities\CmMemberReject;
+use Modules\ClubMembers\Entities\CmTransaction;
+use Modules\PointOfSale\Entities\CashRegister;
 use Modules\PointOfSale\Entities\Order;
+use Modules\RealEstate\Entities\RlstContract;
+use Modules\RealEstate\Entities\RlstContractHeader;
+use Modules\RealEstate\Entities\RlstInvoice;
+use Modules\RealEstate\Entities\RlstReservation;
 use Spatie\Activitylog\LogOptions;
 use Spatie\MediaLibrary\HasMedia;
 
@@ -28,6 +35,15 @@ class Branch extends Model implements HasMedia
                 'stores',
                 'media',
             ]);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class, 'branch_id');
+    }
+    public function cm_transactions()
+    {
+        return $this->hasMany(CmTransaction::class, 'branch_id');
     }
 
     public function stores()
@@ -59,62 +75,157 @@ class Branch extends Model implements HasMedia
     {
         return $this->hasMany(Order::class);
     }
-
-    public function hasChildren()
+    public function documentHeaders()
     {
-        return $this->stores()->count() > 0 ||
-        $this->serials()->count() > 0 ||
-        $this->children()->count() > 0 ||
-        $this->orders()->count() > 0 ||
-        $this->products()->count() > 0 ;
+        return $this->hasMany(DocumentHeader::class, 'branch_id');
+    }
 
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'branch_id');
+    }
+    public function cash_registers()
+    {
+        return $this->hasMany(CashRegister::class, 'branch_id');
+    }
+    public function cm_member_rejects()
+    {
+        return $this->hasMany(CmMemberReject::class, 'branch_id');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(RlstContract::class, 'branch_id');
+    }
+
+    public function contractHeaders()
+    {
+        return $this->hasMany(RlstContractHeader::class, 'branch_id');
+    }
+
+    public function RlstInvoices()
+    {
+        return $this->hasMany(RlstInvoice::class, 'branch_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(RlstReservation::class,'branch_id');
     }
 
 
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
 
-    // public function hasChildren()
-    // {
-    //     $relationsWithChildren = [];
+        if ($this->cm_member_rejects()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm member rejects',
+                'count' => $this->cm_member_rejects()->count(),
+                'ids' => $this->cm_member_rejects()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->reservations()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'reservations',
+                'count' => $this->reservations()->count(),
+                'ids' => $this->reservations()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->RlstInvoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstInvoices',
+                'count' => $this->RlstInvoices()->count(),
+                'ids' => $this->RlstInvoices()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->contractHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contractHeaders',
+                'count' => $this->contractHeaders()->count(),
+                'ids' => $this->contractHeaders()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->contracts()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contracts',
+                'count' => $this->contracts()->count(),
+                'ids' => $this->contracts()->pluck('date')->toArray(),
+            ];
+        }
+        if ($this->cash_registers()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cash_registers',
+                'count' => $this->cash_registers()->count(),
+                'ids' => $this->cash_registers()->pluck('title')->toArray(),
+            ];
+        }
+        if ($this->stores()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'stores',
+                'count' => $this->stores()->count(),
+                'ids' => $this->stores()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->serials()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'serials',
+                'count' => $this->serials()->count(),
+                'ids' => $this->serials()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->products()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'products',
+                'count' => $this->products()->count(),
+                'ids' => $this->products()->pluck('title')->toArray(),
+            ];
+        }
+        if ($this->orders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'orders',
+                'count' => $this->orders()->count(),
+                'ids' => $this->orders()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->documentHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentHeaders',
+                'count' => $this->documentHeaders()->count(),
+                'ids' => $this->documentHeaders()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->employees()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'employees',
+                'count' => $this->employees()->count(),
+                'ids' => $this->employees()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'transactions',
+                'count' => $this->transactions()->count(),
+                'ids' => $this->transactions()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->cm_transactions()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm transactions',
+                'count' => $this->cm_transactions()->count(),
+                'ids' => $this->cm_transactions()->pluck('prefix')->toArray(),
+            ];
+        }
 
-    //     if ($this->stores()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'stores',
-    //             'count' => $this->stores()->count(),
-    //             'ids' => $this->stores()->pluck('id')->toArray(),
-    //         ];
-    //     }
-    //     if ($this->serials()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'serials',
-    //             'count' => $this->serials()->count(),
-    //             'ids' => $this->serials()->pluck('id')->toArray(),
-    //         ];
-    //     }
-
-    //     if ($this->children()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'branches',
-    //             'count' => $this->children()->count(),
-    //             'ids' => $this->children()->pluck('id')->toArray(),
-    //         ];
-    //     }
-    //     if ($this->products()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'products',
-    //             'count' => $this->products()->count(),
-    //             'ids' => $this->products()->pluck('id')->toArray(),
-    //         ];
-    //     }
-    //     if ($this->orders()->count() > 0) {
-    //         $relationsWithChildren[] = [
-    //             'relation' => 'orders',
-    //             'count' => $this->orders()->count(),
-    //             'ids' => $this->orders()->pluck('id')->toArray(),
-    //         ];
-    //     }
-
-    //     return $relationsWithChildren;
-    // }
+        return $relationsWithChildren;
+    }
 
     public function company()
     {

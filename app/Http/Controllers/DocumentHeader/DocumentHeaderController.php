@@ -4,22 +4,23 @@ namespace App\Http\Controllers\DocumentHeader;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentHeader\DocumentHeaderRequest;
-use App\Http\Requests\DocumentStatuse\DocumentStatuseRequest;
 use App\Http\Resources\DocumentHeader\AllDocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\DocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\FindDocumentHeaderResource;
+use App\Http\Resources\DocumentHeader\HMSDocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\NewDocumentHeaderResource;
-use App\Http\Resources\DocumentStatuse\DocumentStatuseResource;
-use App\Repositories\DocumentHeader\DocumentHeaderInterface;
+use App\Http\Resources\DocumentHeader\RealEstateDocumentHeaderResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
+
 
 class DocumentHeaderController extends Controller
 {
+    private $resource_class_name;
     public function __construct(private \App\Repositories\DocumentHeader\DocumentHeaderInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
+        $this->resource_class_name = request()->module_name == 'hms' ? HMSDocumentHeaderResource::class : NewDocumentHeaderResource::class;
+
     }
 
     public function find($id)
@@ -35,7 +36,7 @@ class DocumentHeaderController extends Controller
     public function all(Request $request)
     {
         $models = $this->modelInterface->all($request);
-        return responseJson(200, 'success', NewDocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', $this->resource_class_name::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
     public function allDocumentHeader(Request $request)
@@ -44,6 +45,8 @@ class DocumentHeaderController extends Controller
         return responseJson(200, 'success', AllDocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
 
     }
+
+
 
 
     public function create(DocumentHeaderRequest $request)
@@ -114,13 +117,21 @@ class DocumentHeaderController extends Controller
 
     public function bulkDelete(Request $request)
     {
-
         foreach ($request->ids as $id) {
             $model = $this->modelInterface->find($id);
             $this->modelInterface->delete($id);
         }
         return responseJson(200, __('Done'));
     }
+
+
+
+    private function getRelationDisplayName($relation)
+    {
+        $displayableName = str_replace('_', ' ', $relation);
+        return ucwords($displayableName);
+    }
+
 
     public function checkDateModelFinancialYear(Request $request){
         if (generalCheckDateModelFinancialYear($request['date']) == "true"){
@@ -177,6 +188,15 @@ class DocumentHeaderController extends Controller
     {
         return $data = $this->modelInterface->createDailyInvoiceOnline($request);
 
+    }
+
+    public function getDocumentRealEstateData($id)
+    {
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        return responseJson(200, 'success', new RealEstateDocumentHeaderResource($model));
     }
 
 }

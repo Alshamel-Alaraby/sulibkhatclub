@@ -1293,6 +1293,7 @@ export default {
         },
         addLocationGovernorate()
         {
+
             if (this.create.governorate_id)
             {
                 this.location.governorate_id = this.create.governorate_id;

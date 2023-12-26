@@ -27,7 +27,6 @@ class ItemBreakDown extends Model
 
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

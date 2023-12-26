@@ -12,9 +12,40 @@ class RpInstallmentStatus extends Model
 
     protected $guarded = ['id'];
 
-
-    protected static function newFactory()
+    public function rp_break_downs()
     {
-        return \Modules\RecievablePayable\Database\factories\RpInstallmentStatusFactory::new();
+        return $this->hasMany(RpBreakDown::class, 'installment_statu_id');
     }
+
+    public function payment_plan_installments()
+    {
+        return $this->hasMany(RpPaymentPlanInstallment::class, 'installment_status_id');
+    }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->rp_break_downs()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'rp_break_downs',
+                'count' => $this->rp_break_downs()->count(),
+                'ids' => $this->rp_break_downs()->pluck('rate')->toArray(),
+            ];
+        }
+        if ($this->payment_plan_installments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'payment_plan_installments',
+                'count' => $this->payment_plan_installments()->count(),
+                'ids' => $this->payment_plan_installments()->pluck('v_date')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
+
 }

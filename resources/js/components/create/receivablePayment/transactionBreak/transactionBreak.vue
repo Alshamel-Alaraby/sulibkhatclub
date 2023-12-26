@@ -431,7 +431,7 @@ export default {
                 rate: data.rate,
                 currency_id: data.currency_id,
                 customer_id: data.customer_id,
-                customer_id: data.client_type_id,
+                client_type_id: data.client_type_id,
                 break_id: data.id,
                 break_type: data.break_type,
                 document_id: data.document_id,

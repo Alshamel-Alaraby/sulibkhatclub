@@ -77,7 +77,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       isError: false,
       type: "password",
       login_as: "admin",
-      programs_and_modules: []
+      user_programs_and_modules: []
     };
   },
   components: {
@@ -210,13 +210,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     l = res.data.data;
                     _this.$store.commit("auth/editToken", l.token);
                     _this.$store.commit("auth/editUser", l.user);
-                    _this.$store.commit("auth/editType", "user");
+                    _this.$store.commit("auth/editType", 'user');
                     _this.isSuccess = true;
                     _context2.next = 7;
                     return _this.workflowUser(l.user.permissions);
                   case 7:
                     _context2.next = 9;
-                    return _this.getProgramsAndModulesForCompany(l.user.company_id);
+                    return _this.getProgramsAndModulesForCompany(l.user.company_id, 'user');
                   case 9:
                     _this.$router.push({
                       name: "home"
@@ -251,6 +251,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               permissions.forEach(function (el) {
                 if (!workflowTree.includes(el.crud_name)) {
                   workflowTree.push(el.crud_name);
+                }
+                if (!_this2.user_programs_and_modules.includes(el.module)) {
+                  _this2.user_programs_and_modules.push(el.module);
                 }
               });
               _this2.$store.commit("auth/editPermission", permissions);
@@ -301,7 +304,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    getProgramsAndModulesForCompany: function getProgramsAndModulesForCompany(company_id) {
+    getProgramsAndModulesForCompany: function getProgramsAndModulesForCompany(company_id, type) {
       var _this4 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
@@ -310,9 +313,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this4.isLoader = true;
               _context5.next = 3;
               return axios.get("".concat("https://admin.alshamelalaraby2.com/", "api/partners/get_programs_and_modules_for_company/").concat(company_id)).then(function (res) {
-                console.log(res.data.data);
-                _this4.programs_and_modules = res.data.data;
-                _this4.$store.commit("auth/editParentModule", res.data.data);
+                if (type == 'user') {
+                  var filtered_prog_modules = [];
+                  res.data.data.forEach(function (element) {
+                    var counter = 0;
+                    element.modules.forEach(function (moduleItem, index) {
+                      if (_this4.user_programs_and_modules.includes(moduleItem.project_program_module.name_e)) {
+                        moduleItem.isUserTopBar = 1;
+                        element.modules[index] = moduleItem;
+                        counter++;
+                      }
+                    });
+                    if (counter) {
+                      filtered_prog_modules.push(element);
+                    }
+                  });
+                  _this4.$store.commit("auth/editParentModule", filtered_prog_modules);
+                } else {
+                  _this4.$store.commit("auth/editParentModule", res.data.data);
+                }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
                   icon: "error",

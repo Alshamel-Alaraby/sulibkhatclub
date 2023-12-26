@@ -15,6 +15,29 @@ class CmDischargeReson extends Model
 
     protected $table ='cm_discharge_reson';
 
+    public function cm_member_rejects()
+    {
+        return $this->hasMany(CmMemberReject::class, 'discharge_reson_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->cm_member_rejects()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm member rejects',
+                'count' => $this->cm_member_rejects()->count(),
+                'ids' => $this->cm_member_rejects()->pluck('prefix')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
+
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

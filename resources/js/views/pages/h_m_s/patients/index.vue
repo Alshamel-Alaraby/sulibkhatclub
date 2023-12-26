@@ -8,7 +8,7 @@ import customTable from "../../../../helper/mixin/customTable";
 import crudHelper from "../../../../helper/mixin/crudHelper";
 import searchPage from "../../../../components/general/searchPage";
 import actionSetting from "../../../../components/general/actionSetting";
-import tableCustom from "../../../../components/general/tableCustom";
+import tableCustom from "../../../../components/general/tableCustom.vue";
 import Modal from "./modal.vue";
 import patientdetailsmodal from "./patient_details.vue";
 import page_title from "../../../../helper/PageTitle"
@@ -40,7 +40,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next((vm) => {
-          return permissionGuard(vm, "Patients", "Patients");
+          return permissionGuard(vm, "Patients", "all Patient");
         });
    },
     data() {
@@ -99,7 +99,11 @@ export default {
                     type: 'string',sort: true,setting: {"date_of_birth":true},isSetting: true
                 },
                 {
-                    isFilter: false,isSet: true,trans:"hms_patients_is_active",isV: 'is_active',
+                    isFilter: true,isSet: true,trans:"hms_patients_type",isV: 'type',
+                    type: 'string',sort: true,setting: {"type":true},isSetting: true
+                },
+                {
+                    isFilter: false,isSet: true,trans:"hms_patients_is_active",isV: 'is_active',forceVisible:true,
                     type: 'boolean',setting: {"is_active":true},isSetting: true
                 }
             ],
@@ -179,7 +183,7 @@ export default {
                         />
                         <!-- end setting -->
 
-                        <patientdetailsmodal :patient_id="patient_id" />
+                        <patientdetailsmodal :patient_id="patient_id" v-if="isPermission('show Patient Details')"/>
 
                         <!--  create   -->
                         <Modal
@@ -196,12 +200,14 @@ export default {
 
                             <tableCustom
                                 :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
-                                :tables="tables" :isEdit="true" :isDelete="true" :modalButtonIcon="'fa fa-eye'" :modalButton="'patientDetails'"
+                                :tables="tables" :isEdit="true" :isDelete="true"
+                                 :modalButtonIcon="'fa fa-eye'" :modalButton="'patientDetails'" :modalButtonCondition="{key:'type',value:'inpatient',default_val:'-'}" :modalEmitAttribute="'id'"
+                                 @patientDetails="id=> patient_id = id"
                                 :permissionUpdate="isPermission('update Patient')"
                                 :permissionDelete="isPermission('delete Patient')"
                                 :isVisible="isVisible" :tableSetting="tableSetting"
                                 :enabled3="enabled3" :Tooltip="Tooltip" @logFire="(id) => log(id,url)"
-                                @patientDetails="id=> patient_id = id"
+
                                 @delete="ids => deleteRow(ids,url)" @editRow="id => dbClickRow(id)"
                                 @checkRows="(cR) => checkAll = cR" @checkRowTable="id => checkRow(id)"
                                 :isInputCheck="true" :isLog="false" :isAction="true"

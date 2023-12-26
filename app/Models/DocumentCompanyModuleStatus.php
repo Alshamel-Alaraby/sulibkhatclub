@@ -36,15 +36,6 @@ class DocumentCompanyModuleStatus extends Model
         return $this->belongsTo(DocumentModuleType::class,'document_module_type_id');
     }
 
-
-
-
-
-
-
-
-
-
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

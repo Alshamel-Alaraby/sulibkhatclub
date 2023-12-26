@@ -721,16 +721,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -880,7 +884,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -1170,14 +1174,22 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      localSelectedValues: this.selectedValues
+      localSelectedValues: this.selectedValues,
+      selectedDropdownIds: []
     };
   },
   methods: {
-    updateSelectedValues: function updateSelectedValues() {
-      // Emitting both the dropdownId (as a string) and the selected values array (ids)
-      console.log(this.dropdownId, this.localSelectedValues);
-      this.$emit("updateIds", this.dropdownId, this.localSelectedValues);
+    onDropDownOpen: function onDropDownOpen() {
+      this.$emit("dropdownOpened", {
+        dropdownId: this.dropdownId,
+        selectedValues: this.localSelectedValues
+      });
+    },
+    onDropDownClose: function onDropDownClose() {
+      this.$emit("dropdownClosed", {
+        dropdownId: this.dropdownId,
+        selectedValues: this.localSelectedValues
+      });
     }
   }
 });
@@ -1502,13 +1514,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -1550,7 +1562,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -2079,7 +2091,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       results: [],
       showTable: false,
       dropdownIdTable: null,
-      selectedTableValues: []
+      selectedTableValues: [],
+      openDropdowns: [],
+      allSelectedValues: [],
+      params: {}
     };
   },
   computed: {
@@ -2128,33 +2143,40 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
         console.error("Error fetching data:", error);
       });
     },
-    handleDropdownUpdate: function handleDropdownUpdate(dropdownId, selectedValues) {
+    handleDropdownUpdateOpened: function handleDropdownUpdateOpened(data) {
       var _this2 = this;
-      // so i can use them to fetch the table data
-      this.dropdownIdTable = dropdownId;
-      this.selectedTableValues = selectedValues;
-
+      var existingDropdownIndex = this.openDropdowns.findIndex(function (dropdown) {
+        return dropdown.dropdownId === data.dropdownId;
+      });
+      if (existingDropdownIndex !== -1) {
+        // Update the existing dropdown's selectedValues
+        this.openDropdowns[existingDropdownIndex].selectedValues = data.selectedValues;
+      } else if (data.selectedValues) {
+        // Add a new dropdown entry if selectedValues exist
+        this.openDropdowns.push({
+          dropdownId: data.dropdownId,
+          selectedValues: data.selectedValues
+        });
+      }
+      console.log("Dropdown ID:", data.dropdownId);
+      console.log("open SelectedValue", data.selectedValues);
+      if (this.params.hasOwnProperty(data.dropdownId)) {
+        this.params[data.dropdownId] = []; // Clear the selected values for the opened dropdown
+      } else {
+        this.openDropdowns.forEach(function (dropdown) {
+          _this2.params[dropdown.dropdownId] = dropdown.selectedValues;
+        });
+      }
+      console.log("Params opened:", this.params);
       // Generate dropdownKeys dynamically based on the updated dropdowns
       var dropdownKeys = this.dropdowns.map(function (dropdown) {
         return dropdown.id;
       });
       var rangeInputKeys = ["unitAreaFrom", "unitAreaTo", "unitRoomsFrom", "unitRoomsTo", "unitBathroomsFrom", "unitBathroomsTo"];
-
-      // making the params dynamic based on the dropdownId:
-      var params = {};
-      var dropdown = this.dropdowns.find(function (dropdown) {
-        return dropdown.id === dropdownId;
-      });
-      if (dropdown) {
-        params[dropdownId] = selectedValues;
-      }
-      console.log("DropdownId and SelectedValues:", dropdownId, selectedValues);
-      console.log("params", params);
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("real-estate/unit-reports/get-lists", {
-        params: params
+        params: this.params
       }).then(function (response) {
         var updatedData = response.data.data;
-        console.log("updatedData", updatedData);
         dropdownKeys.forEach(function (key, index) {
           if (updatedData[key]) {
             _this2.dropdowns[index].options = updatedData[key].map(function (item) {
@@ -2175,17 +2197,66 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
             }
           }
         });
-        console.log("Dropdowns after update:", _this2.dropdowns);
-        console.log("Range Inputs after update:", _this2.rangeInputs);
+      })["catch"](function (error) {
+        console.error("Error fetching or updating dropdowns:", error);
+      });
+    },
+    handleDropdownUpdateCLosed: function handleDropdownUpdateCLosed(data) {
+      var _this3 = this;
+      var index = this.openDropdowns.findIndex(function (dropdown) {
+        return dropdown.dropdownId === data.dropdownId;
+      });
+      if (index !== -1) {
+        this.openDropdowns.splice(index, 1);
+      }
+      this.params[data.dropdownId] = data.selectedValues;
+
+      // Remove dropdownIds from params that have empty selectedValues
+      Object.keys(this.params).forEach(function (dropdownId) {
+        if (Array.isArray(_this3.params[dropdownId]) && _this3.params[dropdownId].length === 0) {
+          delete _this3.params[dropdownId];
+        }
+      });
+
+      // Generate dropdownKeys dynamically based on the updated dropdowns
+      var dropdownKeys = this.dropdowns.map(function (dropdown) {
+        return dropdown.id;
+      });
+      var rangeInputKeys = ["unitAreaFrom", "unitAreaTo", "unitRoomsFrom", "unitRoomsTo", "unitBathroomsFrom", "unitBathroomsTo"];
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("real-estate/unit-reports/get-lists", {
+        params: this.params
+      }).then(function (response) {
+        var updatedData = response.data.data;
+        dropdownKeys.forEach(function (key, index) {
+          if (updatedData[key]) {
+            _this3.dropdowns[index].options = updatedData[key].map(function (item) {
+              return {
+                text: item.name || item.name_e || item.code,
+                value: item.id
+              };
+            });
+          }
+        });
+        // this.handleAutoSelectSingleOptions();
+        rangeInputKeys.forEach(function (key) {
+          if (updatedData[key]) {
+            var rangeInput = _this3.rangeInputs.find(function (range) {
+              return range.id === key.slice(0, -4);
+            });
+            if (rangeInput) {
+              rangeInput[key.slice(-2)] = updatedData[key];
+            }
+          }
+        });
       })["catch"](function (error) {
         console.error("Error fetching or updating dropdowns:", error);
       });
     },
     fetchTableData: function fetchTableData() {
-      var _this3 = this;
+      var _this4 = this;
       var params = {};
       var dropdown = this.dropdowns.find(function (dropdown) {
-        return dropdown.id === _this3.dropdownIdTable;
+        return dropdown.id === _this4.dropdownIdTable;
       });
       if (dropdown) {
         params[this.dropdownIdTable] = this.selectedTableValues;
@@ -2193,14 +2264,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("real-estate/unit-reports/get-results", {
         params: params
       }).then(function (response) {
-        _this3.results = response.data.data.results;
-        _this3.showTable = true;
-        _this3.$refs.myModal.hide();
-        _this3.fetchInitialData();
+        _this4.results = response.data.data.results;
+        _this4.showTable = true;
+        _this4.$refs.myModal.hide();
+        _this4.fetchInitialData();
       });
     },
     fetchFilteredData: function fetchFilteredData(selectedFilters) {
-      var _this4 = this;
+      var _this5 = this;
       console.log("selectedFiltersFather", selectedFilters);
       var columnMap = {
         code: "x_code",
@@ -2235,10 +2306,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
         params: params
       }).then(function (response) {
         // Update the 'results' data in this component with the fetched data
-        _this4.results = response.data.data.excel_results;
+        _this5.results = response.data.data.excel_results;
       })["catch"](function (error) {
         console.error("Error fetching filtered data:", error);
         // Handle the error appropriately, such as displaying an error message
+      });
+    },
+    handleAutoSelectSingleOptions: function handleAutoSelectSingleOptions() {
+      var _this6 = this;
+      // here i want to make that if there is a single option it auto select it
+      console.log("it is here in auto ");
+      this.dropdowns.forEach(function (dropdown, index) {
+        if (dropdown.options && dropdown.options.length === 1 && dropdown.options[0].value) {
+          _this6.params[dropdown.id] = [dropdown.options[0].value];
+        }
       });
     }
   }
@@ -3581,7 +3662,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -3601,7 +3682,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -4922,7 +5003,8 @@ var render = function render() {
       }
     },
     on: {
-      input: _vm.updateSelectedValues
+      open: _vm.onDropDownOpen,
+      close: _vm.onDropDownClose
     },
     model: {
       value: _vm.localSelectedValues,
@@ -5465,7 +5547,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -5748,7 +5830,8 @@ var render = function render() {
           options: dropdown.options
         },
         on: {
-          updateIds: _vm.handleDropdownUpdate
+          dropdownOpened: _vm.handleDropdownUpdateOpened,
+          dropdownClosed: _vm.handleDropdownUpdateCLosed
         }
       })], 1);
     }), 0);

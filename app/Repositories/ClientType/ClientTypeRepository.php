@@ -65,4 +65,13 @@ class ClientTypeRepository implements ClientTypeRepositoryInterface
             return ['data' => $models->get(), 'paginate' => false];
         }
     }
+
+    public function getDropDownByTable($request)
+    {
+        $models = DB::table($request->db_table)
+            ->where('id', 'like', '%' . $request->search . '%')
+            ->orWhere('name', 'like', '%' . $request->search . '%')
+            ->orWhere('name_e', 'like', '%' . $request->search . '%');
+        return $models->take($request->limet)->get();
+    }
 }

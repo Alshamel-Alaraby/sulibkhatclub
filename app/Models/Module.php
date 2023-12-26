@@ -26,12 +26,12 @@ class Module extends Model
     // relations
     public function parent()
     {
-        return $this->hasMany(Module::class, 'parent_id', 'id');
+        return $this->belongsTo(Location::class, 'parent_id');
     }
 
     public function children()
     {
-        return $this->belongsTo(Module::class);
+        return $this->hasMany(Location::class, 'parent_id');
     }
 
     public function companies()
@@ -58,4 +58,28 @@ class Module extends Model
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstBuilding::class);
     }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->buildings()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'buildings',
+                'count' => $this->buildings()->count(),
+                'ids' => $this->buildings()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 }

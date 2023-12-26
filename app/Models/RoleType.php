@@ -33,7 +33,16 @@ class RoleType extends Model
 
     public function hasChildren()
     {
-        $h = $this->roles()->count() > 0;
-        return $h;
+        $relationsWithChildren = [];
+
+        if ($this->roles()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'roles',
+                'count' => $this->roles()->count(),
+                'ids' => $this->roles()->pluck('name')->toArray(),
+            ];
+        }
+        return $relationsWithChildren;
     }
+
 }

@@ -14,7 +14,6 @@ import CreateOrUpdateBooking from "./components/create-or-update-booking";
 import CreateOrUpdateItems from "./components/create-or-update-items";
 import CreateOrUpdateCheckout from "./components/create-or-update-checkout";
 import CreateOrUpdateMaintenance from "./components/create-or-update-maintenance";
-import CreateOrUpdateYearlyMaintenance from "./components/create-or-update-yearly-maintenance";
 import AccountStatementPrint from "./print/account-statement-booking";
 import page_title from "../../../helper/PageTitle";
 import PrintInvoice from "./print/print-general-item-invoice";
@@ -42,15 +41,7 @@ export default {
         CreateOrUpdateCheckout,
         CreateOrUpdateMaintenance,
         AccountStatementPrint,
-        CreateOrUpdateYearlyMaintenance,
         PrintInvoice
-    },
-    watch:{
-        pageTitle: {
-        handler(newV, old) {
-            this.page_title = page_title.value;
-        },
-        },
     },
     computed: {
         pageTitle: function () {
@@ -132,6 +123,11 @@ export default {
             } else {
                 this.checkAll = [];
             }
+        },
+        pageTitle: {
+            handler(newV, old) {
+                this.page_title = page_title.value;
+            },
         },
     },
     mounted() {
@@ -458,9 +454,6 @@ export default {
         <template v-if="document && document.document_detail_type == 'normal'">
             <CreateOrUpdateItems :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
         </template>
-        <template v-if="document && document.document_detail_type == 'real_estate' && document_id == 44">
-            <CreateOrUpdateYearlyMaintenance :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :id="'create'" @created="getData()" />
-        </template>
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -501,7 +494,7 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-if="parseInt(document_id) != 49" v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -513,7 +506,7 @@ export default {
                                         <i class="fe-printer"></i>
                                     </button>
                                     <button class="custom-btn-dowonload" @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                                            v-if="checkAll.length == 1 && document_id != 34 && document_id != 44">
+                                            v-if="checkAll.length == 1 && document_id != 34">
                                         <i class="mdi mdi-square-edit-outline"></i>
                                     </button>
                                     <!-- start mult delete  -->
@@ -798,7 +791,7 @@ export default {
                                 </thead>
                                 <tbody v-if="reservations.length > 0">
                                 <tr @click.capture="checkRow(data.id)"
-                                    @dblclick.prevent="document_id != 34 && document_id != 44 ? $bvModal.show(`${data.id+''}`) :document_id == 34 ? $bvModal.show(`${'printStatement'+' '+data.id}`):''"
+                                    @dblclick.prevent="document_id != 34 ? $bvModal.show(`${data.id+''}`) : $bvModal.show(`${'printStatement'+' '+data.id}`)"
                                     v-for="(data, index) in reservations" :key="data.id" class="body-tr-custom">
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="form-check custom-control" style="min-height: 1.9em">
@@ -839,7 +832,7 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#" v-if="document_id != 34 && document_id != 44"
+                                                <a class="dropdown-item" href="#" v-if="document_id != 34"
                                                    @click="$bvModal.show(`${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
@@ -855,7 +848,7 @@ export default {
                                                         <i class="fas fa-eye text-info"></i>
                                                     </div>
                                                 </a>
-                                                <a v-if="document && data.id && document_id != 34 && document_id != 44"
+                                                <a v-if="document && data.id && document_id != 34"
                                                    class="dropdown-item" href="#" @click="$bvModal.show(`${'PrintGeneralInvoice'+'-'+data.id}`)">
                                                     <div class="d-flex justify-content-between align-items-center text-black">
                                                         <span>{{ $t("general.print") }}</span>
@@ -906,11 +899,6 @@ export default {
                                         <div style="display:none;">
                                             <template v-if="document && document.document_detail_type == 'normal'  && data.id">
                                                 <CreateOrUpdateItems :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :dataRow="data" :id="data.id+''" @created="getData()" />
-                                            </template>
-                                        </div>
-                                        <div style="display:none;">
-                                            <template v-if="document && document.document_detail_type == 'real_estate'  && data.id && document_id == 44">
-                                                <CreateOrUpdateYearlyMaintenance :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :document="document" :document_id="document_id" :dataRow="data" :id="data.id+''" @created="getData()" />
                                             </template>
                                         </div>
                                     </td>

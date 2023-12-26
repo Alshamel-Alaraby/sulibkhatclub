@@ -17,6 +17,7 @@ import permissionGuard from "../../../helper/permission";
 
 import ArchStatus from "../../../components/create/arch/arch-status";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
+import successError from "../../../helper/mixin/success&error";
 /**
  * Advanced Table component
  */
@@ -25,7 +26,7 @@ export default {
     title: "Gen Arch Doc Type",
     meta: [{ name: "description", content: "Gen Arch Doc Type" }],
   },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Layout,
     PageHeader,
@@ -367,11 +368,9 @@ export default {
             })
             .catch((err) => {
               if (err.response.status == 400) {
-                Swal.fire({
-                  icon: "error",
-                  title: `${this.$t("general.Error")}`,
-                  text: `${this.$t("general.CantDeleteRelation")}`,
-                });
+                  let text = '';
+                  err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                  this.errorFunChildren('Error', text);
               } else {
                 Swal.fire({
                   icon: "error",
@@ -420,11 +419,9 @@ export default {
             })
             .catch((err) => {
               if (err.response.status == 400) {
-                Swal.fire({
-                  icon: "error",
-                  title: `${this.$t("general.Error")}`,
-                  text: `${this.$t("general.CantDeleteRelation")}`,
-                });
+                  let text = '';
+                  err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                  this.errorFunChildren('Error', text);
               } else {
                 Swal.fire({
                   icon: "error",

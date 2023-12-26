@@ -33,12 +33,12 @@ class SalesmenPlan extends Model
 
     public function salesmenPlansSource()
     {
-        return $this->belongsTo(SalesmenPlansSource::class);
+        return $this->belongsTo(SalesmenPlansSource::class, 'salesmen_plans_source_id');
     }
 
     public function restartPeriod()
     {
-        return $this->belongsTo(RestartPeriod::class);
+        return $this->belongsTo(RestartPeriod::class, 'restart_period_id');
     }
 
     public function details()
@@ -53,8 +53,20 @@ class SalesmenPlan extends Model
 
     public function hasChildren()
     {
-        return false;
+        $relationsWithChildren = [];
+
+        if ($this->details()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'details',
+                'count' => $this->details()->count(),
+                'ids' => $this->details()->pluck('id')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

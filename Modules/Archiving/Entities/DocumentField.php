@@ -36,7 +36,18 @@ class DocumentField extends Model
 
     public function hasChildren()
     {
-        return $this->archiveClosedReference()->count() > 0 || $this->dataTye()->count() > 0 || $this->docTypeField()->count() > 0
-            || $this->treeProperty()->count() > 0 || $this->docTypeField()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->archiveClosedReference()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'archive Closed Reference',
+                'count' => $this->archiveClosedReference()->count(),
+                'ids' => $this->archiveClosedReference()->pluck('field_value')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 }

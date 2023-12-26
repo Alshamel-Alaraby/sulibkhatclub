@@ -19,7 +19,6 @@ class MessageReceiverContact extends Model
 
     public function scopeData($query)
     {
-
         return $query
             ->select(
                 'id',

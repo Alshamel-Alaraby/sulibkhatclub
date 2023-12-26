@@ -1425,10 +1425,11 @@ import Building from "./realEstate/building"
 import Unit from "./realEstate/unit"
 import TransactionBreak from "./receivablePayment/transactionBreak/transactionBreak";
 import page_title from "../../helper/PageTitle"
+import successError from "../../helper/mixin/success&error";
 
 export default {
     name: "reservationCom",
-    mixins: [translation],
+    mixins: [translation,successError],
     components: {
         Unit,
         Building,
@@ -2137,11 +2138,9 @@ export default {
                             })
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                     this.getData();
                                 } else {
                                     Swal.fire({
@@ -2187,11 +2186,9 @@ export default {
 
                             .catch((err) => {
                                 if (err.response.status == 400) {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: `${this.$t("general.Error")}`,
-                                        text: `${this.$t("general.CantDeleteRelation")}`,
-                                    });
+                                    let text = '';
+                                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                                    this.errorFunChildren('Error', text);
                                 } else {
                                     Swal.fire({
                                         icon: "error",

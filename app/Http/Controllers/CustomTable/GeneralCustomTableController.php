@@ -2,29 +2,21 @@
 
 namespace App\Http\Controllers\CustomTable;
 
-use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomTableRequest;
 use App\Http\Resources\CustomTable\CustomTableResource;
 use App\Models\GeneralCustomTable;
 use Database\Seeders\CustomTableSeeder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
+
 class GeneralCustomTableController extends Controller
 {
 
     public function __construct(private \App\Repositories\CustomTable\CustomTableInterface $modelInterface)
     {
         $this->modelInterface = $modelInterface;
-    }
-
-    public function find($id)
-    {
-        $model = $this->modelInterface->find($id);
-        if (!$model) {
-            return responseJson(404, __('message.data not found'));
-        }
-        return responseJson(200, 'success', new CustomTableResource($model));
     }
 
     public function all(Request $request)
@@ -47,6 +39,7 @@ class GeneralCustomTableController extends Controller
         $model->refresh();
         return responseJson(200, 'success', new CustomTableResource($model));
     }
+
     public function logs($id)
     {
         $model = $this->modelInterface->find($id);
@@ -55,6 +48,23 @@ class GeneralCustomTableController extends Controller
         }
         $logs = $this->modelInterface->logs($id);
         return responseJson(200, 'success', \App\Http\Resources\Log\LogResource::collection($logs));
+    }
+
+    public function find($id)
+    {
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson(404, __('message.data not found'));
+        }
+        return responseJson(200, 'success', new CustomTableResource($model));
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        foreach ($request->ids as $id) {
+            $this->modelInterface->delete($id);
+        }
+        return responseJson(200, __('Done'));
     }
 
     public function delete($id)
@@ -67,18 +77,10 @@ class GeneralCustomTableController extends Controller
         return responseJson(200, 'success');
     }
 
-    public function bulkDelete(Request $request)
-    {
-        foreach ($request->ids as $id) {
-            $this->modelInterface->delete($id);
-        }
-        return responseJson(200, __('Done'));
-    }
-
     public function getCustomTableFields($tableName)
     {
 
-        // $this->seeder();
+        //$this->seeder();
 
         $allColumns = Schema::getColumnListing($tableName);
         $currentColumnsCount = count(Schema::getColumnListing($tableName));
@@ -91,13 +93,13 @@ class GeneralCustomTableController extends Controller
         if (Schema::hasColumn($tableName, 'company_id')) {
             // The `company_id` column exists in the `$tableName` table
             $customTable = GeneralCustomTable::where('table_name', $tableName)
-        ->where(function ($query) use ($company_id) {
-            $query->where('company_id', null)
-                ->orWhere('company_id', $company_id)
-                ->orWhere('company_id', 0);
-        })->first();
+                ->where(function ($query) use ($company_id) {
+                    $query->where('company_id', null)
+                        ->orWhere('company_id', $company_id)
+                        ->orWhere('company_id', 0);
+                })->first();
 
-        $CompanyIdValue = $customTable['company_id'];
+            $CompanyIdValue = $customTable['company_id'];
 
         } else {
 
@@ -115,14 +117,14 @@ class GeneralCustomTableController extends Controller
         if ($currentColumnsCount != $recordedColumnsCount) {
 
             $newColumnsArray = [];
-            $i =0;
+            $i = 0;
 
             $collection = new Collection(json_decode($customTable, true)['columns']);
 
 
-            foreach($allColumns as $column){
+            foreach ($allColumns as $column) {
 
-                $columnFound = $collection->first(function ($value, $key) use ($column){
+                $columnFound = $collection->first(function ($value, $key) use ($column) {
                     return $value['column_name'] === $column;
                 });
 

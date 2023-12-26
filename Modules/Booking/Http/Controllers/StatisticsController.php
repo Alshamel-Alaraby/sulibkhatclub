@@ -47,7 +47,7 @@ class StatisticsController extends Controller
 
         ///////////////////////////////////////////
 
-        $units_with_not_Status_count = Unit::whereDoesntHave('documentHeaderDetails', function ($q) use ($stat) {
+        $units_with_not_Status_count = Unit::whereDoesntHave('documentHeaderDetails', function ($q) {
             $q->whereDate('date_from', '<=', now())
                 ->whereDate('date_to', '>=', now());
         })->count();

@@ -1,47 +1,49 @@
 <template>
     <table class="table table-borderless table-hover table-centered m-0">
         <thead>
-            <tr>
-                <th
-                    v-if="enabled3 && isInputCheck"
-                    scope="col"
-                    style="width: 0"
-                    class="do-not-print"
-                >
-                    <div class="form-check custom-control">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            style="width: 17px; height: 17px"
-                            v-model="isCheckAll"
+        <tr>
+            <th
+                v-if="enabled3 && isInputCheck"
+                class="do-not-print"
+                scope="col"
+                style="width: 0"
+            >
+                <div class="form-check custom-control">
+                    <input
+                        v-model="isCheckAll"
+                        class="form-check-input"
+                        style="width: 17px; height: 17px"
+                        type="checkbox"
+                    />
+                </div>
+            </th>
+
+            <template v-for="item in tableSetting">
+                <th v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible)">
+                    <div class="d-flex justify-content-center">
+                        <span>{{ getCompanyKey(item.trans) }}</span>
+                        <sortStringConponent
+                            v-if="item.sort" :col="item.isV"
+                            :tables="tables"
+                            @sortData="(data) => tables = data"
                         />
                     </div>
                 </th>
-                <template v-for="item in tableSetting">
-                    <th v-if="item.isSetting && isVisible(item.isV)">
-                        <div class="d-flex justify-content-center">
-                            <span>{{ getCompanyKey(item.trans) }}</span>
-                            <sortStringConponent
-                                v-if="item.sort" :col="item.isV"
-                                :tables="tables"
-                                @sortData="(data) => tables = data"
-                            />
-                        </div>
-                    </th>
-                </template>
-                <th v-if="modalButton"  class="do-not-print">
-                    {{ $t('general.' + modalButton) }}
-                </th>
-                <th v-if="enabled3 && isAction"  class="do-not-print">
-                    {{ $t("general.Action") }}
-                </th>
-                <th v-if="enabled3 && isLog"  class="do-not-print">
-                    <i class="fas fa-ellipsis-v"></i>
-                </th>
-            </tr>
+            </template>
+
+            <th v-if="modalButton" class="do-not-print">
+                {{ $t('general.' + modalButton) }}
+            </th>
+            <th v-if="enabled3 && isAction" class="do-not-print">
+                {{ $t("general.Action") }}
+            </th>
+            <th v-if="enabled3 && isLog" class="do-not-print">
+                <i class="fas fa-ellipsis-v"></i>
+            </th>
+        </tr>
         </thead>
         <tbody v-if="tables.length > 0">
-            <tr
+        <tr
             v-for="(data, index) in tables"
             :key="data.id"
             class="body-tr-custom"
@@ -52,63 +54,65 @@
                 : false
             "
         >
-            <td v-if="enabled3 && isInputCheck"  class="do-not-print">
+            <td v-if="enabled3 && isInputCheck" class="do-not-print">
                 <div
                     class="form-check custom-control"
                     style="min-height: 1.9em"
                 >
                     <input
-                        style="width: 17px; height: 17px"
-                        class="form-check-input"
-                        type="checkbox"
-                        :value="data.id"
-                        @change="$emit('checkRows',checkAll)"
                         v-model="checkAll"
+                        :value="data.id"
+                        class="form-check-input"
+                        style="width: 17px; height: 17px"
+                        type="checkbox"
+                        @change="$emit('checkRows',checkAll)"
                     />
                 </div>
             </td>
             <template v-for="item in tableSetting">
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'string' && !item.columnCustom">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'string' && !item.columnCustom">
                     <h5 class="m-0 font-weight-normal">
                         {{ data[item.isV] }}
                     </h5>
                 </td>
 
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'badge' && item.prop_type == 'array'">
-                    <label class="badge badge-primary text-white mx-1 p-2" style="border-radius:2rem" v-for="(badge,index) in data[item.isV]" :key="index">{{ $t(`general.${index}`) + " : " + badge}}</label>
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible)  && item.type == 'badge' && item.prop_type == 'array'">
+                    <label v-for="(badge,index) in data[item.isV]" :key="index"
+                           class="badge badge-primary text-white mx-1 p-2"
+                           style="border-radius:2rem">{{ $t(`general.${index}`) + " : " + badge }}</label>
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'badge' && item.prop_type != 'array'">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible)  && item.type == 'badge' && item.prop_type != 'array'">
                     <label class="badge badge-primary p-2" style="border-radius:2rem">{{ data[item.isV] }}</label>
                 </td>
 
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'relation'">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'relation'">
                     {{
                         data[item.name]
                             ? $i18n.locale == "ar"
-                            ? data[item.name][item.col1]
-                            : data[item.name][item.col2]
+                                ? data[item.name][item.col1]
+                                : data[item.name][item.col2]
                             : " - "
                     }}
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'relation1'">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'relation1'">
                     {{
                         data[item.name]
                             ? data[item.name][item.name1] ? $i18n.locale == "ar"
-                            ? data[item.name][item.name1][item.col1]
-                            : data[item.name][item.name1][item.col2]
-                            :" - "
+                                    ? data[item.name][item.name1][item.col1]
+                                    : data[item.name][item.name1][item.col2]
+                                : " - "
                             : " - "
                     }}
                 </td>
                 <td v-if="item.isSetting && item.type == 'relationMany'">
                     <h5 v-if="data[item.name].length > 0" class="m-0 font-weight-normal">
                         <span v-for="(i,index) in data[item.name]" :key="i.id">
-                            {{ $i18n.locale == "ar" ? i[item.col1] : i[item.col2]}}
+                            {{ $i18n.locale == "ar" ? i[item.col1] : i[item.col2] }}
                             <span> - </span>
                         </span>
                     </h5>
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'boolean'">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'boolean'">
                       <span
                           :class="[
                               data[item.isV] == 'active' || data[item.isV] == 1
@@ -124,7 +128,7 @@
                           }}
                       </span>
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'boolean1'">
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'boolean1'">
                       <span
                           :class="[
                               data[item.isV] == 'active' || data[item.isV] == 1 || data[item.isV]
@@ -140,38 +144,41 @@
                           }}
                       </span>
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.type == 'date'">
-                      {{ formatDate(data[item.isV]) }}
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'date'">
+                    {{ formatDate(data[item.isV]) }}
                 </td>
-                <td v-if="item.isSetting && isVisible(item.isV) && item.columnCustom == 'allowed_subscription_date'">
-                    <h5 class="m-0 font-weight-normal">{{ data[item.isV].slice(3) + '-' + data[item.isV].slice(0,2) }}</h5>
+                <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.columnCustom == 'allowed_subscription_date'">
+                    <h5 class="m-0 font-weight-normal">{{
+                            data[item.isV].slice(3) + '-' + data[item.isV].slice(0, 2)
+                        }}</h5>
                 </td>
             </template>
-            <td v-if="modalButton"  class="do-not-print">
-                <b-button
-                @click.prevent="$emit(modalButton,data.id);$bvModal.show(modalButton);"
-                variant="warning"
-                class="btn-sm mx-1 font-weight-bold"
-            >
-                <i :class="modalButtonIcon"></i>
-            </b-button>
+            <td v-if="modalButton" class="do-not-print">
+                <b-button v-if="modalButtonCondition.value == data[modalButtonCondition.key]"
+                          class="btn-sm mx-1 font-weight-bold"
+                          variant="warning"
+                          @click.prevent="$emit(modalButton,data[modalEmitAttribute]);$bvModal.show(modalButton);"
+                >
+                    <i :class="modalButtonIcon"></i>
+                </b-button>
+                <span v-else>{{ modalButtonCondition.default_val }}</span>
             </td>
-            <td v-if="enabled3 && isAction"  class="do-not-print">
+            <td v-if="enabled3 && isAction" class="do-not-print">
                 <div class="btn-group">
                     <button
-                        type="button"
+                        aria-expanded="false"
                         class="btn btn-sm dropdown-toggle dropdown-coustom"
                         data-toggle="dropdown"
-                        aria-expanded="false"
+                        type="button"
                     >
                         {{ $t("general.commands") }}
                         <i class="fas fa-angle-down"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-custom">
                         <a
+                            v-if="permissionUpdate && isEdit"
                             class="dropdown-item"
                             href="#"
-                            v-if="permissionUpdate && isEdit"
                             @click="$emit('editRow',data.id)"
                         >
                             <div
@@ -196,21 +203,34 @@
                                 <i class="fas fa-times text-danger"></i>
                             </div>
                         </a>
+                        <a
+                            v-if="isPrint"
+                            class="dropdown-item text-black"
+                            href="#"
+                            @click.prevent="$emit('printRow', data.id)"
+                        >
+                            <div
+                                class="d-flex justify-content-between align-items-center text-black"
+                            >
+                                <span>{{ $t("general.print") }}</span>
+                                <i class="fas fa-print"></i>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </td>
-            <td v-if="enabled3 && isLog"  class="do-not-print">
+            <td v-if="enabled3 && isLog" class="do-not-print">
                 <button
-                    @mousemove="!isLogClick? $emit('logFire',data.id): null"
-                    @mouseover="!isLogClick? $emit('logFire',data.id): null"
-                    @click="isLogClick? $emit('logFire',data.id): false"
-                    type="button"
-                    class="btn"
                     :id="`tooltip-${data.id}`"
                     :data-placement="
                           $i18n.locale == 'en' ? 'left' : 'right'
                         "
                     :title="Tooltip"
+                    class="btn"
+                    type="button"
+                    @click="isLogClick? $emit('logFire',data.id): false"
+                    @mousemove="!isLogClick? $emit('logFire',data.id): null"
+                    @mouseover="!isLogClick? $emit('logFire',data.id): null"
                 >
                     <i class="fe-info" style="font-size: 22px"></i>
                 </button>
@@ -218,11 +238,11 @@
         </tr>
         </tbody>
         <tbody v-else>
-            <tr>
-                <th class="text-center" colspan="30">
-                    {{ $t("general.notDataFound") }}
-                </th>
-            </tr>
+        <tr>
+            <th class="text-center" colspan="30">
+                {{ $t("general.notDataFound") }}
+            </th>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -238,16 +258,16 @@ export default {
     components: {
         sortStringConponent
     },
-    data(){
+    data() {
         return {
             checkAll: [],
             isCheckAll: false
         }
     },
-    props:[
-        'tables','permissionUpdate','permissionDelete','isEdit','isDelete','modalButton','modalButtonIcon',
-        'isVisible','tableSetting','enabled3','Tooltip','isLog','isAction',
-        'isInputCheck','isLogClick'
+    props: [
+        'tables', 'permissionUpdate', 'permissionDelete', 'isEdit', 'isDelete', 'modalButton', 'modalButtonIcon',
+        'isVisible', 'tableSetting', 'enabled3', 'Tooltip', 'isLog', 'isAction', 'modalEmitAttribute',
+        'isInputCheck', 'isLogClick', 'permissionPrint', 'isPrint'
     ],
     watch: {
         /*** watch check All table*/
@@ -261,13 +281,14 @@ export default {
             } else {
                 this.checkAll = [];
             }
-            this.$emit('checkRows',this.checkAll)
+            this.$emit('checkRows', this.checkAll)
         },
     },
     methods: {
         formatDate(value) {
             return formatDateOnly(value);
         },
+
     }
 }
 </script>

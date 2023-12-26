@@ -24,6 +24,37 @@ class MessageType extends Model
             );
     }
 
+    public function GeneralMessageRequests()
+    {
+        return $this->hasMany(GeneralMessageRequest::class, 'message_type_id');
+    }
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'message_type_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->GeneralMessageRequests()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'General Message Requests',
+                'count' => $this->GeneralMessageRequests()->count(),
+                'ids' => $this->GeneralMessageRequests()->pluck('message_date')->toArray(),
+            ];
+        }
+        if ($this->messages()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'messages',
+                'count' => $this->messages()->count(),
+                'ids' => $this->messages()->pluck('content')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

@@ -17,7 +17,7 @@ class RlstExpenseItemRequest extends FormRequest
             'name' => 'required|string|max:100|unique:rlst_expenses_items,name,'.($this->method() == 'PUT' ? $this->id : ''),
             'name_e' => 'required|string|max:100|unique:rlst_expenses_items,name_e,'.($this->method() == 'PUT' ? $this->id : ''),
             'chart_id' => 'required|integer|exists:gl_chart,id',
-            'type' => 'sometimes|integer|in:building,unit,unit/building,general',
+            'type' => 'sometimes|in:building,unit,unit/building,general',
         ];
     }
 

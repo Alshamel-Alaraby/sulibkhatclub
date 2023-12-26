@@ -194,4 +194,12 @@ export default [
         },
         component: () => import('../../views/pages/booking/report/occupied'),
     },
+    {
+        path: '/dashboard/booking/daily-sales-income-report',
+        name: 'Daily Sales Income Report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/booking/report/daily-sales-income-report'),
+    },
 ];

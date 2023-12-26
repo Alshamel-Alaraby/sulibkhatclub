@@ -30,7 +30,8 @@
                     :dropdownId="dropdown.id"
                     :selectedValues="dropdown.selectedValues"
                     :options="dropdown.options"
-                    @updateIds="handleDropdownUpdate"
+                    @dropdownOpened="handleDropdownUpdateOpened"
+                    @dropdownClosed="handleDropdownUpdateCLosed"
                   ></filter-dropdown>
                 </div>
               </div>
@@ -168,6 +169,7 @@ export default {
           selectedValues: [],
           options: [],
         },
+
         {
           id: "street_ids",
           label: "Streets",
@@ -214,6 +216,9 @@ export default {
       showTable: false,
       dropdownIdTable: null,
       selectedTableValues: [],
+      openDropdowns: [],
+      allSelectedValues: [],
+      params: {},
     };
   },
   computed: {
@@ -237,6 +242,7 @@ export default {
     openModal() {
       this.$refs.myModal.show();
     },
+
     fetchInitialData() {
       adminApi
         .get("real-estate/unit-reports/get-lists")
@@ -274,11 +280,35 @@ export default {
           console.error("Error fetching data:", error);
         });
     },
-    handleDropdownUpdate(dropdownId, selectedValues) {
-      // so i can use them to fetch the table data
-      this.dropdownIdTable = dropdownId;
-      this.selectedTableValues = selectedValues;
+    handleDropdownUpdateOpened(data) {
+      const existingDropdownIndex = this.openDropdowns.findIndex(
+        (dropdown) => dropdown.dropdownId === data.dropdownId
+      );
 
+      if (existingDropdownIndex !== -1) {
+        // Update the existing dropdown's selectedValues
+        this.openDropdowns[existingDropdownIndex].selectedValues =
+          data.selectedValues;
+      } else if (data.selectedValues) {
+        // Add a new dropdown entry if selectedValues exist
+        this.openDropdowns.push({
+          dropdownId: data.dropdownId,
+          selectedValues: data.selectedValues,
+        });
+      }
+
+      console.log("Dropdown ID:", data.dropdownId);
+      console.log("open SelectedValue", data.selectedValues);
+
+      if (this.params.hasOwnProperty(data.dropdownId)) {
+        this.params[data.dropdownId] = []; // Clear the selected values for the opened dropdown
+      } else {
+        this.openDropdowns.forEach((dropdown) => {
+          this.params[dropdown.dropdownId] = dropdown.selectedValues;
+        });
+      }
+
+      console.log("Params opened:", this.params);
       // Generate dropdownKeys dynamically based on the updated dropdowns
       const dropdownKeys = this.dropdowns.map((dropdown) => dropdown.id);
       const rangeInputKeys = [
@@ -289,24 +319,12 @@ export default {
         "unitBathroomsFrom",
         "unitBathroomsTo",
       ];
-
-      // making the params dynamic based on the dropdownId:
-      const params = {};
-      const dropdown = this.dropdowns.find(
-        (dropdown) => dropdown.id === dropdownId
-      );
-      if (dropdown) {
-        params[dropdownId] = selectedValues;
-      }
-      console.log("DropdownId and SelectedValues:", dropdownId, selectedValues);
-      console.log("params", params);
       adminApi
         .get("real-estate/unit-reports/get-lists", {
-          params: params,
+          params: this.params,
         })
         .then((response) => {
           const updatedData = response.data.data;
-          console.log("updatedData", updatedData);
           dropdownKeys.forEach((key, index) => {
             if (updatedData[key]) {
               this.dropdowns[index].options = updatedData[key].map((item) => ({
@@ -327,10 +345,70 @@ export default {
               }
             }
           });
-
-          console.log("Dropdowns after update:", this.dropdowns);
-          console.log("Range Inputs after update:", this.rangeInputs);
         })
+        .catch((error) => {
+          console.error("Error fetching or updating dropdowns:", error);
+        });
+    },
+    handleDropdownUpdateCLosed(data) {
+      const index = this.openDropdowns.findIndex(
+        (dropdown) => dropdown.dropdownId === data.dropdownId
+      );
+
+      if (index !== -1) {
+        this.openDropdowns.splice(index, 1);
+      }
+
+      this.params[data.dropdownId] = data.selectedValues;
+
+      // Remove dropdownIds from params that have empty selectedValues
+      Object.keys(this.params).forEach((dropdownId) => {
+        if (
+          Array.isArray(this.params[dropdownId]) &&
+          this.params[dropdownId].length === 0
+        ) {
+          delete this.params[dropdownId];
+        }
+      });
+
+      // Generate dropdownKeys dynamically based on the updated dropdowns
+      const dropdownKeys = this.dropdowns.map((dropdown) => dropdown.id);
+      const rangeInputKeys = [
+        "unitAreaFrom",
+        "unitAreaTo",
+        "unitRoomsFrom",
+        "unitRoomsTo",
+        "unitBathroomsFrom",
+        "unitBathroomsTo",
+      ];
+      adminApi
+        .get("real-estate/unit-reports/get-lists", {
+          params: this.params,
+        })
+        .then((response) => {
+          const updatedData = response.data.data;
+          dropdownKeys.forEach((key, index) => {
+            if (updatedData[key]) {
+              this.dropdowns[index].options = updatedData[key].map((item) => ({
+                text: item.name || item.name_e || item.code,
+                value: item.id,
+              }));
+            }
+          });
+          // this.handleAutoSelectSingleOptions();
+          rangeInputKeys.forEach((key) => {
+            if (updatedData[key]) {
+              const rangeInput = this.rangeInputs.find(
+                (range) => range.id === key.slice(0, -4)
+              );
+
+              if (rangeInput) {
+                rangeInput[key.slice(-2)] = updatedData[key];
+              }
+            }
+          });
+        })
+
         .catch((error) => {
           console.error("Error fetching or updating dropdowns:", error);
         });
@@ -401,6 +479,19 @@ export default {
           console.error("Error fetching filtered data:", error);
           // Handle the error appropriately, such as displaying an error message
         });
+    },
+    handleAutoSelectSingleOptions() {
+      // here i want to make that if there is a single option it auto select it
+      console.log("it is here in auto ");
+      this.dropdowns.forEach((dropdown, index) => {
+        if (
+          dropdown.options &&
+          dropdown.options.length === 1 &&
+          dropdown.options[0].value
+        ) {
+          this.params[dropdown.id] = [dropdown.options[0].value];
+        }
+      });
     },
   },
 };

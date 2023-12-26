@@ -1,41 +1,59 @@
 <template>
-    <b-modal id="patientDetails" size="xl" title-class="font-18" body-class="p-4 " :title="$t('general.patientDetails')">
-
+    <b-modal id="patientDetails" size="xll" title-class="font-18" body-class="p-4 " :title="$t('general.patientDetails')">
+        <ModalService
+            :companyKeys="companyKeys"
+            :defaultsKeys="defaultsKeys"
+            id="addService"
+            :isPage="false"
+            type="create"
+            :isPermission="isPermission"
+            @created="getServices()"
+        />
+        <InsuranceCompany :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" id="addCompanyInsurance"
+                            :isPage="false" type="create" :isPermission="isPermission" @created="get_insurance_companies" />
         <b-tabs nav-class="nav-tabs nav-bordered w-100">
             <loader size="large" v-if="isLoader" style="margin:0px -37px;" />
 
-            <b-tab :title="$t('general.Health History')" active>
+            <b-tab :title="$t('general.Health History')" v-if="isPermission('show Health History')" active>
 
                 <div class="row">
-                    <healthHistory :patient_id="id" @created="get_patient_data" :histories="patient.health_history ?? []" />
+                    <healthHistory :patient_id="id" @created="get_patient_data" :histories="patient.health_history ?? []"
+                        :createHealthHistory="isPermission('create Health History')"
+                        :deleteHealthHistory="isPermission('delete Health History')" />
                 </div>
 
             </b-tab>
-            <b-tab :title="$t('general.Medical Files')">
+            <b-tab :title="$t('general.Medical Files')" v-if="isPermission('show Medical Files')">
 
                 <div class="row">
                     <MedicalFiles :patient_id="id" @created="get_patient_data"
+                        :createMedicalFiles="isPermission('create Medical Files')"
+                        :deleteMedicalFiles="isPermission('delete Medical Files')"
                         :medical_files="patient.medical_files ?? []" />
                 </div>
 
             </b-tab>
-            <b-tab :title="$t('general.Appointments')">
+            <b-tab :title="$t('general.Appointments')"
+                v-if="isPermission('show Patient Appointments') || isPermission('all Appointment')">
 
                 <div class="row">
                     <div class="d-inline-block mb-3">
                         <b-button @click.prevent="$bvModal.show(`createAppointment`);" variant="primary"
-                            v-if="isPermission('create Appointment')" class="font-weight-bold">
+                            v-if="isPermission('create Patient Appointments') || isPermission('create Appointment')"
+                            class="font-weight-bold">
                             {{ $t("general.Create") }}
                             <i class="fas fa-plus"></i>
                         </b-button>
                     </div>
 
                     <appointmentTable :appointments="patient.appointments ?? []" :doctors="doctors" :patients="[]"
-                        :patient_details_id="id" :diagnosis_tests="diagnosis_tests" :drugs="drugs"
+                        :companies_insurances="companies_insurances" :paymentMethods="paymentMethods" :services="services"
+                        :patient_details_id="id" :diagnosis_tests="diagnosis_tests" :drugs="drugs" :branches="branches"
+
                         :permissionUpdate="isPermission('update Appointment')"
                         :permissionDelete="isPermission('delete Appointment')"
                         :permissionCreatePrescription="isPermission('create Prescription')"
-                        :permissionCreateInvoice="isPermission('create AppointmentInvoice')"
+                        :permissionCreateInvoice="isPermission('create HMS Invoice')"
                         @getAppointments="get_patient_data()" />
 
                     <!--  create   -->
@@ -43,16 +61,18 @@
                         :patient_details_id="id" :url="'h_m_s/appointments'" :doctors="doctors" :patients="[]"
                         :branches="branches" :isPage="false" :isVisiblePage="isVisible" :isRequiredPage="isRequired"
                         :type="'create'" @created="get_patient_data(); $bvModal.hide(`createAppointment`)"
-                        :isPermission="isPermission" v-if="isPermission('create Appointment')" />
+                        :isPermission="isPermission"
+                        v-if="isPermission('create Patient Appointments') || isPermission('create Appointment')" />
 
                 </div>
 
             </b-tab>
 
-            <b-tab :title="$t('general.Prescriptions')">
+            <b-tab :title="$t('general.Prescriptions')"
+                v-if="isPermission('show Patient Prescriptions') || isPermission('all Prescription')">
                 <div class="d-inline-block mb-3">
-                    <b-button @click.prevent="$bvModal.show(`createPrescriptionInPatient`); type = 'create'" variant="primary"
-                        v-if="isPermission('create Appointment')" class="font-weight-bold">
+                    <b-button @click.prevent="$bvModal.show(`createPrescriptionInPatient`); type = 'create'"
+                        variant="primary" v-if="isPermission('create Prescription')" class="font-weight-bold">
                         {{ $t("general.Create") }}
                         <i class="fas fa-plus"></i>
                     </b-button>
@@ -66,8 +86,7 @@
                             :tables="patient.prescriptions ?? []" :isEdit="true" :isDelete="true"
                             :permissionUpdate="isPermission('update Prescription')"
                             :permissionDelete="isPermission('delete Prescription')" :isVisible="isVisible"
-                            :tableSetting="tableSetting" :enabled3="true"
-                            @delete="ids => delete_prescription(ids)"
+                            :tableSetting="tableSetting" :enabled3="true" @delete="ids => delete_prescription(ids)"
                             @editRow="id => dbClickRow(id, 'createPrescriptionInPatient')"
                             @checkRowTable="id => checkRow(id)" :isInputCheck="false" :isAction="true" />
 
@@ -86,9 +105,14 @@
                 </div>
             </b-tab>
 
-            <b-tab :title="$t('general.Payment History')">
+            <b-tab :title="$t('general.Payment History')"
+                v-if="isPermission('show Patient Invoices') || isPermission('all HMS Invoice')">
+                <DocumentWithItem :document_id="45" :patient_details_id="id" :branches="branches" :doctors="doctors"
+                    :services="services" :companies_insurances="companies_insurances" :paymentMethods="paymentMethods" />
 
             </b-tab>
+
+
         </b-tabs>
 
     </b-modal>
@@ -110,13 +134,16 @@ import tableCustom from "../../../../components/general/tableCustom.vue";
 import crudHelper from '../../../../helper/mixin/crudHelper';
 import Swal from "sweetalert2";
 import successError from "../../../../helper/mixin/success&error";
+import DocumentWithItem from "../../../../components/document/h_m_s/documentWithItem.vue";
+import ModalService from "../services_types/modal.vue";
+import InsuranceCompany from "../../../../components/create/general/insuranceCompany";
 
 export default {
     name: 'PatientDetails',
     props: ['patient_id'],
-    mixins: [transMixinComp, translation, customTable, crudHelper,successError],
+    mixins: [transMixinComp, translation, customTable, crudHelper, successError],
     components: {
-        loader, healthHistory, MedicalFiles, PrescriptionModal, appointmentTable, tableCustom, ModalAppointment
+        loader, healthHistory, MedicalFiles, PrescriptionModal, appointmentTable,InsuranceCompany, tableCustom, ModalAppointment, DocumentWithItem,ModalService
     },
     data() {
         return {
@@ -126,6 +153,9 @@ export default {
             doctors: [],
             drugs: [],
             branches: [],
+            companies_insurances:[],
+            paymentMethods:[],
+            services:[],
             diagnosis_tests: [],
             tableSetting: [
 
@@ -162,13 +192,66 @@ export default {
             }
         }
     },
+
     mounted() {
         this.get_doctors();
         this.getBranch();
         this.get_drugs();
         this.get_diagnosis_tests();
+        this.get_insurance_companies()
+        this.getPaymentMethod()
+        this.getServices()
     },
     methods: {
+        get_insurance_companies() {
+            adminApi.get(`insurance_companies?drop_down=1&company_id=${this.company_id}`).then((res) => {
+                let data = res.data
+                        if (this.isPermission("create InsuranceCompany")) {
+                            data.unshift({ id: 0, name: "اضف شركة تأمين", name_e: "Add Insurance Company" });
+                    }
+                    this.companies_insurances = data
+            });
+        },
+        getPaymentMethod() {
+            this.isLoader = true;
+            adminApi.get(`/payment-methods`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.paymentMethods = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getServices() {
+            this.isLoader = true;
+            adminApi
+                .get(`/h_m_s/service_types`)
+                .then((res) => {
+                    let data = res.data.data
+                        if (this.isPermission("create ServiceType")) {
+                            data.unshift({ id: 0, name: "اضف خدمة", name_e: "Add Service" });
+                    }
+                    this.services = data
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         get_patient_data() {
             this.isLoader = true
             adminApi.get(`h_m_s/get_patient_data/${this.id}`).then((res) => {
@@ -186,7 +269,7 @@ export default {
         getBranch() {
             this.isLoader = true;
             adminApi
-                .get(`/branches/get-drop-down?company_id=${this.company_id}&notParent=1`)
+                .get(`/branches?company_id=${this.company_id}&notParent=1&document_id=45`)
                 .then((res) => {
                     this.branches = res.data.data;
                 })
@@ -219,7 +302,7 @@ export default {
                 text: `${this.$t("general.Youwontbeabletoreverthis")}`,
                 type: "warning",
                 showCancelButton: true,
-                confirmButtonText:`${this.$t("general.Yesdeleteit")}`,
+                confirmButtonText: `${this.$t("general.Yesdeleteit")}`,
                 cancelButtonText: `${this.$t("general.Nocancel")}`,
                 confirmButtonClass: "btn btn-success mt-2",
                 cancelButtonClass: "btn btn-danger ml-2 mt-2",
@@ -227,24 +310,24 @@ export default {
             }).then((result) => {
                 if (result.value) {
                     this.isLoader = true;
-                        adminApi
-                            .delete(`h_m_s/prescriptions/${prescription_id}`)
-                            .then((res) => {
-                                this.get_patient_data();
-                                this.successFun('Yourrowhasbeendeleted', 'Deleted');
-                            })
+                    adminApi
+                        .delete(`h_m_s/prescriptions/${prescription_id}`)
+                        .then((res) => {
+                            this.get_patient_data();
+                            this.successFun('Yourrowhasbeendeleted', 'Deleted');
+                        })
 
-                            .catch((err) => {
-                                console.log(err)
-                                if (err.response.status == 400) {
-                                    this.errorFun('Error', 'CantDeleteRelation');
-                                } else {
-                                    this.errorFun('Error', 'Thereisanerrorinthesystem');
-                                }
-                            })
-                            .finally(() => {
-                                this.isLoader = false;
-                            });
+                        .catch((err) => {
+                            console.log(err)
+                            if (err.response.status == 400) {
+                                this.errorFun('Error', 'CantDeleteRelation');
+                            } else {
+                                this.errorFun('Error', 'Thereisanerrorinthesystem');
+                            }
+                        })
+                        .finally(() => {
+                            this.isLoader = false;
+                        });
                 }
             })
         }

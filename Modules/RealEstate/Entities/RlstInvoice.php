@@ -2,11 +2,8 @@
 
 namespace Modules\RealEstate\Entities;
 
-use App\Models\Branch;
-use App\Models\Document;
+
 use App\Models\GeneralCustomer;
-use App\Models\Salesman;
-use App\Models\Serial;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -126,17 +123,7 @@ class RlstInvoice extends Model
         return $this->hasMany(RpBreakDown::class, 'break_id');
     }
 
-    // public function hasChildren()
-    // {
-    //     return $this->contracts()->count() > 0 ||
-    //     $this->units()->count() > 0 ||
-    //     $this->items()->count() > 0 ||
-    //     $this->invoiceItems()->count() > 0 ||
-    //     $this->transactions()->count() > 0 ||
-    //     $this->breakDowns()->count() > 0
-    //     ;
 
-    // }
 
 
     public function hasChildren()
@@ -147,23 +134,11 @@ class RlstInvoice extends Model
             $relationsWithChildren[] = [
                 'relation' => 'contracts',
                 'count' => $this->contracts()->count(),
-                'ids' => $this->contracts()->pluck('id')->toArray()
+                'ids' => $this->contracts()->pluck('date')->toArray()
             ];
         }
-        if ($this->units()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'units',
-                'count' => $this->units()->count(),
-                'ids' => $this->units()->pluck('id')->toArray()
-            ];
-        }
-        if ($this->items()->count() > 0) {
-            $relationsWithChildren[] = [
-                'relation' => 'items',
-                'count' => $this->items()->count(),
-                'ids' => $this->items()->pluck('id')->toArray()
-            ];
-        }
+
+
         if ($this->invoiceItems()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'invoiceItems',
@@ -175,14 +150,14 @@ class RlstInvoice extends Model
             $relationsWithChildren[] = [
                 'relation' => 'transactions',
                 'count' => $this->transactions()->count(),
-                'ids' => $this->transactions()->pluck('id')->toArray()
+                'ids' => $this->transactions()->pluck('prefix')->toArray()
             ];
         }
         if ($this->breakDowns()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'breakDowns',
                 'count' => $this->breakDowns()->count(),
-                'ids' => $this->breakDowns()->pluck('id')->toArray()
+                'ids' => $this->breakDowns()->pluck('rate')->toArray()
             ];
         }
 

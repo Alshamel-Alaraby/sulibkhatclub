@@ -6,6 +6,7 @@ use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\RealEstate\Entities\RlstContractHeader;
 use Spatie\Activitylog\LogOptions;
 
 class ExternalSalesmen extends Model
@@ -37,7 +38,27 @@ class ExternalSalesmen extends Model
 
     public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    public function contractHeaders()
+    {
+        return $this->hasMany(RlstContractHeader::class, 'external_salesmen_id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->contractHeaders()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contractHeaders',
+                'count' => $this->contractHeaders()->count(),
+                'ids' => $this->contractHeaders()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -44,10 +44,40 @@ class Department extends Model
             ->distinct()->whereNull('arch_doc_types.parent_id');
     }
 
+    public function doc_type_departments()
+    {
+        return $this->hasMany(DocTypeDepartment::class, 'arch_department_id', 'id');
+    }
+
+
+
     public function hasChildren()
     {
-        return $this->children()->count() > 0 ||
-        $this->documents()->count() > 0 ||
-        $this->archiveFile()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->archiveFile()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'archive File',
+                'count' => $this->archiveFile()->count(),
+                'ids' => $this->archiveFile()->pluck('data_type_value')->toArray(),
+            ];
+        }
+        if ($this->doc_type_departments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'doc type departments',
+                'count' => $this->doc_type_departments()->count(),
+                'ids' => $this->doc_type_departments()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 }

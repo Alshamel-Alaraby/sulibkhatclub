@@ -12,6 +12,7 @@
                     <i class="mdi mdi-square-edit-outline text-info"></i>
                 </div>
             </a>
+
             <a v-if="permissionDelete && isDelete" class="dropdown-item text-black" href="#"
                 @click.prevent="$emit('deleteItem', data_id)">
                 <div class="d-flex justify-content-between align-items-center text-black">

@@ -43,8 +43,6 @@ class StockSalePurchaseDetail extends Model
     {
         return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
     }
-
-
     public function stock()
     {
         return $this->belongsTo(Stock::class, 'stock_id', 'id');

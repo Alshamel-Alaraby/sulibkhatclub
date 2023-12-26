@@ -314,7 +314,7 @@ export default {
                         <!-- end search -->
 
                         <div class="row justify-content-between align-items-center mb-2 px-1" >
-                            <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
+                            <div class="col-md-5 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                                 <b-button
                                     v-b-modal.create
                                     variant="primary"
@@ -342,6 +342,10 @@ export default {
                                     <button v-print="'#printData'" class="custom-btn-dowonload"  v-if="items.length > 0">
                                         <i class="fe-printer"></i>
                                     </button>
+                                    <b-button v-print="'#printEnvelope'" variant="info"  v-if="items.length > 0">
+                                        {{ $t("general.envelopePrinting") }}
+                                        <i class="fe-printer"></i>
+                                    </b-button>
                                 </div>
                                 <!-- end create and printer -->
                             </div>
@@ -550,6 +554,15 @@ export default {
                             </form>
                         </b-modal>
                         <!--  /create   -->
+
+                        <div id="printEnvelope" class="head-branch">
+                            <div class="row justify-content-center align-items-center content text-center" v-for="item in items">
+                                <div class="col-md-4 text-center">
+                                    <p>{{ $t('general.memberName') }}: {{ item.full_name }}</p>
+                                    <p>{{ $t('general.memberAddress') }}: {{ item.home_address }}</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- start .table-responsive-->
                         <div  class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printData">
@@ -774,6 +787,13 @@ export default {
     .signature h4 {
         text-decoration: underline;
         margin: 3px;
+    }
+    .content {
+        min-height: 1270px;
+        padding: 20px;
+        border: 2px solid;
+        margin-bottom: 300px;
+        position: relative;
     }
 }
 </style>

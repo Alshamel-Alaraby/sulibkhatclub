@@ -61,7 +61,6 @@ class RlstWallet extends Model
                 'ids' => $this->walletOwner()->pluck('id')->toArray(),
             ];
         }
-
         if ($this->buildingWallet()->count() > 0) {
             $relationsWithChildren[] = [
                 'relation' => 'buildingWallet',

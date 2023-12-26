@@ -12,6 +12,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import propertyTree from "../../../components/create/general/property-tree";
 import { arabicValue, englishValue } from "../../../helper/langTransform";
 import permissionGuard from "../../../helper/permission";
+import successError from "../../../helper/mixin/success&error";
 
 /**
  * Advanced Table component
@@ -21,7 +22,7 @@ export default {
     title: "Document Field",
     meta: [{ name: "description", content: "Document Field" }],
   },
-  mixins: [translation],
+  mixins: [translation,successError],
   components: {
     Multiselect,
     Layout,
@@ -198,12 +199,10 @@ export default {
       this.create.name = arabicValue(txt);
       this.edit.name = arabicValue(txt);
     },
-
     englishValue(txt) {
       this.create.name_e = englishValue(txt);
       this.edit.name_e = englishValue(txt);
     },
-
     async getProperties() {
       await adminApi
         .get(`/tree-properties/root-nodes`)
@@ -339,11 +338,9 @@ export default {
               })
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                   this.getData();
                 } else {
                   Swal.fire({
@@ -389,11 +386,9 @@ export default {
 
               .catch((err) => {
                 if (err.response.status == 400) {
-                  Swal.fire({
-                    icon: "error",
-                    title: `${this.$t("general.Error")}`,
-                    text: `${this.$t("general.CantDeleteRelation")}`,
-                  });
+                    let text = '';
+                    err.response.data.message.forEach(el => text += `<div>${el.message}</div> <br/>`);
+                    this.errorFunChildren('Error', text);
                 } else {
                   Swal.fire({
                     icon: "error",

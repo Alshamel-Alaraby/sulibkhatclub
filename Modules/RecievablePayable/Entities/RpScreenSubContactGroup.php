@@ -12,10 +12,7 @@ class RpScreenSubContactGroup extends Model
 
     protected $guarded = ['id'];
 
-    protected static function newFactory()
-    {
-        return \Modules\RecievablePayable\Database\factories\RpScreenSubContactGroupFactory::new();
-    }
+  
 
     public function subContactGroup(){
         return $this->belongsTo(RpSubContactGroup::class,"sub_contract_group_id");

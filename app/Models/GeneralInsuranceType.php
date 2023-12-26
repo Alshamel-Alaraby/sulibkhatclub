@@ -24,6 +24,28 @@ class GeneralInsuranceType extends Model
         );
     }
 
+    public function GeneralInsuranceDocuments()
+    {
+        return $this->hasMany(GeneralInsuranceDocument::class, 'insurance_type_id');
+    }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->GeneralInsuranceDocuments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'General Insurance Documents',
+                'count' => $this->GeneralInsuranceDocuments()->count(),
+                'ids' => $this->GeneralInsuranceDocuments()->pluck('name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         $user = auth()->user()->id ?? "system";

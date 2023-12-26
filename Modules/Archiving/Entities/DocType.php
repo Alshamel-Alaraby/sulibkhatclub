@@ -24,10 +24,7 @@ class DocType extends Model
         return $this->belongsTo(DocType::class, 'parent_id', 'id');
     }
 
-    //    public function files()
-    //    {
-    //        return $this->belongsToMany(ArchiveFile::class, 'arch_archive_files', 'arch_doc_type_id', 'arch_doc_statues_id');
-    //    }
+
 
     public function statuses()
     {
@@ -45,18 +42,6 @@ class DocType extends Model
         $e = $this->archiveFiles()->where('data_type_value', 'like', '');
     }
 
-    //        public function fields()
-    //        {
-    //            return $this->belongsToMany(DocField::class, 'arch_doc_type_fields', 'doc_type_id', 'doc_field_id')->withPivot('field_order', 'is_required', 'field_characters');
-    //        }
-
-    public function hasChildren()
-    {
-        return $this->children()->count() > 0 ||
-        $this->statuses()->count() > 0 ||
-        $this->archiveFiles()->count() > 0;
-    }
-
     public function departments()
     {
         return $this->belongsToMany(Department::class, 'arch_type_department', 'arch_doc_type_id', 'arch_department_id')
@@ -67,6 +52,77 @@ class DocType extends Model
 
         return $this->belongsToMany(DocumentField::class,'arch_doc_type_fields','doc_type_id','doc_field_id');
     }
+
+    public function doc_type_departments()
+    {
+        return $this->hasMany(DocTypeDepartment::class, 'arch_doc_type_id', 'id');
+    }
+    public function doc_type_fields()
+    {
+        return $this->hasMany(DocTypeField::class, 'doc_type_id', 'id');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'arch_doc_type', 'id');
+    }
+
+    public function documentDtls()
+    {
+        return $this->hasMany(DocumentDtl::class, 'doc_type_id', 'id');
+    }
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+
+        if ($this->archiveFiles()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'archiveFiles',
+                'count' => $this->archiveFiles()->count(),
+                'ids' => $this->archiveFiles()->pluck('data_type_value')->toArray(),
+            ];
+        }
+        if ($this->doc_type_departments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'doc type departments',
+                'count' => $this->doc_type_departments()->count(),
+                'ids' => $this->doc_type_departments()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->doc_type_fields()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'doc type fields',
+                'count' => $this->doc_type_fields()->count(),
+                'ids' => $this->doc_type_fields()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->documents()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documents',
+                'count' => $this->documents()->count(),
+                'ids' => $this->documents()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->documentDtls()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentDtls',
+                'count' => $this->documentDtls()->count(),
+                'ids' => $this->documentDtls()->pluck('id')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
+    }
+
 
     public function getKeyAttribute()
     {

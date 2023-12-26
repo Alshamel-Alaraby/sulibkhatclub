@@ -20,10 +20,8 @@ class RlstBuildingWalletResource extends JsonResource
     {
         return [
             "id"                   => $this->id,
-            // "wallet"               => $this->whenLoaded('wallet'),
-            "wallet"                => RlstWallet::find($this->wallet_id)->only(['id','name','name_e']),
-            "building"              => RlstBuilding::find($this->building_id)->only(['id','name','name_e']),
-            // "building"             => $this->whenLoaded('building')
+            "wallet"               => $this->whenLoaded('wallet'),
+            "building"             => $this->whenLoaded('building')
         ];
     }
 }

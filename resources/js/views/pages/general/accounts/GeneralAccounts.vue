@@ -79,7 +79,7 @@ export default {
       .filter((e) => e.isFilter)
       .map((el) => el.isV);
     this.settingFun();
-    this.getCustomTableFields("general_accounts");
+    this.getCustomTableFields("gl-chart");
     this.getData(1, this.url, this.filterSearch(this.searchField));
   },
   methods: {

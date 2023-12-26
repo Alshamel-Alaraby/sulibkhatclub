@@ -2,6 +2,7 @@
 
 namespace Modules\BoardsRent\Entities;
 
+use App\Models\DocumentHeader;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,10 @@ class SellMethod extends Model
     public function orders()
     {
         return $this->hasMany(\Modules\BoardsRent\Entities\Order::class);
+    }
+    public function documentHeader()
+    {
+        return $this->hasMany(DocumentHeader::class, 'sell_method_id');
     }
 
     public function hasChildren()

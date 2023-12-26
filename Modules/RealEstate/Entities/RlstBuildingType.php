@@ -14,7 +14,7 @@ class RlstBuildingType extends Model
     protected $table = 'rlst_building_types';
 
     protected $guarded = ['id'];
-    
+
     protected function buildings()
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstBuilding::class, 'building_type_id');
@@ -28,15 +28,14 @@ class RlstBuildingType extends Model
             $relationsWithChildren[] = [
                 'relation' => 'buildings',
                 'count' => $this->buildings()->count(),
-                'ids' => $this->buildings()->pluck('rlst_buildings.id')->toArray(),
+                'ids' => $this->buildings()->pluck('name')->toArray(),
             ];
         }
 
         return $relationsWithChildren;
-
     }
-    
-    
+
+
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
         $user = @auth()->user()->id ?: "system";

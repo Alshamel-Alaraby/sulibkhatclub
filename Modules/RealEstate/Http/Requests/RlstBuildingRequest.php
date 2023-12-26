@@ -26,9 +26,10 @@ class RlstBuildingRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            'name'              => 'required|string|max:100|unique:rlst_buildings,name,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
-            'name_e'            => 'required|string|max:100|unique:rlst_buildings,name_e,' . ($this->method() == 'PUT' ? ',' . $this->id : '') .',id,deleted_at,NULL',
+            'name' => 'required|string|max:100|unique:rlst_buildings,name,'.($this->method() == 'PUT' ? $this->id : '').',id,deleted_at,NULL',
+            'name_e' => 'required|string|max:100|unique:rlst_buildings,name_e,'.($this->method() == 'PUT' ? $this->id : '').',id,deleted_at,NULL',
             'description'       => "sometimes|string",
             'description_e'     => "sometimes|string",
             'land_area'         => "sometimes|numeric|gt:0",
@@ -64,16 +65,16 @@ class RlstBuildingRequest extends FormRequest
             "middleman_cost" => "sometimes|numeric|min:0",
             "registration_cost" => "sometimes|numeric|min:0",
             "building_currency_id" => "required|exists:general_currencies,id",
-            "accrued_revenues_account_id" => "sometimes|exists:general_accounts,id",
-            "advance_revenues_account_id" => "sometimes|exists:general_accounts,id",
-            "revenues_account_id" => "sometimes|exists:general_accounts,id",
-            "discounts_account_id" => "sometimes|exists:general_accounts,id",
-            "cash_account_id" => "sometimes|exists:general_accounts,id",
-            "knet_account_id" => "sometimes|exists:general_accounts,id",
-            "insurance_account_id" => "sometimes|exists:general_accounts,id",
-            "main_cost_center_id" => "sometimes|exists:general_main_cost_centers,id",
+            "accrued_revenues_account_id" => "sometimes|exists:gl_chart,id",
+            "advance_revenues_account_id" => "sometimes|exists:gl_chart,id",
+            "revenues_account_id" => "sometimes|exists:gl_chart,id",
+            "discounts_account_id" => "sometimes|exists:gl_chart,id",
+            "cash_account_id" => "sometimes|exists:gl_chart,id",
+            "knet_account_id" => "sometimes|exists:gl_chart,id",
+            "insurance_account_id" => "sometimes|exists:gl_chart,id",
+            "main_cost_center_id" => "sometimes|exists:gl_cost_centers,id",
             "financial_period" => "sometimes|in:monthly,yearly",
-            'building_category_id' => 'sometimes|exists:rlst_building_categories,id',  
+            'building_category_id' => 'sometimes|exists:rlst_building_categories,id',
 
         ];
     }

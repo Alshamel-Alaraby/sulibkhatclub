@@ -54,6 +54,9 @@ class DocumentHeaderDetailResource extends JsonResource
             'category' => $this->category,
             'note' => $this->note,
             'prefix_related' => $this->prefix_related,
+            'company_insurance_amount' => $this->when($this->company_insurance_amount , $this->company_insurance_amount),
+            'patient_amount' => $this->when($this->patient_amount,$this->patient_amount),
+            'service_id' => $this->when($this->service_id,$this->service_id),
 
             'governorate' => new GovernorateResource($this->governorate),
 //            'document_header'    =>  new DocumentHeaderResource($this->documentHeader) ,
@@ -63,6 +66,9 @@ class DocumentHeaderDetailResource extends JsonResource
 
             'unit' => $this->unit,
             'item' => $this->item,
+            'service' => $this->service,
+            'patient_amount' => $this->patient_amount,
+            'company_insurance_amount' => $this->company_insurance_amount,
         ];
     }
 }

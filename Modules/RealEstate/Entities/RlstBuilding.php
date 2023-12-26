@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Modules\RealEstate\Entities\RlstBuildingType;
 use App\Models\Currency;
-use App\Models\GeneralMainCostCenters;
+use App\Models\DocumentHeaderDetail;
+use App\Models\GlCostCenter;
 use App\Models\GlChart;
 class RlstBuilding extends Model implements HasMedia
 {
@@ -44,7 +45,7 @@ class RlstBuilding extends Model implements HasMedia
                 'properties',
                 'attachments',
                 'module')
-        */        
+        */
             ->with(
                     'buildingType:id,name,name_e',
                     'buildingCategory:id,name,name_e',
@@ -59,8 +60,8 @@ class RlstBuilding extends Model implements HasMedia
                     'wallets:id,name,name_e',
                     'policies:id,name,name_e,description',
                 )
-            ->whereNull('deleted_at');    
-                
+            ->whereNull('deleted_at');
+
     }
 
     // attributes
@@ -154,12 +155,14 @@ class RlstBuilding extends Model implements HasMedia
     {
         return $this->hasMany(\Modules\RealEstate\Entities\RlstGuard::class, 'building_id');
     }
-    
+
     public function account($accountId)
     {
-        return $accountId ? GlChart::find($accountId)->only(['id','name','name_e','account_number','parent_id']) : null;
+        $record = GlChart::find($accountId);
+
+        return $record ? $record->only(['id','name','name_e','account_number','parent_id']) : null;
     }
-    
+
 
     public function buildingType()
     {
@@ -173,21 +176,86 @@ class RlstBuilding extends Model implements HasMedia
 
     public function mainCostCenter()
     {
-        return $this->belongsTo(GeneralMainCostCenters::class, 'main_cost_center_id');
+        return $this->belongsTo(GlCostCenter::class, 'main_cost_center_id');
     }
+
+
+    public function documentHeaderDetails()
+    {
+        return $this->hasMany(DocumentHeaderDetail::class,'building_id');
+    }
+
+    public function contractDetails()
+    {
+        return $this->hasMany(RlstContractDetail::class, 'building_id');
+    }
+
+    public function RlstInvoices()
+    {
+        return $this->hasMany(RlstInvoice::class, 'building_id');
+    }
+
+    public function RlstUnits()
+    {
+        return $this->hasMany(\Modules\RealEstate\Entities\RlstUnit::class, 'building_id');
+    }
+
 
 
     public function hasChildren()
     {
         $relationsWithChildren = [];
 
-        if ($this->buildingWallet()->count() > 0) {
+        if ($this->RlstUnits()->count() > 0) {
             $relationsWithChildren[] = [
-                'relation' => 'buildingWallet',
-                'count' => $this->buildingWallet()->count(),
-                'ids' => $this->buildingWallet()->pluck('rlst_building_wallet.id')->toArray(),
+                'relation' => 'RlstUnits',
+                'count' => $this->RlstUnits()->count(),
+                'ids' => $this->RlstUnits()->pluck('name')->toArray(),
             ];
         }
+        if ($this->buildingWallet()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'building Wallet',
+                'count' => $this->buildingWallet()->count(),
+                'ids' => $this->buildingWallet()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->RlstInvoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstInvoices',
+                'count' => $this->RlstInvoices()->count(),
+                'ids' => $this->RlstInvoices()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->contractDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'contractDetails',
+                'count' => $this->contractDetails()->count(),
+                'ids' => $this->contractDetails()->pluck('id')->toArray(),
+            ];
+        }
+        if ($this->buildingPolicies()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'building Policies',
+                'count' => $this->buildingPolicies()->count(),
+                'ids' => $this->buildingPolicies()->pluck('amount')->toArray(),
+            ];
+        }
+        if ($this->guards()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'guards',
+                'count' => $this->guards()->count(),
+                'ids' => $this->guards()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->documentHeaderDetails()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentHeaderDetails',
+                'count' => $this->documentHeaderDetails()->count(),
+                'ids' => $this->documentHeaderDetails()->pluck('id')->toArray(),
+            ];
+        }
+
 
         return $relationsWithChildren;
     }

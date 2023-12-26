@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\PointOfSale\Entities\Payment;
+use Modules\RealEstate\Entities\RlstInvoice;
 use Spatie\Activitylog\LogOptions;
 
 class PaymentMethod extends Model
@@ -30,8 +31,6 @@ class PaymentMethod extends Model
         );
     }
 
-
-
     public function payments()
     {
         return $this->hasMany(Payment::class, 'payment_method_id');
@@ -42,6 +41,17 @@ class PaymentMethod extends Model
         return $this->hasMany(DocumentHeader::class, 'payment_method_id');
 
     }
+    public function voucherHeader()
+    {
+        return $this->hasMany(VoucherHeader::class, 'payment_method_id');
+
+    }
+
+    public function RlstInvoices()
+    {
+        return $this->hasMany(RlstInvoice::class, 'payment_method_id');
+    }
+
 
 
     public function hasChildren()
@@ -52,21 +62,27 @@ class PaymentMethod extends Model
             $relationsWithChildren[] = [
                 'relation' => 'payments',
                 'count' => $this->payments()->count(),
-                'ids' => $this->payments()->pluck('id')->toArray()
+                'ids' => $this->payments()->pluck('date')->toArray(),
+            ];
+        }
+        if ($this->documentHeader()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'documentHeader',
+                'count' => $this->documentHeader()->count(),
+                'ids' => $this->documentHeader()->pluck('prefix')->toArray(),
+            ];
+        }
+        if ($this->RlstInvoices()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'RlstInvoices',
+                'count' => $this->RlstInvoices()->count(),
+                'ids' => $this->RlstInvoices()->pluck('prefix')->toArray(),
             ];
         }
 
-        if ($this->documentHeader()->count() > 0) {
-                $relationsWithChildren[] = [
-                    'relation' => 'documentHeader',
-                    'count' => $this->documentHeader()->count(),
-                    'ids' => $this->documentHeader()->pluck('id')->toArray()
-                ];
-        }
-
-
         return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

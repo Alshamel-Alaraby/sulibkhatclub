@@ -108,8 +108,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         payment_method_id: null,
         customer_id: null,
         amount: 0,
-        client_type_id: 1,
-        notes: ''
+        client_type_id: null,
+        notes: '',
+        manual_document_number: ''
       },
       errors: {},
       branches: [],
@@ -147,7 +148,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       client_type_id: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
       },
-      notes: {}
+      notes: {},
+      manual_document_number: {}
     }
   },
   mounted: function mounted() {
@@ -205,7 +207,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.openTransfer = false;
       this.amountPaid = 0;
       this.amount = 0;
-      this.open_invoice_details = false;
+      this.open_invoice_details = parseInt(this.document.is_break) == 1 ? true : false;
       this.financial_years_validate = true;
       this.with_paid = false;
       this.create = {
@@ -216,9 +218,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         customer_id: null,
         amount: 0,
         document_id: this.document_id,
-        client_type_id: 1,
+        client_type_id: null,
         module_type_id: null,
-        notes: ''
+        notes: '',
+        manual_document_number: ''
       };
     },
     /**
@@ -396,11 +399,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           _this7.create.salesmen_id = l.employee_id;
           if (l.employee_id) {
             _this7.customer_data_create = l.customer;
-            _this7.getCustomers(l.employee_id);
+            var table = _this7.clientTypes.find(function (e) {
+              return e.id == _this7.create.client_type_id;
+            }) ? _this7.clientTypes.find(function (e) {
+              return e.id == _this7.create.client_type_id;
+            }).db_table : '';
+            if (table) {
+              _this7.getCustomers(table);
+            }
             _this7.create.customer_id = l.customer_id;
             _this7.customers.push(_this7.customer_data_create);
-            // لو فى بريك افتحها لان مع ديفونا لا يوجد بريك
-            // this.getBreakCustomer(l.customer_id);
           }
         }
       })["catch"](function (err) {
@@ -416,9 +424,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     getClientType: function getClientType() {
       var _this8 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/client-types/get-drop-down").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/client-types").then(function (res) {
         var l = res.data.data;
-        _this8.clientTypes = l;
+        var documentTypesIds = [];
+        _this8.document.clientTypes.forEach(function (e, index) {
+          documentTypesIds.push(parseInt(e));
+        });
+        _this8.clientTypes = l.filter(function (x) {
+          return documentTypesIds.includes(x.id);
+        });
+        if (_this8.clientTypes.length == 1) {
+          _this8.create.client_type_id = _this8.clientTypes[0].id;
+          _this8.getCustomers(_this8.clientTypes[0].db_table);
+        }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
@@ -483,18 +501,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
-    getCustomerSalesman: function getCustomerSalesman(e) {
-      var employee_id = e;
-      if (employee_id) {
-        this.getCustomers(employee_id);
+    getCustomerData: function getCustomerData(e) {
+      var type_id = e !== null && e !== void 0 ? e : '';
+      if (type_id) {
+        var table = this.clientTypes.find(function (e) {
+          return e.id == type_id;
+        }).db_table;
+        this.getCustomers(table);
       }
     },
     getCustomers: function getCustomers() {
       var _this12 = this;
-      var employee_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var table = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var search = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/general-customer?limet=10&company_id=".concat(this.company_id, "&employee_id=").concat(employee_id, "&search=").concat(search, "&columns[0]=name&columns[1]=name_e&columns[2]=id")).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/client-types/get-drop-down-model?db_table=".concat(table, "&limet=10&search=").concat(search)).then(function (res) {
         _this12.isLoader = false;
         var l = res.data.data;
         _this12.customers = l;
@@ -536,7 +557,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this13.isLoader = false;
       });
     },
-    getBreakCustomer: function getBreakCustomer(id) {
+    getBreakCustomer: function getBreakCustomer(id, client_type_id) {
       var _this14 = this;
       this.isLoader = true;
       this.customerDebits = [];
@@ -547,7 +568,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.customer_data_edit = this.customers.find(function (e) {
         return e.id == _this14.create.customer_id;
       });
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/recievable-payable/document-with-money-details?customer_id=".concat(id, "&with_paid=").concat(this.with_paid)).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/recievable-payable/document-with-money-details?customer_id=".concat(id, "&client_type_id=").concat(client_type_id, "&with_paid=").concat(this.with_paid)).then(function (res) {
         _this14.isLoader = false;
         var l = res.data.data;
         l.forEach(function (e) {
@@ -562,6 +583,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               // salesman: this.handelSalesman(e),
               serial_number: _this14.handelSerial(e),
               amount_status: e.amount_status,
+              unit_statement: _this14.handelStatment(e),
               settlement_amount: 0,
               prev_settlement: (_e$prev_settlement = e.prev_settlement) !== null && _e$prev_settlement !== void 0 ? _e$prev_settlement : 0
             });
@@ -576,6 +598,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               // salesman: this.handelSalesman(e),
               serial_number: _this14.handelSerial(e),
               amount_status: e.amount_status,
+              unit_statement: _this14.handelStatment(e),
               settlement_amount: 0,
               prev_settlement: (_e$prev_settlement2 = e.prev_settlement) !== null && _e$prev_settlement2 !== void 0 ? _e$prev_settlement2 : 0
             });
@@ -626,6 +649,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
       return '---';
     },
+    handelStatment: function handelStatment(e) {
+      if (e.break_type == 'documentHeader') {
+        if (e.documentHeader.document_header_details[0].unit_type == 'real_estate' && (e.documentHeader.document_id == 44 || e.documentHeader.document_id == 4)) {
+          if (this.$i18n.locale == "ar") {
+            return e.documentHeader.document_header_details[0].real_estate_unit.name;
+          } else {
+            return e.documentHeader.document_header_details[0].real_estate_unit.name_e;
+          }
+        }
+      }
+      return '';
+    },
     handelSerial: function handelSerial(e) {
       if (e.break_type == 'invoice') {
         if (e.invoice) {
@@ -673,7 +708,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     resetModalEdit: function resetModalEdit(id) {
       var _this16 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var invoice;
+        var invoice, table;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
@@ -690,41 +725,47 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
               _this16.serial_number = invoice.prefix;
               _this16.invoice_id = invoice.id;
-              _context3.next = 13;
-              return _this16.getCustomers(invoice.salesmen_id);
-            case 13:
-              _context3.next = 15;
+              table = _this16.clientTypes.find(function (e) {
+                return e.id == _this16.create.client_type_id;
+              }) ? _this16.clientTypes.find(function (e) {
+                return e.id == _this16.create.client_type_id;
+              }).db_table : '';
+              _context3.next = 14;
+              return _this16.getCustomers(table);
+            case 14:
+              _context3.next = 16;
               return _this16.getSalesmen();
-            case 15:
-              _context3.next = 17;
+            case 16:
+              _context3.next = 18;
               return _this16.getPaymentMethod();
-            case 17:
-              _context3.next = 19;
+            case 18:
+              _context3.next = 20;
               return _this16.getBranches();
-            case 19:
+            case 20:
               _this16.edit.date = invoice.date;
               _this16.edit.customer_id = invoice.customer_id;
               _this16.edit.salesmen_id = invoice.salesmen_id;
               _this16.edit.payment_method_id = invoice.payment_method_id;
               _this16.edit.notes = invoice.notes;
+              _this16.edit.manual_document_number = invoice.manual_document_number;
               _this16.edit.branch_id = invoice.branch_id;
               _this16.edit.document_id = invoice.document_id;
               _this16.edit.amount = invoice.amount;
               _this16.customer_data_edit = invoice.customer;
               if (!(_this16.document && _this16.document.attributes && _this16.parseInt(document.attributes.customer) == -1)) {
-                _context3.next = 34;
+                _context3.next = 36;
                 break;
               }
-              _context3.next = 31;
-              return _this16.getBreakCustomer(_this16.edit.customer_id);
-            case 31:
               _context3.next = 33;
-              return _this16.getTransactions(id);
+              return _this16.getBreakCustomer(_this16.edit.customer_id, _this16.edit.client_type_id);
             case 33:
-              _this16.amount = _this16.totalTransferAmount;
-            case 34:
-              _this16.errors = {};
+              _context3.next = 35;
+              return _this16.getTransactions(id);
             case 35:
+              _this16.amount = _this16.totalTransferAmount;
+            case 36:
+              _this16.errors = {};
+            case 37:
             case "end":
               return _context3.stop();
           }
@@ -755,7 +796,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         document_id: this.document_id,
         customer_id: null,
         amount: 0,
-        notes: ''
+        notes: '',
+        manual_document_number: ''
       };
       this.invoice_id = null;
     },
@@ -770,7 +812,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var search = e !== null && e !== void 0 ? e : '';
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this17.getCustomers(_this17.create.salesmen_id, search);
+        var table = _this17.clientTypes.find(function (e) {
+          return e.id == _this17.create.client_type_id;
+        }) ? _this17.clientTypes.find(function (e) {
+          return e.id == _this17.create.client_type_id;
+        }).db_table : '';
+        if (table) {
+          _this17.getCustomers(table, search);
+        }
       }, 500);
     },
     titleModelName: function titleModelName() {
@@ -1085,6 +1134,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         serial_number: true,
         date: true,
         customer_id: true,
+        client_type_id: true,
         amount: true,
         payment_method_id: true,
         salesmen_id: true
@@ -2200,16 +2250,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -2359,7 +2413,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -2706,13 +2760,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -2754,7 +2808,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -3210,7 +3264,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("a", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                    ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("a", {
     staticClass: "btn btn-success mx-1",
     on: {
       click: function click($event) {
@@ -3218,7 +3272,7 @@ var render = function render() {
         return _vm.Submit(false);
       }
     }
-  }, [_vm._v("\n                                " + _vm._s(_vm.dataRow ? _vm.$t("general.Edit") : _vm.$t("general.Add")) + "\n                            ")]) : _c("b-button", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.dataRow ? _vm.$t("general.Edit") : _vm.$t("general.Add")) + "\n                        ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -3241,7 +3295,7 @@ var render = function render() {
         return _vm.$bvModal.hide("".concat(_vm.id));
       }
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Cancel")) + "\n                        ")])], 2)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                    ")])], 2)]), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3"
@@ -3281,17 +3335,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.branch_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Date")) + "\n                                "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Date")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
     "class": {
@@ -3318,17 +3372,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.financial_years_validate ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.The date is outside the permitted fiscal year")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.The date is outside the permitted fiscal year")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.serial_number")) + "\n                            ")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.serial_number")) + "\n                        ")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3367,15 +3421,14 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.salesmen.find(function (x) {
+        return _vm.salesmen.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.salesmen.find(function (x) {
           return x.id == opt;
         }).name : _vm.salesmen.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : "";
       }
-    },
-    on: {
-      input: _vm.getCustomerSalesman
     },
     model: {
       value: _vm.create.salesmen_id,
@@ -3386,24 +3439,24 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.salesmen_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.salesmen_id ? _vm._l(_vm.errors.salesmen_id, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.salesmen_id ? _vm._l(_vm.errors.salesmen_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("money_voucher_client_type")) + "\n                                "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("money_voucher_client_type")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.client_type_id.$error || _vm.errors.client_type_id
     },
     attrs: {
-      disabled: true,
+      "show-labels": false,
       options: _vm.clientTypes.map(function (type) {
         return type.id;
       }),
@@ -3417,6 +3470,9 @@ var render = function render() {
         }).name_e : "";
       }
     },
+    on: {
+      input: _vm.getCustomerData
+    },
     model: {
       value: _vm.create.client_type_id,
       callback: function callback($$v) {
@@ -3426,11 +3482,11 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.client_type_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.client_type_id ? _vm._l(_vm.errors.client_type_id, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.client_type_id ? _vm._l(_vm.errors.client_type_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _vm.create.client_type_id ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
@@ -3461,7 +3517,7 @@ var render = function render() {
     on: {
       "search-change": _vm.searchCustomer,
       input: function input($event) {
-        return _vm.getBreakCustomer(_vm.create.customer_id);
+        return _vm.getBreakCustomer(_vm.create.customer_id, _vm.create.client_type_id);
       }
     },
     model: {
@@ -3473,17 +3529,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.customer_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.customer_id ? _vm._l(_vm.errors.customer_id, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.customer_id ? _vm._l(_vm.errors.customer_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _vm.document && _vm.document.document_module_type_id ? _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.document && _vm.document.document_module_type_id ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.document.document_module_type.title : _vm.document.document_module_type.title_e) + "\n                            ")]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.document.document_module_type.title : _vm.document.document_module_type.title_e) + "\n                        ")]), _vm._v(" "), _c("multiselect", {
     attrs: {
       "show-labels": false,
       options: _vm.moduleTypes.map(function (type) {
@@ -3509,14 +3565,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.module_type_id ? _vm._l(_vm.errors.module_type_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.paymentMethod")) + "\n                                "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.paymentMethod")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -3544,10 +3600,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.payment_method_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.payment_method_id ? _vm._l(_vm.errors.payment_method_id, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.payment_method_id ? _vm._l(_vm.errors.payment_method_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
@@ -3579,10 +3635,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.amount.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.amount ? _vm._l(_vm.errors.amount, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.amount ? _vm._l(_vm.errors.amount, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
@@ -3614,7 +3670,39 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.notes ? _vm._l(_vm.errors.notes, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-3"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v(_vm._s(_vm.$t("general.manual_document_number")))]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.create.manual_document_number,
+      expression: "create.manual_document_number"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.manual_document_number.$error || _vm.errors.manual_document_number
+    },
+    attrs: {
+      type: "text",
+      step: "any"
+    },
+    domProps: {
+      value: _vm.create.manual_document_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.create, "manual_document_number", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.manual_document_number ? _vm._l(_vm.errors.manual_document_number, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _vm.document && parseInt(_vm.document.is_break) == 2 ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
@@ -3660,7 +3748,7 @@ var render = function render() {
     staticStyle: {
       padding: "9px"
     }
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.showInvoiceDetails")) + "\n                            ")])])]) : _vm._e(), _vm._v(" "), _vm.create.customer_id && _vm.open_invoice_details ? _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.showInvoiceDetails")) + "\n                        ")])])]) : _vm._e(), _vm._v(" "), _vm.create.customer_id && _vm.open_invoice_details ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-check mt-3"
@@ -3699,7 +3787,7 @@ var render = function render() {
           _vm.with_paid = $$c;
         }
       }, function ($event) {
-        return _vm.getBreakCustomer(_vm.create.customer_id);
+        return _vm.getBreakCustomer(_vm.create.customer_id, _vm.create.client_type_id);
       }]
     }
   }), _vm._v(" "), _c("label", {
@@ -3707,7 +3795,7 @@ var render = function render() {
     staticStyle: {
       padding: "9px"
     }
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.showPayment")) + "\n                            ")])])]) : _vm._e(), _vm._v(" "), _vm.create.amount && _vm.create.customer_id && _vm.open_invoice_details ? _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.showPayment")) + "\n                        ")])])]) : _vm._e(), _vm._v(" "), _vm.create.amount && _vm.create.customer_id && _vm.open_invoice_details ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("b-button", {
     staticClass: "mx-1 mt-3",
@@ -3720,7 +3808,7 @@ var render = function render() {
         return _vm.autoSettlement.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.AutoSettlement")) + "\n                        ")])], 1) : _vm._e(), _vm._v(" "), _vm.document && _vm.document.attributes && parseInt(_vm.document.attributes.customer) != 0 && parseInt(_vm.document.is_break) > 0 && _vm.open_invoice_details ? _c("div", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.AutoSettlement")) + "\n                    ")])], 1) : _vm._e(), _vm._v(" "), _vm.document && _vm.document.attributes && parseInt(_vm.document.attributes.customer) != 0 && parseInt(_vm.document.is_break) > 0 && _vm.open_invoice_details ? _c("div", {
     staticClass: "col-md-12"
   }, [_c("div", {
     staticClass: "page-content"
@@ -3753,7 +3841,7 @@ var render = function render() {
     staticClass: "card-header p-0"
   }, [_c("h3", {
     staticClass: "card-title float-left"
-  }, [_vm._v("\n                                                            " + _vm._s(_vm.$t("general.CustomerDebts")) + "\n                                                        ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                        " + _vm._s(_vm.$t("general.CustomerDebts")) + "\n                                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
   }, [_vm.isLoader ? _c("loader", {
     attrs: {
@@ -3761,11 +3849,13 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_c("th", [_vm._v(_vm._s(_vm.$t("general.documentSerial")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.type")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.Date")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.amount")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.prev_settlement")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.settlement_amount")))])])]), _vm._v(" "), _vm.customerDebits.length > 0 ? _c("tbody", [_vm._l(_vm.customerDebits, function (data, index) {
+  }, [_c("thead", [_c("tr", [_vm.customerDebits.length > 0 && _vm.customerDebits[0].unit_statement ? _c("th", [_vm._v(_vm._s(_vm.$t("general.statement")))]) : _vm._e(), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.documentSerial")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.type")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.Date")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.amount")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.prev_settlement")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.settlement_amount")))])])]), _vm._v(" "), _vm.customerDebits.length > 0 ? _c("tbody", [_vm._l(_vm.customerDebits, function (data, index) {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_c("td", [_c("h5", {
+    }, [data.unit_statement ? _c("td", [_c("h5", {
+      staticClass: "m-0 font-weight-normal"
+    }, [_vm._v(_vm._s(data.unit_statement))])]) : _vm._e(), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.serial_number))])]), _vm._v(" "), _c("td", [data.document ? _c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -3773,7 +3863,7 @@ var render = function render() {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v("---")])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                                                        " + _vm._s(data.instalment_date) + "\n                                                                    ")])]), _vm._v(" "), _c("td", [_c("h5", {
+    }, [_vm._v("\n                                                                    " + _vm._s(data.instalment_date) + "\n                                                                ")])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.amount))])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -3821,13 +3911,13 @@ var render = function render() {
     attrs: {
       colspan: "6"
     }
-  }, [_vm._v("\n                                                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                                ")])])])])], 1)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                                " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                            ")])])])])], 1)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "card-header p-0"
   }, [_c("h3", {
     staticClass: "card-title float-left"
-  }, [_vm._v("\n                                                            " + _vm._s(_vm.$t("general.CustomerCredit")) + "\n                                                        ")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                        " + _vm._s(_vm.$t("general.CustomerCredit")) + "\n                                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
   }, [_vm.isLoader ? _c("loader", {
     attrs: {
@@ -3835,11 +3925,13 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_c("th", [_vm._v(_vm._s(_vm.$t("general.documentSerial")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.type")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.Date")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.amount")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.prev_settlement")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.settlement_amount")))])])]), _vm._v(" "), _vm.customerCredit.length > 0 ? _c("tbody", [_vm._l(_vm.customerCredit, function (data, index) {
+  }, [_c("thead", [_c("tr", [_vm.customerCredit.length > 0 && _vm.customerCredit[0].unit_statement ? _c("th", [_vm._v(_vm._s(_vm.$t("general.statement")))]) : _vm._e(), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.documentSerial")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.type")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.Date")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.amount")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.prev_settlement")))]), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.settlement_amount")))])])]), _vm._v(" "), _vm.customerCredit.length > 0 ? _c("tbody", [_vm._l(_vm.customerCredit, function (data, index) {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_c("td", [_c("h5", {
+    }, [data.unit_statement ? _c("td", [_c("h5", {
+      staticClass: "m-0 font-weight-normal"
+    }, [_vm._v(_vm._s(data.unit_statement))])]) : _vm._e(), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.serial_number))])]), _vm._v(" "), _c("td", [data.document ? _c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -3847,7 +3939,7 @@ var render = function render() {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v("---")])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                                                        " + _vm._s(data.instalment_date) + "\n                                                                    ")])]), _vm._v(" "), _c("td", [_c("h5", {
+    }, [_vm._v("\n                                                                    " + _vm._s(data.instalment_date) + "\n                                                                ")])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.amount))])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -3895,7 +3987,7 @@ var render = function render() {
     attrs: {
       colspan: "6"
     }
-  }, [_vm._v("\n                                                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                                ")])])])])], 1)])])])])])])])]) : _vm._e()])])])], 1);
+  }, [_vm._v("\n                                                                " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                            ")])])])])], 1)])])])])])])])]) : _vm._e()])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -4193,6 +4285,15 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.Date")))]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
+      value: _vm.setting.client_type_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.setting, "client_type_id", $$v);
+      },
+      expression: "setting.client_type_id"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.client_types")))]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    model: {
       value: _vm.setting.customer_id,
       callback: function callback($$v) {
         _vm.$set(_vm.setting, "customer_id", $$v);
@@ -4404,6 +4505,24 @@ var render = function render() {
         _vm.invoices.sort(_vm.sortString("-date"));
       }
     }
+  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.client_type_id ? _c("th", [_c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.client_types")))]), _vm._v(" "), _c("div", {
+    staticClass: "arrow-sort"
+  }, [_c("i", {
+    staticClass: "fas fa-arrow-up",
+    on: {
+      click: function click($event) {
+        _vm.invoices.sort(_vm.sortString(_vm.$i18n.locale == "ar" ? "name" : "name_e"));
+      }
+    }
+  }), _vm._v(" "), _c("i", {
+    staticClass: "fas fa-arrow-down",
+    on: {
+      click: function click($event) {
+        _vm.invoices.sort(_vm.sortString(_vm.$i18n.locale == "ar" ? "-name" : "-name_e"));
+      }
+    }
   })])])]) : _vm._e(), _vm._v(" "), _vm.setting.customer_id ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.client")))]), _vm._v(" "), _c("div", {
@@ -4545,7 +4664,9 @@ var render = function render() {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.prefix))])]) : _vm._e(), _vm._v(" "), _vm.setting.date ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(data.date))])]) : _vm._e(), _vm._v(" "), _vm.setting.customer_id ? _c("td", [_c("h5", {
+    }, [_vm._v(_vm._s(data.date))])]) : _vm._e(), _vm._v(" "), _vm.setting.client_type_id ? _c("td", [_c("h5", {
+      staticClass: "m-0 font-weight-normal"
+    }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? data.clientType.name : data.clientType.name_e))])]) : _vm._e(), _vm._v(" "), _vm.setting.customer_id ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? data.customer.name : data.customer.name_e))])]) : _vm._e(), _vm._v(" "), _vm.setting.amount ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -4746,7 +4867,7 @@ var render = function render() {
     staticClass: "text-center mb-2"
   }, [_vm._v(_vm._s(_vm.$t("general.client")))]), _vm._v(" "), _vm.data.customer ? _c("h5", [_vm._v(_vm._s(_vm.$t("general.client")) + " : " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.data.customer.name : _vm.data.customer.name_e))]) : _vm._e(), _vm._v(" "), _c("h3", {
     staticClass: "text-center mb-2"
-  }, [_vm._v(_vm._s(_vm.$t("general.theDetails")))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.paymentMethod")) + " : " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.data.paymentMethod.name : _vm.data.paymentMethod.name_e))]), _vm._v(" "), _vm.data.notes ? _c("h5", [_vm._v(_vm._s(_vm.$t("general.note")) + " : " + _vm._s(_vm.data.notes))]) : _vm._e(), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.amount")) + " : " + _vm._s(_vm.data.amount) + " KD")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.theDetails")))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.paymentMethod")) + " : " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.data.paymentMethod.name : _vm.data.paymentMethod.name_e))]), _vm._v(" "), _vm.data.manual_document_number ? _c("h5", [_vm._v(_vm._s(_vm.$t("general.manual_document_number")) + " : " + _vm._s(_vm.data.manual_document_number))]) : _vm._e(), _vm._v(" "), _vm.data.notes ? _c("h5", [_vm._v(_vm._s(_vm.$t("general.note")) + " : " + _vm._s(_vm.data.notes))]) : _vm._e(), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.amount")) + " : " + _vm._s(_vm.data.amount) + " KD")])])]), _vm._v(" "), _c("div", {
     staticClass: "row detail-print-details"
   }, [_c("div", {
     staticClass: "col-6",
@@ -6109,7 +6230,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -6129,7 +6250,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -7618,7 +7739,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -8192,7 +8313,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.page-content[data-v-158b6cd0] {\r\n    width: 100%;\n}\n.total[data-v-158b6cd0] {\r\n    color: #343a40 !important;\r\n    font-weight: bold;\n}\n.text-secondary-d1[data-v-158b6cd0] {\r\n    color: #728299 !important;\n}\n.page-header[data-v-158b6cd0] {\r\n    margin: 0 0 1rem;\r\n    padding-bottom: 1rem;\r\n    padding-top: .5rem;\r\n    border-bottom: 1px dotted #e2e2e2;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: center;\n}\n.page-title[data-v-158b6cd0] {\r\n    padding: 0;\r\n    margin: 0;\r\n    font-size: 1.75rem;\r\n    font-weight: 300;\n}\n.brc-default-l1[data-v-158b6cd0] {\r\n    border-color: #dce9f0 !important;\n}\n.ml-n1[data-v-158b6cd0],\r\n.mx-n1[data-v-158b6cd0] {\r\n    margin-left: -.25rem !important;\n}\n.mr-n1[data-v-158b6cd0],\r\n.mx-n1[data-v-158b6cd0] {\r\n    margin-right: -.25rem !important;\n}\n.mb-4[data-v-158b6cd0],\r\n.my-4[data-v-158b6cd0] {\r\n    margin-bottom: 1.5rem !important;\n}\nhr[data-v-158b6cd0] {\r\n    margin-top: 1rem;\r\n    margin-bottom: 1rem;\r\n    border: 0;\r\n    border-top: 1px solid rgba(0, 0, 0, .1);\n}\n.text-grey-m2[data-v-158b6cd0] {\r\n    color: #888a8d !important;\n}\n.text-success-m2[data-v-158b6cd0] {\r\n    color: #86bd68 !important;\n}\n.font-bolder[data-v-158b6cd0],\r\n.text-600[data-v-158b6cd0] {\r\n    font-weight: 600 !important;\n}\n.text-110[data-v-158b6cd0] {\r\n    font-size: 110% !important;\n}\n.text-blue[data-v-158b6cd0] {\r\n    color: #478fcc !important;\n}\n.pb-25[data-v-158b6cd0],\r\n.py-25[data-v-158b6cd0] {\r\n    padding-bottom: .75rem !important;\n}\n.pt-25[data-v-158b6cd0],\r\n.py-25[data-v-158b6cd0] {\r\n    padding-top: .75rem !important;\n}\n.bgc-default-tp1[data-v-158b6cd0] {\r\n    background-color: rgba(121, 169, 197, .92) !important;\n}\n.bgc-default-l4[data-v-158b6cd0],\r\n.bgc-h-default-l4[data-v-158b6cd0]:hover {\r\n    background-color: #f3f8fa !important;\n}\n.page-header .page-tools[data-v-158b6cd0] {\r\n    align-self: flex-end;\n}\n.btn-light[data-v-158b6cd0] {\r\n    color: #757984;\r\n    background-color: #f5f6f9;\r\n    border-color: #dddfe4;\n}\n.w-2[data-v-158b6cd0] {\r\n    width: 1rem;\n}\n.text-120[data-v-158b6cd0] {\r\n    font-size: 120% !important;\n}\n.text-primary-m1[data-v-158b6cd0] {\r\n    color: #4087d4 !important;\n}\n.text-danger-m1[data-v-158b6cd0] {\r\n    color: #dd4949 !important;\n}\n.text-blue-m2[data-v-158b6cd0] {\r\n    color: #68a3d5 !important;\n}\n.text-150[data-v-158b6cd0] {\r\n    font-size: 150% !important;\n}\n.text-60[data-v-158b6cd0] {\r\n    font-size: 60% !important;\n}\n.text-grey-m1[data-v-158b6cd0] {\r\n    color: #7b7d81 !important;\n}\n.align-bottom[data-v-158b6cd0] {\r\n    vertical-align: bottom !important;\n}\n.amount-red[data-v-158b6cd0]{\r\n    color: red;\n}\n.total-amount[data-v-158b6cd0]{\r\n    background-color: rgba(0,0,0,.075);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.page-content[data-v-158b6cd0] {\r\n    width: 100%;\n}\n.total[data-v-158b6cd0] {\r\n    color: #343a40 !important;\r\n    font-weight: bold;\n}\n.text-secondary-d1[data-v-158b6cd0] {\r\n    color: #728299 !important;\n}\n.page-header[data-v-158b6cd0] {\r\n    margin: 0 0 1rem;\r\n    padding-bottom: 1rem;\r\n    padding-top: .5rem;\r\n    border-bottom: 1px dotted #e2e2e2;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: center;\n}\n.page-title[data-v-158b6cd0] {\r\n    padding: 0;\r\n    margin: 0;\r\n    font-size: 1.75rem;\r\n    font-weight: 300;\n}\n.brc-default-l1[data-v-158b6cd0] {\r\n    border-color: #dce9f0 !important;\n}\n.ml-n1[data-v-158b6cd0],\r\n.mx-n1[data-v-158b6cd0] {\r\n    margin-left: -.25rem !important;\n}\n.mr-n1[data-v-158b6cd0],\r\n.mx-n1[data-v-158b6cd0] {\r\n    margin-right: -.25rem !important;\n}\n.mb-4[data-v-158b6cd0],\r\n.my-4[data-v-158b6cd0] {\r\n    margin-bottom: 1.5rem !important;\n}\nhr[data-v-158b6cd0] {\r\n    margin-top: 1rem;\r\n    margin-bottom: 1rem;\r\n    border: 0;\r\n    border-top: 1px solid rgba(0, 0, 0, .1);\n}\n.text-grey-m2[data-v-158b6cd0] {\r\n    color: #888a8d !important;\n}\n.text-success-m2[data-v-158b6cd0] {\r\n    color: #86bd68 !important;\n}\n.font-bolder[data-v-158b6cd0],\r\n.text-600[data-v-158b6cd0] {\r\n    font-weight: 600 !important;\n}\n.text-110[data-v-158b6cd0] {\r\n    font-size: 110% !important;\n}\n.text-blue[data-v-158b6cd0] {\r\n    color: #478fcc !important;\n}\n.pb-25[data-v-158b6cd0],\r\n.py-25[data-v-158b6cd0] {\r\n    padding-bottom: .75rem !important;\n}\n.pt-25[data-v-158b6cd0],\r\n.py-25[data-v-158b6cd0] {\r\n    padding-top: .75rem !important;\n}\n.bgc-default-tp1[data-v-158b6cd0] {\r\n    background-color: rgba(121, 169, 197, .92) !important;\n}\n.bgc-default-l4[data-v-158b6cd0],\r\n.bgc-h-default-l4[data-v-158b6cd0]:hover {\r\n    background-color: #f3f8fa !important;\n}\n.page-header .page-tools[data-v-158b6cd0] {\r\n    align-self: flex-end;\n}\n.btn-light[data-v-158b6cd0] {\r\n    color: #757984;\r\n    background-color: #f5f6f9;\r\n    border-color: #dddfe4;\n}\n.w-2[data-v-158b6cd0] {\r\n    width: 1rem;\n}\n.text-120[data-v-158b6cd0] {\r\n    font-size: 120% !important;\n}\n.text-primary-m1[data-v-158b6cd0] {\r\n    color: #4087d4 !important;\n}\n.text-danger-m1[data-v-158b6cd0] {\r\n    color: #dd4949 !important;\n}\n.text-blue-m2[data-v-158b6cd0] {\r\n    color: #68a3d5 !important;\n}\n.text-150[data-v-158b6cd0] {\r\n    font-size: 150% !important;\n}\n.text-60[data-v-158b6cd0] {\r\n    font-size: 60% !important;\n}\n.text-grey-m1[data-v-158b6cd0] {\r\n    color: #7b7d81 !important;\n}\n.align-bottom[data-v-158b6cd0] {\r\n    vertical-align: bottom !important;\n}\n.amount-red[data-v-158b6cd0] {\r\n    color: red;\n}\n.total-amount[data-v-158b6cd0] {\r\n    background-color: rgba(0, 0, 0, .075);\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

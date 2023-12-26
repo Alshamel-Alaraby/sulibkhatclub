@@ -86,6 +86,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       employees: [],
       create_linked_with_docs: [],
       create_approve_employee: [],
+      clientTypes: [],
       moduleTypes: [],
       docsList: [],
       create: {
@@ -98,7 +99,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         is_break: 0,
         is_partially: 0,
         relation_voucher_header: 0,
-        document_module_type_id: null
+        document_module_type_id: null,
+        clientTypes: []
       },
       create_effects: {
         cash: 0,
@@ -207,6 +209,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
+    getClientType: function getClientType() {
+      var _this2 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/client-types/get-drop-down").then(function (res) {
+        var l = res.data.data;
+        _this2.clientTypes = l;
+      })["catch"](function (err) {
+        Swal.fire({
+          icon: "error",
+          title: "".concat(_this2.$t("general.Error")),
+          text: "".concat(_this2.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this2.isLoader = false;
+      });
+    },
     isVisible: function isVisible(fieldName) {
       if (!this.isPage) {
         var res = this.fields.filter(function (field) {
@@ -228,7 +246,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     defaultData: function defaultData() {
-      var _this2 = this;
+      var _this3 = this;
       this.create = {
         name: "",
         name_e: "",
@@ -239,11 +257,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         is_break: 0,
         is_partially: 0,
         relation_voucher_header: 0,
-        document_module_type_id: null
+        document_module_type_id: null,
+        clientTypes: []
       };
       this.create_linked_with_docs = [];
       this.$nextTick(function () {
-        _this2.$v.$reset();
+        _this3.$v.$reset();
       });
       this.errors = {};
       if ('edit' == this.type) {
@@ -284,68 +303,70 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$bvModal.hide(this.id);
     },
     resetModal: function resetModal() {
-      var _this3 = this;
+      var _this4 = this;
       setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         var module;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (!(_this3.type != 'edit')) {
+              if (!(_this4.type != 'edit')) {
                 _context2.next = 9;
                 break;
               }
-              _this3.defaultData();
-              if (_this3.isPage) {
+              _this4.defaultData();
+              if (_this4.isPage) {
                 _context2.next = 5;
                 break;
               }
               _context2.next = 5;
-              return _this3.getCustomTableFields();
+              return _this4.getCustomTableFields();
             case 5:
               // this.getBranches();
               // this.getSerials();
-              _this3.docType();
-              _this3.getEmployees();
+              _this4.docType();
+              _this4.getEmployees();
               _context2.next = 10;
               break;
             case 9:
-              if (_this3.idObjEdit.dataObj) {
-                module = _this3.idObjEdit.dataObj;
-                _this3.document_id = module.id;
-                _this3.create.name = module.name;
-                _this3.create.name_e = module.name_e;
-                _this3.create.required = module.required;
-                _this3.create.need_approve = module.need_approve;
-                _this3.create.is_copy = module.is_copy;
-                _this3.create.is_break = module.is_break;
-                _this3.create.is_partially = module.is_partially;
-                _this3.create.document_detail_type = module.document_detail_type;
-                _this3.create.relation_voucher_header = module.relation_voucher_header;
-                _this3.create.document_module_type_id = module.document_module_type_id;
+              if (_this4.idObjEdit.dataObj) {
+                module = _this4.idObjEdit.dataObj;
+                _this4.document_id = module.id;
+                _this4.create.name = module.name;
+                _this4.create.name_e = module.name_e;
+                _this4.create.required = module.required;
+                _this4.create.need_approve = module.need_approve;
+                _this4.create.is_copy = module.is_copy;
+                _this4.create.is_break = module.is_break;
+                _this4.create.is_partially = module.is_partially;
+                _this4.create.document_detail_type = module.document_detail_type;
+                _this4.create.relation_voucher_header = module.relation_voucher_header;
+                _this4.create.document_module_type_id = module.document_module_type_id;
+                _this4.create.clientTypes = module.clientTypes;
                 if (module.attributes) {
-                  _this3.create_effects.cash = module.attributes.cash;
-                  _this3.create_effects.customer = module.attributes.customer;
-                  _this3.create_effects.supplier = module.attributes.supplier;
-                  _this3.create_effects.item_quantity = module.attributes.item_quantity;
-                  _this3.create_effects.reserved_quantity = module.attributes.reserved_quantity;
-                  _this3.create_effects.ordered_quantity = module.attributes.ordered_quantity;
-                  _this3.create_effects.available = module.attributes.available;
-                  _this3.create_effects.unrealized_revenue = module.attributes.unrealized_revenue;
-                  _this3.create_effects.revenue = module.attributes.revenue;
-                  _this3.create_effects.unrealized_commission = module.attributes.unrealized_commission;
-                  _this3.create_effects.commission = module.attributes.commission;
+                  _this4.create_effects.cash = module.attributes.cash;
+                  _this4.create_effects.customer = module.attributes.customer;
+                  _this4.create_effects.supplier = module.attributes.supplier;
+                  _this4.create_effects.item_quantity = module.attributes.item_quantity;
+                  _this4.create_effects.reserved_quantity = module.attributes.reserved_quantity;
+                  _this4.create_effects.ordered_quantity = module.attributes.ordered_quantity;
+                  _this4.create_effects.available = module.attributes.available;
+                  _this4.create_effects.unrealized_revenue = module.attributes.unrealized_revenue;
+                  _this4.create_effects.revenue = module.attributes.revenue;
+                  _this4.create_effects.unrealized_commission = module.attributes.unrealized_commission;
+                  _this4.create_effects.commission = module.attributes.commission;
                 }
-                _this3.docType();
-                _this3.getEmployees();
-                _this3.getModuleTypes();
+                _this4.docType();
+                _this4.getEmployees();
+                _this4.getModuleTypes();
+                _this4.getClientType();
                 // await this.getBranches();
                 // await this.getSerials();
                 // this.branchFormEdit.branche_id = module.branche_id;
                 // this.branchFormEdit.serial_id = module.serial_id;
-                _this3.create_linked_with_docs = module.document_relateds.map(function (doc) {
+                _this4.create_linked_with_docs = module.document_relateds.map(function (doc) {
                   return doc.id;
                 });
-                _this3.create_approve_employee = module.employees.map(function (doc) {
+                _this4.create_approve_employee = module.employees.map(function (doc) {
                   return doc.id;
                 });
               }
@@ -360,7 +381,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.defaultData();
     },
     AddSubmit: function AddSubmit() {
-      var _this4 = this;
+      var _this5 = this;
       if (!this.create.name) {
         this.create.name = this.create.name_e;
       }
@@ -391,20 +412,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].post(this.url, _objectSpread(_objectSpread({}, this.create), {}, {
             company_id: this.$store.getters["auth/company_id"]
           })).then(function (res) {
-            _this4.is_disabled = true;
-            _this4.document_id = res.data.data.id;
-            if (!_this4.isPage) _this4.$emit("created");else _this4.$emit("getDataTable");
+            _this5.is_disabled = true;
+            _this5.document_id = res.data.data.id;
+            if (!_this5.isPage) _this5.$emit("created");else _this5.$emit("getDataTable");
             setTimeout(function () {
-              _this4.successFun('Addedsuccessfully');
+              _this5.successFun('Addedsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this4.errors = err.response.data.errors;
+              _this5.errors = err.response.data.errors;
             } else {
-              _this4.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         } else {
           var _this$create = this.create,
@@ -416,7 +437,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             is_break = _this$create.is_break,
             is_partially = _this$create.is_partially,
             document_detail_type = _this$create.document_detail_type,
-            document_module_type_id = _this$create.document_module_type_id;
+            document_module_type_id = _this$create.document_module_type_id,
+            clientTypes = _this$create.clientTypes;
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), {
             name: name,
             name_e: name_e,
@@ -426,21 +448,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             is_break: is_break,
             is_partially: is_partially,
             document_detail_type: document_detail_type,
-            document_module_type_id: document_module_type_id
+            document_module_type_id: document_module_type_id,
+            clientTypes: clientTypes
           }).then(function (res) {
-            _this4.$bvModal.hide(_this4.id);
-            _this4.$emit("getDataTable");
+            _this5.$bvModal.hide(_this5.id);
+            _this5.$emit("getDataTable");
             setTimeout(function () {
-              _this4.successFun('Editsuccessfully');
+              _this5.successFun('Editsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this4.errors = err.response.data.errors;
+              _this5.errors = err.response.data.errors;
             } else {
-              _this4.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         }
       }
@@ -449,25 +472,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_7__.formatDateOnly)(value);
     },
     getEmployees: function getEmployees() {
-      var _this5 = this;
+      var _this6 = this;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/employees").then(function (res) {
         var l = res.data.data;
-        _this5.employees = l;
-      })["catch"](function (err) {
-        _this5.errorFun('Error', 'Thereisanerrorinthesystem');
-      });
-    },
-    getModuleTypes: function getModuleTypes() {
-      var _this6 = this;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/document-module-type/get-drop-down").then(function (res) {
-        var l = res.data.data;
-        _this6.moduleTypes = l;
+        _this6.employees = l;
       })["catch"](function (err) {
         _this6.errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
-    companyId: function companyId(id) {
+    getModuleTypes: function getModuleTypes() {
       var _this7 = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/document-module-type/get-drop-down").then(function (res) {
+        var l = res.data.data;
+        _this7.moduleTypes = l;
+      })["catch"](function (err) {
+        _this7.errorFun('Error', 'Thereisanerrorinthesystem');
+      });
+    },
+    companyId: function companyId(id) {
+      var _this8 = this;
       axios.get("".concat("https://admin.alshamelalaraby2.com/", "api/everything_about_the_company/").concat(id)).then(function (res) {
         var l = res.data.data;
         if (l.document_company_module.length > 0) {
@@ -496,12 +519,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].post("/document/from_admin", {
               documents: documents
             }).then(function (res) {})["catch"](function (err) {
-              _this7.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this8.errorFun('Error', 'Thereisanerrorinthesystem');
             });
           }
         }
       })["catch"](function (err) {
-        _this7.errorFun('Error', 'Thereisanerrorinthesystem');
+        _this8.errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
     getHeader: function getHeader() {
@@ -511,28 +534,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return "";
     },
     addDocs: function addDocs($action) {
-      var _this8 = this;
+      var _this9 = this;
       this.isLoader = true;
       var linked_with_docs = this.create_linked_with_docs;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("/document/".concat(this.document_id), {
         document_relateds: linked_with_docs
-      }).then(function (res) {
-        _this8.isLoader = false;
-        _this8.getData();
-        setTimeout(function () {
-          _this8.successFun('Addedsuccessfully');
-        }, 500);
-      })["catch"](function (err) {
-        _this8.errorFun('Error', 'Thereisanerrorinthesystem');
-      });
-    },
-    addApproveEmployee: function addApproveEmployee($action) {
-      var _this9 = this;
-      this.isLoader = true;
-      var linked_with_docs = this.create_approve_employee;
-      var data = $action == "create" ? this.create : this.edit;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("/document/".concat(this.document_id), {
-        employees: linked_with_docs
       }).then(function (res) {
         _this9.isLoader = false;
         _this9.getData();
@@ -543,17 +549,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this9.errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
-    docType: function docType() {
+    addApproveEmployee: function addApproveEmployee($action) {
       var _this10 = this;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/document").then(function (res) {
-        var l = res.data;
-        _this10.docsList = l.data;
+      this.isLoader = true;
+      var linked_with_docs = this.create_approve_employee;
+      var data = $action == "create" ? this.create : this.edit;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("/document/".concat(this.document_id), {
+        employees: linked_with_docs
+      }).then(function (res) {
+        _this10.isLoader = false;
+        _this10.getData();
+        setTimeout(function () {
+          _this10.successFun('Addedsuccessfully');
+        }, 500);
       })["catch"](function (err) {
         _this10.errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
-    addBranchForm: function addBranchForm(method) {
+    docType: function docType() {
       var _this11 = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/document").then(function (res) {
+        var l = res.data;
+        _this11.docsList = l.data;
+      })["catch"](function (err) {
+        _this11.errorFun('Error', 'Thereisanerrorinthesystem');
+      });
+    },
+    addBranchForm: function addBranchForm(method) {
+      var _this12 = this;
       var form = null;
       form = _objectSpread(_objectSpread({}, this.branchFormCreate), {}, {
         id: this.document_id
@@ -562,25 +585,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       if (this.$v.branchFormCreate.$invalid) return;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("/document/".concat(this.document_id), form).then(function (res) {
-        _this11.getData();
+        _this12.getData();
         setTimeout(function () {
-          _this11.successFun('Addedsuccessfully');
+          _this12.successFun('Addedsuccessfully');
         }, 500);
-      })["catch"](function (err) {
-        if (err.response.data) {
-          _this11.errors = err.response.data.errors;
-        } else {
-          _this11.errorFun('Error', 'Thereisanerrorinthesystem');
-        }
-      })["finally"](function () {
-        _this11.isLoader = false;
-      });
-    },
-    getBranches: function getBranches() {
-      var _this12 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/branches").then(function (res) {
-        _this12.branches = res.data.data;
       })["catch"](function (err) {
         if (err.response.data) {
           _this12.errors = err.response.data.errors;
@@ -591,11 +599,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this12.isLoader = false;
       });
     },
-    getSerials: function getSerials() {
+    getBranches: function getBranches() {
       var _this13 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/serials").then(function (res) {
-        _this13.serials = res.data.data;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/branches").then(function (res) {
+        _this13.branches = res.data.data;
       })["catch"](function (err) {
         if (err.response.data) {
           _this13.errors = err.response.data.errors;
@@ -606,8 +614,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this13.isLoader = false;
       });
     },
-    addEffects: function addEffects(method) {
+    getSerials: function getSerials() {
       var _this14 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].get("/serials").then(function (res) {
+        _this14.serials = res.data.data;
+      })["catch"](function (err) {
+        if (err.response.data) {
+          _this14.errors = err.response.data.errors;
+        } else {
+          _this14.errorFun('Error', 'Thereisanerrorinthesystem');
+        }
+      })["finally"](function () {
+        _this14.isLoader = false;
+      });
+    },
+    addEffects: function addEffects(method) {
+      var _this15 = this;
       if (parseInt(this.create_effects.cash) == parseInt(this.create_effects.customer)) {
         this.errorFun('Error', 'TheEffectOnTheCashMustNotBeEqualToTheEffectOnTheCustomer');
         return;
@@ -619,18 +642,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_4__["default"].put("/document/".concat(this.document_id), form).then(function (res) {
-        _this14.getData();
+        _this15.getData();
         setTimeout(function () {
-          _this14.successFun('Addedsuccessfully');
+          _this15.successFun('Addedsuccessfully');
         }, 500);
       })["catch"](function (err) {
         if (err.response.data) {
-          _this14.errors = err.response.data.errors;
+          _this15.errors = err.response.data.errors;
         } else {
-          _this14.errorFun('Error', 'Thereisanerrorinthesystem');
+          _this15.errorFun('Error', 'Thereisanerrorinthesystem');
         }
       })["finally"](function () {
-        _this14.isLoader = false;
+        _this15.isLoader = false;
       });
     },
     arabicValueName: function arabicValueName(txt) {
@@ -2582,16 +2605,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                           folders_and_pages.push(element);
                         });
                       case 3:
-                        _context.next = 5;
+                        if (!(_this2.$store.state.auth.type == 'admin')) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 6;
                         return _this2.getWorkflows(folders_and_pages);
-                      case 5:
-                        _context.next = 7;
+                      case 6:
+                        _context.next = 8;
                         return _this2.appendShowProperty(folders_and_pages);
-                      case 7:
+                      case 8:
                         folders_and_pages_after_appended_show_property = _context.sent;
                         localStorage.setItem('routeModules', JSON.stringify(folders_and_pages_after_appended_show_property));
                         _helper_Rule_js__WEBPACK_IMPORTED_MODULE_4__["default"].value = folders_and_pages_after_appended_show_property;
-                      case 10:
+                      case 11:
                       case "end":
                         return _context.stop();
                     }
@@ -2741,7 +2768,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!(_this6.$store.state.auth.type == "user")) {
+              if (!(_this6.$store.state.auth.type != "admin")) {
                 _context4.next = 5;
                 break;
               }
@@ -3088,13 +3115,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this4.notifications.unshift(notification);
-          _this4.count += 1;
-          console.log(notification);
-        });
+        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
+        //     .notification((notification) => {
+        //         this.notifications.unshift(notification);
+        //         this.count += 1;
+        //         console.log(notification);
+        //     });
       }
     }
   },
@@ -3136,7 +3163,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     checkUserOrAdminPermission: function checkUserOrAdminPermission(isUserMenu) {
-      if (this.$store.state.auth.type == "user") {
+      if (this.$store.state.auth.type != "admin") {
         return isUserMenu;
       }
       return true;
@@ -3517,7 +3544,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/general/Page-header */ "./resources/js/components/general/Page-header.vue");
 /* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../api/adminAxios */ "./resources/js/api/adminAxios.js");
 /* harmony import */ var _api_outerAxios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../api/outerAxios */ "./resources/js/api/outerAxios.js");
-/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
@@ -3534,10 +3561,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_create_receivablePayment_installmentPaymentType_vue__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../components/create/receivablePayment/installmentPaymentType.vue */ "./resources/js/components/create/receivablePayment/installmentPaymentType.vue");
 /* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../helper/langTransform */ "./resources/js/helper/langTransform.js");
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
+/* harmony import */ var _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../helper/mixin/success&error */ "./resources/js/helper/mixin/success&error.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -3570,7 +3599,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       content: "Payment plan installment"
     }]
   },
-  mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_10__["default"]],
+  mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_10__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_18__["default"]],
   components: {
     Layout: _layouts_main__WEBPACK_IMPORTED_MODULE_0__["default"],
     InstallmentStatus: _components_create_receivablePayment_installmentStatus__WEBPACK_IMPORTED_MODULE_12__["default"],
@@ -3652,124 +3681,124 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   validations: {
     create: {
       installment_payment_plan_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
       },
       payment_plan_installments: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
         $each: {
           installment_payment_type_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           installment_status_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           doc_type_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           v_date: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           due_date: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           total_amount: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           paid_amount: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           day_month: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer,
-            between: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.between)(1, 30)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer,
+            between: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.between)(1, 30)
           },
           ref_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           rp_code: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           is_fixed: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
           },
           note_a: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(255)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(255)
           },
           note_e: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(255)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(255)
           }
         }
       }
     },
     edit: {
       installment_payment_plan_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
       },
       payment_plan_installments: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
         $each: {
           installment_payment_type_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           installment_status_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           doc_type_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           v_date: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           due_date: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required
           },
           total_amount: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           paid_amount: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           day_month: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer,
-            between: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.between)(1, 30)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer,
+            between: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.between)(1, 30)
           },
           ref_id: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           rp_code: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.decimal,
-            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.minValue)(0.1)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            decimal: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.decimal,
+            minValue: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.minValue)(0.1)
           },
           is_fixed: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.integer
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            integer: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.integer
           },
           note_a: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(255)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(255)
           },
           note_e: {
-            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.required,
-            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_18__.maxLength)(255)
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.required,
+            maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_19__.maxLength)(255)
           }
         }
       }
@@ -4044,11 +4073,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this6.$t("general.Error")),
-                  text: "".concat(_this6.$t("general.CantDeleteRelation"))
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
                 });
+                _this6.errorFunChildren('Error', text);
                 _this6.getData();
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
@@ -4088,11 +4117,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               });
             })["catch"](function (err) {
               if (err.response.status == 400) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
-                  icon: "error",
-                  title: "".concat(_this6.$t("general.Error")),
-                  text: "".concat(_this6.$t("general.CantDeleteRelation"))
+                var text = '';
+                err.response.data.message.forEach(function (el) {
+                  return text += "<div>".concat(el.message, "</div> <br/>");
                 });
+                _this6.errorFunChildren('Error', text);
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
@@ -5155,7 +5184,41 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
-  }) : _vm._e()], 2)]) : _vm._e()])]), _vm._v(" "), _c("b-tab", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.client_types")) + "\n                                ")]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      multiple: true,
+      "show-labels": false,
+      options: _vm.clientTypes.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.clientTypes.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.clientTypes.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.clientTypes.find(function (x) {
+          return x.id == opt;
+        }).name_e : "";
+      }
+    },
+    model: {
+      value: _vm.create.clientTypes,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "clientTypes", $$v);
+      },
+      expression: "create.clientTypes"
+    }
+  }), _vm._v(" "), _vm.errors.clientTypes ? _vm._l(_vm.errors.clientTypes, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)])])]), _vm._v(" "), _c("b-tab", {
     attrs: {
       disabled: !_vm.document_id,
       title: _vm.$t("general.effects")
@@ -8360,7 +8423,7 @@ var render = function render() {
         html: (prog.icon ? "<i class='".concat(prog.icon, "' style='background:none!important;color:#000'></i> ") : "") + (_vm.$i18n.locale == "ar" ? prog.name : prog.name_e)
       }
     }, [_vm._l(prog.modules, function (prog_module, index) {
-      return [_c("b-dropdown-item", {
+      return [prog_module.isUserTopBar || _vm.$store.state.auth.type == "admin" ? _c("b-dropdown-item", {
         "class": _vm.selectedParents.value.length && _vm.selectedParents.value[1] == prog_module.project_program_module.id ? "selected-program" : "",
         on: {
           click: function click($event) {
@@ -8380,7 +8443,7 @@ var render = function render() {
           background: "none!important",
           color: "#000"
         }
-      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")])];
+      }), _vm._v(" " + _vm._s(_vm.$i18n.locale == "ar" ? prog_module.project_program_module.name : prog_module.project_program_module.name_e) + "\n                                            ")]) : _vm._e()];
     })], 2)], 1);
   }), 0)])]) : _vm._e()]], 2), _vm._v(" "), _c("div", {
     staticClass: "clearfix"
@@ -9869,7 +9932,7 @@ var render = function render() {
         "data-title": item.page.title,
         "data-title_e": item.page.title_e,
         "data-url": "/dashboard/".concat(item.page.middleware_url),
-        to: "/dashboard/".concat(item.page.middleware_url)
+        to: "/dashboard/".concat(item.page.middleware_url == "/" ? "" : item.page.middleware_url)
       },
       on: {
         click: function click($event) {
@@ -12148,6 +12211,13 @@ __webpack_require__.r(__webpack_exports__);
         icon: "error",
         title: "".concat(this.$t("general.".concat(Error))),
         text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
       });
     },
     successFun: function successFun(text) {

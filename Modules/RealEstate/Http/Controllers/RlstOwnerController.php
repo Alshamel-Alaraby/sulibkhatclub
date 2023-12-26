@@ -20,10 +20,6 @@ class RlstOwnerController extends Controller
     public function find($id)
     {
 
-        //return $this->model->data()->find($id);
-        //return $this->model->data()->find($id)->wallets()->pluck('rlst_wallet_owners.wallet_id');
-        //return $this->model->data()->find($id)->distinct()->buildings();
-
         $model = $this->model->data()->find($id);
 
         if (!$model) {
@@ -35,11 +31,8 @@ class RlstOwnerController extends Controller
 
     public function all(Request $request)
     {
-        
-        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
-        
-        
+        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -55,7 +48,6 @@ class RlstOwnerController extends Controller
 
         $model = $this->model->create($request->validated());
         return $model;
-
 
         return responseJson(200, 'created', new RlstOwnerResource($model));
 
@@ -88,34 +80,32 @@ class RlstOwnerController extends Controller
     public function delete($id)
     {
         $model = $this->model->find($id);
-
         if (!$model) {
-            return responseJson(404, 'not found');
+            return responseJson(404, __('message.data not found'));
         }
-
 
         $relationsWithChildren = $model->hasChildren();
 
-        //return $relationsWithChildren;
-
-        if (sizeof($relationsWithChildren) > 0) {
+        if (!empty($relationsWithChildren)) {
             $errorMessages = [];
             foreach ($relationsWithChildren as $relation) {
                 $relationName = $this->getRelationDisplayName($relation['relation']);
                 $childCount = $relation['count'];
                 $childIds = implode(', ', $relation['ids']);
-                $errorMessages[] = "This item has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                $errorMessages[] = [
+                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                ];
             }
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        $model->deleted_at = now();
-        $model->save();
-
+        $model->delete();
         return responseJson(200, 'success');
     }
-
-
 
     public function bulkDelete(Request $request)
     {
@@ -133,9 +123,7 @@ class RlstOwnerController extends Controller
                 continue;
             }
 
-            $model->deleted_at = now();
-            $model->save();
-            
+            $model->delete();
         }
 
         if (count($itemsWithRelations) > 0) {
@@ -149,17 +137,25 @@ class RlstOwnerController extends Controller
                     $relationName = $this->getRelationDisplayName($relation['relation']);
                     $childCount = $relation['count'];
                     $childIds = implode(', ', $relation['ids']);
-                    $relationErrorMessages[] = "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first.";
+                    $relationErrorMessages[] = [
+                        'message' => "Item with ID {$itemId} has {$childCount} {$relationName} (IDs: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+                    ];
                 }
 
-                $errorMessages[] = implode(' ', $relationErrorMessages);
+                $errorMessages = array_merge($errorMessages, $relationErrorMessages);
             }
 
-            return responseJson(400, $errorMessages);
+            return response()->json([
+                "message" => $errorMessages,
+                "data" => null,
+                "pagination" => null
+            ], 400);
         }
 
-        return responseJson(200, __('Done'));
+        return responseJson(200, 'success');
     }
+
+
 
     private function getRelationDisplayName($relation)
     {

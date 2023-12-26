@@ -24,8 +24,8 @@ class ItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255|unique:rlst_items,name,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
-            'name_e' => 'required|string|max:255|unique:rlst_items,name_e,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
+            'name' => 'nullable|string|max:255|unique:rlst_items,name,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
+            'name_e' => 'nullable|string|max:255|unique:rlst_items,name_e,'. ($this->method() == 'PUT' ?  $this->id : '').',id,deleted_at,NULL',
             'code_number' => 'sometimes|string|max:255',
             'type'=> 'nullable|string',
             'price'=> 'numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',

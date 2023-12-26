@@ -56,10 +56,46 @@ class Location extends Model
         return $this->hasMany(Location::class, 'parent_id');
     }
 
+    public function equipments()
+    {
+        return $this->hasMany(Equipment::class, 'location_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'location_id');
+    }
+
     public function hasChildren()
     {
-        return $this->children()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->equipments()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'equipments',
+                'count' => $this->equipments()->count(),
+                'ids' => $this->equipments()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->tasks()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'tasks',
+                'count' => $this->tasks()->count(),
+                'ids' => $this->tasks()->pluck('contact_person')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): LogOptions
     {

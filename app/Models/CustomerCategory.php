@@ -33,10 +33,47 @@ class CustomerCategory extends Model
     {
         return $this->hasMany(CustomerCategory::class, 'parent_id');
     }
+
+    public function customer_main_category()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'customer_main_category_id');
+    }
+    public function customer_sub_category()
+    {
+        return $this->hasMany(GeneralCustomer::class, 'customer_sub_category_id');
+    }
+
+ 
     public function hasChildren()
     {
-        return $this->children()->count() > 0;
+        $relationsWithChildren = [];
+
+        if ($this->children()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'children',
+                'count' => $this->children()->count(),
+                'ids' => $this->children()->pluck('name')->toArray(),
+            ];
+        }
+        if ($this->customer_main_category()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customer_main_category',
+                'count' => $this->customer_main_category()->count(),
+                'ids' => $this->customer_main_category()->pluck('name')->toArray(),
+            ];
+        }
+
+        if ($this->customer_sub_category()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'customer_sub_category',
+                'count' => $this->customer_sub_category()->count(),
+                'ids' => $this->customer_sub_category()->pluck('name')->toArray(),
+            ];
+        }
+
+        return $relationsWithChildren;
     }
+
 
     public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
     {
@@ -44,7 +81,7 @@ class CustomerCategory extends Model
 
         return \Spatie\Activitylog\LogOptions::defaults()
             ->logAll()
-            ->useLogName('Customer')
+            ->useLogName('Customer Category')
             ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName} by ($user)");
     }
 

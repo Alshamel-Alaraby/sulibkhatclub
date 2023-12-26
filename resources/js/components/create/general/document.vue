@@ -329,6 +329,27 @@
                                 </template>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    {{$t('general.client_types')}}
+                                </label>
+
+                                <multiselect
+                                    :multiple="true"
+                                    :show-labels="false"
+                                    v-model="create.clientTypes"
+                                    :options="clientTypes.map((type) => type.id)"
+                                    :custom-label=" (opt) => clientTypes.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? clientTypes.find((x) => x.id == opt).name: clientTypes.find((x) => x.id == opt).name_e:''"
+                                >
+                                </multiselect>
+                                <template v-if="errors.clientTypes">
+                                    <ErrorMessage v-for="(errorMessage, index) in errors.clientTypes"
+                                                  :key="index">{{ errorMessage }}
+                                    </ErrorMessage>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </b-tab>
                 <b-tab :disabled="!document_id" :title="$t('general.effects')">
@@ -695,6 +716,7 @@ export default {
             employees: [],
             create_linked_with_docs: [],
             create_approve_employee: [],
+            clientTypes: [],
             moduleTypes: [],
             docsList: [],
             create: {
@@ -708,6 +730,7 @@ export default {
                 is_partially: 0,
                 relation_voucher_header: 0,
                 document_module_type_id: null,
+                clientTypes:[],
             },
             create_effects: {
                 cash: 0,
@@ -800,6 +823,25 @@ export default {
                     this.isCustom = false;
                 });
         },
+        getClientType() {
+            this.isLoader = true;
+            adminApi
+                .get(`/client-types/get-drop-down`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.clientTypes = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
         isVisible(fieldName) {
             if(!this.isPage){
                 let res = this.fields.filter((field) => {
@@ -823,7 +865,7 @@ export default {
         defaultData(){
             this.create = {
                 name: "", name_e: "", document_detail_type: "normal",
-                required: 0, need_approve: 0, is_copy: 0,is_break: 0,is_partially: 0,relation_voucher_header:0,document_module_type_id:null
+                required: 0, need_approve: 0, is_copy: 0,is_break: 0,is_partially: 0,relation_voucher_header:0,document_module_type_id:null,clientTypes:[]
             };
             this.create_linked_with_docs = [];
             this.$nextTick(() => {
@@ -890,6 +932,7 @@ export default {
                         this.create.document_detail_type = module.document_detail_type;
                         this.create.relation_voucher_header = module.relation_voucher_header;
                         this.create.document_module_type_id = module.document_module_type_id;
+                        this.create.clientTypes = module.clientTypes;
                         if (module.attributes) {
                             this.create_effects.cash = module.attributes.cash;
                             this.create_effects.customer = module.attributes.customer;
@@ -906,6 +949,7 @@ export default {
                         this.docType();
                         this.getEmployees();
                         this.getModuleTypes();
+                        this.getClientType();
                         // await this.getBranches();
                         // await this.getSerials();
                         // this.branchFormEdit.branche_id = module.branche_id;
@@ -982,9 +1026,9 @@ export default {
                         });
                 }else {
 
-                    let { name, name_e, required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id } = this.create;
+                    let { name, name_e, required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id,clientTypes } = this.create;
                     adminApi
-                        .put(`${this.url}/${this.idObjEdit.idEdit}`, { name, name_e,required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id })
+                        .put(`${this.url}/${this.idObjEdit.idEdit}`, { name, name_e,required, need_approve,is_copy,is_break,is_partially, document_detail_type,document_module_type_id,clientTypes })
                         .then((res) => {
                             this.$bvModal.hide(this.id);
                             this.$emit("getDataTable");
