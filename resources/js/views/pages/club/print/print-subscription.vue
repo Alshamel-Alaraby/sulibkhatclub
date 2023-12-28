@@ -51,8 +51,8 @@ export default {
 
             <h3><b>{{ $t('general.Date') }}: {{ formatDate(data_row.date) }}</b>  </h3>
             <div style="display: flex; margin: 0;padding: 0;">
-                <h3 class="col-8"><b>{{ $t('general.We got from Mr') }}  : {{ data_row.member.full_name }}</b></h3>
-                <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data_row.member.membership_number }}</b> </h3>
+                <h3 class="col-8"><b>{{ $t('general.We got from Mr') }}  : {{ data_row.member ? data_row.member.full_name : data_row.member_request.full_name}}</b></h3>
+                <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data_row.member ? data_row.member.membership_number : '' }}</b> </h3>
             </div>
             <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{ data_row.amount + " " + $t('general.APPKDW')}} ) {{ convert_currency_to_words(data_row.amount) }} {{ $t('general.KDW') + " " + $t('general.Just nothing else') }}</b></h3>
 
@@ -90,8 +90,8 @@ export default {
 
             <h3><b>{{ $t('general.Date') }}: {{ formatDate(data_row.date) }}</b>  </h3>
             <div style="display: flex; margin: 0;padding: 0;">
-                <h3 class="col-8"><b>{{ $t('general.We got from Mr') }}  : {{ data_row.member.full_name }}</b></h3>
-                <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data_row.member.membership_number }}</b> </h3>
+                <h3 class="col-8"><b>{{ $t('general.We got from Mr') }}  : {{ data_row.member ? data_row.member.full_name : data_row.member_request.full_name}}</b></h3>
+                <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data_row.member ? data_row.member.membership_number : '' }}</b> </h3>
             </div>
             <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{ data_row.amount + " " + $t('general.APPKDW')}} ) {{ convert_currency_to_words(data_row.amount) }} {{ $t('general.KDW') + " " + $t('general.Just nothing else') }}</b></h3>
 
