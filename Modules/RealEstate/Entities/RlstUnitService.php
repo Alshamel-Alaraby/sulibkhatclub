@@ -17,6 +17,8 @@ class RlstUnitService extends Model
 
     protected $appends = ['unit_name'];
 
+    protected $hidden = ['unit'];
+
 
     public function scopeData($query)
     {

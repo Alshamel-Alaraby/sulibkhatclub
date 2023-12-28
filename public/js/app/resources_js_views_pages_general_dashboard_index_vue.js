@@ -2570,7 +2570,7 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     statices: function statices(newDa, old) {
       var _this = this;
-      newDa.unitsWithStatusWithDetailsCount.forEach(function (el, index) {
+      if (Object.keys(newDa !== null && newDa !== void 0 ? newDa : []).length) newDa.unitsWithStatusWithDetailsCount.forEach(function (el, index) {
         _this.series1.push(el.percentage);
         _this.chartOptions1.labels.push(_this.$i18n.locale == 'ar' ? el.name : el.name_e);
         _this.chartOptions1.colors.push(_this.colors[index]);
@@ -8683,6 +8683,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
 var render = function render() {
+  var _vm$statices$unitsWit;
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", [_c("div", {
@@ -8704,7 +8705,7 @@ var render = function render() {
       height: "312",
       series: _vm.series1
     }
-  })], 1), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), Object.keys((_vm$statices$unitsWit = _vm.statices.unitsWithStatusWithDetailsCount) !== null && _vm$statices$unitsWit !== void 0 ? _vm$statices$unitsWit : []).length ? _c("div", {
     staticClass: "row mt-3"
   }, _vm._l(_vm.statices.unitsWithStatusWithDetailsCount, function (item) {
     return _c("div", {
@@ -8712,7 +8713,7 @@ var render = function render() {
     }, [_c("p", {
       staticClass: "font-15 mb-1 text-truncate"
     }, [_vm._v(_vm._s(_vm.$i18n.locale == "ar" ? item.name : item.name_e))]), _vm._v(" "), _c("h4", [_vm._v(_vm._s(item.count))])]);
-  }), 0)])]), _vm._v(" "), _vm._v("\n\n    <\n")]);
+  }), 0) : _vm._e()])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;

@@ -546,15 +546,17 @@ export default {
                                                 {{ $t('general.beforeDate') }}
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder="yyyy-mm-dd"
+                                            <date-picker
+
+                                                type="date"
                                                 v-model="$v.create.date.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
                                                 :class="{ 'is-invalid':  $v.create.date.$error || errors.date,
                                                     'is-valid':!$v.create.date.$invalid &&!errors.date,
                                                     }"
-                                            >
+                                            ></date-picker>
                                             <template v-if="errors.date">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.date"
                                                               :key="index">
@@ -569,15 +571,22 @@ export default {
                                                 {{ $t('general.forYear') }}
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                placeholder="yyyy"
-                                                class="form-control"
+                                            <date-picker
+                                                type="year"
                                                 v-model="$v.create.year.$model"
-                                                :class="{ 'is-invalid':  $v.create.year.$error || errors.year,
-                                                    'is-valid':!$v.create.year.$invalid &&!errors.year,
-                                                    }"
-                                            >
+                                                format="YYYY"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':
+                                                        $v.create.year.$error ||
+                                                        errors.year,
+                                                    'is-valid':
+                                                        !$v.create.year
+                                                            .$invalid &&
+                                                        !errors.year,
+                                                }"
+                                            ></date-picker>
+
                                             <template v-if="errors.year">
                                                 <ErrorMessage v-for="(errorMessage,index) in errors.year"
                                                               :key="index">

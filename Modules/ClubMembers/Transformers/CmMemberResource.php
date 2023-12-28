@@ -56,7 +56,11 @@ class CmMemberResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'cm_transaction_count' => $this->cm_transaction_count??null,
-            'transaction' =>$this->lastCmTransaction
+            'transaction' =>$this->lastCmTransaction,
+            'executive_office_date' =>$this->executive_office_date,
+            'executive_office_number' =>$this->executive_office_number,
+            'board_of_directors_date' =>$this->board_of_directors_date,
+            'board_of_directors_number' =>$this->board_of_directors_number,
 
         ];
     }

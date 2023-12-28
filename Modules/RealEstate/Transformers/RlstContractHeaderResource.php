@@ -3,6 +3,7 @@
 namespace Modules\RealEstate\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class RlstContractHeaderResource extends JsonResource
 {
@@ -14,6 +15,10 @@ class RlstContractHeaderResource extends JsonResource
      */
     public function toArray($request)
     {
+        $count_settlement = DB::table('general_break_settlements')
+            ->join('rp_break_downs','general_break_settlements.break_id','rp_break_downs.id')
+            ->join('rlst_contract_headers','rp_break_downs.break_id','rlst_contract_headers.id')
+            ->where('rlst_contract_headers.id',$this->id)->count();
         return [
             'id'                      => $this->id,
             'branch_id'               => $this->branch_id,
@@ -47,6 +52,8 @@ class RlstContractHeaderResource extends JsonResource
             'document'                => $this->whenLoaded('document'),
             'contractHeaderDetail'    => $this->whenLoaded('contractHeaderDetail'),
             'units'                   => $this->whenLoaded('units'),
+
+            'breakSettlement'        => $count_settlement > 0 ? 1 : 0,
 
         ];
     }

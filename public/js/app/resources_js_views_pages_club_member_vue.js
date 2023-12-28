@@ -3160,6 +3160,10 @@ __webpack_require__.r(__webpack_exports__);
         acceptance: "0",
         session_date: this.formatDate(new Date()),
         session_number: "",
+        executive_office_date: "",
+        executive_office_number: "",
+        board_of_directors_date: "",
+        board_of_directors_number: "",
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
@@ -3198,7 +3202,18 @@ __webpack_require__.r(__webpack_exports__);
       },
       is_disabled: false,
       fullName: '',
-      filterSetting: ["full_name", "national_id", "membership_number"],
+      filterMember: {
+        full_name: '',
+        national_id: '',
+        membership_number: '',
+        first_name: '',
+        second_name: '',
+        third_name: '',
+        last_name: '',
+        family_name: '',
+        home_phone: ''
+      },
+      filterSetting: ["full_name", "national_id", "membership_number", "first_name", "second_name", "third_name", "last_name", "family_name", "home_phone"],
       printLoading: true,
       printObj: {
         id: "printData"
@@ -3227,6 +3242,10 @@ __webpack_require__.r(__webpack_exports__);
       sponsor: {},
       acceptance: {},
       session_number: {},
+      executive_office_date: {},
+      executive_office_number: {},
+      board_of_directors_date: {},
+      board_of_directors_number: {},
       session_date: {},
       sponsor_id: {},
       member_type: {},
@@ -3350,7 +3369,14 @@ __webpack_require__.r(__webpack_exports__);
      *  start get Data countrie && pagination
      */
     getData: function getData() {
-      var _this5 = this;
+      var _this$filterMember$na,
+        _this$filterMember$me,
+        _this$filterMember$fu,
+        _this$filterMember$ho,
+        _this$filterMember$fi,
+        _this$filterMember$se,
+        _this$filterMember$la,
+        _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
       var index = this.filterSetting.indexOf("sponsor_id");
@@ -3365,7 +3391,7 @@ __webpack_require__.r(__webpack_exports__);
       for (var i = 0; i < this.filterSetting.length; ++i) {
         filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
       }
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_7__["default"].get("/club-members/members?page=".concat(page, "&per_page=").concat(this.per_page, "&company_id=").concat(this.company_id, "&search=").concat(this.search, "&").concat(filter, "&national_id=").concat((_this$filterMember$na = this.filterMember.national_id) !== null && _this$filterMember$na !== void 0 ? _this$filterMember$na : '', "&membership_number=").concat((_this$filterMember$me = this.filterMember.membership_number) !== null && _this$filterMember$me !== void 0 ? _this$filterMember$me : '', "&full_name=").concat((_this$filterMember$fu = this.filterMember.full_name) !== null && _this$filterMember$fu !== void 0 ? _this$filterMember$fu : '', "&home_phone=").concat((_this$filterMember$ho = this.filterMember.home_phone) !== null && _this$filterMember$ho !== void 0 ? _this$filterMember$ho : '', "&first_name=").concat((_this$filterMember$fi = this.filterMember.first_name) !== null && _this$filterMember$fi !== void 0 ? _this$filterMember$fi : '', "&second_name=").concat((_this$filterMember$se = this.filterMember.second_name) !== null && _this$filterMember$se !== void 0 ? _this$filterMember$se : '', "&third_name=").concat(this.filterMember.third_name, "&last_name=").concat((_this$filterMember$la = this.filterMember.last_name) !== null && _this$filterMember$la !== void 0 ? _this$filterMember$la : '', "&family_name=").concat(this.filterMember.family_name)).then(function (res) {
         var l = res.data;
         _this5.members = l.data;
         _this5.membersPagination = l.pagination;
@@ -3438,6 +3464,10 @@ __webpack_require__.r(__webpack_exports__);
       this.edit.applying_number = member.applying_number;
       this.edit.membership_number = member.membership_number;
       this.edit.session_number = member.session_number;
+      this.edit.executive_office_date = member.executive_office_date;
+      this.edit.executive_office_number = member.executive_office_number;
+      this.edit.board_of_directors_date = member.board_of_directors_date;
+      this.edit.board_of_directors_number = member.board_of_directors_number;
       this.edit.first_name = member.first_name;
       this.edit.phone_code = member.phone_code;
       this.edit.second_name = member.second_name;
@@ -3653,6 +3683,21 @@ __webpack_require__.r(__webpack_exports__);
           _this12.isLoader = false;
         });
       }
+    },
+    /**
+     * start filter member
+     */
+    resetFormSearch: function resetFormSearch() {
+      this.filterMember.full_name = '';
+      this.filterMember.national_id = '';
+      this.filterMember.membership_number = '';
+      this.filterMember.first_name = '';
+      this.filterMember.second_name = '';
+      this.filterMember.third_name = '';
+      this.filterMember.last_name = '';
+      this.filterMember.family_name = '';
+      this.filterMember.home_phone = '';
+      this.is_disabled = false;
     }
   }
 });
@@ -8096,7 +8141,79 @@ var render = function render() {
       },
       expression: "filterSetting"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.name")) + "\n                    ")])], 1)], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "first_name"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "second_name"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_second_name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "third_name"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_third_name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "last_name"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_last_name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "family_name"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_family_name")) + "\n                    ")]), _vm._v(" "), _c("b-form-checkbox", {
+    staticClass: "mb-1",
+    attrs: {
+      value: "home_phone"
+    },
+    model: {
+      value: _vm.filterSetting,
+      callback: function callback($$v) {
+        _vm.filterSetting = $$v;
+      },
+      expression: "filterSetting"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                    ")])], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "d-inline-block position-relative",
     staticStyle: {
       width: "77%"
@@ -8169,6 +8286,13 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "d-inline-block"
   }, [_c("b-button", {
+    directives: [{
+      name: "b-modal",
+      rawName: "v-b-modal.filter_members",
+      modifiers: {
+        filter_members: true
+      }
+    }],
     staticClass: "mx-1 custom-btn-background"
   }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.filter")) + "\n                      "), _c("i", {
     staticClass: "fas fa-filter"
@@ -8429,7 +8553,304 @@ var render = function render() {
         return _vm.getData(_vm.membersPagination.current_page + 1);
       }
     }
-  }, [_c("span", [_vm._v(">")])])])])])])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v(">")])])])])])])]), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "filter_members",
+      title: _vm.$t("general.filter"),
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      size: "lg",
+      scrollable: "",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-12 mb-3 d-flex justify-content-end"
+  }, [_c("b-button", {
+    "class": ["font-weight-bold px-2", _vm.is_disabled ? "mx-2" : ""],
+    attrs: {
+      variant: "success",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.resetFormSearch.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                  " + _vm._s(_vm.$t("general.NewSearch")) + "\n                              ")]), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "submit"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getData.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                      " + _vm._s(_vm.$t("general.Search")) + "\n                                  ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("filter_members");
+      }
+    }
+  }, [_vm._v("\n                                  " + _vm._s(_vm.$t("general.Cancel")) + "\n                              ")])], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.$t("general.full_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.full_name,
+      expression: "filterMember.full_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.full_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "full_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.national_id,
+      expression: "filterMember.national_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.national_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "national_id", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.membership_number,
+      expression: "filterMember.membership_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.membership_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "membership_number", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.first_name,
+      expression: "filterMember.first_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.first_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "first_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.second_name,
+      expression: "filterMember.second_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.second_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "second_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.third_name,
+      expression: "filterMember.third_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.third_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "third_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.last_name,
+      expression: "filterMember.last_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.last_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "last_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.family_name,
+      expression: "filterMember.family_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.family_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "family_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                      " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                  ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.home_phone,
+      expression: "filterMember.home_phone"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.home_phone
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "home_phone", $event.target.value);
+      }
+    }
+  })])])])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
   }, [_vm.isLoader ? _c("loader", {
     attrs: {
@@ -8977,7 +9398,7 @@ var render = function render() {
       }
     })])]) : _vm._e(), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.name ? _c("td", [_vm._v("\n                      " + _vm._s("".concat(data.first_name, " ").concat(data.second_name, " ").concat(data.third_name, " ").concat(data.last_name, " ").concat(data.family_name)) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.financial_status_id ? _c("td", [data.financial_status ? [_vm._v("\n                        " + _vm._s(data.financial_status ? _vm.$i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "") + "\n                      ")] : _vm._e()], 2) : _vm._e(), _vm._v(" "), _vm.setting.applying_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.applying_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_status_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.status ? _vm.$i18n.locale == "ar" ? data.status.name : data.status.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.auto_status_sun ? _c("td", [_vm._v("\n                      " + _vm._s(data.membersType ? _vm.$i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.national_id) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.PaymentDate ? _c("td", [_vm._v("\n                          " + _vm._s(data.transaction ? _vm.formatDate(data.transaction.date) : "---") + "\n                      ")]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_vm._v("\n                          " + _vm._s(data.transaction ? data.transaction.document_no : "---") + "\n                      ")]) : _vm._e(), _vm._v(" "), _vm.setting.ForAYear ? _c("td", [_vm._v("\n                          " + _vm._s(data.transaction ? data.transaction.year : "---") + "\n                      ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.birth_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                      " + _vm._s(data.gender ? data.gender == 1 ? _vm.$t("general.male") : _vm.$t("general.female") : null) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.nationality_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.nationality_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_phone) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.home_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                      " + _vm._s(data.work_address) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.membership_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                      " + _vm._s(data.job) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                      " + _vm._s(data.degree) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.acceptance ? _c("td", [_c("span", {
       staticClass: "text-success"
-    }, [data.acceptance == "0" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.pending")) + "\n                        ")] : data.acceptance == "1" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.accepted")) + "\n                        ")] : [_vm._v("\n                          " + _vm._s(_vm.$t("general.declined")) + "\n                        ")]], 2)]) : _vm._e(), _vm._v(" "), _vm.setting.session_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.session_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.sponsor_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.sponsors ? _vm.$i18n.locale == "ar" ? data.sponsors.name : data.sponsors.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _c("b-modal", {
+    }, [data.acceptance == "0" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.pending")) + "\n                        ")] : data.acceptance == "1" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.accepted")) + "\n                        ")] : data.acceptance == "2" ? [_vm._v("\n                          " + _vm._s(_vm.$t("general.declined")) + "\n                        ")] : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.setting.session_date ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_date) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.session_number ? _c("td", [_vm._v("\n                      " + _vm._s(data.session_number) + "\n                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.sponsor_id ? _c("td", [_vm._v("\n                      " + _vm._s(data.sponsors ? _vm.$i18n.locale == "ar" ? data.sponsors.name : data.sponsors.name_e : "-") + "\n                    ")]) : _vm._e(), _vm._v(" "), _c("b-modal", {
       ref: "edit-".concat(data.id),
       refInFor: true,
       attrs: {
@@ -9771,7 +10192,131 @@ var render = function render() {
     }), _vm._v(" "), _vm.errors.session_number ? _vm._l(_vm.errors.session_number, function (errorMessage, index) {
       return _c("ErrorMessage", {
         key: index
-      }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+      }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "control-label"
+    }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("member_executive_office_history")) + "\n                                    ")]), _vm._v(" "), _c("date-picker", {
+      "class": {
+        "is-invalid": _vm.$v.edit.executive_office_date.$error || _vm.errors.executive_office_date,
+        "is-valid": !_vm.$v.edit.executive_office_date.$invalid && !_vm.errors.executive_office_date
+      },
+      attrs: {
+        type: "date",
+        disabled: true,
+        format: "YYYY-MM-DD",
+        valueType: "format",
+        confirm: false
+      },
+      model: {
+        value: _vm.$v.edit.executive_office_date.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.edit.executive_office_date, "$model", $$v);
+        },
+        expression: "$v.edit.executive_office_date.$model"
+      }
+    }), _vm._v(" "), _vm.errors.executive_office_date ? _vm._l(_vm.errors.executive_office_date, function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_executive_office_number")))]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.$v.edit.executive_office_number.$model,
+        expression: "$v.edit.executive_office_number.$model"
+      }],
+      staticClass: "form-control",
+      "class": {
+        "is-invalid": _vm.$v.edit.executive_office_number.$error || _vm.errors.executive_office_number,
+        "is-valid": !_vm.$v.edit.executive_office_number.$invalid && !_vm.errors.executive_office_number
+      },
+      attrs: {
+        disabled: true,
+        type: "number"
+      },
+      domProps: {
+        value: _vm.$v.edit.executive_office_number.$model
+      },
+      on: {
+        input: function input($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.$v.edit.executive_office_number, "$model", $event.target.value);
+        }
+      }
+    }), _vm._v(" "), _vm.errors.executive_office_number ? _vm._l(_vm.errors.executive_office_number, function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "control-label"
+    }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("member_Board_of_Directors_history")) + "\n                                    ")]), _vm._v(" "), _c("date-picker", {
+      "class": {
+        "is-invalid": _vm.$v.edit.board_of_directors_date.$error || _vm.errors.board_of_directors_date,
+        "is-valid": !_vm.$v.edit.board_of_directors_date.$invalid && !_vm.errors.board_of_directors_date
+      },
+      attrs: {
+        type: "date",
+        disabled: true,
+        format: "YYYY-MM-DD",
+        valueType: "format",
+        confirm: false
+      },
+      model: {
+        value: _vm.$v.edit.board_of_directors_date.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.edit.board_of_directors_date, "$model", $$v);
+        },
+        expression: "$v.edit.board_of_directors_date.$model"
+      }
+    }), _vm._v(" "), _vm.errors.board_of_directors_date ? _vm._l(_vm.errors.board_of_directors_date, function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_Board_of_Directors_number")))]), _vm._v(" "), _c("input", {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: _vm.$v.edit.board_of_directors_number.$model,
+        expression: "$v.edit.board_of_directors_number.$model"
+      }],
+      staticClass: "form-control",
+      "class": {
+        "is-invalid": _vm.$v.edit.board_of_directors_number.$error || _vm.errors.board_of_directors_number,
+        "is-valid": !_vm.$v.edit.board_of_directors_number.$invalid && !_vm.errors.board_of_directors_number
+      },
+      attrs: {
+        disabled: true,
+        type: "number"
+      },
+      domProps: {
+        value: _vm.$v.edit.board_of_directors_number.$model
+      },
+      on: {
+        input: function input($event) {
+          if ($event.target.composing) return;
+          _vm.$set(_vm.$v.edit.board_of_directors_number, "$model", $event.target.value);
+        }
+      }
+    }), _vm._v(" "), _vm.errors.board_of_directors_number ? _vm._l(_vm.errors.board_of_directors_number, function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
     }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
       staticClass: "col-md-3"
     }, [_c("div", {
@@ -9835,7 +10380,7 @@ var render = function render() {
     attrs: {
       colspan: "30"
     }
-  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.notDataFound")) + "\n                    ")])])])])], 1)])])])])], 1);
+  }, [_vm._v("\n                      " + _vm._s(_vm.$t("general.notDataFound")) + "\n                    ")])])])])], 1)], 1)])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;

@@ -67,7 +67,7 @@ class DocumentHeaderRequest extends FormRequest
             'header_details.*.sell_method_id' => 'nullable|integer|exists:boards_rent_sell_methods,id',
             'header_details.*.sell_method_discount' => 'nullable|numeric',
             'header_details.*.rent_days' => 'nullable|integer',
-            'header_details.*.date_to' => 'nullable|date|after_or_equal:date_from',
+            'header_details.*.date_to' => 'nullable|date|after_or_equal:header_details.*.date_from',
             'header_details.*.is_stripe' => 'nullable|in:1,0',
             'header_details.*.governorate_id' => 'nullable|exists:general_governorates,id',
             'header_details.*.package_id' => 'nullable|exists:boards_rent_packages,id',

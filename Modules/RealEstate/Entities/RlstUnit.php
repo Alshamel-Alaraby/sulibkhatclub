@@ -84,6 +84,12 @@ class RlstUnit extends Model implements HasMedia
         return $this->hasOne(RlstTenant::class, 'unit_id');
     }
 
+    public function services()
+    {
+        return $this->belongsToMany(RlstService::class, 'rlst_unit_services','unit_id','service_id')->withPivot(['from_date','default_price'])->orderBy('pivot_from_date', 'desc');
+    }
+
+
     // public function hasChildren()
     // {
     //     return $this->items()->count() > 0 ;

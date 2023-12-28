@@ -17,11 +17,11 @@ export default {
     title: "Renting Units",
     meta: [{ name: "Renting Units", content: "Renting Units" }],
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      return permissionGuard(vm, "Renting Units", "all Renting Units");
-    });
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   next((vm) => {
+  //     return permissionGuard(vm, "Renting Units", "all Renting Units");
+  //   });
+  // },
   components: {
     Layout,
     PageHeader,

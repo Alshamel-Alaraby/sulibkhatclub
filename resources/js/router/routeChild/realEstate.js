@@ -262,6 +262,14 @@ export default [
         component: () => import('../../views/pages/realEstate/yearlyMaintenanceContract'),
     },
     {
+        path: '/dashboard/realEstate/RenewYearlyMaintenanceContract',
+        name: 'Renew Yearly Maintenance Contract',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/realEstate/renewYearlyMaintenanceContract'),
+    },
+    {
         path: '/dashboard/realEstate/UnitCreditInvoice',
         name: 'Unit Credit Invoice',
         meta: {

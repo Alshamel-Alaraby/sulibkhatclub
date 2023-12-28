@@ -298,8 +298,8 @@ import Swal from "sweetalert2";
 export default {
     name: "print-general-real-estate",
     props: {
-        id: {default: "create",},
-        document_row_id: {default: '',},
+        id: {default: "PrintCreate",},
+        document_row_id: { default: '',},
     },
     components: {
         ErrorMessage,

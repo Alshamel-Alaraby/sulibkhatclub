@@ -2203,7 +2203,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/get-sponsors?page=".concat(page, "&per_page=40&sponsor_id=").concat(this.create.old_sponsor_id, "&memberNumber=1")).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/get-sponsors?page=".concat(page, "&per_page=40&sponsor_id=").concat(this.create.old_sponsor_id, "&memberNumber=1&member_status_id=1")).then(function (res) {
         var l = res.data.data;
         _this3.members = l.data;
         _this3.membersPagination = l['0'];
@@ -2224,7 +2224,7 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       if (this.current_page <= this.membersPagination.last_page && this.current_page != this.membersPagination.current_page && this.current_page) {
         this.isLoader = true;
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/get-sponsors?sponsor_id=".concat(this.create.old_sponsor_id, "&page=").concat(this.current_page, "&per_page=40")).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/get-sponsors?sponsor_id=".concat(this.create.old_sponsor_id, "&page=").concat(this.current_page, "&per_page=40&memberNumber=1&member_status_id=1")).then(function (res) {
           var l = res.data.data;
           _this4.members = l.data;
           _this4.membersPagination = l['0'];

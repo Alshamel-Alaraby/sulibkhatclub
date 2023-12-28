@@ -38,6 +38,7 @@ export default {
     props: ['statices'],
     watch:{
         statices(newDa,old){
+            if(Object.keys(newDa?? []).length)
             newDa.unitsWithStatusWithDetailsCount.forEach((el,index) => {
                 this.series1.push(el.percentage);
                 this.chartOptions1.labels.push(this.$i18n.locale == 'ar'?el.name: el.name_e);
@@ -73,7 +74,7 @@ export default {
                             </apexchart>
                         </div>
 
-                        <div class="row mt-3">
+                        <div class="row mt-3" v-if="Object.keys(statices.unitsWithStatusWithDetailsCount ?? []).length">
                             <div class="col-4" v-for="item in statices.unitsWithStatusWithDetailsCount">
                                 <p class="font-15 mb-1 text-truncate">{{ $i18n.locale == 'ar' ?item.name:item.name_e }}</p>
                                 <h4>{{ item.count }}</h4>
@@ -84,7 +85,7 @@ export default {
 
             <!-- end col -->
 
-        <
+
     </div>
     <!-- end row -->
     <!-- end card-box -->

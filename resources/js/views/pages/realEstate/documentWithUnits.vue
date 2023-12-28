@@ -238,10 +238,7 @@ export default {
                     <CreateOrUpdateUnits
                         :id="'create'"
                         :companyKeys="companyKeys"
-                        :defaultsKeys="defaultsKeys"
-                        :document="document"
-                        :document_id="document_id"
-                        :idObjEdit="
+                        :dataRow="
                             idEdit
                                 ? {
                                       idEdit,
@@ -251,6 +248,10 @@ export default {
                                   }
                                 : null
                         "
+                        :id-edit="idEdit"
+                        :defaultsKeys="defaultsKeys"
+                        :document="document"
+                        :document_id="document_id"
                         :isPage="true"
                         :isPermission="isPermission"
                         :isRequiredPage="isRequired"
@@ -279,7 +280,7 @@ export default {
                             :enabled3="enabled3"
                             :isAction="true"
                             :isDelete="true"
-                            :isEdit="false"
+                            :isEdit="true"
                             :isInputCheck="true"
                             :isLog="true"
                             :isPrint="true"

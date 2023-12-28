@@ -12045,6 +12045,42 @@ class TranslationSeeder extends Seeder
                 "company_id" => 0,
                 "screen" => "club"
             ],
+            [
+                "key" => "member_executive_office_history",
+                "default_en" => "Executive office history",
+                "default_ar" => "تاريخ المكتب التنفيذى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_executive_office_number",
+                "default_en" => "Executive office number",
+                "default_ar" => "رقم المكتب التنفيذى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_Board_of_Directors_history",
+                "default_en" => "Board of Directors history",
+                "default_ar" => "تاريخ مجلس الادارة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
+            [
+                "key" => "member_Board_of_Directors_number",
+                "default_en" => "Board of Directors number",
+                "default_ar" => "رقم مجلس الادارة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "club"
+            ],
         ]);
         //Pending member
         Translation::insert([

@@ -5376,29 +5376,23 @@ var render = function render() {
     staticClass: "control-label"
   }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.forYear")) + "\n                                            "), _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.create.year.$model,
-      expression: "$v.create.year.$model"
-    }],
-    staticClass: "form-control",
+  }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.year.$error || _vm.errors.year,
       "is-valid": !_vm.$v.create.year.$invalid && !_vm.errors.year
     },
     attrs: {
-      type: "text"
+      type: "year",
+      format: "YYYY",
+      valueType: "format",
+      confirm: false
     },
-    domProps: {
-      value: _vm.$v.create.year.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.create.year, "$model", $event.target.value);
-      }
+    model: {
+      value: _vm.$v.create.year.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.year, "$model", $$v);
+      },
+      expression: "$v.create.year.$model"
     }
   }), _vm._v(" "), _vm.errors.year ? _vm._l(_vm.errors.year, function (errorMessage, index) {
     return _c("ErrorMessage", {

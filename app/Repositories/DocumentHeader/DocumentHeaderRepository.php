@@ -77,6 +77,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
         }
     }
 
+
     public function checkOutPrint($id)
     {
 
@@ -333,8 +334,6 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
 
                 }
             }
-
-
 
 
                 if ($date_old_end > $date){
@@ -1294,6 +1293,116 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     {
         $data = $this->model->relation()->find($id);
         return $data;
+    }
+
+
+    public function updateContractHeader($request,$id){
+        if (generalCheckDateModelFinancialYear($request['date']) == "true"){
+                $data = $this->model->find($id);
+                $check_paid_amount = RpBreakDown::where('break_id',$data['id'])->where('customer_id',$data->customer_id)->where('document_id',$data->document_id)->whereHas('breakSettlements')->first();
+                if($check_paid_amount)
+                    return 'paid_befor';
+                $data->update($request->only(['document_status_id','employee_id','total_invoice','net_invoice','invoice_discount','date']));
+                $header_details = $data->documentHeaderDetails()->first();
+                if($header_details){
+                    $header_data = collect($request->header_details[0])->only(['unit_id','building_id','date_from','rent_days','total','date_to','discount','discount_per_day','price_per_uint'])->toArray();
+                    $header_data['net_invoice'] = $request->net_invoice;
+                    $header_data['invoice_discount'] = $request->invoice_discount;
+                    $header_details->update($header_data);
+                    RpBreakDown::where('break_id',$data['id'])->where('customer_id',$data->customer_id)->where('document_id',$data->document_id)->delete();
+                    RpBreakDown::create([
+                        'instalment_date' => $request->date,
+                        'rate' => 1,
+                        'repate' => 1,
+                        'currency_id' => 1,
+                        'document_id' => $data->document_id,
+                        'customer_id' => $data->customer_id,
+                        'break_id' => $data['id'],
+                        'instalment_type_id' => 1,
+                        'break_type' => 'documentHeader',
+                        'debit' => ($data->document->attributes && $data->document->attributes['customer'] == 1)?$request->net_invoice:0,
+                        'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1)?$request->net_invoice:0,
+                        'total' =>$request->net_invoice,
+                        'installment_statu_id' =>1,
+                        'client_type_id' =>1,
+                    ]);
+
+                }
+
+                return $data;
+        }
+        return 'false';
+
+
+    }
+
+    public function all_renew_contract_header($request)
+    {
+        $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+
+        if($request->document_id)
+        {
+            $models->where('document_id',$request->document_id);
+        }
+
+        if($request->building_id || $request->start_date)
+        {
+
+            $models->whereRelation('documentHeaderDetails',function($q) use($request){
+                if($request->building_id){
+                    $q->where('building_id',$request->building_id);
+
+                }
+
+                if($request->start_date)
+                    $q->whereYear('date_to', ">=", $request->start_date)
+                        ->whereYear('date_from', "<=", $request->start_date);
+
+            });
+        }
+
+        if ($request->per_page) {
+            return ['data' => $models->paginate($request->per_page), 'paginate' => true];
+        } else {
+            return ['data' => $models->get(), 'paginate' => false];
+        }
+    }
+
+    public function renew_contract($request){
+        $contracts = $this->model->find($request->ids);
+        foreach($contracts as $contract){
+            $new_contract = $contract->replicate();
+            $new_contract->save();
+            $serials = generalSerial($new_contract);
+            $new_contract->update([
+                'date' => now()->format('Y-m-d'),
+                'created_at' => now(),
+                "serial_number" => $serials['serial_number'],
+                "prefix" => $serials['prefix'],
+            ]);
+
+            $header_detail = $contract->documentHeaderDetails()->first();
+            $new_header_detail = $header_detail->replicate();
+            $new_header_detail->save();
+            $new_header_detail->update([
+                'document_header_id' => $new_contract->id,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+                'created_at' => now(),
+            ]);
+
+            $break = RpBreakDown::where('break_id',$contract->id)->where('customer_id',$contract->customer_id)->where('document_id',$contract->document_id)->first();
+            $new_break = $break->replicate();
+            $new_break->save();
+            $new_break->update([
+                'break_id' => $new_contract->id,
+                'instalment_date' => now()->format('Y-m-d'),
+                'created_at' => now(),
+            ]);
+
+
+        }
+
     }
 
 }

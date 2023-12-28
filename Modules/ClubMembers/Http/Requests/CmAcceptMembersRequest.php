@@ -28,6 +28,10 @@ class CmAcceptMembersRequest extends FormRequest
             "accept-members.*.id" => 'required',
             "accept-members.*.session_date" => 'required',
             "accept-members.*.session_number" => 'required',
+            "accept-members.*.executive_office_date" => 'nullable',
+            "accept-members.*.executive_office_number" => 'nullable',
+            "accept-members.*.board_of_directors_date" => 'nullable',
+            "accept-members.*.board_of_directors_number" => 'nullable',
             "accept-members.*.membership_date" => 'required',
         ];
     }

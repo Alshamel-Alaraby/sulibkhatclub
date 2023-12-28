@@ -24,7 +24,7 @@ class HMSRoomReservationAppointmentController extends Controller
     public function __construct(private HMSAppointment $model)
     {
         $this->model = $model;
-        $this->interval = HMSSetting::first()->interval;////  Setting::first()->appointment_interval
+        $this->interval = HMSSetting::first() ? HMSSetting::first()->interval : 15;////  Setting::first()->appointment_interval
     }
 
     public function index(Request $request)

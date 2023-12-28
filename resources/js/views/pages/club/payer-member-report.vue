@@ -66,9 +66,40 @@ export default {
       setting: {
         name: true,
         name_e: true,
+          membership_number: true,
+          full_name: true,
+          birth_date: true,
+          gender: true,
+          membership_date: true,
+          financial_status_id: true,
+          member_status_id: true,
+          PaymentDate: true,
+          document_no: true,
+          ForAYear: true,
+          national_id: true,
+          home_phone: true,
+          home_address: true,
+          work_phone: true,
+          job: true,
+          degree: true,
       },
       is_disabled: false,
-      filterSetting: ["name"],
+      filterSetting: [
+          "name",
+          "membership_number",
+          "full_name",
+          "birth_date",
+          "gender",
+          "membership_date",
+          "financial_status_id",
+          "member_status_id",
+          "national_id",
+          "home_phone",
+          "home_address",
+          "work_phone",
+          "job",
+          "degree",
+      ],
       printLoading: true,
       printObj: {
         id: "printData",
@@ -296,34 +327,7 @@ export default {
               <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
                 <div class="d-inline-block" style="width: 22.2%">
                   <!-- Basic dropdown -->
-                  <!-- <b-dropdown
-                    variant="primary"
-                    :text="$t('general.searchSetting')"
-                    ref="dropdown"
-                    class="btn-block setting-search"
-                  >
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="id"
-                      class="mb-1"
-                    >
-                      {{ $t("general.id") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="path"
-                      class="mb-1"
-                    >
-                      {{ $t("general.path") }}
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                      v-model="filterSetting"
-                      value="created_at"
-                      class="mb-1"
-                    >
-                      {{ $t("general.created_at") }}
-                    </b-form-checkbox>
-                  </b-dropdown> -->
+
                   <!-- Basic dropdown -->
                 </div>
 
@@ -400,25 +404,39 @@ export default {
                       <i class="fe-menu"></i>
                     </b-button>
                     <!-- Basic dropdown -->
-                    <b-dropdown
-                      variant="primary"
-                      :html="`${$t(
-                        'general.setting'
-                      )} <i class='fe-settings'></i>`"
-                      ref="dropdown"
-                      class="dropdown-custom-ali"
-                    >
-                      <b-form-checkbox v-model="setting.name" class="mb-1">
-                          {{ getCompanyKey("member") }}
-                      </b-form-checkbox>
-                      <div class="d-flex justify-content-end">
-                        <a
-                          href="javascript:void(0)"
-                          class="btn btn-primary btn-sm"
-                          >Apply</a
-                        >
-                      </div>
-                    </b-dropdown>
+                      <b-dropdown
+                          variant="primary"
+                          :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                          ref="dropdown"
+                          class="dropdown-custom-ali"
+                      >
+                          <b-form-checkbox v-model="setting.name" class="mb-1">
+                              {{ getCompanyKey("member") }}
+                          </b-form-checkbox>
+                          <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.name") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ getCompanyKey("financial_status") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.member_status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">{{ $t("general.PaymentDate") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.ForAYear" class="mb-1">{{ $t("general.ForAYear") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.job" class="mb-1">{{ getCompanyKey("member_job") }}</b-form-checkbox>
+                          <b-form-checkbox v-model="setting.degree" class="mb-1">{{ getCompanyKey("member_degree") }}</b-form-checkbox>
+
+                          <div class="d-flex justify-content-end">
+                              <a href="javascript:void(0)" class="btn btn-primary btn-sm">
+                                  Apply
+                              </a>
+                          </div>
+                      </b-dropdown>
+
                     <!-- Basic dropdown -->
                   </div>
                   <!-- end filter and setting -->
@@ -501,21 +519,139 @@ export default {
                         />
                       </div>
                     </th>
-                    <th v-if="setting.name">
-                      <div class="d-flex justify-content-center">
-                        <span>{{getCompanyKey("member")}}</span>
-                        <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="items.sort(sortString('name'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="items.sort(sortString('-name'))"
-                          ></i>
-                        </div>
-                      </div>
-                    </th>
+
+                      <th v-if="setting.membership_number">
+                          <div class="d-flex justify-content-center">
+                              <span>{{getCompanyKey("member_membership_number")}}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('membership_number'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_number'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.full_name">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.name") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('full_name'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-full_name'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.birth_date">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_birth_date") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('birth_date'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-birth_date'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.gender">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_gender") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('gender'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-gender'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.membership_date">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_membership_date")}}</span>
+                              <div class="arrow-sort">
+                                  <i  class="fas fa-arrow-up" @click="items.sort(sortString('membership_date'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_date'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.financial_status_id">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("financial_status") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.member_status_id">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.status") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.PaymentDate">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.PaymentDate") }}</span>
+                          </div>
+                      </th>
+                      <th v-if="setting.document_no">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.ReceiptNumber") }}</span>
+                          </div>
+                      </th>
+                      <th v-if="setting.ForAYear">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.ForAYear") }}</span>
+                          </div>
+                      </th>
+                      <th v-if="setting.national_id">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_national_id") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('national_id'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-national_id'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.home_phone">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_home_phone") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('home_phone'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_phone'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.home_address">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_home_address") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('home_address'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_address'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.work_phone">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_work_phone") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('work_phone'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-work_phone'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.job">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_job") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('job'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-job'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.degree">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("member_degree") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('degree'))"></i>
+                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-degree'))"></i>
+                              </div>
+                          </div>
+                      </th>
                   </tr>
                 </thead>
                 <tbody v-if="items.length > 0">
@@ -540,9 +676,54 @@ export default {
                         />
                       </div>
                     </td>
-                    <td v-if="setting.name">
-                      <h5 class="m-0 font-weight-normal">{{ data.first_name ?data.first_name: '' }} {{data.second_name ?data.second_name : ""}} {{data.third_name ?data.third_name: ""}} {{data.last_name ?data.last_name: ""}} {{data.family_name ?data.family_name: ""}}</h5>
-                    </td>
+                      <td v-if="setting.membership_number">
+                          {{ data.membership_number }}
+                      </td>
+                      <td v-if="setting.full_name">
+                          {{ data.full_name }}
+                      </td>
+                      <td v-if="setting.birth_date">
+                          {{ data.birth_date?data.birth_date:'---' }}
+                      </td>
+                      <td v-if="setting.gender">
+                          {{data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'}}
+                      </td>
+                      <td v-if="setting.membership_date">
+                          {{data.membership_date ? formatDate(data.membership_date) : '---' }}
+                      </td>
+                      <td v-if="setting.financial_status_id">
+                          {{data.financial_status ? $i18n.locale == "ar"? data.financial_status.name: data.financial_status.name_e: "---"}}
+                      </td>
+                      <td v-if="setting.member_status_id">
+                          {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
+                      </td>
+                      <td v-if="setting.PaymentDate">
+                          {{data.transaction ? formatDate(data.transaction.date) : '---' }}
+                      </td>
+                      <td v-if="setting.document_no">
+                          {{ data.transaction ? data.transaction.document_no : '---' }}
+                      </td>
+                      <td v-if="setting.ForAYear">
+                          {{ data.transaction ? data.transaction.year : '---' }}
+                      </td>
+                      <td v-if="setting.national_id">
+                          {{ data.national_id ? data.national_id : '---' }}
+                      </td>
+                      <td v-if="setting.home_phone">
+                          {{ data.home_phone ? data.home_phone : '---' }}
+                      </td>
+                      <td v-if="setting.home_address">
+                          {{ data.home_address ? data.home_address : '---' }}
+                      </td>
+                      <td v-if="setting.work_phone">
+                          {{ data.work_phone ? data.work_phone : '---' }}
+                      </td>
+                      <td v-if="setting.job">
+                          {{ data.job ? data.job : '---' }}
+                      </td>
+                      <td v-if="setting.degree">
+                          {{ data.degree ? data.degree : '---' }}
+                      </td>
                   </tr>
                 </tbody>
                 <tbody v-else>

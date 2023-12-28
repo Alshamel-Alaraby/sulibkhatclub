@@ -255,6 +255,7 @@ export default {
             this.create.second_name = '';
             this.create.third_name = '';
             this.create.last_name = '';
+            this.create.family_name = '';
             this.create.full_name = '';
             this.create.national_id = '';
             this.create.membership_number = '';

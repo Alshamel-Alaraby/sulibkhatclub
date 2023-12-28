@@ -63,6 +63,12 @@ return new class extends Migration
             /* 44 */$table->unsignedInteger('national_no')->nullable();
             /* 45 */$table->unsignedInteger('company_id')->index()->nullable();
 
+            /* 46 */$table->date('executive_office_date')->nullable();
+            /* 47 */$table->string('executive_office_number')->nullable();
+
+            /* 48 */$table->date('board_of_directors_date')->nullable();
+            /* 49 */$table->string('board_of_directors_number')->nullable();
+
 
             $table->softDeletes();
             $table->timestamps();

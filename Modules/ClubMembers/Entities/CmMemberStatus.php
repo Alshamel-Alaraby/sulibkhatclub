@@ -66,4 +66,28 @@ class CmMemberStatus extends Model
             }
         });
     }
+
+    // relations
+
+    public function cm_members()
+    {
+        return $this->hasMany(CmMember::class, 'member_status_id');
+    }
+
+
+    public function hasChildren()
+    {
+        $relationsWithChildren = [];
+
+        if ($this->cm_members()->count() > 0) {
+            $relationsWithChildren[] = [
+                'relation' => 'cm members',
+                'count' => $this->cm_members()->count(),
+                'ids' => $this->cm_members()->pluck('first_name')->toArray(),
+            ];
+        }
+
+
+        return $relationsWithChildren;
+    }
 }

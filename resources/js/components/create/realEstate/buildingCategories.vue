@@ -150,7 +150,7 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
-  name: "Building Type",
+  name: "BuildingType",
   mixins: [transMixinComp, successError],
   components: {
     ErrorMessage,

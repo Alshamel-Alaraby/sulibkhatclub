@@ -391,7 +391,7 @@ export default {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
-                    .put(`document-headers/${id}`, {
+                    .put(`document-headers/updateContractHeader/${id}`, {
                         ...this.create
                     })
                     .then((res) => {
@@ -404,21 +404,28 @@ export default {
                                 timer: 1500,
                             });
                         }, 500);
-                        if(this.document.attributes && parseInt(this.document.attributes.customer) != 0)
-                        {
-                            this.showBreakCreate();
-                        }
+
                     })
                     .catch((err) => {
-                        if (err.response.data) {
-                            this.errors = err.response.data.errors;
-                        } else {
-                            Swal.fire({
+                        console.log(err.response.status)
+                            if(err.response.status == 402){
+                                console.log(err.response.status)
+                                Swal.fire({
                                 icon: "error",
                                 title: `${this.$t("general.Error")}`,
-                                text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                text: `${this.$t("general.You cant edit, because there is a settlement for this invoice")}`,
                             });
-                        }
+                            }else{
+                                if (err.response.data) {
+                                    this.errors = err.response.data.errors;
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: `${this.$t("general.Error")}`,
+                                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                                    })
+                                }
+                            }
                     })
                     .finally(() => {
                         this.isLoader = false;
@@ -633,7 +640,7 @@ export default {
 
             this.getCustomers(reservation.employee.customer_handel,reservation.employee_id);
             this.serial_number = reservation.prefix;
-            this.create.document_status_id = reservation.document_status_id;
+            this.create.document_status_id = reservation.document_status_id??( parseInt(this.document.need_approve) == 0 ? 5 : 1);
             this.create.reason = reservation.reason??'';
             this.create.branch_id = reservation.branch_id;
             this.create.date = reservation.date;
@@ -660,7 +667,9 @@ export default {
             this.create.related_document_number = reservation.related_document_number;
             this.create.related_document_prefix = reservation.related_document_prefix;
             this.create.header_details = [];
+
             reservation.header_details.forEach((e,index) => {
+
                 this.create.header_details.push({
                     unit_id:e.unit_id, //for units
                     building_id:e.building_id, //for building
@@ -677,13 +686,17 @@ export default {
                     sell_method_discount: e.sell_method_discount,
                     note: e.note,
                 });
+
+
             });
+            this.getUnites(0)
             this.isLoader = false;
         },
         /**
          *  hidden Modal (edit)
          */
         resetModalHiddenEdit(id) {
+            this.id=''
             this.customer_data_edit = '';
             this.errors = {};
             this.create = {
@@ -1053,6 +1066,7 @@ export default {
                             <label class="control-label">{{ $t('general.Branch') }} <span class="text-danger">*</span></label>
 
                             <multiselect
+                                :disabled="Object.keys(dataRow ?? []).length > 0"
                                 :show-labels="false"
                                 @input="getSerialNumber($event)"
                                 v-model="create.branch_id"
@@ -1217,7 +1231,7 @@ export default {
                             <label class="control-label">{{ $t('general.documentCustomer') }} <span class="text-danger">*</span></label>
                             <multiselect
                                 :show-labels="false"
-                                :disabled="!create.branch_id"
+                                :disabled="!create.branch_id || Object.keys(dataRow ?? []).length  > 0"
                                 :internalSearch="false"
                                 @search-change="searchCustomer"
                                 @input="showGuestModal"
@@ -1413,22 +1427,22 @@ export default {
 <!--                                                <a @click.prevent="addNewField" class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0">-->
 <!--                                                    {{$t("general.AddNewLine") }}-->
 <!--                                                </a>-->
-                                                <div v-if="document && document.attributes && parseInt(document.attributes.customer) != 0" class="px-4 float-right mt-3 mt-lg-0">
-                                                    <b-button v-if="!create.id && create.net_invoice > 0"
-                                                              variant="primary"
-                                                              class="btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
-                                                              @click="Submit(true)"
-                                                    >
-                                                        {{ $t('general.Break') }}
-                                                    </b-button>
+                                                // <div v-if="document && document.attributes && parseInt(document.attributes.customer) != 0 && Object.keys(dataRow ?? []).length  == 0" class="px-4 float-right mt-3 mt-lg-0">
+                                                //     <b-button v-if="!create.id && create.net_invoice > 0"
+                                                //               variant="primary"
+                                                //               class="btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
+                                                //               @click="Submit(true)"
+                                                //     >
+                                                //         {{ $t('general.Break') }}
+                                                //     </b-button>
 
-                                                    <b-button v-else
-                                                              variant="secondary"
-                                                              class="btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
-                                                    >
-                                                        {{ $t('general.Break') }}
-                                                    </b-button>
-                                                </div>
+                                                //     <b-button v-else
+                                                //               variant="secondary"
+                                                //               class="btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
+                                                //     >
+                                                //         {{ $t('general.Break') }}
+                                                //     </b-button>
+                                                // </div>
                                             </div>
                                         </div>
                                     </div>

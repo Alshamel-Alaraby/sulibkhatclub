@@ -1739,6 +1739,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       approve: {
         session_date: this.formatDate(new Date()),
         session_number: null,
+        executive_office_date: null,
+        executive_office_number: null,
+        board_of_directors_date: null,
+        board_of_directors_number: null,
         "accept-members": []
       },
       company_id: null,
@@ -1796,7 +1800,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_16__.required
           }
         }
-      }
+      },
+      executive_office_date: {},
+      executive_office_number: {},
+      board_of_directors_date: {},
+      board_of_directors_number: {}
     },
     reject: {
       notes: {
@@ -1916,6 +1924,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.approve["accept-members"].forEach(function (el, index) {
         _this5.approve["accept-members"][index]["session_date"] = _this5.approve.session_date;
         _this5.approve["accept-members"][index]["session_number"] = _this5.approve.session_number;
+        _this5.approve["accept-members"][index]["executive_office_date"] = _this5.approve.executive_office_date;
+        _this5.approve["accept-members"][index]["executive_office_number"] = _this5.approve.executive_office_number;
+        _this5.approve["accept-members"][index]["board_of_directors_date"] = _this5.approve.board_of_directors_date;
+        _this5.approve["accept-members"][index]["board_of_directors_number"] = _this5.approve.board_of_directors_number;
       });
       this.$v.approve.$touch();
       if (this.$v.approve.$invalid) {
@@ -1997,6 +2009,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.approve = {
         session_number: "",
         session_date: this.formatDate(new Date()),
+        executive_office_date: "",
+        executive_office_number: "",
+        board_of_directors_date: "",
+        board_of_directors_number: "",
         "accept-members": []
       };
       this.checkAll.forEach(function (id) {
@@ -2030,6 +2046,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.approve = {
         session_number: "",
         session_date: this.formatDate(new Date()),
+        executive_office_date: "",
+        executive_office_number: "",
+        board_of_directors_date: "",
+        board_of_directors_number: "",
         "accept-members": []
       };
       this.checkAll = [];
@@ -5694,30 +5714,23 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_session_date")) + "\n                                        ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.approve.session_date.$model,
-      expression: "$v.approve.session_date.$model"
-    }],
-    staticClass: "form-control",
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_session_date")) + "\n                                        ")]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.approve.session_date.$error || _vm.errors.session_date,
       "is-valid": !_vm.$v.approve.session_date.$invalid && !_vm.errors.session_date
     },
     attrs: {
-      type: "text",
-      placeholder: "yyyy-mm-dd"
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
     },
-    domProps: {
-      value: _vm.$v.approve.session_date.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.approve.session_date, "$model", $event.target.value);
-      }
+    model: {
+      value: _vm.$v.approve.session_date.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.approve.session_date, "$model", $$v);
+      },
+      expression: "$v.approve.session_date.$model"
     }
   }), _vm._v(" "), _vm.errors.session_date ? _vm._l(_vm.errors.session_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
@@ -5727,7 +5740,7 @@ var render = function render() {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("input", {
+  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_session_number")))]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -5752,6 +5765,130 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _vm.errors.session_number ? _vm._l(_vm.errors.session_number, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
+  }) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_executive_office_history")) + "\n                                        ")]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.approve.executive_office_date.$error || _vm.errors.executive_office_date,
+      "is-valid": !_vm.$v.approve.executive_office_date.$invalid && !_vm.errors.executive_office_date
+    },
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
+    },
+    model: {
+      value: _vm.$v.approve.executive_office_date.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.approve.executive_office_date, "$model", $$v);
+      },
+      expression: "$v.approve.executive_office_date.$model"
+    }
+  }), _vm._v(" "), _vm.errors.executive_office_date ? _vm._l(_vm.errors.executive_office_date, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_executive_office_number")))]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.approve.executive_office_number.$model,
+      expression: "$v.approve.executive_office_number.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.approve.executive_office_number.$error || _vm.errors.executive_office_number,
+      "is-valid": !_vm.$v.approve.executive_office_number.$invalid && !_vm.errors.executive_office_number
+    },
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.$v.approve.executive_office_number.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.approve.executive_office_number, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.executive_office_number ? _vm._l(_vm.errors.executive_office_number, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
+  }) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_Board_of_Directors_history")) + "\n                                        ")]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.approve.board_of_directors_date.$error || _vm.errors.board_of_directors_date,
+      "is-valid": !_vm.$v.approve.board_of_directors_date.$invalid && !_vm.errors.board_of_directors_date
+    },
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
+    },
+    model: {
+      value: _vm.$v.approve.board_of_directors_date.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.approve.board_of_directors_date, "$model", $$v);
+      },
+      expression: "$v.approve.board_of_directors_date.$model"
+    }
+  }), _vm._v(" "), _vm.errors.board_of_directors_date ? _vm._l(_vm.errors.board_of_directors_date, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("member_Board_of_Directors_number")))]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.approve.board_of_directors_number.$model,
+      expression: "$v.approve.board_of_directors_number.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.approve.board_of_directors_number.$error || _vm.errors.board_of_directors_number,
+      "is-valid": !_vm.$v.approve.board_of_directors_number.$invalid && !_vm.errors.board_of_directors_number
+    },
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.$v.approve.board_of_directors_number.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.approve.board_of_directors_number, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.board_of_directors_number ? _vm._l(_vm.errors.board_of_directors_number, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage) + "\n                                            ")]);

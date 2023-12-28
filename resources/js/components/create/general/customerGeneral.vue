@@ -1058,6 +1058,7 @@ export default {
         :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
         :isPage="false" type="create" :isPermission="isPermission"
         @created="getBankAcount" :id="'bankAccount-create-customer'"
+        :tables="[]"
     />
     <Country
       :companyKeys="companyKeys"

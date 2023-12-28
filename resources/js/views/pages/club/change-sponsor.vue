@@ -175,7 +175,7 @@ export default {
 
           adminApi
               .get(
-                  `/club-members/members/get-sponsors?page=${page}&per_page=40&sponsor_id=${this.create.old_sponsor_id}&memberNumber=1`
+                  `/club-members/members/get-sponsors?page=${page}&per_page=40&sponsor_id=${this.create.old_sponsor_id}&memberNumber=1&member_status_id=1`
               )
               .then((res) => {
                   let l = res.data.data;
@@ -205,7 +205,7 @@ export default {
 
               adminApi
                   .get(
-                      `/club-members/members/get-sponsors?sponsor_id=${this.create.old_sponsor_id}&page=${this.current_page}&per_page=40`
+                      `/club-members/members/get-sponsors?sponsor_id=${this.create.old_sponsor_id}&page=${this.current_page}&per_page=40&memberNumber=1&member_status_id=1`
                   )
                   .then((res) => {
                       let l = res.data.data;

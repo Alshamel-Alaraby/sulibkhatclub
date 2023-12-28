@@ -2639,6 +2639,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       enabled3: true,
       is_disabled: false,
       isLoader: false,
+      filterMember: {
+        full_name: '',
+        national_id: '',
+        membership_number: '',
+        first_name: '',
+        second_name: '',
+        third_name: '',
+        last_name: '',
+        family_name: '',
+        home_phone: ''
+      },
       create: {
         sponsor_id: null,
         branch_id: null,
@@ -3542,6 +3553,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _arguments = arguments,
         _this19 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+        var _this19$filterMember$, _this19$filterMember$2, _this19$filterMember$3, _this19$filterMember$4, _this19$filterMember$5, _this19$filterMember$6, _this19$filterMember$7;
         var search;
         return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) switch (_context9.prev = _context9.next) {
@@ -3549,7 +3561,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
               _this19.isLoader = true;
               _context9.next = 4;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?hasTransaction=1&member_status_id=1&without=".concat(_this19.removeMembers, "&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?hasTransaction=1&member_status_id=1&without=".concat(_this19.removeMembers, "&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=").concat((_this19$filterMember$ = _this19.filterMember.national_id) !== null && _this19$filterMember$ !== void 0 ? _this19$filterMember$ : '', "&membership_number=").concat((_this19$filterMember$2 = _this19.filterMember.membership_number) !== null && _this19$filterMember$2 !== void 0 ? _this19$filterMember$2 : '', "&full_name=").concat((_this19$filterMember$3 = _this19.filterMember.full_name) !== null && _this19$filterMember$3 !== void 0 ? _this19$filterMember$3 : '', "&home_phone=").concat((_this19$filterMember$4 = _this19.filterMember.home_phone) !== null && _this19$filterMember$4 !== void 0 ? _this19$filterMember$4 : '', "&first_name=").concat((_this19$filterMember$5 = _this19.filterMember.first_name) !== null && _this19$filterMember$5 !== void 0 ? _this19$filterMember$5 : '', "&second_name=").concat((_this19$filterMember$6 = _this19.filterMember.second_name) !== null && _this19$filterMember$6 !== void 0 ? _this19$filterMember$6 : '', "&third_name=").concat(_this19.filterMember.third_name, "&last_name=").concat((_this19$filterMember$7 = _this19.filterMember.last_name) !== null && _this19$filterMember$7 !== void 0 ? _this19$filterMember$7 : '', "&family_name=").concat(_this19.filterMember.family_name)).then(function (res) {
                 var l = res.data.data;
                 _this19.members = l;
               })["catch"](function (err) {
@@ -3782,6 +3794,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       array.push(data);
       this.printInv(array);
     },
+    /**
+     * start filter member
+     */
+    resetFormSearch: function resetFormSearch() {
+      this.filterMember.full_name = '';
+      this.filterMember.national_id = '';
+      this.filterMember.membership_number = '';
+      this.filterMember.first_name = '';
+      this.filterMember.second_name = '';
+      this.filterMember.third_name = '';
+      this.filterMember.last_name = '';
+      this.filterMember.family_name = '';
+      this.filterMember.home_phone = '';
+      this.is_disabled = false;
+    },
     printInv: function printInv(data) {
       this.dataInv = data;
     }
@@ -3802,6 +3829,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../helper/startDate */ "./resources/js/helper/startDate.js");
+/* harmony import */ var _helper_mixin_convertCurrencyToWords__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../helper/mixin/convertCurrencyToWords */ "./resources/js/helper/mixin/convertCurrencyToWords.js");
+
+
 
 /**
  * Advanced Table component
@@ -3813,6 +3843,7 @@ __webpack_require__.r(__webpack_exports__);
       "default": []
     }
   },
+  mixins: [_helper_mixin_convertCurrencyToWords__WEBPACK_IMPORTED_MODULE_1__["default"]],
   data: function data() {
     return {
       printObj: {
@@ -8330,7 +8361,21 @@ var render = function render() {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member")) + "\n                                            ")]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member")) + "\n                                                "), _c("b-button", {
+    directives: [{
+      name: "b-modal",
+      rawName: "v-b-modal.filter_members",
+      modifiers: {
+        filter_members: true
+      }
+    }],
+    staticClass: "mx-1 custom-btn-background",
+    staticStyle: {
+      "font-size": "14px"
+    }
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.filter")) + "\n                                                    "), _c("i", {
+    staticClass: "fas fa-filter"
+  })])], 1), _vm._v(" "), _c("multiselect", {
     attrs: {
       internalSearch: false,
       options: _vm.members.map(function (type) {
@@ -8339,7 +8384,9 @@ var render = function render() {
       "custom-label": function customLabel(opt) {
         return _vm.members.find(function (x) {
           return x.id == opt;
-        }).full_name;
+        }) ? _vm.members.find(function (x) {
+          return x.id == opt;
+        }).full_name : "";
       }
     },
     on: {
@@ -8492,7 +8539,304 @@ var render = function render() {
     attrs: {
       colspan: "9"
     }
-  }, [_vm._v("\n                                                            " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                        ")])])])])], 1)])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                            " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                                        ")])])])])], 1)])])])])]), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "filter_members",
+      title: _vm.$t("general.filter"),
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      size: "lg",
+      scrollable: "",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-12 mb-3 d-flex justify-content-end"
+  }, [_c("b-button", {
+    "class": ["font-weight-bold px-2", _vm.is_disabled ? "mx-2" : ""],
+    attrs: {
+      variant: "success",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.resetFormSearch.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.NewSearch")) + "\n                                        ")]), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "submit"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getMember("");
+      }
+    }
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Search")) + "\n                                            ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("filter_members");
+      }
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Cancel")) + "\n                                        ")])], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.full_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.full_name,
+      expression: "filterMember.full_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.full_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "full_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.national_id,
+      expression: "filterMember.national_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.national_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "national_id", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.membership_number,
+      expression: "filterMember.membership_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.membership_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "membership_number", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.first_name,
+      expression: "filterMember.first_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.first_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "first_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.second_name,
+      expression: "filterMember.second_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.second_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "second_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.third_name,
+      expression: "filterMember.third_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.third_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "third_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.last_name,
+      expression: "filterMember.last_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.last_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "last_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.family_name,
+      expression: "filterMember.family_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.family_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "family_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.home_phone,
+      expression: "filterMember.home_phone"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.home_phone
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "home_phone", $event.target.value);
+      }
+    }
+  })])])])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
   }, [_vm.isLoader ? _c("loader", {
     attrs: {
@@ -8880,52 +9224,164 @@ var render = function render() {
       key: data.id,
       staticClass: "invoice"
     }, [_c("div", {
+      staticClass: "box pl-0 ml-0"
+    }, [_c("div", {
+      staticClass: "image-header px-0"
+    }, [_c("img", {
+      attrs: {
+        src: "/images/sulib.png"
+      }
+    }), _vm._v(" "), _c("h1", {
+      staticClass: "text-center"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
+      staticStyle: {
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
+      }
+    }, [data.serial ? _c("b", {
+      staticStyle: {
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                            " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name_e : ""))]) : _c("b", {
+      staticStyle: {
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.Membership renewal receipt voucher")))])])]), _vm._v(" "), _c("div", {
+      staticClass: "doc_box text-center pl-0 ml-0"
+    }, [_c("b", {
+      staticStyle: {
+        "font-size": "15px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                    " + _vm._s(data.document_no))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(data.date)))])]), _vm._v(" "), _c("div", {
+      staticStyle: {
+        display: "flex",
+        margin: "0",
+        padding: "0"
+      }
+    }, [_c("h3", {
+      staticClass: "col-8"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + " : " + _vm._s(data.member.full_name))])]), _vm._v(" "), _c("h3", {
+      staticClass: "col-4"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(data.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " ( " + _vm._s(data.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convert_currency_to_words(data.amount)) + " " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + " " + _vm._s(data.year))])]), _vm._v(" "), _c("div", {
+      staticStyle: {
+        display: "flex",
+        "justify-content": "space-around",
+        margin: "30px 10px"
+      }
+    }, [_c("span", {
+      staticStyle: {
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
+      }
+    }, [_c("b", {
+      staticStyle: {
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
+      staticStyle: {
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
+      }
+    }, [_c("b", {
+      staticStyle: {
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
+      staticStyle: {
+        "margin-top": "120px",
+        color: "#000",
+        "font-weight": "bold"
+      }
+    }, [_vm._v("* " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])]), _vm._v(" "), _c("div", {
+      staticClass: "box mt-5 pl-0 ml-0"
+    }, [_c("div", {
       staticClass: "image-header"
     }, [_c("img", {
       attrs: {
         src: "/images/sulib.png"
       }
-    }), _vm._v(" "), _c("h1", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))])]), _vm._v(" "), data.serial ? _c("h1", {
+    }), _vm._v(" "), _c("h1", {
+      staticClass: "text-center"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
       staticStyle: {
-        "text-align": "center"
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.docu")) + " " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name_e : ""))]) : _c("h1", {
+    }, [data.serial ? _c("b", {
       staticStyle: {
-        "text-align": "center"
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.ReceiptVoucher")))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("h4", {
+    }, [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                            " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name_e : ""))]) : _c("b", {
       staticStyle: {
-        "text-align": "right"
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.Date")) + " : " + _vm._s(_vm.formatDate(data.date)) + " ")]), _vm._v(" "), _c("h4", {
+    }, [_vm._v(_vm._s(_vm.$t("general.Membership renewal receipt voucher")))])])]), _vm._v(" "), _c("div", {
+      staticClass: "doc_box text-center pl-0 ml-0"
+    }, [_c("b", {
       staticStyle: {
-        "text-align": "right"
+        "font-size": "15px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")) + " : " + _vm._s(data.document_no))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("h2", {
+    }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                    " + _vm._s(data.document_no))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(data.date)))])]), _vm._v(" "), _c("div", {
       staticStyle: {
-        "text-align": "center"
+        display: "flex",
+        margin: "0",
+        padding: "0"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.TheMember")))]), _vm._v(" "), _c("h4", {
+    }, [_c("h3", {
+      staticClass: "col-8"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + " : " + _vm._s(data.member.full_name))])]), _vm._v(" "), _c("h3", {
+      staticClass: "col-4"
+    }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(data.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " ( " + _vm._s(data.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convert_currency_to_words(data.amount)) + " " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + " " + _vm._s(data.year))])]), _vm._v(" "), _c("div", {
       staticStyle: {
-        "text-align": "right"
+        display: "flex",
+        "justify-content": "space-around",
+        margin: "30px 10px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.memberName")) + " : " + _vm._s(data.member.full_name))]), _vm._v(" "), _c("h4", {
+    }, [_c("span", {
       staticStyle: {
-        "text-align": "right"
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.MembershipNo")) + ": " + _vm._s(data.member.membership_number))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("h2", {
+    }, [_c("b", {
       staticStyle: {
-        "text-align": "center"
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.theDetails")))]), _vm._v(" "), _c("h4", {
+    }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
       staticStyle: {
-        "text-align": "right"
+        "margin-top": "7px",
+        "font-size": "27px",
+        "font-weight": "bold",
+        color: "#000"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.forYear")) + ": " + _vm._s(data.year))]), _vm._v(" "), _c("h4", {
+    }, [_c("b", {
       staticStyle: {
-        "text-align": "right"
+        "border-bottom": "1px solid #717171",
+        "padding-bottom": "1.5px"
       }
-    }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + ": " + _vm._s(data.amount))])]);
+    }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
+      staticStyle: {
+        "margin-top": "120px",
+        color: "#000",
+        "font-weight": "bold"
+      }
+    }, [_vm._v("* " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])])]);
   }), 0) : _vm._e();
 };
 var staticRenderFns = [];
@@ -9117,6 +9573,191 @@ function englishValue(txt) {
   return en;
 }
 ;
+
+/***/ }),
+
+/***/ "./resources/js/helper/mixin/convertCurrencyToWords.js":
+/*!*************************************************************!*\
+  !*** ./resources/js/helper/mixin/convertCurrencyToWords.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      TableScales: ["", "ألف", "مليون", "مليار", "ترليون", "كوادرليون", "كوينتليون", "سكستليون"],
+      TableScalesP: ["", "آلاف", "ملايين", "مليارات"],
+      TableMale: ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة", "عشرة"],
+      TableFemale: ["", "واحدة", "اثنتان", "ثلاث", "أربع", "خمس", "ست", "سبع", "ثمان", "تسع", "عشر"]
+    };
+  },
+  methods: {
+    convert_currency_to_words: function convert_currency_to_words() {
+      var NumIn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        Feminine = _ref.Feminine,
+        Comma = _ref.Comma,
+        SplitHund = _ref.SplitHund,
+        Miah = _ref.Miah,
+        Billions = _ref.Billions,
+        TextToFollow = _ref.TextToFollow,
+        AG = _ref.AG,
+        Subject = _ref.Subject,
+        Legal = _ref.Legal;
+      if (NumIn == 0) return "صفر"; // if 0 or "0" then "zero"
+      var Triplet,
+        Scale,
+        ScalePos,
+        ScalePlural,
+        TableUnits,
+        Table11_19,
+        NumberInWords = "",
+        IsLastEffTriplet = false,
+        Num_99;
+      var ON = "on",
+        // Flag to test if Option is ON
+        IsAG = AG === ON,
+        // Option Accusative or Genitive case Grammar?
+        SpWa = " و",
+        // AND word
+        TanweenLetter = "ًا",
+        // Tanween Fatih for Scale Names above 10
+        Ahad = "أحد",
+        Ehda = "إحدى",
+        // Masculine/Feminine 11
+        // ---- Setup constants for the AG Option (Accusative/Genitive or Nominative case Grammar)
+        Taa = IsAG ? "تي" : "تا",
+        Taan = IsAG ? "تين" : "تان",
+        // Hundred 2's مئتا/مائتا مئتان/مائتان
+        Aa = IsAG ? "ي" : "ا",
+        Aan = IsAG ? "ين" : "ان",
+        // Scale 2's الفا/مليونا الفان/مليونان
+        Ethna = IsAG ? "اثني" : "اثنا",
+        Ethnata = IsAG ? "اثنتي" : "اثنتا",
+        // Masculine/Feminine 12 starting word
+        Ethnan = IsAG ? "اثنين" : "اثنان",
+        Ethnatan = IsAG ? "اثنتين" : "اثنتان",
+        // Masculine/Feminine 2
+        Woon = IsAG ? "ين" : "ون",
+        // Second part of 20's to 90's
+        IsSubject = Array.isArray(Subject) && Subject.length === 4; // Check for Subject Array Names
+
+      TextToFollow = TextToFollow === ON; // TextToFollow Option Flag
+      if (IsSubject) TextToFollow = true; // Enable TextToFollow Option if Subject Option is ON
+      NumIn += ""; // Make numeric string
+      NumIn = "" + NumIn.replace(/[٠-٩]/g, function (d) {
+        return "٠١٢٣٤٥٦٧٨٩".indexOf(d);
+      }); // Convert Arabic-Indic Numbers to Arabic if any
+      Miah = Miah === ON ? "مئة" : "مائة"; // Select chosen Miah (Hundred) Option
+
+      TableUnits = _toConsumableArray(this.TableMale);
+      Table11_19 = _toConsumableArray(this.TableMale); // Create copies of Masculine Table for manipulation
+      Table11_19[0] = this.TableFemale[10]; // Borrow word "عشرة" from Feminine's Table for use in 11-19
+      Table11_19[1] = Ahad; // Masculine starting words for 11
+      Table11_19[2] = Ethna; // Masculine starting words for 12
+      TableUnits[2] = Ethnan; // Masculine word for 2
+
+      NumIn = "0".repeat(NumIn.length * 2 % 3) + NumIn; // Convert Number to a Triplets String
+
+      var NumLen = NumIn.length;
+      for (var digits = NumLen; digits > 0; digits -= 3) {
+        // Loop and convert each Triplet
+        Triplet = +NumIn.substr(NumLen - digits, 3); // Get a Triplet Number
+        IsLastEffTriplet = !+NumIn.substr(NumLen - digits + 3); // Determine if Last Effective Triplet
+        if (Triplet) {
+          // If not Empty: Convert Triplet Number to Words
+          ScalePos = digits / 3 - 1; // Position of Scale Name in Scale Table
+          Scale = this.TableScales[ScalePos]; // Get Scale Name
+          ScalePlural = ScalePos < 4 ? this.TableScalesP[ScalePos] : this.TableScales[ScalePos] + "ات"; // Make Scale Plural
+          if (Billions && ScalePos === 3) Scale = "بليون", ScalePlural = "بلايين"; // If Billions Option
+          NumberInWords += oneTripletToWords(); // Convert 1 Triplet to Words
+          if (!IsLastEffTriplet) NumberInWords += (Comma === ON ? "،" : "") + SpWa; // Add "و " and Option Comma
+        }
+      } // All done with conversion, Process Subject Name if any
+      var SubjectName = "";
+      if (IsSubject) {
+        // Process Subject Name
+        var space = !IsLastEffTriplet ? "" : " "; // Position correct spacing
+        Triplet = +(Triplet + "").slice(-2); // Get last 2 digits of last Triplet
+        SubjectName = space + Subject[0]; // Default Subject Name is at Pos 0
+        if (Triplet > 10) SubjectName = space + Subject[3]; // Subject name with Tanween for 11-99
+        else if (Triplet > 2) SubjectName = space + Subject[2]; // Subject name Plural for 3-10
+        else if (Triplet > 0) SubjectName = Subject[Triplet - 1] + " " + TableUnits[Num_99]; // Reverse names for 1 or 2
+      }
+
+      return NumberInWords + SubjectName; // All done
+      //------------------------------------------------------------------
+      //    Core Function Converts 1 Triplet (1 to 999) to Arabic Words
+      //------------------------------------------------------------------
+      function oneTripletToWords() {
+        Num_99 = Triplet % 100; // 00 to 99
+        var Num_100 = ~~(Triplet / 100),
+          // Hundreds (1 digit)
+          Num_Unit = Num_99 % 10,
+          // 0 to 9 (1 digit)
+          Num_Tens = ~~(Num_99 / 10),
+          // Tens   (1 digit)
+          Word_100 = "",
+          Word_99 = ""; // Holds words for Hundreds & 0-99
+
+        if (Feminine === ON && !Scale) {
+          // If Feminine, use the Feminine table if no scale
+          TableUnits = _toConsumableArray(this.TableFemale);
+          Table11_19 = _toConsumableArray(this.TableFemale); // Create copies of Feminine Table for manipulation
+          Table11_19[0] = this.TableMale[10]; // Borrow word "عشر" from Masculine's Table for use in 11-19
+          Table11_19[1] = Ehda; // Feminine starting words for 11
+          Table11_19[2] = Ethnata; // Feminine starting words for 12
+          TableUnits[2] = Ethnatan; // Feminine word for 2
+          if (Num_99 > 19) TableUnits[1] = Ehda; // Feminine word for 1 used in 20's to 90's
+        }
+
+        if (Num_100) {
+          // ---- Do Hundreds (100 to 900)
+          if (Num_100 > 2) Word_100 = this.TableFemale[Num_100] + (SplitHund === ON ? " " : "") + Miah; // 300-900
+          else if (Num_100 === 1) Word_100 = Miah; // 100
+          else Word_100 = Miah.slice(0, -1) + (Scale && !Num_99 || TextToFollow ? Taa : Taan); // 200 Use either مئتا or مئتان
+        }
+
+        if (Num_99 > 19) Word_99 = TableUnits[Num_Unit] + (Num_Unit ? SpWa : "") + (
+        // 20-99 Units و and
+        Num_Tens === 2 ? "عشر" : this.TableFemale[Num_Tens]) + Woon; // Add Woon for 20's or 30's to 90's
+        else if (Num_99 > 10) Word_99 = Table11_19[Num_99 - 10] + " " + Table11_19[0]; // 11-19
+        else if (Num_99 > 2 || !Num_99 || !IsSubject) Word_99 = TableUnits[Num_99]; // 0 or 3-10 (else keep void for 1 &2)
+
+        var Words999 = Word_100 + (Num_100 && Num_99 ? SpWa : "") + Word_99; // Join Hund, Tens, and Units
+
+        if (Scale) {
+          // Add Scale Name if applicable
+          var legalTxt = Legal === ON && Num_99 < 3 ? " " + Scale : ""; // if Legal Option add Extra Word
+          var Word_100Wa = (Num_100 ? Word_100 + legalTxt + SpWa : "") + Scale; // Default Scale Name
+          if (Num_99 > 2) {
+            Words999 += " " + (
+            // Scale for for 3 to 99
+            Num_99 > 10 ? Scale + (IsLastEffTriplet && TextToFollow ? "" : TanweenLetter) // Scale for 11 to 99 (Tanween)
+            : ScalePlural); // Scale for 3 to 10 (Plural)
+          } else {
+            if (!Num_99) Words999 += " " + Scale; // Scale for 0
+            else if (Num_99 === 1) Words999 = Word_100Wa; // Scale for 1
+            else Words999 = Word_100Wa + (IsLastEffTriplet && TextToFollow ? Aa : Aan); // Scale for 2 ألفا or ألفان
+          }
+        }
+
+        return Words999; //Return the Triple in Words
+      }
+    }
+  }
+});
 
 /***/ }),
 
@@ -9662,7 +10303,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nh1[data-v-5a08a31a], h2[data-v-5a08a31a], h3[data-v-5a08a31a], p[data-v-5a08a31a] {\r\n    margin: 5px 0;\r\n    color: #333;\n}\nhr[data-v-5a08a31a] {\r\n    border: none;\r\n    border-top: 1px solid #ccc;\r\n    margin: 10px 0;\n}\n.invoice[data-v-5a08a31a] {\r\n    max-width: 600px;\r\n    margin: 0 auto;\r\n    padding: 20px;\r\n    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\r\n    margin-bottom: 220px;\n}\nbutton[data-v-5a08a31a] {\r\n    margin-top: 20px;\n}\n.invoice .center[data-v-5a08a31a]{\r\n    text-align: center;\n}\n.invoice .right[data-v-5a08a31a]{\r\n    text-align: right;\n}\n.image-header[data-v-5a08a31a]{\r\n    width: 100%;\n}\n.image-header img[data-v-5a08a31a]{\r\n    width: 100px;\r\n    display: inline-block;\r\n    margin-bottom: -42px;\n}\n.image-header h1[data-v-5a08a31a]{\r\n    width: 80%;\r\n    display: inline-block;\r\n    text-align: right;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-5a08a31a] {\r\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-5a08a31a],\r\n    h2[data-v-5a08a31a],\r\n    h3[data-v-5a08a31a],\r\n    p[data-v-5a08a31a] {\r\n        margin: 5px 0;\r\n        color: #333;\n}\nhr[data-v-5a08a31a] {\r\n        border: none;\r\n        border-top: 1px solid #ccc;\r\n        margin: 10px 0;\n}\nh3[data-v-5a08a31a] {\r\n        font-size: 25px;\r\n        color: #000;\r\n        padding: 4px 2px;\r\n        margin: 15px 0px;\n}\nh3 b[data-v-5a08a31a] {\r\n        background: #d7d7d7 !important;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\r\n        padding: 4px 2px;\n}\n.invoice[data-v-5a08a31a] {\r\n        height: 100%;\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: space-between;\r\n        margin: 0 auto;\r\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-5a08a31a] {\r\n        margin-top: 20px;\n}\n.invoice .center[data-v-5a08a31a] {\r\n        text-align: center;\n}\n.invoice .right[data-v-5a08a31a] {\r\n        text-align: right;\n}\n.image-header[data-v-5a08a31a] {\r\n        width: 100%;\r\n        margin-bottom: 30px;\r\n        padding-left: 0px;\r\n        display: flex;\r\n        justify-content: space-between;\n}\n.image-header img[data-v-5a08a31a] {\r\n        display: inline-block;\r\n        margin-top: 7px;\r\n        height: 100px;\n}\n.image-header h1[data-v-5a08a31a] {\r\n        display: inline-block;\r\n        margin-top: 10px;\n}\n.box[data-v-5a08a31a] {\r\n        padding: 0px 30px 0px 20px;\r\n        margin: 50px 0;\r\n        height: 49%;\r\n        border: #6e6b6b solid 1px;\r\n        max-height: 720px;\n}\n.doc_box[data-v-5a08a31a] {\r\n        border: #6e6b6b solid 1px;\r\n        background: #d7d7d7 !important;\r\n        color: #000;\r\n        padding: 10px;\r\n        width: 150px;\r\n        height: 70px;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\n}\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

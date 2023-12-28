@@ -60,7 +60,7 @@ class RealEstateDocumentHeaderResource extends JsonResource
 
             'customer' => collect($this->whenLoaded('customer'))->only(['id','name','name_e','address','customer_sub_category'])  ,
 
-            'header_details' => RealEstateDocumentHeaderDetailResource::collection($this->whenLoaded('documentHeaderDetails')),
+            'header_details' => RealEstateDocumentHeaderDetailResource::collection($this->documentHeaderDetails()->get()),
 
             'payment_method' => $this->whenLoaded('paymentMethod'),
             'employee'   => collect($this->whenLoaded('employee'))->only(['id','name','name_e','customer_handel']),

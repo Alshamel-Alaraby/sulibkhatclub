@@ -20,9 +20,9 @@ class UniqueUnitService implements Rule
 
     public function __construct($id)
     {
-        $this->id = $id;   
+        $this->id = $id;
     }
-   
+
 
     /**
      * Determine if the validation rule passes.
@@ -33,7 +33,6 @@ class UniqueUnitService implements Rule
      */
     public function passes($attribute, $value)
     {
-        // Check if the combination of unit_ids and service_ids is unique
         // in the rlst_unit_services table.
 
          // Log the $value and $attribute
@@ -42,16 +41,12 @@ class UniqueUnitService implements Rule
 
         $requestData = request()->input(); // Get all request data
 
-        $unitIds = $requestData['unit_ids'];
-        $serviceIds = $requestData['service_ids'];
+        $unitId = $requestData['unit_id'];
 
         $unitServicePairs = [];
 
-        $i = 0;
-        foreach($unitIds as $unitIdx => $unitId){
-            foreach($serviceIds as $serviceIdx => $serviceId){
-                $unitServicePairs[$i] = $unitId . '-' . $serviceId;
-            }
+        foreach($requestData['details'] as  $item){
+            $unitServicePairs[] = $unitId . '-' . $item['service_id'].'-' . $item['from_date'];
         }
         $uniquePairsInRequest = count(array_unique($unitServicePairs)) === count($unitServicePairs);
 
@@ -61,12 +56,11 @@ class UniqueUnitService implements Rule
 
 
         // Check if each unit_id and its corresponding service_id is unique in the rlst_unit_services table
-        foreach ($unitIds as $index => $unitId) {
-            $serviceId = $serviceIds[$index];
-
-            $count = RlstUnitService::where('id', '!=', $this->id)
-                ->where('unit_id', $unitId)
-                ->where('service_id', $serviceId)
+        if(!$this->id)
+        foreach($requestData['details'] as  $item){
+            $count = RlstUnitService::where('unit_id', $unitId)
+                ->where('service_id', $item['service_id'])
+                ->where('from_date', $item['from_date'])
                 ->count();
 
             if ($count > 0) {

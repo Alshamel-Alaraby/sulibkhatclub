@@ -11656,7 +11656,8 @@ var render = function render() {
       isPage: false,
       type: "create",
       isPermission: _vm.isPermission,
-      id: "bankAccount-create-customer"
+      id: "bankAccount-create-customer",
+      tables: []
     },
     on: {
       created: _vm.getBankAcount

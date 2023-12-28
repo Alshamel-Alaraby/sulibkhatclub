@@ -54,6 +54,45 @@ class CmMemberRepository implements CmMemberInterface
         if ($request->without) {
             $models->whereNotIn('id', explode(",", $request->without));
         }
+        if ($request->membership_number) {
+            $models->where('membership_number', $request->membership_number);
+        }
+
+        if ($request->full_name) {
+            $models->where('full_name', 'like', $request->full_name . '%');
+        }
+
+        if ($request->national_id) {
+            $models->where('national_id', $request->national_id);
+        }
+
+        if ($request->membership_number) {
+            $models->where('membership_number', $request->membership_number);
+        }
+
+        if ($request->home_phone) {
+            $models->where('home_phone', $request->home_phone);
+        }
+
+        if ($request->first_name) {
+            $models->where('first_name', 'like', $request->first_name . '%');
+        }
+
+        if ($request->second_name) {
+            $models->where('second_name', 'like', $request->second_name . '%');
+        }
+
+        if ($request->third_name) {
+            $models->where('third_name', 'like', $request->third_name . '%');
+        }
+
+        if ($request->last_name) {
+            $models->where('last_name', 'like', $request->last_name . '%');
+        }
+
+        if ($request->family_name) {
+            $models->where('family_name', 'like', $request->family_name . '%');
+        }
 
         if ($request->per_page) {
             return ['data' => $models->paginate($request->per_page), 'paginate' => true];
@@ -670,6 +709,10 @@ class CmMemberRepository implements CmMemberInterface
 
         if ($request->sponsor_id) {
             $models->where('sponsor_id', $request->sponsor_id);
+        }
+
+        if ($request->member_status_id) {
+            $models->where('member_status_id', $request->member_status_id);
         }
 
         if ($request->memberNumber) {

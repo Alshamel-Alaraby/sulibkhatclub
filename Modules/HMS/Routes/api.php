@@ -45,11 +45,6 @@ Route::prefix('h_m_s')->group(function () {
 //    Route::get('days/logs/{id}', 'HMSDayController@logs');
 
 
-    Route::apiResource('insurance_companies', "HMSInsuranceCompanyController");
-    Route::post("insurance_companies/bulk-delete", "HMSInsuranceCompanyController@bulkDelete");
-    Route::get('insurance_companies/logs/{id}', 'HMSInsuranceCompanyController@logs');
-
-
     Route::apiResource('patients', "HMSPatientController");
     Route::post("patients/bulk-delete", "HMSPatientController@bulkDelete");
     Route::get('patients/logs/{id}', 'HMSPatientController@logs');

@@ -10383,7 +10383,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Building Type",
+  name: "BuildingType",
   mixins: [_helper_mixin_translation_comp_mixin__WEBPACK_IMPORTED_MODULE_1__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_2__["default"]],
   components: {
     ErrorMessage: _widgets_errorMessage__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -22415,7 +22415,8 @@ var render = function render() {
       isPage: false,
       type: "create",
       isPermission: _vm.isPermission,
-      id: "bankAccount-create-customer"
+      id: "bankAccount-create-customer",
+      tables: []
     },
     on: {
       created: _vm.getBankAcount

@@ -8,7 +8,7 @@
 <script>
 import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
-import DocumentWithItem from "../../../components/document/RealEstate/documentWithUnitsGeneral";
+import DocumentWithItem from "../../../components/document/RealEstate/documentWithUnitsGeneral.vue";
 import Swal from "sweetalert2";
 import permissionGuard from "../../../helper/permission";
 

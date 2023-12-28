@@ -5,14 +5,17 @@ namespace Modules\RealEstate\Http\Controllers;
 use App\Http\Requests\AllRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Modules\RealEstate\Entities\RlstUnit;
 use Modules\RealEstate\Entities\RlstUnitService;
 use Modules\RealEstate\Http\Requests\RlstUnitServiceRequest;
 use Modules\RealEstate\Transformers\RlstUnitServiceResource;
+use Modules\RealEstate\Transformers\RlstUnitServicesCollectionResource;
 
 class RlstUnitServiceController extends Controller
 {
 
-    public function __construct(private RlstUnitService $model)
+    public function __construct(private RlstUnitService $model,private RlstUnit $unitModel)
     {
         $this->model = $model;
     }
@@ -29,10 +32,10 @@ class RlstUnitServiceController extends Controller
 
     public function all(AllRequest $request)
     {
-        $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->unitModel->with('services')->has('services')->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request['unit_id']){
-            $models->whereIn('unit_id',$request['unit_id']);
+            $models->whereIn('id',$request['unit_id']);
         }
 //        if ($request->last_date){
 //           return $last =  $this->model->selectRaw("unit_id,service_id,MAX(from_date),default_price")->groupBy(['unit_id','service_id'])->get();
@@ -44,52 +47,46 @@ class RlstUnitServiceController extends Controller
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', RlstUnitServiceResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', RlstUnitServicesCollectionResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 
     public function create(RlstUnitServiceRequest $request)
     {
-        $unitIds = $request->unit_ids;
-        $serviceIds = $request->service_ids;
-
-        $models = [];
-
-        foreach ($unitIds as $unitId) {
-            foreach ($serviceIds as $serviceId) {
-                $unitService = [
-                    'unit_id' => $unitId,
-                    'service_id' => $serviceId,
-                    'price' => $request->price,
-                    'from_date' => $request->from_date,
-                ];
-                $models[]= $this->model->create($unitService);
-            }
+        foreach ($request->details as $item) {
+            $unitService = [
+                'unit_id' => $request->unit_id,
+                'service_id' => $item['service_id'],
+                'default_price' => $item['default_price'],
+                'from_date' => $item['from_date'],
+            ];
+            $this->model->create($unitService);
         }
         return responseJson(200, 'success');
     }
 
     public function update($id, RlstUnitServiceRequest $request)
     {
-        $model = $this->model->find($id);
+        $model = $this->unitModel->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
 
-        if ($request) {
-            $serviceId = $request->service_ids[0];
-            $unitId = $request->unit_ids[0];
+        $model->services->unique('id')->map(function($item){
+            $pivot = $item->pivot;
+            RlstUnitService::where('unit_id',$pivot->unit_id)->where('service_id',$pivot->service_id)->where('from_date',$pivot->from_date)->where('default_price',$pivot->default_price)->delete();
+        });
 
-            $unit_service = [
-                'unit_id' => $unitId,
-                'service_id' => $serviceId,
-                'from_date' => $request->from_date,
+        foreach ($request->details as $item) {
+            $unitService = [
+                'unit_id' => $request->unit_id,
+                'service_id' => $item['service_id'],
+                'default_price' => $item['default_price'],
+                'from_date' => $item['from_date'],
             ];
-            $model->update($unit_service);
-            $model->refresh();
-
+            $this->model->create($unitService);
         }
-        return responseJson(200, 'updated', new RlstUnitServiceResource($model));
+        return responseJson(200, 'updated',[]);
     }
 
 
@@ -106,13 +103,13 @@ class RlstUnitServiceController extends Controller
 
     public function delete($id)
     {
-        $model = $this->model->find($id);
+        $model = $this->unitModel->find($id);
         if (!$model) {
             return responseJson(404, 'not found');
         }
 
-        $model->delete();
-        $model->refresh();
+        RlstUnitService::where('unit_id',$id)->delete();
+
         return responseJson(200, 'deleted');
     }
 
@@ -122,14 +119,8 @@ class RlstUnitServiceController extends Controller
         if (!$request->ids) {
             return responseJson(400, 'ids is required');
         }
-        $models = $this->model->whereIn('id', $ids)->get();
-        if ($models->count() != count($ids)) {
-            return responseJson(404, 'not found');
-        }
-        $models->each(function ($model) {
-            $model->delete();
-            $model->refresh();
-        });
+        $models = RlstUnitService::whereIn('unit_id',$request->ids)->delete();
+
         return responseJson(200, 'deleted');
     }
 

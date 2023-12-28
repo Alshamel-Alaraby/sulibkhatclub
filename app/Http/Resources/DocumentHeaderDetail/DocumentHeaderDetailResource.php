@@ -33,6 +33,7 @@ class DocumentHeaderDetailResource extends JsonResource
             'unit_type' => $this->unit_type,
             'is_stripe' => $this->is_stripe,
             'rent_days' => $this->rent_days,
+            'building_id' => $this->building_id,
             'unit_id' => $this->unit_id,
             'item_id' => $this->item_id,
             'category_booking' => $this->category_booking,

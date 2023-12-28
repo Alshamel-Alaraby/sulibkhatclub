@@ -29,4 +29,8 @@ interface DocumentHeaderInterface
     public function getDocumentsCustomer($id,$request);
 
     public function documentRealEstateData($id);
+
+    public function updateContractHeader($request,$id);
+    public function all_renew_contract_header($request);
+    public function renew_contract($request);
 }

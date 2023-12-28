@@ -1746,6 +1746,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       enabled3: true,
       is_disabled: false,
       isLoader: false,
+      filterMember: {
+        full_name: '',
+        national_id: '',
+        membership_number: '',
+        first_name: '',
+        second_name: '',
+        third_name: '',
+        last_name: '',
+        family_name: '',
+        home_phone: ''
+      },
       create: {
         branch_id: null,
         serial_id: null,
@@ -2529,6 +2540,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _arguments = arguments,
         _this18 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+        var _this18$filterMember$, _this18$filterMember$2, _this18$filterMember$3, _this18$filterMember$4, _this18$filterMember$5, _this18$filterMember$6, _this18$filterMember$7;
         var search;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
@@ -2536,7 +2548,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
               _this18.isLoader = true;
               _context8.next = 4;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?member_status_id=1&limet=10&company_id=".concat(_this18.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name")).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?member_status_id=1&limet=10&company_id=".concat(_this18.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=").concat((_this18$filterMember$ = _this18.filterMember.national_id) !== null && _this18$filterMember$ !== void 0 ? _this18$filterMember$ : '', "&membership_number=").concat((_this18$filterMember$2 = _this18.filterMember.membership_number) !== null && _this18$filterMember$2 !== void 0 ? _this18$filterMember$2 : '', "&full_name=").concat((_this18$filterMember$3 = _this18.filterMember.full_name) !== null && _this18$filterMember$3 !== void 0 ? _this18$filterMember$3 : '', "&home_phone=").concat((_this18$filterMember$4 = _this18.filterMember.home_phone) !== null && _this18$filterMember$4 !== void 0 ? _this18$filterMember$4 : '', "&first_name=").concat((_this18$filterMember$5 = _this18.filterMember.first_name) !== null && _this18$filterMember$5 !== void 0 ? _this18$filterMember$5 : '', "&second_name=").concat((_this18$filterMember$6 = _this18.filterMember.second_name) !== null && _this18$filterMember$6 !== void 0 ? _this18$filterMember$6 : '', "&third_name=").concat(_this18.filterMember.third_name, "&last_name=").concat((_this18$filterMember$7 = _this18.filterMember.last_name) !== null && _this18$filterMember$7 !== void 0 ? _this18$filterMember$7 : '', "&family_name=").concat(_this18.filterMember.family_name)).then(function (res) {
                 var l = res.data.data;
                 _this18.members = l;
               })["catch"](function (err) {
@@ -2600,6 +2612,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
         _this20.enabled3 = true;
       }, 100);
+    },
+    /**
+     * start filter member
+     */
+    resetFormSearch: function resetFormSearch() {
+      this.filterMember.full_name = '';
+      this.filterMember.national_id = '';
+      this.filterMember.membership_number = '';
+      this.filterMember.first_name = '';
+      this.filterMember.second_name = '';
+      this.filterMember.third_name = '';
+      this.filterMember.last_name = '';
+      this.filterMember.family_name = '';
+      this.filterMember.home_phone = '';
+      this.is_disabled = false;
     },
     printInv: function printInv(data) {
       this.dataInv = data;
@@ -6234,7 +6261,21 @@ var render = function render() {
     staticClass: "control-label"
   }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_reject_member")) + "\n                                                "), _vm.isRequired("cm_member_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e(), _vm._v(" "), _c("b-button", {
+    directives: [{
+      name: "b-modal",
+      rawName: "v-b-modal.filter_members",
+      modifiers: {
+        filter_members: true
+      }
+    }],
+    staticClass: "mx-1 custom-btn-background",
+    staticStyle: {
+      "font-size": "14px"
+    }
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.filter")) + "\n                                                    "), _c("i", {
+    staticClass: "fas fa-filter"
+  })])], 1), _vm._v(" "), _c("multiselect", {
     attrs: {
       internalSearch: false,
       options: _vm.members.map(function (type) {
@@ -6243,13 +6284,15 @@ var render = function render() {
       "custom-label": function customLabel(opt) {
         return _vm.members.find(function (x) {
           return x.id == opt;
+        }) ? _vm.members.find(function (x) {
+          return x.id == opt;
         }).first_name + " " + _vm.members.find(function (x) {
           return x.id == opt;
         }).second_name + " " + _vm.members.find(function (x) {
           return x.id == opt;
         }).third_name + " " + _vm.members.find(function (x) {
           return x.id == opt;
-        }).last_name;
+        }).last_name : "";
       }
     },
     on: {
@@ -6276,26 +6319,19 @@ var render = function render() {
     staticClass: "control-label"
   }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_reject_date")) + "\n                                                "), _vm.isRequired("date") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.create.date,
-      expression: "create.date"
-    }],
-    staticClass: "form-control",
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     attrs: {
-      type: "text",
-      placeholder: "yyyy-mm-dd"
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
     },
-    domProps: {
-      value: _vm.create.date
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.create, "date", $event.target.value);
-      }
+    model: {
+      value: _vm.create.date,
+      callback: function callback($$v) {
+        _vm.$set(_vm.create, "date", $$v);
+      },
+      expression: "create.date"
     }
   }), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
     return _c("ErrorMessage", {
@@ -6456,7 +6492,304 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e()])])]), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "filter_members",
+      title: _vm.$t("general.filter"),
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      size: "lg",
+      scrollable: "",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-12 mb-3 d-flex justify-content-end"
+  }, [_c("b-button", {
+    "class": ["font-weight-bold px-2", _vm.is_disabled ? "mx-2" : ""],
+    attrs: {
+      variant: "success",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.resetFormSearch.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.NewSearch")) + "\n                                        ")]), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "submit"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getMember("");
+      }
+    }
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Search")) + "\n                                            ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("filter_members");
+      }
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Cancel")) + "\n                                        ")])], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.full_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.full_name,
+      expression: "filterMember.full_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.full_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "full_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.national_id,
+      expression: "filterMember.national_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.national_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "national_id", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.membership_number,
+      expression: "filterMember.membership_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number"
+    },
+    domProps: {
+      value: _vm.filterMember.membership_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "membership_number", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.first_name,
+      expression: "filterMember.first_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.first_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "first_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.second_name,
+      expression: "filterMember.second_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.second_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "second_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.third_name,
+      expression: "filterMember.third_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.third_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "third_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.last_name,
+      expression: "filterMember.last_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.last_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "last_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.family_name,
+      expression: "filterMember.family_name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.family_name
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "family_name", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-4"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                            ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filterMember.home_phone,
+      expression: "filterMember.home_phone"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.filterMember.home_phone
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.filterMember, "home_phone", $event.target.value);
+      }
+    }
+  })])])])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
   }, [_vm.isLoader ? _c("loader", {
     attrs: {

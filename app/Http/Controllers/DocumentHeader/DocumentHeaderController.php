@@ -4,6 +4,7 @@ namespace App\Http\Controllers\DocumentHeader;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentHeader\DocumentHeaderRequest;
+use App\Http\Requests\DocumentHeader\RenewContractDocumentHeaderRequest;
 use App\Http\Resources\DocumentHeader\AllDocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\DocumentHeaderResource;
 use App\Http\Resources\DocumentHeader\FindDocumentHeaderResource;
@@ -198,5 +199,37 @@ class DocumentHeaderController extends Controller
         }
         return responseJson(200, 'success', new RealEstateDocumentHeaderResource($model));
     }
+
+    public function updateContractHeader(DocumentHeaderRequest $request, $id)
+    {
+        $model = $this->modelInterface->find($id);
+        if (!$model) {
+            return responseJson( 404 , __('message.data not found'));
+        }
+        $model_Interface = $this->modelInterface->updateContractHeader($request,$id);
+        if ($model_Interface == 'paid_befor'){
+            return responseJson(402, "You can't edit because there is a settlement for this invoice");
+        }
+        if ($model_Interface == 'false'){
+            return responseJson(400, "Not Found Date in Table Financial Year");
+        }
+        $model->refresh();
+        return responseJson(200, 'success', new DocumentHeaderResource($model));
+
+    }
+
+
+    public function all_renew_contract_header(Request $request)
+    {
+        $models = $this->modelInterface->all_renew_contract_header($request);
+        return responseJson(200, 'success', RealEstateDocumentHeaderResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
+
+    public function renew_contract(RenewContractDocumentHeaderRequest $request)
+    {
+        $this->modelInterface->renew_contract($request);
+    }
+
 
 }

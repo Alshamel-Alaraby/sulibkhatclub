@@ -3,6 +3,7 @@
         <employee
             :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'employee-create-task'"
             :isPage="false" type="create" :isPermission="isPermission" @created="getEmployees"
+            :tables="[]"
         />
         <Department
             :id="'department-create-task'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
@@ -10,7 +11,7 @@
         />
         <customerGeneral
             :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :id="'customer-general-create-task'"
-            :isPage="false" type="create" :isPermission="isPermission" @created="getCustomers"
+            :isPage="false" type="create" :isPermission="isPermission" @created="getCustomers" :tables="[]"
         />
         <TaskDepartment
             :id="'department-task-create-task'"

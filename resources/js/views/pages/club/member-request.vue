@@ -65,6 +65,10 @@ export default {
             approve: {
                 session_date: this.formatDate(new Date()),
                 session_number: null,
+                executive_office_date: null,
+                executive_office_number: null,
+                board_of_directors_date: null,
+                board_of_directors_number: null,
                 "accept-members": [],
             },
             company_id: null,
@@ -125,6 +129,10 @@ export default {
                     membership_date: {required},
                 },
             },
+            executive_office_date: {},
+            executive_office_number: {},
+            board_of_directors_date: {},
+            board_of_directors_number: {},
         },
         reject: {
             notes: {required},
@@ -255,6 +263,14 @@ export default {
                     this.approve.session_date;
                 this.approve["accept-members"][index]["session_number"] =
                     this.approve.session_number;
+                this.approve["accept-members"][index]["executive_office_date"] =
+                    this.approve.executive_office_date;
+                this.approve["accept-members"][index]["executive_office_number"] =
+                    this.approve.executive_office_number;
+                this.approve["accept-members"][index]["board_of_directors_date"] =
+                    this.approve.board_of_directors_date;
+                this.approve["accept-members"][index]["board_of_directors_number"] =
+                    this.approve.board_of_directors_number;
             });
             this.$v.approve.$touch();
             if (this.$v.approve.$invalid) {
@@ -343,6 +359,10 @@ export default {
             this.approve = {
                 session_number: "",
                 session_date: this.formatDate(new Date()),
+                executive_office_date: "",
+                executive_office_number: "",
+                board_of_directors_date: "",
+                board_of_directors_number: "",
                 "accept-members": [],
             };
             this.checkAll.forEach((id) => {
@@ -378,6 +398,10 @@ export default {
             this.approve = {
                 session_number: "",
                 session_date: this.formatDate(new Date()),
+                executive_office_date: "",
+                executive_office_number: "",
+                board_of_directors_date: "",
+                board_of_directors_number: "",
                 "accept-members": [],
             };
 
@@ -665,15 +689,16 @@ export default {
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_session_date") }}
                                             </label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                placeholder="yyyy-mm-dd"
+                                            <date-picker
+                                                type="date"
                                                 v-model="$v.approve.session_date.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
                                                 :class="{ 'is-invalid':  $v.approve.session_date.$error || errors.session_date,
                                                  'is-valid':!$v.approve.session_date.$invalid &&!errors.session_date,
                                                 }"
-                                            >
+                                            ></date-picker>
                                             <template v-if="errors.session_date">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.session_date"
@@ -685,7 +710,7 @@ export default {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ getCompanyKey("member_membership_number")}}</label>
+                                            <label>{{ getCompanyKey("member_session_number")}}</label>
                                             <input
                                                 v-model="$v.approve.session_number.$model"
                                                 class="form-control"
@@ -702,6 +727,108 @@ export default {
                                             <template v-if="errors.session_number">
                                                 <ErrorMessage
                                                     v-for="(errorMessage, index) in errors.session_number"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_executive_office_history") }}
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.approve.executive_office_date.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':  $v.approve.executive_office_date.$error || errors.executive_office_date,
+                                                 'is-valid':!$v.approve.executive_office_date.$invalid &&!errors.executive_office_date,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.executive_office_date">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.executive_office_date"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ getCompanyKey("member_executive_office_number")}}</label>
+                                            <input
+                                                v-model="$v.approve.executive_office_number.$model"
+                                                class="form-control"
+                                                type="number"
+                                                :class="{
+                                                  'is-invalid':
+                                                    $v.approve.executive_office_number.$error ||
+                                                    errors.executive_office_number,
+                                                  'is-valid':
+                                                    !$v.approve.executive_office_number.$invalid &&
+                                                    !errors.executive_office_number,
+                                                }"
+                                            />
+                                            <template v-if="errors.executive_office_number">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.executive_office_number"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_Board_of_Directors_history") }}
+                                            </label>
+                                            <date-picker
+                                                type="date"
+                                                v-model="$v.approve.board_of_directors_date.$model"
+                                                format="YYYY-MM-DD"
+                                                valueType="format"
+                                                :confirm="false"
+                                                :class="{ 'is-invalid':  $v.approve.board_of_directors_date.$error || errors.board_of_directors_date,
+                                                 'is-valid':!$v.approve.board_of_directors_date.$invalid &&!errors.board_of_directors_date,
+                                                }"
+                                            ></date-picker>
+                                            <template v-if="errors.board_of_directors_date">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.board_of_directors_date"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ getCompanyKey("member_Board_of_Directors_number")}}</label>
+                                            <input
+                                                v-model="$v.approve.board_of_directors_number.$model"
+                                                class="form-control"
+                                                type="number"
+                                                :class="{
+                                                  'is-invalid':
+                                                    $v.approve.board_of_directors_number.$error ||
+                                                    errors.board_of_directors_number,
+                                                  'is-valid':
+                                                    !$v.approve.board_of_directors_number.$invalid &&
+                                                    !errors.board_of_directors_number,
+                                                }"
+                                            />
+                                            <template v-if="errors.board_of_directors_number">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.board_of_directors_number"
                                                     :key="index"
                                                 >{{ errorMessage }}
                                                 </ErrorMessage>

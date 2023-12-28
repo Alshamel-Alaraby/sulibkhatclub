@@ -55,6 +55,17 @@ export default {
             enabled3: true,
             is_disabled: false,
             isLoader: false,
+            filterMember: {
+                full_name : '',
+                national_id : '',
+                membership_number : '',
+                first_name : '',
+                second_name : '',
+                third_name : '',
+                last_name : '',
+                family_name : '',
+                home_phone : '',
+            },
             create: {
                 sponsor_id: null,
                 branch_id: null,
@@ -807,7 +818,7 @@ export default {
         async getMember(search='') {
             this.isLoader = true;
             await adminApi
-                .get(`/club-members/members?hasTransaction=1&member_status_id=1&without=${this.removeMembers}&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name`)
+                .get(`/club-members/members?hasTransaction=1&member_status_id=1&without=${this.removeMembers}&limet=10&company_id=${this.company_id}&search=${search}&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=${this.filterMember.national_id??''}&membership_number=${this.filterMember.membership_number??''}&full_name=${this.filterMember.full_name??''}&home_phone=${this.filterMember.home_phone??''}&first_name=${this.filterMember.first_name??''}&second_name=${this.filterMember.second_name??''}&third_name=${this.filterMember.third_name}&last_name=${this.filterMember.last_name??''}&family_name=${this.filterMember.family_name}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.members = l;
@@ -1005,6 +1016,21 @@ export default {
             let array = [];
             array.push(data);
             this.printInv(array);
+        },
+        /**
+         * start filter member
+         */
+        resetFormSearch() {
+            this.filterMember.full_name = '';
+            this.filterMember.national_id = '';
+            this.filterMember.membership_number = '';
+            this.filterMember.first_name = '';
+            this.filterMember.second_name = '';
+            this.filterMember.third_name = '';
+            this.filterMember.last_name = '';
+            this.filterMember.family_name = '';
+            this.filterMember.home_phone = '';
+            this.is_disabled = false;
         },
         printInv(data){
             this.dataInv = data
@@ -1400,6 +1426,10 @@ export default {
                                         <div class="form-group position-relative">
                                             <label class="control-label">
                                                 {{ getCompanyKey("member") }}
+                                                <b-button style="font-size: 14px;" v-b-modal.filter_members class="mx-1 custom-btn-background">
+                                                    {{ $t("general.filter") }}
+                                                    <i class="fas fa-filter"></i>
+                                                </b-button>
                                             </label>
                                             <multiselect
                                                 :internalSearch="false"
@@ -1408,7 +1438,7 @@ export default {
                                                 v-model="create.cm_member_id"
                                                 :options="members.map((type) => type.id)"
                                                 :custom-label="
-                                                  (opt) => members.find((x) => x.id == opt).full_name
+                                                  (opt) => members.find((x) => x.id == opt) ? members.find((x) => x.id == opt).full_name:''
                                                 "
                                             >
                                             </multiselect>
@@ -1648,6 +1678,167 @@ export default {
                             </form>
                         </b-modal>
                         <!--  /create   -->
+
+                        <!-- start filter member  -->
+                        <b-modal
+                            id="filter_members"
+                            :title="$t('general.filter')"
+                            title-class="font-18"
+                            body-class="p-4 "
+                            size="lg"
+                            scrollable
+                            :hide-footer="true"
+                        >
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3 d-flex justify-content-end">
+                                        <b-button
+                                            variant="success"
+                                            @click.prevent="resetFormSearch"
+                                            type="button"
+                                            :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                                        >
+                                            {{ $t("general.NewSearch") }}
+                                        </b-button>
+                                        <!-- Emulate built in modal footer ok and cancel button actions -->
+                                        <template v-if="!is_disabled">
+                                            <b-button
+                                                variant="success"
+                                                type="submit"
+                                                class="mx-1"
+                                                v-if="!isLoader"
+                                                @click.prevent="getMember('')"
+                                            >
+                                                {{ $t("general.Search") }}
+                                            </b-button>
+
+                                            <b-button variant="success" class="mx-1" disabled v-else>
+                                                <b-spinner small></b-spinner>
+                                                <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                            </b-button>
+                                        </template>
+                                        <b-button
+                                            variant="danger"
+                                            type="button"
+                                            @click.prevent="$bvModal.hide('filter_members')"
+                                        >
+                                            {{ $t("general.Cancel") }}
+                                        </b-button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t("general.full_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.full_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_national_id") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.national_id"
+                                                class="form-control"
+                                                type="number"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.membership_number"
+                                                class="form-control"
+                                                type="number"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_first_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.first_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_second_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.second_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_third_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.third_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_last_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.last_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_family_name") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.family_name"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ getCompanyKey("member_home_phone") }}
+                                            </label>
+                                            <input
+                                                v-model="filterMember.home_phone"
+                                                class="form-control"
+                                                type="text"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  end filter member   -->
 
                         <!-- start .table-responsive-->
                         <div class="table-responsive mb-3 custom-table-theme position-relative">

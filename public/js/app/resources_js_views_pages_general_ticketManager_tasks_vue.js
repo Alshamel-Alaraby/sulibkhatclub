@@ -12288,7 +12288,8 @@ var render = function render() {
       isPage: false,
       type: "create",
       isPermission: _vm.isPermission,
-      id: "bankAccount-create-customer"
+      id: "bankAccount-create-customer",
+      tables: []
     },
     on: {
       created: _vm.getBankAcount
@@ -17636,7 +17637,8 @@ var render = function render() {
       id: "employee-create-task",
       isPage: false,
       type: "create",
-      isPermission: _vm.isPermission
+      isPermission: _vm.isPermission,
+      tables: []
     },
     on: {
       created: _vm.getEmployees
@@ -17660,7 +17662,8 @@ var render = function render() {
       id: "customer-general-create-task",
       isPage: false,
       type: "create",
-      isPermission: _vm.isPermission
+      isPermission: _vm.isPermission,
+      tables: []
     },
     on: {
       created: _vm.getCustomers
@@ -22809,13 +22812,12 @@ var render = function render() {
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
-        staticClass: "m-0 font-weight-normal"
-      }, _vm._l(data[item.name], function (i, index) {
-        return _c("span", {
-          key: i.id
-        }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" && data[item.name].length > 0 ? _c("td", _vm._l(data[item.name], function (i, index) {
+        return _c("label", {
+          key: i.id,
+          staticClass: "badge badge-primary text-white mx-1 p-2"
+        }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                    ")]);
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
       }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]

@@ -8,7 +8,7 @@ class RlstUnitServiceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
+     *RlstUnitServicesCollectionResource
      * @param  \Illuminate\Http\Request
      * @return array
      */

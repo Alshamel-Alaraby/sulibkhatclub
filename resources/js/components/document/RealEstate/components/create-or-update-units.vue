@@ -27,10 +27,15 @@ export default {
         dataRow: {
             default: null,
         },
+        idEdit: {
+          default: null,
+        },
         id: {
             default: "create",
         },
-
+        type: {
+            default: 'create'
+        }
     },
     mixins: [translation],
     components: {
@@ -59,6 +64,7 @@ export default {
             statuses: [],
             externalSalesman: [],
             serial_number: "",
+            showValue: true,
             relatedDocumentNumbers: [],
             relatedDocuments: [],
             paymentMethods: [],
@@ -187,14 +193,16 @@ export default {
         test() {
             console.log(this.create.units)
         },
-        async resetModalCreateOrUpdate() {
+         resetModalCreateOrUpdate() {
             this.relatedDocuments = this.document.document_relateds;
+             setTimeout( async () => {
             if (this.dataRow) {
                 await this.getDataRow();
                 await this.resetModalEdit(this.dataRow.id);
             } else {
                 await this.resetModal();
             }
+             },50);
         },
         resetModalHiddenCreateOrUpdate() {
             if (this.dataRow) {
@@ -402,7 +410,7 @@ export default {
         /**
          *  edit screen
          */
-        // editSubmit(id) {
+         editSubmit(id) {
         //   if (
         //     parseInt(this.document.required) == 1 &&
         //     !this.create.related_document_number
@@ -414,51 +422,51 @@ export default {
         //     });
         //     return 0;
         //   }
-        //   this.$v.create.$touch();
+           this.$v.create.$touch();
 
-        //   if (this.$v.create.$invalid || !this.financial_years_validate) {
-        //     return;
-        //   } else {
-        //     this.create.company_id = this.company_id;
-        //     this.isLoader = true;
-        //     this.errors = {};
-        //     adminApi
-        //       .put(`contract-headers/${id}`, {
-        //         ...this.create,
-        //       })
-        //       .then((res) => {
-        //         this.$emit("created");
-        //         setTimeout(() => {
-        //           Swal.fire({
-        //             icon: "success",
-        //             text: `${this.$t("general.Editsuccessfully")}`,
-        //             showConfirmButton: false,
-        //             timer: 1500,
-        //           });
-        //         }, 500);
-        //         if (
-        //           this.document.attributes &&
-        //           parseInt(this.document.attributes.customer) != 0
-        //         ) {
-        //           this.showBreakCreate();
-        //         }
-        //       })
-        //       .catch((err) => {
-        //         if (err.response.data) {
-        //           this.errors = err.response.data.errors;
-        //         } else {
-        //           Swal.fire({
-        //             icon: "error",
-        //             title: `${this.$t("general.Error")}`,
-        //             text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-        //           });
-        //         }
-        //       })
-        //       .finally(() => {
-        //         this.isLoader = false;
-        //       });
-        //   }
-        // },
+          if (this.$v.create.$invalid || !this.financial_years_validate) {
+            return;
+          } else {
+             this.create.company_id = this.company_id;
+             this.isLoader = true;
+             this.errors = {};
+             adminApi
+               .put(`contract-headers/${id}`, {
+                 ...this.create,
+               })
+               .then((res) => {
+                 this.$emit("created");
+                 setTimeout(() => {
+                   Swal.fire({
+                     icon: "success",
+                     text: `${this.$t("general.Editsuccessfully")}`,
+                     showConfirmButton: false,
+                     timer: 1500,
+                   });
+                 }, 500);
+                 // if (
+                 //   this.document.attributes &&
+                 //   parseInt(this.document.attributes.customer) != 0
+                 // ) {
+                 //   this.showBreakCreate();
+                 // }
+               })
+               .catch((err) => {
+                 if (err.response.data) {
+                   this.errors = err.response.data.errors;
+                 } else {
+                   Swal.fire({
+                     icon: "error",
+                     title: `${this.$t("general.Error")}`,
+                     text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                   });
+                 }
+               })
+               .finally(() => {
+                this.isLoader = false;
+              });
+          }
+        },
         /**
          *  get workflows
          */
@@ -703,133 +711,119 @@ export default {
         /**
          *   show Modal (edit)
          */
-        // async resetModalEdit(id) {
-        //   this.rooms = [];
-        //   // this.guestModelId = "guest-create-" + this.id;
-        //   this.companyModelId = "company-create-" + this.id;
-        //   this.attendantModelId = "attendant-create-" + this.id;
-        //   this.customer_data_edit = "";
-        //   this.customer_data_create = "";
-        //   this.isLoader = true;
-        //   this.financial_years_validate = true;
-        //   if (this.checkDocumentNeedApprove()) {
-        //     this.getStatus();
-        //   }
-        //   this.getBranches();
-        //   this.getPaymentMethod();
-        //   this.getSalesmen();
-        //   // this.getServices();
-        //   let reservation = this.dataOfRow;
-        //   // this.tenant_data_edit = reservation.tenant;
-        //
-        //   this.getTenants();
-        //    this.getUnits();
-        // this.getInstallPaymentTypes();
-        //   // this.serial_number = reservation.prefix;
-        //   this.create.reason = reservation.reason ?? "";
-        //   this.create.branch_id = reservation.branch_id;
-        //   this.create.date = reservation.date;
-        //   this.create.related_document_id = reservation.related_document_id;
-        //   this.create.document_module_type_id = this.document
-        //     ? this.document.document_module_type_id
-        //     : null;
-        //   if (reservation.related_document_id) {
-        //     this.handelRelatedDocument();
-        //   }
-        //   if (reservation.document_number) {
-        //     this.relatedDocumentNumbers.push(reservation.document_number);
-        //   }
-        //   this.getEscorts(reservation.customer_id);
-        //   this.create.id = reservation.id;
-        //   this.create.customer_id = reservation.customer_id;
-        //   this.create.company_id = reservation.company_id;
-        //   this.create.customer_type = reservation.customer_type;
-        //   this.create.attendans_num = reservation.attendans_num;
-        //   this.create.attendants = reservation.attendants;
-        //   if (reservation.customer_type == 0) {
-        //     this.getCompanies(
-        //       reservation.employee.customer_handel,
-        //       reservation.employee_id
-        //     );
-        //   }
-        //   this.create.employee_id = reservation.employee_id;
-        //   this.create.payment_method_id = reservation.payment_method_id;
-        //   this.create.sell_method_id = reservation.sell_method_id;
-        //   this.create.total_invoice = reservation.total_invoice;
-        //   this.create.invoice_discount = reservation.invoice_discount;
-        //   this.create.net_invoice = reservation.net_invoice;
-        //   this.create.sell_method_discount = reservation.sell_method_discount;
-        //   this.create.unrelaized_revenue = reservation.unrelaized_revenue;
-        //   this.create.related_document_number = reservation.related_document_number;
-        //   this.create.related_document_prefix = reservation.related_document_prefix;
-        //   this.create.header_details = [];
-        //   reservation.header_details.forEach((e, index) => {
-        //     if (e.unit_id) {
-        //       this.rooms.push({ rooms: [e.unit] });
-        //     } else {
-        //       this.rooms.push({ rooms: [] });
-        //     }
-        //
-        //     this.create.header_details.push({
-        //       unit_id: e.unit_id, //for rooms
-        //       item_id: e.item_id, //for service
-        //       date_from: this.formatDate(e.date_from),
-        //       rent_days: e.rent_days,
-        //       date_to: this.formatDate(e.date_to),
-        //       check_in_time: e.check_in_time,
-        //       unit_type: e.unit_type,
-        //       quantity: e.quantity,
-        //       price_per_uint: e.price_per_uint,
-        //       discount_per_day: e.discount / e.rent_days,
-        //       discount: e.discount,
-        //       total: e.total,
-        //       is_stripe: e.is_stripe,
-        //       sell_method_discount: e.sell_method_discount,
-        //       note: e.note,
-        //       category_booking: e.category_booking,
-        //     });
-        //   });
-        //   this.isLoader = false;
-        // },
+        async resetModalEdit(id) {
+            this.showServiceModal = false;
+          this.tenant_data_edit = "";
+          this.tenant = "";
+          this.isLoader = true;
+          this.financial_years_validate = true;
+          // if (this.checkDocumentNeedApprove()) {
+          //   this.getStatus();
+          // }
+          this.getBranches();
+
+          let reservation = this.dataOfRow;
+          if (reservation.breakSettlement === 1) {
+              this.showValue = false;
+          } else {
+              this.showValue = true;
+          }
+            console.log('breakSettlement', reservation.breakSettlement)
+          this.tenant_data_edit = reservation.tenant;
+          this.getTenants();
+          this.getUnits();
+          this.getExternalSalesmen();
+          this.getInstallPaymentTypes();
+
+          this.serial_number = reservation.prefix;
+          this.create.branch_id = reservation.branch_id;
+          this.create.date = reservation.date;
+          this.create.related_document_id = reservation.related_document_id;
+          this.create.document_module_type_id = this.document
+            ? this.document.document_module_type_id
+            : null;
+          if (reservation.related_document_id) {
+            this.handelRelatedDocument();
+          }
+          if (reservation.document_number) {
+            this.relatedDocumentNumbers.push(reservation.document_number);
+          }
+          this.create.id = reservation.id;
+          this.create.tenant_id = reservation.tenant_id;
+          // this.create.company_id = reservation.company_id;
+          this.create.employee_id = reservation.employee.id;
+          this.create.notice_period = reservation.notice_period;
+          this.create.insurance_amount = reservation.insurance_amount;
+          this.create.automatic_renews = reservation.automatic_renews;
+          this.create.external_salesmen_id = reservation.externalSalesmen.id;
+          this.create.commission = reservation.commission;
+          this.create.posted = reservation.posted;
+          this.create.receipt_print_detail = reservation.receipt_print_detail;
+            this.unit_ids = [];
+            this.create.units = []
+            reservation.units.forEach((unit) => {
+                this.unit_ids.push(unit.unit_id);
+                this.create.units.push({
+                   unit_id : unit.id,
+                    unit_services: unit.pivot.unit_services
+                }) ;
+            });
+
+          this.create.related_document_number = reservation.related_document_number;
+          this.create.related_document_prefix = reservation.related_document_prefix;
+          this.create.header_details = [];
+          reservation.contractHeaderDetail.forEach((e, index) => {
+            this.create.header_details.push({
+              from_date: this.formatDate(e.from_date),
+              rent_amount: e.rent_amount,
+              to_date: this.formatDate(e.to_date),
+                payment_type_id: e.payment_type_id,
+                print_day: e.print_day,
+                due_day: e.due_day,
+            });
+          });
+          this.isLoader = false;
+        },
         /**
          *  hidden Modal (edit)
          */
-        // resetModalHiddenEdit(id) {
-        //   this.tenant_data_edit = "";
-        //   this.rooms = [{ rooms: [] }];
-        //   this.errors = {};
-        //   this.create = {
-        //     document_id: this.document_id,
-        //     // document_status_id: null,
-        //     id: null,
-        //     // reason:'',
-        //     branch_id: null,
-        //     date: this.formatDate(new Date()),
-        //     related_document_id: null,
-        //     related_document_number: null,
-        //     related_document_prefix: "",
-        //     employee_id: null,
-        //     tenant_id: null,
-        //     company_id: null,
-        //     sell_method_id: null,
-        //     payment_method_id: 1,
-        //     customer_type: 1,
-        //     attendants: [],
-        //     total_invoice: 0,
-        //     // invoice_discount: 0,
-        //     attendans_num: 0,
-        //     net_invoice: 0,
-        //     sell_method_discount: 0,
-        //     unrelaized_revenue: 0,
-        //     header_details: [],
-        //   };
-        // },
+        resetModalHiddenEdit(id) {
+          this.tenant_data_edit = "";
+            this.showServiceModal = false;
+            this.showValue = true
+            this.unit_ids = [],
+          this.errors = {};
+          this.create = {
+            document_id: this.document_id,
+            // document_status_id: null,
+            id: null,
+              branch_id: null,
+              date: this.formatDate(new Date()),
+              serial_id: null,
+              related_document_id: null,
+              related_document_number: null,
+              related_document_prefix: "",
+              employee_id: null,
+              tenant_id: null,
+              notice_period: 0, // it should be how many months before the tenant leave
+              insurance_amount: 0,
+              automatic_renews: "",
+              external_salesmen_id: null,
+              commission: 0,
+              posted: "",
+              receipt_print_detail: "", // it is 0 or 1
+              company_id: null,
+              units: [],
+            header_details: [],
+          };
+        },
         async getDataRow() {
             this.isLoader = true;
             await adminApi
-                .get(`/contract-headers/${this.id}`)
+                .get(`/real-estate/contract-headers/${this.idEdit}`)
                 .then((res) => {
                     let l = res.data.data;
+                    console.log('dataEddit', l)
                     this.dataOfRow = l;
                 })
                 .catch((err) => {
@@ -1288,6 +1282,7 @@ export default {
                                 :options="branches.map((type) => type.id)"
                                 :show-labels="false"
                                 @input="getSerialNumber($event)"
+                                :disabled="!showValue"
                             >
                             </multiselect>
                             <div
@@ -1456,7 +1451,7 @@ export default {
                                         : tenants.find((x) => x.id == opt).name_e
                                       : ''
                                 "
-
+                                :disabled="!showValue"
                                 :internalSearch="false"
                                 :options="tenants.map((type) => type.id)"
                                 :show-labels="false"
@@ -1606,7 +1601,7 @@ export default {
                                   'is-valid':
                                     !$v.create.insurance_amount.$invalid && !errors.insurance_amount,
                                 }"
-                                :disabled="!create.branch_id"
+                                :disabled="!showValue"
                                 class="form-control englishInput"
                                 step="any"
                                 type="number"
@@ -1629,7 +1624,6 @@ export default {
                                 v-model="create.external_salesmen_id"
                                 :class="{'is-invalid': $v.create.external_salesmen_id.$error || errors.external_salesmen_id, }"
                                 :custom-label="(opt) => externalSalesman.find((x) => x.id == opt) ? $i18n.locale == 'ar' ? externalSalesman.find((x) => x.id == opt).name : externalSalesman.find((x) => x.id == opt).name_e :''"
-                                :disabled="!create.branch_id"
                                 :options="externalSalesman.map((type) => type.id)"
                                 :show-labels="false">
                             </multiselect>
@@ -1670,7 +1664,7 @@ export default {
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3" v-if="showValue">
                         <div class="form-group">
                             <label class="control-label">
                                 {{ $t("general.posted") }}
@@ -1778,7 +1772,7 @@ export default {
                                 "
                                 :internalSearch="false"
                                 :multiple="true"
-
+                                :disabled="!showValue"
                                 :options="units.map((type) => type.id)"
                                 :show-labels="false"
                                 @input="test"
@@ -1801,7 +1795,7 @@ export default {
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3" v-if="showValue">
                         <div class="form-group">
                             <label class="control-label"
                             >{{ $t("general.chooseServiceForUnits") }}
@@ -1925,7 +1919,7 @@ export default {
                                                                     .to_date.$error || errors.to_date,
                                                               }"
                                                             :confirm="false"
-                                                            :disabled="false"
+                                                            :disabled="!showValue"
                                                             format="YYYY-MM-DD"
                                                             type="date"
                                                             valueType="format"
@@ -1949,6 +1943,7 @@ export default {
                                                             class="form-control englishInput"
                                                             required
                                                             type="number"
+                                                            :disabled="!showValue"
                                                         />
                                                     </div>
                                                 </div>
@@ -1969,6 +1964,7 @@ export default {
                                                               "
                                                             :options="payment_types.map((type) => type.id)"
                                                             :show-labels="false"
+                                                            :disabled="!showValue"
                                                         ></multiselect>
                                                     </div>
                                                 </div>
@@ -1989,6 +1985,7 @@ export default {
                                                             class="form-control englishInput"
                                                             required
                                                             type="number"
+                                                            :disabled="!showValue"
                                                         />
                                                     </div>
                                                 </div>
@@ -2008,6 +2005,7 @@ export default {
                                                             class="form-control englishInput"
                                                             required
                                                             type="number"
+                                                            :disabled="!showValue"
                                                         />
                                                     </div>
                                                 </div>
@@ -2085,34 +2083,35 @@ export default {
                                             <a
                                                 class="btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
                                                 @click.prevent="addNewField"
+                                                v-if="showValue"
                                             >
                                                 {{ $t("general.AddNewLine") }}
                                             </a>
-                                            <div
-                                                v-if="
-                                                document &&
-                                                document.attributes &&
-                                                parseInt(document.attributes.customer) != 0
-                                              "
-                                                class="px-4 float-right mt-3 mt-lg-0"
-                                            >
-                                                <b-button
-                                                    v-if="!create.id && create.net_invoice > 0"
-                                                    class="btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
-                                                    variant="primary"
-                                                    @click="Submit(true)"
-                                                >
-                                                    {{ $t("general.Break") }}
-                                                </b-button>
+<!--                                            <div-->
+<!--                                                v-if="-->
+<!--                                                document &&-->
+<!--                                                document.attributes &&-->
+<!--                                                parseInt(document.attributes.customer) != 0-->
+<!--                                              "-->
+<!--                                                class="px-4 float-right mt-3 mt-lg-0"-->
+<!--                                            >-->
+<!--                                                <b-button-->
+<!--                                                    v-if="!create.id && create.net_invoice > 0"-->
+<!--                                                    class="btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"-->
+<!--                                                    variant="primary"-->
+<!--                                                    @click="Submit(true)"-->
+<!--                                                >-->
+<!--                                                    {{ $t("general.Break") }}-->
+<!--                                                </b-button>-->
 
-                                                <b-button
-                                                    v-else
-                                                    class="btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"
-                                                    variant="secondary"
-                                                >
-                                                    {{ $t("general.Break") }}
-                                                </b-button>
-                                            </div>
+<!--                                                <b-button-->
+<!--                                                    v-else-->
+<!--                                                    class="btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"-->
+<!--                                                    variant="secondary"-->
+<!--                                                >-->
+<!--                                                    {{ $t("general.Break") }}-->
+<!--                                                </b-button>-->
+<!--                                            </div>-->
                                         </div>
                                     </div>
                                 </div>

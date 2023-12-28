@@ -858,8 +858,7 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a v-if="document_id != 44 && document_id != 4" class="dropdown-item"
-                                                   href="#"
+                                                <a class="dropdown-item" href="#" v-if="document_id != 4"
                                                    @click="$bvModal.show(`${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">

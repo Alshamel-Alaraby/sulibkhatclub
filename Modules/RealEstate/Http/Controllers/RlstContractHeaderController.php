@@ -6,9 +6,11 @@ use App\Models\Document;
 use App\Models\Serial;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller;
 use Modules\RealEstate\Entities\RlstContractHeader;
 use Modules\RealEstate\Entities\RlstContractHeaderDetail;
+use Modules\RealEstate\Entities\RlstContractHeaderUnit;
 use Modules\RealEstate\Http\Requests\RlstContractHeaderRequest;
 use Modules\RealEstate\Transformers\RlstContractHeaderResource;
 use Modules\RecievablePayable\Entities\RpBreakDown;
@@ -105,82 +107,10 @@ class RlstContractHeaderController extends Controller
         return responseJson(200, 'created', new RlstContractHeaderResource($model));
 
     }
-
-    public function createBarekDown($contractHeaderDetail, $data, $units)
-    {
-
-        $array = $this->CalculateDate($contractHeaderDetail);
-
-        foreach ($array['date'] as $object_date) {
-
-            RpBreakDown::create([
-                'instalment_date' => $object_date,
-                'rate' => 1,
-                'repate' => 1,
-                'currency_id' => 1,
-                'document_id' => $data['document_id'],
-                'customer_id' => $data['tenant_id'],
-                'break_id' => $data['id'],
-                'instalment_type_id' => 1,
-                'break_type' => 'contractHeader',
-                'debit' => ($data->document->attributes && $data->document->attributes['customer'] == 1) ? $contractHeaderDetail['rent_amount'] : 0,
-                'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1) ? $contractHeaderDetail['rent_amount'] : 0,
-                'total' => $contractHeaderDetail['rent_amount'],
-                'installment_statu_id' => 1,
-                'client_type_id' => $data['tenant_id'],
-                'details' => "contract_header_detail",
-            ]);
-
-//            $total_unit_services = RlstUnitService::whereIn('unit_id', $units)->whereDate('from_date', '>=', $contractHeaderDetail['from_date'])->whereDate('from_date', '<=', $contractHeaderDetail['to_date'])->sum('default_price');
-//            if ($total_unit_services) {
-//
-//                RpBreakDown::create([
-//                    'instalment_date' => $object_date,
-//                    'rate' => 1,
-//                    'repate' => 1,
-//                    'currency_id' => 1,
-//                    'document_id' => $data['document_id'],
-//                    'customer_id' => $data['tenant_id'],
-//                    'break_id' => $data['id'],
-//                    'instalment_type_id' => 1,
-//                    'break_type' => 'contractHeader',
-//                    'debit' => ($data->document->attributes && $data->document->attributes['customer'] == 1) ? $total_unit_services : 0,
-//                    'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1) ? $total_unit_services : 0,
-//                    'total' => $total_unit_services,
-//                    'installment_statu_id' => 1,
-//                    'client_type_id' => $data['tenant_id'],
-//                    'details' => "unit_services",
-//                ]);
-
-
-//            }
-
-
-        }
-        RpBreakDown::create([
-            'instalment_date'       => $data['date'],
-            'rate'                  => 1,
-            'repate'                => 1,
-            'currency_id'           => 1,
-            'document_id'           => $data['document_id'],
-            'customer_id'           => $data['tenant_id'],
-            'break_id'              => $data['id'],
-            'instalment_type_id'    => 1,
-            'break_type'            => 'contractHeader',
-            'debit'                 => ($data->document->attributes && $data->document->attributes['customer'] == 1)?$data['insurance_amount']:0,
-            'credit'                => ($data->document->attributes && $data->document->attributes['customer'] == -1)?$data['insurance_amount']:0,
-            'total'                 => $data['insurance_amount'],
-            'installment_statu_id'  => 1,
-            'client_type_id'        => $data['tenant_id'],
-            'details'               => "insurance_amount",
-        ]);
-
-
-    }
-
     public function CalculateDate($break_downs)
     {
         $PaymentType = RpInstallmentPaymentType::find($break_downs['payment_type_id']);
+
         $date_instalment = \Carbon\Carbon::parse($break_downs['from_date']);
 
         if (strlen($break_downs['due_day']) == 1) {
@@ -238,6 +168,80 @@ class RlstContractHeaderController extends Controller
     }
 
 
+    public function createBarekDown($contractHeaderDetail, $data, $units)
+    {
+
+        $array = $this->CalculateDate($contractHeaderDetail);
+
+        foreach ($array['date'] as $object_date) {
+
+            RpBreakDown::create([
+                'instalment_date' => $object_date,
+                'rate' => 1,
+                'repate' => 1,
+                'currency_id' => 1,
+                'document_id' => $data['document_id'],
+                'customer_id' => $data['tenant_id'],
+                'break_id' => $data['id'],
+                'instalment_type_id' => 1,
+                'break_type' => 'contractHeader',
+                'debit' => ($data->document->attributes && $data->document->attributes['customer'] == 1) ? $contractHeaderDetail['rent_amount'] : 0,
+                'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1) ? $contractHeaderDetail['rent_amount'] : 0,
+                'total' => $contractHeaderDetail['rent_amount'],
+                'installment_statu_id' => 1,
+                'client_type_id' => 7,
+                'details' => "contract_header_detail",
+            ]);
+
+//            $total_unit_services = RlstUnitService::whereIn('unit_id', $units)->whereDate('from_date', '>=', $contractHeaderDetail['from_date'])->whereDate('from_date', '<=', $contractHeaderDetail['to_date'])->sum('default_price');
+//            if ($total_unit_services) {
+//
+//                RpBreakDown::create([
+//                    'instalment_date' => $object_date,
+//                    'rate' => 1,
+//                    'repate' => 1,
+//                    'currency_id' => 1,
+//                    'document_id' => $data['document_id'],
+//                    'customer_id' => $data['tenant_id'],
+//                    'break_id' => $data['id'],
+//                    'instalment_type_id' => 1,
+//                    'break_type' => 'contractHeader',
+//                    'debit' => ($data->document->attributes && $data->document->attributes['customer'] == 1) ? $total_unit_services : 0,
+//                    'credit' => ($data->document->attributes && $data->document->attributes['customer'] == -1) ? $total_unit_services : 0,
+//                    'total' => $total_unit_services,
+//                    'installment_statu_id' => 1,
+//                    'client_type_id' => $data['tenant_id'],
+//                    'details' => "unit_services",
+//                ]);
+
+
+//            }
+
+
+        }
+        RpBreakDown::create([
+            'instalment_date'       => $data['date'],
+            'rate'                  => 1,
+            'repate'                => 1,
+            'currency_id'           => 1,
+            'document_id'           => $data['document_id'],
+            'customer_id'           => $data['tenant_id'],
+            'break_id'              => $data['id'],
+            'instalment_type_id'    => 1,
+            'break_type'            => 'contractHeader',
+            'debit'                 => ($data->document->attributes && $data->document->attributes['customer'] == 1)?$data['insurance_amount']:0,
+            'credit'                => ($data->document->attributes && $data->document->attributes['customer'] == -1)?$data['insurance_amount']:0,
+            'total'                 => $data['insurance_amount'],
+            'installment_statu_id'  => 1,
+            'client_type_id'        => 7,
+            'details'               => "insurance_amount",
+        ]);
+
+
+    }
+
+
+
 
 
     public function update($id, RlstContractHeaderRequest $request)
@@ -247,9 +251,46 @@ class RlstContractHeaderController extends Controller
             return responseJson(404, 'not found');
         }
 
-        $model->update($request->validated());
-        $model->refresh();
-        return responseJson(200, 'updated', new RlstTenantResource($model));
+        if ($request['breakSettlement'] == 1){
+
+            $model->update($request->validated());
+            $model->refresh();
+            return responseJson(200, 'updated', new RlstContractHeaderResource($model));
+
+        }else{
+
+            if ($model->rpBreakDowns){
+                foreach ($model->rpBreakDowns as $down){
+                    if ($down->breakSettlements){
+                        foreach ($down->breakSettlements as $settlement){
+                            $settlement->delete();
+                        }
+                    }
+                    $down->delete();
+                }
+            }
+            if ($model->contractHeaderDetail){
+                foreach ($model->contractHeaderDetail as $detail){
+                    $detail->delete();
+                }
+            }
+            if ($model->contractHeaderDetail){
+                foreach ($model->contractHeaderDetail as $detail){
+                    $detail->delete();
+                }
+            }
+            if ($model->units){
+                foreach ($model->units as $unit){
+                    $header_unit = RlstContractHeaderUnit::find($unit['pivot']['id']);
+                    $header_unit->delete();
+                }
+            }
+            $model->delete();
+            $model_new = $this->create($request);
+            return $model_new;
+
+        }
+
 
     }
 

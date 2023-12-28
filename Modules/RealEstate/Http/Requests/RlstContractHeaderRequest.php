@@ -30,6 +30,7 @@ class RlstContractHeaderRequest extends FormRequest
             'posted'                  => 'nullable|int:1,0',
             'receipt_print_detail'    => 'nullable|int:1,0',
             'document_id'             => 'required|exists:general_documents,id',
+            'breakSettlement'         => 'nullable|int:1,0',
 
 
 

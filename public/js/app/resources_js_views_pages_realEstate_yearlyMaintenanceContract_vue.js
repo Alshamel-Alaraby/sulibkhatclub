@@ -6638,7 +6638,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.create.company_id = this.company_id;
         this.isLoader = true;
         this.errors = {};
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].put("document-headers/".concat(id), _objectSpread({}, this.create)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].put("document-headers/updateContractHeader/".concat(id), _objectSpread({}, this.create)).then(function (res) {
           _this6.$emit("created");
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
@@ -6648,18 +6648,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               timer: 1500
             });
           }, 500);
-          if (_this6.document.attributes && parseInt(_this6.document.attributes.customer) != 0) {
-            _this6.showBreakCreate();
-          }
         })["catch"](function (err) {
-          if (err.response.data) {
-            _this6.errors = err.response.data.errors;
-          } else {
+          console.log(err.response.status);
+          if (err.response.status == 402) {
+            console.log(err.response.status);
             sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
               icon: "error",
               title: "".concat(_this6.$t("general.Error")),
-              text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+              text: "".concat(_this6.$t("general.You cant edit, because there is a settlement for this invoice"))
             });
+          } else {
+            if (err.response.data) {
+              _this6.errors = err.response.data.errors;
+            } else {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+                icon: "error",
+                title: "".concat(_this6.$t("general.Error")),
+                text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+              });
+            }
           }
         })["finally"](function () {
           _this6.isLoader = false;
@@ -6847,7 +6854,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     resetModalEdit: function resetModalEdit(id) {
       var _this15 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var _reservation$reason;
+        var _reservation$document, _reservation$reason;
         var reservation;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
@@ -6868,7 +6875,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this15.customer_data_edit = reservation.customer;
               _this15.getCustomers(reservation.employee.customer_handel, reservation.employee_id);
               _this15.serial_number = reservation.prefix;
-              _this15.create.document_status_id = reservation.document_status_id;
+              _this15.create.document_status_id = (_reservation$document = reservation.document_status_id) !== null && _reservation$document !== void 0 ? _reservation$document : parseInt(_this15.document.need_approve) == 0 ? 5 : 1;
               _this15.create.reason = (_reservation$reason = reservation.reason) !== null && _reservation$reason !== void 0 ? _reservation$reason : '';
               _this15.create.branch_id = reservation.branch_id;
               _this15.create.date = reservation.date;
@@ -6913,8 +6920,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   note: e.note
                 });
               });
+              _this15.getUnites(0);
               _this15.isLoader = false;
-            case 37:
+            case 38:
             case "end":
               return _context3.stop();
           }
@@ -6925,6 +6933,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (edit)
      */
     resetModalHiddenEdit: function resetModalHiddenEdit(id) {
+      this.id = '';
       this.customer_data_edit = '';
       this.errors = {};
       this.create = {
@@ -7719,7 +7728,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   name: "print-general-real-estate",
   props: {
     id: {
-      "default": "create"
+      "default": "PrintCreate"
     },
     document_row_id: {
       "default": ''
@@ -9462,7 +9471,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _layouts_main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../layouts/main */ "./resources/js/views/layouts/main.vue");
 /* harmony import */ var _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/general/Page-header */ "./resources/js/components/general/Page-header.vue");
-/* harmony import */ var _components_document_RealEstate_documentWithUnitsGeneral__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components/document/RealEstate/documentWithUnitsGeneral */ "./resources/js/components/document/RealEstate/documentWithUnitsGeneral.vue");
+/* harmony import */ var _components_document_RealEstate_documentWithUnitsGeneral_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components/document/RealEstate/documentWithUnitsGeneral.vue */ "./resources/js/components/document/RealEstate/documentWithUnitsGeneral.vue");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../helper/permission */ "./resources/js/helper/permission.js");
@@ -9487,7 +9496,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Layout: _layouts_main__WEBPACK_IMPORTED_MODULE_0__["default"],
     PageHeader: _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__["default"],
-    DocumentWithItem: _components_document_RealEstate_documentWithUnitsGeneral__WEBPACK_IMPORTED_MODULE_2__["default"]
+    DocumentWithItem: _components_document_RealEstate_documentWithUnitsGeneral_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   }
 });
 
@@ -15639,6 +15648,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
 var render = function render() {
+  var _vm$dataRow, _vm$dataRow2, _vm$dataRow3;
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", [_c("div", {
@@ -15844,6 +15854,7 @@ var render = function render() {
       "is-invalid": _vm.$v.create.branch_id.$error || _vm.errors.branch_id
     },
     attrs: {
+      disabled: Object.keys((_vm$dataRow = _vm.dataRow) !== null && _vm$dataRow !== void 0 ? _vm$dataRow : []).length > 0,
       "show-labels": false,
       options: _vm.branches.map(function (type) {
         return type.id;
@@ -16144,7 +16155,7 @@ var render = function render() {
     },
     attrs: {
       "show-labels": false,
-      disabled: !_vm.create.branch_id,
+      disabled: !_vm.create.branch_id || Object.keys((_vm$dataRow2 = _vm.dataRow) !== null && _vm$dataRow2 !== void 0 ? _vm$dataRow2 : []).length > 0,
       internalSearch: false,
       options: _vm.customers.map(function (type) {
         return type.id;
@@ -16450,24 +16461,9 @@ var render = function render() {
     staticClass: "text-150 text-success-d3 opacity-2"
   }, [_vm._v("\n                                                                " + _vm._s(!_vm.create.net_invoice ? "0.00" : parseFloat(_vm.create.net_invoice).toFixed(3)) + "\n                                                            ")])])])])]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", [_c("span", {
     staticClass: "text-secondary-d1 text-105"
-  }, [_vm._v(_vm._s(_vm.$t("general.Thank_you")))]), _vm._v(" "), _vm.document && _vm.document.attributes && parseInt(_vm.document.attributes.customer) != 0 ? _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Thank_you")))]), _vm._v(" "), _vm._v("\n                                                // "), _vm.document && _vm.document.attributes && parseInt(_vm.document.attributes.customer) != 0 && Object.keys((_vm$dataRow3 = _vm.dataRow) !== null && _vm$dataRow3 !== void 0 ? _vm$dataRow3 : []).length == 0 ? _c("div", {
     staticClass: "px-4 float-right mt-3 mt-lg-0"
-  }, [!_vm.create.id && _vm.create.net_invoice > 0 ? _c("b-button", {
-    staticClass: "btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0",
-    attrs: {
-      variant: "primary"
-    },
-    on: {
-      click: function click($event) {
-        return _vm.Submit(true);
-      }
-    }
-  }, [_vm._v("\n                                                        " + _vm._s(_vm.$t("general.Break")) + "\n                                                    ")]) : _c("b-button", {
-    staticClass: "btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0",
-    attrs: {
-      variant: "secondary"
-    }
-  }, [_vm._v("\n                                                        " + _vm._s(_vm.$t("general.Break")) + "\n                                                    ")])], 1) : _vm._e()])], 2)])])])])])])])])], 1);
+  }, [_vm._v("\n                                                //     "), _vm._v('\n                                                //               variant="primary"\n                                                //               class="btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"\n                                                //               @click="Submit(true)"\n                                                //     >\n                                                //         ' + _vm._s(_vm.$t("general.Break")) + "\n                                                //     "), _vm._v("\n\n                                                //     "), _vm._v('\n                                                //               variant="secondary"\n                                                //               class="btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0"\n                                                //     >\n                                                //         ' + _vm._s(_vm.$t("general.Break")) + "\n                                                //     "), _vm._v("\n                                                // ")]) : _vm._e()])], 2)])])])])])])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -17295,7 +17291,7 @@ var render = function render() {
       staticClass: "fas fa-angle-down"
     })]), _vm._v(" "), _c("div", {
       staticClass: "dropdown-menu dropdown-menu-custom"
-    }, [_vm.document_id != 44 && _vm.document_id != 4 ? _c("a", {
+    }, [_vm.document_id != 4 ? _c("a", {
       staticClass: "dropdown-item",
       attrs: {
         href: "#"

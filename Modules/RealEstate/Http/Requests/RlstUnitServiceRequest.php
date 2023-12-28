@@ -14,12 +14,11 @@ class RlstUnitServiceRequest extends FormRequest
     public function rules()
     {
         return [
-                "unit_ids"      => 'required|array',
-                "service_ids"   => 'required|array',
-                "unit_ids.*"    => ['required','integer','exists:rlst_units,id'],
-                "from_date"     => 'required|date',
-                "service_ids.*" => ['required','integer','exists:rlst_services,id', new UniqueUnitService($this->id)],
-                "price"         => ['required','numeric','gt:0'],
+                "unit_id"      => ['required','integer','exists:rlst_units,id'],
+                'details' => 'required|array|min:1',
+                "details.*.from_date"     => 'required|date|after:yesterday',
+                "details.*.service_id" => ['required','integer','exists:rlst_services,id', new UniqueUnitService($this->id)],
+                "details.*.default_price"         => ['required','numeric','gt:0'],
             ];
     }
 

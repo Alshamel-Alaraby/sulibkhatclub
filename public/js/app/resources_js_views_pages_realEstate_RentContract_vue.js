@@ -58,8 +58,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     dataRow: {
       "default": null
     },
+    idEdit: {
+      "default": null
+    },
     id: {
       "default": "create"
+    },
+    type: {
+      "default": 'create'
     }
   },
   mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_4__["default"]],
@@ -88,6 +94,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       statuses: [],
       externalSalesman: [],
       serial_number: "",
+      showValue: true,
       relatedDocumentNumbers: [],
       relatedDocuments: [],
       paymentMethods: [],
@@ -250,32 +257,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     resetModalCreateOrUpdate: function resetModalCreateOrUpdate() {
       var _this2 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      this.relatedDocuments = this.document.document_relateds;
+      setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _this2.relatedDocuments = _this2.document.document_relateds;
               if (!_this2.dataRow) {
-                _context.next = 8;
+                _context.next = 7;
                 break;
               }
-              _context.next = 4;
+              _context.next = 3;
               return _this2.getDataRow();
-            case 4:
-              _context.next = 6;
+            case 3:
+              _context.next = 5;
               return _this2.resetModalEdit(_this2.dataRow.id);
-            case 6:
-              _context.next = 10;
+            case 5:
+              _context.next = 9;
               break;
-            case 8:
-              _context.next = 10;
+            case 7:
+              _context.next = 9;
               return _this2.resetModal();
-            case 10:
+            case 9:
             case "end":
               return _context.stop();
           }
         }, _callee);
-      }))();
+      })), 50);
     },
     resetModalHiddenCreateOrUpdate: function resetModalHiddenCreateOrUpdate() {
       if (this.dataRow) {
@@ -483,104 +490,99 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     /**
      *  edit screen
      */
-    // editSubmit(id) {
-    //   if (
-    //     parseInt(this.document.required) == 1 &&
-    //     !this.create.related_document_number
-    //   ) {
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: `${this.$t("general.Error")}`,
-    //       text: `${this.$t("general.PleaseChooseRelatedSerialNumber")}`,
-    //     });
-    //     return 0;
-    //   }
-    //   this.$v.create.$touch();
-    //   if (this.$v.create.$invalid || !this.financial_years_validate) {
-    //     return;
-    //   } else {
-    //     this.create.company_id = this.company_id;
-    //     this.isLoader = true;
-    //     this.errors = {};
-    //     adminApi
-    //       .put(`contract-headers/${id}`, {
-    //         ...this.create,
-    //       })
-    //       .then((res) => {
-    //         this.$emit("created");
-    //         setTimeout(() => {
-    //           Swal.fire({
-    //             icon: "success",
-    //             text: `${this.$t("general.Editsuccessfully")}`,
-    //             showConfirmButton: false,
-    //             timer: 1500,
-    //           });
-    //         }, 500);
-    //         if (
-    //           this.document.attributes &&
-    //           parseInt(this.document.attributes.customer) != 0
-    //         ) {
-    //           this.showBreakCreate();
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         if (err.response.data) {
-    //           this.errors = err.response.data.errors;
-    //         } else {
-    //           Swal.fire({
-    //             icon: "error",
-    //             title: `${this.$t("general.Error")}`,
-    //             text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-    //           });
-    //         }
-    //       })
-    //       .finally(() => {
-    //         this.isLoader = false;
-    //       });
-    //   }
-    // },
+    editSubmit: function editSubmit(id) {
+      var _this7 = this;
+      //   if (
+      //     parseInt(this.document.required) == 1 &&
+      //     !this.create.related_document_number
+      //   ) {
+      //     Swal.fire({
+      //       icon: "error",
+      //       title: `${this.$t("general.Error")}`,
+      //       text: `${this.$t("general.PleaseChooseRelatedSerialNumber")}`,
+      //     });
+      //     return 0;
+      //   }
+      this.$v.create.$touch();
+      if (this.$v.create.$invalid || !this.financial_years_validate) {
+        return;
+      } else {
+        this.create.company_id = this.company_id;
+        this.isLoader = true;
+        this.errors = {};
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].put("contract-headers/".concat(id), _objectSpread({}, this.create)).then(function (res) {
+          _this7.$emit("created");
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+              icon: "success",
+              text: "".concat(_this7.$t("general.Editsuccessfully")),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+          // if (
+          //   this.document.attributes &&
+          //   parseInt(this.document.attributes.customer) != 0
+          // ) {
+          //   this.showBreakCreate();
+          // }
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this7.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+              icon: "error",
+              title: "".concat(_this7.$t("general.Error")),
+              text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+            });
+          }
+        })["finally"](function () {
+          _this7.isLoader = false;
+        });
+      }
+    },
     /**
      *  get workflows
      */
     getStatus: function getStatus() {
-      var _this7 = this;
+      var _this8 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/document-statuses").then(function (res) {
         var l = res.data.data;
-        _this7.statuses = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this7.$t("general.Error")),
-          text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
-        });
-      })["finally"](function () {
-        _this7.isLoader = false;
-      });
-    },
-    getBranches: function getBranches() {
-      var _this8 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/branches?document_id=".concat(this.document_id)).then(function (res) {
-        _this8.isLoader = false;
-        var l = res.data.data;
-        _this8.branches = l;
-        if (!_this8.dataRow) {
-          if (_this8.branches.length == 1) {
-            _this8.create.branch_id = _this8.branches[0].id;
-            _this8.getSerialNumber(_this8.create.branch_id);
-          }
-        }
+        _this8.statuses = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
           title: "".concat(_this8.$t("general.Error")),
           text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
         });
+      })["finally"](function () {
+        _this8.isLoader = false;
+      });
+    },
+    getBranches: function getBranches() {
+      var _this9 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/branches?document_id=".concat(this.document_id)).then(function (res) {
+        _this9.isLoader = false;
+        var l = res.data.data;
+        _this9.branches = l;
+        if (!_this9.dataRow) {
+          if (_this9.branches.length == 1) {
+            _this9.create.branch_id = _this9.branches[0].id;
+            _this9.getSerialNumber(_this9.create.branch_id);
+          }
+        }
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+          icon: "error",
+          title: "".concat(_this9.$t("general.Error")),
+          text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+        });
       });
     },
     getSerialNumber: function getSerialNumber(e) {
-      var _this9 = this;
+      var _this10 = this;
       var date = this.create.date;
       var shortYear = new Date(date).getFullYear();
       var twoDigitYear = shortYear.toString().substr(-2);
@@ -588,7 +590,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return e == row.id;
       });
       var serial = branch.serials.find(function (row) {
-        return _this9.document_id == row.document_id;
+        return _this10.document_id == row.document_id;
       });
       this.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(this.document_id, "-").concat(serial.perfix);
       var document_id = this.create.related_document_id;
@@ -598,53 +600,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     getExternalSalesmen: function getExternalSalesmen() {
-      var _this10 = this;
+      var _this11 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/external-salesmen?company_id=".concat(this.company_id)).then(function (res) {
         var l = res.data.data;
-        _this10.externalSalesman = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this10.$t("general.Error")),
-          text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
-        });
-      })["finally"](function () {
-        _this10.isLoader = false;
-      });
-    },
-    getTenants: function getTenants() {
-      var _this11 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/tenants").then(function (res) {
-        _this11.isLoader = false;
-        var l = res.data.data;
-        l.unshift({
-          id: 0,
-          name: "اضف مسآجر",
-          name_e: "Add Tenant"
-        });
-        _this11.tenants = l;
+        _this11.externalSalesman = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
           title: "".concat(_this11.$t("general.Error")),
           text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
         });
+      })["finally"](function () {
+        _this11.isLoader = false;
       });
     },
-    getUnits: function getUnits() {
+    getTenants: function getTenants() {
       var _this12 = this;
       this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/units").then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/tenants").then(function (res) {
         _this12.isLoader = false;
         var l = res.data.data;
         l.unshift({
           id: 0,
-          name: "اضافة وحده",
-          name_e: "Add unit"
+          name: "اضف مسآجر",
+          name_e: "Add Tenant"
         });
-        _this12.units = l;
+        _this12.tenants = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
@@ -653,8 +635,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
-    getServices: function getServices() {
+    getUnits: function getUnits() {
       var _this13 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/units").then(function (res) {
+        _this13.isLoader = false;
+        var l = res.data.data;
+        l.unshift({
+          id: 0,
+          name: "اضافة وحده",
+          name_e: "Add unit"
+        });
+        _this13.units = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+          icon: "error",
+          title: "".concat(_this13.$t("general.Error")),
+          text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
+        });
+      });
+    },
+    getServices: function getServices() {
+      var _this14 = this;
       // make method that takes the unit_id that in creat.unit_service.unit_id
       var unit_ids = this.unit_ids;
       var params = unit_ids.map(function (unit_id) {
@@ -662,7 +664,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }).join('&');
       // use this as params in the api of the unit service table
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/unit-service?".concat(params)).then(function (res) {
-        _this13.isLoader = false;
+        _this14.isLoader = false;
         // take unique values from the data
         var data = [];
         unit_ids.forEach(function (item, index) {
@@ -673,7 +675,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           var totalAmount = 0;
           res.data.data.forEach(function (ele) {
             if (ele.unit.id == item) {
-              _this13.create.units[index].unit_services.push(ele.service.id);
+              _this14.create.units[index].unit_services.push(ele.service.id);
               totalAmount += ele.price;
               data[index]['services'].push({
                 id: ele.service.id,
@@ -687,27 +689,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
 
         // from the data I get fromm the api I make the service array to be that and make user choose form them,
-        _this13.services = data;
+        _this14.services = data;
         // make condition it be false at first and then when this method gets triggered show the modal for the user
 
-        _this13.showServiceModal = true;
-        console.log('Unit Services:', _this13.create.units);
+        _this14.showServiceModal = true;
+        console.log('Unit Services:', _this14.create.units);
       })["catch"](function (err) {
         console.log('error', err);
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
-          title: "".concat(_this13.$t("general.Error")),
-          text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this14.$t("general.Error")),
+          text: "".concat(_this14.$t("general.Thereisanerrorinthesystem"))
         });
       });
     },
     // When the user selects services for a specific unit_id inside the modal
     // Making sure it saved right
     updateServicesForUnit: function updateServicesForUnit(unit, selectedServices, index) {
-      var _this14 = this;
+      var _this15 = this;
       var totalAmount = 0;
       this.services[index]['services'].forEach(function (ele) {
-        if (_this14.create.units[index].unit_services.includes(ele.id)) totalAmount += ele.price;
+        if (_this15.create.units[index].unit_services.includes(ele.id)) totalAmount += ele.price;
       });
       this.$set(this.services[index], 'totalAmount', totalAmount);
       console.log('totaAmount', totalAmount);
@@ -728,7 +730,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     getInstallPaymentTypes: function getInstallPaymentTypes() {
-      var _this15 = this;
+      var _this16 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/recievable-payable/rp_installment_payment_types").then(function (res) {
         var l = res.data.data;
@@ -737,22 +739,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           name: "اضف نوع دفع",
           name_e: "Add installment payment type"
         });
-        _this15.payment_types = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this15.$t("general.Error")),
-          text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
-        });
-      });
-    },
-    // why its unused,,, component called breakdown
-    getPaymentType: function getPaymentType() {
-      var _this16 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/payment-methods").then(function (res) {
-        var l = res.data.data;
-        _this16.paymentMethods = l;
+        _this16.payment_types = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
@@ -761,155 +748,164 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
+    // why its unused,,, component called breakdown
+    getPaymentType: function getPaymentType() {
+      var _this17 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/payment-methods").then(function (res) {
+        var l = res.data.data;
+        _this17.paymentMethods = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+          icon: "error",
+          title: "".concat(_this17.$t("general.Error")),
+          text: "".concat(_this17.$t("general.Thereisanerrorinthesystem"))
+        });
+      });
+    },
     /**
      *   show Modal (edit)
      */
-    // async resetModalEdit(id) {
-    //   this.rooms = [];
-    //   // this.guestModelId = "guest-create-" + this.id;
-    //   this.companyModelId = "company-create-" + this.id;
-    //   this.attendantModelId = "attendant-create-" + this.id;
-    //   this.customer_data_edit = "";
-    //   this.customer_data_create = "";
-    //   this.isLoader = true;
-    //   this.financial_years_validate = true;
-    //   if (this.checkDocumentNeedApprove()) {
-    //     this.getStatus();
-    //   }
-    //   this.getBranches();
-    //   this.getPaymentMethod();
-    //   this.getSalesmen();
-    //   // this.getServices();
-    //   let reservation = this.dataOfRow;
-    //   // this.tenant_data_edit = reservation.tenant;
-    //
-    //   this.getTenants();
-    //    this.getUnits();
-    // this.getInstallPaymentTypes();
-    //   // this.serial_number = reservation.prefix;
-    //   this.create.reason = reservation.reason ?? "";
-    //   this.create.branch_id = reservation.branch_id;
-    //   this.create.date = reservation.date;
-    //   this.create.related_document_id = reservation.related_document_id;
-    //   this.create.document_module_type_id = this.document
-    //     ? this.document.document_module_type_id
-    //     : null;
-    //   if (reservation.related_document_id) {
-    //     this.handelRelatedDocument();
-    //   }
-    //   if (reservation.document_number) {
-    //     this.relatedDocumentNumbers.push(reservation.document_number);
-    //   }
-    //   this.getEscorts(reservation.customer_id);
-    //   this.create.id = reservation.id;
-    //   this.create.customer_id = reservation.customer_id;
-    //   this.create.company_id = reservation.company_id;
-    //   this.create.customer_type = reservation.customer_type;
-    //   this.create.attendans_num = reservation.attendans_num;
-    //   this.create.attendants = reservation.attendants;
-    //   if (reservation.customer_type == 0) {
-    //     this.getCompanies(
-    //       reservation.employee.customer_handel,
-    //       reservation.employee_id
-    //     );
-    //   }
-    //   this.create.employee_id = reservation.employee_id;
-    //   this.create.payment_method_id = reservation.payment_method_id;
-    //   this.create.sell_method_id = reservation.sell_method_id;
-    //   this.create.total_invoice = reservation.total_invoice;
-    //   this.create.invoice_discount = reservation.invoice_discount;
-    //   this.create.net_invoice = reservation.net_invoice;
-    //   this.create.sell_method_discount = reservation.sell_method_discount;
-    //   this.create.unrelaized_revenue = reservation.unrelaized_revenue;
-    //   this.create.related_document_number = reservation.related_document_number;
-    //   this.create.related_document_prefix = reservation.related_document_prefix;
-    //   this.create.header_details = [];
-    //   reservation.header_details.forEach((e, index) => {
-    //     if (e.unit_id) {
-    //       this.rooms.push({ rooms: [e.unit] });
-    //     } else {
-    //       this.rooms.push({ rooms: [] });
-    //     }
-    //
-    //     this.create.header_details.push({
-    //       unit_id: e.unit_id, //for rooms
-    //       item_id: e.item_id, //for service
-    //       date_from: this.formatDate(e.date_from),
-    //       rent_days: e.rent_days,
-    //       date_to: this.formatDate(e.date_to),
-    //       check_in_time: e.check_in_time,
-    //       unit_type: e.unit_type,
-    //       quantity: e.quantity,
-    //       price_per_uint: e.price_per_uint,
-    //       discount_per_day: e.discount / e.rent_days,
-    //       discount: e.discount,
-    //       total: e.total,
-    //       is_stripe: e.is_stripe,
-    //       sell_method_discount: e.sell_method_discount,
-    //       note: e.note,
-    //       category_booking: e.category_booking,
-    //     });
-    //   });
-    //   this.isLoader = false;
-    // },
-    /**
-     *  hidden Modal (edit)
-     */
-    // resetModalHiddenEdit(id) {
-    //   this.tenant_data_edit = "";
-    //   this.rooms = [{ rooms: [] }];
-    //   this.errors = {};
-    //   this.create = {
-    //     document_id: this.document_id,
-    //     // document_status_id: null,
-    //     id: null,
-    //     // reason:'',
-    //     branch_id: null,
-    //     date: this.formatDate(new Date()),
-    //     related_document_id: null,
-    //     related_document_number: null,
-    //     related_document_prefix: "",
-    //     employee_id: null,
-    //     tenant_id: null,
-    //     company_id: null,
-    //     sell_method_id: null,
-    //     payment_method_id: 1,
-    //     customer_type: 1,
-    //     attendants: [],
-    //     total_invoice: 0,
-    //     // invoice_discount: 0,
-    //     attendans_num: 0,
-    //     net_invoice: 0,
-    //     sell_method_discount: 0,
-    //     unrelaized_revenue: 0,
-    //     header_details: [],
-    //   };
-    // },
-    getDataRow: function getDataRow() {
-      var _this17 = this;
+    resetModalEdit: function resetModalEdit(id) {
+      var _this18 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        var reservation;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this17.isLoader = true;
-              _context3.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/contract-headers/".concat(_this17.id)).then(function (res) {
-                var l = res.data.data;
-                _this17.dataOfRow = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-                  icon: "error",
-                  title: "".concat(_this17.$t("general.Error")),
-                  text: "".concat(_this17.$t("general.Thereisanerrorinthesystem"))
+              _this18.showServiceModal = false;
+              _this18.tenant_data_edit = "";
+              _this18.tenant = "";
+              _this18.isLoader = true;
+              _this18.financial_years_validate = true;
+              // if (this.checkDocumentNeedApprove()) {
+              //   this.getStatus();
+              // }
+              _this18.getBranches();
+              reservation = _this18.dataOfRow;
+              if (reservation.breakSettlement === 1) {
+                _this18.showValue = false;
+              } else {
+                _this18.showValue = true;
+              }
+              console.log('breakSettlement', reservation.breakSettlement);
+              _this18.tenant_data_edit = reservation.tenant;
+              _this18.getTenants();
+              _this18.getUnits();
+              _this18.getExternalSalesmen();
+              _this18.getInstallPaymentTypes();
+              _this18.serial_number = reservation.prefix;
+              _this18.create.branch_id = reservation.branch_id;
+              _this18.create.date = reservation.date;
+              _this18.create.related_document_id = reservation.related_document_id;
+              _this18.create.document_module_type_id = _this18.document ? _this18.document.document_module_type_id : null;
+              if (reservation.related_document_id) {
+                _this18.handelRelatedDocument();
+              }
+              if (reservation.document_number) {
+                _this18.relatedDocumentNumbers.push(reservation.document_number);
+              }
+              _this18.create.id = reservation.id;
+              _this18.create.tenant_id = reservation.tenant_id;
+              // this.create.company_id = reservation.company_id;
+              _this18.create.employee_id = reservation.employee.id;
+              _this18.create.notice_period = reservation.notice_period;
+              _this18.create.insurance_amount = reservation.insurance_amount;
+              _this18.create.automatic_renews = reservation.automatic_renews;
+              _this18.create.external_salesmen_id = reservation.externalSalesmen.id;
+              _this18.create.commission = reservation.commission;
+              _this18.create.posted = reservation.posted;
+              _this18.create.receipt_print_detail = reservation.receipt_print_detail;
+              _this18.unit_ids = [];
+              _this18.create.units = [];
+              reservation.units.forEach(function (unit) {
+                _this18.unit_ids.push(unit.unit_id);
+                _this18.create.units.push({
+                  unit_id: unit.id,
+                  unit_services: unit.pivot.unit_services
                 });
-              })["finally"](function () {
-                _this17.isLoader = false;
               });
-            case 3:
+              _this18.create.related_document_number = reservation.related_document_number;
+              _this18.create.related_document_prefix = reservation.related_document_prefix;
+              _this18.create.header_details = [];
+              reservation.contractHeaderDetail.forEach(function (e, index) {
+                _this18.create.header_details.push({
+                  from_date: _this18.formatDate(e.from_date),
+                  rent_amount: e.rent_amount,
+                  to_date: _this18.formatDate(e.to_date),
+                  payment_type_id: e.payment_type_id,
+                  print_day: e.print_day,
+                  due_day: e.due_day
+                });
+              });
+              _this18.isLoader = false;
+            case 39:
             case "end":
               return _context3.stop();
           }
         }, _callee3);
+      }))();
+    },
+    /**
+     *  hidden Modal (edit)
+     */
+    resetModalHiddenEdit: function resetModalHiddenEdit(id) {
+      this.tenant_data_edit = "";
+      this.showServiceModal = false;
+      this.showValue = true;
+      this.unit_ids = [], this.errors = {};
+      this.create = {
+        document_id: this.document_id,
+        // document_status_id: null,
+        id: null,
+        branch_id: null,
+        date: this.formatDate(new Date()),
+        serial_id: null,
+        related_document_id: null,
+        related_document_number: null,
+        related_document_prefix: "",
+        employee_id: null,
+        tenant_id: null,
+        notice_period: 0,
+        // it should be how many months before the tenant leave
+        insurance_amount: 0,
+        automatic_renews: "",
+        external_salesmen_id: null,
+        commission: 0,
+        posted: "",
+        receipt_print_detail: "",
+        // it is 0 or 1
+        company_id: null,
+        units: [],
+        header_details: []
+      };
+    },
+    getDataRow: function getDataRow() {
+      var _this19 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              _this19.isLoader = true;
+              _context4.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/contract-headers/".concat(_this19.idEdit)).then(function (res) {
+                var l = res.data.data;
+                console.log('dataEddit', l);
+                _this19.dataOfRow = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+                  icon: "error",
+                  title: "".concat(_this19.$t("general.Error")),
+                  text: "".concat(_this19.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this19.isLoader = false;
+              });
+            case 3:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4);
       }))();
     },
     /**
@@ -971,106 +967,106 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     changeDateDocument: function changeDateDocument() {
-      var _this18 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var date, branch_id;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              date = _this18.create.date;
-              branch_id = _this18.create.branch_id;
-              _context4.next = 4;
-              return _this18.checkFinancialYears(date, branch_id);
-            case 4:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee4);
-      }))();
-    },
-    checkFinancialYears: function checkFinancialYears(date, branch_id) {
-      var _this19 = this;
+      var _this20 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var date, branch_id;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              _this19.isLoader = true;
-              _context5.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/document-headers/check-date?date=".concat(date)).then(function (res) {
-                var l = res.data;
-                if (!l) {
-                  _this19.financial_years_validate = false;
-                  sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-                    icon: "error",
-                    title: "".concat(_this19.$t("general.Error")),
-                    text: "".concat(_this19.$t("general.The date is outside the permitted fiscal year"))
-                  });
-                  _this19.serial_number = "";
-                } else {
-                  _this19.financial_years_validate = true;
-                  var shortYear = new Date(date).getFullYear();
-                  var twoDigitYear = shortYear.toString().substr(-2);
-                  var branch = _this19.branches.find(function (row) {
-                    return branch_id == row.id;
-                  });
-                  var serial = branch.serials.find(function (row) {
-                    return _this19.document_id == row.document_id;
-                  });
-                  _this19.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(_this19.document_id, "-").concat(serial.perfix);
-                }
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-                  icon: "error",
-                  title: "".concat(_this19.$t("general.Error")),
-                  text: "".concat(_this19.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this19.isLoader = false;
-              });
-            case 3:
+              date = _this20.create.date;
+              branch_id = _this20.create.branch_id;
+              _context5.next = 4;
+              return _this20.checkFinancialYears(date, branch_id);
+            case 4:
             case "end":
               return _context5.stop();
           }
         }, _callee5);
       }))();
     },
-    handelRelatedDocument: function handelRelatedDocument() {
-      var _this20 = this;
+    checkFinancialYears: function checkFinancialYears(date, branch_id) {
+      var _this21 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        var related_document_id, document_id, branch_id;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              related_document_id = _this20.create.related_document_id;
-              document_id = _this20.document_id;
-              branch_id = _this20.create.branch_id;
-              _context6.next = 5;
-              return _this20.getRelatedDocument(related_document_id, branch_id, document_id);
-            case 5:
+              _this21.isLoader = true;
+              _context6.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/document-headers/check-date?date=".concat(date)).then(function (res) {
+                var l = res.data;
+                if (!l) {
+                  _this21.financial_years_validate = false;
+                  sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+                    icon: "error",
+                    title: "".concat(_this21.$t("general.Error")),
+                    text: "".concat(_this21.$t("general.The date is outside the permitted fiscal year"))
+                  });
+                  _this21.serial_number = "";
+                } else {
+                  _this21.financial_years_validate = true;
+                  var shortYear = new Date(date).getFullYear();
+                  var twoDigitYear = shortYear.toString().substr(-2);
+                  var branch = _this21.branches.find(function (row) {
+                    return branch_id == row.id;
+                  });
+                  var serial = branch.serials.find(function (row) {
+                    return _this21.document_id == row.document_id;
+                  });
+                  _this21.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(_this21.document_id, "-").concat(serial.perfix);
+                }
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+                  icon: "error",
+                  title: "".concat(_this21.$t("general.Error")),
+                  text: "".concat(_this21.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this21.isLoader = false;
+              });
+            case 3:
             case "end":
               return _context6.stop();
           }
         }, _callee6);
       }))();
     },
+    handelRelatedDocument: function handelRelatedDocument() {
+      var _this22 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+        var related_document_id, document_id, branch_id;
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
+            case 0:
+              related_document_id = _this22.create.related_document_id;
+              document_id = _this22.document_id;
+              branch_id = _this22.create.branch_id;
+              _context7.next = 5;
+              return _this22.getRelatedDocument(related_document_id, branch_id, document_id);
+            case 5:
+            case "end":
+              return _context7.stop();
+          }
+        }, _callee7);
+      }))();
+    },
     // here the route does not work
     getRelatedDocument: function getRelatedDocument(related_document_id, branch_id, document_id) {
-      var _this21 = this;
+      var _this23 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/contract-headers/check-related-document?related_document_id=".concat(related_document_id, "&document_id=").concat(document_id, "&branch_id=").concat(branch_id)).then(function (res) {
         var l = res.data.data;
-        _this21.relatedDocumentNumbers = l;
-        if (_this21.dataOfRow) {
-          _this21.relatedDocumentNumbers.push(_this21.dataOfRow.document_number);
+        _this23.relatedDocumentNumbers = l;
+        if (_this23.dataOfRow) {
+          _this23.relatedDocumentNumbers.push(_this23.dataOfRow.document_number);
         }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
-          title: "".concat(_this21.$t("general.Error")),
-          text: "".concat(_this21.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this23.$t("general.Error")),
+          text: "".concat(_this23.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this21.isLoader = false;
+        _this23.isLoader = false;
       });
     },
     RelatedDocumentData: function RelatedDocumentData() {
@@ -1081,7 +1077,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     //  here I will adjust it and then comment for future
     displayDataCreate: function displayDataCreate(related_document_number) {
-      var _this22 = this;
+      var _this24 = this;
       this.isLoader = true;
       var relatedDocument = this.relatedDocumentNumbers.find(function (el) {
         return el.id == related_document_number;
@@ -1111,23 +1107,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.create.unrelaized_revenue = relatedDocument.unrelaized_revenue;
       relatedDocument.header_details.forEach(function (e, index) {
         if (e.unit_id) {
-          _this22.rooms.push({
+          _this24.rooms.push({
             rooms: [e.unit]
           });
         } else {
-          _this22.rooms.push({
+          _this24.rooms.push({
             rooms: []
           });
         }
-        _this22.create.header_details.push({
+        _this24.create.header_details.push({
           unit_id: e.unit_id,
           //for rooms
           item_id: e.item_id,
           //for service
-          date_from: _this22.formatDate(e.date_from),
+          date_from: _this24.formatDate(e.date_from),
           rent_days: e.rent_days,
-          date_to: _this22.formatDate(e.date_to),
-          check_in_time: _this22.currentTime(),
+          date_to: _this24.formatDate(e.date_to),
+          check_in_time: _this24.currentTime(),
           unit_type: e.unit_type,
           quantity: e.quantity,
           price_per_uint: e.price_per_uint,
@@ -3246,11 +3242,11 @@ __webpack_require__.r(__webpack_exports__);
       content: "Renting Units"
     }]
   },
-  beforeRouteEnter: function beforeRouteEnter(to, from, next) {
-    next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_4__["default"])(vm, "Renting Units", "all Renting Units");
-    });
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   next((vm) => {
+  //     return permissionGuard(vm, "Renting Units", "all Renting Units");
+  //   });
+  // },
   components: {
     Layout: _layouts_main__WEBPACK_IMPORTED_MODULE_0__["default"],
     PageHeader: _components_general_Page_header__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -3510,7 +3506,7 @@ var render = function render() {
       type: "button",
       variant: "primary"
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.print")) + "\n                    "), _c("i", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.print")) + "\n                        "), _c("i", {
     staticClass: "fe-printer"
   })]) : _c("b-button", {
     directives: [{
@@ -3524,7 +3520,7 @@ var render = function render() {
       type: "button",
       variant: "primary"
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.print")) + "\n                    "), _c("i", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.print")) + "\n                        "), _c("i", {
     staticClass: "fe-printer"
   })]), _vm._v(" "), !_vm.dataRow ? _c("b-button", {
     "class": ["font-weight-bold px-2 mx-1", _vm.is_disabled ? "mx-2" : ""],
@@ -3539,7 +3535,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("a", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                    ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("a", {
     staticClass: "btn btn-success mx-1",
     on: {
       click: function click($event) {
@@ -3547,7 +3543,7 @@ var render = function render() {
         return _vm.Submit(false);
       }
     }
-  }, [_vm._v("\n                        " + _vm._s(_vm.dataRow ? _vm.$t("general.Edit") : _vm.$t("general.Add")) + "\n                    ")]) : _c("b-button", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.dataRow ? _vm.$t("general.Edit") : _vm.$t("general.Add")) + "\n                        ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       disabled: "",
@@ -3570,7 +3566,7 @@ var render = function render() {
         return _vm.$bvModal.hide("".concat(_vm.id));
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                    ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3"
@@ -3578,7 +3574,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.Branch")) + "\n                            "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Branch")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -3597,7 +3593,8 @@ var render = function render() {
       options: _vm.branches.map(function (type) {
         return type.id;
       }),
-      "show-labels": false
+      "show-labels": false,
+      disabled: !_vm.showValue
     },
     on: {
       input: function input($event) {
@@ -3613,17 +3610,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.branch_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.branch_id ? _vm._l(_vm.errors.branch_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Date")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Date")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
     "class": {
@@ -3650,17 +3647,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.financial_years_validate ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.The date is outside the permitted fiscal year")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.The date is outside the permitted fiscal year")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.date ? _vm._l(_vm.errors.date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.serial_number")) + "\n                        ")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.serial_number")) + "\n                            ")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3720,7 +3717,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.related_document_id ? _vm._l(_vm.errors.related_document_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.checkDocumentLinked() ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
@@ -3758,14 +3755,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.related_document_number ? _vm._l(_vm.errors.related_document_number, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.checkDocumentLinked() ? _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.RelatedDocumentNumber")) + "\n                        ")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.RelatedDocumentNumber")) + "\n                            ")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3792,7 +3789,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.tenant")) + "\n                            "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.tenant")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -3808,6 +3805,7 @@ var render = function render() {
           return x.id == opt;
         }).name_e : "";
       },
+      disabled: !_vm.showValue,
       internalSearch: false,
       options: _vm.tenants.map(function (type) {
         return type.id;
@@ -3823,17 +3821,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.tenant_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.tenant_id ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.tenant_id ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.employee")) + "\n                            "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.employee")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -3863,17 +3861,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.employee_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.employee_id ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.employee_id ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.noticePeriod")) + "\n                        ")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.noticePeriod")) + "\n                            ")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -3902,14 +3900,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.notice_period ? _vm._l(_vm.errors.notice_period, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.automatic_renews")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.automatic_renews")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -3929,7 +3927,7 @@ var render = function render() {
       },
       expression: "$v.create.automatic_renews.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                            ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                                ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "automatic_renews",
@@ -3942,17 +3940,17 @@ var render = function render() {
       },
       expression: "$v.create.automatic_renews.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                            ")])], 1), _vm._v(" "), _vm.errors.automatic_renews ? _vm._l(_vm.errors.automatic_renews, function (errorMessage, index) {
+  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                                ")])], 1), _vm._v(" "), _vm.errors.automatic_renews ? _vm._l(_vm.errors.automatic_renews, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.insurance_amount")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.insurance_amount")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -3967,7 +3965,7 @@ var render = function render() {
       "is-valid": !_vm.$v.create.insurance_amount.$invalid && !_vm.errors.insurance_amount
     },
     attrs: {
-      disabled: !_vm.create.branch_id,
+      disabled: !_vm.showValue,
       step: "any",
       type: "number"
     },
@@ -3983,7 +3981,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.insurance_amount ? _vm._l(_vm.errors.insurance_amount, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
@@ -4002,7 +4000,6 @@ var render = function render() {
           return x.id == opt;
         }).name_e : "";
       },
-      disabled: !_vm.create.branch_id,
       options: _vm.externalSalesman.map(function (type) {
         return type.id;
       }),
@@ -4018,14 +4015,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.external_salesmen_id ? _vm._l(_vm.errors.external_salesmen_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.commission")) + "\n                        ")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.commission")) + "\n                            ")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -4054,14 +4051,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.commission ? _vm._l(_vm.errors.commission, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _vm.showValue ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.posted")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.posted")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -4081,7 +4078,7 @@ var render = function render() {
       },
       expression: "$v.create.posted.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                            ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                                ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "posted",
@@ -4094,17 +4091,17 @@ var render = function render() {
       },
       expression: "$v.create.posted.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                            ")])], 1), _vm._v(" "), _vm.errors.posted ? _vm._l(_vm.errors.posted, function (errorMessage, index) {
+  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                                ")])], 1), _vm._v(" "), _vm.errors.posted ? _vm._l(_vm.errors.posted, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.receipt_print_detail")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.receipt_print_detail")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", {
     "class": {
@@ -4124,7 +4121,7 @@ var render = function render() {
       },
       expression: "$v.create.receipt_print_detail.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                            ")]), _vm._v(" "), _c("b-form-radio", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                                ")]), _vm._v(" "), _c("b-form-radio", {
     staticClass: "d-inline-block m-1",
     attrs: {
       name: "receipt_print_detail",
@@ -4137,17 +4134,17 @@ var render = function render() {
       },
       expression: "$v.create.receipt_print_detail.$model"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                            ")])], 1), _vm._v(" "), _vm.errors.receipt_print_detail ? _vm._l(_vm.errors.receipt_print_detail, function (errorMessage, index) {
+  }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                                ")])], 1), _vm._v(" "), _vm.errors.receipt_print_detail ? _vm._l(_vm.errors.receipt_print_detail, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.units")) + "\n                            "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.units")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -4165,6 +4162,7 @@ var render = function render() {
       },
       internalSearch: false,
       multiple: true,
+      disabled: !_vm.showValue,
       options: _vm.units.map(function (type) {
         return type.id;
       }),
@@ -4182,17 +4180,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.units.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.units ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.units ? _vm._l(_vm.errors.button_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                ")]);
+  }) : _vm._e()], 2)]), _vm._v(" "), _vm.showValue ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.$t("general.chooseServiceForUnits")) + "\n                            "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.$t("general.chooseServiceForUnits")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("b-button", {
     attrs: {
@@ -4201,7 +4199,7 @@ var render = function render() {
     on: {
       click: _vm.getServices
     }
-  }, [_vm._v("Add Services")])], 1)]), _vm._v(" "), _c("b-modal", {
+  }, [_vm._v("Add Services")])], 1)]) : _vm._e(), _vm._v(" "), _c("b-modal", {
     attrs: {
       title: "Select Service"
     },
@@ -4223,9 +4221,9 @@ var render = function render() {
       staticClass: "control-label"
     }, [_vm._v("Unit Name")]), _vm._v(" "), _c("div", {
       staticClass: "pt-2"
-    }, [_vm._v("\n                                " + _vm._s(((_vm$units$find = _vm.units.find(function (u) {
+    }, [_vm._v("\n                                    " + _vm._s(((_vm$units$find = _vm.units.find(function (u) {
       return u.id === unit;
-    })) === null || _vm$units$find === void 0 ? void 0 : _vm$units$find.name_e) || "") + "\n                            ")])]), _vm._v("\n                        :\n                        "), Object.keys((_vm$services$index = _vm.services[index]) !== null && _vm$services$index !== void 0 ? _vm$services$index : []).length ? _c("div", {
+    })) === null || _vm$units$find === void 0 ? void 0 : _vm$units$find.name_e) || "") + "\n                                ")])]), _vm._v("\n                            :\n                            "), Object.keys((_vm$services$index = _vm.services[index]) !== null && _vm$services$index !== void 0 ? _vm$services$index : []).length ? _c("div", {
       staticClass: "col-md-5"
     }, [_c("div", {
       staticClass: "form-group"
@@ -4272,7 +4270,7 @@ var render = function render() {
       staticClass: "control-label"
     }, [_vm._v("Price")]), _vm._v(" "), _c("div", {
       staticClass: "pt-2"
-    }, [_vm._v("\n                                " + _vm._s(_vm.services[index]["totalAmount"]) + "\n                            ")])]) : _vm._e()]);
+    }, [_vm._v("\n                                    " + _vm._s(_vm.services[index]["totalAmount"]) + "\n                                ")])]) : _vm._e()]);
   }), 0), _vm._v(" "), _c("div", {
     staticClass: "col-md-12 p-0 m-0"
   }, [_c("div", {
@@ -4289,17 +4287,17 @@ var render = function render() {
     staticClass: "row text-600 text-white bgc-default-tp1 py-25"
   }, [_c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.from_date")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.from_date")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.to_date")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.to_date")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.rent_amount")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.rent_amount")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.payment_type")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.payment_type")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.print_day")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.print_day")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.due_day")) + "\n                                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.due_day")) + "\n                                                ")]), _vm._v(" "), _c("div", {
     staticClass: "col"
   }, [_vm._v(_vm._s(_vm.$t("general.Action")))])])]), _vm._v(" "), _vm._l(_vm.create.header_details, function (item, gIndex) {
     return _c("div", {
@@ -4327,7 +4325,7 @@ var render = function render() {
         callback: function callback($$v) {
           _vm.$set(_vm.$v.create.header_details.$each[gIndex].from_date, "$model", $$v);
         },
-        expression: "\n                                                            $v.create.header_details.$each[gIndex].from_date\n                                                              .$model\n                                                          "
+        expression: "\n                                                                $v.create.header_details.$each[gIndex].from_date\n                                                                  .$model\n                                                              "
       }
     })], 1)]), _vm._v(" "), _c("div", {
       staticClass: "col p-0"
@@ -4339,7 +4337,7 @@ var render = function render() {
       },
       attrs: {
         confirm: false,
-        disabled: false,
+        disabled: !_vm.showValue,
         format: "YYYY-MM-DD",
         type: "date",
         valueType: "format"
@@ -4349,7 +4347,7 @@ var render = function render() {
         callback: function callback($$v) {
           _vm.$set(_vm.$v.create.header_details.$each[gIndex].to_date, "$model", $$v);
         },
-        expression: "\n                                                            $v.create.header_details.$each[gIndex].to_date\n                                                              .$model\n                                                          "
+        expression: "\n                                                                $v.create.header_details.$each[gIndex].to_date\n                                                                  .$model\n                                                              "
       }
     })], 1)]), _vm._v(" "), _c("div", {
       staticClass: "col p-0"
@@ -4360,7 +4358,7 @@ var render = function render() {
         name: "model",
         rawName: "v-model",
         value: _vm.$v.create.header_details.$each[gIndex].rent_amount.$model,
-        expression: "\n                                                            $v.create.header_details.$each[gIndex]\n                                                              .rent_amount.$model\n                                                          "
+        expression: "\n                                                                $v.create.header_details.$each[gIndex]\n                                                                  .rent_amount.$model\n                                                              "
       }],
       staticClass: "form-control englishInput",
       "class": {
@@ -4368,7 +4366,8 @@ var render = function render() {
       },
       attrs: {
         required: "",
-        type: "number"
+        type: "number",
+        disabled: !_vm.showValue
       },
       domProps: {
         value: _vm.$v.create.header_details.$each[gIndex].rent_amount.$model
@@ -4400,14 +4399,15 @@ var render = function render() {
         options: _vm.payment_types.map(function (type) {
           return type.id;
         }),
-        "show-labels": false
+        "show-labels": false,
+        disabled: !_vm.showValue
       },
       model: {
         value: _vm.$v.create.header_details.$each[gIndex].payment_type_id.$model,
         callback: function callback($$v) {
           _vm.$set(_vm.$v.create.header_details.$each[gIndex].payment_type_id, "$model", $$v);
         },
-        expression: "$v.create.header_details.$each[gIndex]\n                                                              .payment_type_id.$model"
+        expression: "$v.create.header_details.$each[gIndex]\n                                                                  .payment_type_id.$model"
       }
     })], 1)]), _vm._v(" "), _c("div", {
       staticClass: "col p-0"
@@ -4418,7 +4418,7 @@ var render = function render() {
         name: "model",
         rawName: "v-model",
         value: _vm.$v.create.header_details.$each[gIndex].print_day.$model,
-        expression: "\n                                                            $v.create.header_details.$each[gIndex]\n                                                              .print_day.$model\n                                                          "
+        expression: "\n                                                                $v.create.header_details.$each[gIndex]\n                                                                  .print_day.$model\n                                                              "
       }],
       staticClass: "form-control englishInput",
       "class": {
@@ -4426,7 +4426,8 @@ var render = function render() {
       },
       attrs: {
         required: "",
-        type: "number"
+        type: "number",
+        disabled: !_vm.showValue
       },
       domProps: {
         value: _vm.$v.create.header_details.$each[gIndex].print_day.$model
@@ -4446,7 +4447,7 @@ var render = function render() {
         name: "model",
         rawName: "v-model",
         value: _vm.$v.create.header_details.$each[gIndex].due_day.$model,
-        expression: "\n                                                            $v.create.header_details.$each[gIndex]\n                                                              .due_day.$model\n                                                          "
+        expression: "\n                                                                $v.create.header_details.$each[gIndex]\n                                                                  .due_day.$model\n                                                              "
       }],
       staticClass: "form-control englishInput",
       "class": {
@@ -4454,7 +4455,8 @@ var render = function render() {
       },
       attrs: {
         required: "",
-        type: "number"
+        type: "number",
+        disabled: !_vm.showValue
       },
       domProps: {
         value: _vm.$v.create.header_details.$each[gIndex].due_day.$model
@@ -4485,7 +4487,7 @@ var render = function render() {
     staticClass: "row border-b-2 brc-default-l2"
   }), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", [_c("span", {
     staticClass: "text-secondary-d1 text-105"
-  }, [_vm._v(_vm._s(_vm.$t("general.Thank_you")))]), _vm._v(" "), _c("a", {
+  }, [_vm._v(_vm._s(_vm.$t("general.Thank_you")))]), _vm._v(" "), _vm.showValue ? _c("a", {
     staticClass: "btn btn-info btn-bold px-4 float-right mt-3 mx-2 mt-lg-0",
     on: {
       click: function click($event) {
@@ -4493,24 +4495,7 @@ var render = function render() {
         return _vm.addNewField.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.AddNewLine")) + "\n                                        ")]), _vm._v(" "), _vm.document && _vm.document.attributes && parseInt(_vm.document.attributes.customer) != 0 ? _c("div", {
-    staticClass: "px-4 float-right mt-3 mt-lg-0"
-  }, [!_vm.create.id && _vm.create.net_invoice > 0 ? _c("b-button", {
-    staticClass: "btn btn-primary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0",
-    attrs: {
-      variant: "primary"
-    },
-    on: {
-      click: function click($event) {
-        return _vm.Submit(true);
-      }
-    }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Break")) + "\n                                            ")]) : _c("b-button", {
-    staticClass: "btn btn-secondary btn-bold px-4 float-right mt-3 mx-2 mt-lg-0",
-    attrs: {
-      variant: "secondary"
-    }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Break")) + "\n                                            ")])], 1) : _vm._e()])], 2)])])])])], 1)])])], 1);
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.AddNewLine")) + "\n                                            ")]) : _vm._e()])], 2)])])])])], 1)])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -8163,13 +8148,12 @@ var render = function render() {
         staticStyle: {
           "border-radius": "2rem"
         }
-      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" ? _c("td", [data[item.name].length > 0 ? _c("h5", {
-        staticClass: "m-0 font-weight-normal"
-      }, _vm._l(data[item.name], function (i, index) {
-        return _c("span", {
-          key: i.id
-        }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                        "), _c("span", [_vm._v(" - ")])]);
-      }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
+      }, [_vm._v(_vm._s(data[item.isV]))])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? _vm.$i18n.locale == "ar" ? data[item.name][item.col1] : data[item.name][item.col2] : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "relation1" ? _c("td", [_vm._v("\n                " + _vm._s(data[item.name] ? data[item.name][item.name1] ? _vm.$i18n.locale == "ar" ? data[item.name][item.name1][item.col1] : data[item.name][item.name1][item.col2] : " - " : " - ") + "\n            ")]) : _vm._e(), _vm._v(" "), item.isSetting && item.type == "relationMany" && data[item.name].length > 0 ? _c("td", _vm._l(data[item.name], function (i, index) {
+        return _c("label", {
+          key: i.id,
+          staticClass: "badge badge-primary text-white mx-1 p-2"
+        }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? i[item.col1] : i[item.col2]) + "\n                    ")]);
+      }), 0) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 ? "text-success" : "text-danger", "badge"]
       }, [_vm._v("\n                    " + _vm._s(data[item.isV] == "active" || data[item.isV] == 1 ? "".concat(_vm.$t("general.Active")) : "".concat(_vm.$t("general.Inactive"))) + "\n                  ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "boolean1" ? _c("td", [_c("span", {
         "class": [data[item.isV] == "active" || data[item.isV] == 1 || data[item.isV] ? "text-success" : "text-danger", "badge"]
@@ -8628,15 +8612,16 @@ var render = function render() {
     attrs: {
       id: "create",
       companyKeys: _vm.companyKeys,
-      defaultsKeys: _vm.defaultsKeys,
-      document: _vm.document,
-      document_id: _vm.document_id,
-      idObjEdit: _vm.idEdit ? {
+      dataRow: _vm.idEdit ? {
         idEdit: _vm.idEdit,
         dataObj: this.tables.find(function (el) {
           return el.id == _vm.idEdit;
         })
       } : null,
+      "id-edit": _vm.idEdit,
+      defaultsKeys: _vm.defaultsKeys,
+      document: _vm.document,
+      document_id: _vm.document_id,
       isPage: true,
       isPermission: _vm.isPermission,
       isRequiredPage: _vm.isRequired,
@@ -8667,7 +8652,7 @@ var render = function render() {
       enabled3: _vm.enabled3,
       isAction: true,
       isDelete: true,
-      isEdit: false,
+      isEdit: true,
       isInputCheck: true,
       isLog: true,
       isPrint: true,

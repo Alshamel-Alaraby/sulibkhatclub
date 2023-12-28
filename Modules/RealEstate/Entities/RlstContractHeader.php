@@ -10,6 +10,7 @@ use App\Models\Serial;
 use App\Traits\LogTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\RecievablePayable\Entities\RpBreakDown;
 
 class RlstContractHeader extends Model
 {
@@ -73,7 +74,8 @@ class RlstContractHeader extends Model
 
     public function units()
     {
-        return $this->belongsToMany(RlstUnitService::class,'rlst_contract_headers_units','contract_header_id','unit_id');
+
+        return $this->belongsToMany(RlstUnitService::class,'rlst_contract_headers_units','contract_header_id','unit_id')->withPivot('unit_services','id');
     }
 
     public function contractHeaderDetail()
@@ -81,6 +83,11 @@ class RlstContractHeader extends Model
         return $this->hasMany(RlstContractHeaderDetail::class,'contract_header_id');
     }
 
+
+    public function rpBreakDowns()
+    {
+        return $this->hasMany(RpBreakDown::class, 'break_id','id')->where('break_type','contractHeader');
+    }
 
 
     public function hasChildren()

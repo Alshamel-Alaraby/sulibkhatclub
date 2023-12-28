@@ -175,6 +175,7 @@ export default {
                     })
                     .then((res) => {
                         let l = res.data.data;
+                        this.items = l.committees_with_members;
                         // this.itemsPagination = l.pagination;
                         // this.current_page = l.pagination.current_page;
                     })

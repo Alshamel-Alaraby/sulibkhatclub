@@ -106,6 +106,10 @@ export default {
         acceptance: "0",
         session_date: this.formatDate(new Date()),
         session_number: "",
+          executive_office_date: "",
+          executive_office_number: "",
+          board_of_directors_date: "",
+          board_of_directors_number: "",
         sponsor: "active",
         sponsor_id: null,
         member_type: "",
@@ -144,10 +148,27 @@ export default {
       },
       is_disabled: false,
       fullName: '',
+        filterMember: {
+            full_name : '',
+            national_id : '',
+            membership_number : '',
+            first_name : '',
+            second_name : '',
+            third_name : '',
+            last_name : '',
+            family_name : '',
+            home_phone : '',
+        },
       filterSetting: [
         "full_name",
         "national_id",
         "membership_number",
+        "first_name",
+        "second_name",
+        "third_name",
+        "last_name",
+        "family_name",
+        "home_phone",
       ],
       printLoading: true,
       printObj: {
@@ -177,6 +198,10 @@ export default {
       sponsor: {  },
       acceptance: {  },
       session_number: {  },
+        executive_office_date: {},
+        executive_office_number: {},
+        board_of_directors_date: {},
+        board_of_directors_number: {},
       session_date: {  },
       sponsor_id: {},
       member_type: {},
@@ -328,7 +353,7 @@ export default {
       }
       adminApi
         .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}`
+          `/club-members/members?page=${page}&per_page=${this.per_page}&company_id=${this.company_id}&search=${this.search}&${filter}&national_id=${this.filterMember.national_id??''}&membership_number=${this.filterMember.membership_number??''}&full_name=${this.filterMember.full_name??''}&home_phone=${this.filterMember.home_phone??''}&first_name=${this.filterMember.first_name??''}&second_name=${this.filterMember.second_name??''}&third_name=${this.filterMember.third_name}&last_name=${this.filterMember.last_name??''}&family_name=${this.filterMember.family_name}`
         )
         .then((res) => {
           let l = res.data;
@@ -420,6 +445,10 @@ export default {
       this.edit.applying_number = member.applying_number;
       this.edit.membership_number = member.membership_number;
       this.edit.session_number = member.session_number;
+      this.edit.executive_office_date = member.executive_office_date;
+      this.edit.executive_office_number = member.executive_office_number;
+      this.edit.board_of_directors_date = member.board_of_directors_date;
+      this.edit.board_of_directors_number = member.board_of_directors_number;
       this.edit.first_name = member.first_name;
       this.edit.phone_code = member.phone_code;
       this.edit.second_name = member.second_name;
@@ -651,6 +680,22 @@ export default {
                   });
           }
       },
+
+    /**
+     * start filter member
+     */
+      resetFormSearch() {
+          this.filterMember.full_name = '';
+          this.filterMember.national_id = '';
+          this.filterMember.membership_number = '';
+          this.filterMember.first_name = '';
+          this.filterMember.second_name = '';
+          this.filterMember.third_name = '';
+          this.filterMember.last_name = '';
+          this.filterMember.family_name = '';
+          this.filterMember.home_phone = '';
+          this.is_disabled = false;
+      },
   },
 };
 </script>
@@ -692,6 +737,49 @@ export default {
                       class="mb-1"
                       >{{ $t("general.name") }}
                     </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="first_name"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_first_name") }}
+                    </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="second_name"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_second_name") }}
+                    </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="third_name"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_third_name") }}
+                    </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="last_name"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_last_name") }}
+                    </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="family_name"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_family_name") }}
+                    </b-form-checkbox>
+
+                      <b-form-checkbox
+                      v-model="filterSetting"
+                      value="home_phone"
+                      class="mb-1"
+                      >{{ getCompanyKey("member_home_phone") }}
+                    </b-form-checkbox>
+
                   </b-dropdown>
                   <!-- Basic dropdown -->
                 </div>
@@ -720,9 +808,7 @@ export default {
             </div>
             <!-- end search -->
 
-            <div
-              class="row justify-content-between align-items-center mb-2 px-1"
-            >
+            <div class="row justify-content-between align-items-center mb-2 px-1">
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <div class="d-inline-flex">
                   <button
@@ -743,7 +829,7 @@ export default {
                 <div class="d-fex">
                   <!-- start filter and setting -->
                   <div class="d-inline-block">
-                    <b-button class="mx-1 custom-btn-background">
+                    <b-button  v-b-modal.filter_members class="mx-1 custom-btn-background">
                       {{ $t("general.filter") }}
                       <i class="fas fa-filter"></i>
                     </b-button>
@@ -889,6 +975,167 @@ export default {
                 </div>
               </div>
             </div>
+
+              <!-- start filter member  -->
+              <b-modal
+                  id="filter_members"
+                  :title="$t('general.filter')"
+                  title-class="font-18"
+                  body-class="p-4 "
+                  size="lg"
+                  scrollable
+                  :hide-footer="true"
+              >
+                  <form>
+                      <div class="row">
+                          <div class="col-md-12 mb-3 d-flex justify-content-end">
+                              <b-button
+                                  variant="success"
+                                  @click.prevent="resetFormSearch"
+                                  type="button"
+                                  :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
+                              >
+                                  {{ $t("general.NewSearch") }}
+                              </b-button>
+                              <!-- Emulate built in modal footer ok and cancel button actions -->
+                              <template v-if="!is_disabled">
+                                  <b-button
+                                      variant="success"
+                                      type="submit"
+                                      class="mx-1"
+                                      v-if="!isLoader"
+                                      @click.prevent="getData"
+                                  >
+                                      {{ $t("general.Search") }}
+                                  </b-button>
+
+                                  <b-button variant="success" class="mx-1" disabled v-else>
+                                      <b-spinner small></b-spinner>
+                                      <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                  </b-button>
+                              </template>
+                              <b-button
+                                  variant="danger"
+                                  type="button"
+                                  @click.prevent="$bvModal.hide('filter_members')"
+                              >
+                                  {{ $t("general.Cancel") }}
+                              </b-button>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ $t("general.full_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.full_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_national_id") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.national_id"
+                                      class="form-control"
+                                      type="number"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_membership_number") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.membership_number"
+                                      class="form-control"
+                                      type="number"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_first_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.first_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_second_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.second_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_third_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.third_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_last_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.last_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_family_name") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.family_name"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                      {{ getCompanyKey("member_home_phone") }}
+                                  </label>
+                                  <input
+                                      v-model="filterMember.home_phone"
+                                      class="form-control"
+                                      type="text"
+                                  />
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+              </b-modal>
+              <!--  end filter member   -->
 
             <!-- start .table-responsive-->
             <div
@@ -1367,18 +1614,10 @@ export default {
                     </th>
                     <th v-if="setting.session_number">
                       <div class="d-flex justify-content-center">
-                        <span>{{
-                          getCompanyKey("member_session_number")
-                        }}</span>
+                        <span>{{ getCompanyKey("member_session_number")}}</span>
                         <div class="arrow-sort">
-                          <i
-                            class="fas fa-arrow-up"
-                            @click="members.sort(sortString('session_number'))"
-                          ></i>
-                          <i
-                            class="fas fa-arrow-down"
-                            @click="members.sort(sortString('-session_number'))"
-                          ></i>
+                          <i class="fas fa-arrow-up" @click="members.sort(sortString('session_number'))"></i>
+                          <i class="fas fa-arrow-down" @click="members.sort(sortString('-session_number'))"></i>
                         </div>
                       </div>
                     </th>
@@ -1518,7 +1757,7 @@ export default {
                         <template v-else-if="data.acceptance == '1'">
                           {{ $t("general.accepted") }}
                         </template>
-                        <template v-else="data.acceptance == '2'">
+                        <template v-else-if="data.acceptance == '2'">
                           {{ $t("general.declined") }}
                         </template>
                       </span>
@@ -2249,9 +2488,7 @@ export default {
                           </div>
                           <div class="col-md-3">
                             <div class="form-group">
-                              <label>{{
-                                getCompanyKey("member_session_number")
-                              }}</label>
+                              <label>{{ getCompanyKey("member_session_number")}}</label>
                               <input
                                 disabled
                                 v-model="$v.edit.session_number.$model"
@@ -2259,16 +2496,107 @@ export default {
                                 type="text"
                               />
                               <template v-if="errors.session_number">
-                                <ErrorMessage
-                                  v-for="(
-                                    errorMessage, index
-                                  ) in errors.session_number"
-                                  :key="index"
-                                  >{{ errorMessage }}
+                                <ErrorMessage v-for="(errorMessage, index) in errors.session_number" :key="index">
+                                    {{ errorMessage }}
                                 </ErrorMessage>
                               </template>
                             </div>
                           </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("member_executive_office_history") }}
+                                    </label>
+                                    <date-picker
+                                        type="date"
+                                        :disabled="true"
+                                        v-model="$v.edit.executive_office_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{ 'is-invalid':  $v.edit.executive_office_date.$error || errors.executive_office_date,
+                                                 'is-valid':!$v.edit.executive_office_date.$invalid &&!errors.executive_office_date,
+                                                }"
+                                    ></date-picker>
+                                    <template v-if="errors.executive_office_date">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.executive_office_date"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>{{ getCompanyKey("member_executive_office_number")}}</label>
+                                    <input
+                                        v-model="$v.edit.executive_office_number.$model"
+                                        :disabled="true"
+                                        class="form-control"
+                                        type="number"
+                                        :class="{
+                                          'is-invalid': $v.edit.executive_office_number.$error || errors.executive_office_number,
+                                          'is-valid': !$v.edit.executive_office_number.$invalid && !errors.executive_office_number,
+                                        }"
+                                    />
+                                    <template v-if="errors.executive_office_number">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.executive_office_number"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("member_Board_of_Directors_history") }}
+                                    </label>
+                                    <date-picker
+                                        type="date"
+                                        v-model="$v.edit.board_of_directors_date.$model"
+                                        :disabled="true"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                            'is-invalid':  $v.edit.board_of_directors_date.$error || errors.board_of_directors_date,
+                                            'is-valid':!$v.edit.board_of_directors_date.$invalid &&!errors.board_of_directors_date,
+                                        }"
+                                    ></date-picker>
+                                    <template v-if="errors.board_of_directors_date">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.board_of_directors_date"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>{{ getCompanyKey("member_Board_of_Directors_number")}}</label>
+                                    <input
+                                        v-model="$v.edit.board_of_directors_number.$model"
+                                        :disabled="true"
+                                        class="form-control"
+                                        type="number"
+                                        :class="{
+                                            'is-invalid': $v.edit.board_of_directors_number.$error || errors.board_of_directors_number,
+                                            'is-valid': !$v.edit.board_of_directors_number.$invalid &&!errors.board_of_directors_number,
+                                        }"
+                                    />
+                                    <template v-if="errors.board_of_directors_number">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.board_of_directors_number"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
                           <div class="col-md-3">
                             <div class="form-group position-relative">
                               <label class="control-label">

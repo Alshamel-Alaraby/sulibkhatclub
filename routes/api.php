@@ -847,6 +847,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
     Route::group(['prefix' => 'document-headers'], function () {
         Route::controller(\App\Http\Controllers\DocumentHeader\DocumentHeaderController::class)->group(function () {
+            Route::get('all_renew_contract_header', 'all_renew_contract_header');
             Route::get('createDailyCheckInCustomer', 'createDailyCheckInCustomer');
             Route::get('getDocumentRealEstateData/{id}', 'getDocumentRealEstateData');
             Route::get("check-booking", "checkBooking");
@@ -861,7 +862,9 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('document-headers.create');
             Route::put('/{id}', 'update')->name('document-headers.update');
+            Route::put('/updateContractHeader/{id}', 'updateContractHeader');
             Route::delete('/{id}', 'delete')->name('document-headers.destroy');
+            Route::post("bulk-renew-contract", "renew_contract");
             Route::post("bulk-delete", "bulkDelete");
             Route::post("update-check-in-customer", "updateCheckInCustomer");
             Route::get('document-customer/{id}', 'getDocumentsCustomer');

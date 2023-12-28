@@ -15,9 +15,8 @@ use Illuminate\Routing\Controller;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\TaskLogResource;
 use App\Http\Requests\AllTaskPostRequest;
-use Illuminate\Contracts\Support\Renderable;
-use Modules\BoardsRent\Entities\EmployeeTask;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\GeneralTaskResource;
+use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TaskController extends Controller
@@ -36,9 +35,10 @@ class TaskController extends Controller
         return responseJson(200, 'success', new TaskResource($model));
     }
 
-    public function all(AllRequest $request)
+
+    public function all(Request $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->employee_id) {
             $models->where('employee_id', $request->employee_id);
@@ -48,14 +48,13 @@ class TaskController extends Controller
             $models->where('customer_id', $request->customer_id);
         }
 
-
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
             $models = ['data' => $models->get(), 'paginate' => false];
         }
 
-        return responseJson(200, 'success', $models['data'], $models['paginate'] ? getPaginates($models['data']) : null);
+        return responseJson(200, 'success', GeneralTaskResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
     }
 
 

@@ -29,13 +29,20 @@ class Task extends Model implements HasMedia
             ->select(
                 'id','contact_person','contact_phone','task_title','execution_date','execution_duration','customer_id',
                 'execution_end_date','notification_date','start_time','end_time','department_task_id','employee_id',
-                'customer_id','department_id','status_id','note','location_id','priority_id','is_closed','admin_note',
-                'task_requirement','type','equipment_id'
+                'customer_id','department_id','status_id','note',
+                'location_id',
+                'priority_id',
+                'is_closed',
+                'admin_note',
+                'task_requirement',
+                'type','equipment_id'
             )
             ->with([
                 'departmentTask:id,name,name_e','department:id,name,name_e','employee:id,name,name_e',
                 'customer:id,name,name_e,contact_person,contact_phone','equipment:id,name,name_e',
-                'status:id,name,name_e','location:id,name,name_e','priority:id,name,name_e'
+                'status:id,name,name_e'
+                ,'location:id,name,name_e'
+                ,'priority:id,name,name_e'
             ]);
     }
 

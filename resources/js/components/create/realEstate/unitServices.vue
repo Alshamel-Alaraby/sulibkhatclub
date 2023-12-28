@@ -1,149 +1,82 @@
 <template>
     <div>
-        <Unit
-            :id="'unit-create'"
-            :companyKeys="companyKeys"
-            :defaultsKeys="defaultsKeys"
-            :isPage="false"
-            :isPermission="isPermission"
-            type="create"
-            @created="getUnits"
-        />
-        <Service
-            :id="'service-create'"
-            :companyKeys="companyKeys"
-            :defaultsKeys="defaultsKeys"
-            :isPage="false"
-            :isPermission="isPermission"
-            type="create"
-            @created="getServices"
-        />
+        <Unit :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getUnits" :isPage="false" type="create"
+            :isPermission="isPermission" :id="'unit-create'" />
+        <Service :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" @created="getServices" :isPage="false"
+            type="create" :isPermission="isPermission" :id="'service-create'" />
 
         <!--  create   -->
-        <b-modal
-            id="create"
-            :hide-footer="true"
-            :title="
-            type != 'edit'
-              ? getCompanyKey('unit_service_create_form')
-              : getCompanyKey('unit_service_edit_form')
-           "
-            body-class="p-4"
-            dialog-class="modal-lg"
-            title-class="font-18"
-            @hidden="resetModalHidden"
-            @show="resetModal"
-        >
+        <b-modal id="create" :title="type != 'edit'
+                ? getCompanyKey('unit_service_create_form')
+                : getCompanyKey('unit_service_edit_form')
+            " dialog-class="modal-xl" title-class="font-18" body-class="p-4" :hide-footer="true" @show="resetModal"
+            @hidden="resetModalHidden">
             <form>
-                <loader v-if="isCustom && !isPage" size="large"/>
+                <loader size="large" v-if="isCustom && !isPage" />
                 <div class="mb-3 d-flex justify-content-end">
-                    <b-button
-                        v-if="type != 'edit'"
-                        :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']"
-                        :disabled="!is_disabled"
-                        type="button"
-                        variant="success"
-                        @click.prevent="resetForm"
-                    >
+                    <b-button v-if="type != 'edit'" variant="success" :disabled="!is_disabled" @click.prevent="resetForm"
+                        type="button" :class="['font-weight-bold px-2', is_disabled ? 'mx-2' : '']">
                         {{ $t("general.AddNewRecord") }}
                     </b-button>
                     <template v-if="!is_disabled">
-                        <b-button
-                            v-if="!isLoader"
-                            class="mx-1"
-                            type="submit"
-                            variant="success"
-                            @click.prevent="AddSubmit"
-                        >
+                        <b-button variant="success" type="submit" class="mx-1" v-if="!isLoader" @click.prevent="AddSubmit">
                             {{ type != "edit" ? $t("general.Add") : $t("general.edit") }}
                         </b-button>
-                        <b-button v-else class="mx-1" disabled variant="success">
+                        <b-button variant="success" class="mx-1" disabled v-else>
                             <b-spinner small></b-spinner>
                             <span class="sr-only">{{ $t("login.Loading") }}...</span>
                         </b-button>
                     </template>
-                    <b-button
-                        type="button"
-                        variant="danger"
-                        @click.prevent="resetModalHidden"
-                    >
+                    <b-button @click.prevent="resetModalHidden" variant="danger" type="button">
                         {{ $t("general.Cancel") }}
                     </b-button>
                 </div>
-
                 <div class="row">
-                    <div class="col-md-12 position-relative">
+                    <div class="col-md-3 position-relative">
                         <div class="form-group">
                             <label class="my-1 mr-2">{{ getCompanyKey("unit") }}</label>
                             <span class="text-danger">*</span>
-                            <multiselect
-                                v-model="create.unit_ids"
-                                :class="{
-                                  'is-invalid': $v.create.unit_ids.$error || errors.unit_ids,
-                                }"
-                                :custom-label="
-                                  (opt) =>
-                                    units.find((x) => x.id == opt)
-                                      ? $i18n.locale == 'ar'
-                                        ? units.find((x) => x.id == opt).name
-                                        : units.find((x) => x.id == opt).name_e
-                                      : ''
-                                "
-                                :multiple="true"
-                                :options="units.map((type) => type.id)"
-                                @input="showUnitModal"
-                            >
-                            </multiselect>
-                            <div v-if="!$v.create.unit_ids.required" class="invalid-feedback">
-                                {{ $t("general.fieldIsRequired") }}
-                            </div>
 
-                            <template v-if="errors.unit_ids">
-                                <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.unit_ids"
-                                    :key="index"
-                                >{{ errorMessage }}
-                                </ErrorMessage
-                                >
+                            <multiselect :show-labels="false" @input="showUnitModal" :disabled="type == 'edit'"
+                                v-model="$v.create.unit_id.$model" :options="units.map((type) => type.id)" :custom-label="(opt) =>
+                                        units.find((x) => x.id == opt)
+                                            ? $i18n.locale == 'ar'
+                                                ? units.find((x) => x.id == opt).name
+                                                : units.find((x) => x.id == opt).name_e
+                                            : ''
+                                    " :class="{ 'is-invalid': $v.create.unit_id.$error || errors.unit_id }">
+                            </multiselect>
+
+                            <template v-if="errors && errors.unit_id">
+                                <ErrorMessage >{{ errors.unit_id}}</ErrorMessage>
                             </template>
                         </div>
                     </div>
-                    <div class="col-md-12 position-relative">
+                    <button class="btn col-2 btn-sm btn-primary h-50 mt-4" @click.prevent="addNewField">
+                        {{ $t('general.Add') }} <i class="fa fa-plus"></i></button>
+                </div>
+
+                <div class="row" v-for="(item, gIndex) in create.details" :key="gIndex">
+
+                    <div class="col-md-4 position-relative">
                         <div class="form-group">
                             <label class="my-1 mr-2">{{ getCompanyKey("service") }}</label>
                             <span class="text-danger">*</span>
-                            <multiselect
-                                v-model="create.service_ids"
-                                :class="{
-                                  'is-invalid':
-                                    $v.create.service_ids.$error || errors.service_ids,
-                                }"
-                                :custom-label="
-                                  (opt) =>
-                                    services.find((x) => x.id == opt)
-                                      ? $i18n.locale == 'ar'
-                                        ? services.find((x) => x.id == opt).name
-                                        : services.find((x) => x.id == opt).name_e
-                                      : ''
-                                "
-                                :multiple="true"
-                                :options="services.map((type) => type.id)"
-                                @input="showServiceModal"
-                            >
+                            <multiselect @input="showServiceModal(gIndex)"
+                                v-model="$v.create.details.$each[gIndex].service_id.$model"
+                                :options="services.map((type) => type.id)" :custom-label="(opt) =>
+                                        services.find((x) => x.id == opt)
+                                            ? $i18n.locale == 'ar'
+                                                ? services.find((x) => x.id == opt).name
+                                                : services.find((x) => x.id == opt).name_e
+                                            : ''
+                                    " :class="{ 'is-invalid': $v.create.details.$each[gIndex].service_id.$error || errors[`details.${gIndex}.service_id`] }">
                             </multiselect>
-                            <div
-                                v-if="!$v.create.service_ids.required"
-                                class="invalid-feedback"
-                            >
-                                {{ $t("general.fieldIsRequired") }}
-                            </div>
-                            <template v-if="errors.service_ids">
-                                <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.service_ids"
-                                    :key="index"
-                                >{{ errorMessage }}
-                                </ErrorMessage
-                                >
+                            <template v-if="errors && errors[`details.${gIndex}.service_id`]">
+                                <ErrorMessage v-for="(errorMessage, gIndex) in errors[`details.${gIndex}.service_id`]"
+                                    :key="gIndex">{{ errorMessage
+                                    }}
+                                </ErrorMessage>
                             </template>
                         </div>
                     </div>
@@ -151,43 +84,46 @@
                         <div class="form-group">
                             <label class="control-label">
                                 <label class="my-1 mr-2">{{
-                                        getCompanyKey("unitServices_price")
-                                    }}</label>
+                                    getCompanyKey("unitServices_price")
+                                }}</label>
                                 <span class="text-danger">*</span>
                             </label>
-                            <input
-                                v-model="$v.create.default_price.$model"
-                                :class="{
-                                  'is-invalid': $v.create.default_price.$error || errors.default_price,
-                                  'is-valid': !$v.create.default_price.$invalid && !errors.default_price,
-                                }"
-                                class="form-control"
-                                type="number"
-                            />
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="control-label">
-                                {{ $t("general.Date") }}
-                                <span class="text-danger">*</span>
-                            </label>
-                            <date-picker
-                                v-model="$v.create.from_date.$model"
-                                :confirm="false"
-                                format="YYYY-MM-DD"
-                                type="date"
-                                valueType="format"
-                            ></date-picker>
-                            <template v-if="errors.from_date">
-                                <ErrorMessage
-                                    v-for="(errorMessage, index) in errors.from_date"
-                                    :key="index"
-                                >
-                                    {{ errorMessage }}
+                            <input type="number" class="form-control"
+                                v-model="$v.create.details.$each[gIndex].default_price.$model" :class="{'is-valid': !$v.create.details.$each[gIndex].default_price.$invalid && !errors[`details.${gIndex}.default_price`],
+                                }" />
+                                <template v-if="errors && errors[`details.${gIndex}.default_price`]">
+                                <ErrorMessage v-for="(errorMessage, gIndex) in errors[`details.${gIndex}.default_price`]"
+                                    :key="gIndex">{{ errorMessage
+                                    }}
                                 </ErrorMessage>
                             </template>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group pt-2">
+                            <label class="control-label">
+                                <label class="my-1 mr-2">{{
+                                    getCompanyKey("unitServices_date")
+                                }}</label>
+                                <span class="text-danger">*</span>
+                            </label>
+                            <date-picker type="date"
+                                v-model="$v.create.details.$each[gIndex].from_date.$model" format="YYYY-MM-DD"
+                                valueType="format" :confirm="false"
+                                :class="{ 'is-invalid': $v.create.details.$each[gIndex].from_date.$error }"></date-picker>
+                                <template v-if="errors && errors[`details.${gIndex}.from_date`]">
+                                <ErrorMessage v-for="(errorMessage, gIndex) in errors[`details.${gIndex}.from_date`]"
+                                    :key="gIndex">{{ errorMessage
+                                    }}
+                                </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="col-md-1 pt-3">
+                        <button v-if="create.details.length > 1" type="button" @click.prevent="removeNewField(gIndex)"
+                            class="btn btn-sm btn-danger p-2">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -199,7 +135,7 @@
 
 <script>
 import adminApi from "../../../api/adminAxios";
-import {numeric} from "vuelidate/lib/validators";
+import { required, numeric, minValue } from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
@@ -209,6 +145,7 @@ import Multiselect from "vue-multiselect";
 import transMixinComp from "../../../helper/mixin/translation-comp-mixin";
 import successError from "../../../helper/mixin/success&error";
 import DatePicker from "vue2-datepicker";
+import { formatDateOnly } from "../../../helper/startDate";
 
 /**
  * Advanced Table component
@@ -216,28 +153,28 @@ import DatePicker from "vue2-datepicker";
 export default {
     page: {
         title: "Unit Services",
-        meta: [{name: "description", content: "Unit Services"}],
+        meta: [{ name: "description", content: "Unit Services" }],
     },
     mixins: [transMixinComp, successError],
     props: {
-        id: {default: "create"},
-        companyKeys: {default: []},
-        defaultsKeys: {default: []},
-        isPage: {default: true},
-        isVisiblePage: {default: null},
-        isRequiredPage: {default: null},
-        type: {default: "create"},
-        idObjEdit: {default: null},
+        id: { default: "create" },
+        companyKeys: { default: [] },
+        defaultsKeys: { default: [] },
+        isPage: { default: true },
+        isVisiblePage: { default: null },
+        isRequiredPage: { default: null },
+        type: { default: "create" },
+        idObjEdit: { default: null },
         isPermission: {},
-        url: {default: "/real-estate/unit-service"},
+        url: { default: "/real-estate/unit-service" },
     },
     components: {
         ErrorMessage,
         loader,
         Multiselect,
+        DatePicker,
         Unit,
         Service,
-        DatePicker
     },
     data() {
         return {
@@ -246,10 +183,14 @@ export default {
             isLoader: false,
             isCustom: false,
             create: {
-                service_ids: [],
-                unit_ids: [],
-                default_price: 0,
-                from_date: ""
+                unit_id: null,
+                details: [
+                    {
+                        service_id: null,
+                        default_price: 0,
+                        from_date: this.formatDate(new Date()),
+                    }
+                ],
             },
             errors: {},
             is_disabled: false,
@@ -259,13 +200,32 @@ export default {
     },
     validations: {
         create: {
-            service_ids: {required: true},
-            unit_ids: {required: true},
-            default_price: {required: true, numeric},
-            from_date: {required: true},
+            unit_id: { required },
+            details: {
+                required,
+                $each: {
+                    service_id: { required },
+                    from_date: {},
+                    default_price: { required, minValue: minValue(0) },
+                }
+            }
         }
     },
     methods: {
+
+        removeNewField(index) {
+            if (this.create.details.length > 1) {
+                this.create.details.splice(index, 1);
+            }
+        },
+
+        addNewField() {
+            this.create.details.push({
+                service_id: null,
+                default_price: 0,
+                from_date: this.formatDate(new Date()),
+            });
+        },
         async getCustomTableFields() {
             this.isCustom = true;
             await adminApi
@@ -279,6 +239,9 @@ export default {
                 .finally(() => {
                     this.isCustom = false;
                 });
+        },
+        formatDate(value) {
+            return formatDateOnly(value);
         },
         isVisible(fieldName) {
             if (!this.isPage) {
@@ -301,24 +264,25 @@ export default {
             }
         },
         showUnitModal() {
-            if (this.create.unit_ids == 0) {
+            if (this.create.unit_id == 0) {
                 this.$bvModal.show("unit-create");
-                this.create.unit_ids = null;
+                this.create.unit_id = null;
             }
         },
-        showServiceModal() {
-            if (this.create.service_ids == 0) {
+        showServiceModal(index) {
+            if (this.create.details[index].service_id == 0) {
                 this.$bvModal.show("service-create");
-                this.create.service_ids = null;
+                this.create.details[index].service_id = null;
             }
         },
         defaultData(edit = null) {
-            this.create = {
-                unit_ids: [],
-                service_ids: [],
-                default_price: 0,
-                from_data: ''
-            };
+            this.create.details = [
+                {
+                    service_id: null,
+                    default_price: 0,
+                    from_date: this.formatDate(new Date()),
+                }
+            ];
             this.$nextTick(() => {
                 this.$v.$reset();
             });
@@ -344,10 +308,15 @@ export default {
                     if (this.idObjEdit.dataObj) {
                         let unitService = this.idObjEdit.dataObj;
                         this.errors = {};
-                        this.create.unit_ids = unitService.unit.id;
-                        this.create.service_ids = unitService.service.id;
-                        this.create.default_price = unitService.default_price;
-                        this.create.from_date = unitService.from_date
+                        this.create.unit_id = unitService.id;
+                        this.create.details = [];
+                        unitService.services.forEach((e, index) => {
+                            this.create.details.push({
+                                service_id: e.pivot.service_id,
+                                from_date: this.formatDate(e.pivot.from_date),
+                                default_price: e.pivot.default_price,
+                            });
+                        });
                         this.getUnits();
                         this.getServices();
                     }
@@ -427,7 +396,7 @@ export default {
                     this.isLoader = false;
                     let l = res.data.data;
                     if (this.isPermission("create unit RealState")) {
-                        l.unshift({id: 0, name: "اضافة وحده", name_e: "Add unit"});
+                        l.unshift({ id: 0, name: "اضافة وحده", name_e: "Add unit" });
                     }
                     this.units = l;
                 })
@@ -448,7 +417,7 @@ export default {
                     this.isLoader = false;
                     let l = res.data.data;
                     if (this.isPermission("create services")) {
-                        l.unshift({id: 0, name: "اضافة خدمه", name_e: "Add service"});
+                        l.unshift({ id: 0, name: "اضافة خدمه", name_e: "Add service" });
                     }
                     this.services = l;
                 })

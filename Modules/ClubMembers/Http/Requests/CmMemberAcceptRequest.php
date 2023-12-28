@@ -26,6 +26,10 @@ class CmMemberAcceptRequest extends FormRequest
             'acceptance' => 'nullable',
             'session_date'=>'required|date',
             'session_number'=>'required|string|max:255',
+            'executive_office_date'=>'nullable',
+            'executive_office_number'=>'nullable',
+            'board_of_directors_date'=>'nullable',
+            'board_of_directors_number'=>'nullable',
             'membership_date' =>'required|date',
             'membership_number' =>  'nullable|string|max:255',
 

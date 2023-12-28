@@ -104,13 +104,10 @@
                             : " - "
                     }}
                 </td>
-                <td v-if="item.isSetting && item.type == 'relationMany'">
-                    <h5 v-if="data[item.name].length > 0" class="m-0 font-weight-normal">
-                        <span v-for="(i,index) in data[item.name]" :key="i.id">
-                            {{ $i18n.locale == "ar" ? i[item.col1] : i[item.col2] }}
-                            <span> - </span>
-                        </span>
-                    </h5>
+                <td v-if="item.isSetting && item.type == 'relationMany' && data[item.name].length > 0">
+                        <label class="badge badge-primary text-white mx-1 p-2" v-for="(i,index) in data[item.name]" :key="i.id">
+                            {{ $i18n.locale == "ar" ? i[item.col1] : i[item.col2]}}
+                        </label>
                 </td>
                 <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'boolean'">
                       <span

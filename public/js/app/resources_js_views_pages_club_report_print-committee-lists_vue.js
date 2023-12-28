@@ -1841,6 +1841,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }).then(function (res) {
           var l = res.data.data;
+          _this3.items = l.committees_with_members;
           // this.itemsPagination = l.pagination;
           // this.current_page = l.pagination.current_page;
         })["catch"](function (err) {
