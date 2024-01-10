@@ -86,12 +86,19 @@ Route::prefix('recievable-payable')->group(function () {
 
     Route::resource('rp_break_down', 'RpBreakDownController')->except('edit', 'create');
     Route::get('rp_break_down/logs/{id}', 'RpBreakDownController@logs');
+
     Route::get('filterBreak', 'RpBreakDownController@filterBreak');
+
     Route::get('all-break-customer-money-details', 'RpBreakDownController@getBreakCustomerMoneyDetails');
     Route::post('rp_break_down/logs/bulk-delete', 'RpBreakDownController@bulkDelete');
     Route::post('rp_break_down/update_break', 'RpBreakDownController@updateBreak');
 
     Route::get('filter-vourcher', 'RpReportController@filterVourcher');
+    Route::get('filter-break-client', 'RpReportController@filterBreakClient');
+    Route::get('filter-follow-payments', 'RpReportController@filterFollowSPayments');
+    Route::get('filter-follow-settlements', 'RpReportController@filterFollowSettlements');
+
+
     Route::get('customer-statement-of-account', 'RpBreakDownController@getCustomerStatementOfAccount');
     Route::get('document-with-money-details', 'RpBreakDownController@getDocumentWithMoneyDetails');
 

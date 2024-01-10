@@ -76,7 +76,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       isSuccess: false,
       isError: false,
       type: "password",
-      login_as: "admin",
+      login_as: "employee",
       user_programs_and_modules: []
     };
   },
@@ -218,12 +218,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     _context2.next = 9;
                     return _this.getProgramsAndModulesForCompany(l.user.company_id, 'user');
                   case 9:
+                    _this.$store.commit("auth/editCompanyId", l.user.company_id);
                     _this.$router.push({
                       name: "home"
                     });
                     _this.getDefaultKeys();
                     _this.getCompanyKeys(l.user.company_id);
-                  case 12:
+                  case 13:
                   case "end":
                     return _context2.stop();
                 }

@@ -15,12 +15,11 @@
         </template>
 
         <a
-            href="#"
             class="dropdown-item noti-title"
         >
             <h5 class="m-0">
               <span class="float-right">
-                <a href class="text-dark" @click.prevent="clearAll">
+                <a  class="text-dark" @click.prevent="clearAll">
                   <small>{{
                     $t("navbar.dropdown.notification.subtext")
                   }}</small>
@@ -33,16 +32,16 @@
         <simplebar style="max-height: 230px" >
             <template v-for="(notification,index) in notifications">
                 <router-link
-                    :key="index"
-                    :to="{name:notification.data.name,params: {id:notification.data.id}}"
+                    :key="index" @click.prevent="clearItem(notification.id,index)"
+                    :to="{name:notification.data.name,params: {id:notification.data.id,notification_data:notification.data.data}}"
                     class="dropdown-item notify-item"
                 >
-                    <div  @click="clearItem(notification.id,index)">
+                    <div  >
                         <div class="notify-icon bg-soft-primary text-primary">
                             <i class="mdi mdi-comment-account-outline"></i>
                         </div>
                         <p class="notify-details">
-                            {{ notification.data.message }}
+                            {{ $i18n.locale == 'ar' ? notification.data.message : (notification.data.message_en ??notification.data.message) }}
                             <small class="text-muted">{{
                                     notification.data.timeDate
                                 }}
@@ -118,13 +117,11 @@ export default {
         },
         pusherNotification(){
             if(localStorage.getItem("user")){
-                // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-                //     .notification((notification) => {
-                //         this.notifications.unshift(notification);
-                //         this.count += 1;
-                //         console.log(notification);
-                //     });
-            }
+                Echo.private("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification((notification) => {
+                    this.notifications.unshift(notification);
+                    this.count += 1;
+                });
+             }
         }
     },
     mounted(){

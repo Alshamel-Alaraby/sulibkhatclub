@@ -56,6 +56,7 @@
             v-if="sidePaginate"
             :class="`col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-${isPaginate?'end':'center'}`"
         >
+            <slot></slot>
             <div class="d-fex">
                 <!-- start filter and setting -->
                 <div class="d-inline-block">

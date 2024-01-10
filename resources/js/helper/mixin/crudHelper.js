@@ -44,6 +44,7 @@ export default {
                     this.idEdit = null;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun('Error', 'Thereisanerrorinthesystem');
                 })
                 .finally(() => {

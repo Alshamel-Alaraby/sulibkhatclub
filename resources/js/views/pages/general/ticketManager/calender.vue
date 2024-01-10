@@ -38,24 +38,8 @@ export default {
     },
     mixins: [translation],
     beforeRouteEnter(to, from, next) {
-         next((vm) => {
-      return permissionGuard(vm, "Task Calender", "all Calender");
-    });
-
         next((vm) => {
-            if(vm.$store.state.auth.type == 'user'){
-                if (vm.$store.state.auth.permissions.includes("")) {
-                    return true;
-                } else {
-                    return vm.$router.push({ name: "home" });
-                }
-            }else {
-                if (vm.$store.state.auth.work_flow_trees.includes('ticket manager')) {
-                    return true;
-                } else {
-                    return vm.$router.push({ name: "home" });
-                }
-            }
+            return permissionGuard(vm, "Tasks Report", "all Calender");
         });
     },
     beforeMount() {
@@ -66,6 +50,11 @@ export default {
     },
     mounted() {
         this.$store.dispatch('locationIp/getIp');
+        this.getCustomTableFields();
+        this.getLocation();
+        if (this.isVisible("department_id"))  this.getDepartment();
+        if (this.isVisible("status_id"))  this.getStatus();
+        if (this.isVisible("priority_id"))  this.getPriority();
     },
     data() {
         return {
@@ -90,6 +79,11 @@ export default {
                 contact_phone:'',
                 task_title:'',
                 department_task_id:null,
+                actual_execution_date:this.formatDate(new Date()),
+                actual_start_time:'',
+                actual_end_time:'',
+                actual_execution_duration:'0 Day 0 Minutes',
+                actual_execution_end_date:this.formatDate(new Date()),
                 owners:[],
                 supervisors:[],
                 notifications:[],
@@ -102,7 +96,7 @@ export default {
                 execution_end_date:this.formatDate(new Date()),
                 note:'',
                 media: [],
-                type: 'general',
+                type: 'equipment',
                 equipment_id: null,
                 location_id: null,
                 priority_id: null,
@@ -110,34 +104,7 @@ export default {
                 is_closed: 0,
                 task_requirement: ''
             },
-            edit: {
-                employee_id: null,
-                department_id: null,
-                customer_id:null,
-                contact_person: '',
-                contact_phone:'',
-                task_title:'',
-                department_task_id:null,
-                owners:[],
-                supervisors:[],
-                notifications:[],
-                status_id:null,
-                execution_date:this.formatDate(new Date()),
-                start_time:'',
-                end_time:'',
-                execution_duration:'0 Day 0 Minutes',
-                notification_date:this.formatDate(new Date()),
-                execution_end_date:this.formatDate(new Date()),
-                note:'',
-                old_media: [],
-                type: '',
-                equipment_id: null,
-                location_id: null,
-                priority_id: null,
-                admin_note: '',
-                is_closed: 0,
-                task_requirement: ''
-            },
+
             calendarEvents: [],
             calendarOptions: {
                 headerToolbar: {
@@ -159,8 +126,10 @@ export default {
                 editable: true,
                 droppable: true,
                 eventResizableFromStart: true,
-                dateClick: this.isPermission('create Task') ? this.dateClicked : false,
-                eventClick: this.isPermission('update Task') ? this.editEvent : false,
+                dateClick: false,
+                // dateClick: this.isPermission('create Task') ? this.dateClicked : false,
+                eventClick: false,
+                // eventClick: this.isPermission('update Task') ? this.editEvent : false,
                 eventsSet: this.handleEvents,
                 weekends: true,
                 selectable: true,
@@ -198,7 +167,6 @@ export default {
                 }
             },
             showModal: false,
-            eventModal: false,
             submitted: false,
             submit: false,
             newEventData: {},
@@ -217,7 +185,10 @@ export default {
             isVaildPhone: false,
             errors: {},
             employees: [],
+            fields: [],
             employeeDepartments: [],
+            all_locations: [],
+            all_departments: [],
             departments: [],
             departmentTasks: [],
             statuses: [],
@@ -276,52 +247,60 @@ export default {
             task_requirement: {requiredIf: requiredIf(function (model) {
                     return this.create.type == "general";
                 })},
-            is_closed: {required},
-            priority_id: {required}
-        },
-        edit: {
-            employee_id: {required},
-            department_id: {required},
-            task_title: {required},
-            department_task_id: {required},
-            owners: {required},
-            supervisors: {required},
-            notifications: {required},
-            status_id: {required},
-            execution_date: {required},
-            start_time:{},
-            end_time:{},
-            execution_duration: {required},
-            notification_date: {required},
-            execution_end_date: {required},
-            note: {},
-            admin_note: {},
-            media: {},
-            type: {required},
-            customer_id: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "customer";
+                actual_execution_date: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_date");
                 })},
-            contact_person: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "customer";
+            actual_start_time:{required: requiredIf(function (model) {
+                    return this.isRequired("actual_start_time");
                 })},
-            contact_phone: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "customer";
+            actual_end_time:{required: requiredIf(function (model) {
+                    return this.isRequired("actual_end_time");
                 })},
-            equipment_id: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "equipment";
+            actual_execution_duration: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_duration");
                 })},
-            location_id: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "equipment";
-                })},
-            task_requirement: {requiredIf: requiredIf(function (model) {
-                    return this.edit.type == "general";
+            actual_execution_end_date: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_end_date");
                 })},
             is_closed: {required},
             priority_id: {required}
         },
+
         titleFile: {required, minLength: minLength(2), maxLength: maxLength(100),}
     },
     methods: {
+        async getCustomTableFields() {
+            this.isCustom = true;
+            await adminApi
+                .get(`/customTable/table-columns/general_tasks`)
+                .then((res) => {
+                    this.fields = res.data;
+                })
+                .catch((err) => {
+                    this.errorFun("Error", "Thereisanerrorinthesystem");
+                })
+                .finally(() => {
+                    this.isCustom = false;
+                });
+        },
+        isRequired(fieldName) {
+            if (this.fields.length > 0) {
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_required == 1 ? true : false;
+            }
+            return true;
+        },
+        isVisible(fieldName) {
+            if (this.fields.length > 0) {
+                let res = this.fields.filter((field) => {
+                    return field.column_name == fieldName;
+                });
+                return res.length > 0 && res[0].is_visible == 1 ? true : false;
+            }
+            return true;
+        },
         isPermission(item) {
             if (this.$store.state.auth.type == 'user'){
                 return this.$store.state.auth.permissions.includes(item)
@@ -372,10 +351,12 @@ export default {
 
                 adminApi.post(`/tasks`, {
                     ...this.create,
-                    execution_date: this.create.execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
-                    execution_end_date: this.create.execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
-                    company_id: this.$store.getters["auth/company_id"]
-                }).then((res) => {
+                            execution_date: this.create.execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                            execution_end_date: this.create.execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
+                            actual_execution_date: this.create.actual_execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                            actual_execution_end_date: this.create.actual_execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
+                            company_id: this.$store.getters["auth/company_id"]
+                        }).then((res) => {
                         this.is_disabled = true;
                         this.task_id = res.data.data.id;
                         this.getData();
@@ -409,25 +390,27 @@ export default {
          */
         // eslint-disable-next-line no-unused-vars
         editSubmit() {
-            this.edit.company_id = JSON.parse(localStorage.getItem("company_id"));
-            this.$v.edit.$touch();
+            this.create.company_id = JSON.parse(localStorage.getItem("company_id"));
+            this.$v.create.$touch();
             this.images.forEach((e) => {
-                this.edit.old_media.push(e.id);
+                this.create.old_media.push(e.id);
             });
 
-            if (this.$v.edit.$invalid) {
+            if (this.$v.create.$invalid) {
                 return;
             } else {
                 this.isLoader = true;
                 this.errors = {};
                 adminApi.put(`/tasks/${this.task_id}`, {
-                    ...this.edit,
-                    execution_date: this.edit.execution_date.slice(0,10) +  (this.edit.start_time ? ` ${this.edit.start_time}` : ' 00:00:00'),
-                    execution_end_date: this.edit.execution_end_date.slice(0,10)  +  (this.edit.end_time ? ` ${this.edit.end_time}`  : ' 00:00:00')
+                    ...this.create,
+                    execution_date: this.create.execution_date.slice(0,10) +  (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                    execution_end_date: this.create.execution_end_date.slice(0,10)  +  (this.create.end_time ? ` ${this.create.end_time}`  : ' 00:00:00'),
+                    actual_execution_date: this.create.actual_execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                    actual_execution_end_date: this.create.actual_execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
                 })
                     .then((res) => {
                         this.getData();
-                        this.eventModal = false;
+                        this.showModal = false;
                         setTimeout(() => {
                             Swal.fire({
                                 icon: 'success',
@@ -473,10 +456,15 @@ export default {
                 start_time: `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`,
                 end_time: `${time.getHours() + 2}:${time.getMinutes()}:${time.getSeconds()}`,
                 execution_duration: '0 Day 0 Minutes',
+                actual_execution_date:this.formatDate(new Date()),
+                actual_start_time:'',
+                actual_end_time:'',
+                actual_execution_duration:'0 Day 0 Minutes',
+                actual_execution_end_date:this.formatDate(new Date()),
                 notification_date: this.formatDate(this.newEventData.date),
                 execution_end_date: this.formatDate(this.newEventData.date),
                 note:'',
-                type: 'general',
+                type: 'equipment',
                 equipment_id: null,
                 location_id: null,
                 priority_id: null,
@@ -514,7 +502,7 @@ export default {
                 execution_end_date: this.formatDate(new Date()),
                 note: '',
                 media: null,
-                type: 'general',
+                type: 'equipment',
                 equipment_id: null,
                 location_id: null,
                 priority_id: null,
@@ -539,7 +527,6 @@ export default {
             this.dataCreate();
             await this.getEmployees();
             await this.getEmployeeDepartments();
-            await this.getDepartment();
             await this.getPriority();
             this.calcDurationCreate();
             this.showPhoto = "../../../../../images/img-1.png";
@@ -552,65 +539,58 @@ export default {
          * Modal open for edit event
          */
         async editEvent(info) {
-            this.eventModal = true;
+            this.showModal = true;
             this.task_id =  info.event.id;
             let calendar = this.calendarOptions.events.find((el) => el.id ==  this.task_id)
             await this.getEmployees();
             await this.getEmployeeDepartments();
-            await this.getDepartment();
 
-            let owners = [];
-            calendar.owners.forEach((el) => {
-                owners.push(el.id);
-            });
-            let supervisors = [];
-            calendar.supervisors.forEach((el) => {
-                supervisors.push(el.id);
-            });
-            let notifications = [];
-            calendar.notifications.forEach((el) => {
-                notifications.push(el.id);
-            });
+
             this.department_id = calendar.department_id;
             this.task_id = calendar.id;
             await this.getDepartmentTask();
-            this.edit.employee_id = calendar.employee_id;
-            this.edit.department_id = calendar.department_id;
-            this.edit.task_title = calendar.task_title;
-            this.edit.department_task_id = calendar.department_task_id;
-            this.edit.owners = owners;
-            this.edit.supervisors = supervisors;
-            this.edit.notifications = notifications;
-            this.edit.status_id = calendar.status_id;
-            this.edit.execution_date = calendar.execution_date;
-            this.edit.start_time = calendar.start_time;
-            this.edit.end_time = calendar.end_time;
-            this.edit.execution_duration = calendar.execution_duration;
-            this.edit.notification_date = calendar.notification_date;
-            this.edit.execution_end_date = calendar.execution_end_date;
-            this.edit.admin_note = calendar.admin_note;
-            this.edit.is_closed = calendar.is_closed ;
-            this.edit.note = calendar.note;
-            if( this.edit.type == 'customer'){
+            this.create.employee_id = calendar.employee_id;
+            this.create.department_id = calendar.department_id;
+            this.create.task_title = calendar.task_title;
+            this.create.department_task_id = calendar.department_task_id;
+            this.create.owners = calendar.owners;
+            this.create.supervisors = calendar.supervisors;
+            this.create.notifications = calendar.notifications;
+            this.create.status_id = calendar.status_id;
+            this.create.execution_date = calendar.execution_date;
+            this.create.start_time = calendar.start_time;
+            this.create.end_time = calendar.end_time;
+            this.create.execution_duration = calendar.execution_duration;
+            this.create.notification_date = calendar.notification_date;
+            this.create.execution_end_date = calendar.execution_end_date;
+            this.create.admin_note = calendar.admin_note;
+            this.create.is_closed = calendar.is_closed ;
+
+            this.create.actual_execution_date = calendar.actual_execution_date;
+            this.create.actual_start_time = calendar.actual_start_time;
+            this.create.actual_end_time = calendar.actual_end_time;
+            this.create.actual_execution_duration = calendar.actual_execution_duration;
+            this.create.actual_execution_end_date = calendar.actual_execution_end_date;
+            this.create.note = calendar.note;
+            if( this.create.type == 'customer'){
                 await this.getCustomers();
-                this.edit.customer_id = calendar.customer_id;
-                this.edit.contact_person = calendar.contact_person;
-                this.edit.contact_phone = calendar.contact_phone;
-            }else if (this.edit.type == 'equipment') {
-                await this.getLocation();
-                this.edit.location_id = calendar.location_id;
+                this.create.customer_id = calendar.customer_id;
+                this.create.contact_person = calendar.contact_person;
+                this.create.contact_phone = calendar.contact_phone;
+            }else if (this.create.type == 'equipment') {
+                this.create.location_id = calendar.location_id;
                 await this.getEquipment(calendar.location_id);
                 this.equipment_id = calendar.equipment.parent_id;
                 await this.getEquipmentChild(this.equipment_id);
-                this.edit.equipment_id = calendar.equipment.id;
+                this.create.equipment_id = calendar.equipment.id;
             }else{
-                this.edit.task_requirement = calendar.task_requirement;
+                this.create.task_requirement = calendar.task_requirement;
             }
 
             await this.getStatus();
-            this.edit.status_id = calendar.status_id;
+            this.create.status_id = calendar.status_id;
             await this.getPriority();
-            this.edit.priority_id = calendar.priority_id;
+            this.create.priority_id = calendar.priority_id;
 
             this.images = calendar.media ?? [];
             if (this.images && this.images.length > 0) {
@@ -700,7 +680,6 @@ export default {
         async resetModalSearch() {
             await this.getCustomers();
             await this.getEmployees();
-            await this.getDepartment();
             await this.getStatus();
             this.is_disabled = false;
             this.$nextTick(() => {
@@ -735,9 +714,9 @@ export default {
             }
         },
         showStatusModalEdit() {
-            if (this.edit.status_id == 0) {
+            if (this.create.status_id == 0) {
                 this.$bvModal.show("status-create");
-                this.edit.status_id = null;
+                this.create.status_id = null;
             }
         },
 
@@ -789,16 +768,16 @@ export default {
             }
         },
         async showEmployeeModalEdit() {
-            if (this.edit.employee_id == 0) {
+            if (this.create.employee_id == 0) {
                 this.$bvModal.show("employee-create");
-                this.edit.employee_id = null;
+                this.create.employee_id = null;
             } else {
-                let customer = this.customerDepartment(this.edit.employee_id);
+                let customer = this.customerDepartment(this.create.employee_id);
                 if (customer) {
-                    this.edit.owners = [];
-                    this.edit.department_id = customer.department_id;
+                    this.create.owners = [];
+                    this.create.department_id = customer.department_id;
                     this.department_id = customer.department_id;
-                    this.edit.owners.push(this.edit.employee_id);
+                    this.create.owners.push(this.create.employee_id);
                     await this.getDepartmentTask();
                 }
             }
@@ -809,25 +788,122 @@ export default {
             }
         },
         // start department
-        async getDepartment() {
+        getDepartment() {
             this.isLoader = true;
-            await adminApi
-                .get(`/depertments?employees=1`)
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
+            adminApi
+                .get(`/depertments?task_employee_id=${emp_id}`)
                 .then((res) => {
                     let l = res.data.data;
-                    l.unshift({ id: 0, name: "اضف قسم", name_e: "Add Department" });
+
                     this.departments = l;
+                    this.all_departments = l;
+
+                    let locations= this.get_default_locations(l)
+
+                    this.locations = locations
+
+                    if(locations.length == 1){
+                        this.create.location_id = locations[0].id
+                        this.getEquipment(this.create.location_id)
+                    }
+                    if(l.length == 1)
+                        this.create.department_id = l[0].id
+
+                    if(this.create.location_id && this.create.department_id)
+                        this.setSupervisorsAndAttentions(l[0])
+
                 })
                 .catch((err) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-                    });
+                    this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
                     this.isLoader = false;
                 });
+        },
+        get_default_locations(departments){
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
+            let locations = []
+            departments.forEach((department) => {
+                department.locations.forEach((ele) => {
+                    this.all_locations.forEach((location) => {
+                        if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))))
+                            locations.push(location)
+                    })
+
+                })
+            })
+
+            return locations
+        },
+        showDepartmentModal() {
+            if(!this.create.location_id && !this.create.department_id){
+                this.departments = this.all_departments
+                this.locations= this.get_default_locations(this.all_departments)
+            }
+            let department = this.departments.find((el) => el.id ==  this.create.department_id)
+            if(department){
+                if(!this.create.location_id || !department.locations.find((el) => el.location_id ==  this.create.location_id)){
+                    this.locations = []
+                    this.create.location_id = null
+                    this.create.supervisors = []
+                    this.create.notifications = []
+                }else{
+                    this.setSupervisorsAndAttentions()
+                }
+
+                this.department_id = this.create.department_id;
+                this.setLocation()
+                this.getDepartmentTask();
+            }else{
+                this.create.supervisors = []
+                this.create.notifications = []
+            }
+        },
+        setSupervisorsAndAttentions(department){
+            department.locations.forEach((ele) => {
+                if(ele.location_id == this.create.location_id){
+                    setTimeout(() => {
+                        this.create.supervisors = ele.supervisors
+                        this.create.notifications = ele.attentions
+                    },1000)
+
+                }
+            })
+        },
+        setLocation(){
+            let department = this.departments.find((el) => el.id ==  this.create.department_id)
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
+
+            let locations= []
+                department.locations.forEach((ele) => {
+                    this.all_locations.forEach((location) => {
+                        if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))))
+                            locations.push(location)
+                    })
+                })
+                this.locations = locations
+                if(locations.length == 1){
+                    this.create.location_id = locations[0].id
+                    this.getEquipment(this.create.location_id)
+                    this.setSupervisorsAndAttentions(department)
+                }
+        },
+        setDepartment(){
+            let departments =[]
+            this.all_departments.forEach((department) =>{
+                department.locations.forEach((ele) => {
+                    if(ele.location_id == this.create.location_id)
+                        departments.push(department)
+
+                })
+            })
+            this.departments = departments
+            if(departments.length == 1){
+                this.create.department_id = departments[0].id
+                this.setSupervisorsAndAttentions(departments[0])
+            }
+
         },
         async showDepartmentModal() {
             if (this.create.department_id == 0) {
@@ -841,13 +917,13 @@ export default {
             }
         },
         async showDepartmentModalEdit() {
-            if (this.edit.department_id == 0) {
+            if (this.create.department_id == 0) {
                 this.$bvModal.show("create_department_task");
-                this.edit.department_id = null;
+                this.create.department_id = null;
             }else {
-                let department = this.departments.find((el) => el.id ==  this.edit.department_id)
-                this.department_id = this.edit.department_id;
-                this.edit.supervisors = department.supervisors ? department.supervisors : [];
+                let department = this.departments.find((el) => el.id ==  this.create.department_id)
+                this.department_id = this.create.department_id;
+                this.create.supervisors = department.supervisors ? department.supervisors : [];
                 await this.getDepartmentTask();
             }
         },
@@ -885,15 +961,15 @@ export default {
             }
         },
         showCustomerModalEdit() {
-            if (this.edit.customer_id == 0) {
+            if (this.create.customer_id == 0) {
                 this.$bvModal.show("customer-general-create");
-                this.edit.customer_id = null;
+                this.create.customer_id = null;
             }else {
-                let customer = this.getCustomerData(this.edit.customer_id)
+                let customer = this.getCustomerData(this.create.customer_id)
                 if (customer)
                 {
-                    this.edit.contact_person = customer.contact_person;
-                    this.edit.contact_phone = customer.contact_phone;
+                    this.create.contact_person = customer.contact_person;
+                    this.create.contact_phone = customer.contact_phone;
                 }
             }
         },
@@ -973,7 +1049,7 @@ export default {
                 .get(`/locations`)
                 .then((res) => {
                     let l = res.data.data;
-                    this.locations = l;
+                    this.all_locations = l;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -986,20 +1062,20 @@ export default {
                     this.isLoader = false;
                 });
         },
-        async showLocationModal() {
-            if (this.create.location_id == 0) {
-                this.$bvModal.show("location-create");
-                this.create.location_id = null;
-            }else {
-                await this.getEquipment(this.create.location_id);
+        async  showLocationModal() {
+            if(!this.create.location_id && !this.create.department_id){
+                this.departments = this.all_departments
+                this.locations= this.get_default_locations(this.all_departments)
             }
-        },
-        async showLocationModalEdit() {
-            if (this.edit.location_id == 0) {
-                this.$bvModal.show("location-create");
-                this.edit.location_id = null;
-            }else {
-                await this.getEquipment(this.edit.location_id);
+            this.create.supervisors = []
+            this.create.notifications = []
+            if(this.create.location_id){
+                this.setDepartment()
+                this.getEquipment(this.create.location_id);
+                if(this.create.department_id){
+                    let department = this.departments.find((el) => el.id ==  this.create.department_id)
+                    this.setSupervisorsAndAttentions(department)
+                }
             }
         },
 
@@ -1029,9 +1105,9 @@ export default {
             }
         },
         showDepartmentTaskModalEdit() {
-            if (this.edit.department_task_id == 0) {
+            if (this.create.department_task_id == 0) {
                 this.$bvModal.show("create-task");
-                this.edit.department_task_id = null;
+                this.create.department_task_id = null;
             }
         },
         // chech employee id create
@@ -1072,33 +1148,33 @@ export default {
         checkIncloudsIdOwnersEdit(e) {
             let employee_id = e[e.length - 1];
             if (employee_id) {
-                if (this.edit.supervisors.includes(employee_id)) {
-                    this.edit.supervisors.splice(this.edit.supervisors.indexOf(employee_id), 1)
+                if (this.create.supervisors.includes(employee_id)) {
+                    this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1)
                 }
-                if (this.edit.notifications.includes(employee_id)) {
-                    this.edit.notifications.splice(this.edit.notifications.indexOf(employee_id), 1)
+                if (this.create.notifications.includes(employee_id)) {
+                    this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1)
                 }
             }
         },
         checkIncloudsIdSupervisorsEdit(e) {
             let employee_id = e[e.length - 1];
             if (employee_id) {
-                if (this.edit.owners.includes(employee_id)) {
-                    this.edit.owners.splice(this.edit.owners.indexOf(employee_id), 1)
+                if (this.create.owners.includes(employee_id)) {
+                    this.create.owners.splice(this.create.owners.indexOf(employee_id), 1)
                 }
-                if (this.edit.notifications.includes(employee_id)) {
-                    this.edit.notifications.splice(this.edit.notifications.indexOf(employee_id), 1)
+                if (this.create.notifications.includes(employee_id)) {
+                    this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1)
                 }
             }
         },
         checkIncloudsIdNotificationsEdit(e) {
             let employee_id = e[e.length - 1];
             if (employee_id) {
-                if (this.edit.owners.includes(employee_id)) {
-                    this.edit.owners.splice(this.edit.owners.indexOf(employee_id), 1)
+                if (this.create.owners.includes(employee_id)) {
+                    this.create.owners.splice(this.create.owners.indexOf(employee_id), 1)
                 }
-                if (this.edit.supervisors.includes(employee_id)) {
-                    this.edit.supervisors.splice(this.edit.supervisors.indexOf(employee_id), 1)
+                if (this.create.supervisors.includes(employee_id)) {
+                    this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1)
                 }
             }
         },
@@ -1129,8 +1205,8 @@ export default {
         calcDurationEdit() {
             let TotalDays = 0;
             let TotalTime = '0 Minutes';
-            let execution_date = new Date(this.edit.execution_date).getTime();
-            let execution_end_date = new Date(this.edit.execution_end_date).getTime();
+            let execution_date = new Date(this.create.execution_date).getTime();
+            let execution_end_date = new Date(this.create.execution_end_date).getTime();
             if (execution_date < execution_end_date) {
                 let difference = execution_end_date - execution_date;
                 TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
@@ -1139,15 +1215,15 @@ export default {
             // --------- calc Time --------------
             var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
 
-            let startTime = new Date(today + " " + this.edit.start_time);
-            let endTime = new Date(today + " " + this.edit.end_time);
+            let startTime = new Date(today + " " + this.create.start_time);
+            let endTime = new Date(today + " " + this.create.end_time);
             if (endTime > startTime) {
                 var difference = endTime.getTime() - startTime.getTime();
 
                 TotalTime = Math.round(difference / 60000) + " Minutes";
             }
 
-            this.edit.execution_duration = `${TotalDays} Days, ${TotalTime}`
+            this.create.execution_duration = `${TotalDays} Days, ${TotalTime}`
 
         },
         uploadPhotoTitle() {
@@ -1316,43 +1392,24 @@ export default {
         formatDate(value) {
             return formatDateOnly(value);
         },
-        async showTypeModal(model = 'edit'){
-            if(model == 'create'){
+        async  showTypeModal(){
                 if(this.create.type == "equipment") {
                     this.create.equipment_id = null;
                     this.create.location_id = null;
+                    this.create.supervisors = []
+                    this.create.notifications = []
                     this.create.priority_id = null;
                     this.equipments = [];
                     this.equipment_childs = [];
-                    if(!(this.locations.length > 0)) await this.getLocation();
                 }else if(this.create.type == "customer") {
                     this.create.customer_id = null;
                     this.create.priority_id = null;
                     this.create.contact_person = '';
                     this.create.contact_phone = '';
-                    if(this.customers.length == 0) await this.getCustomers();
+                    if(this.customers.length == 0)  this.getCustomers();
                 }else {
                     this.create.task_requirement = '';
                 }
-            }else {
-                if(this.edit.type == "equipment") {
-                    this.edit.equipment_id = null;
-                    this.edit.location_id = null;
-                    this.edit.priority_id = null;
-                    this.equipment_id = null;
-                    this.equipments = [];
-                    this.equipment_childs = [];
-                    if(!(this.locations.length > 0)) await this.getLocation();
-                }else if(this.edit.type == "customer") {
-                    this.edit.customer_id = null;
-                    this.edit.priority_id = null;
-                    this.edit.contact_person = '';
-                    this.edit.contact_phone = '';
-                    if(this.customers.length == 0) await this.getCustomers();
-                }else {
-                    this.edit.task_requirement = '';
-                }
-            }
         },
         async getPriority() {
             this.isLoader = true;
@@ -1537,651 +1594,828 @@ export default {
                                     </b-button>
                                 </div>
                         <b-tabs nav-class="nav-tabs nav-bordered">
-                                <b-tab :title="$t('general.DataEntry')" active>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('boardRent_task_type') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    @input="showTypeModal('create')"
-                                                    v-model="create.type"
-                                                    :options="types.map((type) => type)"
-                                                    :class="{'is-invalid': $v.create.type.$error || errors.type,'is-valid': !$v.create.type.$invalid && !errors.type,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.type.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                            <b-tab :title="$t('general.DataEntry')" active>
+                        <div class="row">
+                            <div v-if="isVisible('type')" class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        {{ getCompanyKey('boardRent_task_type') }}
+                                        <span v-if="isRequired('type')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showTypeModal('create')"
+                                        v-model="create.type"
+                                        :options="types.map((type) => type)"
+                                        :class="{'is-invalid': $v.create.type.$error || errors.type,'is-valid': !$v.create.type.$invalid && !errors.type,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.type.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.type">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.type"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('employee') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    @input="showEmployeeModal"
-                                                    v-model="create.employee_id"
-                                                    :options="employeeDepartments.map((type) => type.id)"
-                                                    :custom-label=" (opt) => $i18n.locale == 'ar' ? employeeDepartments.find((x) => x.id == opt).name : employeeDepartments.find((x) => x.id == opt).name_e "
-                                                    :class="{'is-invalid': $v.create.employee_id.$error || errors.employee_id,'is-valid': !$v.create.employee_id.$invalid && !errors.employee_id,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.employee_id.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                                    <template v-if="errors.type">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.type"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('employee_id')" class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        {{ getCompanyKey('employee') }}
+                                        <span v-if="isRequired('employee_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showEmployeeModal"
+                                        v-model="create.employee_id"
+                                        :options="employeeDepartments.map((type) => type.id)"
+                                        :custom-label=" (opt) => employeeDepartments.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? employeeDepartments.find((x) => x.id == opt).name : employeeDepartments.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.employee_id.$error || errors.employee_id,'is-valid': !$v.create.employee_id.$invalid && !errors.employee_id,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.employee_id.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.employee_id">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.employee_id"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("boardRent_task_department") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    @input="showDepartmentModal" v-model="create.department_id"
-                                                    :options="departments.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? departments.find((x) => x.id == opt).name : departments.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.department_id.$error || errors.department_id,'is-valid': !$v.create.department_id.$invalid && !errors.department_id,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="$v.create.department_id.$error || errors.department_id" class="text-danger">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
-                                                <template v-if="errors.department_id">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.department_id" :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
-                                        </div>
-                                        <div v-if="create.type == 'customer'" class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label
-                                                    class="control-label">{{ getCompanyKey("customer") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    @input="showCustomerModal"
-                                                    :internalSearch="false"
-                                                    @search-change="searchCustomer"
-                                                    v-model="$v.create.customer_id.$model"
-                                                    :options="customers.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ?customers.find((x) => x.id == opt).name:customers.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.customer_id.$error || errors.customer_id,'is-valid': !$v.create.customer_id.$invalid && !errors.customer_id,}"
-                                                >
-                                                </multiselect>
+                                    <template v-if="errors.employee_id">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.employee_id"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('department_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("boardRent_task_department") }}
+                                        <span v-if="isRequired('department_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showDepartmentModal" v-model="create.department_id"
+                                        :options="departments.map((type) => type.id)"
+                                        :custom-label=" (opt) => departments.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? departments.find((x) => x.id == opt).name : departments.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.department_id.$error || errors.department_id,'is-valid': !$v.create.department_id.$invalid && !errors.department_id,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="$v.create.department_id.$error || errors.department_id" class="text-danger">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
+                                    <template v-if="errors.department_id">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.department_id" :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div  v-if="create.type == 'customer' && isVisible('customer_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label
+                                        class="control-label">{{ getCompanyKey("customer") }}
+                                        <span v-if="isRequired('customer_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showCustomerModal"
+                                        :internalSearch="false"
+                                        @search-change="searchCustomer"
+                                        v-model="$v.create.customer_id.$model"
+                                        :options="customers.map((type) => type.id)"
+                                        :custom-label=" (opt) => customers.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? customers.find((x) => x.id == opt).name : customers.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.customer_id.$error || errors.customer_id,'is-valid': !$v.create.customer_id.$invalid && !errors.customer_id,}"
+                                    >
+                                    </multiselect>
 
-                                                <template v-if="errors.customer_id">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.customer_id"
-                                                        :key="index"
-                                                    >{{ errorMessage }}
-                                                    </ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'customer'" class="col-md-4">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey('general_customer_contact_person') }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="9"
-                                                    v-model="$v.create.contact_person.$model"
-                                                    :class="{
-                                                                'is-invalid':$v.create.contact_person.$error || errors.contact_person,
-                                                                'is-valid':!$v.create.contact_person.$invalid && !errors.contact_person
-                                                            }"
-                                                />
-                                                <template v-if="errors.contact_person">
-                                                    <ErrorMessage v-for="(errorMessage,index) in errors.contact_person" :key="index">{{ errorMessage }}</ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'customer'" class="col-md-4">
-                                            <div class="form-group">
-                                                <label  class="control-label">
-                                                    {{ getCompanyKey('general_customer_contact_phones') }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="9"
-                                                    v-model="$v.create.contact_phone.$model"
-                                                    :class="{
-                                                                'is-invalid':$v.create.contact_phone.$error || errors.contact_phone,
-                                                                'is-valid':!$v.create.contact_phone.$invalid && !errors.contact_phone
-                                                            }"
-                                                />
-                                                <template v-if="errors.contact_phone">
-                                                    <ErrorMessage v-for="(errorMessage,index) in errors.contact_phone" :key="index">{{ errorMessage }}</ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'equipment'" class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label
-                                                    class="control-label">{{ getCompanyKey("boardRent_task_location") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    @input="showLocationModal"
-                                                    v-model="$v.create.location_id.$model"
-                                                    :options="locations.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ?locations.find((x) => x.id == opt).name:locations.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.location_id.$error || errors.location_id,'is-valid': !$v.create.location_id.$invalid && !errors.location_id,}"
-                                                >
-                                                </multiselect>
+                                    <template v-if="errors.customer_id">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.customer_id"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="create.type == 'customer' && isVisible('contact_person')" class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey('general_customer_contact_person') }}
+                                        <span v-if="isRequired('contact_person')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.contact_person.$model"
+                                        :class="{
+                                            'is-invalid':$v.create.contact_person.$error || errors.contact_person,
+                                            'is-valid':!$v.create.contact_person.$invalid && !errors.contact_person
+                                        }"
+                                    />
+                                    <template v-if="errors.contact_person">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.contact_person" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="create.type == 'customer' && isVisible('contact_phone')" class="col-md-4">
+                                <div class="form-group">
+                                    <label  class="control-label">
+                                        {{ getCompanyKey('general_customer_contact_phones') }}
+                                        <span v-if="isRequired('contact_phone')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.contact_phone.$model"
+                                        :class="{
+                                            'is-invalid':$v.create.contact_phone.$error || errors.contact_phone,
+                                            'is-valid':!$v.create.contact_phone.$invalid && !errors.contact_phone
+                                        }"
+                                    />
+                                    <template v-if="errors.contact_phone">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.contact_phone" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="create.type == 'equipment' && isVisible('location_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label
+                                        class="control-label">{{ getCompanyKey("boardRent_task_location") }}
+                                        <span v-if="isRequired('location_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showLocationModal"
+                                        v-model="$v.create.location_id.$model"
+                                        :options="locations.map((type) => type.id)"
+                                        :custom-label=" (opt) => locations.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? locations.find((x) => x.id == opt).name : locations.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.location_id.$error || errors.location_id,'is-valid': !$v.create.location_id.$invalid && !errors.location_id,}"
+                                    >
+                                    </multiselect>
 
-                                                <template v-if="errors.location_id">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.location_id"
-                                                        :key="index"
-                                                    >{{ errorMessage }}
-                                                    </ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'equipment'" class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label
-                                                    class="control-label">{{ getCompanyKey("equipment") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    @input="showEquipmentModal"
-                                                    v-model="equipment_id"
-                                                    :options="equipments.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ?equipments.find((x) => x.id == opt).name:equipments.find((x) => x.id == opt).name_e"
-                                                >
-                                                </multiselect>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'equipment'" class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label
-                                                    class="control-label">{{ getCompanyKey("boardRent_task_equipment") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    v-model="$v.create.equipment_id.$model"
-                                                    :options="equipment_childs.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ?equipment_childs.find((x) => x.id == opt).name:equipment_childs.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.equipment_id.$error || errors.equipment_id,'is-valid': !$v.create.equipment_id.$invalid && !errors.equipment_id,}"
-                                                >
-                                                </multiselect>
+                                    <template v-if="errors.location_id">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.location_id"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                 <!--           <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label
+                                        class="control-label">{{ getCompanyKey("equipment") }}
+                                        <span  v-if="isRequired('equipment_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showEquipmentModal"
+                                        v-model="equipment_id"
+                                        :options="equipments.map((type) => type.id)"
+                                        :custom-label=" (opt) => equipments.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? equipments.find((x) => x.id == opt).name : equipments.find((x) => x.id == opt).name_e
+                                            : null
+                                        "                                      >
+                                    </multiselect>
+                                </div>
+                            </div>-->
+                            <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label
+                                        class="control-label">{{ getCompanyKey("boardRent_task_equipment") }}
+                                        <span v-if="isRequired('equipment_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        v-model="$v.create.equipment_id.$model"
+                                        :options="equipments.map((type) => type.id)"
+                                        :custom-label=" (opt) => equipments.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? equipments.find((x) => x.id == opt).name : equipments.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.equipment_id.$error || errors.equipment_id,'is-valid': !$v.create.equipment_id.$invalid && !errors.equipment_id,}"
+                                    >
+                                    </multiselect>
 
-                                                <template v-if="errors.equipment_id">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.equipment_id"
-                                                        :key="index"
-                                                    >{{ errorMessage }}
-                                                    </ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div v-if="create.type == 'general'" class="col-md-6">
-                                            <div class="form-group position-relative">
-                                                <label
-                                                    class="control-label">{{ getCompanyKey("boardRent_task_task_requirement") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    v-model="$v.create.task_requirement.$model"
-                                                    :class="{
-                                                                'is-invalid':$v.create.task_requirement.$error || errors.task_requirement,
-                                                                'is-valid':!$v.create.task_requirement.$invalid && !errors.task_requirement
-                                                            }"
-                                                />
-                                                <template v-if="errors.task_requirement">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.task_requirement"
-                                                        :key="index"
-                                                    >{{ errorMessage }}
-                                                    </ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label  class="control-label">
-                                                    {{ getCompanyKey('task_title') }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="9"
-                                                    v-model="$v.create.task_title.$model"
-                                                    :class="{
-                                                                'is-invalid':$v.create.task_title.$error || errors.task_title,
-                                                                'is-valid':!$v.create.task_title.$invalid && !errors.task_title
-                                                            }"
-                                                />
-                                                <template v-if="errors.task_title">
-                                                    <ErrorMessage v-for="(errorMessage,index) in errors.task_title" :key="index">{{ errorMessage }}</ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group position-relative">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("task_type") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    @input="showDepartmentTaskModal" v-model="create.department_task_id"
-                                                    :options="departmentTasks.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? departmentTasks.find((x) => x.id == opt).name : departmentTasks.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.department_task_id.$error || errors.department_task_id,'is-valid': !$v.create.department_task_id.$invalid && !errors.department_task_id,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="$v.create.department_task_id.$error || errors.department_task_id" class="text-danger">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
-                                                <template v-if="errors.department_task_id">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.department_task_id" :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('task_status') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    @input="showStatusModal"
-                                                    v-model="create.status_id"
-                                                    :options="statuses.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar'? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.status_id.$error || errors.status_id,'is-valid': !$v.create.status_id.$invalid && !errors.status_id,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.status_id.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                                    <template v-if="errors.equipment_id">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.equipment_id"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="create.type == 'general' && isVisible('task_requirement')" class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label
+                                        class="control-label">{{ getCompanyKey("boardRent_task_task_requirement") }}
+                                        <span v-if="isRequired('task_requirement')"  class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        v-model="$v.create.task_requirement.$model"
+                                        :class="{
+                                            'is-invalid':$v.create.task_requirement.$error || errors.task_requirement,
+                                            'is-valid':!$v.create.task_requirement.$invalid && !errors.task_requirement
+                                        }"
+                                    />
+                                    <template v-if="errors.task_requirement">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.task_requirement"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div v-if="isVisible('task_title')" class="col-md-4">
+                                <div class="form-group">
+                                    <label  class="control-label">
+                                        {{ getCompanyKey('task_title') }}
+                                        <span v-if="isRequired('task_title')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.task_title.$model"
+                                        :class="{
+                                            'is-invalid':$v.create.task_title.$error || errors.task_title,
+                                            'is-valid':!$v.create.task_title.$invalid && !errors.task_title
+                                        }"
+                                    />
+                                    <template v-if="errors.task_title">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.task_title" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('department_task_id')" class="col-md-4">
+                                <div class="form-group position-relative">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("task_type") }}
+                                        <span v-if="isRequired('department_task_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        @input="showDepartmentTaskModal" v-model="create.department_task_id"
+                                        :options="departmentTasks.map((type) => type.id)"
+                                        :custom-label=" (opt) => departmentTasks.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? departmentTasks.find((x) => x.id == opt).name : departmentTasks.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.department_task_id.$error || errors.department_task_id,'is-valid': !$v.create.department_task_id.$invalid && !errors.department_task_id,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="$v.create.department_task_id.$error || errors.department_task_id" class="text-danger">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
+                                    <template v-if="errors.department_task_id">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.department_task_id" :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('status_id')" class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        {{ getCompanyKey('task_status') }}
+                                        <span v-if="isRequired('status_id')" class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        v-model="create.status_id"
+                                        :options="statuses.map((type) => type.id)"
+                                        :custom-label=" (opt) => statuses.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.status_id.$error || errors.status_id,'is-valid': !$v.create.status_id.$invalid && !errors.status_id,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.status_id.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.status_id">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.status_id"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('task_owners') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    :disabled="!(create.type == 'general')"
-                                                    :multiple="true"
-                                                    @input="checkIncloudIdOwners"
-                                                    v-model="create.owners"
-                                                    :options="employees.map((type) => type.id)"
-                                                    :custom-label=" (opt) => $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e "
-                                                    :class="{'is-invalid': $v.create.owners.$error || errors.owners,'is-valid': !$v.create.owners.$invalid && !errors.owners,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.owners.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                                    <template v-if="errors.status_id">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.status_id"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div  class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        {{ getCompanyKey('task_owners') }}
+                                        <span  class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        :disabled="!(create.type == 'general')"
+                                        :multiple="true"
+                                        @input="checkIncloudIdOwners"
+                                        v-model="create.owners"
+                                        :options="employees.map((type) => type.id)"
+                                        :custom-label=" (opt) => employees.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.owners.$error || errors.owners,'is-valid': !$v.create.owners.$invalid && !errors.owners,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.owners.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.owners">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.owners"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('task_supervisors') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    :multiple="true"
-                                                    @input="checkIncloudIdSupervisors"
-                                                    v-model="create.supervisors"
-                                                    :options="employees.map((type) => type.id)"
-                                                    :custom-label=" (opt) => $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e "
-                                                    :class="{'is-invalid': $v.create.supervisors.$error || errors.supervisors,'is-valid': !$v.create.supervisors.$invalid && !errors.supervisors,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.supervisors.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                                    <template v-if="errors.owners">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.owners"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div  class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ getCompanyKey('task_supervisors') }}<span class="text-danger">*</span></label>
+                                    <multiselect
+                                        :multiple="true"
+                                        @input="checkIncloudIdSupervisors"
+                                        v-model="create.supervisors"
+                                        :options="employees.map((type) => type.id)"
+                                        :custom-label=" (opt) => employees.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.supervisors.$error || errors.supervisors,'is-valid': !$v.create.supervisors.$invalid && !errors.supervisors,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.supervisors.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.supervisors">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.supervisors"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ getCompanyKey('task_notifications') }}<span class="text-danger">*</span></label>
-                                                <multiselect
-                                                    :multiple="true"
-                                                    @input="checkIncloudIdNotifications"
-                                                    v-model="create.notifications"
-                                                    :options="employees.map((type) => type.id)"
-                                                    :custom-label=" (opt) => $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e "
-                                                    :class="{'is-invalid': $v.create.notifications.$error || errors.notifications,'is-valid': !$v.create.notifications.$invalid && !errors.notifications,}"
-                                                >
-                                                </multiselect>
-                                                <div v-if="!$v.create.notifications.required" class="invalid-feedback">
-                                                    {{ $t("general.fieldIsRequired") }}
-                                                </div>
+                                    <template v-if="errors.supervisors">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.supervisors"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div  class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{ getCompanyKey('task_notifications') }}<span class="text-danger">*</span></label>
+                                    <multiselect
+                                        :multiple="true"
+                                        @input="checkIncloudIdNotifications"
+                                        v-model="create.notifications"
+                                        :options="employees.map((type) => type.id)"
+                                        :custom-label=" (opt) => employees.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? employees.find((x) => x.id == opt).name : employees.find((x) => x.id == opt).name_e
+                                            : null
+                                        "
+                                        :class="{'is-invalid': $v.create.notifications.$error || errors.notifications,'is-valid': !$v.create.notifications.$invalid && !errors.notifications,}"
+                                    >
+                                    </multiselect>
+                                    <div v-if="!$v.create.notifications.required" class="invalid-feedback">
+                                        {{ $t("general.fieldIsRequired") }}
+                                    </div>
 
-                                                <template v-if="errors.notifications">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.notifications"
-                                                                  :key="index">{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("execution_date") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <date-picker
-                                                    @input="calcDurationCreate"
-                                                    type="date"
-                                                    v-model="$v.create.execution_date.$model"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                    :class="{
-                                                                'is-invalid': $v.create.execution_date.$error || errors.execution_date,
-                                                                'is-valid': !$v.create.execution_date.$invalid && !errors.execution_date,
-                                                            }">
-                                                </date-picker>
-                                                <template v-if="errors.execution_date">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.execution_date" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("task_start_time") }}
-                                                </label>
-                                                <date-picker
-                                                    @input="calcDurationCreate"
-                                                    type="time"
-                                                    v-model="$v.create.start_time.$model"
-                                                    format="HH:mm:ss"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                    :class="{
+                                    <template v-if="errors.notifications">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.notifications"
+                                                      :key="index">{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div v-if="isVisible('execution_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("execution_date") }}
+                                        <span v-if="isRequired('execution_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate"
+                                        type="date"
+                                        v-model="$v.create.execution_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                            'is-invalid': $v.create.execution_date.$error || errors.execution_date,
+                                            'is-valid': !$v.create.execution_date.$invalid && !errors.execution_date,
+                                        }">
+                                    </date-picker>
+                                    <template v-if="errors.execution_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.execution_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('start_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("task_start_time") }}
+                                        <span v-if="isRequired('start_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate"
+                                        type="time"
+                                        v-model="$v.create.start_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
                                                                 'is-invalid': $v.create.start_time.$error || errors.start_time,
                                                                 'is-valid': !$v.create.start_time.$invalid && !errors.start_time,
                                                             }">
-                                                </date-picker>
-                                                <template v-if="errors.start_time">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.start_time" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("execution_end_date") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <date-picker
-                                                    @input="calcDurationCreate"
-                                                    type="date"
-                                                    v-model="$v.create.execution_end_date.$model"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                    :class="{
+                                    </date-picker>
+                                    <template v-if="errors.start_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.start_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('execution_end_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("execution_end_date") }}
+                                        <span v-if="isRequired('execution_end_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate"
+                                        type="date"
+                                        v-model="$v.create.execution_end_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
                                                                 'is-invalid': $v.create.execution_end_date.$error || errors.execution_end_date,
                                                                 'is-valid': !$v.create.execution_end_date.$invalid && !errors.execution_end_date,
                                                             }">
-                                                </date-picker>
-                                                <template v-if="errors.execution_end_date">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.execution_end_date" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("task_end_time") }}
-                                                </label>
-                                                <date-picker
-                                                    @input="calcDurationCreate"
-                                                    type="time"
-                                                    v-model="$v.create.end_time.$model"
-                                                    format="HH:mm:ss"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                    :class="{
+                                    </date-picker>
+                                    <template v-if="errors.execution_end_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.execution_end_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('end_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("task_end_time") }}
+                                        <span v-if="isRequired('end_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate"
+                                        type="time"
+                                        v-model="$v.create.end_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
                                                                 'is-invalid': $v.create.end_time.$error || errors.end_time,
                                                                 'is-valid': !$v.create.end_time.$invalid && !errors.end_time,
                                                             }">
-                                                </date-picker>
-                                                <template v-if="errors.end_time">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.end_time" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label  class="control-label">
-                                                    {{ getCompanyKey('execution_duration') }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    :disabled="true"
-                                                    class="form-control"
-                                                    data-create="9"
-                                                    v-model="$v.create.execution_duration.$model"
-                                                    :class="{
+                                    </date-picker>
+                                    <template v-if="errors.end_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.end_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('execution_duration')" class="col-md-2">
+                                <div class="form-group">
+                                    <label  class="control-label">
+                                        {{ getCompanyKey('execution_duration') }}
+                                        <span v-if="isRequired('execution_duration')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        :disabled="true"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.execution_duration.$model"
+                                        :class="{
                                                                 'is-invalid':$v.create.execution_duration.$error || errors.execution_duration,
                                                                 'is-valid':!$v.create.execution_duration.$invalid && !errors.execution_duration
                                                             }"
-                                                />
-                                                <template v-if="errors.execution_duration">
-                                                    <ErrorMessage v-for="(errorMessage,index) in errors.execution_duration" :key="index">{{ errorMessage }}</ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("notification_date") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <date-picker
-                                                    type="date"
-                                                    v-model="$v.create.notification_date.$model"
-                                                    format="YYYY-MM-DD"
-                                                    valueType="format"
-                                                    :confirm="false"
-                                                    :class="{
+                                    />
+                                    <template v-if="errors.execution_duration">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.execution_duration" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div v-if="isVisible('actual_execution_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("actual_execution_date") }}
+                                        <span v-if="isRequired('actual_execution_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="date"
+                                        v-model="$v.create.actual_execution_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                            'is-invalid': $v.create.actual_execution_date.$error || errors.actual_execution_date,
+                                            'is-valid': !$v.create.actual_execution_date.$invalid && !errors.actual_execution_date,
+                                        }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_execution_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_execution_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_start_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("actual_task_start_time") }}
+                                        <span v-if="isRequired('actual_start_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="time"
+                                        v-model="$v.create.actual_start_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_start_time.$error || errors.actual_start_time,
+                                                                'is-valid': !$v.create.actual_start_time.$invalid && !errors.actual_start_time,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_start_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_start_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_execution_end_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("actual_execution_end_date") }}
+                                        <span v-if="isRequired('actual_execution_end_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="date"
+                                        v-model="$v.create.actual_execution_end_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_execution_end_date.$error || errors.actual_execution_end_date,
+                                                                'is-valid': !$v.create.actual_execution_end_date.$invalid && !errors.actual_execution_end_date,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_execution_end_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_execution_end_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_end_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("actual_task_end_time") }}
+                                        <span v-if="isRequired('actual_end_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="time"
+                                        v-model="$v.create.actual_end_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_end_time.$error || errors.actual_end_time,
+                                                                'is-valid': !$v.create.actual_end_time.$invalid && !errors.actual_end_time,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_end_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_end_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_execution_duration')" class="col-md-2">
+                                <div class="form-group">
+                                    <label  class="control-label">
+                                        {{ getCompanyKey('actual_execution_duration') }}
+                                        <span v-if="isRequired('actual_execution_duration')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        :disabled="true"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.actual_execution_duration.$model"
+                                        :class="{
+                                                                'is-invalid':$v.create.actual_execution_duration.$error || errors.actual_execution_duration,
+                                                                'is-valid':!$v.create.actual_execution_duration.$invalid && !errors.actual_execution_duration
+                                                            }"
+                                    />
+                                    <template v-if="errors.actual_execution_duration">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.actual_execution_duration" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div v-if="isVisible('notification_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("notification_date") }}
+                                        <span v-if="isRequired('notification_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        type="date"
+                                        v-model="$v.create.notification_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
                                                                 'is-invalid': $v.create.notification_date.$error || errors.notification_date,
                                                                 'is-valid': !$v.create.notification_date.$invalid && !errors.notification_date,
                                                             }">
-                                                </date-picker>
-                                                <template v-if="errors.notification_date">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.notification_date" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("task_priority") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <multiselect
-                                                    v-model="$v.create.priority_id.$model"
-                                                    :options="priorities.map((type) => type.id)"
-                                                    :custom-label="(opt) => $i18n.locale == 'ar' ? priorities.find((x) => x.id == opt).name : priorities.find((x) => x.id == opt).name_e"
-                                                    :class="{'is-invalid': $v.create.priority_id.$error || errors.priority_id,'is-valid': !$v.create.priority_id.$invalid && !errors.priority_id,}"
-                                                >
-                                                </multiselect>
-                                                <template v-if="errors.priority_id">
-                                                    <ErrorMessage v-for="(errorMessage, index) in errors.priority_id" :key="index">
-                                                        {{
-                                                            errorMessage
-                                                        }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2" >
-                                            <div class="form-group">
-                                                <label class="my-1 mr-2">
-                                                    {{ getCompanyKey("boardRent_task_is_closed") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <b-form-group>
-                                                    <b-form-radio
-                                                        class="d-inline-block"
-                                                        v-model="$v.create.is_closed.$model"
-                                                        name="some-radios-create"
-                                                        value="1"
-                                                    >{{ $t("general.Yes") }}</b-form-radio
-                                                    >
-                                                    <b-form-radio
-                                                        class="d-inline-block m-1"
-                                                        v-model="$v.create.is_closed.$model"
-                                                        name="some-radios-create"
-                                                        value="0"
-                                                    >{{ $t("general.No") }}</b-form-radio
-                                                    >
-                                                </b-form-group>
-                                                <template v-if="errors.is_closed">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.is_closed"
-                                                        :key="index"
-                                                    >{{ errorMessage }}
-                                                    </ErrorMessage>
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("boardRent_panel_note") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <textarea v-model="$v.create.note.$model" class="form-control" :maxlength="1000" rows="4"></textarea>
-                                                <template v-if="errors.note">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.note"
-                                                        :key="index"
-                                                    >{{ errorMessage }}</ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ getCompanyKey("boardRent_panel_admin_note") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <textarea v-model="$v.create.admin_note.$model" class="form-control" :maxlength="1000" rows="4"></textarea>
-                                                <template v-if="errors.admin_note">
-                                                    <ErrorMessage
-                                                        v-for="(errorMessage, index) in errors.admin_note"
-                                                        :key="index"
-                                                    >{{ errorMessage }}</ErrorMessage
-                                                    >
-                                                </template>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </b-tab>
-                                <b-tab :disabled="!task_id" :title="$t('general.attachment')">
-                                    <div class="row">
-                                        <b-modal
-                                            id="uploadPhotoTitleCreate"
-                                            :title="$t('general.ImageUploads')"
-                                            title-class="font-18"
-                                            body-class="p-4 "
-                                            :hide-footer="true"
-                                            @show="uploadPhotoTitle"
-                                            @hidden="uploadPhotoTitleHidden"
+                                    </date-picker>
+                                    <template v-if="errors.notification_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.notification_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("task_priority") }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <multiselect
+                                        v-model="$v.create.priority_id.$model"
+                                        :options="priorities.map((type) => type.id)"
+                                        :custom-label="(opt) => $i18n.locale == 'ar' ? priorities.find((x) => x.id == opt).name : priorities.find((x) => x.id == opt).name_e"
+                                        :class="{'is-invalid': $v.create.priority_id.$error || errors.priority_id,'is-valid': !$v.create.priority_id.$invalid && !errors.priority_id,}"
+                                    >
+                                    </multiselect>
+                                    <template v-if="errors.priority_id">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.priority_id" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('is_closed')" class="col-md-2" >
+                                <div class="form-group">
+                                    <label class="my-1 mr-2">
+                                        {{ getCompanyKey("boardRent_task_is_closed") }}
+                                        <span v-if="isRequired('is_closed')" class="text-danger">*</span>
+                                    </label>
+                                    <b-form-group>
+                                        <b-form-radio
+                                            class="d-inline-block"
+                                            v-model="$v.create.is_closed.$model"
+                                            name="some-radios-create"
+                                            value="1"
+                                        >{{ $t("general.Yes") }}</b-form-radio
                                         >
-                                            <div class="form-group">
-                                                <label class="control-label">
-                                                    {{ $t("general.titleFile") }}
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <div dir="rtl">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        data-create="1"
-                                                        v-model="$v.titleFile.$model"
-                                                        :class="{
+                                        <b-form-radio
+                                            class="d-inline-block m-1"
+                                            v-model="$v.create.is_closed.$model"
+                                            name="some-radios-create"
+                                            value="0"
+                                        >{{ $t("general.No") }}</b-form-radio
+                                        >
+                                    </b-form-group>
+                                    <template v-if="errors.is_closed">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.is_closed"
+                                            :key="index"
+                                        >{{ errorMessage }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('note')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("boardRent_panel_note") }}
+                                        <span v-if="isRequired('note')" class="text-danger">*</span>
+                                    </label>
+                                    <textarea v-model="$v.create.note.$model" class="form-control" :maxlength="1000" rows="4"></textarea>
+                                    <template v-if="errors.note">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.note"
+                                            :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('admin_note')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ getCompanyKey("boardRent_panel_admin_note") }}
+                                        <span v-if="isRequired('admin_note')" class="text-danger">*</span>
+                                    </label>
+                                    <textarea  v-model="$v.create.admin_note.$model" class="form-control" :class="{'is-invalid': $v.create.admin_note.$error || errors.admin_note}" :maxlength="1000" rows="4"></textarea>
+                                    <template v-if="errors.admin_note">
+                                        <ErrorMessage
+                                            v-for="(errorMessage, index) in errors.admin_note"
+                                            :key="index"
+                                        >{{ errorMessage }}</ErrorMessage
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </b-tab>
+                    <b-tab :disabled="!task_id" :title="$t('general.attachment')">
+                        <div class="row">
+                            <b-modal
+                                id="uploadPhotoTitleCreate"
+                                :title="$t('general.ImageUploads')"
+                                title-class="font-18"
+                                body-class="p-4 "
+                                :hide-footer="true"
+                                @show="uploadPhotoTitle"
+                                @hidden="uploadPhotoTitleHidden"
+                            >
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.titleFile") }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div dir="rtl">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            data-create="1"
+                                            v-model="$v.titleFile.$model"
+                                            :class="{
                                                                         'is-invalid':$v.titleFile.$error || errors.title,
                                                                         'is-valid':!$v.titleFile.$invalid && !errors.title
                                                                     }"
-                                                    />
-                                                </div>
-                                                <div v-if="!$v.titleFile.minLength" class="invalid-feedback">{{ $t('general.Itmustbeatleast') }} {{ $v.titleFile.$params.minLength.min }} {{ $t('general.letters') }}</div>
-                                                <div v-if="!$v.titleFile.maxLength" class="invalid-feedback">{{ $t('general.Itmustbeatmost') }}  {{ $v.titleFile.$params.maxLength.max }} {{ $t('general.letters') }}</div>
-                                                <template v-if="errors.title">
-                                                    <ErrorMessage v-for="(errorMessage,index) in errors.title" :key="index">{{ errorMessage }}</ErrorMessage>
-                                                </template>
-                                            </div>
+                                        />
+                                    </div>
+                                    <div v-if="!$v.titleFile.minLength" class="invalid-feedback">{{ $t('general.Itmustbeatleast') }} {{ $v.titleFile.$params.minLength.min }} {{ $t('general.letters') }}</div>
+                                    <div v-if="!$v.titleFile.maxLength" class="invalid-feedback">{{ $t('general.Itmustbeatmost') }}  {{ $v.titleFile.$params.maxLength.max }} {{ $t('general.letters') }}</div>
+                                    <template v-if="errors.title">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.title" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
 
-                                            <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file" id="uploadImageCreate"
-                                                   @change.prevent="onImageChanged" class="input-file-upload position-absolute" :class="[
+                                <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file" id="uploadImageCreate"
+                                       @change.prevent="onImageChanged" class="input-file-upload position-absolute" :class="[
                                                         'd-none',
                                                         {
                                                           'is-invalid': $v.create.media.$error || errors.media,
@@ -2189,46 +2423,46 @@ export default {
                                                         },
                                                       ]" />
 
-                                            <b-button :disabled="!titleFile && $v.titleFile.$error" @click="changePhoto" variant="success" type="button"
-                                                      class="mx-1 font-weight-bold px-3" v-if="!isLoader">
-                                                {{ $t("general.Add") }}
-                                            </b-button>
-                                            <b-button variant="success" class="mx-1" disabled v-else>
-                                                <b-spinner small></b-spinner>
-                                                <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                            </b-button>
+                                <b-button :disabled="!titleFile && $v.titleFile.$error" @click="changePhoto" variant="success" type="button"
+                                          class="mx-1 font-weight-bold px-3" v-if="!isLoader">
+                                    {{ $t("general.Add") }}
+                                </b-button>
+                                <b-button variant="success" class="mx-1" disabled v-else>
+                                    <b-spinner small></b-spinner>
+                                    <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                </b-button>
 
-                                        </b-modal>
-                                        <div class="col-md-8 my-1">
-                                            <!-- file upload -->
-                                            <div class="row align-content-between" style="width: 100%; height: 100%">
-                                                <div class="col-12">
-                                                    <div class="d-flex flex-wrap">
-                                                        <div :class="[
+                            </b-modal>
+                            <div class="col-md-8 my-1">
+                                <!-- file upload -->
+                                <div class="row align-content-between" style="width: 100%; height: 100%">
+                                    <div class="col-12">
+                                        <div class="d-flex flex-wrap">
+                                            <div :class="[
                                                           'dropzone-previews col-4 position-relative mb-2',
                                                         ]" v-for="(photo, index) in images" :key="photo.id">
-                                                            <div :class="[
+                                                <div :class="[
                                                             'card mb-0 shadow-none border',
                                                             images.length - 1 == index ? 'bg-primary' : '',
                                                           ]">
-                                                                <div class="p-2">
-                                                                    <div class="row align-items-center">
-                                                                        <div class="col-auto" @click="showPhoto = photo.webp">
-                                                                            <img data-dz-thumbnail :src="photo.webp" class="avatar-sm rounded bg-light"
-                                                                                 @error="src = '../../../../../images/img-1.png'" />
-                                                                        </div>
-                                                                        <div class="col pl-0">
-                                                                            <a href="javascript:void(0);" :class="[
+                                                    <div class="p-2">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto" @click="showPhoto = photo.webp">
+                                                                <img data-dz-thumbnail :src="photo.webp" class="avatar-sm rounded bg-light"
+                                                                     @error="src = img" />
+                                                            </div>
+                                                            <div class="col pl-0">
+                                                                <a href="javascript:void(0);" :class="[
                                                                     'font-weight-bold',
                                                                     images.length - 1 == index
                                                                       ? 'text-white'
                                                                       : 'text-muted',
                                                                   ]" data-dz-name>
-                                                                                {{ photo.title }}
-                                                                            </a>
-                                                                        </div>
-                                                                        <!-- Button -->
-                                                                        <a href="javascript:void(0);" :class="[
+                                                                    {{ photo.title }}
+                                                                </a>
+                                                            </div>
+                                                            <!-- Button -->
+                                                            <a href="javascript:void(0);" :class="[
                                                                   'btn-danger dropzone-close',
                                                                   $i18n.locale == 'ar'
                                                                     ? 'dropzone-close-rtl'
@@ -2236,196 +2470,30 @@ export default {
                                                                 ]" data-dz-remove @click.prevent="
                                                                     deleteImageCreate(photo.id, index)
                                                                     ">
-                                                                            <i class="fe-x"></i>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                                <i class="fe-x"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="footer-image col-12">
-                                                    <b-button @click="uploadPhotoTitle" variant="success" type="button"
-                                                              class="mx-1 font-weight-bold px-3" v-if="!isLoader">
-                                                        {{ $t("general.Add") }}
-                                                    </b-button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="show-dropzone">
-                                                <img :src="showPhoto" class="img-thumbnail" @error="src = '../../../../../images/img-1.png'" />
                                             </div>
                                         </div>
                                     </div>
-                                </b-tab>
-                            </b-tabs>
-                    </form>
-                </b-modal>
-
-                <!-- Edit Modal -->
-                <b-modal
-                    v-model="eventModal"
-                    :title="getCompanyKey('boardRent_task_edit_form')"
-                    title-class="font-18"
-                    body-class=""
-                    dialog-class="modal-full-width"
-                    :hide-footer="true"
-                    hide-footer
-                >
-                    <form>
-                        <div :class="['d-flex justify-content-end position-absolute',$i18n.locale == 'en' ? 'button-left' : 'button-right']">
-                            <!-- Emulate built in modal footer ok and cancel button actions -->
-                            <b-button variant="success" class="mx-1"
-                                      v-if="!isLoader"
-                                      @click.prevent="editSubmit"
-                            >
-                                {{ $t('general.Edit') }}
-                            </b-button>
-
-                            <b-button variant="success" class="mx-1" disabled v-else>
-                                <b-spinner small></b-spinner>
-                                <span class="sr-only">{{ $t('login.Loading') }}...</span>
-                            </b-button>
-
-                            <b-button class="mx-1" variant="danger" v-if="isPermission('delete Task')" @click="confirm">
-                                {{ $t('general.delete') }}
-                            </b-button>
-
-                            <b-button
-                                variant="light"
-                                type="button"
-                                @click.prevent="eventModal = false"
-                            >
-                                {{ $t('general.Cancel') }}
-                            </b-button>
-                        </div>
-                        <b-tabs nav-class="nav-tabs nav-bordered">
-                            <b-tab :title="$t('general.DataEntry')" active>
-                                <div class="row">
-
-                                </div>
-                            </b-tab>
-                            <b-tab :title="$t('general.attachment')">
-                                <div class="row">
-                                    <b-modal
-                                        id="uploadPhotoTitleCreate"
-                                        :title="$t('general.ImageUploads')"
-                                        title-class="font-18"
-                                        body-class="p-4 "
-                                        :hide-footer="true"
-                                        @show="uploadPhotoTitle"
-                                        @hidden="uploadPhotoTitleHidden"
-                                    >
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t("general.titleFile") }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div dir="rtl">
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    data-create="1"
-                                                    v-model="$v.titleFile.$model"
-                                                    :class="{
-                                                                    'is-invalid':$v.titleFile.$error || errors.title,
-                                                                    'is-valid':!$v.titleFile.$invalid && !errors.title
-                                                                }"
-                                                />
-                                            </div>
-                                            <div v-if="!$v.titleFile.minLength" class="invalid-feedback">{{ $t('general.Itmustbeatleast') }} {{ $v.titleFile.$params.minLength.min }} {{ $t('general.letters') }}</div>
-                                            <div v-if="!$v.titleFile.maxLength" class="invalid-feedback">{{ $t('general.Itmustbeatmost') }}  {{ $v.titleFile.$params.maxLength.max }} {{ $t('general.letters') }}</div>
-                                            <template v-if="errors.title">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.title" :key="index">{{ errorMessage }}</ErrorMessage>
-                                            </template>
-                                        </div>
-
-                                        <input accept="image/png, image/gif, image/jpeg, image/jpg" type="file"
-                                               id="uploadImageEdit" @change.prevent="onImageChanged"
-                                               class="input-file-upload position-absolute" :class="[
-                                                                    'd-none',
-                                                                    {
-                                                                      'is-invalid': $v.edit.media.$error || errors.media,
-                                                                      'is-valid':
-                                                                        !$v.edit.media.$invalid && !errors.media,
-                                                                    },
-                                                                  ]" />
-
-                                        <b-button :disabled="!titleFile && $v.titleFile.$error" @click="changePhotoEdit" variant="success" type="button"
+                                    <div class="footer-image col-12">
+                                        <b-button @click="uploadPhotoTitle" variant="success" type="button"
                                                   class="mx-1 font-weight-bold px-3" v-if="!isLoader">
                                             {{ $t("general.Add") }}
                                         </b-button>
-                                        <b-button variant="success" class="mx-1" disabled v-else>
-                                            <b-spinner small></b-spinner>
-                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
-                                        </b-button>
-
-                                    </b-modal>
-
-                                    <div class="col-md-8 my-1">
-                                        <!-- file upload -->
-                                        <div class="row align-content-between" style="width: 100%; height: 100%">
-                                            <div class="col-12">
-                                                <div class="d-flex flex-wrap">
-                                                    <div class="dropzone-previews col-4 position-relative mb-2"
-                                                         v-for="(photo, index) in images">
-                                                        <div :class="[
-                                                                                    'card mb-0 shadow-none border',
-                                                                                    images.length - 1 == index
-                                                                                      ? 'bg-primary'
-                                                                                      : '',
-                                                                                  ]">
-                                                            <div class="p-2">
-                                                                <div class="row align-items-center">
-                                                                    <div class="col-auto" @click="showPhoto = photo.webp">
-                                                                        <img data-dz-thumbnail :src="photo.webp"
-                                                                             class="avatar-sm rounded bg-light"
-                                                                             @error="src = '../../../../../images/img-1.png'" />
-                                                                    </div>
-                                                                    <div class="col pl-0">
-                                                                        <a href="javascript:void(0);" :class="[
-                                                                                                    'font-weight-bold',
-                                                                                                    images.length - 1 == index
-                                                                                                      ? 'text-white'
-                                                                                                      : 'text-muted',
-                                                                                                  ]" data-dz-name>
-                                                                            {{ photo.title }}
-                                                                        </a>
-                                                                    </div>
-                                                                    <!-- Button -->
-                                                                    <a href="javascript:void(0);" :class="[
-                                                                                              'btn-danger text-muted dropzone-close',
-                                                                                              $i18n.locale == 'ar'
-                                                                                                ? 'dropzone-close-rtl'
-                                                                                                : '',
-                                                                                            ]" data-dz-remove @click.prevent="
-                                                                                                      deleteImageCreate(photo.id, index)
-                                                                                                    ">
-                                                                        <i class="fe-x"></i>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="footer-image col-12">
-                                                <b-button @click="uploadPhotoTitle" variant="success" type="button"
-                                                          class="mx-1 font-weight-bold px-3" v-if="!isLoader">
-                                                    {{ $t("general.Add") }}
-                                                </b-button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="show-dropzone">
-                                            <img :src="showPhoto" class="img-thumbnail" @error="src = '../../../../../images/img-1.png'" />
-                                        </div>
                                     </div>
                                 </div>
-                            </b-tab>
-                        </b-tabs>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="show-dropzone">
+                                    <img :src="showPhoto" class="img-thumbnail" @error="src = img" />
+                                </div>
+                            </div>
+                        </div>
+                    </b-tab>
+                            </b-tabs>
                     </form>
                 </b-modal>
 

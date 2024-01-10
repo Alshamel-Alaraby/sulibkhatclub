@@ -11,21 +11,43 @@ import tableCustom from "../../../../components/general/tableCustom";
 import customTable from "../../../../helper/mixin/customTable";
 import successError from "../../../../helper/mixin/success&error";
 import crudHelper from "../../../../helper/mixin/crudHelper";
+import adminApi from "../../../../api/adminAxios";
+import Multiselect from "vue-multiselect";
+import printTask from "./ptintTask.vue"
+import printGeneralUnits from "../../../../components/document/RealEstate/print/print-general-uints.vue";
 
 export default {
     page: {
         title: "Tasks",
-        meta: [{ name: "description", content: 'Tasks' }],
+        meta: [{name: "description", content: 'Tasks'}],
     },
-    mixins: [translation,customTable,successError,crudHelper],
+    mixins: [translation, customTable, successError, crudHelper],
     components: {
-        Layout, PageHeader, loader, Task,
-        searchPage,actionSetting, tableCustom
+        printGeneralUnits,
+        Layout, PageHeader, loader, Task, Multiselect,
+        searchPage, actionSetting, tableCustom, printTask
     },
     beforeRouteEnter(to, from, next) {
-         next((vm) => {
-              return permissionGuard(vm, "Tasks", "all Task");
-         });
+        next((vm) => {
+            return permissionGuard(vm, "Tasks", "all Task");
+        });
+    },
+    props: ['notification_data', 'id'],
+    watch: {
+        $route(to, from) {
+            // react to route changes...
+            if (Object.keys(this.notification_data ?? []).length) {
+                if (!this.tables.find(el => el.id == this.notification_data.id))
+                    this.tables.push(this.notification_data)
+
+                this.dbClickRow(this.notification_data.id)
+
+                this.$router.push('/dashboard/ticket-manager/tasks')
+
+            }
+        },
+        deep: true,
+        immediate: true
     },
     data() {
         return {
@@ -33,136 +55,168 @@ export default {
             searchMain: '',
             tableSetting: [
                 {
-                    isFilter: true,isSet: true,trans:"task_type",isV: 'type',
-                    type: 'string',sort: true,setting: {"type":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_number", isV: 'id', forceVisible: true,
+                    type: 'string', sort: true, setting: {"id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"employee", isV: 'employee_id',
-                    type: 'relation',name: 'employee',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"employee_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_type", isV: 'type',
+                    type: 'string', sort: true, setting: {"type": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_task_department", isV: 'department_id'
-                    ,type: 'relation', name: 'department',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"department_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "employee", isV: 'employee_id',
+                    type: 'relation', name: 'employee', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"employee_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"customer",isV: 'customer_id',
-                    type: 'relation', name:'customer',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"customer_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "boardRent_task_department", isV: 'department_id'
+                    , type: 'relation', name: 'department', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"department_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"city",isV: 'department_task_id',
-                    type: 'relation', name:'department_task',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"department_task_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "customer", isV: 'customer_id',
+                    type: 'relation', name: 'customer', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"customer_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_status",isV: 'status_id',
-                    type: 'relation', name:'status',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"status_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "city", isV: 'department_task_id',
+                    type: 'relation', name: 'department_task', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"department_task_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_task_equipment",isV: 'equipment_id',
-                    type: 'relation', name:'equipment',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"equipment_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_status", isV: 'status_id',
+                    type: 'relation', name: 'status', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"status_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_task_location",isV: 'location_id',
-                    type: 'relation', name:'location',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"location_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "boardRent_task_equipment", isV: 'equipment_id',
+                    type: 'relation', name: 'equipment', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"equipment_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_priority",isV: 'priority_id',
-                    type: 'relation', name:'priority',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"priority_id":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "boardRent_task_location", isV: 'location_id',
+                    type: 'relation', name: 'location', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"location_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_owners",isV: 'owners',
-                    type: 'relation', name:'owners',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"owners":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_priority", isV: 'priority_id',
+                    type: 'relation', name: 'priority', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"priority_id": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_supervisors",isV: 'supervisors',
-                    type: 'relation', name:'supervisors',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"supervisors":true},isSetting: true
+                    isFilter: false, isSet: true, trans: "task_owners", isV: 'owners',
+                    type: 'relation', name: 'owners', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"owners": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_notifications",isV: 'notifications',
-                    type: 'relation', name:'notifications',sort: false,col1: 'name',col2: 'name_e',
-                    setting: {"notifications":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_supervisors", isV: 'supervisors',
+                    type: 'relation', name: 'supervisors', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"supervisors": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"general_customer_contact_person",isV: 'contact_person',
-                    type: 'string',sort: true,setting: {"contact_person":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_notifications", isV: 'notifications',
+                    type: 'relation', name: 'notifications', sort: false, col1: 'name', col2: 'name_e',
+                    setting: {"notifications": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"general_customer_contact_phones",isV: 'contact_phone',
-                    type: 'string',sort: true,setting: {"contact_phone":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "general_customer_contact_person", isV: 'contact_person',
+                    type: 'string', sort: true, setting: {"contact_person": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_title",isV: 'task_title',
-                    type: 'string',sort: true,setting: {"task_title":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "general_customer_contact_phones", isV: 'contact_phone',
+                    type: 'string', sort: true, setting: {"contact_phone": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"execution_date",isV: 'execution_date',
-                    type: 'string',sort: true,setting: {"execution_date":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_title", isV: 'task_title',
+                    type: 'string', sort: true, setting: {"task_title": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_start_time",isV: 'start_time',
-                    type: 'string',sort: true,setting: {"start_time":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "execution_date", isV: 'execution_date',
+                    type: 'string', sort: true, setting: {"execution_date": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"task_end_time",isV: 'end_time',
-                    type: 'string',sort: true,setting: {"end_time":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_start_time", isV: 'start_time',
+                    type: 'string', sort: true, setting: {"start_time": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"execution_duration",isV: 'execution_duration',
-                    type: 'string',sort: true,setting: {"execution_duration":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "execution_end_date", isV: 'execution_end_date',
+                    type: 'string', sort: true, setting: {"execution_end_date": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"notification_date",isV: 'notification_date',
-                    type: 'string',sort: true,setting: {"notification_date":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "task_end_time", isV: 'end_time',
+                    type: 'string', sort: true, setting: {"end_time": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"execution_end_date",isV: 'execution_end_date',
-                    type: 'string',sort: true,setting: {"execution_end_date":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "execution_duration", isV: 'execution_duration',
+                    type: 'string', sort: true, setting: {"execution_duration": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_panel_note",isV: 'note',
-                    type: 'string',sort: true,setting: {"note":true},isSetting: true
+                    isFilter: true, isSet: true, trans: "notification_date", isV: 'notification_date',
+                    type: 'string', sort: true, setting: {"notification_date": true}, isSetting: true
                 },
                 {
-                    isFilter: true,isSet: true,trans:"boardRent_panel_admin_note",isV: 'admin_note',
-                    type: 'string',sort: true,setting: {"admin_note":true},isSetting: true
-                },
-                {
-                    isFilter: true,isSet: true,trans:"boardRent_task_task_requirement",isV: 'task_requirement',
-                    type: 'string',sort: true,setting: {"task_requirement":true},isSetting: true
-                },
-                {
-                    isFilter: false,isSet: true,trans:"boardRent_task_is_closed",isV: 'is_closed',
-                    type: 'boolean',setting: {"is_closed":true},isSetting: true
+                    isFilter: false, isSet: true, trans: "boardRent_task_is_closed", isV: 'is_closed',
+                    type: 'boolean', setting: {"is_closed": true}, isSetting: true
                 }
             ],
             sendSetting: {},
+            status_id: '',
+            data_row: {},
+            statuses: [],
             searchField: [],
         }
     },
     mounted() {
-        this.searchField = this.tableSetting.filter(e => e.isFilter ).map(el => el.isV);
+        this.searchField = this.tableSetting.filter(e => e.isFilter).map(el => el.isV);
         this.settingFun();
+        this.getStatus();
         this.$store.dispatch('locationIp/getIp');
         this.getCustomTableFields('general_tasks');
-        this.getData(1,this.url,this.filterSearch(this.searchField));
+        this.getData(1, this.url, this.filterSearch(this.searchField));
+
     },
     methods: {
-        filterSearch(fields){
+        getStatus() {
+            this.isLoader = true;
+            adminApi
+                .get(`/statuses/get-drop-down?module_type=bordRent`)
+                .then((res) => {
+                    this.statuses = res.data.data;
+                })
+                .catch((err) => {
+                    console.log(err)
+                    this.errorFun("Error", "Thereisanerrorinthesystem");
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                    setTimeout(() => {
+
+                        if (Object.keys(this.notification_data ?? []).length) {
+                            if (!this.tables.find(el => el.id == this.notification_data.id))
+                                this.tables.push(this.notification_data)
+
+                            this.dbClickRow(this.notification_data.id)
+
+                            this.$router.push('/dashboard/ticket-manager/tasks')
+
+                        }
+                    }, 1500)
+                });
+        },
+        filterSearch(fields) {
             let indexemployee = fields.indexOf("employee_id"),
                 indexG = fields.indexOf("department_id"),
                 indexCty = fields.indexOf("customer_id"),
                 indexdepartmentTask = fields.indexOf("department_task_id"),
                 indexstatus = fields.indexOf("status_id"),
+                indeSupervisors = fields.indexOf("supervisors"),
+                indexAttentions = fields.indexOf("notifications"),
                 filter = '';
+            if (indexAttentions > -1) {
+                fields[indexAttentions] = this.$i18n.locale == "ar" ? "attentions.name" : "attentions.name_e";
+            }
+            if (indeSupervisors > -1) {
+                fields[indeSupervisors] = this.$i18n.locale == "ar" ? "supervisors.name" : "supervisors.name_e";
+            }
             if (indexemployee > -1) {
                 fields[indexemployee] = this.$i18n.locale == "ar" ? "employee.name" : "employee.name_e";
             }
@@ -181,17 +235,32 @@ export default {
             for (let i = 0; i < fields.length; ++i) {
                 filter += `columns[${i}]=${fields[i]}&`;
             }
-            return filter;
+            return filter + 'status_id=' + this.status_id;
         },
-        settingFun(setting = null){
-            if(setting) this.tableSetting = setting;
-            let l = {},names = [];
-            names = this.tableSetting.filter(e => e.isSet ).map(el => el.setting);
-            this.tableSetting.forEach((e,i) => {
+        settingFun(setting = null) {
+            if (setting) this.tableSetting = setting;
+            let l = {}, names = [];
+            names = this.tableSetting.filter(e => e.isSet).map(el => el.setting);
+            this.tableSetting.forEach((e, i) => {
                 l[e.isV] = names[i][e.isV];
                 e['isSetting'] = l[e.isV];
             });
             this.sendSetting = l;
+        },
+        openPrintModal(rowId) {
+            this.tables.forEach((ele) => {
+                if (ele.id == rowId) {
+                    this.data_row = ele;
+                }
+            })
+            $('#printInv').removeClass('d-none')
+            setTimeout(() => {
+                $('#printInv').printThis({})
+
+            }, 550);
+            setTimeout(() => {
+                $('#printInv').addClass('d-none')
+            }, 1550);
         },
     }
 };
@@ -199,7 +268,7 @@ export default {
 
 <template>
     <Layout>
-        <PageHeader />
+        <PageHeader/>
 
         <div class="row">
             <div class="col-12">
@@ -238,14 +307,33 @@ export default {
                             @currentPage="(page) => current_page = page"
                             @DataCurrentPage="(page) => getDataCurrentPage(page)"
                             @actionChange="({typeAction,id}) => changeType({typeAction,id})"
-                        />
+                        >
+
+                            <div class="d-flex col-5">
+                                <label>
+                                    {{ getCompanyKey('task_status') }}
+                                </label>
+                                <multiselect
+                                    v-model="status_id"
+                                    :options="statuses.map((type) => type.id)"
+                                    @input="getData(1,url,filterSearch(searchField))"
+                                    :custom-label=" (opt) => statuses.find((x) => x.id == opt)?
+                                    $i18n.locale == 'ar' ? statuses.find((x) => x.id == opt).name : statuses.find((x) => x.id == opt).name_e
+                                    : null
+                                "
+                                >
+                                </multiselect>
+
+                            </div>
+                        </actionSetting>
                         <!-- end setting -->
 
                         <!--  create   -->
                         <Task
                             :id="'create'" :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
                             :isPage="true" :isVisiblePage="isVisible" :isRequiredPage="isRequired" :url="url"
-                            :type="type" :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
+                            :type="type"
+                            :idObjEdit="idEdit? {idEdit,dataObj: this.tables.find(el => el.id == idEdit)}:null"
                             @getDataTable="getData(1,url,filterSearch(searchField))" :isPermission="isPermission"
                         />
                         <!--  /create   -->
@@ -395,12 +483,14 @@ export default {
                                     <tr>
                                         <td v-if="sendSetting.employee_id">
                                             <h5 v-if="log.employee" class="m-0 font-weight-normal">
-                                                {{ log.employee? $i18n.locale == "ar" ? log.employee.name : log.employee.name_e : ' - '}}
+                                                {{
+                                                    log.employee ? $i18n.locale == "ar" ? log.employee.name : log.employee.name_e : ' - '
+                                                }}
                                             </h5>
                                         </td>
                                         <td v-if="sendSetting.department_id">
                                             <h5 v-if="log.department" class="m-0 font-weight-normal">
-                                                {{$i18n.locale == "ar" ? log.department.name : log.department.name_e }}
+                                                {{ $i18n.locale == "ar" ? log.department.name : log.department.name_e }}
                                             </h5>
                                         </td>
                                         <th v-if="sendSetting.type">
@@ -410,28 +500,30 @@ export default {
                                         </th>
                                         <td v-if="sendSetting.customer_id">
                                             <h5 v-if="log.customer" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.customer.name : log.customer.name_e}}
+                                                {{ $i18n.locale == "ar" ? log.customer.name : log.customer.name_e }}
                                             </h5>
                                         </td>
-                                        <td v-if="sendSetting.contact_person"><h5 class="m-0 font-weight-normal">{{ log.contact_person }}</h5></td>
-                                        <td v-if="sendSetting.contact_phone"><h5 class="m-0 font-weight-normal">{{ log.contact_phone }}</h5></td>
+                                        <td v-if="sendSetting.contact_person"><h5 class="m-0 font-weight-normal">
+                                            {{ log.contact_person }}</h5></td>
+                                        <td v-if="sendSetting.contact_phone"><h5 class="m-0 font-weight-normal">
+                                            {{ log.contact_phone }}</h5></td>
                                         <th v-if="sendSetting.equipment_id">
                                             <h5 v-if="log.equipment" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.equipment.name : log.equipment.name_e}}
+                                                {{ $i18n.locale == "ar" ? log.equipment.name : log.equipment.name_e }}
                                             </h5>
                                         </th>
                                         <th v-if="sendSetting.location_id">
                                             <h5 v-if="log.location" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.location.name : log.location.name_e}}
+                                                {{ $i18n.locale == "ar" ? log.location.name : log.location.name_e }}
                                             </h5>
                                         </th>
                                         <th v-if="sendSetting.priority_id">
                                             <h5 v-if="log.priority" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.priority.name : log.priority.name_e}}
+                                                {{ $i18n.locale == "ar" ? log.priority.name : log.priority.name_e }}
                                             </h5>
                                         </th>
                                         <th v-if="sendSetting.task_requirement">
-                                            {{ log.task_requirement}}
+                                            {{ log.task_requirement }}
                                         </th>
                                         <th v-if="sendSetting.is_closed">
                                         <span
@@ -441,57 +533,71 @@ export default {
                                             ]"
                                         >
                                             {{
-                                                  log.is_closed == 1
-                                                      ? `${$t("general.Yes")}`
-                                                : `${$t("general.No")}`
+                                                log.is_closed == 1
+                                                    ? `${$t("general.Yes")}`
+                                                    : `${$t("general.No")}`
                                             }}
                                           </span>
                                         </th>
-                                        <td v-if="sendSetting.task_title"><h5 class="m-0 font-weight-normal">{{ log.task_title }}</h5></td>
+                                        <td v-if="sendSetting.task_title"><h5 class="m-0 font-weight-normal">
+                                            {{ log.task_title }}</h5></td>
                                         <td v-if="sendSetting.department_task_id">
                                             <h5 v-if="log.department_task" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.department_task.name : log.department_task.name_e}}
+                                                {{
+                                                    $i18n.locale == "ar" ? log.department_task.name : log.department_task.name_e
+                                                }}
                                             </h5>
                                         </td>
                                         <td v-if="sendSetting.owners">
-                                            <h5 v-if="log.owners.length > 0 && log.owners" class="m-0 font-weight-normal">
+                                            <h5 v-if="log.owners.length > 0 && log.owners"
+                                                class="m-0 font-weight-normal">
                                             <span v-for="(owner,index) in log.owners"
                                                   :key="owner.id">
-                                            {{ $i18n.locale == "ar" ? owner.name : owner.name_e}}
+                                            {{ $i18n.locale == "ar" ? owner.name : owner.name_e }}
                                                 <span> - </span>
                                             </span>
                                             </h5>
                                         </td>
                                         <td v-if="sendSetting.supervisors">
-                                            <h5 v-if="log.supervisors.length > 0 &&  log.supervisors" class="m-0 font-weight-normal">
+                                            <h5 v-if="log.supervisors.length > 0 &&  log.supervisors"
+                                                class="m-0 font-weight-normal">
                                             <span v-for="(supervisor,index) in log.supervisors"
                                                   :key="supervisor.id">
-                                            {{ $i18n.locale == "ar" ? supervisor.name : supervisor.name_e}}
+                                            {{ $i18n.locale == "ar" ? supervisor.name : supervisor.name_e }}
                                                  <span> - </span>
                                             </span>
                                             </h5>
                                         </td>
                                         <td v-if="sendSetting.notifications">
-                                            <h5 v-if="log.notifications.length > 0 && log.notifications" class="m-0 font-weight-normal">
+                                            <h5 v-if="log.notifications.length > 0 && log.notifications"
+                                                class="m-0 font-weight-normal">
                                             <span v-for="(notification,index) in log.notifications"
                                                   :key="notification.id">
-                                            {{ $i18n.locale == "ar" ? notification.name : notification.name_e}}
+                                            {{ $i18n.locale == "ar" ? notification.name : notification.name_e }}
                                                  <span> - </span>
                                             </span>
                                             </h5>
                                         </td>
                                         <td v-if="sendSetting.status_id">
                                             <h5 v-if="log.status" class="m-0 font-weight-normal">
-                                                {{ $i18n.locale == "ar" ? log.status.name : log.status.name_e}}
+                                                {{ $i18n.locale == "ar" ? log.status.name : log.status.name_e }}
                                             </h5>
                                         </td>
-                                        <td v-if="sendSetting.execution_date"><h5 class="m-0 font-weight-normal">{{ log.execution_date }}</h5></td>
-                                        <td v-if="sendSetting.start_time"><h5 class="m-0 font-weight-normal">{{ log.start_time }}</h5></td>
-                                        <td v-if="sendSetting.end_time"><h5 class="m-0 font-weight-normal">{{ log.end_time }}</h5></td>
-                                        <td v-if="sendSetting.execution_duration"><h5 class="m-0 font-weight-normal">{{ log.execution_duration }}</h5></td>
-                                        <td v-if="sendSetting.notification_date"><h5 class="m-0 font-weight-normal">{{ log.notification_date }}</h5></td>
-                                        <td v-if="sendSetting.execution_end_date"><h5 class="m-0 font-weight-normal">{{ log.execution_end_date }}</h5></td>
-                                        <td v-if="sendSetting.note"><h5 class="m-0 font-weight-normal">{{ log.note }}</h5></td>
+                                        <td v-if="sendSetting.execution_date"><h5 class="m-0 font-weight-normal">
+                                            {{ log.execution_date }}</h5></td>
+                                        <td v-if="sendSetting.start_time"><h5 class="m-0 font-weight-normal">
+                                            {{ log.start_time }}</h5></td>
+                                        <td v-if="sendSetting.end_time"><h5 class="m-0 font-weight-normal">
+                                            {{ log.end_time }}</h5></td>
+                                        <td v-if="sendSetting.execution_duration"><h5 class="m-0 font-weight-normal">
+                                            {{ log.execution_duration }}</h5></td>
+                                        <td v-if="sendSetting.notification_date"><h5 class="m-0 font-weight-normal">
+                                            {{ log.notification_date }}</h5></td>
+                                        <td v-if="sendSetting.execution_end_date"><h5 class="m-0 font-weight-normal">
+                                            {{ log.execution_end_date }}</h5></td>
+                                        <td v-if="sendSetting.note"><h5 class="m-0 font-weight-normal">{{
+                                                log.note
+                                            }}</h5></td>
                                         <th v-if="sendSetting.admin_note">
                                             {{ log.admin_note }}
                                         </th>
@@ -515,7 +621,7 @@ export default {
                         >
 
                             <!--       start loader       -->
-                            <loader size="large" v-if="isLoader" />
+                            <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
 
                             <tableCustom
@@ -529,11 +635,17 @@ export default {
                                 @checkRows="(cR) => checkAll = cR" @checkRowTable="id => checkRow(id)"
                                 :isInputCheck="true" :isLog="true" :isAction="true"
                                 :isLogClick="true"
+                                @printRow="ids => openPrintModal(ids)" :isPrint="true"
                             />
 
                         </div>
                         <!-- end .table-responsive-->
-
+                        <div>
+                            <printTask
+                                :id="'printInv'"
+                                :data_row="data_row"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

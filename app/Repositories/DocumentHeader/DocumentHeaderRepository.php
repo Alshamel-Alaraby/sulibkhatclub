@@ -581,6 +581,9 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     public function update($request,$id){
         if (generalCheckDateModelFinancialYear($request['date']) == "true"){
                 $data = $this->model->find($id);
+                $check_paid_amount = RpBreakDown::where('break_id',$data['id'])->where('document_id',$data->document_id)->whereHas('breakSettlements')->first();
+                if($check_paid_amount)
+                    return 'paid_befor';
                 if (isset($request['related_document_number'])){
                     $related_document_data  = $this->model->find($data->related_document_number);
                     if ($related_document_data){
@@ -641,6 +644,12 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                         }
                     }
                 }
+
+                if (isset($request['header_break_downs'])){
+                    RpBreakDown::where('break_id',$data['id'])->where('document_id',$data->document_id)->delete();
+                    $this->createArrayHeaderBreakDown($request['header_break_downs'],$data);
+                }
+
                 return $data;
         }
         return 'false';
@@ -1299,7 +1308,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
     public function updateContractHeader($request,$id){
         if (generalCheckDateModelFinancialYear($request['date']) == "true"){
                 $data = $this->model->find($id);
-                $check_paid_amount = RpBreakDown::where('break_id',$data['id'])->where('customer_id',$data->customer_id)->where('document_id',$data->document_id)->whereHas('breakSettlements')->first();
+                $check_paid_amount = RpBreakDown::where('break_id',$data['id'])->where('document_id',$data->document_id)->whereHas('breakSettlements')->first();
                 if($check_paid_amount)
                     return 'paid_befor';
                 $data->update($request->only(['document_status_id','employee_id','total_invoice','net_invoice','invoice_discount','date']));
@@ -1309,7 +1318,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                     $header_data['net_invoice'] = $request->net_invoice;
                     $header_data['invoice_discount'] = $request->invoice_discount;
                     $header_details->update($header_data);
-                    RpBreakDown::where('break_id',$data['id'])->where('customer_id',$data->customer_id)->where('document_id',$data->document_id)->delete();
+                    RpBreakDown::where('break_id',$data['id'])->where('document_id',$data->document_id)->delete();
                     RpBreakDown::create([
                         'instalment_date' => $request->date,
                         'rate' => 1,
@@ -1391,7 +1400,7 @@ class DocumentHeaderRepository implements DocumentHeaderInterface
                 'created_at' => now(),
             ]);
 
-            $break = RpBreakDown::where('break_id',$contract->id)->where('customer_id',$contract->customer_id)->where('document_id',$contract->document_id)->first();
+            $break = RpBreakDown::where('break_id',$contract->id)->where('document_id',$contract->document_id)->first();
             $new_break = $break->replicate();
             $new_break->save();
             $new_break->update([

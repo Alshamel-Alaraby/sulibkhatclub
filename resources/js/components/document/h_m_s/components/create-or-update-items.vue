@@ -203,7 +203,7 @@ export default {
         dataRow:{
             handler(newV, old) {
                 this.check_data_row = Object.keys(newV).length
-                if(this.check_data_row != Object.keys(old).length)
+                if(this.check_data_row && newV.id != old.id)
                 this.resetModalCreateOrUpdate()
             },
         },
@@ -435,24 +435,24 @@ export default {
                 this.relatedDocumentNumbers.push(invoice.document_number);
             }
             this.create.id = invoice.id;
-            this.create.patient_id = invoice.patient_id;
+            this.create.patient_id = this.dataRow.patient_id;
             this.create.company_id = invoice.company_id;
             this.create.customer_type = invoice.customer_type;
-            this.create.doctor_id = invoice.doctor_id;
-            this.create.from_doctor_id = invoice.from_doctor_id;
+            this.create.doctor_id = this.dataRow.doctor_id;
+            this.create.from_doctor_id = this.dataRow.from_doctor_id;
             this.create.payment_method_id = invoice.payment_method_id;
             this.create.sell_method_id = invoice.sell_method_id;
             this.create.total_invoice = invoice.total_invoice;
-            this.create.patient_insurance_number = invoice.patient_insurance_number;
-            this.create.company_insurance_id = invoice.company_insurance_id;
+            this.create.patient_insurance_number = this.dataRow.patient_insurance_number;
+            this.create.company_insurance_id = this.dataRow.company_insurance_id;
             this.create.invoice_discount = invoice.invoice_discount;
             this.create.net_invoice = invoice.net_invoice;
             this.create.sell_method_discount = invoice.sell_method_discount;
             this.create.unrelaized_revenue = invoice.unrelaized_revenue;
             this.create.related_document_number = invoice.related_document_number;
             this.create.related_document_prefix = invoice.related_document_prefix;
-            this.create.total_company_insurance_amount = invoice.total_company_insurance_amount;
-            this.create.total_patient_amount = invoice.total_patient_amount;
+            this.create.total_company_insurance_amount = this.dataRow.total_company_insurance_amount;
+            this.create.total_patient_amount = this.dataRow.total_patient_amount;
             this.create.header_details = [];
             invoice.header_details.forEach((e,index) => {
                 this.create.header_details.push({

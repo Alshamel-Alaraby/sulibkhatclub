@@ -58,6 +58,10 @@ export default {
             tenants: [],
             units: [],
             services: [],
+            unitsPerPage: 3,
+            currentPage: 1,
+            total_amount : 0,
+            previousUnitIds: [],
             unit_ids: [],
             payment_types: [],
             salesmen: [],
@@ -189,9 +193,69 @@ export default {
             });
         }
     },
+    computed: {
+
+        paginatedUnits() {
+            const startIndex = (this.currentPage - 1) * this.unitsPerPage;
+            const endIndex = startIndex + this.unitsPerPage;
+            return this.unit_ids.slice(startIndex, endIndex);
+        },
+        totalPages() {
+            return Math.ceil(this.unit_ids.length / this.unitsPerPage);
+        },
+    },
     methods: {
-        test() {
-            console.log(this.create.units)
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+        previousPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        deleteService(unitIndex, serviceIndex) {
+            const unit = this.create.units[unitIndex];
+            const deletedService = this.services[unitIndex].services[serviceIndex];
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You cannot add this service back after deletion!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const deletedPrice = deletedService.price;
+                    unit.unit_services.splice(serviceIndex, 1);
+                    this.services[unitIndex].services.splice(serviceIndex, 1);
+                    this.total_amount -= deletedPrice;
+                    Swal.fire('Deleted!', 'The service has been removed.', 'success');
+                }
+            });
+        },
+        calculateUnitTotal(unitServices) {
+            let totalPrice = 0;
+            unitServices.forEach(service => {
+                totalPrice += service.price;
+            });
+            return totalPrice;
+        },
+        saveServices() {
+            this.create.units = []; // Clear existing data
+
+            this.services.forEach((serviceData, index) => {
+                const unitId = this.unit_ids[index];
+                const unit = {
+                    unit_id: unitId,
+                    unit_services: serviceData.services.map((service) => service.id),
+                };
+
+                this.create.units.push(unit);
+            });
         },
          resetModalCreateOrUpdate() {
             this.relatedDocuments = this.document.document_relateds;
@@ -381,15 +445,7 @@ export default {
                             timer: 1500,
                         });
                     }, 500);
-                    // here for break if user do
-                    if (
-                        this.document.attributes &&
-                        parseInt(this.document.attributes.customer) != 0 &&
-                        is_break == true
-                    ) {
-                        this.create.id = res.data.data.id;
-                        this.showBreakCreate();
-                    }
+
                 })
                 .catch((err) => {
                     if (err.response.data) {
@@ -589,82 +645,69 @@ export default {
         },
 
         getServices() {
-            // make method that takes the unit_id that in creat.unit_service.unit_id
-            let unit_ids = this.unit_ids;
-            let params = unit_ids.map(unit_id => `unit_id[]=${unit_id}`).join('&');
-            // use this as params in the api of the unit service table
-            adminApi
-                .get(`/real-estate/unit-service?${params}`)
-                .then((res) => {
-                    this.isLoader = false;
-                    // take unique values from the data
-                    let data = [];
+            let selectedUnitIds = this.unit_ids;
 
-                    unit_ids.forEach((item, index) => {
+            if (
+                this.previousUnitIds.length &&
+                selectedUnitIds.length === this.previousUnitIds.length &&
+                selectedUnitIds.every((id, index) => id === this.previousUnitIds[index])
+            ) {
+                this.showServiceModal = true;
+            } else {
+                // Get the unit IDs that were removed and added
+                let removedUnits = this.previousUnitIds.filter(id => !selectedUnitIds.includes(id));
+                let addedUnits = selectedUnitIds.filter(id => !this.previousUnitIds.includes(id));
 
-                        data.push({
-                            services: [],
-                            totalAmount: 0
+                removedUnits.forEach(removedId => {
+                    const removedUnit = this.services.find(service => service.id === removedId);
+                    if (removedUnit) {
+                        const removedPrice = removedUnit.services.reduce((total, service) => {
+                            return total + service.price;
+                        }, 0);
+                        this.services = this.services.filter(serviceData => {
+                            return serviceData.id !== removedId;
                         });
-                        let totalAmount = 0
-                        res.data.data.forEach((ele) => {
+                        this.total_amount -= removedPrice; // Subtract removedPrice from total_amount
+                    }
+                });
 
-                            if (ele.unit.id == item) {
-                                this.create.units[index].unit_services.push(ele.service.id)
-                                totalAmount += ele.price
-                                data[index]['services'].push({
-                                    id: ele.service.id,
-                                    name: ele.service.name,
-                                    name_e: ele.service.name_e,
-                                    price: ele.price,
+                this.previousUnitIds = selectedUnitIds;
 
-                                })
+                let params = selectedUnitIds.map(unit_id => `unit_id[]=${unit_id}`).join('&');
+
+                adminApi
+                    .get(`/real-estate/unit-service?${params}`)
+                    .then((res) => {
+                        this.isLoader = false;
+                        addedUnits.forEach(item => {
+                            const unitData = res.data.data.find(unit => unit.id === item);
+                            if (unitData) {
+                                const unitServices = unitData.services.map(service => ({
+                                    id: service.id,
+                                    name: service.name,
+                                    name_e: service.name_e,
+                                    price: service.pivot.default_price
+                                }));
+                                const totalAmount = unitServices.reduce((total, service) => {
+                                    return total + service.price;
+                                }, 0);
+                                this.services.push({ id: item, services: unitServices });
+                                this.total_amount += totalAmount; // Increment total_amount
                             }
                         });
-                        data[index]['totalAmount'] = totalAmount
+                        this.showServiceModal = true;
                     })
-
-
-                    // from the data I get fromm the api I make the service array to be that and make user choose form them,
-                    this.services = data;
-                    // make condition it be false at first and then when this method gets triggered show the modal for the user
-
-                    this.showServiceModal = true;
-                    console.log('Unit Services:', this.create.units);
-                })
-                .catch((err) => {
-                    console.log('error', err)
-                    Swal.fire({
-                        icon: "error",
-                        title: `${this.$t("general.Error")}`,
-                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
                     });
-                });
-        },
-
-        // When the user selects services for a specific unit_id inside the modal
-        // Making sure it saved right
-        updateServicesForUnit(unit, selectedServices, index) {
-            let totalAmount = 0;
-            this.services[index]['services'].forEach((ele) => {
-                if (this.create.units[index].unit_services.includes(ele.id))
-                    totalAmount += ele.price
-            });
-            this.$set(this.services[index], 'totalAmount', totalAmount)
-            console.log('totaAmount', totalAmount)
-            const unitId = this.unit_ids.find(id => id === unit);
-            if (unitId) {
-                this.selectServicesForUnit(selectedServices, unitId);
-            }
-            console.log("unitService after", this.create.units)
-        },
-
-        selectServicesForUnit(services, unit_id) {
-            const unitService = this.create.units.find(us => us.unit_id === unit_id);
-            if (unitService) {
-                unitService.units = services
             }
         },
+
+
 
         getInstallPaymentTypes() {
             this.isLoader = true;
@@ -728,7 +771,6 @@ export default {
           } else {
               this.showValue = true;
           }
-            console.log('breakSettlement', reservation.breakSettlement)
           this.tenant_data_edit = reservation.tenant;
           this.getTenants();
           this.getUnits();
@@ -823,7 +865,6 @@ export default {
                 .get(`/real-estate/contract-headers/${this.idEdit}`)
                 .then((res) => {
                     let l = res.data.data;
-                    console.log('dataEddit', l)
                     this.dataOfRow = l;
                 })
                 .catch((err) => {
@@ -1775,7 +1816,6 @@ export default {
                                 :disabled="!showValue"
                                 :options="units.map((type) => type.id)"
                                 :show-labels="false"
-                                @input="test"
 
                             >
                             </multiselect>
@@ -1804,44 +1844,41 @@ export default {
                         </div>
                     </div>
 
-                    <b-modal v-model="showServiceModal" title="Select Service">
-                        <div v-for="(unit, index) in unit_ids" :key="index" class="row mb-3">
-                            <div class="col-md-3">
-                                <label class="control-label">Unit Name</label>
-                                <div class="pt-2">
-                                    {{ units.find(u => u.id === unit)?.name_e || '' }}
+                    <b-modal v-model="showServiceModal" title="Select Service" dialog-class="modal-xl" title-class="font-18" body-class="p-4" @ok="saveServices">
+                        <div v-for="(unitId, index) in unit_ids" :key="`unit_${index}`" >
+                            <b-card v-if="unitId && services[unitId]?.services.length > 0" :title="`Unit Name: ${units.find(u => u.id === unitId)?.name_e || ''}`">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ $t("general.services") }}</th>
+                                            <th>Price</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="max-height: 200px; overflow-y: auto;">
+                                        <tr v-for="(service, serviceIndex) in services[unitId].services" :key="`service_${serviceIndex}`">
+                                            <td>{{ $i18n.locale === 'ar' ? service.name : service.name_e }}</td>
+                                            <td>{{ service.price }}</td>
+                                            <td>
+                                                <b-button class="custom-btn-dowonload" @click="deleteService(unitId, serviceIndex)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </b-button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            :
-                            <div v-if="Object.keys(services[index] ?? []).length" class="col-md-5">
-                                <div class="form-group">
-                                    <label class="control-label">{{ $t("general.services") }} <span class="text-danger">*</span></label>
-                                    <multiselect
-                                        v-model="create.units[index].unit_services"
-                                        :class="{
-                                                'is-invalid': $v.create.units?.[index]?.unit_services?.$error || errors.units,
-                                                 }"
-                                        :custom-label="
-                                            (opt) => services[index]['services'].find((x) => x.id === opt) ?
-                                              ($i18n.locale === 'ar' ? services[index]['services'].find((x) => x.id === opt).name : services[index]['services'].find((x) => x.id === opt).name_e) : ''
-                                          "
-                                        :internalSearch="false"
-                                        :multiple="true"
-                                        :options="services[index]['services'].map((type) => type.id)"
-                                        :show-labels="false"
-                                        @input="updateServicesForUnit(unit, $event, index)"
-                                    ></multiselect>
+                                <div style="font-weight: bold;">
+                                    Total Price for Unit: {{ calculateUnitTotal(services[unitId]?.services) }}
                                 </div>
+                            </b-card>
+                            <div style="font-weight: bold;" class="pt-2">
+                                Total Amount: {{ total_amount }}
                             </div>
-                            <div v-if="Object.keys(services[index] ?? []).length" class="col-md-3">
-                                <label class="control-label">Price</label>
-                                <div class="pt-2">
-                                    {{ services[index]['totalAmount'] }}
-                                </div>
-                            </div>
-
                         </div>
                     </b-modal>
+
                     <div class="col-md-12 p-0 m-0">
                         <div class="page-content">
                             <div class="px-0">
@@ -2297,6 +2334,10 @@ hr {
 
 .row-danger {
     background-color: #f6a9a9 !important;
+}
+.table-container {
+    max-height: 300px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 </style>

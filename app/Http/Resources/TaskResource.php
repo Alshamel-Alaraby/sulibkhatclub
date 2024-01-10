@@ -12,6 +12,7 @@ use App\Http\Resources\GeneralCustomer\RelationGeneralCustomerResource;
 use App\Http\Resources\Location\RelationLocationResource;
 use App\Http\Resources\Priority\RelationPriorityResource;
 use App\Http\Resources\Status\RelationStatusResource;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskResource extends JsonResource
@@ -29,7 +30,7 @@ class TaskResource extends JsonResource
         $employee_name = $this->employee->name ?? null;
         $equipment_name = $this->equipment->name ?? null;
         $title =
-        $this->task_title . '|' .
+            $this->task_title . '|' .
             $customer_name .
             $equipment_name . '|' .
             $employee_name . '|' .
@@ -58,23 +59,31 @@ class TaskResource extends JsonResource
             "status_id" => $this->status_id,
             "start_time" => $this->start_time,
             "end_time" => $this->end_time,
+            "actual_start_time" => $this->actual_start_time,
+            "actual_end_time" => $this->actual_end_time,
+            'actual_execution_date' => $this->actual_execution_date,
+            'actual_execution_end_date' => $this->actual_execution_end_date,
+            "actual_execution_duration" => $this->actual_execution_duration,
             "department_task" => new RelationDepertmentTaskResource($this->departmentTask),
             "department" => new RelationDepertmentResource($this->department),
             "employee" => new RelationEmployeeResource($this->employee),
             "customer" => new RelationGeneralCustomerResource($this->customer),
             "status" => new RelationStatusResource($this->status),
             "media" => isset($this->files) ? FileResource::collection($this->files) : null,
-            "owners" => $this->owners,
+            "owners" => [$this->created_by ? User::find($this->created_by)->employee_id : null],
             "supervisors" => EmployeeResource::collection($this->supervisors),
             'attentions' => EmployeeResource::collection($this->attentions),
             "notifications" => $this->notifications,
+            'sub_location_id' => $this->sub_location_id,
             'location_id' => $this->location_id,
             'location' => new RelationLocationResource($this->location),
+            'sub_location' => new RelationLocationResource($this->sub_location),
             'priority_id' => $this->priority_id,
             'priority' => new RelationPriorityResource($this->priority),
             'task_requirement' => $this->task_requirement,
             'is_closed' => $this->is_closed,
             'admin_note' => $this->admin_note,
+            'created_at' => $this->created_at,
         ];
     }
 }

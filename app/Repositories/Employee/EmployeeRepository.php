@@ -172,7 +172,7 @@ class EmployeeRepository implements EmployeeInterface
 
     public function getName($request)
     {
-        $models = $this->model->select('id', 'name', 'name_e');
+        $models = $this->model->select('id', 'name', 'name_e','department_id');
 
         if ($request->customer_handel) {
             $models->where('customer_handel', '!=', 'non_customer');

@@ -15,6 +15,7 @@ export default {
                     this.fields = res.data;
                 })
                 .catch((err) => {
+                    console.log(err)
                     errorFun('Error', 'Thereisanerrorinthesystem');
                 });
 

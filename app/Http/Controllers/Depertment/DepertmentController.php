@@ -34,7 +34,7 @@ class DepertmentController extends Controller
 
     public function create(DepertmentRequest $request)
     {
-        $model = $this->modelInterface->create($request->validated());
+       $model = $this->modelInterface->create($request->validated());
 
         return responseJson(200, 'success',new DepertmentResource($model));
     }

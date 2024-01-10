@@ -3497,7 +3497,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     dataRow: {
       handler: function handler(newV, old) {
         this.check_data_row = Object.keys(newV).length;
-        if (this.check_data_row != Object.keys(old).length) this.resetModalCreateOrUpdate();
+        if (this.check_data_row && newV.id != old.id) this.resetModalCreateOrUpdate();
       }
     },
     appointment_data: {
@@ -3753,24 +3753,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this6.relatedDocumentNumbers.push(invoice.document_number);
               }
               _this6.create.id = invoice.id;
-              _this6.create.patient_id = invoice.patient_id;
+              _this6.create.patient_id = _this6.dataRow.patient_id;
               _this6.create.company_id = invoice.company_id;
               _this6.create.customer_type = invoice.customer_type;
-              _this6.create.doctor_id = invoice.doctor_id;
-              _this6.create.from_doctor_id = invoice.from_doctor_id;
+              _this6.create.doctor_id = _this6.dataRow.doctor_id;
+              _this6.create.from_doctor_id = _this6.dataRow.from_doctor_id;
               _this6.create.payment_method_id = invoice.payment_method_id;
               _this6.create.sell_method_id = invoice.sell_method_id;
               _this6.create.total_invoice = invoice.total_invoice;
-              _this6.create.patient_insurance_number = invoice.patient_insurance_number;
-              _this6.create.company_insurance_id = invoice.company_insurance_id;
+              _this6.create.patient_insurance_number = _this6.dataRow.patient_insurance_number;
+              _this6.create.company_insurance_id = _this6.dataRow.company_insurance_id;
               _this6.create.invoice_discount = invoice.invoice_discount;
               _this6.create.net_invoice = invoice.net_invoice;
               _this6.create.sell_method_discount = invoice.sell_method_discount;
               _this6.create.unrelaized_revenue = invoice.unrelaized_revenue;
               _this6.create.related_document_number = invoice.related_document_number;
               _this6.create.related_document_prefix = invoice.related_document_prefix;
-              _this6.create.total_company_insurance_amount = invoice.total_company_insurance_amount;
-              _this6.create.total_patient_amount = invoice.total_patient_amount;
+              _this6.create.total_company_insurance_amount = _this6.dataRow.total_company_insurance_amount;
+              _this6.create.total_patient_amount = _this6.dataRow.total_patient_amount;
               _this6.create.header_details = [];
               invoice.header_details.forEach(function (e, index) {
                 _this6.create.header_details.push({
@@ -6010,13 +6010,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -6826,6 +6825,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     return {
       fields: [],
       available_times: [],
+      from_doctors: [],
       doctors: [],
       rooms: [],
       isCustom: false,
@@ -6871,8 +6871,15 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   },
   mounted: function mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.get_from_doctors();
   },
   methods: {
+    get_from_doctors: function get_from_doctors() {
+      var _this = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("h_m_s/doctors?drop_down=1&company_id=".concat(this.company_id, "}")).then(function (res) {
+        _this.from_doctors = res.data;
+      });
+    },
     showBranchModal: function showBranchModal() {
       if (this.create.branch_id == 0) {
         this.$bvModal.show("addAppointmentBranch");
@@ -6924,21 +6931,21 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }
     },
     get_available_times: function get_available_times() {
-      var _this = this;
+      var _this2 = this;
       if (this.create.doctor_id && this.create.room_id && this.create.date) {
         this.isLoader = true;
         this.errors = {};
         this.available_times = [];
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/h_m_s/doctor_available_times?doctor_id=".concat(this.create.doctor_id, "&room_id=").concat(this.create.room_id, "&date=").concat(this.formatDateTime(this.create.date))).then(function (res) {
-          _this.available_times = res.data;
+          _this2.available_times = res.data;
         })["catch"](function (err) {
           if (err.response.data) {
-            _this.errors = err.response.data.errors;
+            _this2.errors = err.response.data.errors;
           } else {
-            _this.errorFun('Error', 'Thereisanerrorinthesystem');
+            _this2.errorFun('Error', 'Thereisanerrorinthesystem');
           }
         })["finally"](function () {
-          _this.isLoader = false;
+          _this2.isLoader = false;
         });
       } else {
         this.available_times = [];
@@ -6946,40 +6953,40 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     get_rooms_and_doctors_by_branch: function get_rooms_and_doctors_by_branch() {
       var _this$create$doctor_i,
-        _this2 = this,
+        _this3 = this,
         _this$create$room_id;
       if (this.create.branch_id) _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/h_m_s/rooms?branch_id=".concat(this.create.branch_id, "&doctor_id=").concat((_this$create$doctor_i = this.create.doctor_id) !== null && _this$create$doctor_i !== void 0 ? _this$create$doctor_i : '')).then(function (res) {
         var data = res.data.data;
-        if (_this2.isPermission("create Room")) {
+        if (_this3.isPermission("create Room")) {
           data.unshift({
             id: 0,
             name: "اضف غرفة",
             name_e: "Add Room"
           });
         }
-        _this2.rooms = data;
+        _this3.rooms = data;
       });
       if (this.create.branch_id) _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("h_m_s/doctors?drop_down=1&branch_id=".concat(this.create.branch_id, "&company_id=").concat(this.company_id, "&room_id=").concat((_this$create$room_id = this.create.room_id) !== null && _this$create$room_id !== void 0 ? _this$create$room_id : '')).then(function (res) {
         var data = res.data;
-        if (_this2.isPermission("create Doctor")) {
+        if (_this3.isPermission("create Doctor")) {
           data.unshift({
             id: 0,
             name: "اضف طبيب",
             name_e: "Add Doctor"
           });
         }
-        _this2.doctors = data;
+        _this3.doctors = data;
       });
     },
     getCustomTableFields: function getCustomTableFields() {
-      var _this3 = this;
+      var _this4 = this;
       this.isCustom = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/customTable/table-columns/h_m_s_appointments").then(function (res) {
-        _this3.fields = res.data;
+        _this4.fields = res.data;
       })["catch"](function (err) {
-        _this3.errorFun('Error', 'Thereisanerrorinthesystem');
+        _this4.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
-        _this3.isCustom = false;
+        _this4.isCustom = false;
       });
     },
     isVisible: function isVisible(fieldName) {
@@ -7003,7 +7010,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }
     },
     defaultData: function defaultData() {
-      var _this4 = this;
+      var _this5 = this;
       var edit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       this.create = {
         doctor_id: null,
@@ -7023,7 +7030,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.errors = {};
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this4.$v.$reset();
+        _this5.$v.$reset();
       });
     },
     resetModalHidden: function resetModalHidden() {
@@ -7043,7 +7050,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       return new Date(item.getTime() - item.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
     },
     AddSubmit: function AddSubmit() {
-      var _this5 = this;
+      var _this6 = this;
       if (this.patient_details_id) this.create.patient_id = this.patient_details_id;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -7057,37 +7064,37 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             company_id: this.company_id,
             date: this.formatDateTime(this.create.date)
           })).then(function (res) {
-            _this5.is_disabled = true;
-            if (!_this5.isPage) _this5.$emit("created");else _this5.$emit("getDataTable");
+            _this6.is_disabled = true;
+            if (!_this6.isPage) _this6.$emit("created");else _this6.$emit("getDataTable");
             setTimeout(function () {
-              _this5.successFun('Addedsuccessfully');
+              _this6.successFun('Addedsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this5.errors = err.response.data.errors;
+              _this6.errors = err.response.data.errors;
             } else {
-              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this6.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this5.isLoader = false;
+            _this6.isLoader = false;
           });
         } else {
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), _objectSpread(_objectSpread({}, this.create), {}, {
             company_id: this.$store.getters["auth/company_id"]
           })).then(function (res) {
-            _this5.$bvModal.hide(_this5.id);
-            _this5.$emit("getDataTable");
+            _this6.$bvModal.hide(_this6.id);
+            _this6.$emit("getDataTable");
             setTimeout(function () {
-              _this5.successFun('Editsuccessfully');
+              _this6.successFun('Editsuccessfully');
             }, 500);
           })["catch"](function (err) {
             if (err.response.data) {
-              _this5.errors = err.response.data.errors;
+              _this6.errors = err.response.data.errors;
             } else {
-              _this5.errorFun('Error', 'Thereisanerrorinthesystem');
+              _this6.errorFun('Error', 'Thereisanerrorinthesystem');
             }
           })["finally"](function () {
-            _this5.isLoader = false;
+            _this6.isLoader = false;
           });
         }
       }
@@ -15881,6 +15888,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
 var render = function render() {
+  var _vm$document_data;
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", [_c("b-modal", {
@@ -15933,7 +15941,7 @@ var render = function render() {
     attrs: {
       id: "printGeneralInvoice"
     }
-  }, [_vm.document_data ? _c("div", {
+  }, [Object.keys((_vm$document_data = _vm.document_data) !== null && _vm$document_data !== void 0 ? _vm$document_data : []).length ? _c("div", {
     staticClass: "row mt-4"
   }, [_c("div", {
     staticClass: "col-12 col-lg-12"
@@ -18829,7 +18837,7 @@ var render = function render() {
     staticClass: "fas fa-trash-alt"
   })]) : _vm._e()])], 1) : _vm._e(), _vm._v(" "), _vm.sidePaginate ? _c("div", {
     "class": "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-".concat(_vm.isPaginate ? "end" : "center")
-  }, [_c("div", {
+  }, [_vm._t("default"), _vm._v(" "), _c("div", {
     staticClass: "d-fex"
   }, [_c("div", {
     staticClass: "d-inline-block"
@@ -18936,7 +18944,7 @@ var render = function render() {
         _vm.$emit("perviousOrNext", parseInt(_vm.objPagination.current_page) + 1);
       }
     }
-  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])]) : _vm._e()]);
+  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])], 2) : _vm._e()]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -19004,19 +19012,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -19028,6 +19030,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -19035,23 +19038,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -20413,16 +20417,16 @@ var render = function render() {
       "is-invalid": _vm.errors.from_doctor_id || _vm.$v.create.from_doctor_id.$error
     },
     attrs: {
-      options: _vm.doctors.map(function (type) {
+      options: _vm.from_doctors.map(function (type) {
         return type.id;
       }),
       disabled: _vm.type == "edit",
       "custom-label": function customLabel(opt) {
-        return _vm.doctors.find(function (x) {
+        return _vm.from_doctors.find(function (x) {
           return x.id == opt;
-        }) ? _vm.$i18n.locale == "ar" ? _vm.doctors.find(function (x) {
+        }) ? _vm.$i18n.locale == "ar" ? _vm.from_doctors.find(function (x) {
           return x.id == opt;
-        }).name : _vm.doctors.find(function (x) {
+        }).name : _vm.from_doctors.find(function (x) {
           return x.id == opt;
         }).name_e : null;
       }
@@ -25961,6 +25965,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return;
       } else {
         this.create.company_id = this.company_id;
+        this.create_break_downs();
         this.isLoader = true;
         this.errors = {};
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].put("document-headers/".concat(id), _objectSpread({}, this.create)).then(function (res) {
@@ -25973,18 +25978,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               timer: 1500
             });
           }, 500);
-          if (_this6.document.attributes && parseInt(_this6.document.attributes.customer) != 0) {
-            _this6.showBreakCreate();
-          }
         })["catch"](function (err) {
-          if (err.response.data) {
-            _this6.errors = err.response.data.errors;
-          } else {
+          if (err.response.status == 402) {
+            console.log(err.response.status);
+            _this6.resetModalEdit(_this6.dataRow.id);
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
               icon: "error",
               title: "".concat(_this6.$t("general.Error")),
-              text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+              text: "".concat(_this6.$t("general.You cant edit, because there is a settlement for this invoice"))
             });
+          } else {
+            if (err.response.data) {
+              _this6.errors = err.response.data.errors;
+            } else {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                icon: "error",
+                title: "".concat(_this6.$t("general.Error")),
+                text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+              });
+            }
           }
         })["finally"](function () {
           _this6.isLoader = false;
@@ -26028,31 +26040,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         // }
         this.create.is_break = 0;
         this.create.company_id = this.company_id;
-        var invoice = [];
-        if (this.client_type == 'patient') {
-          if (this.create.total_patient_amount > 0) invoice.push({
-            net_invoice: this.create.total_patient_amount,
-            customer_id: this.create.patient_id,
-            client_type_id: 4
-          });
-          if (this.create.total_company_insurance_amount > 0) invoice.push({
-            net_invoice: this.create.total_company_insurance_amount,
-            customer_id: this.create.company_insurance_id,
-            client_type_id: 6
-          });
-        } else {
-          this.create.company_insurance_id = '';
-          if (this.create.net_invoice > 0) {
-            this.create.total_company_insurance_amount = 0;
-            this.create.total_patient_amount = 0;
-            invoice.push({
-              net_invoice: this.create.net_invoice,
-              customer_id: this.create.doctor_id,
-              client_type_id: 5
-            });
-          }
-        }
-        if (Object.keys(invoice !== null && invoice !== void 0 ? invoice : []).length) this.create.header_break_downs = invoice;
+        this.create_break_downs();
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].post("document-headers", _objectSpread({}, this.create)).then(function (res) {
           _this7.$emit("created");
           _this7.is_disabled = true;
@@ -26098,6 +26086,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         this.AddSubmit(is_break);
       }
+    },
+    create_break_downs: function create_break_downs() {
+      var invoice = [];
+      if (this.client_type == 'patient') {
+        if (this.create.total_patient_amount > 0) invoice.push({
+          net_invoice: this.create.total_patient_amount,
+          customer_id: this.create.patient_id,
+          client_type_id: 4
+        });
+        if (this.create.total_company_insurance_amount > 0) invoice.push({
+          net_invoice: this.create.total_company_insurance_amount,
+          customer_id: this.create.company_insurance_id,
+          client_type_id: 6
+        });
+      } else {
+        this.create.company_insurance_id = '';
+        if (this.create.net_invoice > 0) {
+          this.create.total_company_insurance_amount = 0;
+          this.create.total_patient_amount = 0;
+          invoice.push({
+            net_invoice: this.create.net_invoice,
+            customer_id: this.create.doctor_id,
+            client_type_id: 5
+          });
+        }
+      }
+      if (Object.keys(invoice !== null && invoice !== void 0 ? invoice : []).length) this.create.header_break_downs = invoice;
     }
   }
 });
@@ -26352,6 +26367,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.current_page = l.pagination.current_page;
         _this.idEdit = null;
       })["catch"](function (err) {
+        console.log(err);
         _this.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this.isLoader = false;
@@ -26540,6 +26556,7 @@ __webpack_require__.r(__webpack_exports__);
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/".concat(table_name)).then(function (res) {
         _this.fields = res.data;
       })["catch"](function (err) {
+        console.log(err);
         errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
@@ -26646,7 +26663,7 @@ __webpack_require__.r(__webpack_exports__);
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
-          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].new_en;
+          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }

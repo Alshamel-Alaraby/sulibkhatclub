@@ -1,6 +1,6 @@
 <script>
-import { formatDateOnly } from "../../../../helper/startDate";
-import convertCurrencyToWords from "../../../../helper/mixin/convertCurrencyToWords";
+import {formatDateOnly} from "../../../../helper/startDate";
+import convertToArabicWords from "../../../../helper/mixin/convertCurrencyToWords";
 
 /**
  * Advanced Table component
@@ -12,7 +12,7 @@ export default {
             default: [],
         },
     },
-    mixins: [convertCurrencyToWords],
+    mixins: [convertToArabicWords],
     data() {
         return {
             printObj: {
@@ -29,94 +29,125 @@ export default {
 </script>
 
 <template>
-    <div v-if="data_row.length > 0" id="printInv">
+    <div v-if="data_row.length > 0" id="printInv"
+         :style="{ 'direction': $i18n.locale == 'ar' ? 'rtl!important' : '', 'text-align': $i18n.locale == 'ar' ? 'start' : '' }">
         <div class="invoice" v-for="(data, index) in data_row" :key="data.id">
             <div class="box pl-0 ml-0">
+                <img src="/images/sulib.png" alt="Watermark Image" class="watermark">
                 <div class="image-header px-0">
-                    <img src="/images/sulib.png" />
+                    <img src="/images/sulib.png"/>
                     <h1 class="text-center">
                         <b>{{ $t('general.SulaibikhatClub') }}</b> <br>
                         <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                            <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
-                                $t('general.docu') }}
-                                {{ data.serial ? ($i18n.locale == 'ar' ? data.serial.name : data.serial.name_e) :
-                                    "" }}</b>
+                            <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">
+                                {{ $t('general.MembershipReceiptRenewal') }}
+                            </b>
                             <b v-else style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
-                                $t('general.Membership renewal receipt voucher') }}</b>
+                                    $t('general.Membership renewal receipt voucher')
+                                }}</b>
                         </span>
 
                     </h1>
-                    <div class="doc_box text-center pl-0 ml-0"><b style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b> <br>
-                        {{ data.document_no }}</div>
+                    <div class="doc_box text-center pl-0 ml-0"><b
+                        style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b> <br>
+                        {{ data.document_no }} | {{ data.serial_number }}
+                    </div>
 
                 </div>
 
-                <h3><b>{{ $t('general.Date') }}: {{ formatDate(data.date) }}</b> </h3>
+                <h3><b>{{ $t('general.Date') }}: {{ formatDate(data.date) }}</b></h3>
                 <div style="display: flex; margin: 0;padding: 0;">
                     <h3 class="col-8"><b>{{ $t('general.We got from Mr') }} : {{ data.member.full_name }}</b></h3>
-                    <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data.member.membership_number }}</b> </h3>
+                    <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data.member.membership_number }}</b></h3>
                 </div>
-                <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{ data.amount + " " +
-                    $t('general.APPKDW') }} ) {{ convert_currency_to_words(data.amount) }} {{ $t('general.KDW') + " " +
-        $t('general.Just nothing else') }}</b></h3>
+                <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{
+                        data.amount + " " +
+                        $t('general.APPKDW')
+                    }} ) {{ convertToArabicWords(data.amount) }} {{
+                        $t('general.KDW') + " " +
+                        $t('general.Just nothing else')
+                    }}</b></h3>
 
-                <h3><b>{{ $t('general.This is the cost of renewal/annual subscription to the club for up to one year') }} {{
-                    data.year }}</b></h3>
+                <h3><b>{{
+                        $t('general.This is the cost of renewal/annual subscription to the club for up to one year')
+                    }} {{
+                        data.year
+                    }}</b></h3>
 
                 <div style="display: flex;justify-content: space-around;margin: 30px 10px;">
                     <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{ $t('general.Accountant') }}</b>
+                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
+                                $t('general.Accountant')
+                            }}</b>
                     </span>
                     <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{ $t('general.Treasurer') }}</b>
+                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
+                                $t('general.Treasurer')
+                            }}</b>
                     </span>
                 </div>
 
-                <h4 style="margin-top: 120px;color: #000;font-weight: bold">* {{ $t('general.This is an electronic document approved without a signature') }}</h4>
+                <h4 style="margin-top: 120px;color: #000;font-weight: bold">*
+                    {{ $t('general.This is an electronic document approved without a signature') }}</h4>
             </div>
             <div class="box mt-5 pl-0 ml-0">
+                <img src="/images/sulib.png" alt="Watermark Image" class="watermark">
                 <div class="image-header ">
-                    <img src="/images/sulib.png" />
+                    <img src="/images/sulib.png"/>
                     <h1 class="text-center">
                         <b>{{ $t('general.SulaibikhatClub') }}</b> <br>
                         <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                            <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
-                                $t('general.docu') }}
-                                {{ data.serial ? ($i18n.locale == 'ar' ? data.serial.name : data.serial.name_e) :
-                                    "" }}</b>
+                            <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">
+                                {{ $t('general.MembershipReceiptRenewal') }}
+                                </b>
                             <b v-else style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
-                                $t('general.Membership renewal receipt voucher') }}</b>
+                                    $t('general.Membership renewal receipt voucher')
+                                }}</b>
                         </span>
 
                     </h1>
-                    <div class="doc_box text-center pl-0 ml-0"><b style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b>
+                    <div class="doc_box text-center pl-0 ml-0"><b
+                        style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b>
                         <br>
-                        {{ data.document_no }}</div>
+                        {{ data.document_no }} | {{ data.serial_number }}
+                    </div>
 
                 </div>
 
-                <h3><b>{{ $t('general.Date') }}: {{ formatDate(data.date) }}</b> </h3>
+                <h3><b>{{ $t('general.Date') }}: {{ formatDate(data.date) }}</b></h3>
                 <div style="display: flex; margin: 0;padding: 0;">
                     <h3 class="col-8"><b>{{ $t('general.We got from Mr') }} : {{ data.member.full_name }}</b></h3>
-                    <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data.member.membership_number }}</b> </h3>
+                    <h3 class="col-4"><b>{{ $t('general.NoMembership') }} : {{ data.member.membership_number }}</b></h3>
                 </div>
-                <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{ data.amount + " " +
-                    $t('general.APPKDW') }} ) {{ convert_currency_to_words(data.amount) }} {{ $t('general.KDW') + " " +
-        $t('general.Just nothing else') }}</b></h3>
+                <h3><b>{{ $t('general.According to the cash amount and its amount') }} ( {{
+                        data.amount + " " +
+                        $t('general.APPKDW')
+                    }} ) {{ convertToArabicWords(data.amount) }} {{
+                        $t('general.KDW') + " " +
+                        $t('general.Just nothing else')
+                    }}</b></h3>
 
-                <h3><b>{{ $t('general.This is the cost of renewal/annual subscription to the club for up to one year') }} {{
-                    data.year }}</b></h3>
+                <h3><b>{{
+                        $t('general.This is the cost of renewal/annual subscription to the club for up to one year')
+                    }} {{
+                        data.year
+                    }}</b></h3>
 
                 <div style="display: flex;justify-content: space-around;margin: 30px 10px;">
                     <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{ $t('general.Accountant') }}</b>
+                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
+                                $t('general.Accountant')
+                            }}</b>
                     </span>
                     <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
-                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{ $t('general.Treasurer') }}</b>
+                        <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
+                                $t('general.Treasurer')
+                            }}</b>
                     </span>
                 </div>
 
-                <h4 style="margin-top: 120px;color: #000;font-weight: bold">* {{ $t('general.This is an electronic document approved without a signature') }}</h4>
+                <h4 style="margin-top: 120px;color: #000;font-weight: bold">*
+                    {{ $t('general.This is an electronic document approved without a signature') }}</h4>
             </div>
         </div>
     </div>
@@ -197,11 +228,11 @@ export default {
     }
 
     .box {
-        padding: 0px 30px 0px 20px;
-        margin: 50px 0;
-        height: 49%;
+        padding: 0px 40px 0px 30px;
+        margin: 0 0 25px 0;
+        height: 670px;
         border: #6e6b6b solid 1px;
-        max-height: 720px;
+        position: relative;
     }
 
     .doc_box {
@@ -212,5 +243,14 @@ export default {
         width: 150px;
         height: 70px;
         print-color-adjust: exact;
+    }
+
+    .watermark {
+        position: absolute;
+        opacity: 0.07;
+        pointer-events: none;
+        height: 100%;
+        width: 100%;
+
     }
 }</style>

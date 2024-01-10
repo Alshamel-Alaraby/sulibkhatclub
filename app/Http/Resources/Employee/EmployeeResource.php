@@ -39,7 +39,7 @@ class EmployeeResource extends JsonResource
             'branch' => $this->branch,
             'manager' => $this->manager,
             'salesman_type' => $this->salesmanType,
-            'department' => $this->depertment,
+            'department' => $this->department,
             'plans' => $this->plans,
             'managers' => $this->managersData->map(function ($manager) {
                 return [

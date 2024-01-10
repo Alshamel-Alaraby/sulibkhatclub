@@ -180,11 +180,11 @@
                                 <label>
                                     {{ getCompanyKey("hms_appointments_from_doctor") }}
                                 </label>
-                                <multiselect @input="showFromDoctorModal" v-model="create.from_doctor_id" :options="doctors.map((type) => type.id)"
-                                    :disabled="type == 'edit'" :custom-label="(opt) => doctors.find((x) => x.id == opt) ?
+                                <multiselect @input="showFromDoctorModal" v-model="create.from_doctor_id" :options="from_doctors.map((type) => type.id)"
+                                    :disabled="type == 'edit'" :custom-label="(opt) => from_doctors.find((x) => x.id == opt) ?
                                         $i18n.locale == 'ar'
-                                            ? doctors.find((x) => x.id == opt).name
-                                            : doctors.find((x) => x.id == opt).name_e : null"
+                                            ? from_doctors.find((x) => x.id == opt).name
+                                            : from_doctors.find((x) => x.id == opt).name_e : null"
                                     :class="{ 'is-invalid': errors.from_doctor_id || $v.create.from_doctor_id.$error }">
                                 </multiselect>
                                 <div v-if="$v.create.from_doctor_id.$error" class="invalid-feedback">
@@ -319,6 +319,7 @@ export default {
         return {
             fields: [],
             available_times: [],
+            from_doctors: [],
             doctors: [],
             rooms: [],
             isCustom: false,
@@ -354,8 +355,14 @@ export default {
     },
     mounted() {
         this.company_id = this.$store.getters["auth/company_id"];
+        this.get_from_doctors()
     },
     methods: {
+        get_from_doctors(){
+            adminApi.get(`h_m_s/doctors?drop_down=1&company_id=${this.company_id}}`).then((res) => {
+            this.from_doctors = res.data
+        });
+        },
         showBranchModal() {
             if (this.create.branch_id == 0) {
                 this.$bvModal.show("addAppointmentBranch");

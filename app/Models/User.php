@@ -147,8 +147,9 @@ class User extends Authenticatable implements HasMedia
 
     public function receivesBroadcastNotificationsOn()
     {
-        return 'App.Models.User.' . $this->id;
+        return 'App.Models.User.'.$this->id;
     }
+
 
     // scopes
     public function scopeFilter($query, $request)

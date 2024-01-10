@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\Status;
+use App\Http\Requests\AllTaskPostRequest;
+use App\Http\Requests\TaskRequest;
+use App\Http\Resources\GeneralTaskResource;
+use App\Http\Resources\TaskLogResource;
+use App\Http\Resources\TaskResource;
+use App\Models\Depertment;
 use App\Models\Employee;
+use App\Models\GeneralCustomer;
 use App\Models\Location;
 use App\Models\Priority;
-use App\Models\Depertment;
-use App\Models\GeneralCustomer;
-use App\Http\Requests\AllRequest;
-use App\Http\Requests\TaskRequest;
-use Illuminate\Routing\Controller;
-use App\Http\Resources\TaskResource;
-use App\Http\Resources\TaskLogResource;
-use App\Http\Requests\AllTaskPostRequest;
-use App\Http\Resources\GeneralTaskResource;
+use App\Models\Status;
+use App\Models\Task;
+use App\Models\User;
+use App\Notifications\GeneralNotification;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TaskController extends Controller
@@ -38,14 +39,36 @@ class TaskController extends Controller
 
     public function all(Request $request)
     {
+        $user = request()->user();
         $models = $this->model->filter($request)->data()->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
         if ($request->employee_id) {
             $models->where('employee_id', $request->employee_id);
         }
 
+        if ($user) {
+            $models->where(function($q) use($user){
+                $q->where('created_by', $user->id)->orWhereRelation('supervisors','employee_id',$user->employee_id)->orWhereRelation('attentions','employee_id',$user->employee_id);
+            });
+        }
+
         if ($request->customer_id) {
             $models->where('customer_id', $request->customer_id);
+        }
+
+        if ($request->status_id) {
+            $models->where('status_id', $request->status_id);
+        }
+
+        if ($request->department_id) {
+            $models->where('department_id', $request->department_id);
+        }
+
+        if ($request->location_id) {
+            $models->where('location_id', $request->location_id);
+        }
+        if ($request->start_date && $request->end_date) {
+            $models->whereDate('created_at', '>=', $request->start_date)->whereDate('created_at', '<=', $request->end_date);
         }
 
         if ($request->per_page) {
@@ -73,9 +96,11 @@ class TaskController extends Controller
             if ($request->department_task_ids) {
                 $q->whereIn('department_task_id', $request->department_task_ids);
             }
+
             if ($request->employee_ids) {
                 $q->whereIn('employee_id', $request->employee_ids);
             }
+
 
             if ($request->year) {
                 $q->whereYear('execution_date', $request->year);
@@ -97,12 +122,12 @@ class TaskController extends Controller
 
     public function create(TaskRequest $request)
     {
+        $user = request()->user();
         $type = request()->header('type');
-        if ($type == 'admin') {
+        if ($type == 'admin' && !$user) {
             $user_name = request()->header('admin_name');
             $user_id = null;
         } else {
-            $user = \App\Models\User::find($request->header('user_id'));
             if ($user) {
                 $user_name = $user->name;
                 $user_id = $user->id;
@@ -113,6 +138,8 @@ class TaskController extends Controller
         }
 
         $model = $this->model->create($request->all());
+        if ($user)
+            $model->update(['created_by' => $user->id]);
 
         if ($request->supervisors) {
             $model->supervisors()->attach($request->supervisors, [
@@ -120,8 +147,8 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->attentions) {
-            $model->attentions()->attach($request->attentions, [
+        if ($request->notifications) {
+            $model->attentions()->attach($request->notifications, [
                 'type' => 'attention'
             ]);
         }
@@ -134,8 +161,20 @@ class TaskController extends Controller
             'user_id' => $user_id,
             'data' => $model
         ]);
-
         $model->refresh();
+
+        User::whereIn('employee_id', array_merge($request->supervisors, $request->notifications))->get()->each(function ($user) use ($model, $request, $user_name) {
+            $user->notify(new GeneralNotification(
+                new GeneralTaskResource($model),
+                $model->id,
+                'ticketManager tasks',
+                "قام $user_name بانشاء مهمة في " . now()->format('Y-m-d H:i:s'),
+                '',
+                "$user_name has created a task in " . now()->format('Y-m-d H:i:s')
+
+            ));
+        });
+
         return responseJson(200, 'created', new TaskResource($model));
     }
 
@@ -163,7 +202,7 @@ class TaskController extends Controller
 
         // in every record update make message for what old and what new
 
-        if ($request->contact_person != $model->contact_person) {
+        if ($request->contact_person && $request->contact_person != $model->contact_person) {
             $model->logs()->create([
                 'action' => "update",
                 'message_e' => "$user_name has updated the contact person from $model->contact_person to $request->contact_person in "
@@ -174,7 +213,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->contact_person_phone != $model->contact_person_phone) {
+        if ($request->contact_person_phone && $request->contact_person_phone != $model->contact_person_phone) {
             $model->logs()->create([
                 'action' => "update",
                 'message_e' => "$user_name has updated the contact person phone from $model->contact_person_phone to $request->contact_person_phone in "
@@ -187,7 +226,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->task_title != $model->task_title) {
+        if ($request->task_title && $request->task_title != $model->task_title) {
             $model->logs()->create([
                 'action' => "update",
                 'message' => "قام $user_name بتعديل عنوان المهمه من $model->task_title الى $request->task_title",
@@ -196,7 +235,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->execution_date != $model->execution_date) {
+        if ($request->execution_date && $request->execution_date != $model->execution_date) {
             $model->logs()->create([
                 'action' => "update",
                 'message' => "قام $user_name بتعديل تاريخ التنفيذ من $model->execution_date الى $request->execution_date في "
@@ -206,8 +245,18 @@ class TaskController extends Controller
                 'user_id' => $user_id,
             ]);
         }
+        if ($request->actual_execution_date && $request->actual_execution_date != $model->actual_execution_date) {
+            $model->logs()->create([
+                'action' => "update",
+                'message' => "قام $user_name بتعديل تاريخ التنفيذ الفعلي من $model->actual_execution_date الى $request->actual_execution_date في "
+                    . now()->format('Y-m-d H:i:s'),
+                'message_e' => "$user_name has updated the actual execution date from $model->actual_execution_date to $request->actual_execution_date in "
+                    . now()->format('Y-m-d H:i:s'),
+                'user_id' => $user_id,
+            ]);
+        }
 
-        if ($request->execution_duration != $model->execution_duration) {
+        if ($request->execution_duration && $request->execution_duration != $model->execution_duration) {
             $model->logs()->create([
                 'action' => "update",
                 'message_e' => "$user_name has updated the execution duration from $model->execution_duration to $request->execution_duration in "
@@ -217,8 +266,18 @@ class TaskController extends Controller
                 'user_id' => $user_id,
             ]);
         }
+        if ($request->actual_execution_duration && $request->actual_execution_duration != $model->actual_execution_duration) {
+            $model->logs()->create([
+                'action' => "update",
+                'message_e' => "$user_name has updated the actual execution duration from $model->actual_execution_duration to $request->actual_execution_duration in "
+                    . now()->format('Y-m-d H:i:s'),
+                'message' => "قام $user_name بتعديل مدة التنفيذ الفعلية من $model->actual_execution_duration الى $request->actual_execution_duration في "
+                    . now()->format('Y-m-d H:i:s'),
+                'user_id' => $user_id,
+            ]);
+        }
 
-        if ($request->execution_end_date != $model->execution_end_date) {
+        if ($request->execution_end_date && $request->execution_end_date != $model->execution_end_date) {
 
             $model->logs()->create([
                 'action' => "update",
@@ -229,9 +288,20 @@ class TaskController extends Controller
                 'user_id' => $user_id,
             ]);
         }
+        if ($request->actual_execution_end_date && $request->actual_execution_end_date != $model->actual_execution_end_date) {
+
+            $model->logs()->create([
+                'action' => "update",
+                'message_e' => "$user_name has updated the actual execution end date from $model->actual_execution_end_date to $request->actual_execution_end_date in "
+                    . now()->format('Y-m-d H:i:s'),
+                'message' => "قام $user_name بتعديل تاريخ انتهاء التنفيذ الفعلي من $model->actual_execution_end_date الى $request->actual_execution_end_date في "
+                    . now()->format('Y-m-d H:i:s'),
+                'user_id' => $user_id,
+            ]);
+        }
 
 
-        if ($request->notification_date != $model->notification_date) {
+        if ($request->notification_date && $request->notification_date != $model->notification_date) {
 
             $model->logs()->create([
                 'action' => "update",
@@ -243,7 +313,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->start_time != $model->start_time) {
+        if ($request->start_time && $request->start_time != $model->start_time) {
 
             $model->logs()->create([
                 'action' => "update",
@@ -255,7 +325,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->end_time != $model->end_time) {
+        if ($request->end_time && $request->end_time != $model->end_time) {
 
             $model->logs()->create([
                 'action' => "update",
@@ -266,8 +336,31 @@ class TaskController extends Controller
                 'user_id' => $user_id,
             ]);
         }
+        if ($request->actual_start_time && $request->actual_start_time != $model->actual_start_time) {
 
-        if ($request->department_task_id != $model->department_task_id) {
+            $model->logs()->create([
+                'action' => "update",
+                'message_e' => "$user_name has updated the actual start time from $model->actual_start_time to $request->actual_start_time in "
+                    . now()->format('Y-m-d H:i:s'),
+                'message' => "قام $user_name بتعديل وقت البدء الفعلي من $model->actual_start_time الى $request->actual_start_time في "
+                    . now()->format('Y-m-d H:i:s'),
+                'user_id' => $user_id,
+            ]);
+        }
+
+        if ($request->actual_end_time && $request->actual_end_time != $model->actual_end_time) {
+
+            $model->logs()->create([
+                'action' => "update",
+                'message_e' => "$user_name has updated the actual end time from $model->actual_end_time to $request->actual_end_time in "
+                    . now()->format('Y-m-d H:i:s'),
+                'message' => "قام $user_name بتعديل وقت الانتهاء الفعلي من $model->actual_end_time الى $request->actual_end_time في "
+                    . now()->format('Y-m-d H:i:s'),
+                'user_id' => $user_id,
+            ]);
+        }
+
+        if ($request->department_task_id && $request->department_task_id != $model->department_task_id) {
             $old = \App\Models\DepertmentTask::find($model->department_task_id);
             $new = \App\Models\DepertmentTask::find($request->department_task_id);
             $model->logs()->create([
@@ -280,7 +373,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->employee_id != $model->employee_id) {
+        if ($request->employee_id && $request->employee_id != $model->employee_id) {
             $old = \App\Models\Employee::find($model->employee_id);
             $new = \App\Models\Employee::find($request->employee_id);
             $model->logs()->create([
@@ -293,7 +386,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->customer_id != $model->customer_id) {
+        if ($request->customer_id && $request->customer_id != $model->customer_id) {
             $old = GeneralCustomer::find($model->customer_id);
             $new = GeneralCustomer::find($request->customer_id);
             $model->logs()->create([
@@ -306,7 +399,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->department_id != $model->department_id) {
+        if ($request->department_id && $request->department_id != $model->department_id) {
             $old = Depertment::find($model->department_id);
             $new = Depertment::find($request->department_id);
             $model->logs()->create([
@@ -319,7 +412,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->status_id != $model->status_id) {
+        if ($request->status_id && $request->status_id != $model->status_id) {
             $old = Status::find($model->status_id);
             $new = Status::find($request->status_id);
             $model->logs()->create([
@@ -332,7 +425,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->note != $model->note) {
+        if ($request->note && $request->note != $model->note) {
 
             $model->logs()->create([
                 'action' => "update",
@@ -344,7 +437,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->location_id != $model->location_id) {
+        if ($request->location_id && $request->location_id != $model->location_id) {
             $old = Location::find($model->location_id);
             $new = Location::find($request->location_id);
             $model->logs()->create([
@@ -357,7 +450,7 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->priority_id != $model->priority_id) {
+        if ($request->priority_id && $request->priority_id != $model->priority_id) {
             $old = Priority::find($model->priority_id);
             $new = Priority::find($request->priority_id);
             $model->logs()->create([
@@ -372,7 +465,7 @@ class TaskController extends Controller
         // supervisors
 
         if ($request->supervisors) {
-            $old = $model->supervisor()->pluck('id')->toArray();
+            $old = $model->supervisors->pluck('id')->toArray();
             $new = $request->supervisors;
             $old = Employee::whereIn('id', $old)->pluck('name')->toArray();
             $new = Employee::whereIn('id', $new)->pluck('name')->toArray();
@@ -388,9 +481,9 @@ class TaskController extends Controller
             ]);
         }
 
-        if ($request->attentions) {
-            $old = $model->attention()->pluck('id')->toArray();
-            $new = $request->attentions;
+        if ($request->notifications) {
+            $old = $model->attentions->pluck('id')->toArray();
+            $new = $request->notifications;
             $old = Employee::whereIn('id', $old)->pluck('name')->toArray();
             $new = Employee::whereIn('id', $new)->pluck('name')->toArray();
             $old = implode(',', $old);
@@ -407,15 +500,15 @@ class TaskController extends Controller
         }
 
         if ($request->supervisors) {
-            $model->supervisors()->delete();
+            $model->supervisors()->whereTaskId($model->id)->whereType('supervisor')->detach();
             $model->supervisors()->attach($request->supervisors, [
                 'type' => 'supervisor'
             ]);
         }
 
-        if ($request->attentions) {
-            $model->supervisors()->delete();
-            $model->supervisors()->attach($request->attentions, [
+        if ($request->notifications) {
+            $model->attentions()->whereTaskId($model->id)->whereType('attention')->detach();
+            $model->attentions()->attach($request->notifications, [
                 'type' => 'attention'
             ]);
         }
@@ -430,11 +523,11 @@ class TaskController extends Controller
             }
         }
 
-        if (request()->old_media && !request()->media) { // if there is old media and no new media
-            $model->media->whereNotIn('id', request()->old_media)->each(function (Media $media) {
-                $media->delete();
-            });
-        }
+        // if (request()->old_media && !request()->media) { // if there is old media and no new media
+        //     $model->media->whereNotIn('id', request()->old_media)->each(function (Media $media) {
+        //         $media->delete();
+        //     });
+        // }
 
         if (request()->old_media && request()->media) { // if there is old media and new media
             $model->media->whereNotIn('id', request()->old_media)->each(function (Media $media) {
@@ -448,9 +541,21 @@ class TaskController extends Controller
             }
         }
 
-        if (!request()->old_media && !request()->media) { // if this is no old media and new media
-            $model->clearMediaCollection('media');
-        }
+        // if (!request()->old_media && !request()->media) { // if this is no old media and new media
+        //     $model->clearMediaCollection('media');
+        // }
+
+        User::whereIn('id', [$model->created_by ?? 0])->orWhereIn('employee_id', $request->notifications ?? [])->get()->each(function ($user) use ($model, $request, $user_name) {
+            $user->notify(new GeneralNotification(
+                new GeneralTaskResource($model),
+                $model->id,
+                in_array($user->employee_id, $request->notifications ?? []) ? 'ticketManager tasks' : 'externalTicketManager tasks',
+                "قام $user_name بتعديل المهمة رقم $model->id في " . now()->format('Y-m-d H:i:s'),
+                '',
+                "$user_name has updated the task number $model->id in " . now()->format('Y-m-d H:i:s')
+
+            ));
+        });
         $model->refresh();
 
 
@@ -536,7 +641,7 @@ class TaskController extends Controller
         return responseJson(200, 'deleted');
     }
 
-    public function getDropDown($request)
+    public function getDropDown(Request $request)
     {
         $models = $this->model->select('id', 'task_title');
 

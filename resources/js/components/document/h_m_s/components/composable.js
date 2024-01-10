@@ -161,6 +161,8 @@ export default {
                 return;
             } else {
                 this.create.company_id = this.company_id;
+                this.create_break_downs()
+
                 this.isLoader = true;
                 this.errors = {};
                 adminApi
@@ -177,14 +179,18 @@ export default {
                                 timer: 1500,
                             });
                         }, 500);
-                        if (
-                            this.document.attributes &&
-                            parseInt(this.document.attributes.customer) != 0
-                        ) {
-                            this.showBreakCreate();
-                        }
+
                     })
                     .catch((err) => {
+                        if(err.response.status == 402){
+                            console.log(err.response.status)
+                            this.resetModalEdit(this.dataRow.id);
+                            Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.You cant edit, because there is a settlement for this invoice")}`,
+                        });
+                        }else{
                         if (err.response.data) {
                             this.errors = err.response.data.errors;
                         } else {
@@ -195,6 +201,7 @@ export default {
                                     "general.Thereisanerrorinthesystem"
                                 )}`,
                             });
+                        }
                         }
                     })
                     .finally(() => {
@@ -238,36 +245,8 @@ export default {
                 this.create.is_break = 0;
 
                 this.create.company_id = this.company_id;
-                let invoice = []
-                if(this.client_type == 'patient'){
-                    if(this.create.total_patient_amount > 0)
-                        invoice.push({
-                            net_invoice:this.create.total_patient_amount,
-                            customer_id:this.create.patient_id,
-                            client_type_id:4,
-                        })
 
-                    if(this.create.total_company_insurance_amount > 0)
-                        invoice.push({
-                            net_invoice:this.create.total_company_insurance_amount,
-                            customer_id:this.create.company_insurance_id,
-                            client_type_id:6,
-                        })
-                }else{
-                    this.create.company_insurance_id = ''
-                    if(this.create.net_invoice > 0){
-                        this.create.total_company_insurance_amount = 0
-                        this.create.total_patient_amount = 0
-                        invoice.push({
-                            net_invoice:this.create.net_invoice,
-                            customer_id:this.create.doctor_id,
-                            client_type_id:5,
-                        })
-                    }
-                }
-
-                if(Object.keys(invoice ?? []).length)
-                    this.create.header_break_downs = invoice
+                this.create_break_downs()
 
                 adminApi
                     .post(`document-headers`, { ...this.create})
@@ -328,6 +307,39 @@ export default {
                 this.AddSubmit(is_break);
             }
         },
+
+        create_break_downs(){
+            let invoice = []
+            if(this.client_type == 'patient'){
+                if(this.create.total_patient_amount > 0)
+                    invoice.push({
+                        net_invoice:this.create.total_patient_amount,
+                        customer_id:this.create.patient_id,
+                        client_type_id:4,
+                    })
+
+                if(this.create.total_company_insurance_amount > 0)
+                    invoice.push({
+                        net_invoice:this.create.total_company_insurance_amount,
+                        customer_id:this.create.company_insurance_id,
+                        client_type_id:6,
+                    })
+            }else{
+                this.create.company_insurance_id = ''
+                if(this.create.net_invoice > 0){
+                    this.create.total_company_insurance_amount = 0
+                    this.create.total_patient_amount = 0
+                    invoice.push({
+                        net_invoice:this.create.net_invoice,
+                        customer_id:this.create.doctor_id,
+                        client_type_id:5,
+                    })
+                }
+            }
+
+            if(Object.keys(invoice ?? []).length)
+                this.create.header_break_downs = invoice
+        }
 
 
     },

@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="container px-0" id="printGeneralInvoice" :style="{'direction':$i18n.locale == 'ar' ? 'rtl!important' :'','text-align': $i18n.locale == 'ar' ? 'start':''}">
-                    <div class="row mt-4" v-if="document_data">
+                    <div class="row mt-4" v-if="Object.keys(document_data??[]).length">
                         <div class="col-12 col-lg-12">
                             <div class="row">
                                 <div class="col-12">

@@ -24,7 +24,7 @@ export default {
       isSuccess: false,
       isError: false,
       type: "password",
-      login_as: "admin",
+      login_as: "employee",
       user_programs_and_modules:[],
     };
   },
@@ -155,6 +155,7 @@ export default {
               this.isSuccess = true;
               await this.workflowUser(l.user.permissions);
               await this.getProgramsAndModulesForCompany(l.user.company_id,'user')
+              this.$store.commit("auth/editCompanyId",l.user.company_id);
               this.$router.push({ name: "home" });
               this.getDefaultKeys();
               this.getCompanyKeys(l.user.company_id);

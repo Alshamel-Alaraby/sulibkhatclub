@@ -16,6 +16,15 @@ class DepertmentRepository implements DepertmentInterface
     {
         $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+
+        if ($request->task_employee_id) {
+            $models->where(function ($query) use ($request) {
+                $query->whereJsonContains('locations',['supervisors' =>(int) $request->task_employee_id])
+                    ->orWhereJsonContains('locations',['attentions' =>(int) $request->task_employee_id])
+                    ->orWhereJsonContains('locations',['engineers' =>(int) $request->task_employee_id]);
+            });
+        }
+
         if ($request->employees) {
             $models->whereHas('employees');
         } //للحذف عند النهايه
@@ -35,10 +44,11 @@ class DepertmentRepository implements DepertmentInterface
 
     public function create($request)
     {
-        return DB::transaction(function () use ($request) {
+       return  DB::transaction(function () use ($request) {
             $data = $this->model->create($request);
-            return $data;
-        });
+             return $data;
+         });
+
     }
 
     public function update($request, $id)

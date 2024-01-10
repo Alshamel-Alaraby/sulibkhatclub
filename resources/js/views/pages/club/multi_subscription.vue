@@ -864,7 +864,19 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div v-if="create.branch_id && create.sponsor_id" class="col-md-6">
+                                    <div v-if="create.branch_id && create.sponsor_id" class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                {{ $t("general.TheNumberOfMembersPerPage") }}
+                                            </label>
+                                            <input
+                                                v-model="per_page"
+                                                class="form-control"
+                                                type="number"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div v-if="create.branch_id && create.sponsor_id" class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 {{ $t('general.LastYearOfPayment') }}
@@ -891,7 +903,7 @@ export default {
                                             </template>
                                         </div>
                                     </div>
-                                    <div v-if="create.branch_id && create.sponsor_id" class="col-md-6">
+                                    <div v-if="create.branch_id && create.sponsor_id" class="col-md-4">
                                         <div class="form-check mt-3">
                                             <input style="transform: scale(1.5);" type="checkbox" v-model="create.is_sponser" value="true" id="flexCheckDefault">
                                             <label style="padding:9px" class="form-check-label" for="flexCheckDefault">
@@ -1132,20 +1144,25 @@ export default {
                                     <div class="col-md-12">
                                         <div class="card-header p-0">
                                             <div class="row">
-                                                <div class="col-md-4">
-                                                    <h3 class="card-title">
+                                                <div class="col-md-3">
+                                                    <h4 class="card-title">
                                                         {{$t('general.totalAmount')}} : {{total}}
-                                                    </h3>
+                                                    </h4>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <h3 class="card-title">
+                                                <div class="col-md-3">
+                                                    <h4 class="card-title">
+                                                        {{$t('general.NumberOfMembers')}} : {{transaction_create.length}}
+                                                    </h4>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4 class="card-title">
                                                         {{$t('general.sponsor')}} : {{sponsors.find((el)=> el.id ==create.sponsor_id) ? sponsors.find((el)=> el.id ==create.sponsor_id).name:'---'}}
-                                                    </h3>
+                                                    </h4>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <h3 class="card-title">
+                                                <div class="col-md-3">
+                                                    <h4 class="card-title">
                                                         {{ getCompanyKey("branch") }} : {{branches.find((el)=> el.id ==create.branch_id) ? branches.find((el)=> el.id ==create.branch_id).name:'---'}}
-                                                    </h3>
+                                                    </h4>
                                                 </div>
                                             </div>
                                         </div>

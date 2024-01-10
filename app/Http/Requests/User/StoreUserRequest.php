@@ -26,7 +26,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'name_e' => 'nullable|string|max:255',
-            'is_active' => 'nullable|in:active,inactive',
+            'is_active' => 'nullable',
 
             // "media" => ["required", "exists:media,id", new \App\Rules\MediaRule()],
             'email' => 'nullable|string|email|max:255|unique:general_users,email',

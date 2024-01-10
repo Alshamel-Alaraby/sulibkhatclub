@@ -1231,13 +1231,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -1667,39 +1666,33 @@ __webpack_require__.r(__webpack_exports__);
   updated: function updated() {
     this.notificationNotReadScroll();
   },
-  beforeRouteEnter: function beforeRouteEnter(to, from, next) {
-    next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_4__["default"])(vm, "Notification", "all Notification");
-    });
-  },
+  //     beforeRouteEnter(to, from, next) {
+  //     next((vm) => {
+  //       return permissionGuard(vm, "Notification", "all Notification");
+  //     });
+  //   },
   mounted: function mounted() {
     this.notificationNotRead();
     this.pusherNotification();
   },
   methods: {
     notificationNotReadScroll: function notificationNotReadScroll() {
+      var _this = this;
       var el = this.$refs.scrollHeigthNotify;
       console.log(el);
-      // if (
-      //     !(this.count == this.notifications.length)
-      //     &&
-      //     el.scrollHeight == (el.offsetHeight + el.scrollTop)
-      // ) {
-      //     this.loading = true;
-      //     adminApi.get(`/getAllNot?skip=${this.skip}`)
-      //         .then((res) => {
-      //             res.data.data.notifications.forEach(el => {
-      //                 this.notifications.push(el);
-      //             });
-      //             this.skip += this.skip;
-      //         })
-      //         .catch((err) => {
-      //             console.log(err.response);
-      //         })
-      //         .finally(() => {
-      //             this.loading = false;
-      //         });
-      // }
+      if (!(this.count == this.notifications.length) && el.scrollHeight == el.offsetHeight + el.scrollTop) {
+        this.loading = true;
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/getAllNot?skip=".concat(this.skip)).then(function (res) {
+          res.data.data.notifications.forEach(function (el) {
+            _this.notifications.push(el);
+          });
+          _this.skip += _this.skip;
+        })["catch"](function (err) {
+          console.log(err.response);
+        })["finally"](function () {
+          _this.loading = false;
+        });
+      }
     },
     clearItem: function clearItem(id) {
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/clearItem/".concat(id)).then(function (res) {})["catch"](function (err) {
@@ -1707,39 +1700,38 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     clearAll: function clearAll() {
-      var _this = this;
+      var _this2 = this;
       this.loading = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/getNotNotRead").then(function (res) {
-        _this.notificationNotRead();
-        _this.$store.commit('auth/editNotification', !_this.$store.state.auth.notification);
+        _this2.notificationNotRead();
+        _this2.$store.commit('auth/editNotification', !_this2.$store.state.auth.notification);
       })["catch"](function (err) {
         console.log(err.response);
       })["finally"](function () {
-        _this.loading = false;
+        _this2.loading = false;
       });
     },
     notificationNotRead: function notificationNotRead() {
-      var _this2 = this;
+      var _this3 = this;
       this.loading = true;
       if (localStorage.getItem("user")) {
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/getAllNot").then(function (res) {
-          _this2.notifications = res.data.data.notifications;
-          _this2.count = res.data.data.count;
-          _this2.skip = 15;
+          _this3.notifications = res.data.data.notifications;
+          _this3.count = res.data.data.count;
+          _this3.skip = 15;
         })["catch"](function (err) {
           console.log(err.response);
         })["finally"](function () {
-          _this2.loading = false;
+          _this3.loading = false;
         });
       }
     },
     pusherNotification: function pusherNotification() {
-      var _this3 = this;
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        Echo["private"]('App.Models.User.' + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
-          _this3.notifications.unshift(notification);
-          _this3.count += 1;
-          console.log(notification);
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
         });
       }
     }
@@ -4448,19 +4440,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -4472,6 +4458,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -4479,23 +4466,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -4832,26 +4820,18 @@ var render = function render() {
       size: "large"
     }
   }) : _vm._e(), _vm._v(" "), _c("a", {
-    staticClass: "notify-item",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "notify-item py-2"
   }, [_c("h5", {
-    staticClass: "m-0"
-  }, [_c("span", {
-    staticClass: "float-right"
-  }, [_c("a", {
-    staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
+    staticClass: "m-0 d-flex justify-content-between"
+  }, [_c("button", {
+    staticClass: "btn btn-danger btn-sm",
     on: {
       click: function click($event) {
         $event.preventDefault();
         return _vm.clearAll.apply(null, arguments);
       }
     }
-  }, [_c("small", [_vm._v(_vm._s(_vm.$t("navbar.dropdown.notification.subtext")))])])]), _vm._v("\n                                           " + _vm._s(_vm.$t("navbar.dropdown.notification.text")) + "\n                                       ")])]), _vm._v(" "), _c("simplebar", {
+  }, [_vm._v(" " + _vm._s(_vm.$t("navbar.dropdown.notification.subtext")))]), _vm._v("\n\n                                           " + _vm._s(_vm.$t("navbar.dropdown.notification.text")) + "\n                                       ")])]), _vm._v(" "), _c("simplebar", {
     ref: "scrollHeigthNotify",
     staticStyle: {
       "max-height": "450px"
@@ -4860,6 +4840,7 @@ var render = function render() {
       scroll: _vm.notificationNotReadScroll
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       "class": ["dropdown-item", "notify-item", !notification.read_at ? "active" : ""],
@@ -4867,24 +4848,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
           $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                                                       " + _vm._s(notification.data.message) + "\n                                                       "), _c("br"), _c("small", {
+    }, [_vm._v("\n                                                    " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                                                       "), _c("br"), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                                                       ")])])])])];
   })], 2)], 1)])])])])])])], 1);
@@ -5159,7 +5140,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.notify[data-v-57f78448] {\r\n    padding: 5px 10px 10px;\r\n    box-shadow: 0 0 8px 0 rgb(154 161 171 / 30%);\r\n    margin: 0.125rem 0 0;\r\n    font-size: 0.9rem;\r\n    color: #6c757d;\r\n    text-align: left;\r\n    list-style: none;\r\n    background-color: #fff;\r\n    background-clip: padding-box;\r\n    border: 0 solid #e7eef1;\r\n    border-radius: 0.25rem;\n}\n.notify-item[data-v-57f78448] {\r\n    padding: 15px 20px;\r\n    display: block;\r\n    width: 100%;\r\n    clear: both;\r\n    font-weight: 400;\r\n    color: #6c757d;\r\n    text-align: inherit;\r\n    white-space: nowrap;\r\n    background-color: transparent;\r\n    border: 0;\n}\n.notify-item.active[data-v-57f78448]{\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\n.notify-item .notify-icon[data-v-57f78448] {\r\n    float: left;\r\n    height: 36px;\r\n    width: 36px;\r\n    font-size: 18px;\r\n    line-height: 38px;\r\n    text-align: center;\r\n    margin-right: 10px;\r\n    border-radius: 50%;\r\n    color: #fff;\n}\n.notify-item .notify-details[data-v-57f78448] {\r\n    margin-bottom: 5px;\r\n    overflow: hidden;\r\n    margin-left: 45px;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    color: #343a40;\n}\n.notify-item[data-v-57f78448]:hover, .notify-item[data-v-57f78448]:focus {\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.notify[data-v-57f78448] {\r\n    padding: 5px 10px 10px;\r\n    box-shadow: 0 0 8px 0 rgb(154 161 171 / 30%);\r\n    margin: 0.125rem 0 0;\r\n    font-size: 0.9rem;\r\n    color: #6c757d;\r\n    text-align: left;\r\n    list-style: none;\r\n    background-color: #fff;\r\n    background-clip: padding-box;\r\n    border: 0 solid #e7eef1;\r\n    border-radius: 0.25rem;\n}\n.notify-item[data-v-57f78448] {\r\n    padding: 15px 20px;\r\n    display: block;\r\n    width: 100%;\r\n    clear: both;\r\n    font-weight: 400;\r\n    color: #6c757d;\r\n    text-align: inherit;\r\n    white-space: nowrap;\r\n    background-color: transparent;\r\n    border: 0;\n}\n.notify-item.active[data-v-57f78448]{\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\n.notify-item .notify-icon[data-v-57f78448] {\r\n    float: left;\r\n    height: 36px;\r\n    width: 36px;\r\n    font-size: 18px;\r\n    line-height: 38px;\r\n    text-align: center;\r\n    margin-right: 10px;\r\n    border-radius: 50%;\r\n    color: #fff;\n}\n.notify-item .notify-details[data-v-57f78448] {\r\n    margin-bottom: 5px;\r\n    overflow: hidden;\r\n    margin-left: 45px;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    color: #343a40;\n}\n.notify-item[data-v-57f78448]:hover, .notify-item[data-v-57f78448]:focus {\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\n.rtl .notify[data-v-57f78448] {\r\n    padding: 5px 10px 10px;\r\n    box-shadow: 0 0 8px 0 rgb(154 161 171 / 30%);\r\n    margin: 0.125rem 0 0;\r\n    font-size: 0.9rem;\r\n    color: #6c757d;\r\n    text-align: right;\r\n    list-style: none;\r\n    background-color: #fff;\r\n    background-clip: padding-box;\r\n    border: 0 solid #e7eef1;\r\n    border-radius: 0.25rem;\n}\n.rtl .notify-item[data-v-57f78448] {\r\n    padding: 15px 20px;\r\n    display: block;\r\n    width: 100%;\r\n    clear: both;\r\n    font-weight: 400;\r\n    color: #6c757d;\r\n    text-align: inherit;\r\n    white-space: nowrap;\r\n    background-color: transparent;\r\n    border: 0;\n}\n.rtl .notify-item.active[data-v-57f78448]{\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\n.rtl .notify-item .notify-icon[data-v-57f78448] {\r\n    float: right;\r\n    height: 36px;\r\n    width: 36px;\r\n    font-size: 18px;\r\n    line-height: 38px;\r\n    text-align: center;\r\n    margin-left: 10px;\r\n    border-radius: 50%;\r\n    color: #fff;\n}\n.rtl  .notify-item .notify-details[data-v-57f78448] {\r\n    margin-bottom: 5px;\r\n    overflow: hidden;\r\n    margin-right: 45px;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    color: #343a40;\n}\n.rtl  .notify-item[data-v-57f78448]:hover, .notify-item[data-v-57f78448]:focus {\r\n    color: #272e37;\r\n    text-decoration: none;\r\n    background-color: #f1f5f7;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

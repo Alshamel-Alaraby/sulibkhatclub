@@ -680,11 +680,18 @@ class PermissionTableSeeder extends Seeder
 //        //**************************** start Ticket Manager *****************************\\
 //        //*************************************************************************\\
 //        // start Task
-//        $permissions[] = ['name' => 'all Task',"title" => 'show','crud_name' => 'Task','module' => 'Ticket Manager','table'=> 'ticket manager'];
-//        $permissions[] = ['name' => 'create Task',"title" => 'create','crud_name' => 'Task','module' => 'Ticket Manager','table'=> 'ticket manager'];
-//        $permissions[] = ['name' => 'update Task',"title" => 'update','crud_name' => 'Task','module' => 'Ticket Manager','table'=> 'ticket manager'];
-//        $permissions[] = ['name' => 'delete Task',"title" => 'delete','crud_name' => 'Task','module' => 'Ticket Manager','table'=> 'ticket manager'];
-//        $permissions[] = ['name' => 'all Calender',"title" => 'show','crud_name' => 'Calender','module' => 'Ticket Manager','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'all Task',"title" => 'show','crud_name' => 'Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'create Task',"title" => 'create','crud_name' => 'Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'update Task',"title" => 'update','crud_name' => 'Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'delete Task',"title" => 'delete','crud_name' => 'Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'all Calender',"title" => 'show calender','crud_name' => 'Tasks Report','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'all Tasks Report',"title" => 'show task report','crud_name' => 'Tasks Report','module' => 'Follow Up','table'=> 'ticket manager'];
+
+       $permissions[] = ['name' => 'all External Task',"title" => 'show','crud_name' => 'External Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'create External Task',"title" => 'create','crud_name' => 'External Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'update External Task',"title" => 'update','crud_name' => 'External Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+       $permissions[] = ['name' => 'delete External Task',"title" => 'delete','crud_name' => 'External Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
+    //    $permissions[] = ['name' => 'all External Calender',"title" => 'show calender','crud_name' => 'External Tasks','module' => 'Follow Up','table'=> 'ticket manager'];
         // end Task
         //***********************************************************************\\
         //**************************** end Ticket Manager *****************************\\

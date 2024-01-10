@@ -69,6 +69,7 @@
                 </div>
                 <b-tabs nav-class="nav-tabs nav-bordered">
                     <b-tab :title="$t('general.DataEntry')" active>
+                        <div v-if="type == 'edit'" style="text-align: center; font-size: 16px; font-weight: bold;">{{$t('general.AdditionDate')}} : {{this.formatDate(created_at)}}</div>
                         <div class="row">
                             <div v-if="isVisible('type')" class="col-md-4">
                                 <div class="form-group">
@@ -250,43 +251,26 @@
                                     </template>
                                 </div>
                             </div>
-                            <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">
+                            <div v-if="create.type == 'equipment' && isVisible('sub_location_id')" class="col-md-4">
                                 <div class="form-group position-relative">
                                     <label
-                                        class="control-label">{{ getCompanyKey("equipment") }}
-                                        <span  v-if="isRequired('equipment_id')" class="text-danger">*</span>
+                                        class="control-label">{{ getCompanyKey("boardRent_task_sub_location") }}
+                                        <span v-if="isRequired('sub_location_id')" class="text-danger">*</span>
                                     </label>
                                     <multiselect
-                                        @input="showEquipmentModal"
-                                        v-model="equipment_id"
-                                        :options="equipments.map((type) => type.id)"
-                                        :custom-label=" (opt) => equipments.find((x) => x.id == opt)?
-                                            $i18n.locale == 'ar' ? equipments.find((x) => x.id == opt).name : equipments.find((x) => x.id == opt).name_e
-                                            : null
-                                        "                                      >
-                                    </multiselect>
-                                </div>
-                            </div>
-                            <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">
-                                <div class="form-group position-relative">
-                                    <label
-                                        class="control-label">{{ getCompanyKey("boardRent_task_equipment") }}
-                                        <span v-if="isRequired('equipment_id')" class="text-danger">*</span>
-                                    </label>
-                                    <multiselect
-                                        v-model="$v.create.equipment_id.$model"
-                                        :options="equipment_childs.map((type) => type.id)"
-                                        :custom-label=" (opt) => equipment_childs.find((x) => x.id == opt)?
-                                            $i18n.locale == 'ar' ? equipment_childs.find((x) => x.id == opt).name : equipment_childs.find((x) => x.id == opt).name_e
+                                        v-model="$v.create.sub_location_id.$model"
+                                        :options="subLocations.map((type) => type.id)"
+                                        :custom-label=" (opt) => subLocations.find((x) => x.id == opt)?
+                                            $i18n.locale == 'ar' ? subLocations.find((x) => x.id == opt).name : subLocations.find((x) => x.id == opt).name_e
                                             : null
                                         "
-                                        :class="{'is-invalid': $v.create.equipment_id.$error || errors.equipment_id,'is-valid': !$v.create.equipment_id.$invalid && !errors.equipment_id,}"
+                                        :class="{'is-invalid': $v.create.sub_location_id.$error || errors.sub_location_id,'is-valid': !$v.create.sub_location_id.$invalid && !errors.sub_location_id,}"
                                     >
                                     </multiselect>
 
-                                    <template v-if="errors.equipment_id">
+                                    <template v-if="errors.sub_location_id">
                                         <ErrorMessage
-                                            v-for="(errorMessage, index) in errors.equipment_id"
+                                            v-for="(errorMessage, index) in errors.sub_location_id"
                                             :key="index"
                                         >{{ errorMessage }}
                                         </ErrorMessage
@@ -294,6 +278,50 @@
                                     </template>
                                 </div>
                             </div>
+                            <!--           <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">
+                                           <div class="form-group position-relative">
+                                               <label
+                                                   class="control-label">{{ getCompanyKey("equipment") }}
+                                                   <span  v-if="isRequired('equipment_id')" class="text-danger">*</span>
+                                               </label>
+                                               <multiselect
+                                                   @input="showEquipmentModal"
+                                                   v-model="equipment_id"
+                                                   :options="equipments.map((type) => type.id)"
+                                                   :custom-label=" (opt) => equipments.find((x) => x.id == opt)?
+                                                       $i18n.locale == 'ar' ? equipments.find((x) => x.id == opt).name : equipments.find((x) => x.id == opt).name_e
+                                                       : null
+                                                   "                                      >
+                                               </multiselect>
+                                           </div>
+                                       </div>-->
+                            <!--                            <div v-if="create.type == 'equipment' && isVisible('equipment_id')" class="col-md-4">-->
+                            <!--                                <div class="form-group position-relative">-->
+                            <!--                                    <label-->
+                            <!--                                        class="control-label">{{ getCompanyKey("boardRent_task_equipment") }}-->
+                            <!--                                        <span v-if="isRequired('equipment_id')" class="text-danger">*</span>-->
+                            <!--                                    </label>-->
+                            <!--                                    <multiselect-->
+                            <!--                                        v-model="$v.create.equipment_id.$model"-->
+                            <!--                                        :options="equipments.map((type) => type.id)"-->
+                            <!--                                        :custom-label=" (opt) => equipments.find((x) => x.id == opt)?-->
+                            <!--                                            $i18n.locale == 'ar' ? equipments.find((x) => x.id == opt).name : equipments.find((x) => x.id == opt).name_e-->
+                            <!--                                            : null-->
+                            <!--                                        "-->
+                            <!--                                        :class="{'is-invalid': $v.create.equipment_id.$error || errors.equipment_id,'is-valid': !$v.create.equipment_id.$invalid && !errors.equipment_id,}"-->
+                            <!--                                    >-->
+                            <!--                                    </multiselect>-->
+
+                            <!--                                    <template v-if="errors.equipment_id">-->
+                            <!--                                        <ErrorMessage-->
+                            <!--                                            v-for="(errorMessage, index) in errors.equipment_id"-->
+                            <!--                                            :key="index"-->
+                            <!--                                        >{{ errorMessage }}-->
+                            <!--                                        </ErrorMessage-->
+                            <!--                                        >-->
+                            <!--                                    </template>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
                             <div v-if="create.type == 'general' && isVisible('task_requirement')" class="col-md-6">
                                 <div class="form-group position-relative">
                                     <label
@@ -477,13 +505,16 @@
                                     </template>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" v-if="isVisible('execution_date') || isVisible('start_time') || isVisible('execution_end_date') || isVisible('end_time') || isVisible('execution_duration')">
                                 <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div class="col-md-12 text-center" v-if="isVisible('execution_date') || isVisible('start_time') || isVisible('execution_end_date') || isVisible('end_time') || isVisible('execution_duration')">
+                                <h5><strong><u>{{$t('general.ExpectedTime')}}</u></strong></h5>
                             </div>
                             <div v-if="isVisible('execution_date')" class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">
-                                        {{ getCompanyKey("execution_date") }}
+                                        {{ $t("general.startDate") }}
                                         <span v-if="isRequired('execution_date')" class="text-danger">*</span>
                                     </label>
                                     <date-picker
@@ -510,7 +541,7 @@
                             <div v-if="isVisible('start_time')" class="col-md-2">
                                 <div class="form-group">
                                     <label class="control-label">
-                                        {{ getCompanyKey("task_start_time") }}
+                                        {{ $t("general.startTime") }}
                                         <span v-if="isRequired('start_time')" class="text-danger">*</span>
                                     </label>
                                     <date-picker
@@ -537,7 +568,7 @@
                             <div v-if="isVisible('execution_end_date')" class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">
-                                        {{ getCompanyKey("execution_end_date") }}
+                                        {{ $t("general.endDate") }}
                                         <span v-if="isRequired('execution_end_date')" class="text-danger">*</span>
                                     </label>
                                     <date-picker
@@ -564,7 +595,7 @@
                             <div v-if="isVisible('end_time')" class="col-md-2">
                                 <div class="form-group">
                                     <label class="control-label">
-                                        {{ getCompanyKey("task_end_time") }}
+                                        {{ $t("general.endTime") }}
                                         <span v-if="isRequired('end_time')" class="text-danger">*</span>
                                     </label>
                                     <date-picker
@@ -591,7 +622,7 @@
                             <div v-if="isVisible('execution_duration')" class="col-md-2">
                                 <div class="form-group">
                                     <label  class="control-label">
-                                        {{ getCompanyKey('execution_duration') }}
+                                        {{ $t('general.duration') }}
                                         <span v-if="isRequired('execution_duration')" class="text-danger">*</span>
                                     </label>
                                     <input
@@ -609,6 +640,147 @@
                                         <ErrorMessage v-for="(errorMessage,index) in errors.execution_duration" :key="index">{{ errorMessage }}</ErrorMessage>
                                     </template>
                                 </div>
+                            </div>
+
+                            <div class="col-md-12" v-if="isVisible('actual_execution_date') || isVisible('actual_start_time') || isVisible('actual_execution_end_date') || isVisible('actual_end_time') || isVisible('actual_execution_duration')">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div class="col-md-12 text-center" v-if="isVisible('actual_execution_date') || isVisible('actual_start_time') || isVisible('actual_execution_end_date') || isVisible('actual_end_time') || isVisible('actual_execution_duration')">
+                                <h5><strong><u>{{$t('general.ActualTime')}}</u></strong></h5>
+                            </div>
+
+                            <div v-if="isVisible('actual_execution_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.startDate") }}
+                                        <span v-if="isRequired('actual_execution_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="date"
+                                        v-model="$v.create.actual_execution_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                            'is-invalid': $v.create.actual_execution_date.$error || errors.actual_execution_date,
+                                            'is-valid': !$v.create.actual_execution_date.$invalid && !errors.actual_execution_date,
+                                        }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_execution_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_execution_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_start_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.startTime") }}
+                                        <span v-if="isRequired('actual_start_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="time"
+                                        v-model="$v.create.actual_start_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_start_time.$error || errors.actual_start_time,
+                                                                'is-valid': !$v.create.actual_start_time.$invalid && !errors.actual_start_time,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_start_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_start_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_execution_end_date')" class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.endDate") }}
+                                        <span v-if="isRequired('actual_execution_end_date')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="date"
+                                        v-model="$v.create.actual_execution_end_date.$model"
+                                        format="YYYY-MM-DD"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_execution_end_date.$error || errors.actual_execution_end_date,
+                                                                'is-valid': !$v.create.actual_execution_end_date.$invalid && !errors.actual_execution_end_date,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_execution_end_date">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_execution_end_date" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_end_time')" class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        {{ $t("general.endTime") }}
+                                        <span v-if="isRequired('actual_end_time')" class="text-danger">*</span>
+                                    </label>
+                                    <date-picker
+                                        @input="calcDurationCreate(true)"
+                                        type="time"
+                                        v-model="$v.create.actual_end_time.$model"
+                                        format="HH:mm:ss"
+                                        valueType="format"
+                                        :confirm="false"
+                                        :class="{
+                                                                'is-invalid': $v.create.actual_end_time.$error || errors.actual_end_time,
+                                                                'is-valid': !$v.create.actual_end_time.$invalid && !errors.actual_end_time,
+                                                            }">
+                                    </date-picker>
+                                    <template v-if="errors.actual_end_time">
+                                        <ErrorMessage v-for="(errorMessage, index) in errors.actual_end_time" :key="index">
+                                            {{
+                                                errorMessage
+                                            }}
+                                        </ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div v-if="isVisible('actual_execution_duration')" class="col-md-2">
+                                <div class="form-group">
+                                    <label  class="control-label">
+                                        {{ $t('general.duration') }}
+                                        <span v-if="isRequired('actual_execution_duration')" class="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        :disabled="true"
+                                        class="form-control"
+                                        data-create="9"
+                                        v-model="$v.create.actual_execution_duration.$model"
+                                        :class="{
+                                                                'is-invalid':$v.create.actual_execution_duration.$error || errors.actual_execution_duration,
+                                                                'is-valid':!$v.create.actual_execution_duration.$invalid && !errors.actual_execution_duration
+                                                            }"
+                                    />
+                                    <template v-if="errors.actual_execution_duration">
+                                        <ErrorMessage v-for="(errorMessage,index) in errors.actual_execution_duration" :key="index">{{ errorMessage }}</ErrorMessage>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
                             </div>
                             <div v-if="isVisible('notification_date')" class="col-md-3">
                                 <div class="form-group">
@@ -635,6 +807,9 @@
                                         </ErrorMessage>
                                     </template>
                                 </div>
+
+                            </div>
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">
                                         {{ getCompanyKey("task_priority") }}
@@ -664,6 +839,7 @@
                                     </label>
                                     <b-form-group>
                                         <b-form-radio
+                                            @input="changeStatus"
                                             class="d-inline-block"
                                             v-model="$v.create.is_closed.$model"
                                             name="some-radios-create"
@@ -703,13 +879,20 @@
                                     </template>
                                 </div>
                             </div>
-                            <div v-if="isVisible('admin_note')" class="col-md-3">
+                            <div class="col-md-12">
+                                <hr style="margin: 10px 0 !important;  border-top: 1px solid rgb(141 163 159 / 42%)" />
+                            </div>
+                            <div v-if="isVisible('admin_note')" class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">
                                         {{ getCompanyKey("boardRent_panel_admin_note") }}
                                         <span v-if="isRequired('admin_note')" class="text-danger">*</span>
                                     </label>
-                                    <textarea v-model="$v.create.admin_note.$model" class="form-control" :maxlength="1000" rows="4"></textarea>
+                                    <quill-editor
+                                        v-model="$v.create.admin_note.$model"
+                                        :options="editorOption"
+                                    />
+                                    <!--                                    <textarea  v-model="$v.create.admin_note.$model" class="form-control" :class="{'is-invalid': $v.create.admin_note.$error || errors.admin_note}" :maxlength="1000" rows="4"></textarea>-->
                                     <template v-if="errors.admin_note">
                                         <ErrorMessage
                                             v-for="(errorMessage, index) in errors.admin_note"
@@ -880,14 +1063,79 @@ export default {
             isCustom: false,
             debounce: {},
             company_id: null,
+            created_at: null,
             employees: [],
             employeeDepartments: [],
+            all_departments: [],
             departments: [],
+            all_locations: [],
             customers: [],
             departmentTasks: [],
             statuses: [],
             isLoader: false,
             isVaildPhone: false,
+            editorOption: {
+                // Some Quill options...
+                theme: "snow",
+                modules: {
+                    toolbar: [
+                        [
+                            {
+                                font: [],
+                            },
+                            {
+                                size: [],
+                            },
+                        ],
+                        ["bold", "italic", "underline", "strike"],
+                        [
+                            {
+                                color: [],
+                            },
+                            {
+                                background: [],
+                            },
+                        ],
+                        [
+                            {
+                                script: "super",
+                            },
+                            {
+                                script: "sub",
+                            },
+                        ],
+                        [
+                            {
+                                header: [false, 1, 2, 3, 4, 5, 6],
+                            },
+                            "blockquote",
+                            "code-block",
+                        ],
+                        [
+                            {
+                                list: "ordered",
+                            },
+                            {
+                                list: "bullet",
+                            },
+                            {
+                                indent: "-1",
+                            },
+                            {
+                                indent: "+1",
+                            },
+                        ],
+                        [
+                            "direction",
+                            {
+                                align: [],
+                            },
+                        ],
+                        ["link", "image", "video"],
+                        ["clean"],
+                    ],
+                },
+            },
             create: {
                 employee_id: null,
                 department_id: null,
@@ -906,11 +1154,17 @@ export default {
                 execution_duration:'0 Day 0 Minutes',
                 notification_date:this.formatDate(new Date()),
                 execution_end_date:this.formatDate(new Date()),
+                actual_execution_date:this.formatDate(new Date()),
+                actual_start_time:'',
+                actual_end_time:'',
+                actual_execution_duration:'0 Day 0 Minutes',
+                actual_execution_end_date:this.formatDate(new Date()),
                 note:'',
                 media: [],
-                type: 'general',
+                type: 'equipment',
                 equipment_id: null,
                 location_id: null,
+                sub_location_id: null,
                 priority_id: null,
                 admin_note: '',
                 is_closed: 0,
@@ -921,6 +1175,7 @@ export default {
             errors: {},
             equipments: [],
             locations: [],
+            subLocations: [],
             images: [],
             media: {},
             titleFile:"",
@@ -967,11 +1222,26 @@ export default {
             execution_duration: {required: requiredIf(function (model) {
                     return this.isRequired("execution_duration");
                 })},
+            actual_execution_date: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_date");
+                })},
+            actual_start_time:{required: requiredIf(function (model) {
+                    return this.isRequired("actual_start_time");
+                })},
+            actual_end_time:{required: requiredIf(function (model) {
+                    return this.isRequired("actual_end_time");
+                })},
+            actual_execution_duration: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_duration");
+                })},
             notification_date: {required: requiredIf(function (model) {
                     return this.isRequired("notification_date");
                 })},
             execution_end_date: {required: requiredIf(function (model) {
                     return this.isRequired("execution_end_date");
+                })},
+            actual_execution_end_date: {required: requiredIf(function (model) {
+                    return this.isRequired("actual_execution_end_date");
                 })},
             note: {required: requiredIf(function (model) {
                     return this.isRequired("note");
@@ -998,6 +1268,9 @@ export default {
             location_id: {requiredIf: requiredIf(function (model) {
                     return this.create.type == "equipment" && this.isRequired("location_id");
                 })},
+            sub_location_id: {requiredIf: requiredIf(function (model) {
+                    return this.create.type == "equipment" && this.isRequired("sub_location_id");
+                })},
             task_requirement: {requiredIf: requiredIf(function (model) {
                     return this.create.type == "general" && this.isRequired("task_requirement");
                 })},
@@ -1012,6 +1285,11 @@ export default {
     },
     mounted(){
         this.company_id = JSON.parse(localStorage.getItem("company_id"));
+        this.getLocation();
+        if (this.isVisible("department_id"))  this.getDepartment();
+        if (this.isVisible("status_id"))  this.getStatus();
+        if (this.isVisible("priority_id"))  this.getPriority();
+
     },
     methods: {
         async getCustomTableFields() {
@@ -1022,6 +1300,7 @@ export default {
                     this.fields = res.data;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
@@ -1063,22 +1342,29 @@ export default {
                 status_id: 1,
                 execution_date:this.formatDate(new Date()),
                 start_time:'',
-                is_closed: 0,
-                task_requirement: '',
                 end_time:'',
                 execution_duration:'0 Day 0 Minutes',
-                notification_date:this.formatDate(new Date()),
                 execution_end_date:this.formatDate(new Date()),
+                actual_execution_date:this.formatDate(new Date()),
+                actual_start_time:'',
+                actual_end_time:'',
+                actual_execution_duration:'0 Day 0 Minutes',
+                actual_execution_end_date:this.formatDate(new Date()),
+                is_closed: 0,
+                task_requirement: '',
+                notification_date:this.formatDate(new Date()),
                 note:'',
-                type: 'general',
+                type: 'equipment',
                 equipment_id: null,
                 location_id: null,
+                sub_location_id: null,
                 priority_id: null,
                 admin_note: ''
             };
             this.$nextTick(() => { this.$v.$reset() });
             this.department_id = null;
             this.equipment_id = null;
+            this.created_at = null;
             this.task_id = null;
             this.$nextTick(() => { this.$v.$reset() });
             this.errors = {};
@@ -1091,51 +1377,79 @@ export default {
             this.dataCreate();
             this.$bvModal.hide(this.id);
         },
+        setLocation(){
+            let department = this.departments.find((el) => el.id ==  this.create.department_id)
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
+
+            let locations= []
+            department.locations.forEach((ele) => {
+                this.all_locations.forEach((location) => {
+                    if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(parseInt(emp_id)) || ele.attentions.includes(parseInt(emp_id)) || ele.engineers.includes(parseInt(emp_id)))))
+                        locations.push(location)
+                })
+            })
+            this.locations = locations
+            if(locations.length == 1){
+                this.create.location_id = locations[0].id
+                this.getEquipment(this.create.location_id)
+                this.setSupervisorsAndAttentions(department)
+            }
+        },
+        setDepartment(){
+            let departments =[]
+            this.all_departments.forEach((department) =>{
+                if(department.locations && department.locations.length > 0)
+                    department.locations.forEach((ele) => {
+                        if(ele.location_id == this.create.location_id)
+                            departments.push(department)
+
+                    })
+            })
+            this.departments = departments
+            if(departments.length == 1){
+                this.create.department_id = departments[0].id
+                this.setSupervisorsAndAttentions(departments[0])
+            }
+
+        },
         resetModal(){
-             this.dataCreate();
-             setTimeout( async () => {
+            this.dataCreate();
+            setTimeout( async () => {
                 if(this.type != 'edit'){
                     if(!this.isPage)  await this.getCustomTableFields();
                     this.getEmployees();
                     this.getEmployeeDepartments();
-                    if (this.isVisible("department_id"))  this.getDepartment();
-                    if (this.isVisible("status_id"))  this.getStatus();
-                    if (this.isVisible("priority_id"))  this.getPriority();
                 }else {
                     if(this.idObjEdit.dataObj){
                         let build = this.idObjEdit.dataObj;
                         this.create.type = build.type;
                         this.getEmployees();
                         this.getEmployeeDepartments();
-                        if (this.isVisible("department_id"))  this.getDepartment();
-                        let owners = [];
-                        build.owners.forEach((el)=>{
-                            owners.push(el.id);
-                        });
-                        let supervisors = [];
-                        build.supervisors.forEach((el)=>{
-                            supervisors.push(el.id);
-                        });
-                        let notifications = [];
-                        build.notifications.forEach((el)=>{
-                            notifications.push(el.id);
-                        });
                         this.department_id = build.department_id;
                         this.task_id = build.id;
                         this.getDepartmentTask();
                         this.create.employee_id = build.employee_id;
                         this.create.department_id = build.department_id;
+                        this.setLocation()
                         this.create.task_title = build.task_title;
                         this.create.department_task_id = build.department_task_id;
-                        this.create.owners = owners;
-                        this.create.supervisors = supervisors;
-                        this.create.notifications = notifications;
+                        this.create.owners = build.owners;
+                        this.create.supervisors = build.supervisors;
+                        this.create.notifications = build.notifications;
                         this.create.execution_date = build.execution_date;
                         this.create.start_time = build.start_time;
                         this.create.end_time = build.end_time;
                         this.create.execution_duration = build.execution_duration;
                         this.create.notification_date = build.notification_date;
                         this.create.execution_end_date = build.execution_end_date;
+                        this.created_at = build.created_at;
+
+                        this.create.actual_execution_date = build.actual_execution_date;
+                        this.create.actual_start_time = build.actual_start_time;
+                        this.create.actual_end_time = build.actual_end_time;
+                        this.create.actual_execution_duration = build.actual_execution_duration;
+                        this.create.actual_execution_end_date = build.actual_execution_end_date;
+
                         this.create.admin_note = build.admin_note;
                         this.create.is_closed = build.is_closed ;
                         this.create.note = build.note;
@@ -1145,8 +1459,8 @@ export default {
                             this.create.contact_person = build.contact_person;
                             this.create.contact_phone = build.contact_phone;
                         }else if (this.create.type == 'equipment') {
-                            this.getLocation();
                             this.create.location_id = build.location_id;
+                            this.create.sub_location_id = build.sub_location_id;
                             this.getEquipment(build.location_id);
                             this.equipment_id = build.equipment.parent_id;
                             this.getEquipmentChild(this.equipment_id);
@@ -1187,6 +1501,8 @@ export default {
                             ...this.create,
                             execution_date: this.create.execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
                             execution_end_date: this.create.execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
+                            actual_execution_date: this.create.actual_execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                            actual_execution_end_date: this.create.actual_execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
                             company_id: this.$store.getters["auth/company_id"]
                         })
                         .then((res) => {
@@ -1202,6 +1518,7 @@ export default {
 
                         })
                         .catch((err) => {
+                            console.log(err)
                             if (err.response.data) {
                                 this.errors = err.response.data.errors;
                             } else {
@@ -1212,14 +1529,16 @@ export default {
                             this.isLoader = false;
                         });
                 }else {
-                    this.images.forEach((e) => {
-                        this.create.old_media.push(e.id);
-                    });
+                    // this.images.forEach((e) => {
+                    //     this.create.old_media.push(e.id);
+                    // });
                     adminApi
                         .put(`${this.url}/${this.task_id}`, {
                             ...this.create,
                             execution_date: this.create.execution_date.slice(0,10) +  (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
-                            execution_end_date: this.create.execution_end_date.slice(0,10)  +  (this.create.end_time ? ` ${this.create.end_time}`  : ' 00:00:00')
+                            execution_end_date: this.create.execution_end_date.slice(0,10)  +  (this.create.end_time ? ` ${this.create.end_time}`  : ' 00:00:00'),
+                            actual_execution_date: this.create.actual_execution_date.slice(0,10)  + (this.create.start_time ? ` ${this.create.start_time}` : ' 00:00:00'),
+                            actual_execution_end_date: this.create.actual_execution_end_date.slice(0,10)  + (this.create.end_time ? ` ${this.create.end_time}` : ' 00:00:00'),
                         })
                         .then((res) => {
                             this.$bvModal.hide(this.id);
@@ -1227,6 +1546,7 @@ export default {
                             this.successFun('Editsuccessfully');
                         })
                         .catch((err) => {
+                            console.log(err)
                             if (err.response.data) {
                                 this.errors = err.response.data.errors;
                             } else {
@@ -1240,6 +1560,12 @@ export default {
 
             }
 
+        },
+        changeStatus(){
+            if (parseInt(this.create.is_closed) == 1)
+            {
+                this.create.status_id = 3;
+            }
         },
         uploadPhotoTitle () {
             this.titleFile="";
@@ -1281,7 +1607,6 @@ export default {
                             this.images.forEach((e) => old_media.push(e.id));
                             let new_media = [];
                             res.data.data.forEach((e) => new_media.push(e.id));
-
                             adminApi
                                 .put(`${this.url}/${this.task_id}`, { old_media, media: new_media })
                                 .then((res) => {
@@ -1291,14 +1616,17 @@ export default {
                                     } else {
                                         this.showPhoto = img;
                                     }
-                                    this.getData();
+                                    this.$emit("getDataTable");
                                     this.uploadPhotoTitleHidden();
+
                                 })
                                 .catch((err) => {
+                                    console.log(err)
                                     this.errorFun("Error", "Thereisanerrorinthesystem");
                                 });
                         })
                         .catch((err) => {
+                            console.log(err)
                             if (err.response.data) {
                                 this.errors = err.response.data.errors;
                             } else {
@@ -1341,13 +1669,16 @@ export default {
                                             } else {
                                                 this.showPhoto = img;
                                             }
-                                            this.getData();
+                                            this.$emit("getDataTable");
+
                                         })
                                         .catch((err) => {
+                                            console.log(err)
                                             this.errorFun("Error", "Thereisanerrorinthesystem");
                                         });
                                 })
                                 .catch((err) => {
+                                    console.log(err)
                                     if (err.response.data) {
                                         this.errors = err.response.data.errors;
                                     } else {
@@ -1384,6 +1715,7 @@ export default {
                     }
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 });
         },
@@ -1392,16 +1724,14 @@ export default {
         },
         getStatus(){
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/statuses/get-drop-down?module_type=bordRent`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create Status')){
-                        l.unshift({ id: 0, name: "اضف حاله", name_e: "Add Status" });
-                    }
                     this.statuses = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
@@ -1409,7 +1739,7 @@ export default {
                 });
         },
         getEmployeeDepartments() {
-             adminApi
+            adminApi
                 .get(`/employees/get-drop-down?depertment=1`)
                 .then((res) => {
                     let l = res.data.data;
@@ -1419,17 +1749,19 @@ export default {
                     this.employeeDepartments = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 });
         },
         getEmployees() {
-             adminApi
+            adminApi
                 .get(`/employees/get-drop-down`)
                 .then((res) => {
                     let l = res.data.data;
                     this.employees = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 });
         },
@@ -1439,15 +1771,14 @@ export default {
                 this.create.employee_id = null;
             }else {
                 let customer = this.customerDepartment(this.create.employee_id);
-                if (customer)
+                if (customer && this.type!='edit')
                 {
                     this.create.owners = [];
                     this.create.department_id = customer.department_id;
-                    let department = this.departments.find((el) => el.id ==  this.create.department_id)
-                    this.create.supervisors = department.supervisors ? department.supervisors : [];
                     this.department_id = customer.department_id;
                     this.create.owners.push(this.create.employee_id);
                     this.getDepartmentTask();
+                    this.setLocation()
                 }
             }
         },
@@ -1459,32 +1790,89 @@ export default {
         },
         getDepartment() {
             this.isLoader = true;
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
             adminApi
-                .get(`/depertments/get-drop-down?employees=1`)
+                .get(`/depertments?task_employee_id=${emp_id}`)
                 .then((res) => {
                     let l = res.data.data;
-                    if(this.isPermission('create Department')){
-                        l.unshift({ id: 0, name: "اضف قسم", name_e: "Add Department" });
-                    }
+
                     this.departments = l;
+                    this.all_departments = l;
+
+                    let locations= this.get_default_locations(l)
+
+                    this.locations = locations
+
+                    if(locations.length == 1){
+                        this.create.location_id = locations[0].id
+                        this.getEquipment(this.create.location_id)
+                    }
+                    if(l.length == 1)
+                        this.create.department_id = l[0].id
+
+                    if(this.create.location_id && this.create.department_id)
+                        this.setSupervisorsAndAttentions(l[0])
+
                 })
                 .catch((err) => {
-                    this.errorFun("Error", "Thereisanerrorinthesystem");
+                    console.log(err)
+                    // this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
                     this.isLoader = false;
                 });
         },
+        get_default_locations(departments){
+            let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
+            let locations = []
+            departments.forEach((department) => {
+                if(department.locations && department.locations.length > 0)
+                    department.locations.forEach((ele) => {
+                        this.all_locations.forEach((location) => {
+                            if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(parseInt(emp_id)) || ele.attentions.includes(parseInt(emp_id)) || ele.engineers.includes(parseInt(emp_id)))))
+                                locations.push(location)
+                        })
+
+                    })
+            })
+
+            return locations
+        },
         showDepartmentModal() {
-            if (this.create.department_id == 0) {
-                this.$bvModal.show("department-create-task");
-                this.create.department_id = null;
-            }else {
-                let department = this.departments.find((el) => el.id ==  this.create.department_id)
-                this.department_id = this.create.department_id;
-                this.create.supervisors = department.supervisors ? department.supervisors : [];
-                this.getDepartmentTask();
+            if(!this.create.location_id && !this.create.department_id){
+                this.departments = this.all_departments
+                this.locations= this.get_default_locations(this.all_departments)
             }
+            let department = this.departments.find((el) => el.id ==  this.create.department_id)
+            if(department){
+                if(!this.create.location_id || !department.locations.find((el) => el.location_id ==  this.create.location_id)){
+                    this.locations = []
+                    this.create.location_id = null
+                    this.create.supervisors = []
+                    this.create.notifications = []
+                }else{
+                    this.setSupervisorsAndAttentions()
+                }
+
+                this.department_id = this.create.department_id;
+                this.setLocation()
+                this.getDepartmentTask();
+            }else{
+                this.create.supervisors = []
+                this.create.notifications = []
+            }
+        },
+        setSupervisorsAndAttentions(department){
+            if(department.locations && department.locations.length > 0)
+                department.locations.forEach((ele) => {
+                    if(ele.location_id == this.create.location_id){
+                        setTimeout(() => {
+                            this.create.supervisors = ele.supervisors
+                            this.create.notifications = ele.attentions
+                        },1000)
+
+                    }
+                })
         },
         getCustomers(search='') {
             this.isLoader = true;
@@ -1497,6 +1885,7 @@ export default {
                     this.isLoader = false;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 });
         },
@@ -1538,6 +1927,7 @@ export default {
                     this.isLoader = false;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 });
         },
@@ -1549,12 +1939,25 @@ export default {
         },
         getEquipment(location){
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/equipments/get-drop-down?location_id=${location}`)
                 .then((res) => {
                     let l = res.data.data;
                     l.unshift({ id: 0, name: "اضف معده", name_e: "Add Equipment" });
                     this.equipments = l;
+                })
+                .catch((err) => {
+                    console.log(err)
+                    this.errorFun("Error", "Thereisanerrorinthesystem");
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+            adminApi
+                .get(`/locations/get-drop-down?location_id=${location}`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.subLocations = l;
                 })
                 .catch((err) => {
                     this.errorFun("Error", "Thereisanerrorinthesystem");
@@ -1565,13 +1968,14 @@ export default {
         },
         getEquipmentChild(child){
             this.isLoader = true;
-             adminApi
+            adminApi
                 .get(`/equipments/get-drop-down?equipment_id=${child}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.equipment_childs = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
@@ -1582,18 +1986,19 @@ export default {
             if (this.equipment_id == 0) {
                 this.$bvModal.show("equipment-create");
             }else {
-                 this.getEquipmentChild(this.equipment_id)
+                this.getEquipmentChild(this.equipment_id)
             }
         },
         getLocation(){
             this.isLoader = true;
-             adminApi
-                .get(`/locations/get-drop-down`)
+            adminApi
+                .get(`/locations/get-drop-down?not_parent=1`)
                 .then((res) => {
                     let l = res.data.data;
-                    this.locations = l;
+                    this.all_locations = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
@@ -1601,11 +2006,19 @@ export default {
                 });
         },
         showLocationModal() {
-            if (this.create.location_id == 0) {
-                this.$bvModal.show("location-create");
-                this.create.location_id = null;
-            }else {
-                 this.getEquipment(this.create.location_id);
+            if(!this.create.location_id && !this.create.department_id){
+                this.departments = this.all_departments
+                this.locations= this.get_default_locations(this.all_departments)
+            }
+            this.create.supervisors = []
+            this.create.notifications = []
+            if(this.create.location_id){
+                this.setDepartment()
+                this.getEquipment(this.create.location_id);
+                if(this.create.department_id){
+                    let department = this.departments.find((el) => el.id ==  this.create.department_id)
+                    this.setSupervisorsAndAttentions(department)
+                }
             }
         },
         checkIncloudIdOwners(e) {
@@ -1650,11 +2063,11 @@ export default {
                 }
             }
         },
-        calcDurationCreate() {
+        calcDurationCreate(actual = false) {
             let TotalDays = 0 ;
             let TotalTime = '0 Minutes';
-            let execution_date = new Date(this.create.execution_date).getTime();
-            let execution_end_date = new Date(this.create.execution_end_date).getTime();
+            let execution_date = new Date(actual ? this.create.actual_execution_date : this.create.execution_date).getTime();
+            let execution_end_date = new Date(actual ? this.create.actual_execution_end_date : this.create.execution_end_date).getTime();
             if (execution_date < execution_end_date)
             {
                 let difference = execution_end_date - execution_date;
@@ -1671,27 +2084,30 @@ export default {
 
                 TotalTime = Math.round(difference / 60000) + " Minutes";
             }
-
-            this.create.execution_duration = `${TotalDays} Days, ${TotalTime}`
+            if(actual)
+                this.create.actual_execution_duration = `${TotalDays} Days, ${TotalTime}`
+            else
+                this.create.execution_duration = `${TotalDays} Days, ${TotalTime}`
 
         },
         showTypeModal(){
-                if(this.create.type == "equipment") {
-                    this.create.equipment_id = null;
-                    this.create.location_id = null;
-                    this.create.priority_id = null;
-                    this.equipments = [];
-                    this.equipment_childs = [];
-                    if(!(this.locations.length > 0))  this.getLocation();
-                }else if(this.create.type == "customer") {
-                    this.create.customer_id = null;
-                    this.create.priority_id = null;
-                    this.create.contact_person = '';
-                    this.create.contact_phone = '';
-                    if(this.customers.length == 0)  this.getCustomers();
-                }else {
-                    this.create.task_requirement = '';
-                }
+            if(this.create.type == "equipment") {
+                this.create.equipment_id = null;
+                this.create.location_id = null;
+                this.create.supervisors = []
+                this.create.notifications = []
+                this.create.priority_id = null;
+                this.equipments = [];
+                this.equipment_childs = [];
+            }else if(this.create.type == "customer") {
+                this.create.customer_id = null;
+                this.create.priority_id = null;
+                this.create.contact_person = '';
+                this.create.contact_phone = '';
+                if(this.customers.length == 0)  this.getCustomers();
+            }else {
+                this.create.task_requirement = '';
+            }
         },
         getPriority() {
             this.isLoader = true;
@@ -1703,6 +2119,7 @@ export default {
                     this.priorities = l;
                 })
                 .catch((err) => {
+                    console.log(err)
                     this.errorFun("Error", "Thereisanerrorinthesystem");
                 })
                 .finally(() => {
@@ -1738,4 +2155,8 @@ form {
 .modal-body .tab-content {
     padding: 10px 60px 30px !important;
 }
+.quill-editor {
+    background-color: #fff;
+}
 </style>
+

@@ -17011,13 +17011,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -17457,14 +17456,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../helper/startDate */ "./resources/js/helper/startDate.js");
 /* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/index.esm.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+var _methods;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
 
@@ -17507,26 +17507,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_12__["default"]],
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_2__["default"])(vm, "Task Calender", "all Calender");
-    });
-    next(function (vm) {
-      if (vm.$store.state.auth.type == 'user') {
-        if (vm.$store.state.auth.permissions.includes("")) {
-          return true;
-        } else {
-          return vm.$router.push({
-            name: "home"
-          });
-        }
-      } else {
-        if (vm.$store.state.auth.work_flow_trees.includes('ticket manager')) {
-          return true;
-        } else {
-          return vm.$router.push({
-            name: "home"
-          });
-        }
-      }
+      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_2__["default"])(vm, "Tasks Report", "all Calender");
     });
   },
   beforeMount: function beforeMount() {
@@ -17537,6 +17518,11 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   },
   mounted: function mounted() {
     this.$store.dispatch('locationIp/getIp');
+    this.getCustomTableFields();
+    this.getLocation();
+    if (this.isVisible("department_id")) this.getDepartment();
+    if (this.isVisible("status_id")) this.getStatus();
+    if (this.isVisible("priority_id")) this.getPriority();
   },
   data: function data() {
     var _this = this;
@@ -17558,6 +17544,11 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         contact_phone: '',
         task_title: '',
         department_task_id: null,
+        actual_execution_date: this.formatDate(new Date()),
+        actual_start_time: '',
+        actual_end_time: '',
+        actual_execution_duration: '0 Day 0 Minutes',
+        actual_execution_end_date: this.formatDate(new Date()),
         owners: [],
         supervisors: [],
         notifications: [],
@@ -17570,35 +17561,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         execution_end_date: this.formatDate(new Date()),
         note: '',
         media: [],
-        type: 'general',
-        equipment_id: null,
-        location_id: null,
-        priority_id: null,
-        admin_note: '',
-        is_closed: 0,
-        task_requirement: ''
-      },
-      edit: {
-        employee_id: null,
-        department_id: null,
-        customer_id: null,
-        contact_person: '',
-        contact_phone: '',
-        task_title: '',
-        department_task_id: null,
-        owners: [],
-        supervisors: [],
-        notifications: [],
-        status_id: null,
-        execution_date: this.formatDate(new Date()),
-        start_time: '',
-        end_time: '',
-        execution_duration: '0 Day 0 Minutes',
-        notification_date: this.formatDate(new Date()),
-        execution_end_date: this.formatDate(new Date()),
-        note: '',
-        old_media: [],
-        type: '',
+        type: 'equipment',
         equipment_id: null,
         location_id: null,
         priority_id: null,
@@ -17621,8 +17584,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         editable: true,
         droppable: true,
         eventResizableFromStart: true,
-        dateClick: this.isPermission('create Task') ? this.dateClicked : false,
-        eventClick: this.isPermission('update Task') ? this.editEvent : false,
+        dateClick: false,
+        // dateClick: this.isPermission('create Task') ? this.dateClicked : false,
+        eventClick: false,
+        // eventClick: this.isPermission('update Task') ? this.editEvent : false,
         eventsSet: this.handleEvents,
         weekends: true,
         selectable: true,
@@ -17662,7 +17627,6 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         }
       },
       showModal: false,
-      eventModal: false,
       submitted: false,
       submit: false,
       newEventData: {},
@@ -17681,7 +17645,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       isVaildPhone: false,
       errors: {},
       employees: [],
+      fields: [],
       employeeDepartments: [],
+      all_locations: [],
+      all_departments: [],
       departments: [],
       departmentTasks: [],
       statuses: [],
@@ -17778,86 +17745,29 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           return this.create.type == "general";
         })
       },
-      is_closed: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      priority_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      }
-    },
-    edit: {
-      employee_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      department_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      task_title: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      department_task_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      owners: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      supervisors: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      notifications: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      status_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      execution_date: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      start_time: {},
-      end_time: {},
-      execution_duration: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      notification_date: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      execution_end_date: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      note: {},
-      admin_note: {},
-      media: {},
-      type: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.required
-      },
-      customer_id: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "customer";
+      actual_execution_date: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+          return this.isRequired("actual_execution_date");
         })
       },
-      contact_person: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "customer";
+      actual_start_time: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+          return this.isRequired("actual_start_time");
         })
       },
-      contact_phone: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "customer";
+      actual_end_time: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+          return this.isRequired("actual_end_time");
         })
       },
-      equipment_id: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "equipment";
+      actual_execution_duration: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+          return this.isRequired("actual_execution_duration");
         })
       },
-      location_id: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "equipment";
-        })
-      },
-      task_requirement: {
-        requiredIf: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
-          return this.edit.type == "general";
+      actual_execution_end_date: {
+        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.requiredIf)(function (model) {
+          return this.isRequired("actual_execution_end_date");
         })
       },
       is_closed: {
@@ -17873,7 +17783,47 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_17__.maxLength)(100)
     }
   },
-  methods: {
+  methods: (_methods = {
+    getCustomTableFields: function getCustomTableFields() {
+      var _this2 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _this2.isCustom = true;
+              _context.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/customTable/table-columns/general_tasks").then(function (res) {
+                _this2.fields = res.data;
+              })["catch"](function (err) {
+                _this2.errorFun("Error", "Thereisanerrorinthesystem");
+              })["finally"](function () {
+                _this2.isCustom = false;
+              });
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee);
+      }))();
+    },
+    isRequired: function isRequired(fieldName) {
+      if (this.fields.length > 0) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_required == 1 ? true : false;
+      }
+      return true;
+    },
+    isVisible: function isVisible(fieldName) {
+      if (this.fields.length > 0) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      }
+      return true;
+    },
     isPermission: function isPermission(item) {
       if (this.$store.state.auth.type == 'user') {
         return this.$store.state.auth.permissions.includes(item);
@@ -17881,29 +17831,29 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       return true;
     },
     getData: function getData() {
-      var _this2 = this;
+      var _this3 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/tasks/all", this.search).then(function (res) {
         var l = res.data.data;
-        _this2.calendarOptions.initialEvents = l;
-        _this2.calendarOptions.events = l;
-        _this2.search = {
+        _this3.calendarOptions.initialEvents = l;
+        _this3.calendarOptions.events = l;
+        _this3.search = {
           customer_ids: [],
           status_ids: [],
           department_ids: [],
           employee_ids: [],
-          months_number: _this2.search.months_number,
-          year: _this2.search.year
+          months_number: _this3.search.months_number,
+          year: _this3.search.year
         };
-        _this2.$bvModal.hide("search");
+        _this3.$bvModal.hide("search");
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
           icon: 'error',
-          title: "".concat(_this2.$t('general.Error')),
-          text: "".concat(_this2.$t('general.Thereisanerrorinthesystem'))
+          title: "".concat(_this3.$t('general.Error')),
+          text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
         });
       })["finally"](function () {
-        _this2.isLoader = false;
+        _this3.isLoader = false;
       });
     },
     /**
@@ -17911,7 +17861,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
      */
     // eslint-disable-next-line no-unused-vars
     AddSubmit: function AddSubmit() {
-      var _this3 = this;
+      var _this4 = this;
       this.create.company_id = JSON.parse(localStorage.getItem("company_id"));
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -17922,61 +17872,17 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/tasks", _objectSpread(_objectSpread({}, this.create), {}, {
           execution_date: this.create.execution_date.slice(0, 10) + (this.create.start_time ? " ".concat(this.create.start_time) : ' 00:00:00'),
           execution_end_date: this.create.execution_end_date.slice(0, 10) + (this.create.end_time ? " ".concat(this.create.end_time) : ' 00:00:00'),
+          actual_execution_date: this.create.actual_execution_date.slice(0, 10) + (this.create.start_time ? " ".concat(this.create.start_time) : ' 00:00:00'),
+          actual_execution_end_date: this.create.actual_execution_end_date.slice(0, 10) + (this.create.end_time ? " ".concat(this.create.end_time) : ' 00:00:00'),
           company_id: this.$store.getters["auth/company_id"]
         })).then(function (res) {
-          _this3.is_disabled = true;
-          _this3.task_id = res.data.data.id;
-          _this3.getData();
-          setTimeout(function () {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-              icon: 'success',
-              text: "".concat(_this3.$t('general.Addedsuccessfully')),
-              showConfirmButton: false,
-              timer: 1500
-            });
-          }, 500);
-        })["catch"](function (err) {
-          if (err.response.data) {
-            _this3.errors = err.response.data.errors;
-          } else {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-              icon: 'error',
-              title: "".concat(_this3.$t('general.Error')),
-              text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
-            });
-          }
-        })["finally"](function () {
-          _this3.isLoader = false;
-        });
-      }
-    },
-    // eslint-disable-next-line no-unused-vars
-    /**
-     * Edit event modal submit
-     */
-    // eslint-disable-next-line no-unused-vars
-    editSubmit: function editSubmit() {
-      var _this4 = this;
-      this.edit.company_id = JSON.parse(localStorage.getItem("company_id"));
-      this.$v.edit.$touch();
-      this.images.forEach(function (e) {
-        _this4.edit.old_media.push(e.id);
-      });
-      if (this.$v.edit.$invalid) {
-        return;
-      } else {
-        this.isLoader = true;
-        this.errors = {};
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(this.task_id), _objectSpread(_objectSpread({}, this.edit), {}, {
-          execution_date: this.edit.execution_date.slice(0, 10) + (this.edit.start_time ? " ".concat(this.edit.start_time) : ' 00:00:00'),
-          execution_end_date: this.edit.execution_end_date.slice(0, 10) + (this.edit.end_time ? " ".concat(this.edit.end_time) : ' 00:00:00')
-        })).then(function (res) {
+          _this4.is_disabled = true;
+          _this4.task_id = res.data.data.id;
           _this4.getData();
-          _this4.eventModal = false;
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
               icon: 'success',
-              text: "".concat(_this4.$t('general.Editsuccessfully')),
+              text: "".concat(_this4.$t('general.Addedsuccessfully')),
               showConfirmButton: false,
               timer: 1500
             });
@@ -17996,11 +17902,59 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         });
       }
     },
+    // eslint-disable-next-line no-unused-vars
+    /**
+     * Edit event modal submit
+     */
+    // eslint-disable-next-line no-unused-vars
+    editSubmit: function editSubmit() {
+      var _this5 = this;
+      this.create.company_id = JSON.parse(localStorage.getItem("company_id"));
+      this.$v.create.$touch();
+      this.images.forEach(function (e) {
+        _this5.create.old_media.push(e.id);
+      });
+      if (this.$v.create.$invalid) {
+        return;
+      } else {
+        this.isLoader = true;
+        this.errors = {};
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(this.task_id), _objectSpread(_objectSpread({}, this.create), {}, {
+          execution_date: this.create.execution_date.slice(0, 10) + (this.create.start_time ? " ".concat(this.create.start_time) : ' 00:00:00'),
+          execution_end_date: this.create.execution_end_date.slice(0, 10) + (this.create.end_time ? " ".concat(this.create.end_time) : ' 00:00:00'),
+          actual_execution_date: this.create.actual_execution_date.slice(0, 10) + (this.create.start_time ? " ".concat(this.create.start_time) : ' 00:00:00'),
+          actual_execution_end_date: this.create.actual_execution_end_date.slice(0, 10) + (this.create.end_time ? " ".concat(this.create.end_time) : ' 00:00:00')
+        })).then(function (res) {
+          _this5.getData();
+          _this5.showModal = false;
+          setTimeout(function () {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: 'success',
+              text: "".concat(_this5.$t('general.Editsuccessfully')),
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }, 500);
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this5.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: 'error',
+              title: "".concat(_this5.$t('general.Error')),
+              text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
+            });
+          }
+        })["finally"](function () {
+          _this5.isLoader = false;
+        });
+      }
+    },
     /**
      * Modal open for add event
      */
     dataCreate: function dataCreate() {
-      var _this5 = this;
+      var _this6 = this;
       var time = new Date();
       this.create = {
         employee_id: null,
@@ -18018,10 +17972,15 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         start_time: "".concat(time.getHours(), ":").concat(time.getMinutes(), ":").concat(time.getSeconds()),
         end_time: "".concat(time.getHours() + 2, ":").concat(time.getMinutes(), ":").concat(time.getSeconds()),
         execution_duration: '0 Day 0 Minutes',
+        actual_execution_date: this.formatDate(new Date()),
+        actual_start_time: '',
+        actual_end_time: '',
+        actual_execution_duration: '0 Day 0 Minutes',
+        actual_execution_end_date: this.formatDate(new Date()),
         notification_date: this.formatDate(this.newEventData.date),
         execution_end_date: this.formatDate(this.newEventData.date),
         note: '',
-        type: 'general',
+        type: 'equipment',
         equipment_id: null,
         location_id: null,
         priority_id: null,
@@ -18032,14 +17991,14 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.department_id = null;
       this.task_id = null;
       this.$nextTick(function () {
-        _this5.$v.$reset();
+        _this6.$v.$reset();
       });
       this.errors = {};
       this.media = {};
       this.images = [];
     },
     resetModalHidden: function resetModalHidden() {
-      var _this6 = this;
+      var _this7 = this;
       this.create = {
         employee_id: null,
         department_id: null,
@@ -18060,7 +18019,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         execution_end_date: this.formatDate(new Date()),
         note: '',
         media: null,
-        type: 'general',
+        type: 'equipment',
         equipment_id: null,
         location_id: null,
         priority_id: null,
@@ -18069,7 +18028,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         task_requirement: ''
       };
       this.$nextTick(function () {
-        _this6.$v.$reset();
+        _this7.$v.$reset();
       });
       this.errors = {};
       this.images = [];
@@ -18079,36 +18038,33 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.showModal = false;
     },
     dateClicked: function dateClicked(info) {
-      var _this7 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
+      var _this8 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              _this7.newEventData = info;
-              _this7.showModal = true;
-              _context.next = 4;
-              return _this7.getStatus();
+              _this8.newEventData = info;
+              _this8.showModal = true;
+              _context2.next = 4;
+              return _this8.getStatus();
             case 4:
-              _this7.dataCreate();
-              _context.next = 7;
-              return _this7.getEmployees();
+              _this8.dataCreate();
+              _context2.next = 7;
+              return _this8.getEmployees();
             case 7:
-              _context.next = 9;
-              return _this7.getEmployeeDepartments();
+              _context2.next = 9;
+              return _this8.getEmployeeDepartments();
             case 9:
-              _context.next = 11;
-              return _this7.getDepartment();
+              _context2.next = 11;
+              return _this8.getPriority();
             case 11:
-              _context.next = 13;
-              return _this7.getPriority();
+              _this8.calcDurationCreate();
+              _this8.showPhoto = "../../../../../images/img-1.png";
             case 13:
-              _this7.calcDurationCreate();
-              _this7.showPhoto = "../../../../../images/img-1.png";
-            case 15:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
-        }, _callee);
+        }, _callee2);
       }))();
     },
     resetForm: function resetForm() {
@@ -18119,119 +18075,106 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
      * Modal open for edit event
      */
     editEvent: function editEvent(info) {
-      var _this8 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var _this9 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var _calendar$media;
-        var calendar, owners, supervisors, notifications;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+        var calendar;
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this8.eventModal = true;
-              _this8.task_id = info.event.id;
-              calendar = _this8.calendarOptions.events.find(function (el) {
-                return el.id == _this8.task_id;
+              _this9.showModal = true;
+              _this9.task_id = info.event.id;
+              calendar = _this9.calendarOptions.events.find(function (el) {
+                return el.id == _this9.task_id;
               });
-              _context2.next = 5;
-              return _this8.getEmployees();
+              _context3.next = 5;
+              return _this9.getEmployees();
             case 5:
-              _context2.next = 7;
-              return _this8.getEmployeeDepartments();
+              _context3.next = 7;
+              return _this9.getEmployeeDepartments();
             case 7:
-              _context2.next = 9;
-              return _this8.getDepartment();
-            case 9:
-              owners = [];
-              calendar.owners.forEach(function (el) {
-                owners.push(el.id);
-              });
-              supervisors = [];
-              calendar.supervisors.forEach(function (el) {
-                supervisors.push(el.id);
-              });
-              notifications = [];
-              calendar.notifications.forEach(function (el) {
-                notifications.push(el.id);
-              });
-              _this8.department_id = calendar.department_id;
-              _this8.task_id = calendar.id;
-              _context2.next = 19;
-              return _this8.getDepartmentTask();
-            case 19:
-              _this8.edit.employee_id = calendar.employee_id;
-              _this8.edit.department_id = calendar.department_id;
-              _this8.edit.task_title = calendar.task_title;
-              _this8.edit.department_task_id = calendar.department_task_id;
-              _this8.edit.owners = owners;
-              _this8.edit.supervisors = supervisors;
-              _this8.edit.notifications = notifications;
-              _this8.edit.status_id = calendar.status_id;
-              _this8.edit.execution_date = calendar.execution_date;
-              _this8.edit.start_time = calendar.start_time;
-              _this8.edit.end_time = calendar.end_time;
-              _this8.edit.execution_duration = calendar.execution_duration;
-              _this8.edit.notification_date = calendar.notification_date;
-              _this8.edit.execution_end_date = calendar.execution_end_date;
-              _this8.edit.admin_note = calendar.admin_note;
-              _this8.edit.is_closed = calendar.is_closed;
-              _this8.edit.note = calendar.note;
-              if (!(_this8.edit.type == 'customer')) {
-                _context2.next = 44;
+              _this9.department_id = calendar.department_id;
+              _this9.task_id = calendar.id;
+              _context3.next = 11;
+              return _this9.getDepartmentTask();
+            case 11:
+              _this9.create.employee_id = calendar.employee_id;
+              _this9.create.department_id = calendar.department_id;
+              _this9.create.task_title = calendar.task_title;
+              _this9.create.department_task_id = calendar.department_task_id;
+              _this9.create.owners = calendar.owners;
+              _this9.create.supervisors = calendar.supervisors;
+              _this9.create.notifications = calendar.notifications;
+              _this9.create.status_id = calendar.status_id;
+              _this9.create.execution_date = calendar.execution_date;
+              _this9.create.start_time = calendar.start_time;
+              _this9.create.end_time = calendar.end_time;
+              _this9.create.execution_duration = calendar.execution_duration;
+              _this9.create.notification_date = calendar.notification_date;
+              _this9.create.execution_end_date = calendar.execution_end_date;
+              _this9.create.admin_note = calendar.admin_note;
+              _this9.create.is_closed = calendar.is_closed;
+              _this9.create.actual_execution_date = calendar.actual_execution_date;
+              _this9.create.actual_start_time = calendar.actual_start_time;
+              _this9.create.actual_end_time = calendar.actual_end_time;
+              _this9.create.actual_execution_duration = calendar.actual_execution_duration;
+              _this9.create.actual_execution_end_date = calendar.actual_execution_end_date;
+              _this9.create.note = calendar.note;
+              if (!(_this9.create.type == 'customer')) {
+                _context3.next = 41;
                 break;
               }
-              _context2.next = 39;
-              return _this8.getCustomers();
-            case 39:
-              _this8.edit.customer_id = calendar.customer_id;
-              _this8.edit.contact_person = calendar.contact_person;
-              _this8.edit.contact_phone = calendar.contact_phone;
-              _context2.next = 57;
+              _context3.next = 36;
+              return _this9.getCustomers();
+            case 36:
+              _this9.create.customer_id = calendar.customer_id;
+              _this9.create.contact_person = calendar.contact_person;
+              _this9.create.contact_phone = calendar.contact_phone;
+              _context3.next = 52;
               break;
-            case 44:
-              if (!(_this8.edit.type == 'equipment')) {
-                _context2.next = 56;
+            case 41:
+              if (!(_this9.create.type == 'equipment')) {
+                _context3.next = 51;
                 break;
               }
-              _context2.next = 47;
-              return _this8.getLocation();
-            case 47:
-              _this8.edit.location_id = calendar.location_id;
-              _context2.next = 50;
-              return _this8.getEquipment(calendar.location_id);
-            case 50:
-              _this8.equipment_id = calendar.equipment.parent_id;
-              _context2.next = 53;
-              return _this8.getEquipmentChild(_this8.equipment_id);
-            case 53:
-              _this8.edit.equipment_id = calendar.equipment.id;
-              _context2.next = 57;
+              _this9.create.location_id = calendar.location_id;
+              _context3.next = 45;
+              return _this9.getEquipment(calendar.location_id);
+            case 45:
+              _this9.equipment_id = calendar.equipment.parent_id;
+              _context3.next = 48;
+              return _this9.getEquipmentChild(_this9.equipment_id);
+            case 48:
+              _this9.create.equipment_id = calendar.equipment.id;
+              _context3.next = 52;
               break;
-            case 56:
-              _this8.edit.task_requirement = calendar.task_requirement;
+            case 51:
+              _this9.create.task_requirement = calendar.task_requirement;
+            case 52:
+              _context3.next = 54;
+              return _this9.getStatus();
+            case 54:
+              _this9.create.status_id = calendar.status_id;
+              _context3.next = 57;
+              return _this9.getPriority();
             case 57:
-              _context2.next = 59;
-              return _this8.getStatus();
-            case 59:
-              _this8.edit.status_id = calendar.status_id;
-              _context2.next = 62;
-              return _this8.getPriority();
-            case 62:
-              _this8.edit.priority_id = calendar.priority_id;
-              _this8.images = (_calendar$media = calendar.media) !== null && _calendar$media !== void 0 ? _calendar$media : [];
-              if (_this8.images && _this8.images.length > 0) {
-                _this8.showPhoto = _this8.images[_this8.images.length - 1].webp;
+              _this9.create.priority_id = calendar.priority_id;
+              _this9.images = (_calendar$media = calendar.media) !== null && _calendar$media !== void 0 ? _calendar$media : [];
+              if (_this9.images && _this9.images.length > 0) {
+                _this9.showPhoto = _this9.images[_this9.images.length - 1].webp;
               } else {
-                _this8.showPhoto = "../../../../../images/img-1.png";
+                _this9.showPhoto = "../../../../../images/img-1.png";
               }
-              _this8.errors = {};
-            case 66:
+              _this9.errors = {};
+            case 61:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
-        }, _callee2);
+        }, _callee3);
       }))();
     },
     confirm: function confirm() {
-      var _this9 = this;
+      var _this10 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
         title: "".concat(this.$t("general.Areyousure")),
         text: "".concat(this.$t("general.Youwontbeabletoreverthis")),
@@ -18244,12 +18187,12 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         buttonsStyling: false
       }).then(function (result) {
         if (result.value) {
-          _this9.isLoader = true;
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"]["delete"]("/tasks/".concat(_this9.task_id)).then(function (res) {
+          _this10.isLoader = true;
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"]["delete"]("/tasks/".concat(_this10.task_id)).then(function (res) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
               icon: "success",
-              title: "".concat(_this9.$t("general.Deleted")),
-              text: "".concat(_this9.$t("general.Yourrowhasbeendeleted")),
+              title: "".concat(_this10.$t("general.Deleted")),
+              text: "".concat(_this10.$t("general.Yourrowhasbeendeleted")),
               showConfirmButton: false,
               timer: 1500
             });
@@ -18257,18 +18200,18 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             if (err.response.status == 400) {
               sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                 icon: "error",
-                title: "".concat(_this9.$t("general.Error")),
-                text: "".concat(_this9.$t("general.CantDeleteRelation"))
+                title: "".concat(_this10.$t("general.Error")),
+                text: "".concat(_this10.$t("general.CantDeleteRelation"))
               });
             } else {
               sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                 icon: "error",
-                title: "".concat(_this9.$t("general.Error")),
-                text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+                title: "".concat(_this10.$t("general.Error")),
+                text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
               });
             }
           })["finally"](function () {
-            _this9.isLoader = false;
+            _this10.isLoader = false;
           });
         }
       });
@@ -18283,9 +18226,9 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
      *  reset Modal (create)
      */
     resetModalHiddenSearch: function resetModalHiddenSearch() {
-      var _this10 = this;
+      var _this11 = this;
       this.$nextTick(function () {
-        _this10.$v.$reset();
+        _this11.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("search");
@@ -18302,61 +18245,58 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
      *  hidden Modal (create)
      */
     resetModalSearch: function resetModalSearch() {
-      var _this11 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return _this11.getCustomers();
-            case 2:
-              _context3.next = 4;
-              return _this11.getEmployees();
-            case 4:
-              _context3.next = 6;
-              return _this11.getDepartment();
-            case 6:
-              _context3.next = 8;
-              return _this11.getStatus();
-            case 8:
-              _this11.is_disabled = false;
-              _this11.$nextTick(function () {
-                _this11.$v.$reset();
-              });
-              _this11.errors = {};
-            case 11:
-            case "end":
-              return _context3.stop();
-          }
-        }, _callee3);
-      }))();
-    },
-    // start status
-    getStatus: function getStatus() {
       var _this12 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              _this12.isLoader = true;
-              _context4.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/statuses?module_type=bordRent").then(function (res) {
-                var l = res.data.data;
-                _this12.statuses = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this12.$t("general.Error")),
-                  text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this12.isLoader = false;
+              _context4.next = 2;
+              return _this12.getCustomers();
+            case 2:
+              _context4.next = 4;
+              return _this12.getEmployees();
+            case 4:
+              _context4.next = 6;
+              return _this12.getStatus();
+            case 6:
+              _this12.is_disabled = false;
+              _this12.$nextTick(function () {
+                _this12.$v.$reset();
               });
-            case 3:
+              _this12.errors = {};
+            case 9:
             case "end":
               return _context4.stop();
           }
         }, _callee4);
+      }))();
+    },
+    // start status
+    getStatus: function getStatus() {
+      var _this13 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              _this13.isLoader = true;
+              _context5.next = 3;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/statuses?module_type=bordRent").then(function (res) {
+                var l = res.data.data;
+                _this13.statuses = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                  icon: "error",
+                  title: "".concat(_this13.$t("general.Error")),
+                  text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
+                });
+              })["finally"](function () {
+                _this13.isLoader = false;
+              });
+            case 3:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5);
       }))();
     },
     showStatusModal: function showStatusModal() {
@@ -18366,19 +18306,19 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }
     },
     showStatusModalEdit: function showStatusModalEdit() {
-      if (this.edit.status_id == 0) {
+      if (this.create.status_id == 0) {
         this.$bvModal.show("status-create");
-        this.edit.status_id = null;
+        this.create.status_id = null;
       }
     },
     //start employee
     getEmployeeDepartments: function getEmployeeDepartments() {
-      var _this13 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+      var _this14 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              _context5.next = 2;
+              _context6.next = 2;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/employees?depertment=1").then(function (res) {
                 var l = res.data.data;
                 l.unshift({
@@ -18386,31 +18326,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
                   name: "اضف موظف",
                   name_e: "Add Employee"
                 });
-                _this13.employeeDepartments = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this13.$t("general.Error")),
-                  text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
-                });
-              });
-            case 2:
-            case "end":
-              return _context5.stop();
-          }
-        }, _callee5);
-      }))();
-    },
-    getEmployees: function getEmployees() {
-      var _this14 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
-            case 0:
-              _context6.next = 2;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/employees").then(function (res) {
-                var l = res.data.data;
-                _this14.employees = l;
+                _this14.employeeDepartments = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                   icon: "error",
@@ -18425,65 +18341,55 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         }, _callee6);
       }))();
     },
-    showEmployeeModal: function showEmployeeModal() {
+    getEmployees: function getEmployees() {
       var _this15 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-        var customer;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
-              if (!(_this15.create.employee_id == 0)) {
-                _context7.next = 5;
-                break;
-              }
-              _this15.$bvModal.show("employee-create");
-              _this15.create.employee_id = null;
-              _context7.next = 13;
-              break;
-            case 5:
-              customer = _this15.customerDepartment(_this15.create.employee_id);
-              if (!customer) {
-                _context7.next = 13;
-                break;
-              }
-              _this15.create.owners = [];
-              _this15.create.department_id = customer.department_id;
-              _this15.department_id = customer.department_id;
-              _this15.create.owners.push(_this15.create.employee_id);
-              _context7.next = 13;
-              return _this15.getDepartmentTask();
-            case 13:
+              _context7.next = 2;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/employees").then(function (res) {
+                var l = res.data.data;
+                _this15.employees = l;
+              })["catch"](function (err) {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                  icon: "error",
+                  title: "".concat(_this15.$t("general.Error")),
+                  text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+                });
+              });
+            case 2:
             case "end":
               return _context7.stop();
           }
         }, _callee7);
       }))();
     },
-    showEmployeeModalEdit: function showEmployeeModalEdit() {
+    showEmployeeModal: function showEmployeeModal() {
       var _this16 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
         var customer;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
-              if (!(_this16.edit.employee_id == 0)) {
+              if (!(_this16.create.employee_id == 0)) {
                 _context8.next = 5;
                 break;
               }
               _this16.$bvModal.show("employee-create");
-              _this16.edit.employee_id = null;
+              _this16.create.employee_id = null;
               _context8.next = 13;
               break;
             case 5:
-              customer = _this16.customerDepartment(_this16.edit.employee_id);
+              customer = _this16.customerDepartment(_this16.create.employee_id);
               if (!customer) {
                 _context8.next = 13;
                 break;
               }
-              _this16.edit.owners = [];
-              _this16.edit.department_id = customer.department_id;
+              _this16.create.owners = [];
+              _this16.create.department_id = customer.department_id;
               _this16.department_id = customer.department_id;
-              _this16.edit.owners.push(_this16.edit.employee_id);
+              _this16.create.owners.push(_this16.create.employee_id);
               _context8.next = 13;
               return _this16.getDepartmentTask();
             case 13:
@@ -18491,6 +18397,40 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
               return _context8.stop();
           }
         }, _callee8);
+      }))();
+    },
+    showEmployeeModalEdit: function showEmployeeModalEdit() {
+      var _this17 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+        var customer;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
+            case 0:
+              if (!(_this17.create.employee_id == 0)) {
+                _context9.next = 5;
+                break;
+              }
+              _this17.$bvModal.show("employee-create");
+              _this17.create.employee_id = null;
+              _context9.next = 13;
+              break;
+            case 5:
+              customer = _this17.customerDepartment(_this17.create.employee_id);
+              if (!customer) {
+                _context9.next = 13;
+                break;
+              }
+              _this17.create.owners = [];
+              _this17.create.department_id = customer.department_id;
+              _this17.department_id = customer.department_id;
+              _this17.create.owners.push(_this17.create.employee_id);
+              _context9.next = 13;
+              return _this17.getDepartmentTask();
+            case 13:
+            case "end":
+              return _context9.stop();
+          }
+        }, _callee9);
       }))();
     },
     customerDepartment: function customerDepartment(id) {
@@ -18502,808 +18442,754 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     // start department
     getDepartment: function getDepartment() {
-      var _this17 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-          while (1) switch (_context9.prev = _context9.next) {
-            case 0:
-              _this17.isLoader = true;
-              _context9.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/depertments?employees=1").then(function (res) {
-                var l = res.data.data;
-                l.unshift({
-                  id: 0,
-                  name: "اضف قسم",
-                  name_e: "Add Department"
-                });
-                _this17.departments = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this17.$t("general.Error")),
-                  text: "".concat(_this17.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this17.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context9.stop();
-          }
-        }, _callee9);
-      }))();
+      var _this18 = this;
+      this.isLoader = true;
+      var emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/depertments?task_employee_id=".concat(emp_id)).then(function (res) {
+        var l = res.data.data;
+        _this18.departments = l;
+        _this18.all_departments = l;
+        var locations = _this18.get_default_locations(l);
+        _this18.locations = locations;
+        if (locations.length == 1) {
+          _this18.create.location_id = locations[0].id;
+          _this18.getEquipment(_this18.create.location_id);
+        }
+        if (l.length == 1) _this18.create.department_id = l[0].id;
+        if (_this18.create.location_id && _this18.create.department_id) _this18.setSupervisorsAndAttentions(l[0]);
+      })["catch"](function (err) {
+        _this18.errorFun("Error", "Thereisanerrorinthesystem");
+      })["finally"](function () {
+        _this18.isLoader = false;
+      });
+    },
+    get_default_locations: function get_default_locations(departments) {
+      var _this19 = this;
+      var emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id;
+      var locations = [];
+      departments.forEach(function (department) {
+        department.locations.forEach(function (ele) {
+          _this19.all_locations.forEach(function (location) {
+            if (ele.location_id == location.id && (_this19.$store.state.auth.type == 'admin' || ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))) locations.push(location);
+          });
+        });
+      });
+      return locations;
     },
     showDepartmentModal: function showDepartmentModal() {
-      var _this18 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
-        var department;
-        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-          while (1) switch (_context10.prev = _context10.next) {
-            case 0:
-              if (!(_this18.create.department_id == 0)) {
-                _context10.next = 5;
-                break;
-              }
-              _this18.$bvModal.show("create_department_task");
-              _this18.create.department_id = null;
-              _context10.next = 10;
-              break;
-            case 5:
-              department = _this18.departments.find(function (el) {
-                return el.id == _this18.create.department_id;
-              });
-              _this18.department_id = _this18.create.department_id;
-              _this18.create.supervisors = department.supervisors ? department.supervisors : [];
-              _context10.next = 10;
-              return _this18.getDepartmentTask();
-            case 10:
-            case "end":
-              return _context10.stop();
-          }
-        }, _callee10);
-      }))();
-    },
-    showDepartmentModalEdit: function showDepartmentModalEdit() {
-      var _this19 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-        var department;
-        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-          while (1) switch (_context11.prev = _context11.next) {
-            case 0:
-              if (!(_this19.edit.department_id == 0)) {
-                _context11.next = 5;
-                break;
-              }
-              _this19.$bvModal.show("create_department_task");
-              _this19.edit.department_id = null;
-              _context11.next = 10;
-              break;
-            case 5:
-              department = _this19.departments.find(function (el) {
-                return el.id == _this19.edit.department_id;
-              });
-              _this19.department_id = _this19.edit.department_id;
-              _this19.edit.supervisors = department.supervisors ? department.supervisors : [];
-              _context11.next = 10;
-              return _this19.getDepartmentTask();
-            case 10:
-            case "end":
-              return _context11.stop();
-          }
-        }, _callee11);
-      }))();
-    },
-    // start customer
-    getCustomers: function getCustomers() {
-      var _arguments = arguments,
-        _this20 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
-        var search;
-        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-          while (1) switch (_context12.prev = _context12.next) {
-            case 0:
-              search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
-              _this20.isLoader = true;
-              _context12.next = 4;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/general-customer?limet=10&company_id=".concat(_this20.company_id).concat(search ? '&search=${search}&columns[0]=name&columns[1]=name_e' : '')).then(function (res) {
-                var l = res.data.data;
-                l.unshift({
-                  id: 0,
-                  name: "اضافة زبون",
-                  name_e: "Add customer"
-                });
-                _this20.customers = l;
-                _this20.isLoader = false;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this20.$t("general.Error")),
-                  text: "".concat(_this20.$t("general.Thereisanerrorinthesystem"))
-                });
-              });
-            case 4:
-            case "end":
-              return _context12.stop();
-          }
-        }, _callee12);
-      }))();
-    },
-    showCustomerModal: function showCustomerModal() {
-      if (this.create.customer_id == 0) {
-        this.$bvModal.show("customer-general-create");
-        this.create.customer_id = null;
-      } else {
-        var customer = this.getCustomerData(this.create.customer_id);
-        if (customer) {
-          this.create.contact_person = customer.contact_person;
-          this.create.contact_phone = customer.contact_phone;
+      var _this20 = this;
+      if (!this.create.location_id && !this.create.department_id) {
+        this.departments = this.all_departments;
+        this.locations = this.get_default_locations(this.all_departments);
+      }
+      var department = this.departments.find(function (el) {
+        return el.id == _this20.create.department_id;
+      });
+      if (department) {
+        if (!this.create.location_id || !department.locations.find(function (el) {
+          return el.location_id == _this20.create.location_id;
+        })) {
+          this.locations = [];
+          this.create.location_id = null;
+          this.create.supervisors = [];
+          this.create.notifications = [];
+        } else {
+          this.setSupervisorsAndAttentions();
         }
-      }
-    },
-    showCustomerModalEdit: function showCustomerModalEdit() {
-      if (this.edit.customer_id == 0) {
-        this.$bvModal.show("customer-general-create");
-        this.edit.customer_id = null;
+        this.department_id = this.create.department_id;
+        this.setLocation();
+        this.getDepartmentTask();
       } else {
-        var customer = this.getCustomerData(this.edit.customer_id);
-        if (customer) {
-          this.edit.contact_person = customer.contact_person;
-          this.edit.contact_phone = customer.contact_phone;
-        }
+        this.create.supervisors = [];
+        this.create.notifications = [];
       }
     },
-    getCustomerData: function getCustomerData(id) {
-      if (this.customers && id) {
-        return this.customers.find(function (e) {
-          return id == e.id;
-        });
-      }
-    },
-    searchCustomer: function searchCustomer(e) {
+    setSupervisorsAndAttentions: function setSupervisorsAndAttentions(department) {
       var _this21 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
-        var search;
-        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-          while (1) switch (_context13.prev = _context13.next) {
-            case 0:
-              search = e !== null && e !== void 0 ? e : '';
-              clearTimeout(_this21.debounce);
-              _this21.debounce = setTimeout(function () {
-                _this21.getCustomers(search);
-              }, 500);
-            case 3:
-            case "end":
-              return _context13.stop();
-          }
-        }, _callee13);
-      }))();
+      department.locations.forEach(function (ele) {
+        if (ele.location_id == _this21.create.location_id) {
+          setTimeout(function () {
+            _this21.create.supervisors = ele.supervisors;
+            _this21.create.notifications = ele.attentions;
+          }, 1000);
+        }
+      });
     },
-    // start equipment
-    getEquipment: function getEquipment(location) {
+    setLocation: function setLocation() {
       var _this22 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
-        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-          while (1) switch (_context14.prev = _context14.next) {
-            case 0:
-              _this22.isLoader = true;
-              _context14.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/equipments?location_id=".concat(location)).then(function (res) {
-                var l = res.data.data;
-                l.unshift({
-                  id: 0,
-                  name: "اضف معده",
-                  name_e: "Add Equipment"
-                });
-                _this22.equipments = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this22.$t("general.Error")),
-                  text: "".concat(_this22.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this22.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context14.stop();
-          }
-        }, _callee14);
-      }))();
-    },
-    getEquipmentChild: function getEquipmentChild(child) {
-      var _this23 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15() {
-        return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-          while (1) switch (_context15.prev = _context15.next) {
-            case 0:
-              _this23.isLoader = true;
-              _context15.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/equipments?equipment_id=".concat(child)).then(function (res) {
-                var l = res.data.data;
-                _this23.equipment_childs = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this23.$t("general.Error")),
-                  text: "".concat(_this23.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this23.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context15.stop();
-          }
-        }, _callee15);
-      }))();
-    },
-    showEquipmentModal: function showEquipmentModal() {
-      var _this24 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
-        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-          while (1) switch (_context16.prev = _context16.next) {
-            case 0:
-              if (!(_this24.equipment_id == 0)) {
-                _context16.next = 4;
-                break;
-              }
-              _this24.$bvModal.show("equipment-create");
-              _context16.next = 6;
-              break;
-            case 4:
-              _context16.next = 6;
-              return _this24.getEquipmentChild(_this24.equipment_id);
-            case 6:
-            case "end":
-              return _context16.stop();
-          }
-        }, _callee16);
-      }))();
-    },
-    showEquipmentModalEdit: function showEquipmentModalEdit() {
-      var _this25 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
-        return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-          while (1) switch (_context17.prev = _context17.next) {
-            case 0:
-              if (!(_this25.equipment_id == 0)) {
-                _context17.next = 4;
-                break;
-              }
-              _this25.$bvModal.show("equipment-create");
-              _context17.next = 6;
-              break;
-            case 4:
-              _context17.next = 6;
-              return _this25.getEquipmentChild(_this25.equipment_id);
-            case 6:
-            case "end":
-              return _context17.stop();
-          }
-        }, _callee17);
-      }))();
-    },
-    // start location
-    getLocation: function getLocation() {
-      var _this26 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
-        return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-          while (1) switch (_context18.prev = _context18.next) {
-            case 0:
-              _this26.isLoader = true;
-              _context18.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/locations").then(function (res) {
-                var l = res.data.data;
-                _this26.locations = l;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this26.$t("general.Error")),
-                  text: "".concat(_this26.$t("general.Thereisanerrorinthesystem"))
-                });
-              })["finally"](function () {
-                _this26.isLoader = false;
-              });
-            case 3:
-            case "end":
-              return _context18.stop();
-          }
-        }, _callee18);
-      }))();
-    },
-    showLocationModal: function showLocationModal() {
-      var _this27 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
-        return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-          while (1) switch (_context19.prev = _context19.next) {
-            case 0:
-              if (!(_this27.create.location_id == 0)) {
-                _context19.next = 5;
-                break;
-              }
-              _this27.$bvModal.show("location-create");
-              _this27.create.location_id = null;
-              _context19.next = 7;
-              break;
-            case 5:
-              _context19.next = 7;
-              return _this27.getEquipment(_this27.create.location_id);
-            case 7:
-            case "end":
-              return _context19.stop();
-          }
-        }, _callee19);
-      }))();
-    },
-    showLocationModalEdit: function showLocationModalEdit() {
-      var _this28 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
-        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-          while (1) switch (_context20.prev = _context20.next) {
-            case 0:
-              if (!(_this28.edit.location_id == 0)) {
-                _context20.next = 5;
-                break;
-              }
-              _this28.$bvModal.show("location-create");
-              _this28.edit.location_id = null;
-              _context20.next = 7;
-              break;
-            case 5:
-              _context20.next = 7;
-              return _this28.getEquipment(_this28.edit.location_id);
-            case 7:
-            case "end":
-              return _context20.stop();
-          }
-        }, _callee20);
-      }))();
-    },
-    // start department task
-    getDepartmentTask: function getDepartmentTask() {
-      var _this29 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
-        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
-          while (1) switch (_context21.prev = _context21.next) {
-            case 0:
-              _this29.isLoader = true;
-              _context21.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/department-tasks?department_id=".concat(_this29.department_id)).then(function (res) {
-                var l = res.data.data;
-                _this29.departmentTasks = l;
-                _this29.isLoader = false;
-              })["catch"](function (err) {
-                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                  icon: "error",
-                  title: "".concat(_this29.$t("general.Error")),
-                  text: "".concat(_this29.$t("general.Thereisanerrorinthesystem"))
-                });
-              });
-            case 3:
-            case "end":
-              return _context21.stop();
-          }
-        }, _callee21);
-      }))();
-    },
-    showDepartmentTaskModal: function showDepartmentTaskModal() {
-      if (this.create.department_task_id == 0) {
-        this.$bvModal.show("create-task");
-        this.create.department_task_id = null;
-      }
-    },
-    showDepartmentTaskModalEdit: function showDepartmentTaskModalEdit() {
-      if (this.edit.department_task_id == 0) {
-        this.$bvModal.show("create-task");
-        this.edit.department_task_id = null;
-      }
-    },
-    // chech employee id create
-    checkIncloudIdOwners: function checkIncloudIdOwners(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.create.supervisors.includes(employee_id)) {
-          this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
-        }
-        if (this.create.notifications.includes(employee_id)) {
-          this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
-        }
-      }
-    },
-    checkIncloudIdSupervisors: function checkIncloudIdSupervisors(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.create.owners.includes(employee_id)) {
-          this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
-        }
-        if (this.create.notifications.includes(employee_id)) {
-          this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
-        }
-      }
-    },
-    checkIncloudIdNotifications: function checkIncloudIdNotifications(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.create.owners.includes(employee_id)) {
-          this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
-        }
-        if (this.create.supervisors.includes(employee_id)) {
-          this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
-        }
-      }
-    },
-    // chech employee id edit
-    checkIncloudsIdOwnersEdit: function checkIncloudsIdOwnersEdit(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.edit.supervisors.includes(employee_id)) {
-          this.edit.supervisors.splice(this.edit.supervisors.indexOf(employee_id), 1);
-        }
-        if (this.edit.notifications.includes(employee_id)) {
-          this.edit.notifications.splice(this.edit.notifications.indexOf(employee_id), 1);
-        }
-      }
-    },
-    checkIncloudsIdSupervisorsEdit: function checkIncloudsIdSupervisorsEdit(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.edit.owners.includes(employee_id)) {
-          this.edit.owners.splice(this.edit.owners.indexOf(employee_id), 1);
-        }
-        if (this.edit.notifications.includes(employee_id)) {
-          this.edit.notifications.splice(this.edit.notifications.indexOf(employee_id), 1);
-        }
-      }
-    },
-    checkIncloudsIdNotificationsEdit: function checkIncloudsIdNotificationsEdit(e) {
-      var employee_id = e[e.length - 1];
-      if (employee_id) {
-        if (this.edit.owners.includes(employee_id)) {
-          this.edit.owners.splice(this.edit.owners.indexOf(employee_id), 1);
-        }
-        if (this.edit.supervisors.includes(employee_id)) {
-          this.edit.supervisors.splice(this.edit.supervisors.indexOf(employee_id), 1);
-        }
-      }
-    },
-    calcDurationCreate: function calcDurationCreate() {
-      var TotalDays = 0;
-      var TotalTime = '0 Minutes';
-      var execution_date = new Date(this.create.execution_date).getTime();
-      var execution_end_date = new Date(this.create.execution_end_date).getTime();
-      if (execution_date < execution_end_date) {
-        var _difference = execution_end_date - execution_date;
-        TotalDays = Math.ceil(_difference / (1000 * 3600 * 24));
-      }
-
-      // --------- calc Time --------------
-      var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
-      var startTime = new Date(today + " " + this.create.start_time);
-      var endTime = new Date(today + " " + this.create.end_time);
-      if (endTime > startTime) {
-        var difference = endTime.getTime() - startTime.getTime();
-        TotalTime = Math.round(difference / 60000) + " Minutes";
-      }
-      this.create.execution_duration = "".concat(TotalDays, " Days, ").concat(TotalTime);
-    },
-    calcDurationEdit: function calcDurationEdit() {
-      var TotalDays = 0;
-      var TotalTime = '0 Minutes';
-      var execution_date = new Date(this.edit.execution_date).getTime();
-      var execution_end_date = new Date(this.edit.execution_end_date).getTime();
-      if (execution_date < execution_end_date) {
-        var _difference2 = execution_end_date - execution_date;
-        TotalDays = Math.ceil(_difference2 / (1000 * 3600 * 24));
-      }
-
-      // --------- calc Time --------------
-      var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
-      var startTime = new Date(today + " " + this.edit.start_time);
-      var endTime = new Date(today + " " + this.edit.end_time);
-      if (endTime > startTime) {
-        var difference = endTime.getTime() - startTime.getTime();
-        TotalTime = Math.round(difference / 60000) + " Minutes";
-      }
-      this.edit.execution_duration = "".concat(TotalDays, " Days, ").concat(TotalTime);
-    },
-    uploadPhotoTitle: function uploadPhotoTitle() {
-      this.titleFile = "";
-      this.$bvModal.show("uploadPhotoTitleCreate");
-      this.errors = {};
-    },
-    uploadPhotoTitleHidden: function uploadPhotoTitleHidden() {
-      this.titleFile = "";
-      this.$bvModal.hide("uploadPhotoTitleCreate");
-      this.errors = {};
-    },
-    changePhoto: function changePhoto() {
-      document.getElementById("uploadImageCreate").click();
-    },
-    changePhotoEdit: function changePhotoEdit() {
-      document.getElementById("uploadImageEdit").click();
-    },
-    onImageChanged: function onImageChanged(e) {
-      var file = e.target.files[0];
-      this.addImage(file);
-    },
-    addImage: function addImage(file) {
-      var _this30 = this;
-      this.media = file; //upload
-      if (file) {
-        this.idDelete = null;
-        var is_media = this.images.find(function (e) {
-          return e.name == file.name.slice(0, file.name.indexOf("."));
+      var department = this.departments.find(function (el) {
+        return el.id == _this22.create.department_id;
+      });
+      var emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id;
+      var locations = [];
+      department.locations.forEach(function (ele) {
+        _this22.all_locations.forEach(function (location) {
+          if (ele.location_id == location.id && (_this22.$store.state.auth.type == 'admin' || ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))) locations.push(location);
         });
-        this.idDelete = is_media ? is_media.id : null;
-        if (!this.idDelete) {
-          this.isLoader = true;
-          var formDate = new FormData();
-          formDate.append("media[][media]", this.media);
-          formDate.append("media[][title]", this.titleFile);
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/media-name", formDate).then(function (res) {
-            var old_media = [];
-            _this30.images.forEach(function (e) {
-              return old_media.push(e.id);
+      });
+      this.locations = locations;
+      if (locations.length == 1) {
+        this.create.location_id = locations[0].id;
+        this.getEquipment(this.create.location_id);
+        this.setSupervisorsAndAttentions(department);
+      }
+    },
+    setDepartment: function setDepartment() {
+      var _this23 = this;
+      var departments = [];
+      this.all_departments.forEach(function (department) {
+        department.locations.forEach(function (ele) {
+          if (ele.location_id == _this23.create.location_id) departments.push(department);
+        });
+      });
+      this.departments = departments;
+      if (departments.length == 1) {
+        this.create.department_id = departments[0].id;
+        this.setSupervisorsAndAttentions(departments[0]);
+      }
+    }
+  }, _defineProperty(_methods, "showDepartmentModal", function showDepartmentModal() {
+    var _this24 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+      var department;
+      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        while (1) switch (_context10.prev = _context10.next) {
+          case 0:
+            if (!(_this24.create.department_id == 0)) {
+              _context10.next = 5;
+              break;
+            }
+            _this24.$bvModal.show("create_department_task");
+            _this24.create.department_id = null;
+            _context10.next = 10;
+            break;
+          case 5:
+            department = _this24.departments.find(function (el) {
+              return el.id == _this24.create.department_id;
             });
-            var new_media = [];
-            res.data.data.forEach(function (e) {
-              return new_media.push(e.id);
+            _this24.department_id = _this24.create.department_id;
+            _this24.create.supervisors = department.supervisors ? department.supervisors : [];
+            _context10.next = 10;
+            return _this24.getDepartmentTask();
+          case 10:
+          case "end":
+            return _context10.stop();
+        }
+      }, _callee10);
+    }))();
+  }), _defineProperty(_methods, "showDepartmentModalEdit", function showDepartmentModalEdit() {
+    var _this25 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
+      var department;
+      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+        while (1) switch (_context11.prev = _context11.next) {
+          case 0:
+            if (!(_this25.create.department_id == 0)) {
+              _context11.next = 5;
+              break;
+            }
+            _this25.$bvModal.show("create_department_task");
+            _this25.create.department_id = null;
+            _context11.next = 10;
+            break;
+          case 5:
+            department = _this25.departments.find(function (el) {
+              return el.id == _this25.create.department_id;
             });
-            _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(_this30.task_id), {
-              old_media: old_media,
-              media: new_media
-            }).then(function (res) {
-              var _res$data$data$media;
-              _this30.images = (_res$data$data$media = res.data.data.media) !== null && _res$data$data$media !== void 0 ? _res$data$data$media : [];
-              if (_this30.images && _this30.images.length > 0) {
-                _this30.showPhoto = _this30.images[_this30.images.length - 1].webp;
-              } else {
-                _this30.showPhoto = "../../../../../images/img-1.png";
-              }
-              _this30.getData();
-              _this30.uploadPhotoTitleHidden();
+            _this25.department_id = _this25.create.department_id;
+            _this25.create.supervisors = department.supervisors ? department.supervisors : [];
+            _context11.next = 10;
+            return _this25.getDepartmentTask();
+          case 10:
+          case "end":
+            return _context11.stop();
+        }
+      }, _callee11);
+    }))();
+  }), _defineProperty(_methods, "getCustomers", function getCustomers() {
+    var _arguments = arguments,
+      _this26 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+      var search;
+      return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+        while (1) switch (_context12.prev = _context12.next) {
+          case 0:
+            search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
+            _this26.isLoader = true;
+            _context12.next = 4;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/general-customer?limet=10&company_id=".concat(_this26.company_id).concat(search ? '&search=${search}&columns[0]=name&columns[1]=name_e' : '')).then(function (res) {
+              var l = res.data.data;
+              l.unshift({
+                id: 0,
+                name: "اضافة زبون",
+                name_e: "Add customer"
+              });
+              _this26.customers = l;
+              _this26.isLoader = false;
             })["catch"](function (err) {
               sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                 icon: "error",
-                title: "".concat(_this30.$t("general.Error")),
-                text: "".concat(_this30.$t("general.Thereisanerrorinthesystem"))
+                title: "".concat(_this26.$t("general.Error")),
+                text: "".concat(_this26.$t("general.Thereisanerrorinthesystem"))
               });
             });
-          })["catch"](function (err) {
-            if (err.response.data) {
-              _this30.errors = err.response.data.errors;
-            } else {
+          case 4:
+          case "end":
+            return _context12.stop();
+        }
+      }, _callee12);
+    }))();
+  }), _defineProperty(_methods, "showCustomerModal", function showCustomerModal() {
+    if (this.create.customer_id == 0) {
+      this.$bvModal.show("customer-general-create");
+      this.create.customer_id = null;
+    } else {
+      var customer = this.getCustomerData(this.create.customer_id);
+      if (customer) {
+        this.create.contact_person = customer.contact_person;
+        this.create.contact_phone = customer.contact_phone;
+      }
+    }
+  }), _defineProperty(_methods, "showCustomerModalEdit", function showCustomerModalEdit() {
+    if (this.create.customer_id == 0) {
+      this.$bvModal.show("customer-general-create");
+      this.create.customer_id = null;
+    } else {
+      var customer = this.getCustomerData(this.create.customer_id);
+      if (customer) {
+        this.create.contact_person = customer.contact_person;
+        this.create.contact_phone = customer.contact_phone;
+      }
+    }
+  }), _defineProperty(_methods, "getCustomerData", function getCustomerData(id) {
+    if (this.customers && id) {
+      return this.customers.find(function (e) {
+        return id == e.id;
+      });
+    }
+  }), _defineProperty(_methods, "searchCustomer", function searchCustomer(e) {
+    var _this27 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+      var search;
+      return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+        while (1) switch (_context13.prev = _context13.next) {
+          case 0:
+            search = e !== null && e !== void 0 ? e : '';
+            clearTimeout(_this27.debounce);
+            _this27.debounce = setTimeout(function () {
+              _this27.getCustomers(search);
+            }, 500);
+          case 3:
+          case "end":
+            return _context13.stop();
+        }
+      }, _callee13);
+    }))();
+  }), _defineProperty(_methods, "getEquipment", function getEquipment(location) {
+    var _this28 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
+      return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+        while (1) switch (_context14.prev = _context14.next) {
+          case 0:
+            _this28.isLoader = true;
+            _context14.next = 3;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/equipments?location_id=".concat(location)).then(function (res) {
+              var l = res.data.data;
+              l.unshift({
+                id: 0,
+                name: "اضف معده",
+                name_e: "Add Equipment"
+              });
+              _this28.equipments = l;
+            })["catch"](function (err) {
               sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                 icon: "error",
-                title: "".concat(_this30.$t("general.Error")),
-                text: "".concat(_this30.$t("general.Thereisanerrorinthesystem"))
+                title: "".concat(_this28.$t("general.Error")),
+                text: "".concat(_this28.$t("general.Thereisanerrorinthesystem"))
               });
-            }
-          })["finally"](function () {
-            _this30.isLoader = false;
-          });
-        } else {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-            title: "".concat(this.$t("general.Thisfilehasalreadybeenuploaded")),
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonText: "".concat(this.$t("general.Replace")),
-            cancelButtonText: "".concat(this.$t("general.Nocancel")),
-            confirmButtonClass: "btn btn-success mt-2",
-            cancelButtonClass: "btn btn-danger ml-2 mt-2",
-            buttonsStyling: false
-          }).then(function (result) {
-            if (result.value) {
-              _this30.isLoader = true;
-              var _formDate = new FormData();
-              _formDate.append("media[0]", _this30.media);
-              _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/media", _formDate).then(function (res) {
-                var old_media = [];
-                _this30.images.forEach(function (e) {
-                  return old_media.push(e.id);
-                });
-                old_media.splice(old_media.indexOf(_this30.idDelete), 1);
-                var new_media = [];
-                res.data.data.forEach(function (e) {
-                  return new_media.push(e.id);
-                });
-                _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(_this30.country_id), {
-                  old_media: old_media,
-                  media: new_media
-                }).then(function (res) {
-                  var _res$data$data$media2;
-                  _this30.images = (_res$data$data$media2 = res.data.data.media) !== null && _res$data$data$media2 !== void 0 ? _res$data$data$media2 : [];
-                  if (_this30.images && _this30.images.length > 0) {
-                    _this30.showPhoto = _this30.images[_this30.images.length - 1].webp;
-                  } else {
-                    _this30.showPhoto = "../../../../../images/img-1.png";
-                  }
-                  _this30.getData();
-                })["catch"](function (err) {
-                  sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                    icon: "error",
-                    title: "".concat(_this30.$t("general.Error")),
-                    text: "".concat(_this30.$t("general.Thereisanerrorinthesystem"))
-                  });
-                });
-              })["catch"](function (err) {
-                if (err.response.data) {
-                  _this30.errors = err.response.data.errors;
-                } else {
-                  sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-                    icon: "error",
-                    title: "".concat(_this30.$t("general.Error")),
-                    text: "".concat(_this30.$t("general.Thereisanerrorinthesystem"))
-                  });
-                }
-              })["finally"](function () {
-                _this30.isLoader = false;
-              });
-            }
-          });
+            })["finally"](function () {
+              _this28.isLoader = false;
+            });
+          case 3:
+          case "end":
+            return _context14.stop();
         }
+      }, _callee14);
+    }))();
+  }), _defineProperty(_methods, "getEquipmentChild", function getEquipmentChild(child) {
+    var _this29 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15() {
+      return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+        while (1) switch (_context15.prev = _context15.next) {
+          case 0:
+            _this29.isLoader = true;
+            _context15.next = 3;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/equipments?equipment_id=".concat(child)).then(function (res) {
+              var l = res.data.data;
+              _this29.equipment_childs = l;
+            })["catch"](function (err) {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                icon: "error",
+                title: "".concat(_this29.$t("general.Error")),
+                text: "".concat(_this29.$t("general.Thereisanerrorinthesystem"))
+              });
+            })["finally"](function () {
+              _this29.isLoader = false;
+            });
+          case 3:
+          case "end":
+            return _context15.stop();
+        }
+      }, _callee15);
+    }))();
+  }), _defineProperty(_methods, "showEquipmentModal", function showEquipmentModal() {
+    var _this30 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
+      return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+        while (1) switch (_context16.prev = _context16.next) {
+          case 0:
+            if (!(_this30.equipment_id == 0)) {
+              _context16.next = 4;
+              break;
+            }
+            _this30.$bvModal.show("equipment-create");
+            _context16.next = 6;
+            break;
+          case 4:
+            _context16.next = 6;
+            return _this30.getEquipmentChild(_this30.equipment_id);
+          case 6:
+          case "end":
+            return _context16.stop();
+        }
+      }, _callee16);
+    }))();
+  }), _defineProperty(_methods, "showEquipmentModalEdit", function showEquipmentModalEdit() {
+    var _this31 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
+      return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+        while (1) switch (_context17.prev = _context17.next) {
+          case 0:
+            if (!(_this31.equipment_id == 0)) {
+              _context17.next = 4;
+              break;
+            }
+            _this31.$bvModal.show("equipment-create");
+            _context17.next = 6;
+            break;
+          case 4:
+            _context17.next = 6;
+            return _this31.getEquipmentChild(_this31.equipment_id);
+          case 6:
+          case "end":
+            return _context17.stop();
+        }
+      }, _callee17);
+    }))();
+  }), _defineProperty(_methods, "getLocation", function getLocation() {
+    var _this32 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
+      return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+        while (1) switch (_context18.prev = _context18.next) {
+          case 0:
+            _this32.isLoader = true;
+            _context18.next = 3;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/locations").then(function (res) {
+              var l = res.data.data;
+              _this32.all_locations = l;
+            })["catch"](function (err) {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                icon: "error",
+                title: "".concat(_this32.$t("general.Error")),
+                text: "".concat(_this32.$t("general.Thereisanerrorinthesystem"))
+              });
+            })["finally"](function () {
+              _this32.isLoader = false;
+            });
+          case 3:
+          case "end":
+            return _context18.stop();
+        }
+      }, _callee18);
+    }))();
+  }), _defineProperty(_methods, "showLocationModal", function showLocationModal() {
+    var _this33 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
+      var department;
+      return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+        while (1) switch (_context19.prev = _context19.next) {
+          case 0:
+            if (!_this33.create.location_id && !_this33.create.department_id) {
+              _this33.departments = _this33.all_departments;
+              _this33.locations = _this33.get_default_locations(_this33.all_departments);
+            }
+            _this33.create.supervisors = [];
+            _this33.create.notifications = [];
+            if (_this33.create.location_id) {
+              _this33.setDepartment();
+              _this33.getEquipment(_this33.create.location_id);
+              if (_this33.create.department_id) {
+                department = _this33.departments.find(function (el) {
+                  return el.id == _this33.create.department_id;
+                });
+                _this33.setSupervisorsAndAttentions(department);
+              }
+            }
+          case 4:
+          case "end":
+            return _context19.stop();
+        }
+      }, _callee19);
+    }))();
+  }), _defineProperty(_methods, "getDepartmentTask", function getDepartmentTask() {
+    var _this34 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
+      return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+        while (1) switch (_context20.prev = _context20.next) {
+          case 0:
+            _this34.isLoader = true;
+            _context20.next = 3;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/department-tasks?department_id=".concat(_this34.department_id)).then(function (res) {
+              var l = res.data.data;
+              _this34.departmentTasks = l;
+              _this34.isLoader = false;
+            })["catch"](function (err) {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                icon: "error",
+                title: "".concat(_this34.$t("general.Error")),
+                text: "".concat(_this34.$t("general.Thereisanerrorinthesystem"))
+              });
+            });
+          case 3:
+          case "end":
+            return _context20.stop();
+        }
+      }, _callee20);
+    }))();
+  }), _defineProperty(_methods, "showDepartmentTaskModal", function showDepartmentTaskModal() {
+    if (this.create.department_task_id == 0) {
+      this.$bvModal.show("create-task");
+      this.create.department_task_id = null;
+    }
+  }), _defineProperty(_methods, "showDepartmentTaskModalEdit", function showDepartmentTaskModalEdit() {
+    if (this.create.department_task_id == 0) {
+      this.$bvModal.show("create-task");
+      this.create.department_task_id = null;
+    }
+  }), _defineProperty(_methods, "checkIncloudIdOwners", function checkIncloudIdOwners(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.supervisors.includes(employee_id)) {
+        this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
       }
-    },
-    deleteImageCreate: function deleteImageCreate(id, index) {
-      var _this31 = this;
-      var old_media = [];
-      this.images.forEach(function (e) {
-        if (e.id != id) {
-          old_media.push(e.id);
-        }
+      if (this.create.notifications.includes(employee_id)) {
+        this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "checkIncloudIdSupervisors", function checkIncloudIdSupervisors(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.owners.includes(employee_id)) {
+        this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
+      }
+      if (this.create.notifications.includes(employee_id)) {
+        this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "checkIncloudIdNotifications", function checkIncloudIdNotifications(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.owners.includes(employee_id)) {
+        this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
+      }
+      if (this.create.supervisors.includes(employee_id)) {
+        this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "checkIncloudsIdOwnersEdit", function checkIncloudsIdOwnersEdit(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.supervisors.includes(employee_id)) {
+        this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
+      }
+      if (this.create.notifications.includes(employee_id)) {
+        this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "checkIncloudsIdSupervisorsEdit", function checkIncloudsIdSupervisorsEdit(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.owners.includes(employee_id)) {
+        this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
+      }
+      if (this.create.notifications.includes(employee_id)) {
+        this.create.notifications.splice(this.create.notifications.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "checkIncloudsIdNotificationsEdit", function checkIncloudsIdNotificationsEdit(e) {
+    var employee_id = e[e.length - 1];
+    if (employee_id) {
+      if (this.create.owners.includes(employee_id)) {
+        this.create.owners.splice(this.create.owners.indexOf(employee_id), 1);
+      }
+      if (this.create.supervisors.includes(employee_id)) {
+        this.create.supervisors.splice(this.create.supervisors.indexOf(employee_id), 1);
+      }
+    }
+  }), _defineProperty(_methods, "calcDurationCreate", function calcDurationCreate() {
+    var TotalDays = 0;
+    var TotalTime = '0 Minutes';
+    var execution_date = new Date(this.create.execution_date).getTime();
+    var execution_end_date = new Date(this.create.execution_end_date).getTime();
+    if (execution_date < execution_end_date) {
+      var _difference = execution_end_date - execution_date;
+      TotalDays = Math.ceil(_difference / (1000 * 3600 * 24));
+    }
+
+    // --------- calc Time --------------
+    var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
+    var startTime = new Date(today + " " + this.create.start_time);
+    var endTime = new Date(today + " " + this.create.end_time);
+    if (endTime > startTime) {
+      var difference = endTime.getTime() - startTime.getTime();
+      TotalTime = Math.round(difference / 60000) + " Minutes";
+    }
+    this.create.execution_duration = "".concat(TotalDays, " Days, ").concat(TotalTime);
+  }), _defineProperty(_methods, "calcDurationEdit", function calcDurationEdit() {
+    var TotalDays = 0;
+    var TotalTime = '0 Minutes';
+    var execution_date = new Date(this.create.execution_date).getTime();
+    var execution_end_date = new Date(this.create.execution_end_date).getTime();
+    if (execution_date < execution_end_date) {
+      var _difference2 = execution_end_date - execution_date;
+      TotalDays = Math.ceil(_difference2 / (1000 * 3600 * 24));
+    }
+
+    // --------- calc Time --------------
+    var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
+    var startTime = new Date(today + " " + this.create.start_time);
+    var endTime = new Date(today + " " + this.create.end_time);
+    if (endTime > startTime) {
+      var difference = endTime.getTime() - startTime.getTime();
+      TotalTime = Math.round(difference / 60000) + " Minutes";
+    }
+    this.create.execution_duration = "".concat(TotalDays, " Days, ").concat(TotalTime);
+  }), _defineProperty(_methods, "uploadPhotoTitle", function uploadPhotoTitle() {
+    this.titleFile = "";
+    this.$bvModal.show("uploadPhotoTitleCreate");
+    this.errors = {};
+  }), _defineProperty(_methods, "uploadPhotoTitleHidden", function uploadPhotoTitleHidden() {
+    this.titleFile = "";
+    this.$bvModal.hide("uploadPhotoTitleCreate");
+    this.errors = {};
+  }), _defineProperty(_methods, "changePhoto", function changePhoto() {
+    document.getElementById("uploadImageCreate").click();
+  }), _defineProperty(_methods, "changePhotoEdit", function changePhotoEdit() {
+    document.getElementById("uploadImageEdit").click();
+  }), _defineProperty(_methods, "onImageChanged", function onImageChanged(e) {
+    var file = e.target.files[0];
+    this.addImage(file);
+  }), _defineProperty(_methods, "addImage", function addImage(file) {
+    var _this35 = this;
+    this.media = file; //upload
+    if (file) {
+      this.idDelete = null;
+      var is_media = this.images.find(function (e) {
+        return e.name == file.name.slice(0, file.name.indexOf("."));
       });
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(this.task_id), {
-        old_media: old_media
-      }).then(function (res) {
-        var _res$data$data$media3;
-        _this31.tasks[index] = res.data.data;
-        _this31.images = (_res$data$data$media3 = res.data.data.media) !== null && _res$data$data$media3 !== void 0 ? _res$data$data$media3 : [];
-        if (_this31.images && _this31.images.length > 0) {
-          _this31.showPhoto = _this31.images[_this31.images.length - 1].webp;
-        } else {
-          _this31.showPhoto = "../../../../../images/img-1.png";
-        }
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
-          icon: "error",
-          title: "".concat(_this31.$t("general.Error")),
-          text: "".concat(_this31.$t("general.Thereisanerrorinthesystem"))
-        });
-      });
-    },
-    formatDate: function formatDate(value) {
-      return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_15__.formatDateOnly)(value);
-    },
-    showTypeModal: function showTypeModal() {
-      var _arguments2 = arguments,
-        _this32 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
-        var model;
-        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
-          while (1) switch (_context22.prev = _context22.next) {
-            case 0:
-              model = _arguments2.length > 0 && _arguments2[0] !== undefined ? _arguments2[0] : 'edit';
-              if (!(model == 'create')) {
-                _context22.next = 26;
-                break;
-              }
-              if (!(_this32.create.type == "equipment")) {
-                _context22.next = 13;
-                break;
-              }
-              _this32.create.equipment_id = null;
-              _this32.create.location_id = null;
-              _this32.create.priority_id = null;
-              _this32.equipments = [];
-              _this32.equipment_childs = [];
-              if (_this32.locations.length > 0) {
-                _context22.next = 11;
-                break;
-              }
-              _context22.next = 11;
-              return _this32.getLocation();
-            case 11:
-              _context22.next = 24;
-              break;
-            case 13:
-              if (!(_this32.create.type == "customer")) {
-                _context22.next = 23;
-                break;
-              }
-              _this32.create.customer_id = null;
-              _this32.create.priority_id = null;
-              _this32.create.contact_person = '';
-              _this32.create.contact_phone = '';
-              if (!(_this32.customers.length == 0)) {
-                _context22.next = 21;
-                break;
-              }
-              _context22.next = 21;
-              return _this32.getCustomers();
-            case 21:
-              _context22.next = 24;
-              break;
-            case 23:
-              _this32.create.task_requirement = '';
-            case 24:
-              _context22.next = 49;
-              break;
-            case 26:
-              if (!(_this32.edit.type == "equipment")) {
-                _context22.next = 38;
-                break;
-              }
-              _this32.edit.equipment_id = null;
-              _this32.edit.location_id = null;
-              _this32.edit.priority_id = null;
-              _this32.equipment_id = null;
-              _this32.equipments = [];
-              _this32.equipment_childs = [];
-              if (_this32.locations.length > 0) {
-                _context22.next = 36;
-                break;
-              }
-              _context22.next = 36;
-              return _this32.getLocation();
-            case 36:
-              _context22.next = 49;
-              break;
-            case 38:
-              if (!(_this32.edit.type == "customer")) {
-                _context22.next = 48;
-                break;
-              }
-              _this32.edit.customer_id = null;
-              _this32.edit.priority_id = null;
-              _this32.edit.contact_person = '';
-              _this32.edit.contact_phone = '';
-              if (!(_this32.customers.length == 0)) {
-                _context22.next = 46;
-                break;
-              }
-              _context22.next = 46;
-              return _this32.getCustomers();
-            case 46:
-              _context22.next = 49;
-              break;
-            case 48:
-              _this32.edit.task_requirement = '';
-            case 49:
-            case "end":
-              return _context22.stop();
+      this.idDelete = is_media ? is_media.id : null;
+      if (!this.idDelete) {
+        this.isLoader = true;
+        var formDate = new FormData();
+        formDate.append("media[][media]", this.media);
+        formDate.append("media[][title]", this.titleFile);
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/media-name", formDate).then(function (res) {
+          var old_media = [];
+          _this35.images.forEach(function (e) {
+            return old_media.push(e.id);
+          });
+          var new_media = [];
+          res.data.data.forEach(function (e) {
+            return new_media.push(e.id);
+          });
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(_this35.task_id), {
+            old_media: old_media,
+            media: new_media
+          }).then(function (res) {
+            var _res$data$data$media;
+            _this35.images = (_res$data$data$media = res.data.data.media) !== null && _res$data$data$media !== void 0 ? _res$data$data$media : [];
+            if (_this35.images && _this35.images.length > 0) {
+              _this35.showPhoto = _this35.images[_this35.images.length - 1].webp;
+            } else {
+              _this35.showPhoto = "../../../../../images/img-1.png";
+            }
+            _this35.getData();
+            _this35.uploadPhotoTitleHidden();
+          })["catch"](function (err) {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: "error",
+              title: "".concat(_this35.$t("general.Error")),
+              text: "".concat(_this35.$t("general.Thereisanerrorinthesystem"))
+            });
+          });
+        })["catch"](function (err) {
+          if (err.response.data) {
+            _this35.errors = err.response.data.errors;
+          } else {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+              icon: "error",
+              title: "".concat(_this35.$t("general.Error")),
+              text: "".concat(_this35.$t("general.Thereisanerrorinthesystem"))
+            });
           }
-        }, _callee22);
-      }))();
-    },
-    getPriority: function getPriority() {
-      var _this33 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
-        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-          while (1) switch (_context23.prev = _context23.next) {
-            case 0:
-              _this33.isLoader = true;
-              _context23.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/priorities").then(function (res) {
-                var l = res.data.data;
-                _this33.priorities = l;
+        })["finally"](function () {
+          _this35.isLoader = false;
+        });
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+          title: "".concat(this.$t("general.Thisfilehasalreadybeenuploaded")),
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: "".concat(this.$t("general.Replace")),
+          cancelButtonText: "".concat(this.$t("general.Nocancel")),
+          confirmButtonClass: "btn btn-success mt-2",
+          cancelButtonClass: "btn btn-danger ml-2 mt-2",
+          buttonsStyling: false
+        }).then(function (result) {
+          if (result.value) {
+            _this35.isLoader = true;
+            var _formDate = new FormData();
+            _formDate.append("media[0]", _this35.media);
+            _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].post("/media", _formDate).then(function (res) {
+              var old_media = [];
+              _this35.images.forEach(function (e) {
+                return old_media.push(e.id);
+              });
+              old_media.splice(old_media.indexOf(_this35.idDelete), 1);
+              var new_media = [];
+              res.data.data.forEach(function (e) {
+                return new_media.push(e.id);
+              });
+              _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(_this35.country_id), {
+                old_media: old_media,
+                media: new_media
+              }).then(function (res) {
+                var _res$data$data$media2;
+                _this35.images = (_res$data$data$media2 = res.data.data.media) !== null && _res$data$data$media2 !== void 0 ? _res$data$data$media2 : [];
+                if (_this35.images && _this35.images.length > 0) {
+                  _this35.showPhoto = _this35.images[_this35.images.length - 1].webp;
+                } else {
+                  _this35.showPhoto = "../../../../../images/img-1.png";
+                }
+                _this35.getData();
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
                   icon: "error",
-                  title: "".concat(_this33.$t("general.Error")),
-                  text: "".concat(_this33.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this35.$t("general.Error")),
+                  text: "".concat(_this35.$t("general.Thereisanerrorinthesystem"))
                 });
-              })["finally"](function () {
-                _this33.isLoader = false;
               });
-            case 3:
-            case "end":
-              return _context23.stop();
+            })["catch"](function (err) {
+              if (err.response.data) {
+                _this35.errors = err.response.data.errors;
+              } else {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                  icon: "error",
+                  title: "".concat(_this35.$t("general.Error")),
+                  text: "".concat(_this35.$t("general.Thereisanerrorinthesystem"))
+                });
+              }
+            })["finally"](function () {
+              _this35.isLoader = false;
+            });
           }
-        }, _callee23);
-      }))();
+        });
+      }
     }
-  }
+  }), _defineProperty(_methods, "deleteImageCreate", function deleteImageCreate(id, index) {
+    var _this36 = this;
+    var old_media = [];
+    this.images.forEach(function (e) {
+      if (e.id != id) {
+        old_media.push(e.id);
+      }
+    });
+    _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].put("/tasks/".concat(this.task_id), {
+      old_media: old_media
+    }).then(function (res) {
+      var _res$data$data$media3;
+      _this36.tasks[index] = res.data.data;
+      _this36.images = (_res$data$data$media3 = res.data.data.media) !== null && _res$data$data$media3 !== void 0 ? _res$data$data$media3 : [];
+      if (_this36.images && _this36.images.length > 0) {
+        _this36.showPhoto = _this36.images[_this36.images.length - 1].webp;
+      } else {
+        _this36.showPhoto = "../../../../../images/img-1.png";
+      }
+    })["catch"](function (err) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+        icon: "error",
+        title: "".concat(_this36.$t("general.Error")),
+        text: "".concat(_this36.$t("general.Thereisanerrorinthesystem"))
+      });
+    });
+  }), _defineProperty(_methods, "formatDate", function formatDate(value) {
+    return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_15__.formatDateOnly)(value);
+  }), _defineProperty(_methods, "showTypeModal", function showTypeModal() {
+    var _this37 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
+      return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+        while (1) switch (_context21.prev = _context21.next) {
+          case 0:
+            if (_this37.create.type == "equipment") {
+              _this37.create.equipment_id = null;
+              _this37.create.location_id = null;
+              _this37.create.supervisors = [];
+              _this37.create.notifications = [];
+              _this37.create.priority_id = null;
+              _this37.equipments = [];
+              _this37.equipment_childs = [];
+            } else if (_this37.create.type == "customer") {
+              _this37.create.customer_id = null;
+              _this37.create.priority_id = null;
+              _this37.create.contact_person = '';
+              _this37.create.contact_phone = '';
+              if (_this37.customers.length == 0) _this37.getCustomers();
+            } else {
+              _this37.create.task_requirement = '';
+            }
+          case 1:
+          case "end":
+            return _context21.stop();
+        }
+      }, _callee21);
+    }))();
+  }), _defineProperty(_methods, "getPriority", function getPriority() {
+    var _this38 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
+      return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+        while (1) switch (_context22.prev = _context22.next) {
+          case 0:
+            _this38.isLoader = true;
+            _context22.next = 3;
+            return _api_adminAxios__WEBPACK_IMPORTED_MODULE_10__["default"].get("/priorities").then(function (res) {
+              var l = res.data.data;
+              _this38.priorities = l;
+            })["catch"](function (err) {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_9___default().fire({
+                icon: "error",
+                title: "".concat(_this38.$t("general.Error")),
+                text: "".concat(_this38.$t("general.Thereisanerrorinthesystem"))
+              });
+            })["finally"](function () {
+              _this38.isLoader = false;
+            });
+          case 3:
+          case "end":
+            return _context22.stop();
+        }
+      }, _callee22);
+    }))();
+  }), _methods)
 });
 
 /***/ }),
@@ -22008,19 +21894,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -22032,6 +21912,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -22039,23 +21920,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -22395,10 +22277,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
@@ -22681,13 +22559,13 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "row"
-  }, [_c("div", {
+  }, [_vm.isVisible("type") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_type"))), _c("span", {
+  }, [_c("label", [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("boardRent_task_type")) + "\n                                    "), _vm.isRequired("type") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.type.$error || _vm.errors.type,
       "is-valid": !_vm.$v.create.type.$invalid && !_vm.errors.type
@@ -22711,17 +22589,17 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.type.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.type ? _vm._l(_vm.errors.type, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.type ? _vm._l(_vm.errors.type, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("employee_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("employee"))), _c("span", {
+  }, [_c("label", [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("employee")) + "\n                                    "), _vm.isRequired("employee_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.employee_id.$error || _vm.errors.employee_id,
       "is-valid": !_vm.$v.create.employee_id.$invalid && !_vm.errors.employee_id
@@ -22731,11 +22609,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.employeeDepartments.find(function (x) {
+        return _vm.employeeDepartments.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.employeeDepartments.find(function (x) {
           return x.id == opt;
         }).name : _vm.employeeDepartments.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -22750,19 +22630,19 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.employee_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.employee_id ? _vm._l(_vm.errors.employee_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.employee_id ? _vm._l(_vm.errors.employee_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("department_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("boardRent_task_department")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("boardRent_task_department")) + "\n                                    "), _vm.isRequired("department_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.department_id.$error || _vm.errors.department_id,
       "is-valid": !_vm.$v.create.department_id.$invalid && !_vm.errors.department_id
@@ -22772,11 +22652,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.departments.find(function (x) {
+        return _vm.departments.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.departments.find(function (x) {
           return x.id == opt;
         }).name : _vm.departments.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -22791,26 +22673,26 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.department_id.$error || _vm.errors.department_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.department_id ? _vm._l(_vm.errors.department_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.department_id ? _vm._l(_vm.errors.department_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("hr", {
     staticStyle: {
       margin: "10px 0 !important",
       "border-top": "1px solid rgb(141 163 159 / 42%)"
     }
-  })]), _vm._v(" "), _vm.create.type == "customer" ? _c("div", {
+  })]), _vm._v(" "), _vm.create.type == "customer" && _vm.isVisible("customer_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("customer")) + "\n                                                "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("customer")) + "\n                                    "), _vm.isRequired("customer_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.customer_id.$error || _vm.errors.customer_id,
       "is-valid": !_vm.$v.create.customer_id.$invalid && !_vm.errors.customer_id
@@ -22821,11 +22703,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.customers.find(function (x) {
+        return _vm.customers.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.customers.find(function (x) {
           return x.id == opt;
         }).name : _vm.customers.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -22842,16 +22726,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.customer_id ? _vm._l(_vm.errors.customer_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "customer" ? _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "customer" && _vm.isVisible("contact_person") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("general_customer_contact_person")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("general_customer_contact_person")) + "\n                                    "), _vm.isRequired("contact_person") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -22880,15 +22764,15 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "customer" ? _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "customer" && _vm.isVisible("contact_phone") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("general_customer_contact_phones")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("general_customer_contact_phones")) + "\n                                    "), _vm.isRequired("contact_phone") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -22917,15 +22801,15 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "equipment" ? _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "equipment" && _vm.isVisible("location_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_location")) + "\n                                                "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_location")) + "\n                                    "), _vm.isRequired("location_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.location_id.$error || _vm.errors.location_id,
       "is-valid": !_vm.$v.create.location_id.$invalid && !_vm.errors.location_id
@@ -22935,11 +22819,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.locations.find(function (x) {
+        return _vm.locations.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.locations.find(function (x) {
           return x.id == opt;
         }).name : _vm.locations.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -22955,61 +22841,32 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.location_id ? _vm._l(_vm.errors.location_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "equipment" ? _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "equipment" && _vm.isVisible("equipment_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("equipment")) + "\n                                                "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_equipment")) + "\n                                    "), _vm.isRequired("equipment_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
-    attrs: {
-      options: _vm.equipments.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.equipments.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.equipments.find(function (x) {
-          return x.id == opt;
-        }).name_e;
-      }
-    },
-    on: {
-      input: _vm.showEquipmentModal
-    },
-    model: {
-      value: _vm.equipment_id,
-      callback: function callback($$v) {
-        _vm.equipment_id = $$v;
-      },
-      expression: "equipment_id"
-    }
-  })], 1)]) : _vm._e(), _vm._v(" "), _vm.create.type == "equipment" ? _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group position-relative"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_equipment")) + "\n                                                "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.equipment_id.$error || _vm.errors.equipment_id,
       "is-valid": !_vm.$v.create.equipment_id.$invalid && !_vm.errors.equipment_id
     },
     attrs: {
-      options: _vm.equipment_childs.map(function (type) {
+      options: _vm.equipments.map(function (type) {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.equipment_childs.find(function (x) {
+        return _vm.equipments.find(function (x) {
           return x.id == opt;
-        }).name : _vm.equipment_childs.find(function (x) {
+        }) ? _vm.$i18n.locale == "ar" ? _vm.equipments.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name : _vm.equipments.find(function (x) {
+          return x.id == opt;
+        }).name_e : null;
       }
     },
     model: {
@@ -23022,16 +22879,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.equipment_id ? _vm._l(_vm.errors.equipment_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "general" ? _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.create.type == "general" && _vm.isVisible("task_requirement") ? _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_task_requirement")) + "\n                                                "), _c("span", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("boardRent_task_task_requirement")) + "\n                                    "), _vm.isRequired("task_requirement") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -23058,7 +22915,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.task_requirement ? _vm._l(_vm.errors.task_requirement, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("hr", {
@@ -23066,15 +22923,15 @@ var render = function render() {
       margin: "10px 0 !important",
       "border-top": "1px solid rgb(141 163 159 / 42%)"
     }
-  })]), _vm._v(" "), _c("div", {
+  })]), _vm._v(" "), _vm.isVisible("task_title") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("task_title")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_title")) + "\n                                    "), _vm.isRequired("task_title") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -23103,15 +22960,15 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("department_task_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("task_type")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_type")) + "\n                                    "), _vm.isRequired("department_task_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.department_task_id.$error || _vm.errors.department_task_id,
       "is-valid": !_vm.$v.create.department_task_id.$invalid && !_vm.errors.department_task_id
@@ -23121,11 +22978,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.departmentTasks.find(function (x) {
+        return _vm.departmentTasks.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.departmentTasks.find(function (x) {
           return x.id == opt;
         }).name : _vm.departmentTasks.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -23140,17 +22999,17 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.department_task_id.$error || _vm.errors.department_task_id ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.department_task_id ? _vm._l(_vm.errors.department_task_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.department_task_id ? _vm._l(_vm.errors.department_task_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("status_id") ? _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("task_status"))), _c("span", {
+  }, [_c("label", [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_status")) + "\n                                    "), _vm.isRequired("status_id") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
     "class": {
       "is-invalid": _vm.$v.create.status_id.$error || _vm.errors.status_id,
       "is-valid": !_vm.$v.create.status_id.$invalid && !_vm.errors.status_id
@@ -23160,15 +23019,14 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.statuses.find(function (x) {
+        return _vm.statuses.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.statuses.find(function (x) {
           return x.id == opt;
         }).name : _vm.statuses.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
-    },
-    on: {
-      input: _vm.showStatusModal
     },
     model: {
       value: _vm.create.status_id,
@@ -23179,15 +23037,15 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.status_id.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.status_id ? _vm._l(_vm.errors.status_id, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.status_id ? _vm._l(_vm.errors.status_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
-  }, [_c("label", [_vm._v(_vm._s(_vm.getCompanyKey("task_owners"))), _c("span", {
+  }, [_c("label", [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_owners")) + "\n                                    "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -23201,11 +23059,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+        return _vm.employees.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
           return x.id == opt;
         }).name : _vm.employees.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -23220,10 +23080,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.owners.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.owners ? _vm._l(_vm.errors.owners, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.owners ? _vm._l(_vm.errors.owners, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
@@ -23241,11 +23101,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+        return _vm.employees.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
           return x.id == opt;
         }).name : _vm.employees.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -23260,10 +23122,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.supervisors.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.supervisors ? _vm._l(_vm.errors.supervisors, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.supervisors ? _vm._l(_vm.errors.supervisors, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
@@ -23281,11 +23143,13 @@ var render = function render() {
         return type.id;
       }),
       "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+        return _vm.employees.find(function (x) {
+          return x.id == opt;
+        }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
           return x.id == opt;
         }).name : _vm.employees.find(function (x) {
           return x.id == opt;
-        }).name_e;
+        }).name_e : null;
       }
     },
     on: {
@@ -23300,10 +23164,10 @@ var render = function render() {
     }
   }), _vm._v(" "), !_vm.$v.create.notifications.required ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.notifications ? _vm._l(_vm.errors.notifications, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.notifications ? _vm._l(_vm.errors.notifications, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("hr", {
@@ -23311,15 +23175,15 @@ var render = function render() {
       margin: "10px 0 !important",
       "border-top": "1px solid rgb(141 163 159 / 42%)"
     }
-  })]), _vm._v(" "), _c("div", {
+  })]), _vm._v(" "), _vm.isVisible("execution_date") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("execution_date")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("execution_date")) + "\n                                    "), _vm.isRequired("execution_date") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.execution_date.$error || _vm.errors.execution_date,
       "is-valid": !_vm.$v.create.execution_date.$invalid && !_vm.errors.execution_date
@@ -23343,14 +23207,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.execution_date ? _vm._l(_vm.errors.execution_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("start_time") ? _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("task_start_time")) + "\n                                            ")]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_start_time")) + "\n                                    "), _vm.isRequired("start_time") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.start_time.$error || _vm.errors.start_time,
       "is-valid": !_vm.$v.create.start_time.$invalid && !_vm.errors.start_time
@@ -23374,16 +23240,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.start_time ? _vm._l(_vm.errors.start_time, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("execution_end_date") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("execution_end_date")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("execution_end_date")) + "\n                                    "), _vm.isRequired("execution_end_date") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.execution_end_date.$error || _vm.errors.execution_end_date,
       "is-valid": !_vm.$v.create.execution_end_date.$invalid && !_vm.errors.execution_end_date
@@ -23407,14 +23273,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.execution_end_date ? _vm._l(_vm.errors.execution_end_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("end_time") ? _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("task_end_time")) + "\n                                            ")]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_end_time")) + "\n                                    "), _vm.isRequired("end_time") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.end_time.$error || _vm.errors.end_time,
       "is-valid": !_vm.$v.create.end_time.$invalid && !_vm.errors.end_time
@@ -23438,16 +23306,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.end_time ? _vm._l(_vm.errors.end_time, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("execution_duration") ? _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("execution_duration")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("execution_duration")) + "\n                                    "), _vm.isRequired("execution_duration") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -23477,15 +23345,193 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("actual_execution_date") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("notification_date")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("actual_execution_date")) + "\n                                    "), _vm.isRequired("actual_execution_date") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.create.actual_execution_date.$error || _vm.errors.actual_execution_date,
+      "is-valid": !_vm.$v.create.actual_execution_date.$invalid && !_vm.errors.actual_execution_date
+    },
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
+    },
+    on: {
+      input: function input($event) {
+        return _vm.calcDurationCreate(true);
+      }
+    },
+    model: {
+      value: _vm.$v.create.actual_execution_date.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.actual_execution_date, "$model", $$v);
+      },
+      expression: "$v.create.actual_execution_date.$model"
+    }
+  }), _vm._v(" "), _vm.errors.actual_execution_date ? _vm._l(_vm.errors.actual_execution_date, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("actual_start_time") ? _c("div", {
+    staticClass: "col-md-2"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("actual_task_start_time")) + "\n                                    "), _vm.isRequired("actual_start_time") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.create.actual_start_time.$error || _vm.errors.actual_start_time,
+      "is-valid": !_vm.$v.create.actual_start_time.$invalid && !_vm.errors.actual_start_time
+    },
+    attrs: {
+      type: "time",
+      format: "HH:mm:ss",
+      valueType: "format",
+      confirm: false
+    },
+    on: {
+      input: function input($event) {
+        return _vm.calcDurationCreate(true);
+      }
+    },
+    model: {
+      value: _vm.$v.create.actual_start_time.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.actual_start_time, "$model", $$v);
+      },
+      expression: "$v.create.actual_start_time.$model"
+    }
+  }), _vm._v(" "), _vm.errors.actual_start_time ? _vm._l(_vm.errors.actual_start_time, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("actual_execution_end_date") ? _c("div", {
+    staticClass: "col-md-3"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("actual_execution_end_date")) + "\n                                    "), _vm.isRequired("actual_execution_end_date") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.create.actual_execution_end_date.$error || _vm.errors.actual_execution_end_date,
+      "is-valid": !_vm.$v.create.actual_execution_end_date.$invalid && !_vm.errors.actual_execution_end_date
+    },
+    attrs: {
+      type: "date",
+      format: "YYYY-MM-DD",
+      valueType: "format",
+      confirm: false
+    },
+    on: {
+      input: function input($event) {
+        return _vm.calcDurationCreate(true);
+      }
+    },
+    model: {
+      value: _vm.$v.create.actual_execution_end_date.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.actual_execution_end_date, "$model", $$v);
+      },
+      expression: "$v.create.actual_execution_end_date.$model"
+    }
+  }), _vm._v(" "), _vm.errors.actual_execution_end_date ? _vm._l(_vm.errors.actual_execution_end_date, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("actual_end_time") ? _c("div", {
+    staticClass: "col-md-2"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("actual_task_end_time")) + "\n                                    "), _vm.isRequired("actual_end_time") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
+    "class": {
+      "is-invalid": _vm.$v.create.actual_end_time.$error || _vm.errors.actual_end_time,
+      "is-valid": !_vm.$v.create.actual_end_time.$invalid && !_vm.errors.actual_end_time
+    },
+    attrs: {
+      type: "time",
+      format: "HH:mm:ss",
+      valueType: "format",
+      confirm: false
+    },
+    on: {
+      input: function input($event) {
+        return _vm.calcDurationCreate(true);
+      }
+    },
+    model: {
+      value: _vm.$v.create.actual_end_time.$model,
+      callback: function callback($$v) {
+        _vm.$set(_vm.$v.create.actual_end_time, "$model", $$v);
+      },
+      expression: "$v.create.actual_end_time.$model"
+    }
+  }), _vm._v(" "), _vm.errors.actual_end_time ? _vm._l(_vm.errors.actual_end_time, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("actual_execution_duration") ? _c("div", {
+    staticClass: "col-md-2"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("actual_execution_duration")) + "\n                                    "), _vm.isRequired("actual_execution_duration") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.$v.create.actual_execution_duration.$model,
+      expression: "$v.create.actual_execution_duration.$model"
+    }],
+    staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.actual_execution_duration.$error || _vm.errors.actual_execution_duration,
+      "is-valid": !_vm.$v.create.actual_execution_duration.$invalid && !_vm.errors.actual_execution_duration
+    },
+    attrs: {
+      type: "text",
+      disabled: true,
+      "data-create": "9"
+    },
+    domProps: {
+      value: _vm.$v.create.actual_execution_duration.$model
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.$v.create.actual_execution_duration, "$model", $event.target.value);
+      }
+    }
+  }), _vm._v(" "), _vm.errors.actual_execution_duration ? _vm._l(_vm.errors.actual_execution_duration, function (errorMessage, index) {
+    return _c("ErrorMessage", {
+      key: index
+    }, [_vm._v(_vm._s(errorMessage))]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("notification_date") ? _c("div", {
+    staticClass: "col-md-3"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("notification_date")) + "\n                                    "), _vm.isRequired("notification_date") ? _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("date-picker", {
     "class": {
       "is-invalid": _vm.$v.create.notification_date.$error || _vm.errors.notification_date,
       "is-valid": !_vm.$v.create.notification_date.$invalid && !_vm.errors.notification_date
@@ -23506,12 +23552,12 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.notification_date ? _vm._l(_vm.errors.notification_date, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("task_priority")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("task_priority")) + "\n                                    "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
     "class": {
@@ -23540,16 +23586,16 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.priority_id ? _vm._l(_vm.errors.priority_id, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                                    " + _vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                                        " + _vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("is_closed") ? _c("div", {
     staticClass: "col-md-2"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "my-1 mr-2"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("boardRent_task_is_closed")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("boardRent_task_is_closed")) + "\n                                    "), _vm.isRequired("is_closed") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
     staticClass: "d-inline-block",
     attrs: {
       name: "some-radios-create",
@@ -23578,16 +23624,16 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.No")))])], 1), _vm._v(" "), _vm.errors.is_closed ? _vm._l(_vm.errors.is_closed, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                                                ")]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("note") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("boardRent_panel_note")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("boardRent_panel_note")) + "\n                                    "), _vm.isRequired("note") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("textarea", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -23612,15 +23658,15 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("admin_note") ? _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.getCompanyKey("boardRent_panel_admin_note")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("boardRent_panel_admin_note")) + "\n                                    "), _vm.isRequired("admin_note") ? _c("span", {
     staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("textarea", {
+  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -23628,6 +23674,9 @@ var render = function render() {
       expression: "$v.create.admin_note.$model"
     }],
     staticClass: "form-control",
+    "class": {
+      "is-invalid": _vm.$v.create.admin_note.$error || _vm.errors.admin_note
+    },
     attrs: {
       maxlength: 1000,
       rows: "4"
@@ -23645,7 +23694,7 @@ var render = function render() {
     return _c("ErrorMessage", {
       key: index
     }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2)])])]), _vm._v(" "), _c("b-tab", {
+  }) : _vm._e()], 2)]) : _vm._e()])]), _vm._v(" "), _c("b-tab", {
     attrs: {
       disabled: !_vm.task_id,
       title: _vm.$t("general.attachment")
@@ -23668,7 +23717,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.titleFile")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.titleFile")) + "\n                                    "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
     attrs: {
@@ -23734,7 +23783,7 @@ var render = function render() {
     on: {
       click: _vm.changePhoto
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Add")) + "\n                                        ")]) : _c("b-button", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Add")) + "\n                            ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -23783,7 +23832,7 @@ var render = function render() {
       },
       on: {
         error: function error($event) {
-          _vm.src = "../../../../../images/img-1.png";
+          _vm.src = _vm.img;
         }
       }
     })]), _vm._v(" "), _c("div", {
@@ -23794,7 +23843,7 @@ var render = function render() {
         href: "javascript:void(0);",
         "data-dz-name": ""
       }
-    }, [_vm._v("\n                                                                            " + _vm._s(photo.title) + "\n                                                                        ")])]), _vm._v(" "), _c("a", {
+    }, [_vm._v("\n                                                                " + _vm._s(photo.title) + "\n                                                            ")])]), _vm._v(" "), _c("a", {
       "class": ["btn-danger dropzone-close", _vm.$i18n.locale == "ar" ? "dropzone-close-rtl" : ""],
       attrs: {
         href: "javascript:void(0);",
@@ -23820,7 +23869,7 @@ var render = function render() {
     on: {
       click: _vm.uploadPhotoTitle
     }
-  }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("general.Add")) + "\n                                                ")]) : _vm._e()], 1)])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Add")) + "\n                                    ")]) : _vm._e()], 1)])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "show-dropzone"
@@ -23831,264 +23880,7 @@ var render = function render() {
     },
     on: {
       error: function error($event) {
-        _vm.src = "../../../../../images/img-1.png";
-      }
-    }
-  })])])], 1)])], 1)], 1)]), _vm._v(" "), _c("b-modal", {
-    attrs: _defineProperty({
-      title: _vm.getCompanyKey("boardRent_task_edit_form"),
-      "title-class": "font-18",
-      "body-class": "",
-      "dialog-class": "modal-full-width",
-      "hide-footer": true
-    }, "hide-footer", ""),
-    model: {
-      value: _vm.eventModal,
-      callback: function callback($$v) {
-        _vm.eventModal = $$v;
-      },
-      expression: "eventModal"
-    }
-  }, [_c("form", [_c("div", {
-    "class": ["d-flex justify-content-end position-absolute", _vm.$i18n.locale == "en" ? "button-left" : "button-right"]
-  }, [!_vm.isLoader ? _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "success"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.editSubmit.apply(null, arguments);
-      }
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Edit")) + "\n                        ")]) : _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "success",
-      disabled: ""
-    }
-  }, [_c("b-spinner", {
-    attrs: {
-      small: ""
-    }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "sr-only"
-  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1), _vm._v(" "), _vm.isPermission("delete Task") ? _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "danger"
-    },
-    on: {
-      click: _vm.confirm
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.delete")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _c("b-button", {
-    attrs: {
-      variant: "light",
-      type: "button"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        _vm.eventModal = false;
-      }
-    }
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Cancel")) + "\n                        ")])], 1), _vm._v(" "), _c("b-tabs", {
-    attrs: {
-      "nav-class": "nav-tabs nav-bordered"
-    }
-  }, [_c("b-tab", {
-    attrs: {
-      title: _vm.$t("general.DataEntry"),
-      active: ""
-    }
-  }, [_c("div", {
-    staticClass: "row"
-  })]), _vm._v(" "), _c("b-tab", {
-    attrs: {
-      title: _vm.$t("general.attachment")
-    }
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("b-modal", {
-    attrs: {
-      id: "uploadPhotoTitleCreate",
-      title: _vm.$t("general.ImageUploads"),
-      "title-class": "font-18",
-      "body-class": "p-4 ",
-      "hide-footer": true
-    },
-    on: {
-      show: _vm.uploadPhotoTitle,
-      hidden: _vm.uploadPhotoTitleHidden
-    }
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.titleFile")) + "\n                                            "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
-    attrs: {
-      dir: "rtl"
-    }
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.$v.titleFile.$model,
-      expression: "$v.titleFile.$model"
-    }],
-    staticClass: "form-control",
-    "class": {
-      "is-invalid": _vm.$v.titleFile.$error || _vm.errors.title,
-      "is-valid": !_vm.$v.titleFile.$invalid && !_vm.errors.title
-    },
-    attrs: {
-      type: "text",
-      "data-create": "1"
-    },
-    domProps: {
-      value: _vm.$v.titleFile.$model
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.$v.titleFile, "$model", $event.target.value);
-      }
-    }
-  })]), _vm._v(" "), !_vm.$v.titleFile.minLength ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v(_vm._s(_vm.$t("general.Itmustbeatleast")) + " " + _vm._s(_vm.$v.titleFile.$params.minLength.min) + " " + _vm._s(_vm.$t("general.letters")))]) : _vm._e(), _vm._v(" "), !_vm.$v.titleFile.maxLength ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v(_vm._s(_vm.$t("general.Itmustbeatmost")) + "  " + _vm._s(_vm.$v.titleFile.$params.maxLength.max) + " " + _vm._s(_vm.$t("general.letters")))]) : _vm._e(), _vm._v(" "), _vm.errors.title ? _vm._l(_vm.errors.title, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
-  }) : _vm._e()], 2), _vm._v(" "), _c("input", {
-    staticClass: "input-file-upload position-absolute",
-    "class": ["d-none", {
-      "is-invalid": _vm.$v.edit.media.$error || _vm.errors.media,
-      "is-valid": !_vm.$v.edit.media.$invalid && !_vm.errors.media
-    }],
-    attrs: {
-      accept: "image/png, image/gif, image/jpeg, image/jpg",
-      type: "file",
-      id: "uploadImageEdit"
-    },
-    on: {
-      change: function change($event) {
-        $event.preventDefault();
-        return _vm.onImageChanged.apply(null, arguments);
-      }
-    }
-  }), _vm._v(" "), !_vm.isLoader ? _c("b-button", {
-    staticClass: "mx-1 font-weight-bold px-3",
-    attrs: {
-      disabled: !_vm.titleFile && _vm.$v.titleFile.$error,
-      variant: "success",
-      type: "button"
-    },
-    on: {
-      click: _vm.changePhotoEdit
-    }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Add")) + "\n                                    ")]) : _c("b-button", {
-    staticClass: "mx-1",
-    attrs: {
-      variant: "success",
-      disabled: ""
-    }
-  }, [_c("b-spinner", {
-    attrs: {
-      small: ""
-    }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "sr-only"
-  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-md-8 my-1"
-  }, [_c("div", {
-    staticClass: "row align-content-between",
-    staticStyle: {
-      width: "100%",
-      height: "100%"
-    }
-  }, [_c("div", {
-    staticClass: "col-12"
-  }, [_c("div", {
-    staticClass: "d-flex flex-wrap"
-  }, _vm._l(_vm.images, function (photo, index) {
-    return _c("div", {
-      staticClass: "dropzone-previews col-4 position-relative mb-2"
-    }, [_c("div", {
-      "class": ["card mb-0 shadow-none border", _vm.images.length - 1 == index ? "bg-primary" : ""]
-    }, [_c("div", {
-      staticClass: "p-2"
-    }, [_c("div", {
-      staticClass: "row align-items-center"
-    }, [_c("div", {
-      staticClass: "col-auto",
-      on: {
-        click: function click($event) {
-          _vm.showPhoto = photo.webp;
-        }
-      }
-    }, [_c("img", {
-      staticClass: "avatar-sm rounded bg-light",
-      attrs: {
-        "data-dz-thumbnail": "",
-        src: photo.webp
-      },
-      on: {
-        error: function error($event) {
-          _vm.src = "../../../../../images/img-1.png";
-        }
-      }
-    })]), _vm._v(" "), _c("div", {
-      staticClass: "col pl-0"
-    }, [_c("a", {
-      "class": ["font-weight-bold", _vm.images.length - 1 == index ? "text-white" : "text-muted"],
-      attrs: {
-        href: "javascript:void(0);",
-        "data-dz-name": ""
-      }
-    }, [_vm._v("\n                                                                        " + _vm._s(photo.title) + "\n                                                                    ")])]), _vm._v(" "), _c("a", {
-      "class": ["btn-danger text-muted dropzone-close", _vm.$i18n.locale == "ar" ? "dropzone-close-rtl" : ""],
-      attrs: {
-        href: "javascript:void(0);",
-        "data-dz-remove": ""
-      },
-      on: {
-        click: function click($event) {
-          $event.preventDefault();
-          return _vm.deleteImageCreate(photo.id, index);
-        }
-      }
-    }, [_c("i", {
-      staticClass: "fe-x"
-    })])])])])]);
-  }), 0)]), _vm._v(" "), _c("div", {
-    staticClass: "footer-image col-12"
-  }, [!_vm.isLoader ? _c("b-button", {
-    staticClass: "mx-1 font-weight-bold px-3",
-    attrs: {
-      variant: "success",
-      type: "button"
-    },
-    on: {
-      click: _vm.uploadPhotoTitle
-    }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Add")) + "\n                                            ")]) : _vm._e()], 1)])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "show-dropzone"
-  }, [_c("img", {
-    staticClass: "img-thumbnail",
-    attrs: {
-      src: _vm.showPhoto
-    },
-    on: {
-      error: function error($event) {
-        _vm.src = "../../../../../images/img-1.png";
+        _vm.src = _vm.img;
       }
     }
   })])])], 1)])], 1)], 1)])], 1)], 1)], 1);
@@ -24136,7 +23928,7 @@ __webpack_require__.r(__webpack_exports__);
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
-          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].new_en;
+          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }

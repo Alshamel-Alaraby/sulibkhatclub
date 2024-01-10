@@ -6,8 +6,8 @@ export default {
         if (_key == key) {
           returnedKey =
             this.$i18n.locale == "ar"
-              ? this.companyKeysFun[_key].new_ar
-              : this.companyKeysFun[_key].new_en;
+              ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar
+              : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }

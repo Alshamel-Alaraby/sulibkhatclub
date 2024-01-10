@@ -9,6 +9,7 @@ use App\Http\Resources\LocationResource;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
@@ -31,7 +32,6 @@ class LocationController extends Controller
     public function all(AllRequest $request)
     {
         $models = $this->model->data()->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
-
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {
@@ -152,7 +152,6 @@ class LocationController extends Controller
     }
 
 
-
     private function getRelationDisplayName($relation)
     {
         $displayableName = str_replace('_', ' ', $relation);
@@ -163,6 +162,7 @@ class LocationController extends Controller
     {
         return $this->model->whereNull("parent_id")->get();
     }
+
     public function getChildNodes($parentId)
     {
         return $this->model->where("parent_id", $parentId)->get();
@@ -171,8 +171,18 @@ class LocationController extends Controller
 
     public function getDropDown(AllRequest $request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
 
+        if ($request->location_id) {
+            $models->where('parent_id',$request->location_id);
+        }
+
+        if ($request->not_parent) {
+            $models->whereNull('parent_id');
+        }
+        if ($request->parent) {
+            $models->whereNotNull('parent_id');
+        }
         if ($request->per_page) {
             $models = ['data' => $models->paginate($request->per_page), 'paginate' => true];
         } else {

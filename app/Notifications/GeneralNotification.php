@@ -16,6 +16,7 @@ class GeneralNotification extends Notification implements ShouldQueue
     public $name;
     public $page_id;
     public $message;
+    public $message_en;
     public $image;
 
     /**
@@ -23,12 +24,13 @@ class GeneralNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($data = [],$page_id = null,$name = '',$message='',$image='')
+    public function __construct($data = [],$page_id = null,$name = '',$message='',$image='',$message_en='')
     {
         $this->data = $data;
         $this->name = $name;
         $this->page_id = $page_id;
         $this->message = $message;
+        $this->message_en = $message_en;
         $this->image = $image;
     }
 
@@ -70,6 +72,7 @@ class GeneralNotification extends Notification implements ShouldQueue
             'name' => $this->name,
             'id' => $this->page_id,
             'message' => $this->message,
+            'message_en' => $this->message_en,
             'data' => $this->data,
             'image' => $this->image,
         ];
@@ -81,8 +84,9 @@ class GeneralNotification extends Notification implements ShouldQueue
             'data' => [
                 'timeDate' => now()->format('jS \of F  h:i'),
                 'name' => $this->name,
-                'id' => $this->page_id,
                 'message' => $this->message,
+                'message_en' => $this->message_en,
+                'id' => $this->page_id,
                 'data' => $this->data,
                 'image' => $this->image,
             ]

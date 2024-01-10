@@ -38,9 +38,9 @@ class DocumentRequest extends FormRequest
             'company_id' => 'nullable|integer',
             'document_relateds.*' => 'nullable|integer',
             'clientTypes.*' => 'nullable|integer',
-            'required' => "nullable|in:2,1,0",
-            'is_break' => "nullable|in:2,1,0",
-            'need_approve' => 'nullable',
+            'required'      => "nullable|in:2,1,0",
+            'is_break'      => "nullable|in:2,1,0",
+            'need_approve'  => 'nullable',
         ];
     }
 }

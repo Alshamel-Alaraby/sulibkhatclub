@@ -19,6 +19,7 @@ class DepertmentResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'name_e' => $this->name_e,
+            'locations' => $this->locations,
             //'supervisors' => $this->supervisors,
             //'attentions' => $this->attentions,
         ];

@@ -3,7 +3,7 @@ import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
@@ -12,15 +12,14 @@ import {formatDateOnly} from "../../../../helper/startDate";
 import translation from "../../../../helper/mixin/translation-mixin";
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
-import permissionGuard from "../../../../helper/permission";
 
 /**
  * Advanced Table component
  */
 export default {
     page: {
-        title: "Payment Report",
-        meta: [{name: "Payment Report", content: 'Payment Report'}],
+        title: "Payments Report",
+        meta: [{name: "Payments Report", content: 'Payments Report'}],
     },
     mixins: [translation],
     components: {
@@ -32,12 +31,12 @@ export default {
         DatePicker,
         Multiselect,
     },
-    beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "Payment Report RP", "all paymentReport RP");
-    });
-
-    },
+    // beforeRouteEnter(to, from, next) {
+    //     next((vm) => {
+    //         return permissionGuard(vm, "Payments Report ", "all paymentReport RP");
+    //     });
+    //
+    // },
     data() {
         return {
             per_page: 50,
@@ -48,12 +47,11 @@ export default {
             customers: [],
             payment_types: [],
             isLoader: false,
+            branches: [],
+            clients: [],
             create: {
-                start_date: this.formatDate(new Date()),
-                end_date: this.formatDate(new Date()),
-                customer_id: null,
-                instalment_type_id: null,
-                amount_status: null,
+                year: '',
+                client_type_id: null,
             },
             errors: {},
             is_disabled: false,
@@ -65,33 +63,26 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
-                customer_id: true,
-                date: true,
-                currency_id: true,
-                rate: true,
-                local_debit: true,
-                local_credit: true,
-                total: true,
-                break_type: true,
-                instalment_type_id: true,
-                amount_status: true,
-                date_status: true,
-                serial_number: true,
-
+                client_account: true,
+                Before: true,
+                During: true,
+                After: true,
+                paid_before: true,
+                paid_during: true,
+                paid_after: true,
+                net_amount: true,
             },
             filterSetting: [
-                'customer_id',
-                'instalment_date',
-                'currency_id',
-                'rate',
-                'debit',
-                'credit',
-                'total',
-                'break_type',
-                'instalment_type_id',
-                'amount_status',
+                'client_account',
+                'Before',
+                'During',
+                'After',
+                'paid_before',
+                'paid_during',
+                'paid_after',
+                'net_amount',
             ],
             Tooltip: '',
             mouseEnter: null,
@@ -99,8 +90,15 @@ export default {
     },
     validations: {
         create: {
-            start_date: {required},
-            end_date: {required},
+            year: {required},
+            client_type_id: {required},
+        },
+    },
+    computed: {
+        totalNetAmount() {
+            return this.installmentStatus.reduce((total, installment) => {
+                return total + installment.net_amount;
+            }, 0)
         },
     },
     watch: {
@@ -133,44 +131,39 @@ export default {
                 this.checkAll = [];
             }
         },
+        installmentsStatus: {
+            handler(newVal) {
+                // Calculate netAmount for each object in installmentStatus
+                this.calculateNetAmount(newVal);
+            },
+            deep: true, // Watches for changes inside the array elements
+        },
     },
     methods: {
         /**
          *  start get Data module && pagination
          */
-        getData(page = 1) {
+        calculateNetAmount() {
+            for (let i = 0; i < this.installmentStatus.length; i++) {
+                const installment = this.installmentStatus[i];
+
+                const netAmount = (installment.Before + installment.During + installment.After) -
+                    (installment.paid_before + installment.paid_during + installment.paid_after);
+
+                this.$set(this.installmentStatus[i], 'net_amount', netAmount);
+            }
+        },
+        getData() {
             this.$v.create.$touch();
             if (this.$v.create.$invalid) {
                 return;
             } else {
-                this.isLoader = true;
-                let _filterSetting = [...this.filterSetting];
-                let index = this.filterSetting.indexOf("customer_id");
-                if (index > -1) {
-                    _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "customer.name" : "customer.name_e";
-                }
-                index = this.filterSetting.indexOf("currency_id");
-                if (index > -1) {
-                    _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "currency.name" : "currency.name_e";
-                }
-                index = this.filterSetting.indexOf("instalment_type_id");
-                if (index > -1) {
-                    _filterSetting[index] =
-                        this.$i18n.locale == "ar" ? "installment_payment_type.name" : "installment_payment_type.name_e";
-                }
-                let filter = '';
-                for (let i = 0; i < _filterSetting.length; ++i) {
-                    filter += `columns[${i}]=${_filterSetting[i]}&`;
-                }
-
-                adminApi.get(`/recievable-payable/filterBreak?start_date=${this.create.start_date}&end_date=${this.create.end_date}&customer_id=${this.create.customer_id??''}&instalment_type_id=${this.create.instalment_type_id??''}&amount_status=${this.create.amount_status??''}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/recievable-payable/filter-break-client?year=${this.create.year}&client_type_id=${this.create.client_type_id}`)
                     .then((res) => {
-                        let l = res.data;
-                        this.installmentStatus = l.data;
-                        this.installmentStatusPagination = l.pagination;
-                        this.current_page = l.pagination.current_page;
+                        this.installmentStatus = res.data;
+                        this.calculateNetAmount();
+                        // this.installmentStatusPagination = l.pagination;
+                        // this.current_page = l.pagination.current_page;
                     })
                     .catch((err) => {
                         Swal.fire({
@@ -184,68 +177,82 @@ export default {
                     });
             }
         },
-        getDataCurrentPage(page = 1) {
-            this.$v.create.$touch();
-            if (this.$v.create.$invalid) {
-                return;
-            } else {
-                if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
-                    this.isLoader = true;
-                    let _filterSetting = [...this.filterSetting];
-                    let index = this.filterSetting.indexOf("customer_id");
-                    if (index > -1) {
-                        _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "customer.name" : "customer.name_e";
-                    }
-                    index = this.filterSetting.indexOf("currency_id");
-                    if (index > -1) {
-                        _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "currency.name" : "currency.name_e";
-                    }
-                    index = this.filterSetting.indexOf("instalment_type_id");
-                    if (index > -1) {
-                        _filterSetting[index] =
-                            this.$i18n.locale == "ar" ? "installment_payment_type.name" : "installment_payment_type.name_e";
-                    }
-                    let filter = "";
-                    for (let i = 0; i < _filterSetting.length; ++i) {
-                        filter += `columns[${i}]=${_filterSetting[i]}&`;
-                    }
-
-                    adminApi.get(`/recievable-payable/filterBreak?start_date=${this.create.start_date}&end_date=${this.create.end_date}&customer_id=${this.create.customer_id??''}&instalment_type_id=${this.create.instalment_type_id??''}&amount_status=${this.create.amount_status??''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
-                        .then((res) => {
-                            let l = res.data;
-                            this.installmentStatus = l.data;
-                            this.installmentStatusPagination = l.pagination;
-                            this.current_page = l.pagination.current_page;
-                        })
-                        .catch((err) => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: `${this.$t('general.Error')}`,
-                                text: `${this.$t('general.Thereisanerrorinthesystem')}`,
-                            });
-                        })
-                        .finally(() => {
-                            this.isLoader = false;
-                        });
-                }
-            }
-        },
+        // getDataCurrentPage(page = 1) {
+        //     this.$v.create.$touch();
+        //     if (this.$v.create.$invalid) {
+        //         return;
+        //     } else {
+        //         if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
+        //             this.isLoader = true;
+        //             let _filterSetting = [...this.filterSetting];
+        //             let index = this.filterSetting.indexOf("customer_id");
+        //             if (index > -1) {
+        //                 _filterSetting[index] =
+        //                     this.$i18n.locale == "ar" ? "customer.name" : "customer.name_e";
+        //             }
+        //             index = this.filterSetting.indexOf("currency_id");
+        //             if (index > -1) {
+        //                 _filterSetting[index] =
+        //                     this.$i18n.locale == "ar" ? "currency.name" : "currency.name_e";
+        //             }
+        //             index = this.filterSetting.indexOf("instalment_type_id");
+        //             if (index > -1) {
+        //                 _filterSetting[index] =
+        //                     this.$i18n.locale == "ar" ? "installment_payment_type.name" : "installment_payment_type.name_e";
+        //             }
+        //             let filter = "";
+        //             for (let i = 0; i < _filterSetting.length; ++i) {
+        //                 filter += `columns[${i}]=${_filterSetting[i]}&`;
+        //             }
+        //
+        //             adminApi.get(`/recievable-payable/filterBreak?start_date=${this.create.start_date}&end_date=${this.create.end_date}&customer_id=${this.create.customer_id ?? ''}&instalment_type_id=${this.create.instalment_type_id ?? ''}&amount_status=${this.create.amount_status ?? ''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+        //                 .then((res) => {
+        //                     let l = res.data;
+        //                     this.installmentStatus = l.data;
+        //                     this.installmentStatusPagination = l.pagination;
+        //                     this.current_page = l.pagination.current_page;
+        //                 })
+        //                 .catch((err) => {
+        //                     Swal.fire({
+        //                         icon: 'error',
+        //                         title: `${this.$t('general.Error')}`,
+        //                         text: `${this.$t('general.Thereisanerrorinthesystem')}`,
+        //                     });
+        //                 })
+        //                 .finally(() => {
+        //                     this.isLoader = false;
+        //                 });
+        //         }
+        //     }
+        // },
         /**
          *  end get Data module && pagination
          */
         /**
          *  get customer
          */
-        async getCustomers(opening_balance=0) {
-            this.isLoader = true;
-            await adminApi
-                .get(`/general-customer?opening_balance=${opening_balance}`)
+        // async getCustomers(opening_balance = 0) {
+        //     this.isLoader = true;
+        //     await adminApi
+        //         .get(`/general-customer?opening_balance=${opening_balance}`)
+        //         .then((res) => {
+        //             let l = res.data.data;
+        //             this.customers = l;
+        //             this.isLoader = false;
+        //         })
+        //         .catch((err) => {
+        //             Swal.fire({
+        //                 icon: "error",
+        //                 title: `${this.$t("general.Error")}`,
+        //                 text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+        //             });
+        //         });
+        // },
+        getBranches() {
+            adminApi
+                .get(`/branches`)
                 .then((res) => {
-                    let l = res.data.data;
-                    this.customers = l;
-                    this.isLoader = false;
+                    this.branches = res.data.data;
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -253,18 +260,16 @@ export default {
                         title: `${this.$t("general.Error")}`,
                         text: `${this.$t("general.Thereisanerrorinthesystem")}`,
                     });
-                });
+                })
+
         },
-        /**
-         *  get payment type
-         */
-        async getInstallPaymentTypes() {
+        getClientType() {
             this.isLoader = true;
-            await adminApi
-                .get(`/recievable-payable/rp_installment_payment_types`)
+            adminApi
+                .get(`/client-types`)
                 .then((res) => {
-                    let l = res.data.data;
-                    this.payment_types = l;
+                    this.clients = res.data.data;
+
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -277,6 +282,28 @@ export default {
                     this.isLoader = false;
                 });
         },
+        /**
+         *  get payment type
+         */
+        // async getInstallPaymentTypes() {
+        //     this.isLoader = true;
+        //     await adminApi
+        //         .get(`/recievable-payable/rp_installment_payment_types`)
+        //         .then((res) => {
+        //             let l = res.data.data;
+        //             this.payment_types = l;
+        //         })
+        //         .catch((err) => {
+        //             Swal.fire({
+        //                 icon: "error",
+        //                 title: `${this.$t("general.Error")}`,
+        //                 text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+        //             });
+        //         })
+        //         .finally(() => {
+        //             this.isLoader = false;
+        //         });
+        // },
         /**
          *  reset Modal (create)
          */
@@ -292,8 +319,10 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            await this.getCustomers(1);
-            await this.getInstallPaymentTypes();
+            // await this.getCustomers(1);
+            // await this.getInstallPaymentTypes();
+            await this.getClientType();
+            await this.getBranches();
             this.is_disabled = false;
             this.$nextTick(() => {
                 this.$v.$reset()
@@ -327,22 +356,18 @@ export default {
             }, 100);
         },
 
-        dateStatus(date,status)
-        {
-            if (status == 'Unpaid')
-            {
+        dateStatus(date, status) {
+            if (status == 'Unpaid') {
                 let toDay = this.formatDate(new Date());
                 let dateRow = this.formatDate(date);
-                if (toDay >= dateRow)
-                {
+                if (toDay >= dateRow) {
                     return 'due';
-                }else if (toDay < dateRow)
-                {
+                } else if (toDay < dateRow) {
                     return 'NotDue';
-                }else {
+                } else {
                     return 'completedPayment'
                 }
-            }else {
+            } else {
                 return 'completedPayment'
             }
         }
@@ -368,38 +393,34 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
-                                        <b-form-checkbox v-model="filterSetting"
-                                                         :value="$i18n.locale == 'ar' ? 'customer.name' : 'customer.name_e'"
-                                                         class="mb-1">{{ getCompanyKey("customer") }}
+                                        <!--                                        <b-form-checkbox v-model="filterSetting"-->
+                                        <!--                                                         :value="$i18n.locale == 'ar' ? 'customer.name' : 'customer.name_e'"-->
+                                        <!--                                                         class="mb-1">{{ getCompanyKey("customer") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+
+                                        <b-form-checkbox v-model="filterSetting" value="client_account" class="mb-1">
+                                            {{ $t('general.ClientAccount') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="instalment_date" class="mb-1">
-                                            {{ $t('general.instalmentDate') }}
+                                        <b-form-checkbox v-model="filterSetting" value="Before" class="mb-1">
+                                            {{ $t('general.PastYears') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
-                                                         :value="$i18n.locale == 'ar' ? 'currency.name' : 'currency.name_e'"
-                                                         class="mb-1">{{ getCompanyKey("installment_opening_balance_currency") }}
+                                        <b-form-checkbox v-model="filterSetting" value="During" class="mb-1">
+                                            {{ $t('general.CurrentYear') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="rate" class="mb-1">
-                                            {{ getCompanyKey('installment_opening_balance_rate') }}
+                                        <b-form-checkbox v-model="filterSetting" value="After" class="mb-1">
+                                            {{ $t('general.ExistingYears') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="debit" class="mb-1">
-                                            {{ getCompanyKey('installment_opening_balance_local_debit') }}
+                                        <b-form-checkbox v-model="filterSetting" value="paid_before" class="mb-1">
+                                            {{ $t('general.PastYears') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="credit" class="mb-1">
-                                            {{ getCompanyKey('installment_opening_balance_local_credit') }}
+                                        <b-form-checkbox v-model="filterSetting" value="paid_during" class="mb-1">
+                                            {{ $t('general.CurrentYear') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="total" class="mb-1">
-                                            {{ $t('general.Total') }}
+                                        <b-form-checkbox v-model="filterSetting" value="paid_after" class="mb-1">
+                                            {{ $t('general.ExistingYears') }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="break_type" class="mb-1">
-                                            {{ $t('general.type') }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting"
-                                                         :value="$i18n.locale == 'ar' ? 'installment_payment_type.name' : 'installment_payment_type.name_e'"
-                                                         class="mb-1">{{ getCompanyKey("installment_payment_type_id") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="amount_status" class="mb-1">
-                                            {{ $t("general.amount_status") }}
+                                        <b-form-checkbox v-model="filterSetting" value="net_amount" class="mb-1">
+                                            {{ $t('general.NetAmount') }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
@@ -426,14 +447,6 @@ export default {
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
-                                <b-button
-                                    v-b-modal.create
-                                    variant="primary"
-                                    class="btn-sm mx-1 font-weight-bold"
-                                >
-                                    {{ $t('general.Search') }}
-                                    <i class="fe-search"></i>
-                                </b-button>
                                 <div class="d-inline-flex">
                                     <button class="custom-btn-dowonload" @click="ExportExcel('xlsx')">
                                         <i class="fas fa-file-download"></i>
@@ -452,6 +465,7 @@ export default {
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
                                         <b-button
+                                            v-b-modal.create
                                             class="mx-1 custom-btn-background"
                                         >
                                             {{ $t('general.filter') }}
@@ -467,30 +481,34 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.customer_id" class="mb-1">{{ getCompanyKey("customer")}}
+                                            <!--                                            <b-form-checkbox v-model="setting.customer_id" class="mb-1">-->
+                                            <!--                                                {{ getCompanyKey("customer") }}-->
+                                            <!--                                            </b-form-checkbox>-->
+                                            <b-form-checkbox v-model="setting.client_account" class="mb-1">
+                                                {{ $t('general.ClientAccount') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.instalmentDate') }}
+                                            <b-form-checkbox v-model="setting.Before" class="mb-1">
+                                                {{ $t('general.PastYears') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.currency_id" class="mb-1">{{ getCompanyKey("installment_opening_balance_currency")}}
+                                            <b-form-checkbox v-model="setting.During" class="mb-1">
+                                                {{ $t('general.CurrentYear') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.rate" class="mb-1">{{ getCompanyKey("installment_opening_balance_rate")}}
+                                            <b-form-checkbox v-model="setting.After" class="mb-1">
+                                                {{ $t('general.ExistingYears') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.local_debit" class="mb-1">{{ getCompanyKey("installment_opening_balance_local_debit")}}
+                                            <b-form-checkbox v-model="setting.paid_before" class="mb-1">
+                                                {{ $t('general.PastYears') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.local_credit" class="mb-1">{{ getCompanyKey("installment_opening_balance_local_credit")}}
+                                            <b-form-checkbox v-model="setting.paid_during" class="mb-1">
+                                                {{ $t('general.CurrentYear') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.total" class="mb-1">{{ $t('general.Total') }}
+                                            <b-form-checkbox v-model="setting.paid_after" class="mb-1">
+                                                {{ $t('general.ExistingYears') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.break_type" class="mb-1">{{ $t('general.type') }}
+                                            <b-form-checkbox v-model="setting.net_amount" class="mb-1">
+                                                {{ $t('general.NetAmount') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.instalment_type_id" class="mb-1">{{ getCompanyKey("installment_payment_type_id") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.amount_status" class="mb-1">{{ $t('general.amount_status') }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date_status" class="mb-1">{{ $t('general.date_status') }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.serial_number" class="mb-1">{{ $t('general.serial_number') }}
-                                            </b-form-checkbox>
+
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
                                             </div>
@@ -569,144 +587,91 @@ export default {
                                     </b-button>
                                 </div>
                                 <div class="row">
+                                    <!--                                    <div class="col-md-6">-->
+                                    <!--                                        <div class="form-group">-->
+                                    <!--                                            <label class="control-label">-->
+                                    <!--                                                {{ $t('general.branch') }}-->
+                                    <!--                                                <span class="text-danger">*</span>-->
+                                    <!--                                            </label>-->
+                                    <!--                                            <multiselect-->
+                                    <!--                                                v-model="create.branch_id"-->
+                                    <!--                                                :options="branches.map((type) => type.id)"-->
+                                    <!--                                                :custom-label="(opt) => $i18n.locale == 'ar' ?branches.find((x) => x.id == opt).name:branches.find((x) => x.id == opt).name_e"-->
+                                    <!--                                                :class="{-->
+                                    <!--                                                        'is-invalid': errors.branch_id,-->
+                                    <!--                                                        'is-valid': !errors.branch_id,-->
+                                    <!--                                                      }"-->
+                                    <!--                                            >-->
+                                    <!--                                            </multiselect>-->
+
+                                    <!--                                            <template v-if="errors.branch_id">-->
+                                    <!--                                                <ErrorMessage-->
+                                    <!--                                                    v-for="(errorMessage, index) in errors.branch_id"-->
+                                    <!--                                                    :key="index"-->
+                                    <!--                                                >{{ errorMessage }}-->
+                                    <!--                                                </ErrorMessage-->
+                                    <!--                                                >-->
+                                    <!--                                            </template>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
+                                    <div class="col-md-6">
+                                        <div class="form-group position-relative">
+                                            <label
+                                                class="control-label">{{ $t('general.ClientType') }}
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <multiselect
+                                                v-model="create.client_type_id"
+                                                :options="clients.map((type) => type.id)"
+                                                :custom-label="(opt) => $i18n.locale == 'ar' ?clients.find((x) => x.id == opt).name:clients.find((x) => x.id == opt).name_e"
+                                                :class="{
+                                                        'is-invalid': errors.client_type_id,
+                                                        'is-valid': !errors.client_type_id,
+                                                      }"
+                                            >
+                                            </multiselect>
+
+                                            <template v-if="errors.client_type_id">
+                                                <ErrorMessage
+                                                    v-for="(errorMessage, index) in errors.client_type_id"
+                                                    :key="index"
+                                                >{{ errorMessage }}
+                                                </ErrorMessage
+                                                >
+                                            </template>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                {{ $t('general.fromDate') }}
+                                                {{ $t('general.Year') }}
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <date-picker
-                                                type="date"
-                                                v-model="$v.create.start_date.$model"
-                                                format="YYYY-MM-DD"
+                                                type="year"
+                                                v-model="$v.create.year.$model"
+                                                format="YYYY"
                                                 valueType="format"
                                                 :confirm="false"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.start_date.$error ||
-                                                        errors.start_date,
-                                                    'is-valid':
-                                                        !$v.create.start_date
-                                                            .$invalid &&
-                                                        !errors.start_date,
-                                                    }"
+                                                :class="{ 'is-invalid':
+                                                    $v.create.year.$error ||
+                                                    errors.year,
+                                                'is-valid':
+                                                    !$v.create.year
+                                                        .$invalid &&
+                                                    !errors.year,
+                                            }"
                                             ></date-picker>
 
-                                            <template v-if="errors.start_date">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.start_date"
+                                            <template v-if="errors.year">
+                                                <ErrorMessage v-for="(errorMessage,index) in errors.year"
                                                               :key="index">
                                                     {{ errorMessage }}
                                                 </ErrorMessage>
                                             </template>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                {{ $t('general.toDate') }}
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <date-picker
-                                                type="date"
-                                                v-model="$v.create.end_date.$model"
-                                                format="YYYY-MM-DD"
-                                                valueType="format"
-                                                :confirm="false"
-                                                :class="{
-                                                    'is-invalid':
-                                                        $v.create.end_date.$error ||
-                                                        errors.end_date,
-                                                    'is-valid':
-                                                        !$v.create.end_date
-                                                            .$invalid &&
-                                                        !errors.end_date,
-                                                    }"
-                                            ></date-picker>
 
-                                            <template v-if="errors.end_date">
-                                                <ErrorMessage v-for="(errorMessage,index) in errors.end_date"
-                                                              :key="index">
-                                                    {{ errorMessage }}
-                                                </ErrorMessage>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group position-relative">
-                                            <label
-                                                class="control-label">{{ getCompanyKey("customer") }}
-                                            </label>
-                                            <multiselect
-                                                v-model="create.customer_id"
-                                                :options="customers.map((type) => type.id)"
-                                                :custom-label="(opt) => $i18n.locale == 'ar' ?customers.find((x) => x.id == opt).name:customers.find((x) => x.id == opt).name_e"
-                                                :class="{
-                                                        'is-invalid': errors.customer_id,
-                                                        'is-valid': !errors.customer_id,
-                                                      }"
-                                            >
-                                            </multiselect>
-
-                                            <template v-if="errors.customer_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.customer_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group position-relative">
-                                            <label
-                                                class="control-label">{{ getCompanyKey("installment_payment_type_id") }}
-                                            </label>
-                                            <multiselect
-                                                v-model="create.instalment_type_id"
-                                                :options="payment_types.map((type) => type.id)"
-                                                :custom-label="(opt) => $i18n.locale == 'ar' ?payment_types.find((x) => x.id == opt).name:payment_types.find((x) => x.id == opt).name_e"
-                                                :class="{
-                                                        'is-invalid': errors.instalment_type_id,
-                                                        'is-valid': !errors.instalment_type_id,
-                                                      }"
-                                            >
-                                            </multiselect>
-
-                                            <template v-if="errors.instalment_type_id">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.instalment_type_id"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group position-relative">
-                                            <label
-                                                class="control-label">{{ $t('general.amount_status') }}
-                                            </label>
-                                            <select
-                                                class="custom-select"
-                                                v-model="create.amount_status"
-                                            >
-                                                <option value="Unpaid">{{ $t('general.Unpaid') }}</option>
-                                                <option value="Paid">{{ $t('general.Paid') }}</option>
-                                                <option value="Paid_Partially">{{ $t('general.Paid_Partially') }}</option>
-                                            </select>
-
-                                            <template v-if="errors.amount_status">
-                                                <ErrorMessage
-                                                    v-for="(errorMessage, index) in errors.amount_status"
-                                                    :key="index"
-                                                >{{ errorMessage }}
-                                                </ErrorMessage
-                                                >
-                                            </template>
-                                        </div>
-                                    </div>
                                 </div>
                             </form>
                         </b-modal>
@@ -722,10 +687,11 @@ export default {
 
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
+
                                 <tr>
-                                    <th v-if="setting.customer_id">
+                                    <th v-if="setting.client_account" rowspan="2">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("customer") }}</span>
+                                            <span>{{ $t('general.ClientAccount') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="
                                                         installmentStatus.sort(
@@ -740,136 +706,93 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.date">
+                                    <th colspan="3">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.instalmentDate') }}</span>
+                                            <span>
+                                            {{ $t('general.Installments') }}
+                                        </span>
+                                        </div>
+                                    </th>
+                                    <th colspan="3" class="first-section">
+                                        <div class="d-flex justify-content-center">
+                                            <span>
+                                                {{ $t('general.Payment') }}
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th rowspan="2">
+                                        <div class="d-flex justify-content-center">
+                                            <span>
+                                                {{ $t('general.NetAmount') }}
+                                            </span>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th v-if="setting.Before">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.PastYears') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('instalment_date'))"></i>
+                                                   @click="installmentStatus.sort(sortString('Before'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-instalment_date'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-Before'))"></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.currency_id">
+                                    <th v-if="setting.During">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("installment_opening_balance_currency") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        installmentStatus.sort(
-                                                            sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        installmentStatus.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
-                                                        )
-                                                    "></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.rate">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey('installment_opening_balance_rate') }}</span>
+                                            <span>{{ $t('general.CurrentYear') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('rate'))"></i>
+                                                   @click="installmentStatus.sort(sortString('During'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-rate'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-During'))"></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.local_debit">
+                                    <th v-if="setting.After">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey('installment_opening_balance_local_debit') }}</span>
+                                            <span>{{ $t('general.ExistingYears') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('local_debit'))"></i>
+                                                   @click="installmentStatus.sort(sortString('After'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-local_debit'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-After'))"></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.local_credit">
+
+                                    <th v-if="setting.paid_before" class="first-section">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey('installment_opening_balance_local_credit') }}</span>
+                                            <span>{{ $t('general.PastYears') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('local_credit'))"></i>
+                                                   @click="installmentStatus.sort(sortString('paid_before'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-local_credit'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-paid_before'))"></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.total">
+                                    <th v-if="setting.paid_during" class="first-section">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.Total') }}</span>
+                                            <span>{{ $t('general.CurrentYear') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('total'))"></i>
+                                                   @click="installmentStatus.sort(sortString('CurrentYear'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-total'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-CurrentYear'))"></i>
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.break_type">
+                                    <th v-if="setting.paid_after" class="first-section">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.type') }}</span>
+                                            <span>{{ $t('general.ExistingYears') }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('break_type'))"></i>
+                                                   @click="installmentStatus.sort(sortString('paid_after'))"></i>
                                                 <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-break_type'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.instalment_type_id">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("installment_payment_type_id") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="
-                                                        installmentStatus.sort(
-                                                            sortString($i18n.locale == 'ar' ? 'name' : 'name_e')
-                                                        )
-                                                    "></i>
-                                                <i class="fas fa-arrow-down" @click="
-                                                        installmentStatus.sort(
-                                                            sortString($i18n.locale == 'ar' ? '-name' : '-name_e')
-                                                        )
-                                                    "></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.amount_status">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.amount_status') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('amount_status'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-amount_status'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.date_status">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.date_status') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('date_status'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-date_status'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.serial_number">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.serial_number') }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="installmentStatus.sort(sortString('serial_number'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="installmentStatus.sort(sortString('-serial_number'))"></i>
+                                                   @click="installmentStatus.sort(sortString('-paid_after'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -879,50 +802,37 @@ export default {
                                 <tr
                                     v-for="(data,index) in installmentStatus"
                                     :key="data.id"
-                                    class="body-tr-custom"
-                                >
+                                    class="body-tr-custom">
 
-                                    <td v-if="setting.customer_id">
+                                    <td v-if="setting.client_account">
                                         <h5 class="m-0 font-weight-normal td5">
-                                            {{ $i18n.locale == "ar" ? data.customer.name : data.customer.name_e}}
+                                            {{
+                                                ($i18n.locale === 'ar' ? data.name : data.name_e)
+                                            }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.date">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.instalment_date }}</h5>
+                                    <td v-if="setting.Before">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.Before }}</h5>
                                     </td>
-                                    <td v-if="setting.currency_id">
-                                        <h5 class="m-0 font-weight-normal td5">
-                                            {{ $i18n.locale == "ar" ? data.currency.name : data.currency.name_e}}
-                                        </h5>
+                                    <td v-if="setting.During">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.During }}</h5>
                                     </td>
-                                    <td v-if="setting.rate">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.rate }}</h5>
+                                    <td v-if="setting.After">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.After }}</h5>
                                     </td>
-                                    <td v-if="setting.local_debit">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.debit }}</h5>
+                                    <td v-if="setting.paid_before">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.paid_before }}</h5>
                                     </td>
-                                    <td v-if="setting.local_credit">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.credit }}</h5>
+                                    <td v-if="setting.paid_during">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.paid_during }}</h5>
                                     </td>
 
-                                    <td v-if="setting.total">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.total }}</h5>
+                                    <td v-if="setting.paid_after">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.paid_after }}</h5>
                                     </td>
-                                    <td v-if="setting.break_type">
-                                        <h5 v-if="data.document" class="m-0 font-weight-normal">{{$i18n.locale == "ar" ? data.document.name : data.document.name_e}}</h5>
-                                        <h5 v-else class="m-0 font-weight-normal">---</h5>
-                                    </td>
-                                    <td v-if="setting.instalment_type_id">
-                                        <h5 class="m-0 font-weight-normal td5">{{ $i18n.locale == "ar" ? data.installment_payment_type.name : data.installment_payment_type.name_e}}</h5>
-                                    </td>
-                                    <td v-if="setting.amount_status">
-                                        <h5 class="m-0 font-weight-normal td5">{{ $t('general.'+data.amount_status)}}</h5>
-                                    </td>
-                                    <td v-if="setting.date_status">
-                                        <h5 class="m-0 font-weight-normal td5">{{$t('general.'+dateStatus(data.instalment_date,data.amount_status))}}</h5>
-                                    </td>
-                                    <td v-if="setting.serial_number">
-                                        <h5 class="m-0 font-weight-normal td5">{{ data.payment_invoice ? data.payment_invoice.prefix : '---'}}</h5>
+
+                                    <td v-if="setting.net_amount">
+                                        <h5 class="m-0 font-weight-normal td5">{{ data.net_amount }}</h5>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -931,6 +841,20 @@ export default {
                                     <th class="text-center" colspan="12">{{ $t('general.notDataFound') }}</th>
                                 </tr>
                                 </tbody>
+                                <tfoot v-if="installmentStatus.length > 0">
+                                <tr>
+                                    <td colspan="8"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"></td>
+                                    <td colspan="2">
+                                        <div class="text-center">
+                                            <span>{{ $t('general.TotalNetAmount') }}</span>
+                                            <h5 class="m-0 font-weight-normal">{{ totalNetAmount }}</h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tfoot>
                             </table>
 
                         </div>
@@ -955,13 +879,22 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
+
+.first-section {
+    background-color: #f1f5f7;
+    color: black;
+}
+
+
 </style>
 
 

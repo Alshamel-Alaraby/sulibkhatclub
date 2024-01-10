@@ -25,11 +25,13 @@ class DepertmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'nullable',
-            'name' => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
-            'name_e' => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
-            //'supervisors' => ['nullable', 'array'],
-            //'attentions' => ['nullable', 'array'],
+            'id'          => 'nullable',
+            'name'        => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
+            'name_e'      => ['nullable', 'string', 'max:255', Rule::unique('general_departments')->ignore($this->id)],
+//            'supervisors' => ['nullable', 'array'],
+//            'attentions'  => ['nullable', 'array'],
+            'locations'   => ['nullable', 'array'],
+
             //'supervisors.*'
             //=> ['required_with:supervisors', 'exists:general_employees,id'],
             //'attentions.*'

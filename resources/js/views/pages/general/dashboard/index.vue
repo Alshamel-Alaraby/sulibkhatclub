@@ -4,6 +4,7 @@ import Layout from "../../../layouts/main";
 import bookingDashboard from "../../../../components/statistic/booking.vue";
 import clubDashboard from "../../../../components/statistic/club.vue";
 import hmsDashboard from "../../../../components/statistic/h_m_s.vue";
+import tasksDashboard from "../../../../components/statistic/task_management.vue";
 import defaultDashboard from "../../../../components/statistic/defaultDashboard.vue";
 import permissionGuard from "../../../../helper/permission";
 
@@ -15,6 +16,7 @@ export default {
         Layout,
         clubDashboard,
         hmsDashboard,
+        tasksDashboard,
         bookingDashboard,
         defaultDashboard,
     },
@@ -50,6 +52,8 @@ export default {
 
 <template>
         <Layout>
+
+            <tasksDashboard v-if="selectedParents && selectedParents[2] == '5'" />
 
             <hmsDashboard v-if="selectedParents && selectedParents[2] == '4'" />
 

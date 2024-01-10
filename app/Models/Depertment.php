@@ -15,6 +15,8 @@ class Depertment extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = ['locations' => 'json'];
+
     /*
     public function scopeData($query)
     {
@@ -107,4 +109,13 @@ class Depertment extends Model
     {
         $this->attributes['supervisors'] = json_encode($value);
     }
+
+
+
+//    public function getLocationsAttribute($value)
+//    {
+//        return json_decode($value);
+//    }
+
+
 }

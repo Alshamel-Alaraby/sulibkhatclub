@@ -263,6 +263,7 @@ Route::middleware(['authorize.user'])->group(function () {
     });
 
     Route::group(['prefix' => 'tasks'], function () {
+        Route::get('dashboard', '\App\Http\Controllers\DashboardTaskController@index');
         Route::get('/get-drop-down', '\App\Http\Controllers\TaskController@getDropDown')->name('tasks.getDropDown');
         Route::post('/all', '\App\Http\Controllers\TaskController@allPost')->name('tasks.all.post');
         Route::get('/', '\App\Http\Controllers\TaskController@all')->name('tasks.all');

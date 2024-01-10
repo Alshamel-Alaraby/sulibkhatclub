@@ -4816,7 +4816,7 @@ class TranslationSeeder extends Seeder
             ],
 
         ]);
-            //Account
+        //Account
         Translation::insert([
             [
                 "key" => "Account_name_ar",
@@ -10478,6 +10478,15 @@ class TranslationSeeder extends Seeder
                 "screen" => "department"
             ],
             [
+                "key" => "department_engineers",
+                "default_en" => "engineers",
+                "default_ar" => "المهندسين",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "department"
+            ],
+            [
                 "key" => "department_estimated_time",
                 "default_en" => "Estimated time",
                 "default_ar" => "الوقت التقديري",
@@ -10819,8 +10828,17 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "boardRent_task_location",
-                "default_en" => "Location",
-                "default_ar" => "الموقع",
+                "default_en" => "General",
+                "default_ar" => "اللواء",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_sub_location",
+                "default_en" => "Building",
+                "default_ar" => "مبنى",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -10856,7 +10874,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "boardRent_panel_admin_note",
                 "default_en" => "Admin Note",
-                "default_ar" => "ملاحظة المسؤول",
+                "default_ar" => "الأعمال المنجزة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -10932,7 +10950,7 @@ class TranslationSeeder extends Seeder
             [
                 "key" => "task_title",
                 "default_en" => "Task Title",
-                "default_ar" => "عنوان المهمة",
+                "default_ar" => "بيان عن المهمه",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -10963,6 +10981,16 @@ class TranslationSeeder extends Seeder
                 "key" => "task_priority",
                 "default_en" => "priority",
                 "default_ar" => "الاولويه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "task_number",
+                "default_en" => "Task Number",
+                "default_ar" => "رقم المهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11011,8 +11039,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "execution_date",
-                "default_en" => "Task Execution Date",
-                "default_ar" => "تاريخ تنفيذ المهمة",
+                "default_en" => "Task Expected Start Date",
+                "default_ar" => "تاريخ البداية المتوقع المهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11021,8 +11049,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "task_start_time",
-                "default_en" => "Task Start Time",
-                "default_ar" => "وقت بداية المهمة",
+                "default_en" => "Task Expected Start Time",
+                "default_ar" => "وقت البداية المتوقع المهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11031,8 +11059,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "task_end_time",
-                "default_en" => "Task End Time",
-                "default_ar" => "وقت نهاية المهمة",
+                "default_en" => "Task Expected End Time",
+                "default_ar" => "وقت النهاية المتوقع المهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -11063,6 +11091,57 @@ class TranslationSeeder extends Seeder
                 "key" => "execution_end_date",
                 "default_en" => "Task Expected End Date",
                 "default_ar" => "تاريخ الانتهاء المتوقع للمهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "actual_execution_date",
+                "default_en" => "Task Actual Execution Date",
+                "default_ar" => "تاريخ تنفيذ المهمة الفعلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "actual_task_start_time",
+                "default_en" => "Task Actual Start Time",
+                "default_ar" => "وقت بداية المهمة الفعلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "actual_task_end_time",
+                "default_en" => "Task Actual End Time",
+                "default_ar" => "وقت نهاية المهمةالفعلي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "actual_execution_duration",
+                "default_en" => "Task Actual Duration",
+                "default_ar" => "المدة الفعلية للمهمة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+
+            [
+                "key" => "actual_execution_end_date",
+                "default_en" => "Task Actual End Date",
+                "default_ar" => "تاريخ الانتهاء الفعلي للمهمة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,

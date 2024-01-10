@@ -1231,13 +1231,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -5438,19 +5437,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -5462,6 +5455,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -5469,23 +5463,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -5839,7 +5834,13 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "box pl-0 ml-0"
-  }, [_c("div", {
+  }, [_c("img", {
+    staticClass: "watermark",
+    attrs: {
+      src: "/images/sulib.png",
+      alt: "Watermark Image"
+    }
+  }), _vm._v(" "), _c("div", {
     staticClass: "image-header px-0"
   }, [_c("img", {
     attrs: {
@@ -5859,7 +5860,7 @@ var render = function render() {
       "border-bottom": "1px solid #717171",
       "padding-bottom": "1.5px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                        " + _vm._s(_vm.data_row.serial ? _vm.$i18n.locale == "ar" ? _vm.data_row.serial.name : _vm.data_row.serial.name_e : ""))]) : _c("b", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.MembershipReceiptRenewal")) + "\n                    ")]) : _c("b", {
     staticStyle: {
       "border-bottom": "1px solid #717171",
       "padding-bottom": "1.5px"
@@ -5870,7 +5871,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5878,9 +5879,9 @@ var render = function render() {
     }
   }, [_c("h3", {
     staticClass: "col-8"
-  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + "  : " + _vm._s(_vm.data_row.member.full_name))])]), _vm._v(" "), _c("h3", {
+  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + " : " + _vm._s(_vm.data_row.member.full_name))])]), _vm._v(" "), _c("h3", {
     staticClass: "col-4"
-  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(_vm.data_row.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " ( " + _vm._s(_vm.data_row.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convert_currency_to_words(_vm.data_row.amount)) + " " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + " " + _vm._s(_vm.data_row.year))])]), _vm._v(" "), _c("div", {
+  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(_vm.data_row.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " (\n            " + _vm._s(_vm.data_row.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convertToArabicWords(_vm.data_row.amount)) + "\n            " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + "\n            " + _vm._s(_vm.data_row.year))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       "justify-content": "space-around",
@@ -5916,9 +5917,15 @@ var render = function render() {
       color: "#000",
       "font-weight": "bold"
     }
-  }, [_vm._v("* " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])]), _vm._v(" "), _c("div", {
     staticClass: "box mt-5 pl-0 ml-0"
-  }, [_c("div", {
+  }, [_c("img", {
+    staticClass: "watermark",
+    attrs: {
+      src: "/images/sulib.png",
+      alt: "Watermark Image"
+    }
+  }), _vm._v(" "), _c("div", {
     staticClass: "image-header"
   }, [_c("img", {
     attrs: {
@@ -5938,7 +5945,7 @@ var render = function render() {
       "border-bottom": "1px solid #717171",
       "padding-bottom": "1.5px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                        " + _vm._s(_vm.data_row.serial ? _vm.$i18n.locale == "ar" ? _vm.data_row.serial.name : _vm.data_row.serial.name_e : ""))]) : _c("b", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.MembershipReceiptRenewal")) + "\n                        ")]) : _c("b", {
     staticStyle: {
       "border-bottom": "1px solid #717171",
       "padding-bottom": "1.5px"
@@ -5949,7 +5956,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5957,9 +5964,9 @@ var render = function render() {
     }
   }, [_c("h3", {
     staticClass: "col-8"
-  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + "  : " + _vm._s(_vm.data_row.member.full_name))])]), _vm._v(" "), _c("h3", {
+  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.We got from Mr")) + " : " + _vm._s(_vm.data_row.member.full_name))])]), _vm._v(" "), _c("h3", {
     staticClass: "col-4"
-  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(_vm.data_row.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " ( " + _vm._s(_vm.data_row.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convert_currency_to_words(_vm.data_row.amount)) + " " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + " " + _vm._s(_vm.data_row.year))])]), _vm._v(" "), _c("div", {
+  }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.NoMembership")) + " : " + _vm._s(_vm.data_row.member.membership_number))])])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.According to the cash amount and its amount")) + " (\n            " + _vm._s(_vm.data_row.amount + " " + _vm.$t("general.APPKDW")) + " ) " + _vm._s(_vm.convertToArabicWords(_vm.data_row.amount)) + "\n            " + _vm._s(_vm.$t("general.KDW") + " " + _vm.$t("general.Just nothing else")))])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.This is the cost of renewal/annual subscription to the club for up to one year")) + "\n            " + _vm._s(_vm.data_row.year))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       "justify-content": "space-around",
@@ -5995,7 +6002,7 @@ var render = function render() {
       color: "#000",
       "font-weight": "bold"
     }
-  }, [_vm._v("* " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])])]);
+  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -7491,174 +7498,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  data: function data() {
-    return {
-      TableScales: ["", "ألف", "مليون", "مليار", "ترليون", "كوادرليون", "كوينتليون", "سكستليون"],
-      TableScalesP: ["", "آلاف", "ملايين", "مليارات"],
-      TableMale: ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة", "عشرة"],
-      TableFemale: ["", "واحدة", "اثنتان", "ثلاث", "أربع", "خمس", "ست", "سبع", "ثمان", "تسع", "عشر"]
-    };
-  },
   methods: {
-    convert_currency_to_words: function convert_currency_to_words() {
-      var NumIn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        Feminine = _ref.Feminine,
-        Comma = _ref.Comma,
-        SplitHund = _ref.SplitHund,
-        Miah = _ref.Miah,
-        Billions = _ref.Billions,
-        TextToFollow = _ref.TextToFollow,
-        AG = _ref.AG,
-        Subject = _ref.Subject,
-        Legal = _ref.Legal;
-      if (NumIn == 0) return "صفر"; // if 0 or "0" then "zero"
-      var Triplet,
-        Scale,
-        ScalePos,
-        ScalePlural,
-        TableUnits,
-        Table11_19,
-        NumberInWords = "",
-        IsLastEffTriplet = false,
-        Num_99;
-      var ON = "on",
-        // Flag to test if Option is ON
-        IsAG = AG === ON,
-        // Option Accusative or Genitive case Grammar?
-        SpWa = " و",
-        // AND word
-        TanweenLetter = "ًا",
-        // Tanween Fatih for Scale Names above 10
-        Ahad = "أحد",
-        Ehda = "إحدى",
-        // Masculine/Feminine 11
-        // ---- Setup constants for the AG Option (Accusative/Genitive or Nominative case Grammar)
-        Taa = IsAG ? "تي" : "تا",
-        Taan = IsAG ? "تين" : "تان",
-        // Hundred 2's مئتا/مائتا مئتان/مائتان
-        Aa = IsAG ? "ي" : "ا",
-        Aan = IsAG ? "ين" : "ان",
-        // Scale 2's الفا/مليونا الفان/مليونان
-        Ethna = IsAG ? "اثني" : "اثنا",
-        Ethnata = IsAG ? "اثنتي" : "اثنتا",
-        // Masculine/Feminine 12 starting word
-        Ethnan = IsAG ? "اثنين" : "اثنان",
-        Ethnatan = IsAG ? "اثنتين" : "اثنتان",
-        // Masculine/Feminine 2
-        Woon = IsAG ? "ين" : "ون",
-        // Second part of 20's to 90's
-        IsSubject = Array.isArray(Subject) && Subject.length === 4; // Check for Subject Array Names
+    numberToArabicWords: function numberToArabicWords(number) {
+      var units = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة'];
+      var tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+      var hundreds = ['', 'مائة', 'مئتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+      if (number === 0) {
+        return 'صفر';
+      }
+      var words = '';
 
-      TextToFollow = TextToFollow === ON; // TextToFollow Option Flag
-      if (IsSubject) TextToFollow = true; // Enable TextToFollow Option if Subject Option is ON
-      NumIn += ""; // Make numeric string
-      NumIn = "" + NumIn.replace(/[٠-٩]/g, function (d) {
-        return "٠١٢٣٤٥٦٧٨٩".indexOf(d);
-      }); // Convert Arabic-Indic Numbers to Arabic if any
-      Miah = Miah === ON ? "مئة" : "مائة"; // Select chosen Miah (Hundred) Option
-
-      TableUnits = _toConsumableArray(this.TableMale);
-      Table11_19 = _toConsumableArray(this.TableMale); // Create copies of Masculine Table for manipulation
-      Table11_19[0] = this.TableFemale[10]; // Borrow word "عشرة" from Feminine's Table for use in 11-19
-      Table11_19[1] = Ahad; // Masculine starting words for 11
-      Table11_19[2] = Ethna; // Masculine starting words for 12
-      TableUnits[2] = Ethnan; // Masculine word for 2
-
-      NumIn = "0".repeat(NumIn.length * 2 % 3) + NumIn; // Convert Number to a Triplets String
-
-      var NumLen = NumIn.length;
-      for (var digits = NumLen; digits > 0; digits -= 3) {
-        // Loop and convert each Triplet
-        Triplet = +NumIn.substr(NumLen - digits, 3); // Get a Triplet Number
-        IsLastEffTriplet = !+NumIn.substr(NumLen - digits + 3); // Determine if Last Effective Triplet
-        if (Triplet) {
-          // If not Empty: Convert Triplet Number to Words
-          ScalePos = digits / 3 - 1; // Position of Scale Name in Scale Table
-          Scale = this.TableScales[ScalePos]; // Get Scale Name
-          ScalePlural = ScalePos < 4 ? this.TableScalesP[ScalePos] : this.TableScales[ScalePos] + "ات"; // Make Scale Plural
-          if (Billions && ScalePos === 3) Scale = "بليون", ScalePlural = "بلايين"; // If Billions Option
-          NumberInWords += oneTripletToWords(); // Convert 1 Triplet to Words
-          if (!IsLastEffTriplet) NumberInWords += (Comma === ON ? "،" : "") + SpWa; // Add "و " and Option Comma
-        }
-      } // All done with conversion, Process Subject Name if any
-      var SubjectName = "";
-      if (IsSubject) {
-        // Process Subject Name
-        var space = !IsLastEffTriplet ? "" : " "; // Position correct spacing
-        Triplet = +(Triplet + "").slice(-2); // Get last 2 digits of last Triplet
-        SubjectName = space + Subject[0]; // Default Subject Name is at Pos 0
-        if (Triplet > 10) SubjectName = space + Subject[3]; // Subject name with Tanween for 11-99
-        else if (Triplet > 2) SubjectName = space + Subject[2]; // Subject name Plural for 3-10
-        else if (Triplet > 0) SubjectName = Subject[Triplet - 1] + " " + TableUnits[Num_99]; // Reverse names for 1 or 2
+      // Handling hundreds place
+      if (number >= 100) {
+        var hundredsDigit = Math.floor(number / 100);
+        words += hundreds[hundredsDigit] + ' ';
+        number %= 100;
       }
 
-      return NumberInWords + SubjectName; // All done
-      //------------------------------------------------------------------
-      //    Core Function Converts 1 Triplet (1 to 999) to Arabic Words
-      //------------------------------------------------------------------
-      function oneTripletToWords() {
-        Num_99 = Triplet % 100; // 00 to 99
-        var Num_100 = ~~(Triplet / 100),
-          // Hundreds (1 digit)
-          Num_Unit = Num_99 % 10,
-          // 0 to 9 (1 digit)
-          Num_Tens = ~~(Num_99 / 10),
-          // Tens   (1 digit)
-          Word_100 = "",
-          Word_99 = ""; // Holds words for Hundreds & 0-99
-
-        if (Feminine === ON && !Scale) {
-          // If Feminine, use the Feminine table if no scale
-          TableUnits = _toConsumableArray(this.TableFemale);
-          Table11_19 = _toConsumableArray(this.TableFemale); // Create copies of Feminine Table for manipulation
-          Table11_19[0] = this.TableMale[10]; // Borrow word "عشر" from Masculine's Table for use in 11-19
-          Table11_19[1] = Ehda; // Feminine starting words for 11
-          Table11_19[2] = Ethnata; // Feminine starting words for 12
-          TableUnits[2] = Ethnatan; // Feminine word for 2
-          if (Num_99 > 19) TableUnits[1] = Ehda; // Feminine word for 1 used in 20's to 90's
-        }
-
-        if (Num_100) {
-          // ---- Do Hundreds (100 to 900)
-          if (Num_100 > 2) Word_100 = this.TableFemale[Num_100] + (SplitHund === ON ? " " : "") + Miah; // 300-900
-          else if (Num_100 === 1) Word_100 = Miah; // 100
-          else Word_100 = Miah.slice(0, -1) + (Scale && !Num_99 || TextToFollow ? Taa : Taan); // 200 Use either مئتا or مئتان
-        }
-
-        if (Num_99 > 19) Word_99 = TableUnits[Num_Unit] + (Num_Unit ? SpWa : "") + (
-        // 20-99 Units و and
-        Num_Tens === 2 ? "عشر" : this.TableFemale[Num_Tens]) + Woon; // Add Woon for 20's or 30's to 90's
-        else if (Num_99 > 10) Word_99 = Table11_19[Num_99 - 10] + " " + Table11_19[0]; // 11-19
-        else if (Num_99 > 2 || !Num_99 || !IsSubject) Word_99 = TableUnits[Num_99]; // 0 or 3-10 (else keep void for 1 &2)
-
-        var Words999 = Word_100 + (Num_100 && Num_99 ? SpWa : "") + Word_99; // Join Hund, Tens, and Units
-
-        if (Scale) {
-          // Add Scale Name if applicable
-          var legalTxt = Legal === ON && Num_99 < 3 ? " " + Scale : ""; // if Legal Option add Extra Word
-          var Word_100Wa = (Num_100 ? Word_100 + legalTxt + SpWa : "") + Scale; // Default Scale Name
-          if (Num_99 > 2) {
-            Words999 += " " + (
-            // Scale for for 3 to 99
-            Num_99 > 10 ? Scale + (IsLastEffTriplet && TextToFollow ? "" : TanweenLetter) // Scale for 11 to 99 (Tanween)
-            : ScalePlural); // Scale for 3 to 10 (Plural)
-          } else {
-            if (!Num_99) Words999 += " " + Scale; // Scale for 0
-            else if (Num_99 === 1) Words999 = Word_100Wa; // Scale for 1
-            else Words999 = Word_100Wa + (IsLastEffTriplet && TextToFollow ? Aa : Aan); // Scale for 2 ألفا or ألفان
-          }
-        }
-
-        return Words999; //Return the Triple in Words
+      // Handling tens and units place
+      if (number >= 10 && number < 20) {
+        words += units[number % 10] + ' عشرة ';
+      } else if (number >= 20) {
+        var tensDigit = Math.floor(number / 10);
+        words += units[number % 10] + ' و' + tens[tensDigit];
+        words += ' ';
+        number %= 10;
       }
+
+      // Handling units place
+      // if (number > 0 && number < 10) {
+      //     words += units[number] + ' ';
+      // }
+
+      return words.trim();
+    },
+    decimalToArabicWords: function decimalToArabicWords(decimal) {
+      var units = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+      var tens = ['', 'عشرة', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+      var hundreds = ['', 'مائة', 'مئتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+      if (decimal === 0) {
+        return '';
+      }
+      var words = '';
+
+      // Handling hundreds place for the decimal part
+      if (decimal >= 100) {
+        var hundredsDigit = Math.floor(decimal / 100);
+        words += hundreds[hundredsDigit] + ' ';
+        decimal %= 100;
+      }
+
+      // Handling tens and units place for the decimal part
+      if (decimal >= 10) {
+        if (decimal < 20) {
+          words += units[decimal % 10] + ' عشرة ';
+        } else {
+          var tensDigit = Math.floor(decimal / 10);
+          words += tens[tensDigit] + ' ';
+          decimal %= 10;
+        }
+      }
+
+      // Handling units place for the decimal part
+      if (decimal > 0 && decimal < 10) {
+        words += units[decimal] + ' ';
+      }
+      return words.trim();
+    },
+    convertToArabicWords: function convertToArabicWords(inputNumber) {
+      var _inputNumber$toString = inputNumber.toString().split('.'),
+        _inputNumber$toString2 = _slicedToArray(_inputNumber$toString, 2),
+        integerPart = _inputNumber$toString2[0],
+        decimalPart = _inputNumber$toString2[1];
+      var integerWords = this.numberToArabicWords(parseInt(integerPart));
+      var decimalWords = decimalPart ? this.decimalToArabicWords(parseFloat("0.".concat(decimalPart)) * 100) : '';
+      var result = integerWords;
+      if (decimalWords) {
+        // Combining the integer and decimal words with appropriate separators
+        result += ' و ' + decimalWords + ' فلس';
+      }
+      return result;
     }
   }
 });
@@ -7736,7 +7662,7 @@ __webpack_require__.r(__webpack_exports__);
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
-          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].new_en;
+          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }
@@ -8159,7 +8085,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\r\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\r\n    h2[data-v-7a9c1a47],\r\n    h3[data-v-7a9c1a47],\r\n    p[data-v-7a9c1a47] {\r\n        margin: 5px 0;\r\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\r\n        border: none;\r\n        border-top: 1px solid #ccc;\r\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\r\n        font-size: 25px;\r\n        color: #000;\r\n        padding: 4px 2px;\r\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\r\n        background: #d7d7d7 !important;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\r\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\r\n        height: 100%;\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: space-between;\r\n        margin: 0 auto;\r\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\r\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\r\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\r\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\r\n        width: 100%;\r\n        margin-bottom: 30px;\r\n        padding-left: 0px;\r\n        display: flex;\r\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 7px;\r\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\r\n        padding: 0px 30px 0px 20px;\r\n        margin: 50px 0;\r\n        height: 49%;\r\n        border: #6e6b6b solid 1px;\r\n        max-height: 720px;\n}\n.doc_box[data-v-7a9c1a47] {\r\n        border: #6e6b6b solid 1px;\r\n        background: #d7d7d7 !important;\r\n        color: #000;\r\n        padding: 10px;\r\n        width: 150px;\r\n        height: 70px;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\n}\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\n    h2[data-v-7a9c1a47],\n    h3[data-v-7a9c1a47],\n    p[data-v-7a9c1a47] {\n        margin: 5px 0;\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\n        border: none;\n        border-top: 1px solid #ccc;\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\n        font-size: 25px;\n        color: #000;\n        padding: 4px 2px;\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\n        background: #d7d7d7 !important;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\n        height: 100%;\n        display: flex;\n        flex-direction: column;\n        justify-content: space-between;\n        margin: 0 auto;\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\n        width: 100%;\n        margin-bottom: 30px;\n        padding-left: 0px;\n        display: flex;\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 7px;\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\n        padding: 0px 40px 0px 20px;\n        margin: 70px 0;\n        height: 49%;\n        border: #6e6b6b solid 1px;\n        max-height: 720px;\n        position: relative;\n}\n.doc_box[data-v-7a9c1a47] {\n        border: #6e6b6b solid 1px;\n        background: #d7d7d7 !important;\n        color: #000;\n        padding: 10px;\n        width: 150px;\n        height: 70px;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n}\n.watermark[data-v-7a9c1a47] {\n        position: absolute;\n        opacity: 0.07;\n        pointer-events: none;\n        height: 100%;\n        width: 100%;\n}\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

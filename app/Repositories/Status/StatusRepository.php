@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class StatusRepository implements StatusInterface
 {
 
-    public function __construct(private \App\Models\Status$model)
+    public function __construct(private \App\Models\Status $model)
     {
         $this->model = $model;
     }

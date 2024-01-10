@@ -6,7 +6,7 @@ export default [
         path: '/dashboard/installment-status',
         name: 'installmentStatus',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/installmentStatus'),
     },
@@ -14,7 +14,7 @@ export default [
         path: '/dashboard/installment-condition',
         name: 'installmentCondition',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/instalmentcondation'),
     },
@@ -22,7 +22,7 @@ export default [
         path: '/dashboard/installment-payment-type',
         name: 'installmentPaymentType',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/InstallmentPaymentType'),
     },
@@ -30,7 +30,7 @@ export default [
         path: '/dashboard/sub-contact-group',
         name: 'subContactGroup',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/sub-contact-group'),
     },
@@ -38,7 +38,7 @@ export default [
         path: '/dashboard/MainContactGroups',
         name: 'MainContactGroups',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/MainContactGroups'),
     },
@@ -46,7 +46,7 @@ export default [
         path: '/dashboard/InstallmentPaymentPlanDetail',
         name: 'InstallmentPaymentPlanDetail',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/InstallmentPaymentPlanDetail'),
     },
@@ -54,7 +54,7 @@ export default [
         path: '/dashboard/installment-payment-plan',
         name: 'installment-payment-plan',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/installmentPaymentPlan'),
     },
@@ -62,7 +62,7 @@ export default [
         path: '/dashboard/payment-plan-installments',
         name: 'payment plan installment',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/payment_plan_installments'),
     },
@@ -70,7 +70,7 @@ export default [
         path: '/dashboard/installment-document-plan',
         name: 'installment document plan',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentPlans'),
     },
@@ -130,15 +130,15 @@ export default [
         path: '/dashboard/receivablePayable/report/financeReports/payments',
         name: 'financeReports payments',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
-        component: () => import('../../views/pages/recievablePayable/report/payments'),
+        component: () => import('../../views/pages/recievablePayable/report/paymentsOld.vue'),
     },
     {
         path: '/dashboard/receivablePayable/report/financeReports/voucher',
         name: 'financeReports payments',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/report/voucher'),
     },
@@ -148,7 +148,7 @@ export default [
         path: '/dashboard/receivablePayable/documentWithMoney/receiptVoucher',
         name: 'receipt voucher',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/receiptVoucher'),
     },
@@ -156,7 +156,7 @@ export default [
         path: '/dashboard/receivablePayable/documentWithMoney/paymentVoucher',
         name: 'payment voucher',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/paymentVoucher'),
     },
@@ -164,7 +164,7 @@ export default [
         path: '/dashboard/receivablePayable/documentWithMoney/creditNote',
         name: 'credit note',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/creditNote'),
     },
@@ -172,7 +172,7 @@ export default [
         path: '/dashboard/receivablePayable/documentWithMoney/debitNote',
         name: 'debit note',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/debitNote'),
     },
@@ -180,7 +180,7 @@ export default [
         path: '/dashboard/receivablePayable/documentWithMoney/issueVoucher',
         name: 'Issue Voucher',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/documentTransaction/issueVoucher'),
     },
@@ -189,7 +189,7 @@ export default [
         path: '/dashboard/receivablePayable/moneyVoucher',
         name: 'Money Voucher',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/money-voucher'),
     },
@@ -198,8 +198,25 @@ export default [
         path: '/dashboard/receivablePayable/openingBalance',
         name: 'installment opening balance',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/recievablePayable/openingBalance'),
+    },
+
+    {
+        path: '/dashboard/receivablePayable/PaymentReport',
+        name: 'Payments Report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/report/Payments'),
+    },
+    {
+        path: '/dashboard/receivablePayable/DetailedPaymentReport',
+        name: 'Detailed Payments Report',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/recievablePayable/report/DetailedPayments'),
     },
 ];

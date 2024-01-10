@@ -21,7 +21,6 @@ class PeriodicMaintenance extends Model
             'id',
             'name',
             'name_e',
-            'date',
             'restart_period_id',
             'department_id',
             'task_id',

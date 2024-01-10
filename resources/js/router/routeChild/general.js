@@ -379,12 +379,34 @@ export default [
     },
     {
         // checked by Delta
-        path: '/dashboard/ticket-manager/tasks',
+        path: '/dashboard/ticket-manager/tasks/:id?',
         name: 'ticketManager tasks',
+        props: true,
         meta: {
             middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/general/ticketManager/tasks'),
+    },
+    {
+        // checked by Delta
+        path: '/dashboard/ticket-manager/external_tasks/:id?',
+        name: 'externalTicketManager tasks',
+        props: true,
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/externalTicketManager/tasks'),
+    },
+
+    {
+        // checked by Delta
+        path: '/dashboard/ticket-manager/TasksReport',
+        name: 'Tasks Report ',
+        props: true,
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/externalTicketManager/tasksReport.vue'),
     },
     {
         // checked by Delta
@@ -417,7 +439,7 @@ export default [
         path: '/dashboard/insurance-companies',
         name: 'insurance_companies',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/general/insurance_companies/index.vue'),
     },
@@ -425,7 +447,7 @@ export default [
         path: '/dashboard/account_statement',
         name: 'account_statement',
         meta: {
-            middleware: [auth,checkAuth]
+            middleware: [auth, checkAuth]
         },
         component: () => import('../../views/pages/general/account_statement/index.vue'),
     },

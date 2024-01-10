@@ -114,7 +114,7 @@ export default {
               <!-- start setting -->
               <actionSetting
                   :companyKeys="companyKeys" :defaultsKeys="defaultsKeys" :current_page="current_page"
-                  :isCreate="true" :isEdit="true" :isDelete="true"
+                  :isCreate="false" :isEdit="false" :isDelete="false"
                   :permissionCreate="isPermission('create Status')"
                   :permissionUpdate="isPermission('update Status')"
                   :permissionDelete="isPermission('delete Status')" :isExcl="true"
@@ -153,7 +153,7 @@ export default {
 
                 <tableCustom
                     :companyKeys="companyKeys" :defaultsKeys="defaultsKeys"
-                    :tables="tables" :isEdit="true" :isDelete="true"
+                    :tables="tables" :isEdit="false" :isDelete="false"
                     :permissionUpdate="isPermission('update Status')"
                     :permissionDelete="isPermission('delete Status')"
                     :isVisible="isVisible" :tableSetting="tableSetting"

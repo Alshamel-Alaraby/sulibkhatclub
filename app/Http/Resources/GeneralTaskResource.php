@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GeneralTaskResource extends JsonResource
@@ -20,19 +21,24 @@ class GeneralTaskResource extends JsonResource
             'contact_phone' => $this->contact_phone,
             'task_title' => $this->task_title,
             'execution_date' => $this->execution_date,
+            'actual_execution_date' => $this->actual_execution_date,
             'execution_duration' => $this->execution_duration,
             'customer_id' => $this->customer_id,
             'execution_end_date' => $this->execution_end_date,
+            'actual_execution_end_date' => $this->actual_execution_end_date,
+            'actual_execution_duration' => $this->actual_execution_duration,
             'notification_date' => $this->notification_date,
+            'actual_start_time' => $this->actual_start_time,
             'start_time' => $this->start_time,
+            'actual_end_time' => $this->actual_end_time,
             'end_time' => $this->end_time,
             'department_task_id' => $this->department_task_id,
             'employee_id' => $this->employee_id,
-            'customer_id' => $this->customer_id,
             'department_id' => $this->department_id,
             'status_id' => $this->status_id,
             'note' => $this->note,
-            // 'location_id' => $this->location_id,
+            'location_id' => $this->location_id,
+            'sub_location_id' => $this->sub_location_id,
             'priority_id' => $this->priority_id,
             'is_closed' => $this->is_closed,
             'admin_note' => $this->admin_note,
@@ -44,12 +50,15 @@ class GeneralTaskResource extends JsonResource
             'department' => $this->department,
             'employee' => $this->employee,
             'customer' => $this->customer,
-            'contact_person' => $this->contact_person,
-            'contact_phone' => $this->contact_phone,
             'equipment' => $this->equipment,
             'status' => $this->status,
-            // 'location' => $this->location,
+            'location' => $this->location,
+            'owners' => [$this->created_by ? User::find($this->created_by)->employee_id : null],
+            'supervisors' => $this->supervisors->pluck('id')->toArray(),
+            'notifications' => $this->attentions->pluck('id')->toArray(),
             'priority' => $this->priority,
+            "media" => isset($this->files) ? FileResource::collection($this->files) : null,
+            'created_at' => $this->created_at
 
         ];
     }

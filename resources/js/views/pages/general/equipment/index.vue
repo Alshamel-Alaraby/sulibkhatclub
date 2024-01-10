@@ -83,7 +83,7 @@ export default {
               fields[indexPar] = this.$i18n.locale == "ar" ? "parent.name" : "parent.name_e";
           }
           if (indexPeriodic > -1) {
-              fields[indexPeriodic] = this.$i18n.locale == "ar" ? "periodic_maintenance.name" : "periodic_maintenance.name_e";
+              fields[indexPeriodic] = this.$i18n.locale == "ar" ? "periodicMaintenance.name" : "periodicMaintenance.name_e";
           }
           for (let i = 0; i < fields.length; ++i) {
               filter += `columns[${i}]=${fields[i]}&`;

@@ -2349,22 +2349,6 @@ export default {
                                 }"
                                       id="field-144"
                                   />
-                              <div
-                                  v-if="!$v.create.driving_license.minLength"
-                                  class="invalid-feedback"
-                              >
-                                  {{ $t("general.Itmustbeatleast") }}
-                                  {{ $v.create.driving_license.$params.minLength.min }}
-                                  {{ $t("general.letters") }}
-                              </div>
-                              <div
-                                  v-if="!$v.create.driving_license.maxLength"
-                                  class="invalid-feedback"
-                              >
-                                  {{ $t("general.Itmustbeatmost") }}
-                                  {{ $v.create.driving_license.$params.maxLength.max }}
-                                  {{ $t("general.letters") }}
-                              </div>
                               <template v-if="errors.driving_license">
                                   <ErrorMessage
                                       v-for="(errorMessage, index) in errors.driving_license"

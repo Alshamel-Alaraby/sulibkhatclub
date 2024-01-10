@@ -131,7 +131,7 @@ export default {
       this.isLoader = true;
        adminApi
         .post(`/translation-update`, {
-          company_id: this.company_id,
+          company_id: this.company_id && this.company_id.length > 0?this.company_id: 0,
           translations: {},
           get_translation: true,
         })
@@ -152,12 +152,39 @@ export default {
           this.isLoader = false;
         });
     },
+    popup_notification(){
+        if(localStorage.getItem("user")){
+            Echo.private("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification((notification) => {
+                VanillaToasts.create({
+                        // notification title
+                        title: this.$t("general.Notification"),
+
+                        // notification message
+                        text: notification.data.message || notification.data.message_en ? (this.$i18n.locale == 'ar' ?  notification.data.message: (notification.data.message_en ?? notification.data.message)) : this.$t("general.ThereIsANewNotification"),
+
+                        // success, info, warning, error   / optional parameter
+                        type: "warning",
+
+                        timeout: 15000,
+
+                        // path to notification icon
+                        icon:  notification.data.image != "" ? notification.data.image: "/images/shamel-logo-006.png",
+
+                        // topRight, topLeft, topCenter, bottomRight, bottomLeft, bottomCenter
+                        positionClass: this.$i18n.locale  == "en" ? "topLeft" : "topRight",
+
+                        // auto dismiss after 5000ms
+                    });
+                });
+            }
+    }
   },
   created(){
     localStorage.setItem("menuLoaded",false);
   },
   mounted() {
     this.company_id = this.$store.getters["auth/company_id"];
+    this.popup_notification()
     if (this.$store.state.auth.type == "user") {
       this.profile();
       this.getDefaultKeys();

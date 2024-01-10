@@ -84,6 +84,9 @@ class DocumentHeaderController extends Controller
             return responseJson( 404 , __('message.data not found'));
         }
         $model_Interface = $this->modelInterface->update($request->validated(),$id);
+        if ($model_Interface == 'paid_befor'){
+            return responseJson(402, "You can't edit because there is a settlement for this invoice");
+        }
         if ($model_Interface == 'false'){
             return responseJson(400, "Not Found Date in Table Financial Year");
         }

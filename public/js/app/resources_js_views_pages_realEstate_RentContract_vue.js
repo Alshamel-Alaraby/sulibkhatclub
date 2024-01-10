@@ -88,6 +88,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       tenants: [],
       units: [],
       services: [],
+      unitsPerPage: 3,
+      currentPage: 1,
+      total_amount: 0,
+      previousUnitIds: [],
       unit_ids: [],
       payment_types: [],
       salesmen: [],
@@ -251,32 +255,93 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     }
   },
+  computed: {
+    paginatedUnits: function paginatedUnits() {
+      var startIndex = (this.currentPage - 1) * this.unitsPerPage;
+      var endIndex = startIndex + this.unitsPerPage;
+      return this.unit_ids.slice(startIndex, endIndex);
+    },
+    totalPages: function totalPages() {
+      return Math.ceil(this.unit_ids.length / this.unitsPerPage);
+    }
+  },
   methods: {
-    test: function test() {
-      console.log(this.create.units);
+    nextPage: function nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    previousPage: function previousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    deleteService: function deleteService(unitIndex, serviceIndex) {
+      var _this2 = this;
+      var unit = this.create.units[unitIndex];
+      var deletedService = this.services[unitIndex].services[serviceIndex];
+      sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+        title: 'Are you sure?',
+        text: 'You cannot add this service back after deletion!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          var deletedPrice = deletedService.price;
+          unit.unit_services.splice(serviceIndex, 1);
+          _this2.services[unitIndex].services.splice(serviceIndex, 1);
+          _this2.total_amount -= deletedPrice;
+          sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire('Deleted!', 'The service has been removed.', 'success');
+        }
+      });
+    },
+    calculateUnitTotal: function calculateUnitTotal(unitServices) {
+      var totalPrice = 0;
+      unitServices.forEach(function (service) {
+        totalPrice += service.price;
+      });
+      return totalPrice;
+    },
+    saveServices: function saveServices() {
+      var _this3 = this;
+      this.create.units = []; // Clear existing data
+
+      this.services.forEach(function (serviceData, index) {
+        var unitId = _this3.unit_ids[index];
+        var unit = {
+          unit_id: unitId,
+          unit_services: serviceData.services.map(function (service) {
+            return service.id;
+          })
+        };
+        _this3.create.units.push(unit);
+      });
     },
     resetModalCreateOrUpdate: function resetModalCreateOrUpdate() {
-      var _this2 = this;
+      var _this4 = this;
       this.relatedDocuments = this.document.document_relateds;
       setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              if (!_this2.dataRow) {
+              if (!_this4.dataRow) {
                 _context.next = 7;
                 break;
               }
               _context.next = 3;
-              return _this2.getDataRow();
+              return _this4.getDataRow();
             case 3:
               _context.next = 5;
-              return _this2.resetModalEdit(_this2.dataRow.id);
+              return _this4.resetModalEdit(_this4.dataRow.id);
             case 5:
               _context.next = 9;
               break;
             case 7:
               _context.next = 9;
-              return _this2.resetModal();
+              return _this4.resetModal();
             case 9:
             case "end":
               return _context.stop();
@@ -374,11 +439,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this3 = this;
+      var _this5 = this;
       this.dataCreate();
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this3.$v.$reset();
+        _this5.$v.$reset();
       });
       this.errors = {};
     },
@@ -386,28 +451,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this4 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (_this4.checkDocumentNeedApprove()) {
-                _this4.getStatus();
+              if (_this6.checkDocumentNeedApprove()) {
+                _this6.getStatus();
               }
-              _this4.dataCreate();
-              _this4.getBranches();
-              _this4.getExternalSalesmen();
-              _this4.getTenants();
-              _this4.getUnits();
-              _this4.getInstallPaymentTypes();
-              if (parseInt(_this4.document.required) == 1 && _this4.relatedDocuments.length == 1) {
-                _this4.create.related_document_id = _this4.relatedDocuments[0].id;
+              _this6.dataCreate();
+              _this6.getBranches();
+              _this6.getExternalSalesmen();
+              _this6.getTenants();
+              _this6.getUnits();
+              _this6.getInstallPaymentTypes();
+              if (parseInt(_this6.document.required) == 1 && _this6.relatedDocuments.length == 1) {
+                _this6.create.related_document_id = _this6.relatedDocuments[0].id;
               }
-              _this4.is_disabled = false;
-              _this4.$nextTick(function () {
-                _this4.$v.$reset();
+              _this6.is_disabled = false;
+              _this6.$nextTick(function () {
+                _this6.$v.$reset();
               });
-              _this4.errors = {};
+              _this6.errors = {};
             case 11:
             case "end":
               return _context2.stop();
@@ -419,11 +484,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  create screen
      */
     resetForm: function resetForm() {
-      var _this5 = this;
+      var _this7 = this;
       this.dataCreate();
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this5.$v.$reset();
+        _this7.$v.$reset();
       });
     },
     Submit: function Submit() {
@@ -435,7 +500,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     AddSubmit: function AddSubmit() {
-      var _this6 = this;
+      var _this8 = this;
       var is_break = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       // if (
       //     parseInt(this.document.required) == 1 &&
@@ -458,40 +523,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       // }
       this.create.company_id = this.company_id;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].post("real-estate/contract-headers", _objectSpread({}, this.create)).then(function (res) {
-        _this6.$emit("created");
-        _this6.is_disabled = true;
+        _this8.$emit("created");
+        _this8.is_disabled = true;
         setTimeout(function () {
           sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
             icon: "success",
-            text: "".concat(_this6.$t("general.Addedsuccessfully")),
+            text: "".concat(_this8.$t("general.Addedsuccessfully")),
             showConfirmButton: false,
             timer: 1500
           });
         }, 500);
-        // here for break if user do
-        if (_this6.document.attributes && parseInt(_this6.document.attributes.customer) != 0 && is_break == true) {
-          _this6.create.id = res.data.data.id;
-          _this6.showBreakCreate();
-        }
       })["catch"](function (err) {
         if (err.response.data) {
-          _this6.errors = err.response.data.errors;
+          _this8.errors = err.response.data.errors;
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
             icon: "error",
-            title: "".concat(_this6.$t("general.Error")),
-            text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this8.$t("general.Error")),
+            text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
           });
         }
       })["finally"](function () {
-        _this6.isLoader = false;
+        _this8.isLoader = false;
       });
     },
     /**
      *  edit screen
      */
     editSubmit: function editSubmit(id) {
-      var _this7 = this;
+      var _this9 = this;
       //   if (
       //     parseInt(this.document.required) == 1 &&
       //     !this.create.related_document_number
@@ -511,11 +571,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.isLoader = true;
         this.errors = {};
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].put("contract-headers/".concat(id), _objectSpread({}, this.create)).then(function (res) {
-          _this7.$emit("created");
+          _this9.$emit("created");
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
               icon: "success",
-              text: "".concat(_this7.$t("general.Editsuccessfully")),
+              text: "".concat(_this9.$t("general.Editsuccessfully")),
               showConfirmButton: false,
               timer: 1500
             });
@@ -528,16 +588,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           // }
         })["catch"](function (err) {
           if (err.response.data) {
-            _this7.errors = err.response.data.errors;
+            _this9.errors = err.response.data.errors;
           } else {
             sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
               icon: "error",
-              title: "".concat(_this7.$t("general.Error")),
-              text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+              title: "".concat(_this9.$t("general.Error")),
+              text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
             });
           }
         })["finally"](function () {
-          _this7.isLoader = false;
+          _this9.isLoader = false;
         });
       }
     },
@@ -545,44 +605,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get workflows
      */
     getStatus: function getStatus() {
-      var _this8 = this;
+      var _this10 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/document-statuses").then(function (res) {
         var l = res.data.data;
-        _this8.statuses = l;
+        _this10.statuses = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
-          title: "".concat(_this8.$t("general.Error")),
-          text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this10.$t("general.Error")),
+          text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this8.isLoader = false;
+        _this10.isLoader = false;
       });
     },
     getBranches: function getBranches() {
-      var _this9 = this;
+      var _this11 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/branches?document_id=".concat(this.document_id)).then(function (res) {
-        _this9.isLoader = false;
+        _this11.isLoader = false;
         var l = res.data.data;
-        _this9.branches = l;
-        if (!_this9.dataRow) {
-          if (_this9.branches.length == 1) {
-            _this9.create.branch_id = _this9.branches[0].id;
-            _this9.getSerialNumber(_this9.create.branch_id);
+        _this11.branches = l;
+        if (!_this11.dataRow) {
+          if (_this11.branches.length == 1) {
+            _this11.create.branch_id = _this11.branches[0].id;
+            _this11.getSerialNumber(_this11.create.branch_id);
           }
         }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
-          title: "".concat(_this9.$t("general.Error")),
-          text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this11.$t("general.Error")),
+          text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
         });
       });
     },
     getSerialNumber: function getSerialNumber(e) {
-      var _this10 = this;
+      var _this12 = this;
       var date = this.create.date;
       var shortYear = new Date(date).getFullYear();
       var twoDigitYear = shortYear.toString().substr(-2);
@@ -590,7 +650,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return e == row.id;
       });
       var serial = branch.serials.find(function (row) {
-        return _this10.document_id == row.document_id;
+        return _this12.document_id == row.document_id;
       });
       this.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(this.document_id, "-").concat(serial.perfix);
       var document_id = this.create.related_document_id;
@@ -600,102 +660,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     getExternalSalesmen: function getExternalSalesmen() {
-      var _this11 = this;
+      var _this13 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/external-salesmen?company_id=".concat(this.company_id)).then(function (res) {
         var l = res.data.data;
-        _this11.externalSalesman = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this11.$t("general.Error")),
-          text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
-        });
-      })["finally"](function () {
-        _this11.isLoader = false;
-      });
-    },
-    getTenants: function getTenants() {
-      var _this12 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/tenants").then(function (res) {
-        _this12.isLoader = false;
-        var l = res.data.data;
-        l.unshift({
-          id: 0,
-          name: "اضف مسآجر",
-          name_e: "Add Tenant"
-        });
-        _this12.tenants = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this12.$t("general.Error")),
-          text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
-        });
-      });
-    },
-    getUnits: function getUnits() {
-      var _this13 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/units").then(function (res) {
-        _this13.isLoader = false;
-        var l = res.data.data;
-        l.unshift({
-          id: 0,
-          name: "اضافة وحده",
-          name_e: "Add unit"
-        });
-        _this13.units = l;
+        _this13.externalSalesman = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
           title: "".concat(_this13.$t("general.Error")),
           text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
         });
+      })["finally"](function () {
+        _this13.isLoader = false;
       });
     },
-    getServices: function getServices() {
+    getTenants: function getTenants() {
       var _this14 = this;
-      // make method that takes the unit_id that in creat.unit_service.unit_id
-      var unit_ids = this.unit_ids;
-      var params = unit_ids.map(function (unit_id) {
-        return "unit_id[]=".concat(unit_id);
-      }).join('&');
-      // use this as params in the api of the unit service table
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/unit-service?".concat(params)).then(function (res) {
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/tenants").then(function (res) {
         _this14.isLoader = false;
-        // take unique values from the data
-        var data = [];
-        unit_ids.forEach(function (item, index) {
-          data.push({
-            services: [],
-            totalAmount: 0
-          });
-          var totalAmount = 0;
-          res.data.data.forEach(function (ele) {
-            if (ele.unit.id == item) {
-              _this14.create.units[index].unit_services.push(ele.service.id);
-              totalAmount += ele.price;
-              data[index]['services'].push({
-                id: ele.service.id,
-                name: ele.service.name,
-                name_e: ele.service.name_e,
-                price: ele.price
-              });
-            }
-          });
-          data[index]['totalAmount'] = totalAmount;
+        var l = res.data.data;
+        l.unshift({
+          id: 0,
+          name: "اضف مسآجر",
+          name_e: "Add Tenant"
         });
-
-        // from the data I get fromm the api I make the service array to be that and make user choose form them,
-        _this14.services = data;
-        // make condition it be false at first and then when this method gets triggered show the modal for the user
-
-        _this14.showServiceModal = true;
-        console.log('Unit Services:', _this14.create.units);
+        _this14.tenants = l;
       })["catch"](function (err) {
-        console.log('error', err);
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
           title: "".concat(_this14.$t("general.Error")),
@@ -703,34 +695,98 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
-    // When the user selects services for a specific unit_id inside the modal
-    // Making sure it saved right
-    updateServicesForUnit: function updateServicesForUnit(unit, selectedServices, index) {
+    getUnits: function getUnits() {
       var _this15 = this;
-      var totalAmount = 0;
-      this.services[index]['services'].forEach(function (ele) {
-        if (_this15.create.units[index].unit_services.includes(ele.id)) totalAmount += ele.price;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/units").then(function (res) {
+        _this15.isLoader = false;
+        var l = res.data.data;
+        l.unshift({
+          id: 0,
+          name: "اضافة وحده",
+          name_e: "Add unit"
+        });
+        _this15.units = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+          icon: "error",
+          title: "".concat(_this15.$t("general.Error")),
+          text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+        });
       });
-      this.$set(this.services[index], 'totalAmount', totalAmount);
-      console.log('totaAmount', totalAmount);
-      var unitId = this.unit_ids.find(function (id) {
-        return id === unit;
-      });
-      if (unitId) {
-        this.selectServicesForUnit(selectedServices, unitId);
-      }
-      console.log("unitService after", this.create.units);
     },
-    selectServicesForUnit: function selectServicesForUnit(services, unit_id) {
-      var unitService = this.create.units.find(function (us) {
-        return us.unit_id === unit_id;
-      });
-      if (unitService) {
-        unitService.units = services;
+    getServices: function getServices() {
+      var _this16 = this;
+      var selectedUnitIds = this.unit_ids;
+      if (this.previousUnitIds.length && selectedUnitIds.length === this.previousUnitIds.length && selectedUnitIds.every(function (id, index) {
+        return id === _this16.previousUnitIds[index];
+      })) {
+        this.showServiceModal = true;
+      } else {
+        // Get the unit IDs that were removed and added
+        var removedUnits = this.previousUnitIds.filter(function (id) {
+          return !selectedUnitIds.includes(id);
+        });
+        var addedUnits = selectedUnitIds.filter(function (id) {
+          return !_this16.previousUnitIds.includes(id);
+        });
+        removedUnits.forEach(function (removedId) {
+          var removedUnit = _this16.services.find(function (service) {
+            return service.id === removedId;
+          });
+          if (removedUnit) {
+            var removedPrice = removedUnit.services.reduce(function (total, service) {
+              return total + service.price;
+            }, 0);
+            _this16.services = _this16.services.filter(function (serviceData) {
+              return serviceData.id !== removedId;
+            });
+            _this16.total_amount -= removedPrice; // Subtract removedPrice from total_amount
+          }
+        });
+
+        this.previousUnitIds = selectedUnitIds;
+        var params = selectedUnitIds.map(function (unit_id) {
+          return "unit_id[]=".concat(unit_id);
+        }).join('&');
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/unit-service?".concat(params)).then(function (res) {
+          _this16.isLoader = false;
+          addedUnits.forEach(function (item) {
+            var unitData = res.data.data.find(function (unit) {
+              return unit.id === item;
+            });
+            if (unitData) {
+              var unitServices = unitData.services.map(function (service) {
+                return {
+                  id: service.id,
+                  name: service.name,
+                  name_e: service.name_e,
+                  price: service.pivot.default_price
+                };
+              });
+              var totalAmount = unitServices.reduce(function (total, service) {
+                return total + service.price;
+              }, 0);
+              _this16.services.push({
+                id: item,
+                services: unitServices
+              });
+              _this16.total_amount += totalAmount; // Increment total_amount
+            }
+          });
+
+          _this16.showServiceModal = true;
+        })["catch"](function (err) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+            icon: "error",
+            title: "".concat(_this16.$t("general.Error")),
+            text: "".concat(_this16.$t("general.Thereisanerrorinthesystem"))
+          });
+        });
       }
     },
     getInstallPaymentTypes: function getInstallPaymentTypes() {
-      var _this16 = this;
+      var _this17 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/recievable-payable/rp_installment_payment_types").then(function (res) {
         var l = res.data.data;
@@ -739,22 +795,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           name: "اضف نوع دفع",
           name_e: "Add installment payment type"
         });
-        _this16.payment_types = l;
-      })["catch"](function (err) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
-          icon: "error",
-          title: "".concat(_this16.$t("general.Error")),
-          text: "".concat(_this16.$t("general.Thereisanerrorinthesystem"))
-        });
-      });
-    },
-    // why its unused,,, component called breakdown
-    getPaymentType: function getPaymentType() {
-      var _this17 = this;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/payment-methods").then(function (res) {
-        var l = res.data.data;
-        _this17.paymentMethods = l;
+        _this17.payment_types = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
@@ -763,83 +804,97 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
+    // why its unused,,, component called breakdown
+    getPaymentType: function getPaymentType() {
+      var _this18 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/payment-methods").then(function (res) {
+        var l = res.data.data;
+        _this18.paymentMethods = l;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
+          icon: "error",
+          title: "".concat(_this18.$t("general.Error")),
+          text: "".concat(_this18.$t("general.Thereisanerrorinthesystem"))
+        });
+      });
+    },
     /**
      *   show Modal (edit)
      */
     resetModalEdit: function resetModalEdit(id) {
-      var _this18 = this;
+      var _this19 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var reservation;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this18.showServiceModal = false;
-              _this18.tenant_data_edit = "";
-              _this18.tenant = "";
-              _this18.isLoader = true;
-              _this18.financial_years_validate = true;
+              _this19.showServiceModal = false;
+              _this19.tenant_data_edit = "";
+              _this19.tenant = "";
+              _this19.isLoader = true;
+              _this19.financial_years_validate = true;
               // if (this.checkDocumentNeedApprove()) {
               //   this.getStatus();
               // }
-              _this18.getBranches();
-              reservation = _this18.dataOfRow;
+              _this19.getBranches();
+              reservation = _this19.dataOfRow;
               if (reservation.breakSettlement === 1) {
-                _this18.showValue = false;
+                _this19.showValue = false;
               } else {
-                _this18.showValue = true;
+                _this19.showValue = true;
               }
-              console.log('breakSettlement', reservation.breakSettlement);
-              _this18.tenant_data_edit = reservation.tenant;
-              _this18.getTenants();
-              _this18.getUnits();
-              _this18.getExternalSalesmen();
-              _this18.getInstallPaymentTypes();
-              _this18.serial_number = reservation.prefix;
-              _this18.create.branch_id = reservation.branch_id;
-              _this18.create.date = reservation.date;
-              _this18.create.related_document_id = reservation.related_document_id;
-              _this18.create.document_module_type_id = _this18.document ? _this18.document.document_module_type_id : null;
+              _this19.tenant_data_edit = reservation.tenant;
+              _this19.getTenants();
+              _this19.getUnits();
+              _this19.getExternalSalesmen();
+              _this19.getInstallPaymentTypes();
+              _this19.serial_number = reservation.prefix;
+              _this19.create.branch_id = reservation.branch_id;
+              _this19.create.date = reservation.date;
+              _this19.create.related_document_id = reservation.related_document_id;
+              _this19.create.document_module_type_id = _this19.document ? _this19.document.document_module_type_id : null;
               if (reservation.related_document_id) {
-                _this18.handelRelatedDocument();
+                _this19.handelRelatedDocument();
               }
               if (reservation.document_number) {
-                _this18.relatedDocumentNumbers.push(reservation.document_number);
+                _this19.relatedDocumentNumbers.push(reservation.document_number);
               }
-              _this18.create.id = reservation.id;
-              _this18.create.tenant_id = reservation.tenant_id;
+              _this19.create.id = reservation.id;
+              _this19.create.tenant_id = reservation.tenant_id;
               // this.create.company_id = reservation.company_id;
-              _this18.create.employee_id = reservation.employee.id;
-              _this18.create.notice_period = reservation.notice_period;
-              _this18.create.insurance_amount = reservation.insurance_amount;
-              _this18.create.automatic_renews = reservation.automatic_renews;
-              _this18.create.external_salesmen_id = reservation.externalSalesmen.id;
-              _this18.create.commission = reservation.commission;
-              _this18.create.posted = reservation.posted;
-              _this18.create.receipt_print_detail = reservation.receipt_print_detail;
-              _this18.unit_ids = [];
-              _this18.create.units = [];
+              _this19.create.employee_id = reservation.employee.id;
+              _this19.create.notice_period = reservation.notice_period;
+              _this19.create.insurance_amount = reservation.insurance_amount;
+              _this19.create.automatic_renews = reservation.automatic_renews;
+              _this19.create.external_salesmen_id = reservation.externalSalesmen.id;
+              _this19.create.commission = reservation.commission;
+              _this19.create.posted = reservation.posted;
+              _this19.create.receipt_print_detail = reservation.receipt_print_detail;
+              _this19.unit_ids = [];
+              _this19.create.units = [];
               reservation.units.forEach(function (unit) {
-                _this18.unit_ids.push(unit.unit_id);
-                _this18.create.units.push({
+                _this19.unit_ids.push(unit.unit_id);
+                _this19.create.units.push({
                   unit_id: unit.id,
                   unit_services: unit.pivot.unit_services
                 });
               });
-              _this18.create.related_document_number = reservation.related_document_number;
-              _this18.create.related_document_prefix = reservation.related_document_prefix;
-              _this18.create.header_details = [];
+              _this19.create.related_document_number = reservation.related_document_number;
+              _this19.create.related_document_prefix = reservation.related_document_prefix;
+              _this19.create.header_details = [];
               reservation.contractHeaderDetail.forEach(function (e, index) {
-                _this18.create.header_details.push({
-                  from_date: _this18.formatDate(e.from_date),
+                _this19.create.header_details.push({
+                  from_date: _this19.formatDate(e.from_date),
                   rent_amount: e.rent_amount,
-                  to_date: _this18.formatDate(e.to_date),
+                  to_date: _this19.formatDate(e.to_date),
                   payment_type_id: e.payment_type_id,
                   print_day: e.print_day,
                   due_day: e.due_day
                 });
               });
-              _this18.isLoader = false;
-            case 39:
+              _this19.isLoader = false;
+            case 38:
             case "end":
               return _context3.stop();
           }
@@ -881,25 +936,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     },
     getDataRow: function getDataRow() {
-      var _this19 = this;
+      var _this20 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              _this19.isLoader = true;
+              _this20.isLoader = true;
               _context4.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/contract-headers/".concat(_this19.idEdit)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/real-estate/contract-headers/".concat(_this20.idEdit)).then(function (res) {
                 var l = res.data.data;
-                console.log('dataEddit', l);
-                _this19.dataOfRow = l;
+                _this20.dataOfRow = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
                   icon: "error",
-                  title: "".concat(_this19.$t("general.Error")),
-                  text: "".concat(_this19.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this20.$t("general.Error")),
+                  text: "".concat(_this20.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this19.isLoader = false;
+                _this20.isLoader = false;
               });
             case 3:
             case "end":
@@ -967,16 +1021,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     changeDateDocument: function changeDateDocument() {
-      var _this20 = this;
+      var _this21 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         var date, branch_id;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              date = _this20.create.date;
-              branch_id = _this20.create.branch_id;
+              date = _this21.create.date;
+              branch_id = _this21.create.branch_id;
               _context5.next = 4;
-              return _this20.checkFinancialYears(date, branch_id);
+              return _this21.checkFinancialYears(date, branch_id);
             case 4:
             case "end":
               return _context5.stop();
@@ -985,43 +1039,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     checkFinancialYears: function checkFinancialYears(date, branch_id) {
-      var _this21 = this;
+      var _this22 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              _this21.isLoader = true;
+              _this22.isLoader = true;
               _context6.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/document-headers/check-date?date=".concat(date)).then(function (res) {
                 var l = res.data;
                 if (!l) {
-                  _this21.financial_years_validate = false;
+                  _this22.financial_years_validate = false;
                   sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
                     icon: "error",
-                    title: "".concat(_this21.$t("general.Error")),
-                    text: "".concat(_this21.$t("general.The date is outside the permitted fiscal year"))
+                    title: "".concat(_this22.$t("general.Error")),
+                    text: "".concat(_this22.$t("general.The date is outside the permitted fiscal year"))
                   });
-                  _this21.serial_number = "";
+                  _this22.serial_number = "";
                 } else {
-                  _this21.financial_years_validate = true;
+                  _this22.financial_years_validate = true;
                   var shortYear = new Date(date).getFullYear();
                   var twoDigitYear = shortYear.toString().substr(-2);
-                  var branch = _this21.branches.find(function (row) {
+                  var branch = _this22.branches.find(function (row) {
                     return branch_id == row.id;
                   });
                   var serial = branch.serials.find(function (row) {
-                    return _this21.document_id == row.document_id;
+                    return _this22.document_id == row.document_id;
                   });
-                  _this21.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(_this21.document_id, "-").concat(serial.perfix);
+                  _this22.serial_number = "".concat(twoDigitYear, "-").concat(branch.id, "-").concat(_this22.document_id, "-").concat(serial.perfix);
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
                   icon: "error",
-                  title: "".concat(_this21.$t("general.Error")),
-                  text: "".concat(_this21.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this22.$t("general.Error")),
+                  text: "".concat(_this22.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this21.isLoader = false;
+                _this22.isLoader = false;
               });
             case 3:
             case "end":
@@ -1031,17 +1085,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     handelRelatedDocument: function handelRelatedDocument() {
-      var _this22 = this;
+      var _this23 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
         var related_document_id, document_id, branch_id;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
-              related_document_id = _this22.create.related_document_id;
-              document_id = _this22.document_id;
-              branch_id = _this22.create.branch_id;
+              related_document_id = _this23.create.related_document_id;
+              document_id = _this23.document_id;
+              branch_id = _this23.create.branch_id;
               _context7.next = 5;
-              return _this22.getRelatedDocument(related_document_id, branch_id, document_id);
+              return _this23.getRelatedDocument(related_document_id, branch_id, document_id);
             case 5:
             case "end":
               return _context7.stop();
@@ -1051,22 +1105,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     // here the route does not work
     getRelatedDocument: function getRelatedDocument(related_document_id, branch_id, document_id) {
-      var _this23 = this;
+      var _this24 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_6__["default"].get("/contract-headers/check-related-document?related_document_id=".concat(related_document_id, "&document_id=").concat(document_id, "&branch_id=").concat(branch_id)).then(function (res) {
         var l = res.data.data;
-        _this23.relatedDocumentNumbers = l;
-        if (_this23.dataOfRow) {
-          _this23.relatedDocumentNumbers.push(_this23.dataOfRow.document_number);
+        _this24.relatedDocumentNumbers = l;
+        if (_this24.dataOfRow) {
+          _this24.relatedDocumentNumbers.push(_this24.dataOfRow.document_number);
         }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_7___default().fire({
           icon: "error",
-          title: "".concat(_this23.$t("general.Error")),
-          text: "".concat(_this23.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this24.$t("general.Error")),
+          text: "".concat(_this24.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this23.isLoader = false;
+        _this24.isLoader = false;
       });
     },
     RelatedDocumentData: function RelatedDocumentData() {
@@ -1077,7 +1131,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     //  here I will adjust it and then comment for future
     displayDataCreate: function displayDataCreate(related_document_number) {
-      var _this24 = this;
+      var _this25 = this;
       this.isLoader = true;
       var relatedDocument = this.relatedDocumentNumbers.find(function (el) {
         return el.id == related_document_number;
@@ -1107,23 +1161,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.create.unrelaized_revenue = relatedDocument.unrelaized_revenue;
       relatedDocument.header_details.forEach(function (e, index) {
         if (e.unit_id) {
-          _this24.rooms.push({
+          _this25.rooms.push({
             rooms: [e.unit]
           });
         } else {
-          _this24.rooms.push({
+          _this25.rooms.push({
             rooms: []
           });
         }
-        _this24.create.header_details.push({
+        _this25.create.header_details.push({
           unit_id: e.unit_id,
           //for rooms
           item_id: e.item_id,
           //for service
-          date_from: _this24.formatDate(e.date_from),
+          date_from: _this25.formatDate(e.date_from),
           rent_days: e.rent_days,
-          date_to: _this24.formatDate(e.date_to),
-          check_in_time: _this24.currentTime(),
+          date_to: _this25.formatDate(e.date_to),
+          check_in_time: _this25.currentTime(),
           unit_type: e.unit_type,
           quantity: e.quantity,
           price_per_uint: e.price_per_uint,
@@ -2657,13 +2711,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -4168,9 +4221,6 @@ var render = function render() {
       }),
       "show-labels": false
     },
-    on: {
-      input: _vm.test
-    },
     model: {
       value: _vm.unit_ids,
       callback: function callback($$v) {
@@ -4201,7 +4251,13 @@ var render = function render() {
     }
   }, [_vm._v("Add Services")])], 1)]) : _vm._e(), _vm._v(" "), _c("b-modal", {
     attrs: {
-      title: "Select Service"
+      title: "Select Service",
+      "dialog-class": "modal-xl",
+      "title-class": "font-18",
+      "body-class": "p-4"
+    },
+    on: {
+      ok: _vm.saveServices
     },
     model: {
       value: _vm.showServiceModal,
@@ -4210,67 +4266,48 @@ var render = function render() {
       },
       expression: "showServiceModal"
     }
-  }, _vm._l(_vm.unit_ids, function (unit, index) {
-    var _vm$units$find, _vm$services$index, _vm$$v$create$units, _vm$$v$create$units$i, _vm$$v$create$units$i2, _vm$services$index2;
+  }, _vm._l(_vm.unit_ids, function (unitId, index) {
+    var _vm$services$unitId, _vm$units$find, _vm$services$unitId2;
     return _c("div", {
-      key: index,
-      staticClass: "row mb-3"
-    }, [_c("div", {
-      staticClass: "col-md-3"
-    }, [_c("label", {
-      staticClass: "control-label"
-    }, [_vm._v("Unit Name")]), _vm._v(" "), _c("div", {
-      staticClass: "pt-2"
-    }, [_vm._v("\n                                    " + _vm._s(((_vm$units$find = _vm.units.find(function (u) {
-      return u.id === unit;
-    })) === null || _vm$units$find === void 0 ? void 0 : _vm$units$find.name_e) || "") + "\n                                ")])]), _vm._v("\n                            :\n                            "), Object.keys((_vm$services$index = _vm.services[index]) !== null && _vm$services$index !== void 0 ? _vm$services$index : []).length ? _c("div", {
-      staticClass: "col-md-5"
-    }, [_c("div", {
-      staticClass: "form-group"
-    }, [_c("label", {
-      staticClass: "control-label"
-    }, [_vm._v(_vm._s(_vm.$t("general.services")) + " "), _c("span", {
-      staticClass: "text-danger"
-    }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
-      "class": {
-        "is-invalid": ((_vm$$v$create$units = _vm.$v.create.units) === null || _vm$$v$create$units === void 0 ? void 0 : (_vm$$v$create$units$i = _vm$$v$create$units[index]) === null || _vm$$v$create$units$i === void 0 ? void 0 : (_vm$$v$create$units$i2 = _vm$$v$create$units$i.unit_services) === null || _vm$$v$create$units$i2 === void 0 ? void 0 : _vm$$v$create$units$i2.$error) || _vm.errors.units
-      },
+      key: "unit_".concat(index)
+    }, [unitId && ((_vm$services$unitId = _vm.services[unitId]) === null || _vm$services$unitId === void 0 ? void 0 : _vm$services$unitId.services.length) > 0 ? _c("b-card", {
       attrs: {
-        "custom-label": function customLabel(opt) {
-          return _vm.services[index]["services"].find(function (x) {
-            return x.id === opt;
-          }) ? _vm.$i18n.locale === "ar" ? _vm.services[index]["services"].find(function (x) {
-            return x.id === opt;
-          }).name : _vm.services[index]["services"].find(function (x) {
-            return x.id === opt;
-          }).name_e : "";
-        },
-        internalSearch: false,
-        multiple: true,
-        options: _vm.services[index]["services"].map(function (type) {
-          return type.id;
-        }),
-        "show-labels": false
-      },
-      on: {
-        input: function input($event) {
-          return _vm.updateServicesForUnit(unit, $event, index);
-        }
-      },
-      model: {
-        value: _vm.create.units[index].unit_services,
-        callback: function callback($$v) {
-          _vm.$set(_vm.create.units[index], "unit_services", $$v);
-        },
-        expression: "create.units[index].unit_services"
+        title: "Unit Name: ".concat(((_vm$units$find = _vm.units.find(function (u) {
+          return u.id === unitId;
+        })) === null || _vm$units$find === void 0 ? void 0 : _vm$units$find.name_e) || "")
       }
-    })], 1)]) : _vm._e(), _vm._v(" "), Object.keys((_vm$services$index2 = _vm.services[index]) !== null && _vm$services$index2 !== void 0 ? _vm$services$index2 : []).length ? _c("div", {
-      staticClass: "col-md-3"
-    }, [_c("label", {
-      staticClass: "control-label"
-    }, [_vm._v("Price")]), _vm._v(" "), _c("div", {
-      staticClass: "pt-2"
-    }, [_vm._v("\n                                    " + _vm._s(_vm.services[index]["totalAmount"]) + "\n                                ")])]) : _vm._e()]);
+    }, [_c("div", {
+      staticClass: "table-container"
+    }, [_c("table", {
+      staticClass: "table"
+    }, [_c("thead", [_c("tr", [_c("th", [_vm._v(_vm._s(_vm.$t("general.services")))]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]), _vm._v(" "), _c("tbody", {
+      staticStyle: {
+        "max-height": "200px",
+        "overflow-y": "auto"
+      }
+    }, _vm._l(_vm.services[unitId].services, function (service, serviceIndex) {
+      return _c("tr", {
+        key: "service_".concat(serviceIndex)
+      }, [_c("td", [_vm._v(_vm._s(_vm.$i18n.locale === "ar" ? service.name : service.name_e))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(service.price))]), _vm._v(" "), _c("td", [_c("b-button", {
+        staticClass: "custom-btn-dowonload",
+        on: {
+          click: function click($event) {
+            return _vm.deleteService(unitId, serviceIndex);
+          }
+        }
+      }, [_c("i", {
+        staticClass: "fas fa-trash-alt"
+      })])], 1)]);
+    }), 0)])]), _vm._v(" "), _c("div", {
+      staticStyle: {
+        "font-weight": "bold"
+      }
+    }, [_vm._v("\n                                    Total Price for Unit: " + _vm._s(_vm.calculateUnitTotal((_vm$services$unitId2 = _vm.services[unitId]) === null || _vm$services$unitId2 === void 0 ? void 0 : _vm$services$unitId2.services)) + "\n                                ")])]) : _vm._e(), _vm._v(" "), _c("div", {
+      staticClass: "pt-2",
+      staticStyle: {
+        "font-weight": "bold"
+      }
+    }, [_vm._v("\n                                Total Amount: " + _vm._s(_vm.total_amount) + "\n                            ")])], 1);
   }), 0), _vm._v(" "), _c("div", {
     staticClass: "col-md-12 p-0 m-0"
   }, [_c("div", {
@@ -7504,7 +7541,7 @@ var render = function render() {
     staticClass: "fas fa-trash-alt"
   })]) : _vm._e()])], 1) : _vm._e(), _vm._v(" "), _vm.sidePaginate ? _c("div", {
     "class": "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-".concat(_vm.isPaginate ? "end" : "center")
-  }, [_c("div", {
+  }, [_vm._t("default"), _vm._v(" "), _c("div", {
     staticClass: "d-fex"
   }, [_c("div", {
     staticClass: "d-inline-block"
@@ -7611,7 +7648,7 @@ var render = function render() {
         _vm.$emit("perviousOrNext", parseInt(_vm.objPagination.current_page) + 1);
       }
     }
-  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])]) : _vm._e()]);
+  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])], 2) : _vm._e()]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -7679,19 +7716,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -7703,6 +7734,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -7710,23 +7742,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -8776,6 +8809,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.current_page = l.pagination.current_page;
         _this.idEdit = null;
       })["catch"](function (err) {
+        console.log(err);
         _this.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this.isLoader = false;
@@ -8964,6 +8998,7 @@ __webpack_require__.r(__webpack_exports__);
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/".concat(table_name)).then(function (res) {
         _this.fields = res.data;
       })["catch"](function (err) {
+        console.log(err);
         errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
@@ -9070,7 +9105,7 @@ __webpack_require__.r(__webpack_exports__);
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
-          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].new_en;
+          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }
@@ -9325,7 +9360,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.custom-panel-quotation[data-v-232a0871] {\r\n    background-color: #81afca !important;\r\n    color: lemonchiffon;\r\n    font-size: 16px;\r\n    border: none;\n}\n.page-content[data-v-232a0871] {\r\n    width: 100%;\n}\n.total[data-v-232a0871] {\r\n    color: #343a40 !important;\r\n    font-weight: bold;\n}\n.text-secondary-d1[data-v-232a0871] {\r\n    color: #728299 !important;\n}\n.page-header[data-v-232a0871] {\r\n    margin: 0 0 1rem;\r\n    padding-bottom: 1rem;\r\n    padding-top: 0.5rem;\r\n    border-bottom: 1px dotted #e2e2e2;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: center;\n}\n.page-title[data-v-232a0871] {\r\n    padding: 0;\r\n    margin: 0;\r\n    font-size: 1.75rem;\r\n    font-weight: 300;\n}\n.brc-default-l1[data-v-232a0871] {\r\n    border-color: #dce9f0 !important;\n}\n.ml-n1[data-v-232a0871],\r\n.mx-n1[data-v-232a0871] {\r\n    margin-left: -0.25rem !important;\n}\n.mr-n1[data-v-232a0871],\r\n.mx-n1[data-v-232a0871] {\r\n    margin-right: -0.25rem !important;\n}\n.mb-4[data-v-232a0871],\r\n.my-4[data-v-232a0871] {\r\n    margin-bottom: 1.5rem !important;\n}\nhr[data-v-232a0871] {\r\n    margin-top: 1rem;\r\n    margin-bottom: 1rem;\r\n    border: 0;\r\n    border-top: 1px solid rgba(0, 0, 0, 0.1);\n}\n.text-grey-m2[data-v-232a0871] {\r\n    color: #888a8d !important;\n}\n.text-success-m2[data-v-232a0871] {\r\n    color: #86bd68 !important;\n}\n.font-bolder[data-v-232a0871],\r\n.text-600[data-v-232a0871] {\r\n    font-weight: 600 !important;\n}\n.text-110[data-v-232a0871] {\r\n    font-size: 110% !important;\n}\n.text-blue[data-v-232a0871] {\r\n    color: #478fcc !important;\n}\n.pb-25[data-v-232a0871],\r\n.py-25[data-v-232a0871] {\r\n    padding-bottom: 0.75rem !important;\n}\n.pt-25[data-v-232a0871],\r\n.py-25[data-v-232a0871] {\r\n    padding-top: 0.75rem !important;\n}\n.bgc-default-tp1[data-v-232a0871] {\r\n    background-color: rgba(121, 169, 197, 0.92) !important;\n}\n.bgc-default-l4[data-v-232a0871],\r\n.bgc-h-default-l4[data-v-232a0871]:hover {\r\n    background-color: #f3f8fa !important;\n}\n.page-header .page-tools[data-v-232a0871] {\r\n    align-self: flex-end;\n}\n.btn-light[data-v-232a0871] {\r\n    color: #757984;\r\n    background-color: #f5f6f9;\r\n    border-color: #dddfe4;\n}\n.w-2[data-v-232a0871] {\r\n    width: 1rem;\n}\n.text-120[data-v-232a0871] {\r\n    font-size: 120% !important;\n}\n.text-primary-m1[data-v-232a0871] {\r\n    color: #4087d4 !important;\n}\n.text-danger-m1[data-v-232a0871] {\r\n    color: #dd4949 !important;\n}\n.text-blue-m2[data-v-232a0871] {\r\n    color: #68a3d5 !important;\n}\n.text-150[data-v-232a0871] {\r\n    font-size: 150% !important;\n}\n.text-60[data-v-232a0871] {\r\n    font-size: 60% !important;\n}\n.text-grey-m1[data-v-232a0871] {\r\n    color: #7b7d81 !important;\n}\n.align-bottom[data-v-232a0871] {\r\n    vertical-align: bottom !important;\n}\n.face[data-v-232a0871] {\r\n    display: inline-block;\r\n    text-align: center;\r\n    margin: 0 5px;\n}\n.face .face-name[data-v-232a0871] {\r\n    background-color: #6dc6f5;\r\n    padding: 0px 8px;\r\n    font-size: 16px;\r\n    font-weight: 700;\r\n    color: #fff;\r\n    margin-bottom: 7px;\r\n    display: block;\n}\n.row-danger[data-v-232a0871] {\r\n    background-color: #f6a9a9 !important;\n}\r\n\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.custom-panel-quotation[data-v-232a0871] {\r\n    background-color: #81afca !important;\r\n    color: lemonchiffon;\r\n    font-size: 16px;\r\n    border: none;\n}\n.page-content[data-v-232a0871] {\r\n    width: 100%;\n}\n.total[data-v-232a0871] {\r\n    color: #343a40 !important;\r\n    font-weight: bold;\n}\n.text-secondary-d1[data-v-232a0871] {\r\n    color: #728299 !important;\n}\n.page-header[data-v-232a0871] {\r\n    margin: 0 0 1rem;\r\n    padding-bottom: 1rem;\r\n    padding-top: 0.5rem;\r\n    border-bottom: 1px dotted #e2e2e2;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: center;\n}\n.page-title[data-v-232a0871] {\r\n    padding: 0;\r\n    margin: 0;\r\n    font-size: 1.75rem;\r\n    font-weight: 300;\n}\n.brc-default-l1[data-v-232a0871] {\r\n    border-color: #dce9f0 !important;\n}\n.ml-n1[data-v-232a0871],\r\n.mx-n1[data-v-232a0871] {\r\n    margin-left: -0.25rem !important;\n}\n.mr-n1[data-v-232a0871],\r\n.mx-n1[data-v-232a0871] {\r\n    margin-right: -0.25rem !important;\n}\n.mb-4[data-v-232a0871],\r\n.my-4[data-v-232a0871] {\r\n    margin-bottom: 1.5rem !important;\n}\nhr[data-v-232a0871] {\r\n    margin-top: 1rem;\r\n    margin-bottom: 1rem;\r\n    border: 0;\r\n    border-top: 1px solid rgba(0, 0, 0, 0.1);\n}\n.text-grey-m2[data-v-232a0871] {\r\n    color: #888a8d !important;\n}\n.text-success-m2[data-v-232a0871] {\r\n    color: #86bd68 !important;\n}\n.font-bolder[data-v-232a0871],\r\n.text-600[data-v-232a0871] {\r\n    font-weight: 600 !important;\n}\n.text-110[data-v-232a0871] {\r\n    font-size: 110% !important;\n}\n.text-blue[data-v-232a0871] {\r\n    color: #478fcc !important;\n}\n.pb-25[data-v-232a0871],\r\n.py-25[data-v-232a0871] {\r\n    padding-bottom: 0.75rem !important;\n}\n.pt-25[data-v-232a0871],\r\n.py-25[data-v-232a0871] {\r\n    padding-top: 0.75rem !important;\n}\n.bgc-default-tp1[data-v-232a0871] {\r\n    background-color: rgba(121, 169, 197, 0.92) !important;\n}\n.bgc-default-l4[data-v-232a0871],\r\n.bgc-h-default-l4[data-v-232a0871]:hover {\r\n    background-color: #f3f8fa !important;\n}\n.page-header .page-tools[data-v-232a0871] {\r\n    align-self: flex-end;\n}\n.btn-light[data-v-232a0871] {\r\n    color: #757984;\r\n    background-color: #f5f6f9;\r\n    border-color: #dddfe4;\n}\n.w-2[data-v-232a0871] {\r\n    width: 1rem;\n}\n.text-120[data-v-232a0871] {\r\n    font-size: 120% !important;\n}\n.text-primary-m1[data-v-232a0871] {\r\n    color: #4087d4 !important;\n}\n.text-danger-m1[data-v-232a0871] {\r\n    color: #dd4949 !important;\n}\n.text-blue-m2[data-v-232a0871] {\r\n    color: #68a3d5 !important;\n}\n.text-150[data-v-232a0871] {\r\n    font-size: 150% !important;\n}\n.text-60[data-v-232a0871] {\r\n    font-size: 60% !important;\n}\n.text-grey-m1[data-v-232a0871] {\r\n    color: #7b7d81 !important;\n}\n.align-bottom[data-v-232a0871] {\r\n    vertical-align: bottom !important;\n}\n.face[data-v-232a0871] {\r\n    display: inline-block;\r\n    text-align: center;\r\n    margin: 0 5px;\n}\n.face .face-name[data-v-232a0871] {\r\n    background-color: #6dc6f5;\r\n    padding: 0px 8px;\r\n    font-size: 16px;\r\n    font-weight: 700;\r\n    color: #fff;\r\n    margin-bottom: 7px;\r\n    display: block;\n}\n.row-danger[data-v-232a0871] {\r\n    background-color: #f6a9a9 !important;\n}\n.table-container[data-v-232a0871] {\r\n    max-height: 300px; /* Set a maximum height */\r\n    overflow-y: auto; /* Enable vertical scrolling */\n}\r\n\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

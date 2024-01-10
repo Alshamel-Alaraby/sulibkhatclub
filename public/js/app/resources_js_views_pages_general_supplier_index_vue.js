@@ -2408,13 +2408,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       fields: [],
+      locations: [],
       per_page: 50,
       isLoader: false,
       create: {
         name: "",
         name_e: "",
-        supervisors: [],
-        attentions: []
+        locations: [{
+          location_id: null,
+          supervisors: [],
+          attentions: [],
+          engineers: []
+        }]
       },
       company_id: null,
       createTask: {
@@ -2454,15 +2459,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.minLength)(3),
         maxLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.maxLength)(100)
       },
-      attentions: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.requiredIf)(function (model) {
-          return this.isRequired("attentions");
-        })
-      },
-      supervisors: {
-        required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.requiredIf)(function (model) {
-          return this.isRequired("supervisors");
-        })
+      locations: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required,
+        $each: {
+          location_id: {
+            required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.required
+          },
+          attentions: {
+            required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.requiredIf)(function (model) {
+              return this.isRequired("attentions");
+            })
+          },
+          engineers: {
+            required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.requiredIf)(function (model) {
+              return this.isRequired("engineers");
+            })
+          },
+          supervisors: {
+            required: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_9__.requiredIf)(function (model) {
+              return this.isRequired("supervisors");
+            })
+          }
+        }
       }
     },
     createTask: {
@@ -2525,6 +2543,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.company_id = this.$store.getters["auth/company_id"];
   },
   methods: {
+    removeNewField: function removeNewField(index) {
+      if (this.create.locations.length > 1) {
+        this.create.locations.splice(index, 1);
+      }
+    },
+    addNewField: function addNewField() {
+      this.create.locations.push({
+        location_id: null,
+        supervisors: [],
+        attentions: [],
+        engineers: []
+      });
+    },
     getCustomTableFields: function getCustomTableFields() {
       var _this = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -2577,8 +2608,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.create = {
         name: "",
         name_e: "",
-        supervisors: [],
-        attentions: []
+        locations: [{
+          location_id: null,
+          supervisors: [],
+          attentions: [],
+          engineers: []
+        }]
       };
       this.createTask = {
         name: "",
@@ -2629,7 +2664,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
               if (!(_this3.type != "edit")) {
-                _context2.next = 7;
+                _context2.next = 8;
                 break;
               }
               if (_this3.isPage) {
@@ -2639,22 +2674,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context2.next = 4;
               return _this3.getCustomTableFields();
             case 4:
-              if (_this3.isVisible("supervisors") || _this3.isVisible("attentions")) _this3.getEmployees();
-              _context2.next = 8;
+              if (_this3.isVisible("supervisors") || _this3.isVisible("attentions") || _this3.isVisible("engineers")) _this3.getEmployees();
+              _this3.getLocations();
+              _context2.next = 9;
               break;
-            case 7:
+            case 8:
               if (_this3.idObjEdit.dataObj) {
                 module = _this3.idObjEdit.dataObj;
                 _this3.errors = {};
                 _this3.department_id = module.id;
                 _this3.create.name = module.name;
                 _this3.create.name_e = module.name_e;
-                if (_this3.isVisible("supervisors") || _this3.isVisible("attentions")) _this3.getEmployees();
-                _this3.create.attentions = module.attentions;
-                _this3.create.supervisors = module.supervisors;
+                _this3.create.locations = [];
+                module.locations.forEach(function (e, index) {
+                  _this3.create.locations.push({
+                    location_id: e.location_id,
+                    supervisors: e.supervisors,
+                    attentions: e.attentions,
+                    engineers: e.engineers
+                  });
+                });
+                _this3.getLocations();
+                if (_this3.isVisible("supervisors") || _this3.isVisible("attentions") || _this3.isVisible("engineers")) _this3.getEmployees();
                 _this3.getDataTask();
               }
-            case 8:
+            case 9:
             case "end":
               return _context2.stop();
           }
@@ -2904,11 +2948,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       }
     },
-    getEmployees: function getEmployees() {
+    getLocations: function getLocations() {
       var _this9 = this;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/employees/get-drop-down").then(function (res) {
-        var l = res.data.data;
-        _this9.employees = l;
+      var not_parent = 1;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/locations/get-drop-down?not_parent=1").then(function (res) {
+        _this9.locations = res.data.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
           icon: "error",
@@ -2917,21 +2961,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     },
-    getDataTask: function getDataTask() {
+    getEmployees: function getEmployees() {
       var _this10 = this;
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      this.isLoader = true;
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/department-tasks?page=".concat(page, "&per_page=").concat(this.per_page, "&department_id=").concat(this.department_id)).then(function (res) {
-        var l = res.data;
-        _this10.tasks = l.data;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/employees/get-drop-down").then(function (res) {
+        var l = res.data.data;
+        _this10.employees = l;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
           icon: "error",
           title: "".concat(_this10.$t("general.Error")),
           text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
         });
+      });
+    },
+    getDataTask: function getDataTask() {
+      var _this11 = this;
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/department-tasks?page=".concat(page, "&per_page=").concat(this.per_page, "&department_id=").concat(this.department_id)).then(function (res) {
+        var l = res.data;
+        _this11.tasks = l.data;
+      })["catch"](function (err) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
+          icon: "error",
+          title: "".concat(_this11.$t("general.Error")),
+          text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
+        });
       })["finally"](function () {
-        _this10.isLoader = false;
+        _this11.isLoader = false;
       });
     }
   }
@@ -7343,13 +7400,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     pusherNotification: function pusherNotification() {
+      var _this4 = this;
       if (localStorage.getItem("user")) {
-        // Echo.private('App.Models.User.'+JSON.parse(localStorage.getItem("user")).id)
-        //     .notification((notification) => {
-        //         this.notifications.unshift(notification);
-        //         this.count += 1;
-        //         console.log(notification);
-        //     });
+        Echo["private"]("App.Models.User." + JSON.parse(localStorage.getItem("user")).id).notification(function (notification) {
+          _this4.notifications.unshift(notification);
+          _this4.count += 1;
+        });
       }
     }
   },
@@ -10652,7 +10708,7 @@ var render = function render() {
       title: _vm.type != "edit" ? _vm.getCompanyKey("department_create_form") : _vm.getCompanyKey("department_edit_form"),
       "title-class": "font-18",
       "body-class": "p-4",
-      size: "lg",
+      size: "xll",
       "hide-footer": true
     },
     on: {
@@ -10678,7 +10734,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n        ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -10690,7 +10746,7 @@ var render = function render() {
         return _vm.AddSubmit.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n          ")]) : _c("b-button", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -10713,7 +10769,7 @@ var render = function render() {
         return _vm.resetModalHidden.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 2), _vm._v(" "), _c("b-tabs", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("b-tabs", {
     attrs: {
       "nav-class": "nav-tabs nav-bordered"
     }
@@ -10723,14 +10779,14 @@ var render = function render() {
       active: ""
     }
   }, [_c("div", {
-    staticClass: "row justify-content-center"
+    staticClass: "row position-relative"
   }, [_vm.isVisible("name") ? _c("div", {
-    staticClass: "col-md-6"
+    staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n                  " + _vm._s(_vm.getCompanyKey("department_name_ar")) + "\n                  "), _vm.isRequired("name") ? _c("span", {
+    staticClass: "my-1 mr-2"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("department_name_ar")) + "\n                                    "), _vm.isRequired("name") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -10765,19 +10821,19 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                  " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                  " + _vm._s(_vm.$t("general.letters")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                                    " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                                    " + _vm._s(_vm.$t("general.letters")) + "\n                                ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                  " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                  " + _vm._s(_vm.$t("general.letters")) + "\n                ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                                    " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                                    " + _vm._s(_vm.$t("general.letters")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                  ")]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
   }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("name_e") ? _c("div", {
-    staticClass: "col-md-6"
+    staticClass: "col-md-4"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
-    staticClass: "control-label"
-  }, [_vm._v("\n                  " + _vm._s(_vm.getCompanyKey("department_name_en")) + "\n                  "), _vm.isRequired("name_e") ? _c("span", {
+    staticClass: "my-1 mr-2"
+  }, [_vm._v("\n                                    " + _vm._s(_vm.getCompanyKey("department_name_en")) + "\n                                    "), _vm.isRequired("name_e") ? _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("div", {
     attrs: {
@@ -10812,83 +10868,185 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name_e.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                  " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                  " + _vm._s(_vm.$t("general.letters")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                                    " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                                    " + _vm._s(_vm.$t("general.letters")) + "\n                                ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                  " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                  " + _vm._s(_vm.$t("general.letters")) + "\n                ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                                    " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                                    " + _vm._s(_vm.$t("general.letters")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                  ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("supervisors") ? _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", [_vm._v("\n                  " + _vm._s(_vm.getCompanyKey("department_task_supervisors")) + "\n                  "), _vm.isRequired("supervisors") ? _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
-    attrs: {
-      multiple: true,
-      options: _vm.employees.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.employees.find(function (x) {
-          return x.id == opt;
-        }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.employees.find(function (x) {
-          return x.id == opt;
-        }).name_e : null;
+    }, [_vm._v(_vm._s(errorMessage) + "\n                                    ")]);
+  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("locations") ? _c("button", {
+    staticClass: "btn col-2 btn-sm btn-primary h-50 mt-4",
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.addNewField.apply(null, arguments);
       }
-    },
-    model: {
-      value: _vm.$v.create.supervisors.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.supervisors, "$model", $$v);
-      },
-      expression: "$v.create.supervisors.$model"
     }
-  }), _vm._v(" "), !_vm.$v.create.supervisors.required ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                ")]) : _vm._e(), _vm._v(" "), _vm.errors.supervisors ? _vm._l(_vm.errors.supervisors, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                  ")]);
-  }) : _vm._e()], 2)]) : _vm._e(), _vm._v(" "), _vm.isVisible("attentions") ? _c("div", {
-    staticClass: "col-md-6"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", [_vm._v("\n                  " + _vm._s(_vm.getCompanyKey("department_attentions")) + "\n                  "), _vm.isRequired("attentions") ? _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
-    attrs: {
-      multiple: true,
-      options: _vm.employees.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.employees.find(function (x) {
-          return x.id == opt;
-        }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.employees.find(function (x) {
-          return x.id == opt;
-        }).name_e : null;
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Add")) + " "), _c("i", {
+    staticClass: "fa fa-plus"
+  })]) : _vm._e()]), _vm._v(" "), _vm.isVisible("locations") ? _vm._l(_vm.create.locations, function (item, index) {
+    return _c("div", {
+      key: index,
+      staticClass: "row"
+    }, [_c("div", {
+      staticClass: "col-md-3 position-relative"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "my-1 mr-2"
+    }, [_vm._v(_vm._s(_vm.getCompanyKey("locations")) + " Locations")]), _vm._v(" "), _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")]), _vm._v(" "), _c("multiselect", {
+      "class": {
+        "is-invalid": _vm.$v.create.locations.$each[index].location_id.$error || _vm.errors["location.".concat(index, ".location_id")]
+      },
+      attrs: {
+        options: _vm.locations.map(function (type) {
+          return type.id;
+        }),
+        "custom-label": function customLabel(opt) {
+          return _vm.locations.find(function (x) {
+            return x.id == opt;
+          }) ? _vm.$i18n.locale == "ar" ? _vm.locations.find(function (x) {
+            return x.id == opt;
+          }).name : _vm.locations.find(function (x) {
+            return x.id == opt;
+          }).name_e : "";
+        }
+      },
+      model: {
+        value: _vm.$v.create.locations.$each[index].location_id.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.create.locations.$each[index].location_id, "$model", $$v);
+        },
+        expression: "$v.create.locations.$each[index].location_id.$model"
       }
-    },
-    model: {
-      value: _vm.$v.create.attentions.$model,
-      callback: function callback($$v) {
-        _vm.$set(_vm.$v.create.attentions, "$model", $$v);
+    }), _vm._v(" "), _vm.errors && _vm.errors["locations.".concat(index, ".location_id")] ? _vm._l(_vm.errors["locations.".concat(index, ".location_id")], function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "my-1 mr-2"
+    }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("department_task_supervisors")) + "\n                                        "), _vm.isRequired("locations") ? _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
+      attrs: {
+        multiple: true,
+        options: _vm.employees.map(function (type) {
+          return type.id;
+        }),
+        "custom-label": function customLabel(opt) {
+          return _vm.employees.find(function (x) {
+            return x.id == opt;
+          }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name : _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name_e : null;
+        }
       },
-      expression: "$v.create.attentions.$model"
-    }
-  }), _vm._v(" "), !_vm.$v.create.attentions.required ? _c("div", {
-    staticClass: "invalid-feedback"
-  }, [_vm._v("\n                  " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                ")]) : _vm._e(), _vm._v(" "), _vm.errors.supervisors ? _vm._l(_vm.errors.supervisors, function (errorMessage, index) {
-    return _c("ErrorMessage", {
-      key: index
-    }, [_vm._v(_vm._s(errorMessage) + "\n                  ")]);
-  }) : _vm._e()], 2)]) : _vm._e()])]), _vm._v(" "), _c("b-tab", {
+      model: {
+        value: _vm.$v.create.locations.$each[index].supervisors.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.create.locations.$each[index].supervisors, "$model", $$v);
+        },
+        expression: "$v.create.locations.$each[index].supervisors.$model"
+      }
+    }), _vm._v(" "), _vm.errors && _vm.errors["locations.".concat(index, ".supervisors")] ? _vm._l(_vm.errors["locations.".concat(index, ".supervisors")], function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-3"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "my-1 mr-2"
+    }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("department_attentions")) + "\n                                        "), _vm.isRequired("locations") ? _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
+      attrs: {
+        multiple: true,
+        options: _vm.employees.map(function (type) {
+          return type.id;
+        }),
+        "custom-label": function customLabel(opt) {
+          return _vm.employees.find(function (x) {
+            return x.id == opt;
+          }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name : _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name_e : null;
+        }
+      },
+      model: {
+        value: _vm.$v.create.locations.$each[index].attentions.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.create.locations.$each[index].attentions, "$model", $$v);
+        },
+        expression: "$v.create.locations.$each[index].attentions.$model"
+      }
+    }), _vm._v(" "), _vm.errors && _vm.errors["locations.".concat(index, ".attentions")] ? _vm._l(_vm.errors["locations.".concat(index, ".attentions")], function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-2"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "my-1 mr-2"
+    }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("department_engineers")) + "\n                                        "), _vm.isRequired("locations") ? _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")]) : _vm._e()]), _vm._v(" "), _c("multiselect", {
+      attrs: {
+        multiple: true,
+        options: _vm.employees.map(function (type) {
+          return type.id;
+        }),
+        "custom-label": function customLabel(opt) {
+          return _vm.employees.find(function (x) {
+            return x.id == opt;
+          }) ? _vm.$i18n.locale == "ar" ? _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name : _vm.employees.find(function (x) {
+            return x.id == opt;
+          }).name_e : null;
+        }
+      },
+      model: {
+        value: _vm.$v.create.locations.$each[index].engineers.$model,
+        callback: function callback($$v) {
+          _vm.$set(_vm.$v.create.locations.$each[index].engineers, "$model", $$v);
+        },
+        expression: "$v.create.locations.$each[index].engineers.$model"
+      }
+    }), _vm._v(" "), _vm.errors && _vm.errors["locations.".concat(index, ".engineers")] ? _vm._l(_vm.errors["locations.".concat(index, ".engineers")], function (errorMessage, index) {
+      return _c("ErrorMessage", {
+        key: index
+      }, [_vm._v(_vm._s(errorMessage) + "\n                                        ")]);
+    }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-1 pt-3"
+    }, [_vm.create.locations.length > 1 ? _c("button", {
+      staticClass: "btn btn-sm btn-danger p-2",
+      attrs: {
+        type: "button"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.removeNewField(index);
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fas fa-trash-alt"
+    })]) : _vm._e()])]);
+  }) : _vm._e()], 2), _vm._v(" "), _c("b-tab", {
     attrs: {
       disabled: !_vm.department_id,
       title: _vm.$t("general.tasks")
@@ -10897,7 +11055,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mt-1"
   }, [_c("h4", {
     staticClass: "col-6 header-title"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.tasks")) + "\n            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.tasks")) + "\n                        ")]), _vm._v(" "), _c("div", {
     staticClass: "col-2 header-title"
   }, [_c("b-button", {
     staticClass: "btn-sm mx-1 font-weight-bold",
@@ -10911,7 +11069,7 @@ var render = function render() {
         return _vm.changeDepartmentTask(true);
       }
     }
-  }, [_vm._v("\n                " + _vm._s(_vm.$t("general.Create")) + "\n                "), _c("i", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Create")) + "\n                                "), _c("i", {
     staticClass: "fas fa-plus"
   })])], 1)]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive mb-3 custom-table-theme position-relative"
@@ -10927,7 +11085,7 @@ var render = function render() {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("department_task_name_en")))])])]), _vm._v(" "), _c("th", {
     staticClass: "do-not-print"
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Action")) + "\n                  ")])])]), _vm._v(" "), _vm.tasks.length > 0 ? _c("tbody", _vm._l(_vm.tasks, function (data2, index) {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Action")) + "\n                                ")])])]), _vm._v(" "), _vm.tasks.length > 0 ? _c("tbody", _vm._l(_vm.tasks, function (data2, index) {
     return _c("tr", {
       key: data2.id,
       staticClass: "body-tr-custom",
@@ -10939,9 +11097,9 @@ var render = function render() {
       }
     }, [_c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                      " + _vm._s(data2.name) + "\n                    ")])]), _vm._v(" "), _c("td", [_c("h5", {
+    }, [_vm._v("\n                                        " + _vm._s(data2.name) + "\n                                    ")])]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                      " + _vm._s(data2.name_e) + "\n                    ")])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n                                        " + _vm._s(data2.name_e) + "\n                                    ")])]), _vm._v(" "), _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
@@ -10952,7 +11110,7 @@ var render = function render() {
         "data-toggle": "dropdown",
         "aria-expanded": "false"
       }
-    }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.commands")) + "\n                        "), _c("i", {
+    }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.commands")) + "\n                                            "), _c("i", {
       staticClass: "fas fa-angle-down"
     })]), _vm._v(" "), _c("div", {
       staticClass: "dropdown-menu dropdown-menu-custom"
@@ -10991,7 +11149,7 @@ var render = function render() {
     attrs: {
       colspan: "11"
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                  ")])])])])], 1)])], 1)], 1)]), _vm._v(" "), _c("b-modal", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                ")])])])])], 1)])], 1)], 1)]), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "create-task-department",
       title: _vm.typeTask ? _vm.getCompanyKey("department_task_create_form") : _vm.getCompanyKey("department_task_edit_form"),
@@ -11019,7 +11177,7 @@ var render = function render() {
         return _vm.resetFormTask.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n        ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabledTask ? [!_vm.isLoader ? _c("b-button", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabledTask ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -11031,7 +11189,7 @@ var render = function render() {
         return _vm.AddSubmitTask.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n            " + _vm._s(_vm.typeTask ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n          ")]) : _c("b-button", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.typeTask ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -11054,7 +11212,7 @@ var render = function render() {
         return _vm.resetModalHiddenTask.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n          " + _vm._s(_vm.$t("general.Cancel")) + "\n        ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6"
@@ -11062,7 +11220,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("department_task_name_ar")) + "\n              "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("department_task_name_ar")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
     attrs: {
@@ -11098,19 +11256,19 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.createTask.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n              " + _vm._s(_vm.$v.createTask.name.$params.minLength.min) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.createTask.name.maxLength ? _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.createTask.name.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.createTask.name.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n              " + _vm._s(_vm.$v.createTask.name.$params.maxLength.max) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.createTask.name.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("department_task_name_en")) + "\n              "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("department_task_name_en")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("div", {
     attrs: {
@@ -11146,12 +11304,12 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.createTask.name_e.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n              " + _vm._s(_vm.$v.createTask.name_e.$params.minLength.min) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.createTask.name_e.maxLength ? _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.createTask.name_e.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.createTask.name_e.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n              " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n              " + _vm._s(_vm.$v.createTask.name_e.$params.maxLength.max) + "\n              " + _vm._s(_vm.$t("general.letters")) + "\n            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.createTask.name_e.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -11160,7 +11318,7 @@ var render = function render() {
     staticClass: "col-6"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n                " + _vm._s(_vm.getCompanyKey("department_estimated_day")) + "\n                "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("department_estimated_day")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("input", {
     directives: [{
@@ -11186,7 +11344,7 @@ var render = function render() {
     staticClass: "col-6"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n                " + _vm._s(_vm.getCompanyKey("department_estimated_time")) + "\n                "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("department_estimated_time")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
     attrs: {
@@ -11210,7 +11368,7 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("department_task_description_ar")) + "\n              "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("department_task_description_ar")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("textarea", {
     directives: [{
@@ -11238,14 +11396,14 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.description ? _vm._l(_vm.errors.description, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "mr-2"
-  }, [_vm._v("\n              " + _vm._s(_vm.getCompanyKey("department_task_description_en")) + "\n              "), _c("span", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("department_task_description_en")) + "\n                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("textarea", {
     directives: [{
@@ -11273,7 +11431,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.errors.description_e ? _vm._l(_vm.errors.description_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v(_vm._s(errorMessage))]);
+    }, [_vm._v(_vm._s(errorMessage) + "\n                            ")]);
   }) : _vm._e()], 2)])])])])], 1);
 };
 var staticRenderFns = [];
@@ -17692,7 +17850,7 @@ var render = function render() {
     staticClass: "fas fa-trash-alt"
   })]) : _vm._e()])], 1) : _vm._e(), _vm._v(" "), _vm.sidePaginate ? _c("div", {
     "class": "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-".concat(_vm.isPaginate ? "end" : "center")
-  }, [_c("div", {
+  }, [_vm._t("default"), _vm._v(" "), _c("div", {
     staticClass: "d-fex"
   }, [_c("div", {
     staticClass: "d-inline-block"
@@ -17799,7 +17957,7 @@ var render = function render() {
         _vm.$emit("perviousOrNext", parseInt(_vm.objPagination.current_page) + 1);
       }
     }
-  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])]) : _vm._e()]);
+  }, [_c("span", [_vm._v(">")])])])]) : _vm._e()])], 2) : _vm._e()]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -17867,19 +18025,13 @@ var render = function render() {
   }), _vm._v(" "), _vm.count ? _c("span", {
     staticClass: "badge badge-danger rounded-circle noti-icon-badge"
   }, [_vm._v(_vm._s(_vm.count))]) : _vm._e()]), _vm._v(" "), _c("a", {
-    staticClass: "dropdown-item noti-title",
-    attrs: {
-      href: "#"
-    }
+    staticClass: "dropdown-item noti-title"
   }, [_c("h5", {
     staticClass: "m-0"
   }, [_c("span", {
     staticClass: "float-right"
   }, [_c("a", {
     staticClass: "text-dark",
-    attrs: {
-      href: ""
-    },
     on: {
       click: function click($event) {
         $event.preventDefault();
@@ -17891,6 +18043,7 @@ var render = function render() {
       "max-height": "230px"
     }
   }, [_vm._l(_vm.notifications, function (notification, index) {
+    var _notification$data$me;
     return [_c("router-link", {
       key: index,
       staticClass: "dropdown-item notify-item",
@@ -17898,23 +18051,24 @@ var render = function render() {
         to: {
           name: notification.data.name,
           params: {
-            id: notification.data.id
+            id: notification.data.id,
+            notification_data: notification.data.data
           }
         }
-      }
-    }, [_c("div", {
+      },
       on: {
         click: function click($event) {
+          $event.preventDefault();
           return _vm.clearItem(notification.id, index);
         }
       }
-    }, [_c("div", {
+    }, [_c("div", [_c("div", {
       staticClass: "notify-icon bg-soft-primary text-primary"
     }, [_c("i", {
       staticClass: "mdi mdi-comment-account-outline"
     })]), _vm._v(" "), _c("p", {
       staticClass: "notify-details"
-    }, [_vm._v("\n                        " + _vm._s(notification.data.message) + "\n                        "), _c("small", {
+    }, [_vm._v("\n                        " + _vm._s(_vm.$i18n.locale == "ar" ? notification.data.message : (_notification$data$me = notification.data.message_en) !== null && _notification$data$me !== void 0 ? _notification$data$me : notification.data.message) + "\n                        "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(notification.data.timeDate) + "\n                        ")])])])])];
   })], 2), _vm._v(" "), _c("router-link", {
@@ -19092,6 +19246,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.current_page = l.pagination.current_page;
         _this.idEdit = null;
       })["catch"](function (err) {
+        console.log(err);
         _this.errorFun('Error', 'Thereisanerrorinthesystem');
       })["finally"](function () {
         _this.isLoader = false;
@@ -19280,6 +19435,7 @@ __webpack_require__.r(__webpack_exports__);
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/".concat(table_name)).then(function (res) {
         _this.fields = res.data;
       })["catch"](function (err) {
+        console.log(err);
         errorFun('Error', 'Thereisanerrorinthesystem');
       });
     },
@@ -19386,7 +19542,7 @@ __webpack_require__.r(__webpack_exports__);
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
-          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].new_en;
+          returnedKey = this.$i18n.locale == "ar" ? this.companyKeysFun[_key].new_ar ? this.companyKeysFun[_key].new_ar : this.companyKeysFun[_key].default_ar : this.companyKeysFun[_key].new_en ? this.companyKeysFun[_key].new_en : this.companyKeysFun[_key].default_en;
           return returnedKey;
         }
       }
@@ -19785,7 +19941,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\r\n  position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nform[data-v-5ec6e7b6] {\r\n    position: relative;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
