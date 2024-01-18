@@ -11,14 +11,14 @@ export default {
 
             let words = '';
 
-            // Handling hundreds place
+            // For hundreds place
             if (number >= 100) {
                 const hundredsDigit = Math.floor(number / 100);
                 words += hundreds[hundredsDigit] + ' ';
                 number %= 100;
             }
 
-            // Handling tens and units place
+            // For tens and units place
             if (number >= 10 && number < 20) {
                 words += units[number % 10] + ' عشرة ';
             } else if (number >= 20) {
@@ -48,29 +48,31 @@ export default {
 
             let words = '';
 
-            // Handling hundreds place for the decimal part
-            if (decimal >= 100) {
-                const hundredsDigit = Math.floor(decimal / 100);
-                words += hundreds[hundredsDigit] + ' ';
-                decimal %= 100;
-            }
+            // fractional part
+            const decimalAsString = decimal.toString();
+            const [_, decimalPart] = decimalAsString.split('.');
 
-            // Handling tens and units place for the decimal part
-            if (decimal >= 10) {
-                if (decimal < 20) {
-                    words += units[decimal % 10] + ' عشرة ';
-                } else {
-                    const tensDigit = Math.floor(decimal / 10);
-                    words += tens[tensDigit] + ' ';
-                    decimal %= 10;
+            if (decimalPart) {
+                let fractionalPart = parseInt(decimalPart);
+
+                // units and tens for the decimal part
+                if (fractionalPart >= 100) {
+                    const hundredsDigit = Math.floor(fractionalPart / 100);
+                    words += ' و ' + hundreds[hundredsDigit];
+                    fractionalPart %= 100;
+                }
+
+                if (fractionalPart >= 10) {
+                    const tensDigit = Math.floor(fractionalPart / 10);
+                    words += ' و ' + tens[tensDigit];
+                    fractionalPart %= 10;
+                }
+
+                if (fractionalPart > 0) {
+                    words += ' و ' + units[fractionalPart];
                 }
             }
-
-            // Handling units place for the decimal part
-            if (decimal > 0 && decimal < 10) {
-                words += units[decimal] + ' ';
-            }
-
+            console.log("word", words.trim())
             return words.trim();
         },
 
@@ -83,10 +85,10 @@ export default {
             let result = integerWords;
 
             if (decimalWords) {
-                // Combining the integer and decimal words with appropriate separators
+
                 result += ' و ' + decimalWords + ' فلس';
             }
-
+            console.log("decimalWords", decimalWords)
             return result;
         },
     },

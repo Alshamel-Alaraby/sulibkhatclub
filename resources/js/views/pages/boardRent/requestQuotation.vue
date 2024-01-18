@@ -19,7 +19,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
-      return permissionGuard(vm, "Request Quotation BoardRent", "all Store");
+      return permissionGuard(vm, "Request Quotation BoardRent", "all Request Quotation BoardRent");
     });
 
 

@@ -2483,7 +2483,7 @@ __webpack_require__.r(__webpack_exports__);
   mixins: [_helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_8__["default"], _helper_mixin_customTable__WEBPACK_IMPORTED_MODULE_9__["default"], _helper_mixin_success_error__WEBPACK_IMPORTED_MODULE_10__["default"], _helper_mixin_crudHelper__WEBPACK_IMPORTED_MODULE_11__["default"]],
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_3__["default"])(vm, "Board rend looksup", "all Sell method");
+      return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_3__["default"])(vm, "Board rend looksup", "all Lookup Board rend");
     });
   },
   components: {
@@ -6286,7 +6286,7 @@ var render = function render() {
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
       return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(item.trans_value ? _vm.$t("general." + data[item.isV]) : data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -6687,9 +6687,9 @@ var render = function render() {
       isCreate: true,
       isEdit: true,
       isDelete: true,
-      permissionCreate: _vm.isPermission("create Lookup"),
-      permissionUpdate: _vm.isPermission("update Lookup"),
-      permissionDelete: _vm.isPermission("delete Lookup"),
+      permissionCreate: _vm.isPermission("create Lookup Board rend"),
+      permissionUpdate: _vm.isPermission("update Lookup Board rend"),
+      permissionDelete: _vm.isPermission("delete Lookup Board rend"),
       isExcl: true,
       isPrint: true,
       checkAll: _vm.checkAll,
@@ -6772,8 +6772,8 @@ var render = function render() {
       tables: _vm.tables,
       isEdit: true,
       isDelete: true,
-      permissionUpdate: _vm.isPermission("update Lookup"),
-      permissionDelete: _vm.isPermission("delete Lookup"),
+      permissionUpdate: _vm.isPermission("update Lookup Board rend"),
+      permissionDelete: _vm.isPermission("delete Lookup Board rend"),
       isVisible: _vm.isVisible,
       tableSetting: _vm.tableSetting,
       enabled3: _vm.enabled3,
@@ -7348,6 +7348,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -7361,6 +7362,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

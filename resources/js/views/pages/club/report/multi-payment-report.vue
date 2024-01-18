@@ -3,7 +3,7 @@ import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
@@ -35,16 +35,16 @@ export default {
         PrintRenewal
     },
     beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "multi payment report", "all multi payment report");
-    });
+        next((vm) => {
+            return permissionGuard(vm, "multi payment report", "all multi payment report");
+        });
 
     },
     data() {
         return {
             per_page: 50,
             search: '',
-            dataInv:"",
+            dataInv: "",
             debounce: {},
             installmentStatusPagination: {},
             installmentStatus: [],
@@ -65,7 +65,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 serial_number: true,
                 cm_member_id: true,
@@ -99,7 +99,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -147,7 +150,7 @@ export default {
                 let _filterSetting = [...this.filterSetting];
                 let index = this.filterSetting.indexOf("cm_member_id");
                 if (index > -1) {
-                    _filterSetting[index] ="member.full_name";
+                    _filterSetting[index] = "member.full_name";
                 }
                 index = this.filterSetting.indexOf("serial_id");
                 if (index > -1) {
@@ -159,7 +162,7 @@ export default {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -197,7 +200,7 @@ export default {
                     let _filterSetting = [...this.filterSetting];
                     let index = this.filterSetting.indexOf("cm_member_id");
                     if (index > -1) {
-                        _filterSetting[index] ="member.full_name";
+                        _filterSetting[index] = "member.full_name";
                     }
                     index = this.filterSetting.indexOf("serial_id");
                     if (index > -1) {
@@ -208,7 +211,7 @@ export default {
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
-                    adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id??''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -301,11 +304,10 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-        printInv(data){
+        printInv(data) {
             this.dataInv = data
         },
-        changeDate()
-        {
+        changeDate() {
             console.log(123)
             if (this.create.start_date) {
                 const parts = this.create.start_date.split('-');
@@ -412,11 +414,11 @@ export default {
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.filter') }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.group') }}
                                             <i class="fe-menu"></i>
                                         </b-button>
@@ -452,7 +454,15 @@ export default {
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size:13px;">
@@ -624,6 +634,7 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th v-if="setting.cm_member_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member") }}</span>
@@ -643,8 +654,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.serial_number") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString('prefix'))"></i>
-                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString('-prefix'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="transactions.sort(sortString('prefix'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="transactions.sort(sortString('-prefix'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -738,11 +751,11 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
-
+                                    <td>{{ index + 1 }}</td>
                                     <td v-if="setting.cm_member_id">
                                         <h5 class="m-0 font-weight-normal">
                                             {{
-                                                data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
+                                                data.member ? data.member.first_name + ' ' + data.member.second_name + ' ' + data.member.third_name + ' ' + data.member.last_name : ''
                                             }}
                                         </h5>
                                     </td>
@@ -759,14 +772,17 @@ export default {
                                     </td>
                                     <td v-if="setting.serial_id">
                                         <h5 class="m-0 font-weight-normal">
-                                            {{ data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---' }}
+                                            {{
+                                                data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---'
+                                            }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.amount">
                                         <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
                                     </td>
                                     <td v-if="setting.year">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year ? data.year : data.year_to}}</h5>
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.year ? data.year : data.year_to }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">
@@ -780,8 +796,10 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item"  v-print="'#printInv'" href="#" @click="printInv(data)" >
-                                                    <div class="d-flex justify-content-between align-items-center text-black">
+                                                <a class="dropdown-item" v-print="'#printInv'" href="#"
+                                                   @click="printInv(data)">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center text-black">
                                                         {{ $t("general.print") }}
                                                         <i class="fe-printer"></i>
                                                     </div>
@@ -820,11 +838,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

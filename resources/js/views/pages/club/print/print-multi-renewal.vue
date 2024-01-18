@@ -36,7 +36,7 @@ export default {
                 <img src="/images/sulib.png" alt="Watermark Image" class="watermark">
                 <div class="image-header px-0">
                     <img src="/images/sulib.png"/>
-                    <h1 class="text-center">
+                    <h1 class="text-center mt-4">
                         <b>{{ $t('general.SulaibikhatClub') }}</b> <br>
                         <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
                             <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">
@@ -50,7 +50,7 @@ export default {
                     </h1>
                     <div class="doc_box text-center pl-0 ml-0"><b
                         style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b> <br>
-                        {{ data.document_no }} | {{ data.serial_number }}
+                        {{ data.serial.perfix}}-{{ data.serial_number }}
                     </div>
 
                 </div>
@@ -75,26 +75,34 @@ export default {
                     }}</b></h3>
 
                 <div style="display: flex;justify-content: space-around;margin: 30px 10px;">
-                    <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
+                <span style="display: inline-block; text-align: center;">
+                    <span style="margin-top: 7px; font-size: 27px; font-weight: bold; color:#000; display: block;">
                         <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
                                 $t('general.Accountant')
                             }}</b>
                     </span>
-                    <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
+                    <img src="/images/khatm1.png" style="width: 200px; height: auto; margin: 5px auto 0;">
+                </span>
+
+                    <span style="display: flex; align-items: center;">
+                    <img src="/images/sulibkhatKhat.png" style="width: 200px; height: auto; margin: 0 10px;">
+                </span>
+                    <span style="display: inline-block; text-align: center;">
+                    <span style="margin-top: 7px; font-size: 27px; font-weight: bold; color:#000; display: block;">
                         <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
                                 $t('general.Treasurer')
                             }}</b>
                     </span>
+                    <img src="/images/khatm2.png" style="width: 200px; height: auto; margin: 5px auto 0;">
+                </span>
                 </div>
 
-                <h4 style="margin-top: 120px;color: #000;font-weight: bold">*
-                    {{ $t('general.This is an electronic document approved without a signature') }}</h4>
             </div>
             <div class="box mt-5 pl-0 ml-0">
                 <img src="/images/sulib.png" alt="Watermark Image" class="watermark">
                 <div class="image-header ">
                     <img src="/images/sulib.png"/>
-                    <h1 class="text-center">
+                    <h1 class="text-center mt-4">
                         <b>{{ $t('general.SulaibikhatClub') }}</b> <br>
                         <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
                             <b v-if="data.serial" style="border-bottom:1px solid #717171;padding-bottom:1.5px;">
@@ -109,7 +117,7 @@ export default {
                     <div class="doc_box text-center pl-0 ml-0"><b
                         style="font-size: 15px;">{{ $t('general.DocumentNumber') }}</b>
                         <br>
-                        {{ data.document_no }} | {{ data.serial_number }}
+                        {{ data.serial.perfix}}-{{ data.serial_number }}
                     </div>
 
                 </div>
@@ -134,20 +142,29 @@ export default {
                     }}</b></h3>
 
                 <div style="display: flex;justify-content: space-around;margin: 30px 10px;">
-                    <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
+                <span style="display: inline-block; text-align: center;">
+                    <span style="margin-top: 7px; font-size: 27px; font-weight: bold; color:#000; display: block;">
                         <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
                                 $t('general.Accountant')
                             }}</b>
                     </span>
-                    <span style="margin-top: 7px;font-size: 27px;font-weight: bold;color:#000">
+                    <img src="/images/khatm1.png" style="width: 200px; height: auto; margin: 5px auto 0;">
+                </span>
+
+                    <span style="display: flex; align-items: center;">
+                    <img src="/images/sulibkhatKhat.png" style="width: 200px; height: auto; margin: 0 10px;">
+                </span>
+                    <span style="display: inline-block; text-align: center;">
+                    <span style="margin-top: 7px; font-size: 27px; font-weight: bold; color:#000; display: block;">
                         <b style="border-bottom:1px solid #717171;padding-bottom:1.5px;">{{
                                 $t('general.Treasurer')
                             }}</b>
                     </span>
+                    <img src="/images/khatm2.png" style="width: 200px; height: auto; margin: 5px auto 0;">
+                </span>
                 </div>
 
-                <h4 style="margin-top: 120px;color: #000;font-weight: bold">*
-                    {{ $t('general.This is an electronic document approved without a signature') }}</h4>
+
             </div>
         </div>
     </div>
@@ -181,7 +198,7 @@ export default {
     }
 
     h3 b {
-        background: #d7d7d7 !important;
+        font-width: bold;
         print-color-adjust: exact;
         padding: 4px 2px;
 
@@ -240,8 +257,9 @@ export default {
         background: #d7d7d7 !important;
         color: #000;
         padding: 10px;
-        width: 150px;
-        height: 70px;
+        font-weight: bold;
+        width: 180px;
+        height: 80px;
         print-color-adjust: exact;
     }
 

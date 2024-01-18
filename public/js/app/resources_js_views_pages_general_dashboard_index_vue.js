@@ -4187,6 +4187,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_statistic_task_management_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/statistic/task_management.vue */ "./resources/js/components/statistic/task_management.vue");
 /* harmony import */ var _components_statistic_defaultDashboard_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/statistic/defaultDashboard.vue */ "./resources/js/components/statistic/defaultDashboard.vue");
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../helper/permission */ "./resources/js/helper/permission.js");
+/* harmony import */ var _helper_mixin_customTable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../helper/mixin/customTable */ "./resources/js/helper/mixin/customTable.js");
+
 
 
 
@@ -4213,6 +4215,7 @@ __webpack_require__.r(__webpack_exports__);
       selectedParents: _helper_global_js__WEBPACK_IMPORTED_MODULE_0__.selectedParents.value
     };
   },
+  mixins: [_helper_mixin_customTable__WEBPACK_IMPORTED_MODULE_8__["default"]],
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
       return (0,_helper_permission__WEBPACK_IMPORTED_MODULE_7__["default"])(vm, "Dashboard", "Dashboard");
@@ -4224,7 +4227,6 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     selectedParentsComputed: {
       handler: function handler(newV, old) {
-        console.log(_helper_global_js__WEBPACK_IMPORTED_MODULE_0__.selectedParents.value);
         this.selectedParents = _helper_global_js__WEBPACK_IMPORTED_MODULE_0__.selectedParents.value;
       }
     }
@@ -8653,7 +8655,7 @@ var render = function render() {
     staticClass: "avatar-title bg-soft-danger rounded"
   }, [_c("i", {
     staticClass: "fas fa-times-circle font-28 text-danger"
-  })])])], 1)])])])], 1)])]), _vm._v(" "), _c("div", {
+  })])])], 1)])])])], 1)])]), _vm._v(" "), _vm.$store.state.auth.type == "admin" ? [_c("div", {
     staticClass: "col-xl-3 col-md-3"
   }, [_c("div", {
     staticClass: "card py-0 mb-0"
@@ -8675,7 +8677,7 @@ var render = function render() {
     attrs: {
       title: _vm.$t("general.Employees")
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Employees")))]), _vm._v(" "), _c("h3", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Employees")))]), _vm._v(" "), _c("h3", {
     staticClass: "my-2 py-1 d-flex flex-wrap justify-content-between"
   }, [_c("countTo", {
     "class": "pt-2",
@@ -8712,7 +8714,7 @@ var render = function render() {
     attrs: {
       title: _vm.$t("general.Departments")
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Departments")))]), _vm._v(" "), _c("h3", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Departments")))]), _vm._v(" "), _c("h3", {
     staticClass: "my-2 py-1 d-flex flex-wrap justify-content-between"
   }, [_c("countTo", {
     "class": "pt-2",
@@ -8749,7 +8751,7 @@ var render = function render() {
     attrs: {
       title: _vm.$t("general.Locations")
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Locations")))]), _vm._v(" "), _c("h3", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Locations")))]), _vm._v(" "), _c("h3", {
     staticClass: "my-2 py-1 d-flex flex-wrap justify-content-between"
   }, [_c("countTo", {
     "class": "pt-2",
@@ -8786,7 +8788,7 @@ var render = function render() {
     attrs: {
       title: _vm.$t("general.Equipments")
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Equipments")))]), _vm._v(" "), _c("h3", {
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.Equipments")))]), _vm._v(" "), _c("h3", {
     staticClass: "my-2 py-1 d-flex flex-wrap justify-content-between"
   }, [_c("countTo", {
     "class": "pt-2",
@@ -8801,9 +8803,9 @@ var render = function render() {
     staticClass: "avatar-title bg-soft-warning rounded"
   }, [_c("i", {
     staticClass: "fas fa-wrench font-28 text-warning"
-  })])])], 1)])])])], 1)])])]), _vm._v(" "), _c("div", {
+  })])])], 1)])])])], 1)])])] : _vm._e()], 2), _vm._v(" "), _c("div", {
     staticClass: "row mt-2"
-  }, [_c("div", {
+  }, [_vm.$store.state.auth.type == "admin" ? [_c("div", {
     staticClass: "col-xl-6"
   }, [_c("department_tasksVue", {
     attrs: {
@@ -8815,7 +8817,7 @@ var render = function render() {
     attrs: {
       locations_tasks: _vm.statices.locations_tasks
     }
-  })], 1), _vm._v(" "), _c("div", {
+  })], 1)] : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-xl-6"
   }, [_c("tasks_for_current_and_last_monthVue", {
     attrs: {
@@ -8828,7 +8830,7 @@ var render = function render() {
     attrs: {
       total_tasks_for_each_month_in_year: _vm.statices.total_tasks_for_each_month_in_year
     }
-  })], 1)])])], 1);
+  })], 1)], 2)])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -10387,7 +10389,7 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("Layout", [_vm.selectedParents && _vm.selectedParents[2] == "5" ? _c("tasksDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "4" ? _c("hmsDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "3" ? _c("clubDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "2" ? _c("bookingDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "1" ? _c("defaultDashboard") : _vm._e()], 1);
+  return _c("Layout", [_vm.isPermission("Dashboard") ? _c("div", [_vm.selectedParents && _vm.selectedParents[2] == "5" ? _c("tasksDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "4" ? _c("hmsDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "3" ? _c("clubDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "2" ? _c("bookingDashboard") : _vm._e(), _vm._v(" "), _vm.selectedParents && _vm.selectedParents[2] == "1" ? _c("defaultDashboard") : _vm._e()], 1) : _vm._e()]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -10412,6 +10414,124 @@ var page_title = vue__WEBPACK_IMPORTED_MODULE_0__["default"].observable({
   value: localStorage.getItem("page_title") ? JSON.parse(localStorage.getItem("page_title")) : []
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (page_title);
+
+/***/ }),
+
+/***/ "./resources/js/helper/mixin/customTable.js":
+/*!**************************************************!*\
+  !*** ./resources/js/helper/mixin/customTable.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../api/adminAxios */ "./resources/js/api/adminAxios.js");
+/* harmony import */ var _success_error_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./success&error.js */ "./resources/js/helper/mixin/success&error.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      fields: []
+    };
+  },
+  mixins: [_success_error_js__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  methods: {
+    getCustomTableFields: function getCustomTableFields(table_name) {
+      var _this = this;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_0__["default"].get("/customTable/table-columns/".concat(table_name)).then(function (res) {
+        _this.fields = res.data;
+      })["catch"](function (err) {
+        console.log(err);
+        errorFun('Error', 'Thereisanerrorinthesystem');
+      });
+    },
+    isVisible: function isVisible(fieldName) {
+      if (this.fields.length > 0) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_visible == 1 ? true : false;
+      }
+      return true;
+    },
+    isRequired: function isRequired(fieldName) {
+      if (this.fields.length > 0) {
+        var res = this.fields.filter(function (field) {
+          return field.column_name == fieldName;
+        });
+        return res.length > 0 && res[0].is_required == 1 ? true : false;
+      }
+      return true;
+    },
+    isPermission: function isPermission(item) {
+      if (this.$store.state.auth.type == "admin") {
+        return this.$store.state.auth.is_web == 1;
+      }
+      if (this.$store.state.auth.type == "user") {
+        return this.$store.state.auth.permissions.includes(item);
+      }
+      return true;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/helper/mixin/success&error.js":
+/*!****************************************************!*\
+  !*** ./resources/js/helper/mixin/success&error.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  methods: {
+    errorFun: function errorFun(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        text: "".concat(this.$t("general.".concat(text)))
+      });
+    },
+    errorFunChildren: function errorFunChildren(Error, text) {
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        icon: "error",
+        title: "".concat(this.$t("general.".concat(Error))),
+        html: "".concat(text)
+      });
+    },
+    successFun: function successFun(text) {
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      if (title) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: "success",
+          title: "".concat(this.$t("general.".concat(title))),
+          text: "".concat(this.$t("general.".concat(text))),
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+          icon: "success",
+          text: "".concat(this.$t("general.".concat(text))),
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    }
+  }
+});
 
 /***/ }),
 

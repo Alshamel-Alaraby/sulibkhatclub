@@ -18,7 +18,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      return permissionGuard(vm, "Invoice BoardRent", "all Store");
+      return permissionGuard(vm, "Invoice BoardRent", "all Invoice BoardRent");
     });
   },
   components: {

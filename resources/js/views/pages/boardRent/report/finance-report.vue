@@ -20,7 +20,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
-      return permissionGuard(vm, "Finance Report BoardRent", "all Store");
+      return permissionGuard(vm, "Finance Report BoardRent", "all Finance Report BoardRent");
     });
 
     },

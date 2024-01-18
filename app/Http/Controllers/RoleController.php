@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GeneralCustomTable;
+use App\Models\HotkeyRole;
+use App\Models\SpatieRole;
 use Illuminate\Http\Request;
 use App\Http\Requests\AllRequest;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\AllDropListResource;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\PermissionsResource;
@@ -44,9 +49,27 @@ class RoleController extends Controller
 
     public function create(RoleRequest $request)
     {
+        DB::beginTransaction();
         $model = $this->model->create($request->validated());
         $model->permissions()->sync($request->permissions);
+        foreach ($request->added_hotkeys as $table => $columns)
+        {
+            foreach ($columns as $column_name => $options)
+            {
+                $hotkey_role = new HotkeyRole([
+                    'column_name' => $column_name,
+                    'table' => $table,
+                    'can_edit'  =>  $options['can_edit'],
+                    'can_see'  =>  $options['can_see'],
+                    'can_plus'  =>  $options['can_plus'],
+                    'percentage'  =>  $options['percentage'],
+                    'role_id' => $model->id
+                ]);
+                $hotkey_role->save();
+            }
+        }
         $model->refresh();
+        DB::commit();
         return responseJson(200, 'created', new RoleResource($model));
     }
 
@@ -58,8 +81,30 @@ class RoleController extends Controller
         }
 
         $model->update($request->validated());
-        $model->permissions()->sync($request->permissions);
+        $model->permissions()->whereIn('id',$request->permissions_range)->detach();
+        $model->permissions()->attach($request->permissions);
 
+        /* delete role hotkeys */
+        $spatie_role = SpatieRole::query()->findOrFail($id);
+        $spatie_role->hotkeys()->delete();
+
+        /* add new role hotkeys */
+        foreach ($request->added_hotkeys as $table => $columns)
+        {
+            foreach ($columns as $column_name => $options)
+            {
+                $hotkey_role = new HotkeyRole([
+                    'column_name' => $column_name,
+                    'table' => $table,
+                    'can_edit'  =>  $options['can_edit'],
+                    'can_see'  =>  $options['can_see'],
+                    'can_plus'  =>  $options['can_plus'],
+                    'percentage'  =>  $options['percentage'],
+                    'role_id' => $model->id
+                ]);
+                $hotkey_role->save();
+            }
+        }
 
         $model->refresh();
 
@@ -83,24 +128,24 @@ class RoleController extends Controller
             return responseJson(404, __('message.data not found'));
         }
 
-        $relationsWithChildren = $model->hasChildren();
-
-        if (!empty($relationsWithChildren)) {
-            $errorMessages = [];
-            foreach ($relationsWithChildren as $relation) {
-                $relationName = $this->getRelationDisplayName($relation['relation']);
-                $childCount = $relation['count'];
-                $childIds = implode(', ', $relation['ids']);
-                $errorMessages[] = [
-                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
-                ];
-            }
-            return response()->json([
-                "message" => $errorMessages,
-                "data" => null,
-                "pagination" => null
-            ], 400);
-        }
+//        $relationsWithChildren = $model->hasChildren();
+//
+//        if (!empty($relationsWithChildren)) {
+//            $errorMessages = [];
+//            foreach ($relationsWithChildren as $relation) {
+//                $relationName = $this->getRelationDisplayName($relation['relation']);
+//                $childCount = $relation['count'];
+//                $childIds = implode(', ', $relation['ids']);
+//                $errorMessages[] = [
+//                    "message" => "This item has {$childCount} {$relationName} (Names: {$childIds}) and can't be deleted. Remove its {$relationName} first."
+//                ];
+//            }
+//            return response()->json([
+//                "message" => $errorMessages,
+//                "data" => null,
+//                "pagination" => null
+//            ], 400);
+//        }
 
         $model->delete();
         return responseJson(200, 'success');
@@ -181,5 +226,27 @@ class RoleController extends Controller
         }
 
         return responseJson(200, 'success', AllDropListResource::collection($models['data']), $models['paginate'] ? getPaginates($models['data']) : null);
+    }
+
+    public function getHotkeys(Request $request)
+    {
+        $request->validate([
+            'table' => 'required|string|exists:permissions,crud_name',
+            'company_id' => 'required|integer',
+        ]);
+        // get table name from permission table
+        $table_name = Permission::query()->where('crud_name', $request->table)->first()->table;
+        $columns = GeneralCustomTable::query()->where('table_name', $table_name)->where('company_id', $request->company_id)->first();
+        if(!null == $columns){
+            $columns = $columns->columns;
+            // first columns get only is_hotkey = 1
+            $columns = array_filter($columns, function ($column) {
+                return $column['is_hotkey'] == 1;
+            });
+            $columns = array_values($columns);
+        }
+        return responseJson(200, 'success', $columns??[]);
+
+
     }
 }

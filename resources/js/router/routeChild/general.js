@@ -444,6 +444,14 @@ export default [
         component: () => import('../../views/pages/general/insurance_companies/index.vue'),
     },
     {
+        path: '/dashboard/work-nature',
+        name: 'work_nature',
+        meta: {
+            middleware: [auth, checkAuth]
+        },
+        component: () => import('../../views/pages/general/work_nature/index.vue'),
+    },
+    {
         path: '/dashboard/account_statement',
         name: 'account_statement',
         meta: {

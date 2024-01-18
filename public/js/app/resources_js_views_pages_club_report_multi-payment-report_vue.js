@@ -1826,27 +1826,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      * watch per_page
      */
     per_page: function per_page(after, befour) {
-      this.getData();
+      var _this = this;
+      setTimeout(function () {
+        _this.getData();
+      }, 1500);
     },
     /**
      * watch search
      */
     search: function search(after, befour) {
-      var _this = this;
+      var _this2 = this;
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this.getData();
+        _this2.getData();
       }, 400);
     },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this3 = this;
       if (after) {
         this.installmentStatus.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this3.checkAll.includes(el.id)) {
+            _this3.checkAll.push(el.id);
           }
         });
       } else {
@@ -1859,7 +1862,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  start get Data module && pagination
      */
     getData: function getData() {
-      var _this3 = this;
+      var _this4 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1886,24 +1889,24 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         for (var i = 0; i < _filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
         }
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_ = this.create.sponsor_id) !== null && _this$create$sponsor_ !== void 0 ? _this$create$sponsor_ : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_ = this.create.sponsor_id) !== null && _this$create$sponsor_ !== void 0 ? _this$create$sponsor_ : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
           var l = res.data;
-          _this3.installmentStatus = l.data;
-          _this3.installmentStatusPagination = l.pagination;
-          _this3.current_page = l.pagination.current_page;
+          _this4.installmentStatus = l.data;
+          _this4.installmentStatusPagination = l.pagination;
+          _this4.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: 'error',
-            title: "".concat(_this3.$t('general.Error')),
-            text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
+            title: "".concat(_this4.$t('general.Error')),
+            text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
           });
         })["finally"](function () {
-          _this3.isLoader = false;
+          _this4.isLoader = false;
         });
       }
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this4 = this;
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1931,19 +1934,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           for (var i = 0; i < _filterSetting.length; ++i) {
             filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
           }
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_2 = this.create.sponsor_id) !== null && _this$create$sponsor_2 !== void 0 ? _this$create$sponsor_2 : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_2 = this.create.sponsor_id) !== null && _this$create$sponsor_2 !== void 0 ? _this$create$sponsor_2 : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
             var l = res.data;
-            _this4.installmentStatus = l.data;
-            _this4.installmentStatusPagination = l.pagination;
-            _this4.current_page = l.pagination.current_page;
+            _this5.installmentStatus = l.data;
+            _this5.installmentStatusPagination = l.pagination;
+            _this5.current_page = l.pagination.current_page;
           })["catch"](function (err) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: 'error',
-              title: "".concat(_this4.$t('general.Error')),
-              text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
+              title: "".concat(_this5.$t('general.Error')),
+              text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
             });
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         }
       }
@@ -1955,24 +1958,24 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  get Sponsors
      */
     getSponsors: function getSponsors() {
-      var _this5 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _this5.isLoader = true;
+              _this6.isLoader = true;
               _context.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/sponsers").then(function (res) {
                 var l = res.data.data;
-                _this5.sponsors = l;
+                _this6.sponsors = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this5.$t("general.Error")),
-                  text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this6.$t("general.Error")),
+                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this5.isLoader = false;
+                _this6.isLoader = false;
               });
             case 3:
             case "end":
@@ -1985,10 +1988,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this6 = this;
+      var _this7 = this;
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this6.$v.$reset();
+        _this7.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("create");
@@ -1997,19 +2000,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this7 = this;
+      var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _this7.getSponsors();
+              return _this8.getSponsors();
             case 2:
-              _this7.is_disabled = false;
-              _this7.$nextTick(function () {
-                _this7.$v.$reset();
+              _this8.is_disabled = false;
+              _this8.$nextTick(function () {
+                _this8.$v.$reset();
               });
-              _this7.errors = {};
+              _this8.errors = {};
             case 5:
             case "end":
               return _context2.stop();
@@ -2030,10 +2033,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this8 = this;
+      var _this9 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this8.$refs.exportable_table;
+        var elt = _this9.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2046,7 +2049,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } else {
           XLSX.writeFile(wb, fn || ('multi Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this8.enabled3 = true;
+        _this9.enabled3 = true;
       }, 100);
     },
     printInv: function printInv(data) {
@@ -5179,7 +5182,7 @@ var render = function render() {
       src: "/images/sulib.png"
     }
   }), _vm._v(" "), _c("h1", {
-    staticClass: "text-center"
+    staticClass: "text-center mt-4"
   }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
     staticStyle: {
       "margin-top": "7px",
@@ -5203,7 +5206,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.serial.perfix) + "-" + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5221,35 +5224,59 @@ var render = function render() {
     }
   }, [_c("span", {
     staticStyle: {
-      "margin-top": "7px",
-      "font-size": "27px",
-      "font-weight": "bold",
-      color: "#000"
+      display: "inline-block",
+      "text-align": "center"
     }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
+  }, [_c("span", {
     staticStyle: {
       "margin-top": "7px",
       "font-size": "27px",
       "font-weight": "bold",
-      color: "#000"
-    }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
-    staticStyle: {
-      "margin-top": "120px",
       color: "#000",
-      "font-weight": "bold"
+      display: "block"
     }
-  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])]), _vm._v(" "), _c("div", {
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm1.png"
+    }
+  })]), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("span", {
+    staticStyle: {
+      display: "inline-block",
+      "text-align": "center"
+    }
+  }, [_c("span", {
+    staticStyle: {
+      "margin-top": "7px",
+      "font-size": "27px",
+      "font-weight": "bold",
+      color: "#000",
+      display: "block"
+    }
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm2.png"
+    }
+  })])])]), _vm._v(" "), _c("div", {
     staticClass: "box mt-5 pl-0 ml-0"
   }, [_c("img", {
     staticClass: "watermark",
@@ -5264,7 +5291,7 @@ var render = function render() {
       src: "/images/sulib.png"
     }
   }), _vm._v(" "), _c("h1", {
-    staticClass: "text-center"
+    staticClass: "text-center mt-4"
   }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
     staticStyle: {
       "margin-top": "7px",
@@ -5288,7 +5315,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.serial.perfix) + "-" + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5306,37 +5333,97 @@ var render = function render() {
     }
   }, [_c("span", {
     staticStyle: {
-      "margin-top": "7px",
-      "font-size": "27px",
-      "font-weight": "bold",
-      color: "#000"
+      display: "inline-block",
+      "text-align": "center"
     }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
+  }, [_c("span", {
     staticStyle: {
       "margin-top": "7px",
       "font-size": "27px",
       "font-weight": "bold",
-      color: "#000"
-    }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
-    staticStyle: {
-      "margin-top": "120px",
       color: "#000",
-      "font-weight": "bold"
+      display: "block"
     }
-  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])])]);
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm1.png"
+    }
+  })]), _vm._v(" "), _vm._m(1), _vm._v(" "), _c("span", {
+    staticStyle: {
+      display: "inline-block",
+      "text-align": "center"
+    }
+  }, [_c("span", {
+    staticStyle: {
+      "margin-top": "7px",
+      "font-size": "27px",
+      "font-weight": "bold",
+      color: "#000",
+      display: "block"
+    }
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm2.png"
+    }
+  })])])])]);
 };
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticStyle: {
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "0 10px"
+    },
+    attrs: {
+      src: "/images/sulibkhatKhat.png"
+    }
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticStyle: {
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "0 10px"
+    },
+    attrs: {
+      src: "/images/sulibkhatKhat.png"
+    }
+  })]);
+}];
 render._withStripped = true;
 
 
@@ -5626,6 +5713,39 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v("Apply")])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.per_page,
+      expression: "per_page"
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "50px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.per_page
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.per_page = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
@@ -5846,7 +5966,7 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_vm.setting.cm_member_id ? _c("th", [_c("div", {
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _vm.setting.cm_member_id ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -5978,7 +6098,7 @@ var render = function render() {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_vm.setting.cm_member_id ? _c("td", [_c("h5", {
+    }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.cm_member_id ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v("\n                                        " + _vm._s(data.member ? data.member.first_name + " " + data.member.second_name + " " + data.member.third_name + " " + data.member.last_name : "") + "\n                                    ")])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -5992,7 +6112,7 @@ var render = function render() {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(data.amount))])]) : _vm._e(), _vm._v(" "), _vm.setting.year ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(data.year ? data.year : data.year_to))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
+    }, [_vm._v("\n                                        " + _vm._s(data.year ? data.year : data.year_to))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {
       staticClass: "btn-group"
@@ -6089,14 +6209,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
       var words = '';
 
-      // Handling hundreds place
+      // For hundreds place
       if (number >= 100) {
         var hundredsDigit = Math.floor(number / 100);
         words += hundreds[hundredsDigit] + ' ';
         number %= 100;
       }
 
-      // Handling tens and units place
+      // For tens and units place
       if (number >= 10 && number < 20) {
         words += units[number % 10] + ' عشرة ';
       } else if (number >= 20) {
@@ -6122,28 +6242,31 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
       var words = '';
 
-      // Handling hundreds place for the decimal part
-      if (decimal >= 100) {
-        var hundredsDigit = Math.floor(decimal / 100);
-        words += hundreds[hundredsDigit] + ' ';
-        decimal %= 100;
-      }
+      // fractional part
+      var decimalAsString = decimal.toString();
+      var _decimalAsString$spli = decimalAsString.split('.'),
+        _decimalAsString$spli2 = _slicedToArray(_decimalAsString$spli, 2),
+        _ = _decimalAsString$spli2[0],
+        decimalPart = _decimalAsString$spli2[1];
+      if (decimalPart) {
+        var fractionalPart = parseInt(decimalPart);
 
-      // Handling tens and units place for the decimal part
-      if (decimal >= 10) {
-        if (decimal < 20) {
-          words += units[decimal % 10] + ' عشرة ';
-        } else {
-          var tensDigit = Math.floor(decimal / 10);
-          words += tens[tensDigit] + ' ';
-          decimal %= 10;
+        // units and tens for the decimal part
+        if (fractionalPart >= 100) {
+          var hundredsDigit = Math.floor(fractionalPart / 100);
+          words += ' و ' + hundreds[hundredsDigit];
+          fractionalPart %= 100;
+        }
+        if (fractionalPart >= 10) {
+          var tensDigit = Math.floor(fractionalPart / 10);
+          words += ' و ' + tens[tensDigit];
+          fractionalPart %= 10;
+        }
+        if (fractionalPart > 0) {
+          words += ' و ' + units[fractionalPart];
         }
       }
-
-      // Handling units place for the decimal part
-      if (decimal > 0 && decimal < 10) {
-        words += units[decimal] + ' ';
-      }
+      console.log("word", words.trim());
       return words.trim();
     },
     convertToArabicWords: function convertToArabicWords(inputNumber) {
@@ -6155,9 +6278,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var decimalWords = decimalPart ? this.decimalToArabicWords(parseFloat("0.".concat(decimalPart)) * 100) : '';
       var result = integerWords;
       if (decimalWords) {
-        // Combining the integer and decimal words with appropriate separators
         result += ' و ' + decimalWords + ' فلس';
       }
+      console.log("decimalWords", decimalWords);
       return result;
     }
   }
@@ -6179,6 +6302,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -6192,6 +6316,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -6605,7 +6730,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\n    h2[data-v-7a9c1a47],\n    h3[data-v-7a9c1a47],\n    p[data-v-7a9c1a47] {\n        margin: 5px 0;\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\n        border: none;\n        border-top: 1px solid #ccc;\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\n        font-size: 25px;\n        color: #000;\n        padding: 4px 2px;\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\n        background: #d7d7d7 !important;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\n        height: 100%;\n        display: flex;\n        flex-direction: column;\n        justify-content: space-between;\n        margin: 0 auto;\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\n        width: 100%;\n        margin-bottom: 30px;\n        padding-left: 0px;\n        display: flex;\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 7px;\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\n        padding: 0px 40px 0px 20px;\n        margin: 70px 0;\n        height: 49%;\n        border: #6e6b6b solid 1px;\n        max-height: 720px;\n        position: relative;\n}\n.doc_box[data-v-7a9c1a47] {\n        border: #6e6b6b solid 1px;\n        background: #d7d7d7 !important;\n        color: #000;\n        padding: 10px;\n        width: 150px;\n        height: 70px;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n}\n.watermark[data-v-7a9c1a47] {\n        position: absolute;\n        opacity: 0.07;\n        pointer-events: none;\n        height: 100%;\n        width: 100%;\n}\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\r\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\r\n    h2[data-v-7a9c1a47],\r\n    h3[data-v-7a9c1a47],\r\n    p[data-v-7a9c1a47] {\r\n        margin: 5px 0;\r\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\r\n        border: none;\r\n        border-top: 1px solid #ccc;\r\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\r\n        font-size: 25px;\r\n        color: #000;\r\n        padding: 4px 2px;\r\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\r\n        font-weight: bold;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\r\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\r\n        height: 100%;\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: space-between;\r\n        margin: 0 auto;\r\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\r\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\r\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\r\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\r\n        width: 100%;\r\n        margin-bottom: 30px;\r\n        padding-left: 0px;\r\n        display: flex;\r\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 7px;\r\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\r\n        padding: 0px 40px 0px 30px;\r\n        margin: 0 0 25px 0;\r\n        height: 670px;\r\n        border: #6e6b6b solid 1px;\r\n        position: relative;\n}\n.doc_box[data-v-7a9c1a47] {\r\n        border: #6e6b6b solid 1px;\r\n        background: #d7d7d7 !important;\r\n        color: #000;\r\n        padding: 10px;\r\n        font-weight: bold;\r\n        width: 180px;\r\n        height: 80px;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\n}\n.watermark[data-v-7a9c1a47] {\r\n        position: absolute;\r\n        opacity: 0.07;\r\n        pointer-events: none;\r\n        height: 100%;\r\n        width: 100%;\n}\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -6629,7 +6754,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

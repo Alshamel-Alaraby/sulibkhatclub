@@ -24,7 +24,7 @@ export default {
       return permissionGuard(
         vm,
         "Annual Finance Report",
-        "all Store"
+        "all Annual Finance Report"
       );
     });
   },

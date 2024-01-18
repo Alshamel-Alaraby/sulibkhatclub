@@ -1850,7 +1850,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   return {
                     column_name: column,
                     is_required: 1,
-                    is_visible: 1
+                    is_visible: 1,
+                    is_hotkey: 0
                   };
                 });
               })["catch"](function (err) {
@@ -1873,7 +1874,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.create.columns.push({
         column_name: "",
         is_required: 1,
-        is_visible: 1
+        is_visible: 1,
+        is_hotkey: 1
       });
     },
     removeNewField: function removeNewField(index) {
@@ -5665,6 +5667,40 @@ var render = function render() {
         },
         expression: "create.columns[index].is_required"
       }
+    }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                          ")])], 1)], 1)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-4"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "mr-2"
+    }, [_vm._v("\n                          " + _vm._s(_vm.getCompanyKey("custom_is_hotkey")) + "\n                          "), _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
+      staticClass: "d-inline-block",
+      attrs: {
+        disabled: _vm.create.columns[index].is_hotkey == 0,
+        value: "1"
+      },
+      model: {
+        value: _vm.create.columns[index].is_required,
+        callback: function callback($$v) {
+          _vm.$set(_vm.create.columns[index], "is_required", $$v);
+        },
+        expression: "create.columns[index].is_required"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                          ")]), _vm._v(" "), _c("b-form-radio", {
+      staticClass: "d-inline-block m-1",
+      attrs: {
+        disabled: _vm.create.columns[index].is_hotkey == 0,
+        value: "0"
+      },
+      model: {
+        value: _vm.create.columns[index].is_hotkey,
+        callback: function callback($$v) {
+          _vm.$set(_vm.create.columns[index], "is_hotkey", $$v);
+        },
+        expression: "create.columns[index].is_hotkey"
+      }
     }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                          ")])], 1)], 1)])]) : _vm._e()];
   })], 2)]), _vm._v(" "), _c("b-modal", {
     attrs: {
@@ -5856,6 +5892,48 @@ var render = function render() {
           _vm.$set(_vm.edit.columns[index], "is_required", $$v);
         },
         expression: "edit.columns[index].is_required"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                                          ")])], 1)], 1)]), _vm._v(" "), _c("div", {
+      staticClass: "col-md-4"
+    }, [_c("div", {
+      staticClass: "form-group"
+    }, [_c("label", {
+      staticClass: "mr-2"
+    }, [_vm._v("\n                                          " + _vm._s(_vm.getCompanyKey("custom_is_hotkey")) + "\n                                          "), _c("span", {
+      staticClass: "text-danger"
+    }, [_vm._v("*")])]), _vm._v(" "), _c("b-form-group", [_c("b-form-radio", {
+      staticClass: "d-inline-block",
+      attrs: {
+        value: "1"
+      },
+      on: {
+        change: function change($event) {
+          _vm.edit.columns[index].is_hotkey == 0 ? _vm.edit.columns[index].is_required = 0 : null;
+        }
+      },
+      model: {
+        value: _vm.edit.columns[index].is_hotkey,
+        callback: function callback($$v) {
+          _vm.$set(_vm.edit.columns[index], "is_hotkey", $$v);
+        },
+        expression: "edit.columns[index].is_hotkey"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.Yes")) + "\n                                          ")]), _vm._v(" "), _c("b-form-radio", {
+      staticClass: "d-inline-block m-1",
+      attrs: {
+        value: "0"
+      },
+      on: {
+        change: function change($event) {
+          _vm.edit.columns[index].is_hotkey == 0 ? _vm.edit.columns[index].is_required = 0 : null;
+        }
+      },
+      model: {
+        value: _vm.edit.columns[index].is_hotkey,
+        callback: function callback($$v) {
+          _vm.$set(_vm.edit.columns[index], "is_hotkey", $$v);
+        },
+        expression: "edit.columns[index].is_hotkey"
       }
     }, [_vm._v(_vm._s(_vm.$t("general.No")) + "\n                                          ")])], 1)], 1)])]) : _vm._e()];
   })], 2)]), _vm._v(" "), _c("div", {
@@ -6126,6 +6204,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -6139,6 +6218,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

@@ -5,752 +5,818 @@ import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../helper/permission";
-
-import {
-  required,
-  minLength,
-  maxLength,
-  integer,
-  requiredIf,
-} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
-import alphaArabic from "../../../helper/alphaArabic";
-import alphaEnglish from "../../../helper/alphaEnglish";
-import {
-  dynamicSortString,
-  dynamicSortNumber,
-} from "../../../helper/tableSort";
+import {dynamicSortNumber, dynamicSortString,} from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
-import { formatDateOnly } from "../../../helper/startDate";
-import { arabicValue, englishValue } from "../../../helper/langTransform";
+import {formatDateOnly} from "../../../helper/startDate";
 
 /**
  * Advanced Table component
  */
 export default {
-  page: {
-    title: "Payer member report",
-    meta: [{ name: "description", content: "Payer member report" }],
-  },
-  mixins: [translation],
-  components: {
-    Multiselect,
-    Layout,
-    PageHeader,
-    Switches,
-    ErrorMessage,
-    loader,
-  },
-  data() {
-    return {
-      statuses: [],
-      status_id: null,
-      per_page: 50,
-      search: "",
-      debounce: {},
-      enabled3: true,
-      itemsPagination: {},
-      progress: 0,
-      items: [],
-      isLoader: false,
-      Tooltip: "",
-      mouseEnter: "",
-      fields: [],
-      company_id: null,
-      errors: {},
-      isCheckAll: false,
-      checkAll: [],
-      current_page: 1,
-      setting: {
-        name: true,
-        name_e: true,
-          membership_number: true,
-          full_name: true,
-          birth_date: true,
-          gender: true,
-          membership_date: true,
-          financial_status_id: true,
-          member_status_id: true,
-          PaymentDate: true,
-          document_no: true,
-          ForAYear: true,
-          national_id: true,
-          home_phone: true,
-          home_address: true,
-          work_phone: true,
-          job: true,
-          degree: true,
-      },
-      is_disabled: false,
-      filterSetting: [
-          "name",
-          "membership_number",
-          "full_name",
-          "birth_date",
-          "gender",
-          "membership_date",
-          "financial_status_id",
-          "member_status_id",
-          "national_id",
-          "home_phone",
-          "home_address",
-          "work_phone",
-          "job",
-          "degree",
-      ],
-      printLoading: true,
-      printObj: {
-        id: "printData",
-      },
-    };
-  },
-  validations: {},
-  watch: {
-    /**
-     * watch per_page
-     */
-    per_page(after, befour) {
-      this.getData();
+    page: {
+        title: "Payer member report",
+        meta: [{name: "description", content: "Payer member report"}],
     },
-    /**
-     * watch search
-     */
-    search(after, befour) {
-      clearTimeout(this.debounce);
-      this.debounce = setTimeout(() => {
-        this.getData();
-      }, 400);
+    mixins: [translation],
+    components: {
+        Multiselect,
+        Layout,
+        PageHeader,
+        Switches,
+        ErrorMessage,
+        loader,
     },
-    /**
-     * watch check All table
-     */
-    isCheckAll(after, befour) {
-      if (after) {
-        this.items.forEach((el) => {
-          if (!this.checkAll.includes(el.id)) {
-            this.checkAll.push(el.id);
-          }
-        });
-      } else {
-        this.checkAll = [];
-      }
+    data() {
+        return {
+            statuses: [],
+            status_id: null,
+            per_page: 50,
+            search: "",
+            debounce: {},
+            enabled3: true,
+            itemsPagination: {},
+            progress: 0,
+            items: [],
+            isLoader: false,
+            Tooltip: "",
+            mouseEnter: "",
+            fields: [],
+            company_id: null,
+            errors: {},
+            isCheckAll: false,
+            checkAll: [],
+            current_page: 1,
+            setting: {
+                name: true,
+                name_e: true,
+                membership_number: true,
+                full_name: true,
+                birth_date: true,
+                gender: true,
+                membership_date: true,
+                financial_status_id: true,
+                member_status_id: true,
+                PaymentDate: true,
+                document_no: true,
+                ForAYear: true,
+                national_id: true,
+                home_phone: true,
+                home_address: true,
+                work_phone: true,
+                job: true,
+                degree: true,
+            },
+            is_disabled: false,
+            filterSetting: [
+                "name",
+                "membership_number",
+                "full_name",
+                "birth_date",
+                "gender",
+                "membership_date",
+                "financial_status_id",
+                "member_status_id",
+                "national_id",
+                "home_phone",
+                "home_address",
+                "work_phone",
+                "job",
+                "degree",
+            ],
+            printLoading: true,
+            printObj: {
+                id: "printData",
+            },
+        };
     },
-  },
-  mounted() {
-    this.company_id = this.$store.getters["auth/company_id"];
-    this.getStatus();
-  },
+    validations: {},
+    watch: {
+        /**
+         * watch per_page
+         */
+        per_page(after, befour) {
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
+        },
+        /**
+         * watch search
+         */
+        search(after, befour) {
+            clearTimeout(this.debounce);
+            this.debounce = setTimeout(() => {
+                this.getData();
+            }, 400);
+        },
+        /**
+         * watch check All table
+         */
+        isCheckAll(after, befour) {
+            if (after) {
+                this.items.forEach((el) => {
+                    if (!this.checkAll.includes(el.id)) {
+                        this.checkAll.push(el.id);
+                    }
+                });
+            } else {
+                this.checkAll = [];
+            }
+        },
+    },
+    mounted() {
+        this.company_id = this.$store.getters["auth/company_id"];
+        this.getStatus();
+    },
     beforeRouteEnter(to, from, next) {
 
-    next((vm) => {
-      return permissionGuard(vm, "Payer Member Report", "all payer member club");
-    });
-
-    },
-  methods: {
-    createBackup() {
-      setTimeout(() => {
-        let bar = document.getElementById("progress-bar");
-        let self = this;
-        const config = {
-          onUploadProgress: function (progressEvent) {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded / progressEvent.total) * 100
-            );
-            self.progress = percentCompleted;
-            bar.innerHTML = `${percentCompleted}%`;
-            bar.style.width = `${percentCompleted}%`;
-          },
-        };
-        adminApi
-          .post(`/backups`, {}, config)
-          .then((res) => {
-            this.getData();
-          })
-          .catch((err) => {
-            Swal.fire({
-              icon: "error",
-              title: `${this.$t("general.Error")}`,
-              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-            });
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
-      }, 500);
-    },
-
-    formatDate(value) {
-      return formatDateOnly(value);
-    },
-    getData(page = 1) {
-      this.isLoader = true;
-      let filter = "";
-      for (let i = 0; i < this.filterSetting.length; ++i) {
-        filter += `columns[${i}]=${this.filterSetting[i]}&`;
-      }
-      adminApi
-        .get(
-          `/club-members/members?page=${page}&per_page=${this.per_page}&financial_status_id=${this.status_id}`
-        )
-        .then((res) => {
-          let l = res.data;
-          this.items = l.data;
-          this.itemsPagination = l.pagination;
-          this.current_page = l.pagination.current_page;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
+        next((vm) => {
+            return permissionGuard(vm, "Payer Member Report", "all payer member club");
         });
-    },
-    getDataCurrentPage(page = 1) {
-      if (
-        this.current_page <= this.itemsPagination.last_page &&
-        this.current_page != this.itemsPagination.current_page &&
-        this.current_page
-      ) {
-        this.isLoader = true;
-        let filter = "";
-        for (let i = 0; i < this.filterSetting.length; ++i) {
-          filter += `columns[${i}]=${this.filterSetting[i]}&`;
-        }
 
-        adminApi
-          .get(
-            `/club-members/members/?page=${this.current_page}&per_page=${this.per_page}&financial_status_id=${this.status_id}`
-          )
-          .then((res) => {
-            let l = res.data;
-            this.items = l.data;
-            this.itemsPagination = l.pagination;
-            this.current_page = l.pagination.current_page;
-          })
-          .catch((err) => {
-            Swal.fire({
-              icon: "error",
-              title: `${this.$t("general.Error")}`,
-              text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-            });
-          })
-          .finally(() => {
-            this.isLoader = false;
-          });
-      }
     },
-    async getStatus() {
-      this.isLoader = true;
+    methods: {
+        createBackup() {
+            setTimeout(() => {
+                let bar = document.getElementById("progress-bar");
+                let self = this;
+                const config = {
+                    onUploadProgress: function (progressEvent) {
+                        const percentCompleted = Math.round(
+                            (progressEvent.loaded / progressEvent.total) * 100
+                        );
+                        self.progress = percentCompleted;
+                        bar.innerHTML = `${percentCompleted}%`;
+                        bar.style.width = `${percentCompleted}%`;
+                    },
+                };
+                adminApi
+                    .post(`/backups`, {}, config)
+                    .then((res) => {
+                        this.getData();
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }, 500);
+        },
 
-      await adminApi
-        .get(`/club-members/financial-status`)
-        .then((res) => {
-          let l = res.data.data;
-          this.statuses = l;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: `${this.$t("general.Error")}`,
-            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
-          });
-        })
-        .finally(() => {
-          this.isLoader = false;
-        });
+        formatDate(value) {
+            return formatDateOnly(value);
+        },
+        getData(page = 1) {
+            this.isLoader = true;
+            let filter = "";
+            for (let i = 0; i < this.filterSetting.length; ++i) {
+                filter += `columns[${i}]=${this.filterSetting[i]}&`;
+            }
+            adminApi
+                .get(
+                    `/club-members/members?page=${page}&per_page=${this.per_page}&financial_status_id=${this.status_id}&order=full_name&sort=ASC`
+                )
+                .then((res) => {
+                    let l = res.data;
+                    this.items = l.data;
+                    this.itemsPagination = l.pagination;
+                    this.current_page = l.pagination.current_page;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        getDataCurrentPage(page = 1) {
+            if (
+                this.current_page <= this.itemsPagination.last_page &&
+                this.current_page != this.itemsPagination.current_page &&
+                this.current_page
+            ) {
+                this.isLoader = true;
+                let filter = "";
+                for (let i = 0; i < this.filterSetting.length; ++i) {
+                    filter += `columns[${i}]=${this.filterSetting[i]}&`;
+                }
+
+                adminApi
+                    .get(
+                        `/club-members/members/?page=${this.current_page}&per_page=${this.per_page}&financial_status_id=${this.status_id}&order=full_name&sort=ASC`
+                    )
+                    .then((res) => {
+                        let l = res.data;
+                        this.items = l.data;
+                        this.itemsPagination = l.pagination;
+                        this.current_page = l.pagination.current_page;
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: `${this.$t("general.Error")}`,
+                            text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                        });
+                    })
+                    .finally(() => {
+                        this.isLoader = false;
+                    });
+            }
+        },
+        async getStatus() {
+            this.isLoader = true;
+
+            await adminApi
+                .get(`/club-members/financial-status`)
+                .then((res) => {
+                    let l = res.data.data;
+                    this.statuses = l;
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: `${this.$t("general.Error")}`,
+                        text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                    });
+                })
+                .finally(() => {
+                    this.isLoader = false;
+                });
+        },
+        sortString(value) {
+            return dynamicSortString(value);
+        },
+        SortNumber(value) {
+            return dynamicSortNumber(value);
+        },
+        /**
+         *  start  ckeckRow
+         */
+        checkRow(id) {
+            if (!this.checkAll.includes(id)) {
+                this.checkAll.push(id);
+            } else {
+                let index = this.checkAll.indexOf(id);
+                this.checkAll.splice(index, 1);
+            }
+        },
+        /**
+         *  end  ckeckRow
+         */
+        moveInput(tag, c, index) {
+            document.querySelector(`${tag}[data-${c}='${index}']`).focus();
+        },
+        /**
+         *   Export Excel
+         */
+        ExportExcel(type, fn, dl) {
+            this.enabled3 = false;
+            setTimeout(() => {
+                let elt = this.$refs.exportable_table;
+                let wb = XLSX.utils.table_to_book(elt, {sheet: "Sheet JS"});
+                if (dl) {
+                    XLSX.write(wb, {bookType: type, bookSST: true, type: "base64"});
+                } else {
+                    XLSX.writeFile(
+                        wb,
+                        fn || ("Branch" + "." || "SheetJSTableExport.") + (type || "xlsx")
+                    );
+                }
+                this.enabled3 = true;
+            }, 100);
+        },
     },
-    sortString(value) {
-      return dynamicSortString(value);
-    },
-    SortNumber(value) {
-      return dynamicSortNumber(value);
-    },
-    /**
-     *  start  ckeckRow
-     */
-    checkRow(id) {
-      if (!this.checkAll.includes(id)) {
-        this.checkAll.push(id);
-      } else {
-        let index = this.checkAll.indexOf(id);
-        this.checkAll.splice(index, 1);
-      }
-    },
-    /**
-     *  end  ckeckRow
-     */
-    moveInput(tag, c, index) {
-      document.querySelector(`${tag}[data-${c}='${index}']`).focus();
-    },
-    /**
-     *   Export Excel
-     */
-    ExportExcel(type, fn, dl) {
-      this.enabled3 = false;
-      setTimeout(() => {
-        let elt = this.$refs.exportable_table;
-        let wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet JS" });
-        if (dl) {
-          XLSX.write(wb, { bookType: type, bookSST: true, type: "base64" });
-        } else {
-          XLSX.writeFile(
-            wb,
-            fn || ("Branch" + "." || "SheetJSTableExport.") + (type || "xlsx")
-          );
-        }
-        this.enabled3 = true;
-      }, 100);
-    },
-  },
 };
 </script>
 
 <template>
-  <Layout>
-    <PageHeader />
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <!-- start search -->
-            <div class="row justify-content-between align-items-center mb-2">
-              <h4 class="header-title">
-                {{ $t("general.PayerMemberReport") }}
-              </h4>
-              <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
-                <div class="d-inline-block" style="width: 22.2%">
-                  <!-- Basic dropdown -->
+    <Layout>
+        <PageHeader/>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- start search -->
+                        <div class="row justify-content-between align-items-center mb-2">
+                            <h4 class="header-title">
+                                {{ $t("general.PayerMemberReport") }}
+                            </h4>
+                            <div class="col-xs-10 col-md-9 col-lg-7" style="font-weight: 500">
+                                <div class="d-inline-block" style="width: 22.2%">
+                                    <!-- Basic dropdown -->
 
-                  <!-- Basic dropdown -->
-                </div>
+                                    <!-- Basic dropdown -->
+                                </div>
 
-                <div
-                  class="d-inline-block position-relative"
-                  style="width: 77%"
-                >
-                  <div class="form-group position-relative"></div>
-                </div>
-              </div>
-            </div>
-            <!-- end search -->
+                                <div
+                                    class="d-inline-block position-relative"
+                                    style="width: 77%"
+                                >
+                                    <div class="form-group position-relative"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end search -->
 
-            <div
-              class="row justify-content-between align-items-center mb-2 px-1"
-            >
-              <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
-                <div style="width: 100%">
-                  <multiselect
-                    @input="getData(1)"
-                    v-model="status_id"
-                    :options="statuses.map((type) => type.id)"
-                    :custom-label="
+                        <div
+                            class="row justify-content-between align-items-center mb-2 px-1"
+                        >
+                            <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
+                                <div style="width: 100%">
+                                    <multiselect
+                                        @input="getData(1)"
+                                        v-model="status_id"
+                                        :options="statuses.map((type) => type.id)"
+                                        :custom-label="
                       (opt) =>
                         $i18n.locale == 'ar'
                           ? statuses.find((x) => x.id == opt).name
                           : statuses.find((x) => x.id == opt).name_e
                     "
-                  >
-                  </multiselect>
-                </div>
-                <!-- start create and printer -->
-                <!-- <b-button
-                  v-b-modal.progress
-                  variant="primary"
-                  class="btn-sm mx-1 font-weight-bold"
-                >
-                  {{ $t("general.Create") }}
-                  <i class="fas fa-plus"></i>
-                </b-button> -->
-                <div class="d-inline-flex">
-                  <button
-                    style="margin: 0 15px"
-                    @click="ExportExcel('xlsx')"
-                    class="custom-btn-dowonload"
-                  >
-                    <i class="fas fa-file-download"></i>
-                  </button>
-                  <button v-print="'#printData'" class="custom-btn-dowonload">
-                    <i class="fe-printer"></i>
-                  </button>
-                  <button
-                    class="custom-btn-dowonload"
-                    @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
-                    v-if="checkAll.length == 1"
-                  >
-                    <i class="mdi mdi-square-edit-outline"></i>
-                  </button>
-                </div>
-                <!-- end create and printer -->
-              </div>
-              <div
-                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
-              >
-                <div class="d-fex">
-                  <!-- start filter and setting -->
-                  <div class="d-inline-block">
-                    <b-button class="mx-1 custom-btn-background">
-                      {{ $t("general.filter") }}
-                      <i class="fas fa-filter"></i>
-                    </b-button>
-                    <b-button class="mx-1 custom-btn-background">
-                      {{ $t("general.group") }}
-                      <i class="fe-menu"></i>
-                    </b-button>
-                    <!-- Basic dropdown -->
-                      <b-dropdown
-                          variant="primary"
-                          :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
-                          ref="dropdown"
-                          class="dropdown-custom-ali"
-                      >
-                          <b-form-checkbox v-model="setting.name" class="mb-1">
-                              {{ getCompanyKey("member") }}
-                          </b-form-checkbox>
-                          <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.name") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ getCompanyKey("financial_status") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.member_status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">{{ $t("general.PaymentDate") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.ForAYear" class="mb-1">{{ $t("general.ForAYear") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.job" class="mb-1">{{ getCompanyKey("member_job") }}</b-form-checkbox>
-                          <b-form-checkbox v-model="setting.degree" class="mb-1">{{ getCompanyKey("member_degree") }}</b-form-checkbox>
+                                    >
+                                    </multiselect>
+                                </div>
+                                <!-- start create and printer -->
+                                <!-- <b-button
+                                  v-b-modal.progress
+                                  variant="primary"
+                                  class="btn-sm mx-1 font-weight-bold"
+                                >
+                                  {{ $t("general.Create") }}
+                                  <i class="fas fa-plus"></i>
+                                </b-button> -->
+                                <div class="d-inline-flex">
+                                    <button
+                                        style="margin: 0 15px"
+                                        @click="ExportExcel('xlsx')"
+                                        class="custom-btn-dowonload"
+                                    >
+                                        <i class="fas fa-file-download"></i>
+                                    </button>
+                                    <button v-print="'#printData'" class="custom-btn-dowonload">
+                                        <i class="fe-printer"></i>
+                                    </button>
+                                    <button
+                                        class="custom-btn-dowonload"
+                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"
+                                        v-if="checkAll.length == 1"
+                                    >
+                                        <i class="mdi mdi-square-edit-outline"></i>
+                                    </button>
+                                </div>
+                                <!-- end create and printer -->
+                            </div>
+                            <div
+                                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                            >
+                                <div class="d-fex">
+                                    <!-- start filter and setting -->
+                                    <div class="d-inline-block">
+                                        <b-button class="mx-1 custom-btn-background">
+                                            {{ $t("general.filter") }}
+                                            <i class="fas fa-filter"></i>
+                                        </b-button>
+                                        <b-button class="mx-1 custom-btn-background">
+                                            {{ $t("general.group") }}
+                                            <i class="fe-menu"></i>
+                                        </b-button>
+                                        <!-- Basic dropdown -->
+                                        <b-dropdown
+                                            variant="primary"
+                                            :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
+                                            ref="dropdown"
+                                            class="dropdown-custom-ali"
+                                        >
+                                            <b-form-checkbox v-model="setting.name" class="mb-1">
+                                                {{ getCompanyKey("member") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">
+                                                {{ $t("general.name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">
+                                                {{ getCompanyKey("member_birth_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.gender" class="mb-1">
+                                                {{ getCompanyKey("member_type") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">
+                                                {{ getCompanyKey("member_membership_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">
+                                                {{ getCompanyKey("financial_status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.member_status_id" class="mb-1">
+                                                {{ $t("general.status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">
+                                                {{ $t("general.PaymentDate") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">
+                                                {{ $t("general.ReceiptNumber") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.ForAYear" class="mb-1">
+                                                {{ $t("general.ForAYear") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">
+                                                {{ getCompanyKey("member_national_id") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">
+                                                {{ getCompanyKey("member_home_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">
+                                                {{ getCompanyKey("member_home_address") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">
+                                                {{ getCompanyKey("member_work_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.job" class="mb-1">
+                                                {{ getCompanyKey("member_job") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.degree" class="mb-1">
+                                                {{ getCompanyKey("member_degree") }}
+                                            </b-form-checkbox>
 
-                          <div class="d-flex justify-content-end">
-                              <a href="javascript:void(0)" class="btn btn-primary btn-sm">
-                                  Apply
-                              </a>
-                          </div>
-                      </b-dropdown>
+                                            <div class="d-flex justify-content-end">
+                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">
+                                                    Apply
+                                                </a>
+                                            </div>
+                                        </b-dropdown>
 
-                    <!-- Basic dropdown -->
-                  </div>
-                  <!-- end filter and setting -->
-
-                  <!-- start Pagination -->
-                  <div
-                    class="d-inline-flex align-items-center pagination-custom"
-                  >
-                    <div class="d-inline-block" style="font-size: 13px">
-                      {{ itemsPagination.from }}-{{ itemsPagination.to }} /
-                      {{ itemsPagination.total }}
-                    </div>
-                    <div class="d-inline-block">
-                      <a
-                        href="javascript:void(0)"
-                        :style="{
-                          'pointer-events':
-                            itemsPagination.current_page == 1 ? 'none' : '',
-                        }"
-                        @click.prevent="
-                          getData(itemsPagination.current_page - 1)
-                        "
-                      >
-                        <span>&lt;</span>
-                      </a>
-                      <input
-                        type="text"
-                        @keyup.enter="getDataCurrentPage()"
-                        v-model="current_page"
-                        class="pagination-current-page"
-                      />
-                      <a
-                        href="javascript:void(0)"
-                        :style="{
+                                        <!-- Basic dropdown -->
+                                    </div>
+                                    <!-- end filter and setting -->
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 80px;">
+                                    </div>
+                                    <!-- start Pagination -->
+                                    <div
+                                        class="d-inline-flex align-items-center pagination-custom"
+                                    >
+                                        <div class="d-inline-block" style="font-size: 13px">
+                                            {{ itemsPagination.from }}-{{ itemsPagination.to }} /
+                                            {{ itemsPagination.total }}
+                                        </div>
+                                        <div class="d-inline-block">
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
+                                                  'pointer-events':
+                                                    itemsPagination.current_page == 1 ? 'none' : '',
+                                                }"
+                                                @click.prevent="
+                                                  getData(itemsPagination.current_page - 1)
+                                                "
+                                            >
+                                                <span>&lt;</span>
+                                            </a>
+                                            <input
+                                                type="text"
+                                                @keyup.enter="getDataCurrentPage()"
+                                                v-model="current_page"
+                                                class="pagination-current-page"
+                                            />
+                                            <a
+                                                href="javascript:void(0)"
+                                                :style="{
                           'pointer-events':
                             itemsPagination.last_page ==
                             itemsPagination.current_page
                               ? 'none'
                               : '',
                         }"
-                        @click.prevent="
+                                                @click.prevent="
                           getData(itemsPagination.current_page + 1)
                         "
-                      >
-                        <span>&gt;</span>
-                      </a>
+                                            >
+                                                <span>&gt;</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!-- end Pagination -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- start .table-responsive-->
+                        <div
+                            class="table-responsive mb-3 custom-table-theme position-relative"
+                        >
+                            <!--       start loader       -->
+                            <loader size="large" v-if="isLoader"/>
+                            <!--       end loader       -->
+                            <table
+                                class="table table-borderless table-hover table-centered m-0"
+                                ref="exportable_table"
+                                id="printData"
+                            >
+                                <thead>
+                                <tr>
+
+                                    <th
+                                        v-if="enabled3"
+                                        class="do-not-print"
+                                        scope="col"
+                                        style="width: 0"
+                                    >
+                                        <div class="form-check custom-control">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                v-model="isCheckAll"
+                                                style="width: 17px; height: 17px"
+                                            />
+                                        </div>
+                                    </th>
+                                    <th>#</th>
+                                    <th v-if="setting.membership_number">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('membership_number'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-membership_number'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.full_name">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.name") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('full_name'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-full_name'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.birth_date">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_birth_date") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('birth_date'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-birth_date'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.gender">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_gender") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('gender'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-gender'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.membership_date">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('membership_date'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-membership_date'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.financial_status_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("financial_status") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.member_status_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.status") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.PaymentDate">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.PaymentDate") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.document_no">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.ReceiptNumber") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.ForAYear">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.ForAYear") }}</span>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.national_id">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_national_id") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('national_id'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-national_id'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.home_phone">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_home_phone") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('home_phone'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-home_phone'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.home_address">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_home_address") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('home_address'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-home_address'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.work_phone">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_work_phone") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('work_phone'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-work_phone'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.job">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_job") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('job'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-job'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th v-if="setting.degree">
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_degree") }}</span>
+                                            <div class="arrow-sort">
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('degree'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-degree'))"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody v-if="items.length > 0">
+                                <tr
+                                    @click.capture="checkRow(data.id)"
+                                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
+                                    v-for="(data, index) in items"
+                                    :key="data.id"
+                                    class="body-tr-custom"
+                                >
+
+                                    <td v-if="enabled3" class="do-not-print">
+                                        <div
+                                            class="form-check custom-control"
+                                            style="min-height: 1.9em"
+                                        >
+                                            <input
+                                                style="width: 17px; height: 17px"
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                :value="data.id"
+                                                v-model="checkAll"
+                                            />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ index + 1 }}
+                                    </td>
+                                    <td v-if="setting.membership_number">
+                                        {{ data.membership_number }}
+                                    </td>
+                                    <td v-if="setting.full_name">
+                                        {{ data.full_name }}
+                                    </td>
+                                    <td v-if="setting.birth_date">
+                                        {{ data.birth_date ? data.birth_date : '---' }}
+                                    </td>
+                                    <td v-if="setting.gender">
+                                        {{
+                                            data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'
+                                        }}
+                                    </td>
+                                    <td v-if="setting.membership_date">
+                                        {{ data.membership_date ? formatDate(data.membership_date) : '---' }}
+                                    </td>
+                                    <td v-if="setting.financial_status_id">
+                                        {{
+                                            data.financial_status ? $i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "---"
+                                        }}
+                                    </td>
+                                    <td v-if="setting.member_status_id">
+                                        {{
+                                            data.status ? $i18n.locale == "ar" ? data.status.name : data.status.name_e : "---"
+                                        }}
+                                    </td>
+                                    <td v-if="setting.PaymentDate">
+                                        {{ data.transaction ? formatDate(data.transaction.date) : '---' }}
+                                    </td>
+                                    <td v-if="setting.document_no">
+                                        {{ data.transaction ? data.transaction.document_no : '---' }}
+                                    </td>
+                                    <td v-if="setting.ForAYear">
+                                        {{ data.transaction ? data.transaction.year : '---' }}
+                                    </td>
+                                    <td v-if="setting.national_id">
+                                        {{ data.national_id ? data.national_id : '---' }}
+                                    </td>
+                                    <td v-if="setting.home_phone">
+                                        {{ data.home_phone ? data.home_phone : '---' }}
+                                    </td>
+                                    <td v-if="setting.home_address">
+                                        {{ data.home_address ? data.home_address : '---' }}
+                                    </td>
+                                    <td v-if="setting.work_phone">
+                                        {{ data.work_phone ? data.work_phone : '---' }}
+                                    </td>
+                                    <td v-if="setting.job">
+                                        {{ data.job ? data.job : '---' }}
+                                    </td>
+                                    <td v-if="setting.degree">
+                                        {{ data.degree ? data.degree : '---' }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody v-else>
+                                <tr>
+                                    <th class="text-center" colspan="2">
+                                        {{ $t("general.notDataFound") }}
+                                    </th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- end .table-responsive-->
                     </div>
-                  </div>
-                  <!-- end Pagination -->
                 </div>
-              </div>
             </div>
-
-            <!-- start .table-responsive-->
-            <div
-              class="table-responsive mb-3 custom-table-theme position-relative"
-            >
-              <!--       start loader       -->
-              <loader size="large" v-if="isLoader" />
-              <!--       end loader       -->
-              <table
-                class="table table-borderless table-hover table-centered m-0"
-                ref="exportable_table"
-                id="printData"
-              >
-                <thead>
-                  <tr>
-                    <th
-                      v-if="enabled3"
-                      class="do-not-print"
-                      scope="col"
-                      style="width: 0"
-                    >
-                      <div class="form-check custom-control">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          v-model="isCheckAll"
-                          style="width: 17px; height: 17px"
-                        />
-                      </div>
-                    </th>
-
-                      <th v-if="setting.membership_number">
-                          <div class="d-flex justify-content-center">
-                              <span>{{getCompanyKey("member_membership_number")}}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('membership_number'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_number'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.full_name">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ $t("general.name") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('full_name'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-full_name'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.birth_date">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_birth_date") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('birth_date'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-birth_date'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.gender">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_gender") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('gender'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-gender'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.membership_date">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_membership_date")}}</span>
-                              <div class="arrow-sort">
-                                  <i  class="fas fa-arrow-up" @click="items.sort(sortString('membership_date'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_date'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.financial_status_id">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("financial_status") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.member_status_id">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ $t("general.status") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.PaymentDate">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ $t("general.PaymentDate") }}</span>
-                          </div>
-                      </th>
-                      <th v-if="setting.document_no">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ $t("general.ReceiptNumber") }}</span>
-                          </div>
-                      </th>
-                      <th v-if="setting.ForAYear">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ $t("general.ForAYear") }}</span>
-                          </div>
-                      </th>
-                      <th v-if="setting.national_id">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_national_id") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('national_id'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-national_id'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.home_phone">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_home_phone") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('home_phone'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_phone'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.home_address">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_home_address") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('home_address'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_address'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.work_phone">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_work_phone") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('work_phone'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-work_phone'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.job">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_job") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('job'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-job'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                      <th v-if="setting.degree">
-                          <div class="d-flex justify-content-center">
-                              <span>{{ getCompanyKey("member_degree") }}</span>
-                              <div class="arrow-sort">
-                                  <i class="fas fa-arrow-up" @click="items.sort(sortString('degree'))"></i>
-                                  <i class="fas fa-arrow-down" @click="items.sort(sortString('-degree'))"></i>
-                              </div>
-                          </div>
-                      </th>
-                  </tr>
-                </thead>
-                <tbody v-if="items.length > 0">
-                  <tr
-                    @click.capture="checkRow(data.id)"
-                    @dblclick.prevent="$bvModal.show(`modal-edit-${data.id}`)"
-                    v-for="(data, index) in items"
-                    :key="data.id"
-                    class="body-tr-custom"
-                  >
-                    <td v-if="enabled3" class="do-not-print">
-                      <div
-                        class="form-check custom-control"
-                        style="min-height: 1.9em"
-                      >
-                        <input
-                          style="width: 17px; height: 17px"
-                          class="form-check-input"
-                          type="checkbox"
-                          :value="data.id"
-                          v-model="checkAll"
-                        />
-                      </div>
-                    </td>
-                      <td v-if="setting.membership_number">
-                          {{ data.membership_number }}
-                      </td>
-                      <td v-if="setting.full_name">
-                          {{ data.full_name }}
-                      </td>
-                      <td v-if="setting.birth_date">
-                          {{ data.birth_date?data.birth_date:'---' }}
-                      </td>
-                      <td v-if="setting.gender">
-                          {{data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'}}
-                      </td>
-                      <td v-if="setting.membership_date">
-                          {{data.membership_date ? formatDate(data.membership_date) : '---' }}
-                      </td>
-                      <td v-if="setting.financial_status_id">
-                          {{data.financial_status ? $i18n.locale == "ar"? data.financial_status.name: data.financial_status.name_e: "---"}}
-                      </td>
-                      <td v-if="setting.member_status_id">
-                          {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
-                      </td>
-                      <td v-if="setting.PaymentDate">
-                          {{data.transaction ? formatDate(data.transaction.date) : '---' }}
-                      </td>
-                      <td v-if="setting.document_no">
-                          {{ data.transaction ? data.transaction.document_no : '---' }}
-                      </td>
-                      <td v-if="setting.ForAYear">
-                          {{ data.transaction ? data.transaction.year : '---' }}
-                      </td>
-                      <td v-if="setting.national_id">
-                          {{ data.national_id ? data.national_id : '---' }}
-                      </td>
-                      <td v-if="setting.home_phone">
-                          {{ data.home_phone ? data.home_phone : '---' }}
-                      </td>
-                      <td v-if="setting.home_address">
-                          {{ data.home_address ? data.home_address : '---' }}
-                      </td>
-                      <td v-if="setting.work_phone">
-                          {{ data.work_phone ? data.work_phone : '---' }}
-                      </td>
-                      <td v-if="setting.job">
-                          {{ data.job ? data.job : '---' }}
-                      </td>
-                      <td v-if="setting.degree">
-                          {{ data.degree ? data.degree : '---' }}
-                      </td>
-                  </tr>
-                </tbody>
-                <tbody v-else>
-                  <tr>
-                    <th class="text-center" colspan="2">
-                      {{ $t("general.notDataFound") }}
-                    </th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <!-- end .table-responsive-->
-          </div>
         </div>
-      </div>
-    </div>
-  </Layout>
+    </Layout>
 </template>
 
 <style scoped>
 @media print {
-  .do-not-print {
-    display: none;
-  }
+    .do-not-print {
+        display: none;
+    }
 
-  .arrow-sort {
-    display: none;
-  }
+    .arrow-sort {
+        display: none;
+    }
+
 }
 </style>

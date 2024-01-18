@@ -28,7 +28,7 @@ class Task extends Model implements HasMedia
     {
         return $query
             ->select(
-                'id','contact_person','created_by','contact_phone','task_title','execution_date','execution_duration','actual_execution_date','actual_execution_duration'
+                'id','contact_person','work_nature_id','address','signature','created_by','contact_phone','task_title','execution_date','execution_duration','actual_execution_date','actual_execution_duration'
                 ,'actual_end_time','actual_execution_end_date','actual_start_time','customer_id',
                 'execution_end_date','notification_date','start_time','end_time','department_task_id','employee_id',
                 'customer_id','department_id','status_id','note',
@@ -248,6 +248,13 @@ class Task extends Model implements HasMedia
             if ($request->key && $request->value) {
                 $q->where($request->key, $request->value);
             }
+        });
+    }
+
+    public function scopeUser($query , $user){
+        $query->where(function($q) use($user){
+            if($user)
+            $q->where('created_by', $user->id)->orWhereRelation('supervisors','employee_id',$user->employee_id)->orWhereRelation('attentions','employee_id',$user->employee_id);
         });
     }
 }

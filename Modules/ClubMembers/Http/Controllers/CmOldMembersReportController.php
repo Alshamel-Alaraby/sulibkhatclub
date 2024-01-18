@@ -12,9 +12,10 @@ class CmOldMembersReportController extends Controller
     {
         return DB::table('status')->get();
     }
+
     public function getOldMembers(Request $request)
     {
-        return DB::table('members')->where('ZSTATUS',$request->status_id)->paginate($request->per_page);
+        return DB::table('members')->where('ZSTATUS', $request->status_id)->orderBy('FNAME', 'ASC')->paginate($request->per_page);
     }
 
 }

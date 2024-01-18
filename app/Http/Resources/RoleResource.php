@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\SpatieRole;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoleResource extends JsonResource
@@ -14,11 +15,13 @@ class RoleResource extends JsonResource
      */
     public function toArray($request)
     {
+        $role = SpatieRole::query()->findOrFail($this->id);
         return [
             'id' => $this->id,
             "name" => $this->name,
             "name_e" => $this->name_e,
             "permissions" => PermissionsResource::collection($this->permissions),
+            "hotkeys" => $role->hotkeys,
         ];
     }
 }

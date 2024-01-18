@@ -1591,6 +1591,9 @@
         "Age": "Age",
         "Notification": "Notification",
         "ThereIsANewNotification": "There is a new notification for you",
+        "Work Nature": "Work Nature",
+        "Data of the requesting party": "Data of the requesting party",
+        "Signature": "Signature",
         "APPKDW": "KDW",
         "Technician": "Technician",
         "recipient": "recipient",
@@ -1602,6 +1605,10 @@
         "CompanyEngineer": "Company Engineer",
         "MinistryEngineer": "Ministry Engineer",
         "TrustCompany": "Trust Company",
+        "Maintenance": "Maintenance",
+        "general": "General",
+        "equipment": "Equipments",
+        "Periodic maintenance": "Periodic maintenance",
         "Year": "Year",
         "First Week": "First Week",
         "Second Week": "Second Week",
@@ -1890,6 +1897,8 @@
         "PrintDay": "Print Day",
         "DueDay": "Due Day",
         "RentContractTable": "Rent Contract Table",
+        "Can be increased" : "Can be increased",
+        "RentContractTable": "Rent Contract Table",
         "ActualTime": "Actual Time",
         "ExpectedTime": "Expected Time",
         "startTime": "Start Time",
@@ -1911,6 +1920,12 @@
         "FutureYears": "Future Years",
         "ClientName": "Client Name",
         "NumberOfMembers": "Number Of Members",
-        "TheNumberOfMembersPerPage": "The Number Of Members Per Page"
+        "TheNumberOfMembersPerPage": "The Number Of Members Per Page",
+        "chooseRows": "Number of Rows",
+        "StartBarcode": "Start of barcode",
+        "RecordNumber": "Record Number",
+        "NewManagerSignature": "Signature",
+        "ElectoralCommittees": "Electoral Committees",
+        "last_member": "Last Member"
     }
 }

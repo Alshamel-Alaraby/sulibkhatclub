@@ -26,7 +26,7 @@ class RoleRequest extends FormRequest
         return [
             'name' => "required|string",
             'name_e' => "required|string",
-            "permissions" => "required|array|exists:permissions,id"
+            "permissions" => "required|array|exists:permissions,id",
         ];
     }
 }

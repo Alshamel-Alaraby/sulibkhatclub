@@ -56,7 +56,7 @@ class TaskController extends Controller
             $models->where('customer_id', $request->customer_id);
         }
 
-        if ($request->status_id) {
+        if ($request->status_id && $request->status_id != 'null') {
             $models->where('status_id', $request->status_id);
         }
 
@@ -138,6 +138,9 @@ class TaskController extends Controller
         }
 
         $model = $this->model->create($request->all());
+        if($request->location_id)
+            $model->update(['signature' => $request->location_id . '-'.$model->id]);
+
         if ($user)
             $model->update(['created_by' => $user->id]);
 
@@ -199,6 +202,9 @@ class TaskController extends Controller
             return responseJson(404, 'not found');
         }
         $model->update($request->validated());
+
+        if($request->location_id)
+            $model->update(['signature' => $request->location_id . '-'.$model->id]);
 
         // in every record update make message for what old and what new
 
@@ -545,7 +551,8 @@ class TaskController extends Controller
         //     $model->clearMediaCollection('media');
         // }
 
-        User::whereIn('id', [$model->created_by ?? 0])->orWhereIn('employee_id', $request->notifications ?? [])->get()->each(function ($user) use ($model, $request, $user_name) {
+        $user = request()->user();
+        User::whereIn('id', [($model->created_by && $user && $user->id != $model->created_by) || !$user  ? ($model->created_by??0): 0])->orWhereIn('employee_id', array_merge($request->notifications ?? [],$request->supervisors ?? []))->get()->each(function ($user) use ($model, $request, $user_name) {
             $user->notify(new GeneralNotification(
                 new GeneralTaskResource($model),
                 $model->id,

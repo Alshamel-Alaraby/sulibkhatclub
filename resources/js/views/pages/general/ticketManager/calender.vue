@@ -51,7 +51,10 @@ export default {
     mounted() {
         this.$store.dispatch('locationIp/getIp');
         this.getCustomTableFields();
-        this.getLocation();
+        if(this.create.type == "customer")
+            this.getCustomers();
+        if(this.create.type == "equipment")
+            this.getLocation();
         if (this.isVisible("department_id"))  this.getDepartment();
         if (this.isVisible("status_id"))  this.getStatus();
         if (this.isVisible("priority_id"))  this.getPriority();
@@ -825,6 +828,7 @@ export default {
             let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
             let locations = []
             departments.forEach((department) => {
+                if(department.locations && department.locations.length >0)
                 department.locations.forEach((ele) => {
                     this.all_locations.forEach((location) => {
                         if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))))
@@ -861,6 +865,7 @@ export default {
             }
         },
         setSupervisorsAndAttentions(department){
+            if(department.locations && department.locations.length >0)
             department.locations.forEach((ele) => {
                 if(ele.location_id == this.create.location_id){
                     setTimeout(() => {
@@ -876,6 +881,7 @@ export default {
             let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
 
             let locations= []
+            if(department.locations && department.locations.length >0)
                 department.locations.forEach((ele) => {
                     this.all_locations.forEach((location) => {
                         if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))))
@@ -892,6 +898,7 @@ export default {
         setDepartment(){
             let departments =[]
             this.all_departments.forEach((department) =>{
+                if(department.locations && department.locations.length >0)
                 department.locations.forEach((ele) => {
                     if(ele.location_id == this.create.location_id)
                         departments.push(department)

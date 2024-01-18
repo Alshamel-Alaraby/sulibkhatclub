@@ -5847,7 +5847,7 @@ var render = function render() {
       src: "/images/sulib.png"
     }
   }), _vm._v(" "), _c("h1", {
-    staticClass: "text-center"
+    staticClass: "text-center mt-4"
   }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
     staticStyle: {
       "margin-top": "7px",
@@ -5871,7 +5871,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.serial.perfix) + "-" + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5889,35 +5889,59 @@ var render = function render() {
     }
   }, [_c("span", {
     staticStyle: {
-      "margin-top": "7px",
-      "font-size": "27px",
-      "font-weight": "bold",
-      color: "#000"
+      display: "inline-block",
+      "text-align": "center"
     }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
+  }, [_c("span", {
     staticStyle: {
       "margin-top": "7px",
       "font-size": "27px",
       "font-weight": "bold",
-      color: "#000"
-    }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
-    staticStyle: {
-      "margin-top": "120px",
       color: "#000",
-      "font-weight": "bold"
+      display: "block"
     }
-  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])]), _vm._v(" "), _c("div", {
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm1.png"
+    }
+  })]), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("span", {
+    staticStyle: {
+      display: "inline-block",
+      "text-align": "center"
+    }
+  }, [_c("span", {
+    staticStyle: {
+      "margin-top": "7px",
+      "font-size": "27px",
+      "font-weight": "bold",
+      color: "#000",
+      display: "block"
+    }
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm2.png"
+    }
+  })])])]), _vm._v(" "), _c("div", {
     staticClass: "box mt-5 pl-0 ml-0"
   }, [_c("img", {
     staticClass: "watermark",
@@ -5932,7 +5956,7 @@ var render = function render() {
       src: "/images/sulib.png"
     }
   }), _vm._v(" "), _c("h1", {
-    staticClass: "text-center"
+    staticClass: "text-center mt-4"
   }, [_c("b", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("span", {
     staticStyle: {
       "margin-top": "7px",
@@ -5956,7 +5980,7 @@ var render = function render() {
     staticStyle: {
       "font-size": "15px"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.document_no) + " | " + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("br"), _vm._v("\n                " + _vm._s(_vm.data_row.serial.perfix) + "-" + _vm._s(_vm.data_row.serial_number) + "\n            ")])]), _vm._v(" "), _c("h3", [_c("b", [_vm._v(_vm._s(_vm.$t("general.Date")) + ": " + _vm._s(_vm.formatDate(_vm.data_row.date)))])]), _vm._v(" "), _c("div", {
     staticStyle: {
       display: "flex",
       margin: "0",
@@ -5974,37 +5998,97 @@ var render = function render() {
     }
   }, [_c("span", {
     staticStyle: {
-      "margin-top": "7px",
-      "font-size": "27px",
-      "font-weight": "bold",
-      color: "#000"
+      display: "inline-block",
+      "text-align": "center"
     }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("span", {
+  }, [_c("span", {
     staticStyle: {
       "margin-top": "7px",
       "font-size": "27px",
       "font-weight": "bold",
-      color: "#000"
-    }
-  }, [_c("b", {
-    staticStyle: {
-      "border-bottom": "1px solid #717171",
-      "padding-bottom": "1.5px"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])])]), _vm._v(" "), _c("h4", {
-    staticStyle: {
-      "margin-top": "120px",
       color: "#000",
-      "font-weight": "bold"
+      display: "block"
     }
-  }, [_vm._v("*\n            " + _vm._s(_vm.$t("general.This is an electronic document approved without a signature")))])])]);
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Accountant")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm1.png"
+    }
+  })]), _vm._v(" "), _vm._m(1), _vm._v(" "), _c("span", {
+    staticStyle: {
+      display: "inline-block",
+      "text-align": "center"
+    }
+  }, [_c("span", {
+    staticStyle: {
+      "margin-top": "7px",
+      "font-size": "27px",
+      "font-weight": "bold",
+      color: "#000",
+      display: "block"
+    }
+  }, [_c("b", {
+    staticStyle: {
+      "border-bottom": "1px solid #717171",
+      "padding-bottom": "1.5px"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Treasurer")))])]), _vm._v(" "), _c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "5px auto 0"
+    },
+    attrs: {
+      src: "/images/khatm2.png"
+    }
+  })])])])]);
 };
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticStyle: {
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "0 10px"
+    },
+    attrs: {
+      src: "/images/sulibkhatKhat.png"
+    }
+  })]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("span", {
+    staticStyle: {
+      display: "flex",
+      "align-items": "center"
+    }
+  }, [_c("img", {
+    staticStyle: {
+      width: "200px",
+      height: "auto",
+      margin: "0 10px"
+    },
+    attrs: {
+      src: "/images/sulibkhatKhat.png"
+    }
+  })]);
+}];
 render._withStripped = true;
 
 
@@ -7515,14 +7599,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
       var words = '';
 
-      // Handling hundreds place
+      // For hundreds place
       if (number >= 100) {
         var hundredsDigit = Math.floor(number / 100);
         words += hundreds[hundredsDigit] + ' ';
         number %= 100;
       }
 
-      // Handling tens and units place
+      // For tens and units place
       if (number >= 10 && number < 20) {
         words += units[number % 10] + ' عشرة ';
       } else if (number >= 20) {
@@ -7548,28 +7632,31 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
       var words = '';
 
-      // Handling hundreds place for the decimal part
-      if (decimal >= 100) {
-        var hundredsDigit = Math.floor(decimal / 100);
-        words += hundreds[hundredsDigit] + ' ';
-        decimal %= 100;
-      }
+      // fractional part
+      var decimalAsString = decimal.toString();
+      var _decimalAsString$spli = decimalAsString.split('.'),
+        _decimalAsString$spli2 = _slicedToArray(_decimalAsString$spli, 2),
+        _ = _decimalAsString$spli2[0],
+        decimalPart = _decimalAsString$spli2[1];
+      if (decimalPart) {
+        var fractionalPart = parseInt(decimalPart);
 
-      // Handling tens and units place for the decimal part
-      if (decimal >= 10) {
-        if (decimal < 20) {
-          words += units[decimal % 10] + ' عشرة ';
-        } else {
-          var tensDigit = Math.floor(decimal / 10);
-          words += tens[tensDigit] + ' ';
-          decimal %= 10;
+        // units and tens for the decimal part
+        if (fractionalPart >= 100) {
+          var hundredsDigit = Math.floor(fractionalPart / 100);
+          words += ' و ' + hundreds[hundredsDigit];
+          fractionalPart %= 100;
+        }
+        if (fractionalPart >= 10) {
+          var tensDigit = Math.floor(fractionalPart / 10);
+          words += ' و ' + tens[tensDigit];
+          fractionalPart %= 10;
+        }
+        if (fractionalPart > 0) {
+          words += ' و ' + units[fractionalPart];
         }
       }
-
-      // Handling units place for the decimal part
-      if (decimal > 0 && decimal < 10) {
-        words += units[decimal] + ' ';
-      }
+      console.log("word", words.trim());
       return words.trim();
     },
     convertToArabicWords: function convertToArabicWords(inputNumber) {
@@ -7581,9 +7668,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var decimalWords = decimalPart ? this.decimalToArabicWords(parseFloat("0.".concat(decimalPart)) * 100) : '';
       var result = integerWords;
       if (decimalWords) {
-        // Combining the integer and decimal words with appropriate separators
         result += ' و ' + decimalWords + ' فلس';
       }
+      console.log("decimalWords", decimalWords);
       return result;
     }
   }
@@ -7659,6 +7746,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -7672,6 +7760,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -8085,7 +8174,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\n    h2[data-v-7a9c1a47],\n    h3[data-v-7a9c1a47],\n    p[data-v-7a9c1a47] {\n        margin: 5px 0;\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\n        border: none;\n        border-top: 1px solid #ccc;\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\n        font-size: 25px;\n        color: #000;\n        padding: 4px 2px;\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\n        background: #d7d7d7 !important;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\n        height: 100%;\n        display: flex;\n        flex-direction: column;\n        justify-content: space-between;\n        margin: 0 auto;\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\n        width: 100%;\n        margin-bottom: 30px;\n        padding-left: 0px;\n        display: flex;\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 7px;\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\n        display: inline-block;\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\n        padding: 0px 40px 0px 20px;\n        margin: 70px 0;\n        height: 49%;\n        border: #6e6b6b solid 1px;\n        max-height: 720px;\n        position: relative;\n}\n.doc_box[data-v-7a9c1a47] {\n        border: #6e6b6b solid 1px;\n        background: #d7d7d7 !important;\n        color: #000;\n        padding: 10px;\n        width: 150px;\n        height: 70px;\n        -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n}\n.watermark[data-v-7a9c1a47] {\n        position: absolute;\n        opacity: 0.07;\n        pointer-events: none;\n        height: 100%;\n        width: 100%;\n}\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\nbody[data-v-7a9c1a47] {\r\n        -webkit-print-color-adjust: exact;\n}\nh1[data-v-7a9c1a47],\r\n    h2[data-v-7a9c1a47],\r\n    h3[data-v-7a9c1a47],\r\n    p[data-v-7a9c1a47] {\r\n        margin: 5px 0;\r\n        color: #333;\n}\nhr[data-v-7a9c1a47] {\r\n        border: none;\r\n        border-top: 1px solid #ccc;\r\n        margin: 10px 0;\n}\nh3[data-v-7a9c1a47] {\r\n        font-size: 25px;\r\n        color: #000;\r\n        padding: 4px 2px;\r\n        margin: 15px 0px;\n}\nh3 b[data-v-7a9c1a47] {\r\n        font-weight: bold;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\r\n        padding: 4px 2px;\n}\n.invoice[data-v-7a9c1a47] {\r\n        height: 100%;\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: space-between;\r\n        margin: 0 auto;\r\n        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);\n}\nbutton[data-v-7a9c1a47] {\r\n        margin-top: 20px;\n}\n.invoice .center[data-v-7a9c1a47] {\r\n        text-align: center;\n}\n.invoice .right[data-v-7a9c1a47] {\r\n        text-align: right;\n}\n.image-header[data-v-7a9c1a47] {\r\n        width: 100%;\r\n        margin-bottom: 30px;\r\n        padding-left: 0px;\r\n        display: flex;\r\n        justify-content: space-between;\n}\n.image-header img[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 7px;\r\n        height: 100px;\n}\n.image-header h1[data-v-7a9c1a47] {\r\n        display: inline-block;\r\n        margin-top: 10px;\n}\n.box[data-v-7a9c1a47] {\r\n        padding: 0px 40px 0px 30px;\r\n        margin: 0 0 25px 0;\r\n        height: 670px;\r\n        border: #6e6b6b solid 1px;\r\n        position: relative;\n}\n.doc_box[data-v-7a9c1a47] {\r\n        border: #6e6b6b solid 1px;\r\n        background: #d7d7d7 !important;\r\n        color: #000;\r\n        padding: 10px;\r\n        font-weight: bold;\r\n        width: 180px;\r\n        height: 80px;\r\n        -webkit-print-color-adjust: exact;\r\n                print-color-adjust: exact;\n}\n.watermark[data-v-7a9c1a47] {\r\n        position: absolute;\r\n        opacity: 0.07;\r\n        pointer-events: none;\r\n        height: 100%;\r\n        width: 100%;\n}\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

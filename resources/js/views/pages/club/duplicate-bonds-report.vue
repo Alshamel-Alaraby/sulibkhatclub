@@ -3,7 +3,7 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
@@ -13,6 +13,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../helper/permission";
 import DatePicker from "vue2-datepicker";
+
 /**
  * Advanced Table component
  */
@@ -61,7 +62,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 cm_member_id: true,
                 branch_id: true,
@@ -90,7 +91,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -117,14 +121,14 @@ export default {
         },
     },
     methods: {
-        resetModalShow(document){
+        resetModalShow(document) {
 
             let dateStartArray = this.create.start_date.split("-");
             let dateEndArray = this.create.end_date.split("-");
 
-            let data = '?start_date='+dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
-            data += '&end_date='+dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
-            data += '&document_no='+document;
+            let data = '?start_date=' + dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
+            data += '&end_date=' + dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
+            data += '&document_no=' + document;
 
             adminApi.get(`/club-members/transactions/get-member-is-document${data}&per_page=${this.per_page}`)
                 .then((res) => {
@@ -143,7 +147,7 @@ export default {
                     this.isLoader = false;
                 });
         },
-        resetModalShowHidden(document){
+        resetModalShowHidden(document) {
             this.showMembers = [];
             this.$bvModal.hide(`show-${document}`);
         },
@@ -156,8 +160,8 @@ export default {
                 let dateStartArray = this.create.start_date.split("-");
                 let dateEndArray = this.create.end_date.split("-");
 
-                let data = '?start_date='+dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
-                data += '&end_date='+dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
+                let data = '?start_date=' + dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
+                data += '&end_date=' + dateEndArray[2] + "-" + dateEndArray[1] + "-" + dateEndArray[0];
 
                 adminApi.get(`/club-members/transactions/member-transaction-defore-after-date${data}&per_page=${this.per_page}`)
                     .then((res) => {
@@ -186,8 +190,8 @@ export default {
                 if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
                     this.isLoader = true;
 
-                    let data = '?start_date='+this.create.start_date;
-                    data += '&end_date='+this.create.end_date;
+                    let data = '?start_date=' + this.create.start_date;
+                    data += '&end_date=' + this.create.end_date;
 
                     adminApi.get(`/club-members/transactions/member-transaction-defore-after-date${data}&per_page=${this.per_page}`)
                         .then((res) => {
@@ -231,8 +235,8 @@ export default {
         /**
          *  start  dynamicSortString
          */
-        changeStatus(){
-            adminApi.post(`/club-members/transactions/check-date-member-transaction-update`,{
+        changeStatus() {
+            adminApi.post(`/club-members/transactions/check-date-member-transaction-update`, {
                 date: this.create.date,
                 year: this.create.date
             })
@@ -279,21 +283,18 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-        dateStatus(date,status) {
-            if (status == 'Unpaid')
-            {
+        dateStatus(date, status) {
+            if (status == 'Unpaid') {
                 let toDay = this.formatDate(new Date());
                 let dateRow = this.formatDate(date);
-                if (toDay >= dateRow)
-                {
+                if (toDay >= dateRow) {
                     return 'due';
-                }else if (toDay < dateRow)
-                {
+                } else if (toDay < dateRow) {
                     return 'NotDue';
-                }else {
+                } else {
                     return 'completedPayment'
                 }
-            }else {
+            } else {
                 return 'completedPayment'
             }
         }
@@ -357,13 +358,27 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">{{ $t('general.member')}} </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.branch_id" class="mb-1">{{ $t('general.branch')}} </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.prefix" class="mb-1">{{ $t('general.serial_number') }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.date')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_from" class="mb-1">{{ $t('general.year_from')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_to" class="mb-1">{{ $t('general.year_to')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.number_of_years" class="mb-1">{{ $t('general.number_of_years')}}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">
+                                                {{ $t('general.member') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.branch_id" class="mb-1">
+                                                {{ $t('general.branch') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.prefix" class="mb-1">
+                                                {{ $t('general.serial_number') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date" class="mb-1">
+                                                {{ $t('general.date') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.year_from" class="mb-1">
+                                                {{ $t('general.year_from') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.year_to" class="mb-1">
+                                                {{ $t('general.year_to') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.number_of_years" class="mb-1">
+                                                {{ $t('general.number_of_years') }}
+                                            </b-form-checkbox>
 
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
@@ -372,7 +387,15 @@ export default {
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size:13px;">
@@ -493,7 +516,8 @@ export default {
                         <!--  /create   -->
 
                         <!-- start .table-responsive-->
-                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printCustom">
+                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
+                             id="printCustom">
 
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
@@ -502,14 +526,15 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.DocumentNumber')  }}</span>
+                                            <span>{{ $t('general.DocumentNumber') }}</span>
                                         </div>
                                     </th>
                                     <th>
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ $t('general.duplicate')  }}</span>
+                                            <span>{{ $t('general.duplicate') }}</span>
                                         </div>
                                     </th>
                                 </tr>
@@ -521,6 +546,7 @@ export default {
                                     @dblclick.prevent="$bvModal.show(`show-${data.document_no}`)"
                                     class="body-tr-custom"
                                 >
+                                    <td> {{ index + 1 }}</td>
                                     <td>
                                         {{ data.document_no }}
                                     </td>
@@ -541,7 +567,8 @@ export default {
                                     >
                                         <form>
                                             <div class="mb-3 d-flex justify-content-end">
-                                                <b-button variant="danger" type="button" @click.prevent="$bvModal.hide(`show-${data.document_no}`)">
+                                                <b-button variant="danger" type="button"
+                                                          @click.prevent="$bvModal.hide(`show-${data.document_no}`)">
                                                     {{ $t('general.Cancel') }}
                                                 </b-button>
                                             </div>
@@ -550,27 +577,30 @@ export default {
                                                     <!--       start loader       -->
                                                     <loader size="large" v-if="isLoader"/>
                                                     <!--       end loader       -->
-                                                    <table class="table table-borderless table-hover table-centered m-0">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>
-                                                            <div class="d-flex justify-content-center">
-                                                                <span>{{ $t('general.date')  }}</span>
-                                                            </div>
-                                                        </th>
-                                                        <th>
-                                                            <div class="d-flex justify-content-center">
-                                                                <span>{{ getCompanyKey("member_membership_number") }}</span>
-                                                            </div>
-                                                        </th>
-                                                        <th>
-                                                            <div class="d-flex justify-content-center">
-                                                                <span>{{ $t('general.name')  }}</span>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody v-if="showMembers.length > 0">
+                                                    <table
+                                                        class="table table-borderless table-hover table-centered m-0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ $t('general.date') }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{
+                                                                            getCompanyKey("member_membership_number")
+                                                                        }}</span>
+                                                                </div>
+                                                            </th>
+                                                            <th>
+                                                                <div class="d-flex justify-content-center">
+                                                                    <span>{{ $t('general.name') }}</span>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody v-if="showMembers.length > 0">
                                                         <tr v-for="(data1,index) in showMembers">
                                                             <td>
                                                                 {{ data1.date }}
@@ -582,8 +612,8 @@ export default {
                                                                 {{ data1.member.full_name }}
                                                             </td>
                                                         </tr>
-                                                    </tbody>
-                                                </table>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </form>
@@ -621,11 +651,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

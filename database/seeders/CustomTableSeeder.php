@@ -28,7 +28,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $data2 = [];
             foreach ($columns as $column) {
-                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -50,7 +50,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $boards2 = [];
             foreach ($columns as $column) {
-                array_push($boards2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($boards2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -72,7 +72,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $cm2 = [];
             foreach ($columns as $column) {
-                array_push($cm2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($cm2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -94,7 +94,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $hr2 = [];
             foreach ($columns as $column) {
-                array_push($hr2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($hr2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -116,7 +116,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $rlst2 = [];
             foreach ($columns as $column) {
-                array_push($rlst2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($rlst2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -138,7 +138,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $rp2 = [];
             foreach ($columns as $column) {
-                array_push($rp2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($rp2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -160,7 +160,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $pointOfSale2 = [];
             foreach ($columns as $column) {
-                array_push($pointOfSale2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($pointOfSale2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -182,7 +182,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $pointOfSale2 = [];
             foreach ($columns as $column) {
-                array_push($pointOfSale2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($pointOfSale2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -205,7 +205,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $hms2 = [];
             foreach ($columns as $column) {
-                array_push($hms2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($hms2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -227,7 +227,7 @@ class CustomTableSeeder extends Seeder
             $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
             $cars2 = [];
             foreach ($columns as $column) {
-                array_push($cars2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+                array_push($cars2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
             }
             GeneralCustomTable::create([
                 'table_name' => $item,
@@ -249,7 +249,7 @@ class CustomTableSeeder extends Seeder
 //            $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
 //            $data2 = [];
 //            foreach ($columns as $column) {
-//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
 //            }
 //            GeneralCustomTable::create([
 //                'table_name' => $item,
@@ -271,7 +271,7 @@ class CustomTableSeeder extends Seeder
 //            $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
 //            $data2 = [];
 //            foreach ($columns as $column) {
-//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
 //            }
 //            GeneralCustomTable::create([
 //                'table_name' => $item,
@@ -293,7 +293,7 @@ class CustomTableSeeder extends Seeder
 //            $columns = \Illuminate\Support\Facades\DB::select('SHOW COLUMNS FROM ' . $item);
 //            $data2 = [];
 //            foreach ($columns as $column) {
-//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1]);
+//                array_push($data2, ['column_name' => $column->Field, 'is_required' => 1, 'is_visible' => 1,'is_hotkey'=>0]);
 //            }
 //            GeneralCustomTable::create([
 //                'table_name' => $item,

@@ -1161,7 +1161,7 @@ export default {
                 actual_execution_end_date:this.formatDate(new Date()),
                 note:'',
                 media: [],
-                type: 'equipment',
+                type: 'customer',
                 equipment_id: null,
                 location_id: null,
                 sub_location_id: null,
@@ -1285,10 +1285,15 @@ export default {
     },
     mounted(){
         this.company_id = JSON.parse(localStorage.getItem("company_id"));
-        this.getLocation();
+        if(this.create.type == "customer")
+            this.getCustomers();
+        if(this.create.type == "equipment")
+            this.getLocation();
         if (this.isVisible("department_id"))  this.getDepartment();
         if (this.isVisible("status_id"))  this.getStatus();
         if (this.isVisible("priority_id"))  this.getPriority();
+
+
 
     },
     methods: {
@@ -1354,7 +1359,7 @@ export default {
                 task_requirement: '',
                 notification_date:this.formatDate(new Date()),
                 note:'',
-                type: 'equipment',
+                type: 'customer',
                 equipment_id: null,
                 location_id: null,
                 sub_location_id: null,
@@ -1382,6 +1387,7 @@ export default {
             let emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id
 
             let locations= []
+            if(department.locations && department.locations.length >0)
             department.locations.forEach((ele) => {
                 this.all_locations.forEach((location) => {
                     if(ele.location_id == location.id && (this.$store.state.auth.type == 'admin' || (ele.supervisors.includes(parseInt(emp_id)) || ele.attentions.includes(parseInt(emp_id)) || ele.engineers.includes(parseInt(emp_id)))))
@@ -2077,13 +2083,14 @@ export default {
             // --------- calc Time --------------
             var today = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
 
-            let startTime = new Date(today + " " +this.create.start_time);
-            let endTime = new Date(today + " " +this.create.end_time);
+            let startTime = new Date(today + " " +(actual ? this.create.actual_start_time :this.create.start_time));
+            let endTime = new Date(today + " " +(actual ?this.create.actual_end_time : this.create.end_time));
             if (endTime > startTime){
                 var difference = endTime.getTime() - startTime.getTime();
 
                 TotalTime = Math.round(difference / 60000) + " Minutes";
             }
+
             if(actual)
                 this.create.actual_execution_duration = `${TotalDays} Days, ${TotalTime}`
             else

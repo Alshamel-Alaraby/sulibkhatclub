@@ -3,11 +3,11 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
-import {dynamicSortString, dynamicSortNumber} from "../../../helper/tableSort";
+import {dynamicSortNumber, dynamicSortString} from "../../../helper/tableSort";
 import Multiselect from "vue-multiselect";
 import {formatDateOnly} from "../../../helper/startDate";
 import translation from "../../../helper/mixin/translation-mixin";
@@ -43,7 +43,7 @@ export default {
             fields: [],
             per_page: 100,
             search: "",
-            dataInv:[],
+            dataInv: [],
             debounce: {},
             transactionsPagination: {},
             transactions: [],
@@ -76,8 +76,8 @@ export default {
                 gender: null,
                 type: "renew",
                 amount: "",
-                module_type:"club",
-                date:new Date().toISOString().slice(0, 10),
+                module_type: "club",
+                date: new Date().toISOString().slice(0, 10),
             },
             company_id: null,
             setting: {
@@ -95,7 +95,7 @@ export default {
             checkAll: [],
             transaction_create: [],
             current_page: 1,
-            total:0,
+            total: 0,
             filterSetting: [
                 "cm_member_id",
                 "document_no",
@@ -137,7 +137,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -162,7 +165,7 @@ export default {
             } else {
                 this.checkAll = [];
                 this.transaction_create = [];
-                this.total = 0 ;
+                this.total = 0;
             }
         },
     },
@@ -201,7 +204,7 @@ export default {
             return res.length > 0 && res[0].is_required == 1 ? true : false;
         },
         isPermission(item) {
-            if (this.$store.state.auth.type == 'user'){
+            if (this.$store.state.auth.type == 'user') {
                 return this.$store.state.auth.permissions.includes(item)
             }
             return true;
@@ -210,16 +213,16 @@ export default {
             if (this.create.branch_id == 0) {
                 this.$bvModal.show("create_branch");
                 this.create.branch_id = null;
-            }else{
+            } else {
                 await this.getSerials();
             }
         },
         resetForm() {
             this.total = 0;
             this.transaction_create = [];
-            this.current_page= 1;
-            this.transactionsPagination= {};
-            this.transactions= [];
+            this.current_page = 1;
+            this.transactionsPagination = {};
+            this.transactions = [];
             this.create = {
                 sponsor_id: null,
                 branch_id: null,
@@ -231,8 +234,8 @@ export default {
                 type: "renew",
                 document_id: 8,
                 amount: "",
-                module_type:"club",
-                date:new Date().toISOString().slice(0, 10),
+                module_type: "club",
+                date: new Date().toISOString().slice(0, 10),
                 first_name: '',
                 second_name: '',
                 third_name: '',
@@ -273,7 +276,7 @@ export default {
             this.isLoader = true;
             adminApi
                 .get(
-                    `/club-members/members/getMemberForMultiSubscription?sponsor_id=${this.create.is_sponser?this.create.sponsor_id:''}&hasTransaction=1&member_status_id=1&company_id=${this.company_id}&page=${page}&per_page=${this.per_page}&national_id=${this.create.national_id??''}&membership_number=${this.create.membership_number??''}&full_name=${this.create.full_name??''}&year=${this.create.year??''}&first_name=${this.create.first_name??''}&second_name=${this.create.second_name??''}&third_name=${this.create.third_name}&last_name=${this.create.last_name??''}&family_name=${this.create.family_name}&gender=${this.create.gender}`
+                    `/club-members/members/getMemberForMultiSubscription?sponsor_id=${this.create.is_sponser ? this.create.sponsor_id : ''}&hasTransaction=1&member_status_id=1&company_id=${this.company_id}&page=${page}&per_page=${this.per_page}&national_id=${this.create.national_id ?? ''}&membership_number=${this.create.membership_number ?? ''}&full_name=${this.create.full_name ?? ''}&year=${this.create.year ?? ''}&first_name=${this.create.first_name ?? ''}&second_name=${this.create.second_name ?? ''}&third_name=${this.create.third_name}&last_name=${this.create.last_name ?? ''}&family_name=${this.create.family_name}&gender=${this.create.gender}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -381,8 +384,8 @@ export default {
          *  hidden Modal (create)
          */
         async resetModal() {
-            if(this.isVisible('branch_id')) await this.getBranches();
-            if(this.isVisible('sponsor_id')) await this.getSponsors();
+            if (this.isVisible('branch_id')) await this.getBranches();
+            if (this.isVisible('sponsor_id')) await this.getSponsors();
             await this.getRenewal();
             this.$nextTick(() => {
                 this.$v.$reset();
@@ -455,15 +458,13 @@ export default {
         formatDate(value) {
             return formatDateOnly(value);
         },
-        async getRenewal()
-        {
+        async getRenewal() {
             await adminApi
                 .get(`/club-members/memberships-renewals?date_search=${this.create.date}`)
                 .then((res) => {
                     let l = res.data.data;
                     this.renewal = l;
-                    if (this.create.type)
-                    {
+                    if (this.create.type) {
                         this.renewalAmount();
                     }
                     this.DataOfModelFinancialYear();
@@ -480,14 +481,11 @@ export default {
                 });
         },
 
-        renewalAmount()
-        {
-            if (this.renewal.length > 0)
-            {
-                if (this.create.type == "subscribe")
-                {
+        renewalAmount() {
+            if (this.renewal.length > 0) {
+                if (this.create.type == "subscribe") {
                     this.create.amount = this.renewal[0].membership_cost;
-                }else {
+                } else {
                     this.create.amount = this.renewal[0].renewal_cost;
                 }
             }
@@ -512,12 +510,11 @@ export default {
 
         addNewRecordTransaction(id) {
             let data = this.create;
-            let member = this.transactions.find((el)=> el.id ==id);
-            let serial = this.serials.find((el)=> el.gender ==member.gender);
+            let member = this.transactions.find((el) => el.id == id);
+            let serial = this.serials.find((el) => el.gender == member.gender);
             let member_name = member.full_name;
-            let member_transactions = this.transaction_create.find((el)=> el.cm_member_id == id);
-            if (!member_transactions)
-            {
+            let member_transactions = this.transaction_create.find((el) => el.cm_member_id == id);
+            if (!member_transactions) {
                 this.transaction_create.push({
                     sponsor_id: data.sponsor_id,
                     branch_id: data.branch_id,
@@ -534,15 +531,15 @@ export default {
                     amount: data.amount,
                     member_name: member_name,
                     membership_number: member.membership_number,
-                    module_type:"club",
-                    date:new Date().toISOString().slice(0, 10),
+                    module_type: "club",
+                    date: new Date().toISOString().slice(0, 10),
                 });
                 this.total += parseFloat(this.create.amount);
             }
 
         },
         removeRecordTransaction(id) {
-           let index = this.transaction_create.findIndex(obj => obj.cm_member_id === id);
+            let index = this.transaction_create.findIndex(obj => obj.cm_member_id === id);
             this.transaction_create.splice(index, 1);
             this.total = 0;
             this.transaction_create.forEach((el) => {
@@ -555,8 +552,7 @@ export default {
                 .get(`/financial-years/DataOfModelFinancialYear?date=${this.create.date}`)
                 .then((res) => {
                     let l = res.data;
-                    if(l)
-                    {
+                    if (l) {
                         this.create.date_from = l.data.start_date;
                         this.create.date_to = l.data.end_date;
                     }
@@ -572,18 +568,16 @@ export default {
                     this.isLoader = false;
                 });
         },
-        handelDataPrintInv(data)
-        {
+        handelDataPrintInv(data) {
             let array = [];
             array.push(data);
             this.printInv(array);
         },
-        printInv(data){
+        printInv(data) {
             this.dataInv = data
         },
-        serialName(data)
-        {
-          return this.serials.find((el)=> el.gender ==data.gender)
+        serialName(data) {
+            return this.serials.find((el) => el.gender == data.gender)
         }
     },
 };
@@ -653,13 +647,13 @@ export default {
                                         {{ $t("general.PrintReceipts") }}
                                         <i class="fe-printer"></i>
                                     </b-button>
-<!--                                    <button-->
-<!--                                        class="custom-btn-dowonload"-->
-<!--                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
-<!--                                        v-if="checkAll.length == 1 && isPermission('update multiSubscription club')"-->
-<!--                                    >-->
-<!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
-<!--                                    </button>-->
+                                    <!--                                    <button-->
+                                    <!--                                        class="custom-btn-dowonload"-->
+                                    <!--                                        @click="$bvModal.show(`modal-edit-${checkAll[0]}`)"-->
+                                    <!--                                        v-if="checkAll.length == 1 && isPermission('update multiSubscription club')"-->
+                                    <!--                                    >-->
+                                    <!--                                        <i class="mdi mdi-square-edit-outline"></i>-->
+                                    <!--                                    </button>-->
                                 </div>
                                 <!-- end create and printer -->
                             </div>
@@ -720,7 +714,8 @@ export default {
                                                 {{ $t("general.ForAYear") }}
                                             </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
-                                                <a href="javascript:void(0)" class="btn btn-primary btn-sm">{{$t("general.Apply")}}</a>
+                                                <a href="javascript:void(0)"
+                                                   class="btn btn-primary btn-sm">{{ $t("general.Apply") }}</a>
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
@@ -819,8 +814,10 @@ export default {
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label">{{ getCompanyKey("branch") }} <span class="text-danger">*</span></label>
-                                            <multiselect :disabled="transaction_create.length > 0" :show-labels="false" @input="showBranchModal" v-model="create.branch_id"
+                                            <label class="control-label">{{ getCompanyKey("branch") }} <span
+                                                class="text-danger">*</span></label>
+                                            <multiselect :disabled="transaction_create.length > 0" :show-labels="false"
+                                                         @input="showBranchModal" v-model="create.branch_id"
                                                          :options="branches.map((type) => type.id)" :custom-label="
                                                     (opt) =>
                                                         $i18n.locale == 'ar'
@@ -905,14 +902,16 @@ export default {
                                     </div>
                                     <div v-if="create.branch_id && create.sponsor_id" class="col-md-4">
                                         <div class="form-check mt-3">
-                                            <input style="transform: scale(1.5);" type="checkbox" v-model="create.is_sponser" value="true" id="flexCheckDefault">
+                                            <input style="transform: scale(1.5);" type="checkbox"
+                                                   v-model="create.is_sponser" value="true" id="flexCheckDefault">
                                             <label style="padding:9px" class="form-check-label" for="flexCheckDefault">
-                                                {{$t('general.SponsorMembersOnly')}}
+                                                {{ $t('general.SponsorMembersOnly') }}
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                                <hr v-if="create.branch_id && create.sponsor_id" style=" margin: 10px 0 !important; border-top: 1px solid rgb(141 163 159 / 42%);"/>
+                                <hr v-if="create.branch_id && create.sponsor_id"
+                                    style=" margin: 10px 0 !important; border-top: 1px solid rgb(141 163 159 / 42%);"/>
                                 <div class="row" v-if="create.branch_id && create.sponsor_id">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -1146,46 +1145,55 @@ export default {
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <h4 class="card-title">
-                                                        {{$t('general.totalAmount')}} : {{total}}
+                                                        {{ $t('general.totalAmount') }} : {{ total }}
                                                     </h4>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <h4 class="card-title">
-                                                        {{$t('general.NumberOfMembers')}} : {{transaction_create.length}}
+                                                        {{ $t('general.NumberOfMembers') }} :
+                                                        {{ transaction_create.length }}
                                                     </h4>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <h4 class="card-title">
-                                                        {{$t('general.sponsor')}} : {{sponsors.find((el)=> el.id ==create.sponsor_id) ? sponsors.find((el)=> el.id ==create.sponsor_id).name:'---'}}
+                                                        {{ $t('general.sponsor') }} :
+                                                        {{ sponsors.find((el) => el.id == create.sponsor_id) ? sponsors.find((el) => el.id == create.sponsor_id).name : '---' }}
                                                     </h4>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <h4 class="card-title">
-                                                        {{ getCompanyKey("branch") }} : {{branches.find((el)=> el.id ==create.branch_id) ? branches.find((el)=> el.id ==create.branch_id).name:'---'}}
+                                                        {{ getCompanyKey("branch") }} :
+                                                        {{ branches.find((el) => el.id == create.branch_id) ? branches.find((el) => el.id == create.branch_id).name : '---' }}
                                                     </h4>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="table-responsive mb-3 custom-table-theme position-relative">
                                             <!--       start loader       -->
-                                            <loader size="large" v-if="isLoader" />
+                                            <loader size="large" v-if="isLoader"/>
                                             <!--       end loader       -->
 
-                                            <table class="table table-borderless table-hover table-centered m-0" >
+                                            <table class="table table-borderless table-hover table-centered m-0">
                                                 <thead>
                                                 <tr>
-                                                    <th v-if="isVisible('membership_number')">{{ getCompanyKey("member_membership_number") }}</th>
+                                                    <th v-if="isVisible('membership_number')">
+                                                        {{ getCompanyKey("member_membership_number") }}
+                                                    </th>
                                                     <th>{{ $t("general.serial_number") }}</th>
                                                     <th>
                                                         <div class="d-flex justify-content-center">
                                                             <span>{{ getCompanyKey("member") }}</span>
                                                             <div class="arrow-sort">
-                                                                <i class="fas fa-arrow-up" @click="transaction_create.sort(sortString('full_name'))"></i>
-                                                                <i class="fas fa-arrow-down" @click="transaction_create.sort(sortString('-full_name'))"></i>
+                                                                <i class="fas fa-arrow-up"
+                                                                   @click="transaction_create.sort(sortString('full_name'))"></i>
+                                                                <i class="fas fa-arrow-down"
+                                                                   @click="transaction_create.sort(sortString('-full_name'))"></i>
                                                             </div>
                                                         </div>
                                                     </th>
-                                                    <th v-if="isVisible('amount')">{{ getCompanyKey("subscription_amount") }}</th>
+                                                    <th v-if="isVisible('amount')">
+                                                        {{ getCompanyKey("subscription_amount") }}
+                                                    </th>
                                                     <th v-if="isVisible('year')">{{ $t("general.ForAYear") }}</th>
                                                     <th>{{ $t("general.Action") }}</th>
                                                 </tr>
@@ -1196,7 +1204,9 @@ export default {
                                                     class="body-tr-custom"
                                                 >
                                                     <td v-if="isVisible('membership_number')">
-                                                        <h5 class="m-0 font-weight-normal">{{ data.membership_number }}</h5>
+                                                        <h5 class="m-0 font-weight-normal">{{
+                                                                data.membership_number
+                                                            }}</h5>
                                                     </td>
                                                     <td>
                                                         <h5 class="m-0 font-weight-normal">{{ data.serial_name }}</h5>
@@ -1205,13 +1215,14 @@ export default {
                                                         <h5 class="m-0 font-weight-normal">{{ data.member_name }}</h5>
                                                     </td>
                                                     <td v-if="isVisible('amount')">
-                                                        <h5 class="m-0 font-weight-normal">{{data.amount}}</h5>
+                                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
                                                     </td>
-                                                    <td v-if="isVisible('year')"> <h5 class="m-0 font-weight-normal"> {{ data.year }}</h5></td>
+                                                    <td v-if="isVisible('year')"><h5 class="m-0 font-weight-normal">
+                                                        {{ data.year }}</h5></td>
                                                     <td>
-                                                        <button  type="button"
-                                                                 @click.prevent="checkRow(data.cm_member_id)"
-                                                                 class="custom-btn-dowonload"
+                                                        <button type="button"
+                                                                @click.prevent="checkRow(data.cm_member_id)"
+                                                                class="custom-btn-dowonload"
                                                         >
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>
@@ -1255,10 +1266,12 @@ export default {
                                     </th>
                                     <th v-if="setting.membership_number">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{getCompanyKey("member_membership_number")}}</span>
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="members.sort(sortString('membership_number'))"></i>
-                                                <i class="fas fa-arrow-down" @click="members.sort(sortString('-membership_number'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="members.sort(sortString('membership_number'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="members.sort(sortString('-membership_number'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -1266,8 +1279,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString('full_name'))"></i>
-                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString('-full_name'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="transactions.sort(sortString('full_name'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="transactions.sort(sortString('-full_name'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -1275,8 +1290,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_national_id") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="members.sort(sortString('national_id'))"></i>
-                                                <i class="fas fa-arrow-down" @click="members.sort(sortString('-national_id'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="members.sort(sortString('national_id'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="members.sort(sortString('-national_id'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -1298,7 +1315,7 @@ export default {
                                 </tr>
                                 </thead>
                                 <tbody v-if="transactions.length > 0">
-                                     <tr
+                                <tr
                                     @click.capture="checkRow(data.id)"
                                     v-for="(data, index) in transactions"
                                     :key="data.id"
@@ -1315,32 +1332,35 @@ export default {
                                             />
                                         </div>
                                     </td>
-                                     <td v-if="setting.membership_number">
-                                         <h5 class="m-0 font-weight-normal">
-                                             {{data.membership_number}}
-                                         </h5>
-                                     </td>
-                                     <td v-if="setting.cm_member_id">
-                                         <h5 class="m-0 font-weight-normal">
-                                             {{data.full_name}}
-                                         </h5>
-                                     </td>
-                                     <td v-if="setting.national_id">
-                                         <h5 class="m-0 font-weight-normal">
-                                             {{data.national_id}}
-                                         </h5>
-                                     </td>
-                                     <td v-if="setting.serial_id && isVisible('serial_id')">
-                                         <h5 class="m-0 font-weight-normal">
-                                             {{ serialName(data) ? $i18n.locale == 'ar' ? serialName(data).name : serialName(data).name_e : '---' }}
-                                         </h5>
-                                     </td>
-                                     <td v-if="setting.amount && isVisible('amount')">
-                                         <h5 class="m-0 font-weight-normal">{{ create.amount }}</h5>
-                                     </td>
-                                     <td v-if="setting.year && isVisible('year')">
-                                         <h5 class="m-0 font-weight-normal">{{ data.transaction ? parseInt(data.transaction.year) +1 :'---' }}</h5>
-                                     </td>
+                                    <td v-if="setting.membership_number">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.membership_number }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.cm_member_id">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.full_name }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.national_id">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.national_id }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.serial_id && isVisible('serial_id')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{
+                                                serialName(data) ? $i18n.locale == 'ar' ? serialName(data).name : serialName(data).name_e : '---'
+                                            }}
+                                        </h5>
+                                    </td>
+                                    <td v-if="setting.amount && isVisible('amount')">
+                                        <h5 class="m-0 font-weight-normal">{{ create.amount }}</h5>
+                                    </td>
+                                    <td v-if="setting.year && isVisible('year')">
+                                        <h5 class="m-0 font-weight-normal">
+                                            {{ data.transaction ? parseInt(data.transaction.year) + 1 : '---' }}</h5>
+                                    </td>
                                 </tr>
                                 </tbody>
                                 <tbody v-else>

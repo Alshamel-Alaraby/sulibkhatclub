@@ -2020,8 +2020,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, {
         isFilter: true,
         isSet: true,
+        trans: "general_task_signature",
+        isV: 'signature',
+        forceVisible: true,
+        type: 'string',
+        sort: true,
+        setting: {
+          "signature": true
+        },
+        isSetting: true
+      }, {
+        isFilter: true,
+        isSet: true,
         trans: "task_type",
         isV: 'type',
+        trans_value: true,
         type: 'string',
         sort: true,
         setting: {
@@ -2043,9 +2056,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         },
         isSetting: true
       }, {
+        //boardRent_task_department
         isFilter: true,
         isSet: true,
-        trans: "boardRent_task_department",
+        trans: "boardRent_work_type",
         isV: 'department_id',
         type: 'relation',
         name: 'department',
@@ -2056,35 +2070,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "department_id": true
         },
         isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "customer",
-        isV: 'customer_id',
-        type: 'relation',
-        name: 'customer',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "customer_id": true
-        },
-        isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "city",
-        isV: 'department_task_id',
-        type: 'relation',
-        name: 'department_task',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "department_task_id": true
-        },
-        isSetting: true
-      }, {
+      },
+      // {
+      //     isFilter: true,isSet: true,trans:"customer",isV: 'customer_id',
+      //     type: 'relation', name:'customer',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"customer_id":true},isSetting: true
+      // },
+      // {
+      //     isFilter: true,isSet: true,trans:"city",isV: 'department_task_id',
+      //     type: 'relation', name:'department_task',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"department_task_id":true},isSetting: true
+      // },
+      {
         isFilter: true,
         isSet: true,
         trans: "task_status",
@@ -2098,21 +2095,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "status_id": true
         },
         isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "boardRent_task_equipment",
-        isV: 'equipment_id',
-        type: 'relation',
-        name: 'equipment',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "equipment_id": true
-        },
-        isSetting: true
-      }, {
+      },
+      // {
+      //     isFilter: true,isSet: true,trans:"boardRent_task_equipment",isV: 'equipment_id',
+      //     type: 'relation', name:'equipment',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"equipment_id":true},isSetting: true
+      // },
+      {
         isFilter: true,
         isSet: true,
         trans: "boardRent_task_location",
@@ -2129,6 +2118,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, {
         isFilter: true,
         isSet: true,
+        trans: "boardRent_trust_task_sub_location",
+        isV: 'sub_location_id',
+        type: 'relation',
+        name: 'sub_location',
+        sort: false,
+        col1: 'name',
+        col2: 'name_e',
+        setting: {
+          "sub_location_id": true
+        },
+        isSetting: true
+      }, {
+        isFilter: true,
+        isSet: true,
         trans: "task_priority",
         isV: 'priority_id',
         type: 'relation',
@@ -2140,52 +2143,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "priority_id": true
         },
         isSetting: true
-      }, {
-        isFilter: false,
-        isSet: true,
-        trans: "task_owners",
-        isV: 'owners',
-        type: 'relation',
-        name: 'owners',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "owners": true
-        },
-        isSetting: true
-      }, {
+      },
+      // {
+      //     isFilter: false,isSet: true,trans:"task_owners",isV: 'owners',
+      //     type: 'relation', name:'owners',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"owners":true},isSetting: true
+      // },
+      // {
+      //     isFilter: true,isSet: true,trans:"task_supervisors",isV: 'supervisors',
+      //     type: 'relation', name:'supervisors',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"supervisors":true},isSetting: true
+      // },
+      // {
+      //     isFilter: true,isSet: true,trans:"task_notifications",isV: 'notifications',
+      //     type: 'relation', name:'notifications',sort: false,col1: 'name',col2: 'name_e',
+      //     setting: {"notifications":true},isSetting: true
+      // },
+      {
+        //general_customer_contact_person
         isFilter: true,
         isSet: true,
-        trans: "task_supervisors",
-        isV: 'supervisors',
-        type: 'relation',
-        name: 'supervisors',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "supervisors": true
-        },
-        isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "task_notifications",
-        isV: 'notifications',
-        type: 'relation',
-        name: 'notifications',
-        sort: false,
-        col1: 'name',
-        col2: 'name_e',
-        setting: {
-          "notifications": true
-        },
-        isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "general_customer_contact_person",
+        trans: 'general_task_informer_name',
         isV: 'contact_person',
         type: 'string',
         sort: true,
@@ -2194,9 +2172,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         },
         isSetting: true
       }, {
+        //general_customer_contact_phones
         isFilter: true,
         isSet: true,
-        trans: "general_customer_contact_phones",
+        trans: 'company_phone',
         isV: 'contact_phone',
         type: 'string',
         sort: true,
@@ -2204,18 +2183,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "contact_phone": true
         },
         isSetting: true
-      }, {
-        isFilter: true,
-        isSet: true,
-        trans: "task_title",
-        isV: 'task_title',
-        type: 'string',
-        sort: true,
-        setting: {
-          "task_title": true
-        },
-        isSetting: true
-      }, {
+      },
+      // {
+      //     //task_title
+      //     isFilter: true,isSet: true,trans:'trust_task_title',isV: 'task_title',
+      //     type: 'string',sort: true,setting: {"task_title":true},isSetting: true
+      // },
+      {
         isFilter: true,
         isSet: true,
         trans: "execution_date",
@@ -2286,7 +2260,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         isSet: true,
         trans: "boardRent_task_is_closed",
         isV: 'is_closed',
-        type: 'boolean',
+        type: 'boolean1',
         setting: {
           "is_closed": true
         },
@@ -2396,7 +2370,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     filterSearch: function filterSearch(fields) {
-      var _ref, _ref2;
+      var _ref, _ref2, _ref3, _ref4, _ref5;
       var indexemployee = fields.indexOf("employee_id"),
         indexG = fields.indexOf("department_id"),
         indexCty = fields.indexOf("customer_id"),
@@ -2429,7 +2403,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       for (var i = 0; i < fields.length; ++i) {
         filter += "columns[".concat(i, "]=").concat(fields[i], "&");
       }
-      return (_ref = (_ref2 = filter + 'status_id=' + this.create.status_id + '&location_id=' + this.create.location_id + '&department_id=' + this.create.department_id + '&start_date=' + this.create.start_date) !== null && _ref2 !== void 0 ? _ref2 : '' + '&end_date=' + this.create.end_date) !== null && _ref !== void 0 ? _ref : '';
+      return (_ref = (_ref2 = (_ref3 = (_ref4 = (_ref5 = filter + 'status_id=' + this.create.status_id) !== null && _ref5 !== void 0 ? _ref5 : '' + '&location_id=' + this.create.location_id) !== null && _ref4 !== void 0 ? _ref4 : '' + '&department_id=' + this.create.department_id) !== null && _ref3 !== void 0 ? _ref3 : '' + '&start_date=' + this.create.start_date) !== null && _ref2 !== void 0 ? _ref2 : '' + '&end_date=' + this.create.end_date) !== null && _ref !== void 0 ? _ref : '';
     },
     settingFun: function settingFun() {
       var setting = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -5812,7 +5786,7 @@ var render = function render() {
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
       return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(item.trans_value ? _vm.$t("general." + data[item.isV]) : data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -6911,6 +6885,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -6924,6 +6899,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

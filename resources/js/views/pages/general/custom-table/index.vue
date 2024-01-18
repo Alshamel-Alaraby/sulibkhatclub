@@ -154,6 +154,7 @@ export default {
               column_name: column,
               is_required: 1,
               is_visible: 1,
+              is_hotkey: 0,
             };
           });
         })
@@ -173,6 +174,7 @@ export default {
         column_name: "",
         is_required: 1,
         is_visible: 1,
+        is_hotkey: 1,
       });
     },
     removeNewField(index) {
@@ -848,6 +850,30 @@ export default {
                         </b-form-group>
                       </div>
                     </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="mr-2">
+                          {{ getCompanyKey("custom_is_hotkey") }}
+                          <span class="text-danger">*</span>
+                        </label>
+                        <b-form-group>
+                          <b-form-radio
+                            :disabled="create.columns[index].is_hotkey == 0"
+                            class="d-inline-block"
+                            v-model="create.columns[index].is_required"
+                            value="1"
+                            >{{ $t("general.Yes") }}
+                          </b-form-radio>
+                          <b-form-radio
+                            :disabled="create.columns[index].is_hotkey == 0"
+                            class="d-inline-block m-1"
+                            v-model="create.columns[index].is_hotkey"
+                            value="0"
+                            >{{ $t("general.No") }}
+                          </b-form-radio>
+                        </b-form-group>
+                      </div>
+                    </div>
                   </div>
                 </template>
               </form>
@@ -990,6 +1016,38 @@ export default {
                                               :disabled="edit.columns[index].is_visible == 0"
                                               class="d-inline-block m-1"
                                               v-model="edit.columns[index].is_required"
+                                              value="0"
+                                          >{{ $t("general.No") }}
+                                          </b-form-radio>
+                                      </b-form-group>
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                  <div class="form-group">
+                                      <label class="mr-2">
+                                          {{ getCompanyKey("custom_is_hotkey") }}
+                                          <span class="text-danger">*</span>
+                                      </label>
+                                      <b-form-group>
+                                          <b-form-radio
+                                              @change="
+                                        edit.columns[index].is_hotkey == 0
+                                          ? (edit.columns[index].is_required = 0)
+                                          : null
+                                      "
+                                              class="d-inline-block"
+                                              v-model="edit.columns[index].is_hotkey"
+                                              value="1"
+                                          >{{ $t("general.Yes") }}
+                                          </b-form-radio>
+                                          <b-form-radio
+                                              @change="
+                                        edit.columns[index].is_hotkey == 0
+                                          ? (edit.columns[index].is_required = 0)
+                                          : null
+                                      "
+                                              class="d-inline-block m-1"
+                                              v-model="edit.columns[index].is_hotkey"
                                               value="0"
                                           >{{ $t("general.No") }}
                                           </b-form-radio>

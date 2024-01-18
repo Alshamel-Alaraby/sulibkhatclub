@@ -45,7 +45,9 @@ class GeneralTaskResource extends JsonResource
             'task_requirement' => $this->task_requirement,
             'type' => $this->type,
             'equipment_id' => $this->equipment_id,
-
+            "work_nature_id" => $this->work_nature_id,
+            "address" => $this->address,
+            "signature" => $this->signature,
             'departmentTask' => $this->departmentTask,
             'department' => $this->department,
             'employee' => $this->employee,
@@ -53,6 +55,7 @@ class GeneralTaskResource extends JsonResource
             'equipment' => $this->equipment,
             'status' => $this->status,
             'location' => $this->location,
+            'sub_location' => $this->sub_location,
             'owners' => [$this->created_by ? User::find($this->created_by)->employee_id : null],
             'supervisors' => $this->supervisors->pluck('id')->toArray(),
             'notifications' => $this->attentions->pluck('id')->toArray(),

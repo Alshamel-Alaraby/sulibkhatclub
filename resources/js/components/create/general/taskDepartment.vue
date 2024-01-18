@@ -124,7 +124,7 @@ export default {
             setTimeout( async () => {
                 if(this.type != 'edit'){
                     if(!this.isPage) await this.getCustomTableFields();
-                    if (this.isVisible("department_id") && !this.department_id) this.this.getDepartnent();
+                    if (this.isVisible("department_id") && !this.department_id) this.getDepartnent();
                 }else {
                     if(this.idObjEdit.dataObj){
                         let task = this.idObjEdit.dataObj;

@@ -3,7 +3,7 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
@@ -13,6 +13,7 @@ import translation from "../../../helper/mixin/translation-mixin";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../helper/permission";
 import DatePicker from "vue2-datepicker";
+
 /**
  * Advanced Table component
  */
@@ -63,7 +64,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 cm_member_id: true,
                 branch_id: true,
@@ -81,14 +82,14 @@ export default {
             mouseEnter: null,
         }
     },
-    mounted(){
-       this.getStatus();
+    mounted() {
+        this.getStatus();
     },
     validations: {
         create: {
             date: {required},
             year: {required},
-            member_status_id:  {required}
+            member_status_id: {required}
         },
     },
     watch: {
@@ -96,7 +97,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -258,8 +262,8 @@ export default {
         /**
          *  start  dynamicSortString
          */
-        changeStatus(){
-            adminApi.post(`/club-members/transactions/check-date-member-transaction-update`,{
+        changeStatus() {
+            adminApi.post(`/club-members/transactions/check-date-member-transaction-update`, {
                 date: this.create.date,
                 year: this.create.date
             })
@@ -306,21 +310,18 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-        dateStatus(date,status) {
-            if (status == 'Unpaid')
-            {
+        dateStatus(date, status) {
+            if (status == 'Unpaid') {
                 let toDay = this.formatDate(new Date());
                 let dateRow = this.formatDate(date);
-                if (toDay >= dateRow)
-                {
+                if (toDay >= dateRow) {
                     return 'due';
-                }else if (toDay < dateRow)
-                {
+                } else if (toDay < dateRow) {
                     return 'NotDue';
-                }else {
+                } else {
                     return 'completedPayment'
                 }
-            }else {
+            } else {
                 return 'completedPayment'
             }
         }
@@ -350,7 +351,7 @@ export default {
                                                          class="mb-1">{{ $t('general.member') }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
-                                            {{ getCompanyKey("member_membership_number")  }}
+                                            {{ getCompanyKey("member_membership_number") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
@@ -394,16 +395,16 @@ export default {
                                     </button>
 
                                 </div>
-<!--                                <b-button-->
-<!--                                    variant="secondary"-->
-<!--                                    v-if="installmentStatus.length > 0"-->
-<!--                                    :disabled="isLoader"-->
-<!--                                    class="btn-sm mx-1 font-weight-bold"-->
-<!--                                    @click="changeStatus"-->
-<!--                                >-->
-<!--                                    {{ $t('general.changeStatus') }}-->
-<!--                                    <i class="mdi mdi-square-edit-outline"></i>-->
-<!--                                </b-button>-->
+                                <!--                                <b-button-->
+                                <!--                                    variant="secondary"-->
+                                <!--                                    v-if="installmentStatus.length > 0"-->
+                                <!--                                    :disabled="isLoader"-->
+                                <!--                                    class="btn-sm mx-1 font-weight-bold"-->
+                                <!--                                    @click="changeStatus"-->
+                                <!--                                >-->
+                                <!--                                    {{ $t('general.changeStatus') }}-->
+                                <!--                                    <i class="mdi mdi-square-edit-outline"></i>-->
+                                <!--                                </b-button>-->
                                 <!-- end create and printer -->
                             </div>
                             <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center  justify-content-end">
@@ -426,13 +427,27 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">{{ $t('general.member')}} </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.branch_id" class="mb-1">{{ $t('general.branch')}} </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.prefix" class="mb-1">{{ $t('general.serial_number') }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.date" class="mb-1">{{ $t('general.date')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_from" class="mb-1">{{ $t('general.year_from')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.year_to" class="mb-1">{{ $t('general.year_to')}}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.number_of_years" class="mb-1">{{ $t('general.number_of_years')}}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">
+                                                {{ $t('general.member') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.branch_id" class="mb-1">
+                                                {{ $t('general.branch') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.prefix" class="mb-1">
+                                                {{ $t('general.serial_number') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.date" class="mb-1">
+                                                {{ $t('general.date') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.year_from" class="mb-1">
+                                                {{ $t('general.year_from') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.year_to" class="mb-1">
+                                                {{ $t('general.year_to') }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.number_of_years" class="mb-1">
+                                                {{ $t('general.number_of_years') }}
+                                            </b-form-checkbox>
 
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
@@ -441,7 +456,15 @@ export default {
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size:13px;">
@@ -601,7 +624,8 @@ export default {
                         <!--  /create   -->
 
                         <!-- start .table-responsive-->
-                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printCustom">
+                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
+                             id="printCustom">
 
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
@@ -610,6 +634,7 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_membership_number") }}</span>
@@ -643,11 +668,12 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
+                                    <td> {{ index + 1 }}</td>
                                     <td>
                                         {{ data.membership_number }}
                                     </td>
                                     <td>
-                                        {{ data.membership_date ?  formatDate(data.membership_date): '-' }}
+                                        {{ data.membership_date ? formatDate(data.membership_date) : '-' }}
                                     </td>
                                     <td>
                                         <h5 class="m-0 font-weight-normal td5">
@@ -655,10 +681,12 @@ export default {
                                         </h5>
                                     </td>
                                     <td>
-                                        {{ data.cmTransaction.length > 0 ? data.cmTransaction[0].document_no: '-' }}
+                                        {{ data.cmTransaction.length > 0 ? data.cmTransaction[0].document_no : '-' }}
                                     </td>
                                     <td>
-                                        {{ data.cmTransaction.length > 0 ? formatDate(data.cmTransaction[0].date) : '-' }}
+                                        {{
+                                            data.cmTransaction.length > 0 ? formatDate(data.cmTransaction[0].date) : '-'
+                                        }}
                                     </td>
                                 </tr>
                                 </tbody>
@@ -691,11 +719,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

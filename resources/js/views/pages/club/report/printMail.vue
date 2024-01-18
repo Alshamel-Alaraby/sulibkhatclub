@@ -6,18 +6,14 @@ import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../../helper/permission";
 
-import {required, minLength, maxLength, integer, requiredIf,} from "vuelidate/lib/validators";
+import {required,} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
-import {
-    dynamicSortString,
-    dynamicSortNumber,
-} from "../../../../helper/tableSort";
+import {dynamicSortNumber, dynamicSortString,} from "../../../../helper/tableSort";
 import translation from "../../../../helper/mixin/translation-mixin";
 import {formatDateOnly} from "../../../../helper/startDate";
 import DatePicker from "vue2-datepicker";
-import {arabicValue, englishValue} from "../../../../helper/langTransform";
 
 /**
  * Advanced Table component
@@ -60,8 +56,13 @@ export default {
             isCheckAll: false,
             checkAll: [],
             current_page: 1,
+            record_number: '',
+            digits: [],
+            lastDigit: null,
+            rest: "",
+            startingLastDigit: null,
             setting: {
-                membership_number: true,
+                record_number: true,
                 full_name: true,
                 home_address: true,
                 fils: true,
@@ -280,7 +281,24 @@ export default {
                         text: `${this.$t("general.Thereisanerrorinthesystem")}`,
                     });
                 })
+        },
+        getRecord() {
+            let recordNumber = this.record_number.toString();
+            this.digits = [];
 
+            if (recordNumber.length > 0) {
+                const lastDigit = recordNumber.slice(-1);
+                const rest = recordNumber.slice(0, -1);
+
+
+                this.startingLastDigit = (this.current_page - 1) * this.per_page;
+                this.lastDigit = lastDigit;
+                this.rest = rest;
+
+                console.log('lastDigit', this.lastDigit);
+                console.log('rest', this.rest);
+            }
+            console.log('digits', this.digits);
         },
     },
 };
@@ -313,7 +331,7 @@ export default {
                         </div>
                         <!-- end search -->
 
-                        <div class="row justify-content-between align-items-center mb-2 px-1" >
+                        <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-5 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                                 <b-button
                                     v-b-modal.create
@@ -339,10 +357,10 @@ export default {
                                     >
                                         <i class="fas fa-file-download"></i>
                                     </button>
-                                    <button v-print="'#printData'" class="custom-btn-dowonload"  v-if="items.length > 0">
+                                    <button v-print="'#printData'" class="custom-btn-dowonload" v-if="items.length > 0">
                                         <i class="fe-printer"></i>
                                     </button>
-                                    <b-button v-print="'#printEnvelope'" variant="info"  v-if="items.length > 0">
+                                    <b-button v-print="'#printEnvelope'" variant="info" v-if="items.length > 0">
                                         {{ $t("general.envelopePrinting") }}
                                         <i class="fe-printer"></i>
                                     </b-button>
@@ -368,11 +386,23 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.full_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.fils" class="mb-1">{{ $t("general.fils") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.KD" class="mb-1">{{ $t('general.KD') }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.record_number" class="mb-1">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">
+                                                {{ $t("general.full_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">
+                                                {{ getCompanyKey("member_home_address") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.fils" class="mb-1">{{
+                                                    $t("general.fils")
+                                                }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.KD" class="mb-1">{{
+                                                    $t('general.KD')
+                                                }}
+                                            </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">
                                                     Apply
@@ -431,7 +461,16 @@ export default {
                             <form>
                                 <div class="mb-3 d-flex justify-content-end">
                                     <!-- Emulate built in modal footer ok and cancel button actions -->
-                                    <b-button variant="danger" type="button" @click.prevent="$bvModal.hide('create_price')">
+                                    <b-button
+                                        variant="success"
+                                        type="button" class="mx-1"
+                                        v-if="!isLoader"
+                                        @click.prevent="getRecord()"
+                                    >
+                                        {{ $t('general.execution') }}
+                                    </b-button>
+                                    <b-button variant="danger" type="button"
+                                              @click.prevent="$bvModal.hide('create_price')">
                                         {{ $t('general.Cancel') }}
                                     </b-button>
                                 </div>
@@ -459,6 +498,21 @@ export default {
                                                 class="form-control"
                                                 step="0.01"
                                                 v-model.number="fils"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group position-relative">
+                                            <label class="control-label">
+                                                {{ $t('general.StartBarcode') }}
+                                            </label>
+                                            <input
+                                                v-model="record_number"
+                                                type="number"
+                                                class="form-control"
+                                                step="1"
                                             />
                                         </div>
                                     </div>
@@ -517,9 +571,7 @@ export default {
                                             >
                                             </multiselect>
                                             <div
-                                                v-if="
-                                  $v.create.cm_permission_id.$error
-                                "
+                                                v-if="$v.create.cm_permission_id.$error"
                                                 class="text-danger"
                                             >
                                                 {{ $t("general.fieldIsRequired") }}
@@ -555,46 +607,67 @@ export default {
                         </b-modal>
                         <!--  /create   -->
 
-                        <div id="printEnvelope" class="head-branch">
-                            <div class="row justify-content-center align-items-center content text-center" v-for="item in items">
-                                <div class="col-md-4 text-center">
-                                    <p>{{ $t('general.memberName') }}: {{ item.full_name }}</p>
-                                    <p>{{ $t('general.memberAddress') }}: {{ item.home_address }}</p>
+                        <div id="printEnvelope" class="head-branch"
+                             :style="{ 'direction': $i18n.locale == 'ar' ? 'rtl!important' : '', 'text-align': $i18n.locale == 'ar' ? 'start' : '' }">
+                            <div class="row justify-content-center align-items-center content border-0 text-center"
+                                 v-for="(item, index) in items" :key="index">
+                                <div class="col-md-12 d-flex justify-content-around mt-5">
+
+
+                                    <div class="col-8 text-center">
+                                        <div class="index-box float-right">{{ index + 1 }}</div>
+                                        <div class="current-page-box float-left">{{ current_page }}</div>
+                                        <div class="member-info">
+                                            <p style="font-size: 40px;">{{ $t('general.memberName') }}:
+                                                {{ item.full_name }}</p>
+                                            <p style="font-size: 40px;">{{ $t('general.memberAddress') }}:
+                                                {{ item.home_address }}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- start .table-responsive-->
-                        <div  class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printData">
+                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
+                             id="printData"
+                             :style="{ 'direction': $i18n.locale == 'ar' ? 'rtl!important' : '', 'text-align': $i18n.locale == 'ar' ? 'start' : '' }">
                             <div class="head-branch overflow-hidden">
                                 <div class="row">
-                                    <div class="col-2 mb-4">
+                                    <div class="image-header px-0">
+                                        <img src="/images/minstryOfComm.png" class="mr-5">
+                                        <h4 class="d-inline-flex text-center" style="font-size: 20px;">
+                                            {{ current_page }}</h4>
+                                        <img src="/images/mailPrint.png"/>
+                                    </div>
+                                    <div class="col-2 mb-4 d-flex justify-content-start">
                                         <div class="border-custom"></div>
                                     </div>
-                                    <div class="col-8 text-center" style="border-right: 2px solid;border-bottom: 2px solid;">
+                                    <div class="col-8 text-center"
+                                         style="border-right: 2px solid;border-bottom: 2px solid;">
                                         <div class="d-flex justify-content-between mb-4">
-                                            <div>قائمه بعاث المسجله المرسله:</div>
-                                            <div>List of registered items posted:</div>
+                                            <div style="font-size: 30px;">قائمه بعاث المسجله المرسله:</div>
+                                            <div style="font-size: 20px;">:List of registered items posted</div>
                                         </div>
                                         <div class="d-flex">
-                                            <div class="col-1 font-weight-bold">من:</div>
-                                            <h1 class="text-center col-10">
-                                                <span v-if="branch">
-                                                    {{ $i18n.locale == 'ar'? branch.name: branch.name_e }}
+                                            <div class="col-1 font-weight-bold" style="font-size: 30px;">من:</div>
+                                            <h3 class="text-center col-10 pt-4">
+                                                <span style="font-size: 30px;">
+                                                    {{ $t('general.SulaibikhatClub') }}
                                                 </span>
-                                            </h1>
-                                            <div class="col-1 font-weight-bold">BY:</div>
+                                            </h3>
+                                            <div class="col-1 font-weight-bold" style="font-size: 30px;">:BY</div>
                                         </div>
                                     </div>
-                                    <div class="col-2 mb-4">
-                                        <div>قيمه اجور البريد</div>
-                                        <div>بما فيها التسجيل</div>
-                                        <div>Account of postage</div>
-                                        <div>registrationFee</div>
+                                    <div class="col-2 pt-4">
+                                        <div style="font-size: 30px;">قيمه اجور البريد</div>
+                                        <div style="font-size: 30px;">بما فيها التسجيل</div>
+                                        <div style="font-size: 20px;">Account of postage</div>
+                                        <div style="font-size: 20px;">registrationFee</div>
                                     </div>
                                     <div class="col-12 mt-4">
-                                        <div>تاريخ خاتم المكتب المستلم</div>
-                                        <div>Date stamo of receiving office</div>
+                                        <div style="font-size: 30px;">تاريخ خاتم المكتب المستلم</div>
+                                        <div style="font-size: 20px;">Date stamo of receiving office</div>
                                     </div>
                                 </div>
                             </div>
@@ -602,16 +675,18 @@ export default {
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
-                            <table class="table table-borderless table-hover table-centered m-0">
+                            <table class="zizo-table table-borderless table-hover table-centered m-0 w-100">
                                 <thead>
                                 <tr>
                                     <th>{{ $t('general.series') }}</th>
-                                    <th v-if="setting.membership_number">
+                                    <th v-if="setting.record_number" colspan="2">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{getCompanyKey("member_membership_number")}}</span>
+                                            <span>{{ $t("general.RecordNumber") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('membership_number'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_number'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('record_number'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-record_number'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -619,8 +694,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.full_name") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('full_name'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-full_name'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('full_name'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-full_name'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -638,26 +715,30 @@ export default {
                                     class="body-tr-custom"
                                 >
                                     <td>
-                                        {{ index + 1 }}
+                                        {{ (current_page - 1) * per_page + index + 1 }}
                                     </td>
-                                    <td v-if="setting.membership_number">
-                                        {{ data.membership_number }}
+                                    <td v-if="setting.record_number && parseInt(lastDigit) >= 0">
+                                        {{
+                                            (parseInt(lastDigit) + (current_page - 1) * per_page + index + startingLastDigit) % 10
+                                        }}
                                     </td>
+                                    <td v-else>
+                                        {{ lastDigit }}
+                                    </td>
+                                    <td v-if="setting.record_number">
+                                        {{ rest }}
+                                    </td>
+
                                     <td v-if="setting.full_name">
                                         {{ data.full_name }}
                                     </td>
                                     <td v-if="setting.home_address">
                                         {{ data.home_address }}
                                     </td>
-                                    <td v-if="setting.fils">{{ fils ?? '0.00'}}</td>
-                                    <td v-if="setting['KD']">{{ kd ?? '0.00'}}</td>
+                                    <td v-if="setting.fils">{{ fils ?? '0.00' }}</td>
+                                    <td v-if="setting['KD']">{{ kd ?? '0.00' }}</td>
                                 </tr>
-                                <tr>
-                                    <th class="text-center" colspan="2">استلمت</th>
-                                    <th class="text-center">بعثيه مسجله حسب البيان اعلاه</th>
-                                    <th class="text-center">Registered items as entered avove</th>
-                                    <th class="text-center" colspan="2">Received</th>
-                                </tr>
+
                                 </tbody>
                                 <tbody v-else>
                                 <tr>
@@ -668,38 +749,75 @@ export default {
                                 </tbody>
                             </table>
                             <div class="head-branch overflow-hidden">
-                                <div class="row justify-content-between mt-3" style="border-bottom: 2px solid;">
+                                <div class="row justify-content-between mt-2">
+                                    <div class="col-6">
+                                        <h3 style="font-size: 25px;">استلمت ـــــــــــــ بعثيه مسجله حسب البيان
+                                            اعلاه </h3>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 style="font-size: 25px; direction: ltr !important;">Received ـــــــــــــ
+                                            Registered items as entered
+                                            above </h4>
+
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <div class="row justify-content-between" style="border-bottom: 2px solid;">
                                     <div class="col-3">
-                                        <div class="text-center">اسم الموظف المستلم بالكامل</div>
-                                        <div class="text-center">Name of receiving office in full</div>
+                                        <div class="text-center">
+                                            <h3 style="font-size: 25px;">
+                                                اسم الموظف المستلم بالكامل
+                                            </h3>
+                                        </div>
+                                        <div class="text-center">
+                                            <h3 style="font-size: 25px;">Name of receiving office in full</h3>
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <div class="text-center">تدرج التفاصيل المطلوبه من</div>
-                                        <div class="text-center">قبل المرسل</div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">تدرج التفاصيل المطلوبه
+                                            من</h3></div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">قبل المرسل</h3></div>
                                     </div>
                                 </div>
                                 <div class="row justify-content-between" style="border-bottom: 2px solid;">
                                     <div class="col-3">
-                                        <div class="text-center">التوقيعه:</div>
-                                        <div class="text-center">signature</div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">التوقيعه:</h3></div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">signature</h3></div>
                                     </div>
                                     <div class="col-3">
-                                        <div class="text-center">To be completed</div>
-                                        <div class="text-center">By the poster</div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">To be completed</h3></div>
+                                        <div class="text-center"><h3 style="font-size: 25px;">By the poster</h3></div>
                                     </div>
                                 </div>
                                 <div class="finial-border">
-                                    تنص الطوابع الخاصه بالمواد اعلاء في خلف القائمه
+                                    <h3 style="font-size: 30px;">
+                                        ** تنص الطوابع الخاصه بالمواد اعلاء في خلف القائمه
+                                    </h3>
                                 </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="d-flex align-items-center" v-for="i in [1,2,3,4,5,6,7,8]" style="height: 150px">
-                                              <span>{{ i }}</span>
+
+                                <br>
+                                <br>
+
+                                <div class="main-container" v-if="items.length > 0">
+                                    <div class="row col-12 border mx-0 px-0" v-for="i in Math.floor(items.length / 2)"
+                                         :key="i">
+                                        <div class="col-6 px-0">
+                                            <div class="rectangle">
+                                                {{ i }}
+                                            </div>
+                                        </div>
+                                        <div class="col-6 px-0">
+                                            <div class="rectangle">
+                                                {{ i + Math.floor(items.length / 2) }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="d-flex align-items-center" v-for="i in [9,10,11,12,13,14,15,16]" style="height: 150px">
-                                            <span>{{ i }}</span>
+                                    <div class="row col-12 border" v-if=" items.length % 2 == 1">
+                                        <div class="col-6 px-0">
+                                            <div class="rectangle">
+                                                {{ items.length }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -717,43 +835,79 @@ export default {
 .signature {
     display: none;
 }
+
+.main-container {
+    margin: 110px 20px 0;
+    border-radius: 20px;
+    border-style: double;
+    border-spacing: 10px;
+
+}
+
+.col-6 {
+    padding: 0 15px;
+}
+
+.rectangle {
+    border: 1px solid #ccc;
+    height: 165px; /* Adjust the height as needed */
+    width: 90px; /* Adjust the width as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.head-zizo {
+    display: none;
+}
+
 .head-branch {
     display: none;
 }
-.colPay{
+
+.colPay {
     background-color: #3bafda;
     color: #fff;
     font-weight: 500;
 }
+
 .border-custom {
     width: 100px;
     height: 100px;
     border: 1px solid;
     border-radius: 50%;
 }
+
 .finial-border {
-    margin-bottom: 50%;
+    margin-bottom: 5%;
 }
+
 @media print {
-    .colPay{
+    .colPay {
         color: #000;
     }
+
     .head-branch {
-        margin-top: 50px;
+        margin-top: 30px;
         display: block;
     }
-    .head-branch h2{
+
+    .head-branch h2 {
         text-decoration: underline;
     }
-    .head-branch img{
+
+    .head-branch img {
         width: 100px;
         height: 100px;
     }
+
     .head-branch span {
         display: inline-block;
         position: relative;
         top: -49px;
     }
+
     .do-not-print {
         display: none;
     }
@@ -761,39 +915,96 @@ export default {
     .arrow-sort {
         display: none;
     }
+
+    .zizo-table {
+        min-height: 460px !important;
+    }
+
     table thead tr th {
         color: #000;
         border: 1px solid #000;
     }
+
     table tbody tr td {
         color: #000;
         border: 1px solid #000;
     }
+
     hr {
         transform: rotate(90deg);
         background-color: #0000008a;
         border: 1px solid #4444449c;
     }
+
     .custom-table-theme thead {
         border-top: 1px solid #000;
         border-bottom: 1px solid #000;
     }
+
     .custom-table-theme tbody {
         border: 1px solid #000;
     }
+
     .signature {
         display: block;
     }
+
     .signature h4 {
         text-decoration: underline;
         margin: 3px;
     }
+
     .content {
         min-height: 1270px;
         padding: 20px;
         border: 2px solid;
         margin-bottom: 300px;
         position: relative;
+    }
+
+    .image-header {
+        width: 100%;
+        margin-bottom: 30px;
+        padding-left: 0px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .image-header img {
+        display: inline-block;
+        margin-top: 7px;
+        height: 130px;
+        width: 230px;
+    }
+
+    .underline {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: black; /* You can set the color of the line */
+    }
+
+    .position-relative {
+        position: relative;
+
+    }
+
+    .index-box {
+        background-color: black;
+        padding: 8px;
+        font-size: 25px;
+        border: 2px solid;
+        margin-bottom: 10px; /* Add margin to create space between boxes */
+    }
+
+    .current-page-box {
+        background-color: black;
+        padding: 8px;
+        font-size: 25px;
+        border: 2px solid;
+        margin-bottom: 10px; /* Add margin to create space between boxes */
     }
 }
 </style>

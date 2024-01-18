@@ -73,17 +73,22 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       create: {
         name: "",
         name_e: "",
-        permissions: []
+        permissions: [],
+        added_hotkeys: {}
       },
       errors: {},
       isCheckAll: false,
       checkAllPermission: [],
       current_page: 1,
       is_disabled: false,
+      permissions_range: [],
       permissions: [],
+      hotkeys: [],
+      added_hotkeys: {},
       tables: [],
       modules: [],
-      company_id: null
+      company_id: null,
+      selected_table: ''
     };
   },
   validations: {
@@ -118,6 +123,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_1__["default"].get("/roles/permissions?".concat(workflows)).then(function (res) {
         var l = res.data.data;
         l.forEach(function (el) {
+          _this.permissions_range.push(el.id);
           if (!_this.modules.includes(el.module)) {
             _this.modules.push(el.module);
             _this.checkAllPermission.push('');
@@ -171,6 +177,10 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           return;
         } else {
           if (_this3.idObjEdit.dataObj) {
+            // reset added_hotkeys
+            _this3.added_hotkeys = {};
+            // reset hotkeys
+            _this3.hotkeys = [];
             var module = _this3.idObjEdit.dataObj;
             _this3.create.name = module.name;
             _this3.create.name_e = module.name_e;
@@ -179,6 +189,21 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
               items.push(el.id);
             });
             _this3.create.permissions = items;
+            module.hotkeys.forEach(function (el) {
+              if (!_this3.added_hotkeys.hasOwnProperty(el.table)) {
+                _this3.$set(_this3.added_hotkeys, el.table, {});
+              }
+
+              // Now, safely set or update the column_name key
+              if (!_this3.added_hotkeys[el.table].hasOwnProperty(el.column_name)) {
+                _this3.$set(_this3.added_hotkeys[el.table], el.column_name, {
+                  can_see: el.can_see == 1,
+                  can_edit: el.can_edit == 1,
+                  can_plus: el.can_plus == 1,
+                  percentage: el.percentage
+                });
+              }
+            });
           }
         }
       }, 50);
@@ -194,6 +219,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       if (!this.create.name) {
         this.create.name = this.create.name_e;
       }
+      this.create.added_hotkeys = this.added_hotkeys;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
         return;
@@ -206,6 +232,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           })).then(function (res) {
             _this4.is_disabled = true;
             if (!_this4.isPage) _this4.$emit("created");else _this4.$emit("getDataTable");
+            _this4.handleCreatedEvent();
             setTimeout(function () {
               _this4.successFun('Addedsuccessfully');
             }, 500);
@@ -219,9 +246,12 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             _this4.isLoader = false;
           });
         } else {
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_1__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), _objectSpread({}, this.create)).then(function (res) {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_1__["default"].put("".concat(this.url, "/").concat(this.idObjEdit.idEdit), _objectSpread(_objectSpread({}, this.create), {}, {
+            permissions_range: this.permissions_range
+          })).then(function (res) {
             _this4.$bvModal.hide(_this4.id);
             _this4.$emit("getDataTable");
+            _this4.handleCreatedEvent();
             setTimeout(function () {
               _this4.successFun('Editsuccessfully');
             }, 500);
@@ -236,6 +266,12 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           });
         }
       }
+    },
+    handleCreatedEvent: function handleCreatedEvent() {
+      // reset added_hotkeys
+      this.added_hotkeys = {};
+      // reset hotkeys
+      this.hotkeys = [];
     },
     editSubmit: function editSubmit(id) {
       var _this5 = this;
@@ -331,6 +367,53 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     englishValueName: function englishValueName(txt) {
       this.create.name_e = (0,_helper_langTransform__WEBPACK_IMPORTED_MODULE_3__.englishValue)(txt);
+    },
+    getTableHotFields: function getTableHotFields(table) {
+      var _this8 = this;
+      this.isLoader = true;
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_1__["default"].post("/roles/get-hotkeys",
+      // pass table name to the api
+      {
+        table: table,
+        company_id: this.company_id
+      }).then(function (res) {
+        _this8.selected_table = table;
+        _this8.hotkeys = res.data.data;
+        if (_this8.hotkeys != null) {
+          _this8.hotkeys.forEach(function (el) {
+            if (!_this8.added_hotkeys.hasOwnProperty(table)) {
+              _this8.$set(_this8.added_hotkeys, table, {});
+            }
+
+            // Now, safely set or update the column_name key
+            if (!_this8.added_hotkeys[table].hasOwnProperty(el.column_name)) {
+              _this8.$set(_this8.added_hotkeys[table], el.column_name, {
+                can_see: true,
+                can_edit: true,
+                can_plus: true,
+                percentage: 0
+              });
+            }
+          });
+        }
+        _this8.$bvModal.show('hot_keys');
+      })["catch"](function (err) {
+        console.log(err);
+        sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
+          icon: "error",
+          title: "".concat(_this8.$t("general.Error")),
+          text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
+        });
+      })["finally"](function () {
+        _this8.isLoader = false;
+      });
+    },
+    changeCanSee: function changeCanSee(table, column_name) {
+      if (!this.added_hotkeys[table][column_name].can_see) {
+        this.added_hotkeys[table][column_name].can_edit = false;
+        this.added_hotkeys[table][column_name].can_plus = false;
+        this.added_hotkeys[table][column_name].percentage = 0;
+      }
     }
   }
 });
@@ -2403,7 +2486,7 @@ var render = function render() {
         return _vm.resetForm.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.AddNewRecord")) + "\n                    ")]) : _vm._e(), _vm._v(" "), !_vm.is_disabled ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -2415,7 +2498,7 @@ var render = function render() {
         return _vm.AddSubmit.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                        " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                    ")]) : _c("b-button", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.type != "edit" ? _vm.$t("general.Add") : _vm.$t("general.edit")) + "\n                        ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -2438,7 +2521,7 @@ var render = function render() {
         return _vm.resetModalHidden.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                    ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6"
@@ -2449,7 +2532,7 @@ var render = function render() {
     attrs: {
       "for": "field-1"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("role_name_ar")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("role_name_ar")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("div", [_c("input", {
     directives: [{
@@ -2481,12 +2564,12 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                                " + _vm._s(_vm.$v.create.name.$params.minLength.min) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                                " + _vm._s(_vm.$v.create.name.$params.maxLength.max) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name ? _vm._l(_vm.errors.name, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -2496,7 +2579,7 @@ var render = function render() {
     attrs: {
       "for": "field-2"
     }
-  }, [_vm._v("\n                            " + _vm._s(_vm.getCompanyKey("role_name_en")) + "\n                            "), _c("span", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.getCompanyKey("role_name_en")) + "\n                                "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("div", [_c("input", {
     directives: [{
@@ -2528,12 +2611,12 @@ var render = function render() {
     }
   })]), _vm._v(" "), !_vm.$v.create.name_e.minLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                            " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatleast")) + "\n                                " + _vm._s(_vm.$v.create.name_e.$params.minLength.min) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), !_vm.$v.create.name_e.maxLength ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                            " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                            " + _vm._s(_vm.$t("general.letters")) + "\n                        ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Itmustbeatmost")) + "\n                                " + _vm._s(_vm.$v.create.name_e.$params.maxLength.max) + "\n                                " + _vm._s(_vm.$t("general.letters")) + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.errors.name_e ? _vm._l(_vm.errors.name_e, function (errorMessage, index) {
     return _c("ErrorMessage", {
       key: index
-    }, [_vm._v("\n                                " + _vm._s(errorMessage) + "\n                            ")]);
+    }, [_vm._v("\n                                    " + _vm._s(errorMessage) + "\n                                ")]);
   }) : _vm._e()], 2)]), _vm._v(" "), _vm._l(_vm.modules, function (module, index) {
     return _c("div", {
       staticClass: "col-md-12 mb-2"
@@ -2565,7 +2648,7 @@ var render = function render() {
         block: "",
         variant: "info"
       }
-    }, [_vm._v(_vm._s(module))])], 1), _vm._v(" "), _c("b-collapse", {
+    }, [_vm._v(_vm._s(module) + "\n                                    ")])], 1), _vm._v(" "), _c("b-collapse", {
       attrs: {
         id: "accordion-create-".concat(index),
         accordion: "my-accordion",
@@ -2585,7 +2668,7 @@ var render = function render() {
           return _vm.selectAll(module, "create", index);
         }
       }
-    }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.selectALL")) + "\n                                            "), _c("span", {
+    }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.selectALL")) + "\n                                                "), _c("span", {
       staticStyle: {
         margin: "0px 4px"
       }
@@ -2618,7 +2701,7 @@ var render = function render() {
           return _vm.notSelectAll(module, "create", index);
         }
       }
-    }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.notSelectALL")) + "\n                                            "), _c("span", {
+    }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.notSelectALL")) + "\n                                                "), _c("span", {
       staticStyle: {
         margin: "0px 4px"
       }
@@ -2705,6 +2788,25 @@ var render = function render() {
         }
       }, [_c("i", {
         staticClass: "fas fa-plus"
+      })]), _vm._v(" "), _c("b-button", {
+        directives: [{
+          name: "b-tooltip",
+          rawName: "v-b-tooltip:hover",
+          arg: "hover"
+        }],
+        staticClass: "mx-1",
+        attrs: {
+          title: _vm.$t("general.hotFields"),
+          size: "sm",
+          variant: "info"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.getTableHotFields(item.table);
+          }
+        }
+      }, [_c("i", {
+        staticClass: "fas fa-fire"
       })])], 1), _vm._v(" "), _vm._l(_vm.filterPermission(item.table), function (da) {
         return [_c("b-form-checkbox", {
           staticClass: "mb-1",
@@ -2718,10 +2820,101 @@ var render = function render() {
             },
             expression: "$v.create.permissions.$model"
           }
-        }, [_vm._v("\n                                                            " + _vm._s(da.title) + "\n                                                        ")])];
+        }, [_vm._v("\n                                                                " + _vm._s(da.title) + "\n                                                            ")])];
       })], 2)], 1)];
     })], 2)])], 1)], 1)], 1)]);
-  })], 2)])])], 1);
+  })], 2)])]), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "hot_keys",
+      title: _vm.getCompanyKey("hot_keys_form", "Hot Keys"),
+      "dialog-class": "modal-full-width",
+      size: "xl",
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-12 mb-2"
+  }, [_c("b-card", {
+    staticClass: "mb-1",
+    attrs: {
+      "no-body": ""
+    }
+  }, [_c("b-card-body", {
+    staticClass: "bg-white"
+  }, [_c("div", {
+    staticClass: "row"
+  }, [_vm._l(_vm.hotkeys, function (item) {
+    return [_c("div", {
+      staticClass: "col-2 mb-2"
+    }, [_c("b-dropdown", {
+      staticClass: "dropdown-permission dropdown-menu-custom-company",
+      attrs: {
+        "menu-class": "w-100",
+        variant: "primary",
+        html: item.column_name
+      }
+    }, [_c("b-form-checkbox", {
+      staticClass: "mb-1",
+      attrs: {
+        value: true
+      },
+      on: {
+        input: function input($event) {
+          return _vm.changeCanSee(_vm.selected_table, item.column_name);
+        }
+      },
+      model: {
+        value: _vm.added_hotkeys[_vm.selected_table][item.column_name].can_see,
+        callback: function callback($$v) {
+          _vm.$set(_vm.added_hotkeys[_vm.selected_table][item.column_name], "can_see", $$v);
+        },
+        expression: "added_hotkeys[selected_table][item.column_name].can_see"
+      }
+    }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("is_visible")) + "\n                                                ")]), _vm._v(" "), _vm.added_hotkeys[_vm.selected_table][item.column_name].can_see ? _c("b-form-checkbox", {
+      staticClass: "mb-1",
+      attrs: {
+        value: true
+      },
+      model: {
+        value: _vm.added_hotkeys[_vm.selected_table][item.column_name].can_edit,
+        callback: function callback($$v) {
+          _vm.$set(_vm.added_hotkeys[_vm.selected_table][item.column_name], "can_edit", $$v);
+        },
+        expression: "added_hotkeys[selected_table][item.column_name].can_edit"
+      }
+    }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("Edit")) + "\n                                                ")]) : _vm._e(), _vm._v(" "), _vm.added_hotkeys[_vm.selected_table][item.column_name].can_see ? _c("b-form-checkbox", {
+      staticClass: "mb-1",
+      attrs: {
+        value: true
+      },
+      model: {
+        value: _vm.added_hotkeys[_vm.selected_table][item.column_name].can_plus,
+        callback: function callback($$v) {
+          _vm.$set(_vm.added_hotkeys[_vm.selected_table][item.column_name], "can_plus", $$v);
+        },
+        expression: "added_hotkeys[selected_table][item.column_name].can_plus"
+      }
+    }, [_vm._v("\n                                                    " + _vm._s(_vm.$t("Can be increased")) + "\n                                                ")]) : _vm._e(), _vm._v(" "), _vm.added_hotkeys[_vm.selected_table][item.column_name].can_see ? _c("b-form-input", {
+      staticClass: "mb-1",
+      attrs: {
+        type: "number",
+        min: "0",
+        max: "100",
+        placeholder: _vm.$t("percentage"),
+        disabled: !_vm.added_hotkeys[_vm.selected_table][item.column_name].can_plus
+      },
+      model: {
+        value: _vm.added_hotkeys[_vm.selected_table][item.column_name].percentage,
+        callback: function callback($$v) {
+          _vm.$set(_vm.added_hotkeys[_vm.selected_table][item.column_name], "percentage", $$v);
+        },
+        expression: "added_hotkeys[selected_table][item.column_name].percentage"
+      }
+    }) : _vm._e()], 1)], 1)];
+  })], 2)])], 1)], 1)])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -6089,7 +6282,7 @@ var render = function render() {
     })])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.tableSetting, function (item) {
       return [item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "string" && !item.columnCustom ? _c("td", [_c("h5", {
         staticClass: "m-0 font-weight-normal"
-      }, [_vm._v("\n                    " + _vm._s(data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
+      }, [_vm._v("\n                    " + _vm._s(item.trans_value ? _vm.$t("general." + data[item.isV]) : data[item.isV]) + "\n                ")])]) : _vm._e(), _vm._v(" "), item.isSetting && (_vm.isVisible(item.isV) || item.forceVisible) && item.type == "badge" && item.prop_type == "array" ? _c("td", _vm._l(data[item.isV], function (badge, index) {
         return _c("label", {
           key: index,
           staticClass: "badge badge-primary text-white mx-1 p-2",
@@ -7150,6 +7343,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -7163,6 +7357,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

@@ -23,7 +23,7 @@ export default {
   mixins: [translation, customTable, successError, crudHelper],
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      return permissionGuard(vm, "Board rend looksup", "all Sell method");
+      return permissionGuard(vm, "Board rend looksup", "all Lookup Board rend");
     });
   },
   components: {
@@ -148,9 +148,9 @@ export default {
               :isCreate="true"
               :isEdit="true"
               :isDelete="true"
-              :permissionCreate="isPermission('create Lookup')"
-              :permissionUpdate="isPermission('update Lookup')"
-              :permissionDelete="isPermission('delete Lookup')"
+              :permissionCreate="isPermission('create Lookup Board rend')"
+              :permissionUpdate="isPermission('update Lookup Board rend')"
+              :permissionDelete="isPermission('delete Lookup Board rend')"
               :isExcl="true"
               :isPrint="true"
               :checkAll="checkAll"
@@ -217,8 +217,8 @@ export default {
                 :tables="tables"
                 :isEdit="true"
                 :isDelete="true"
-                :permissionUpdate="isPermission('update Lookup')"
-                :permissionDelete="isPermission('delete Lookup')"
+                :permissionUpdate="isPermission('update Lookup Board rend')"
+                :permissionDelete="isPermission('delete Lookup Board rend')"
                 :isVisible="isVisible"
                 :tableSetting="tableSetting"
                 :enabled3="enabled3"

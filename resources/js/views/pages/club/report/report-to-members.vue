@@ -3,7 +3,7 @@ import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
@@ -33,9 +33,9 @@ export default {
         Multiselect,
     },
     beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "report to members", "all report to members");
-    });
+        next((vm) => {
+            return permissionGuard(vm, "report to members", "all report to members");
+        });
 
     },
     data() {
@@ -66,7 +66,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 gender: true,
                 Subscription_receipt_number: true,
@@ -113,7 +113,8 @@ export default {
     },
     validations: {
         create: {
-            year: {required: requiredIf(function (model) {
+            year: {
+                required: requiredIf(function (model) {
                     return this.create.year_number;
                 }),
             },
@@ -124,7 +125,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -165,7 +169,7 @@ export default {
                     filter += `columns[${i}]=${this.filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id??''}&member_type_id=${this.create.member_type_id??''}&status_id=${this.create.status_id??''}&year_number=${this.create.year_number??''}&year=${this.create.year??''}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ''}&member_type_id=${this.create.member_type_id ?? ''}&status_id=${this.create.status_id ?? ''}&year_number=${this.create.year_number ?? ''}&year=${this.create.year ?? ''}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -195,7 +199,7 @@ export default {
                     for (let i = 0; i < this.filterSetting.length; ++i) {
                         filter += `columns[${i}]=${this.filterSetting[i]}&`;
                     }
-                    adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id??''}&member_type_id=${this.create.member_type_id??''}&status_id=${this.create.status_id??''}&year_number=${this.create.year_number??''}&year=${this.create.year??''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                    adminApi.get(`/club-members/members/report-to-members?financial_status_id=${this.create.financial_status_id ?? ''}&member_type_id=${this.create.member_type_id ?? ''}&status_id=${this.create.status_id ?? ''}&year_number=${this.create.year_number ?? ''}&year=${this.create.year ?? ''}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -245,7 +249,7 @@ export default {
          */
         async getType() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/members-types`)
+            await adminApi.get(`/club-members/members-types`)
                 .then((res) => {
                     let l = res.data.data;
                     this.typs = l;
@@ -266,7 +270,7 @@ export default {
          */
         async getStatus() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/member-status`)
+            await adminApi.get(`/club-members/member-status`)
                 .then((res) => {
                     let l = res.data.data;
                     this.status = l;
@@ -332,14 +336,14 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-        choseAllFinancialStatus(){
-           this.create.financial_status_id = this.financial_status.map((obj) => obj.id);
+        choseAllFinancialStatus() {
+            this.create.financial_status_id = this.financial_status.map((obj) => obj.id);
         },
-        choseAllTypes(){
-           this.create.member_type_id = this.typs.map((obj) => obj.id);
+        choseAllTypes() {
+            this.create.member_type_id = this.typs.map((obj) => obj.id);
         },
-        choseAllStatus(){
-           this.create.status_id = this.status.map((obj) => obj.id);
+        choseAllStatus() {
+            this.create.status_id = this.status.map((obj) => obj.id);
         }
 
     },
@@ -370,16 +374,16 @@ export default {
                                             {{ getCompanyKey("member_first_name") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">
-                                            {{getCompanyKey("member_second_name")}}
+                                            {{ getCompanyKey("member_second_name") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">
                                             {{ getCompanyKey("member_third_name") }}
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1" >
+                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1">
                                             {{ getCompanyKey("member_last_name") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">
-                                            {{getCompanyKey("member_family_name")}}
+                                            {{ getCompanyKey("member_family_name") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">
                                             {{ getCompanyKey("status") }}
@@ -455,11 +459,11 @@ export default {
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.filter') }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.group') }}
                                             <i class="fe-menu"></i>
                                         </b-button>
@@ -467,25 +471,63 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">{{ getCompanyKey("member_first_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">{{ getCompanyKey("member_second_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">{{ getCompanyKey("member_third_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{ getCompanyKey("member_last_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">{{ getCompanyKey("member_family_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ $t("general.financial_status") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.member_type_id" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_address" class="mb-1">{{ getCompanyKey("member_work_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.job" class="mb-1">{{ getCompanyKey("member_job") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.degree" class="mb-1">{{ getCompanyKey("member_degree") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">
+                                                {{ getCompanyKey("member_first_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">
+                                                {{ getCompanyKey("member_second_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">
+                                                {{ getCompanyKey("member_third_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">
+                                                {{ getCompanyKey("member_last_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">
+                                                {{ getCompanyKey("member_family_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">
+                                                {{ getCompanyKey("member_birth_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.gender" class="mb-1">
+                                                {{ getCompanyKey("member_type") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">
+                                                {{ getCompanyKey("member_membership_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">
+                                                {{ $t("general.financial_status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.member_type_id" class="mb-1">
+                                                {{ getCompanyKey("member_type") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.status_id" class="mb-1">
+                                                {{ $t("general.status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">
+                                                {{ getCompanyKey("member_national_id") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">
+                                                {{ getCompanyKey("member_home_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">
+                                                {{ getCompanyKey("member_work_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">
+                                                {{ getCompanyKey("member_home_address") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.work_address" class="mb-1">
+                                                {{ getCompanyKey("member_work_address") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.job" class="mb-1">
+                                                {{ getCompanyKey("member_job") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.degree" class="mb-1">
+                                                {{ getCompanyKey("member_degree") }}
+                                            </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
                                             </div>
@@ -493,7 +535,15 @@ export default {
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size:13px;">
@@ -569,7 +619,8 @@ export default {
                                             <label class="control-label">
                                                 {{ $t("general.financial_status") }}
                                             </label>
-                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllFinancialStatus">
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1"
+                                                      @click="choseAllFinancialStatus">
                                                 {{ $t('general.choseAll') }}
                                             </b-button>
                                             <multiselect
@@ -591,7 +642,8 @@ export default {
                                             <label class="control-label">
                                                 {{ getCompanyKey("member_type") }}
                                             </label>
-                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllTypes">
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1"
+                                                      @click="choseAllTypes">
                                                 {{ $t('general.choseAll') }}
                                             </b-button>
                                             <multiselect
@@ -613,7 +665,8 @@ export default {
                                             <label class="control-label">
                                                 {{ $t("general.status") }}
                                             </label>
-                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1" @click="choseAllStatus">
+                                            <b-button variant="primary" class="btn-sm mx-1 font-weight-bold mb-1"
+                                                      @click="choseAllStatus">
                                                 {{ $t('general.choseAll') }}
                                             </b-button>
                                             <multiselect
@@ -680,6 +733,7 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th v-if="setting.membership_number">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_membership_number") }}</span>
@@ -790,13 +844,13 @@ export default {
                                     </th>
                                     <th v-if="setting.membership_date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_date")}}</span>
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
                                             <div class="arrow-sort">
-                                                <i  class="fas fa-arrow-up"
-                                                    @click="installmentStatus.sort(sortString('membership_date'))"
+                                                <i class="fas fa-arrow-up"
+                                                   @click="installmentStatus.sort(sortString('membership_date'))"
                                                 ></i>
                                                 <i class="fas fa-arrow-down"
-                                                    @click="installmentStatus.sort(sortString('-membership_date'))"
+                                                   @click="installmentStatus.sort(sortString('-membership_date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -930,7 +984,7 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
-
+                                    <td>{{ index + 1 }}</td>
                                     <td v-if="setting.membership_number">
                                         {{ data.membership_number }}
                                     </td>
@@ -953,19 +1007,27 @@ export default {
                                         {{ data.birth_date }}
                                     </td>
                                     <td v-if="setting.gender">
-                                        {{data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'}}
+                                        {{
+                                            data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'
+                                        }}
                                     </td>
                                     <td v-if="setting.membership_date">
                                         {{ formatDate(data.membership_date) }}
                                     </td>
                                     <td v-if="setting.financial_status_id">
-                                        {{data.financial_status ? $i18n.locale == "ar"? data.financial_status.name: data.financial_status.name_e: "---"}}
+                                        {{
+                                            data.financial_status ? $i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "---"
+                                        }}
                                     </td>
                                     <td v-if="setting.member_type_id">
-                                        {{data.membersType ? $i18n.locale == "ar"? data.membersType.name: data.membersType.name_e: "---"}}
+                                        {{
+                                            data.membersType ? $i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "---"
+                                        }}
                                     </td>
                                     <td v-if="setting.status_id">
-                                        {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
+                                        {{
+                                            data.status ? $i18n.locale == "ar" ? data.status.name : data.status.name_e : "---"
+                                        }}
                                     </td>
                                     <td v-if="setting.national_id">
                                         {{ data.national_id }}
@@ -1019,11 +1081,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

@@ -3,7 +3,7 @@ import Layout from "../../layouts/main";
 import PageHeader from "../../../components/general/Page-header";
 import adminApi from "../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
+import {required} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
@@ -61,7 +61,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 cm_member_id: true,
             },
@@ -82,7 +82,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -241,9 +244,9 @@ export default {
                 this.enabled3 = true;
             }, 100);
         },
-        changeStatus(){
+        changeStatus() {
             this.isLoader = true;
-            adminApi.post(`/club-members/transactions/unpaid-member-transaction-update`,{
+            adminApi.post(`/club-members/transactions/unpaid-member-transaction-update`, {
                 year: this.create.year
             })
                 .then((res) => {
@@ -270,21 +273,18 @@ export default {
                     this.isLoader = false;
                 });
         },
-        dateStatus(date,status) {
-            if (status == 'Unpaid')
-            {
+        dateStatus(date, status) {
+            if (status == 'Unpaid') {
                 let toDay = this.formatDate(new Date());
                 let dateRow = this.formatDate(date);
-                if (toDay >= dateRow)
-                {
+                if (toDay >= dateRow) {
                     return 'due';
-                }else if (toDay < dateRow)
-                {
+                } else if (toDay < dateRow) {
                     return 'NotDue';
-                }else {
+                } else {
                     return 'completedPayment'
                 }
-            }else {
+            } else {
                 return 'completedPayment'
             }
         }
@@ -314,7 +314,7 @@ export default {
                                                          class="mb-1">{{ $t('general.member') }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">
-                                            {{ getCompanyKey("member_membership_number")  }}
+                                            {{ getCompanyKey("member_membership_number") }}
                                         </b-form-checkbox>
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
@@ -390,12 +390,23 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">{{ $t('general.member')}} </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">
+                                                {{ $t('general.member') }}
+                                            </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
+                                    </div>
+
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page" class="form-control-sm mb-0"
+                                               style="width: 50px;">
                                     </div>
                                     <!-- end filter and setting -->
 
@@ -500,7 +511,8 @@ export default {
                         <!--  /create   -->
 
                         <!-- start .table-responsive-->
-                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table" id="printCustom">
+                        <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"
+                             id="printCustom">
 
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
@@ -508,38 +520,39 @@ export default {
 
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
-                                    <tr>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ getCompanyKey("member_membership_number") }}</span>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ getCompanyKey("member_membership_date") }}</span>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.member') }}</span>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.PaymentVoucherNumber') }}</span>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.Historyofthebond') }}</span>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="d-flex justify-content-center">
-                                                <span>{{ $t('general.ForAYear') }}</span>
-                                            </div>
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.member') }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.PaymentVoucherNumber') }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.Historyofthebond') }}</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t('general.ForAYear') }}</span>
+                                        </div>
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody v-if="installmentStatus.length > 0">
                                 <tr
@@ -548,14 +561,19 @@ export default {
                                     class="body-tr-custom"
                                 >
                                     <td>
+                                        {{ index + 1 }}
+                                    </td>
+                                    <td>
                                         {{ data.membership_number }}
                                     </td>
                                     <td>
-                                        {{  formatDate(data.membership_date) }}
+                                        {{ formatDate(data.membership_date) }}
                                     </td>
                                     <td>
                                         <h5 class="m-0 font-weight-normal td5">
-                                            {{ data.first_name +' '+ data.second_name +' '+ data.third_name +' '+ data.last_name }}
+                                            {{
+                                                data.first_name + ' ' + data.second_name + ' ' + data.third_name + ' ' + data.last_name
+                                            }}
                                         </h5>
                                     </td>
                                     <td>
@@ -598,11 +616,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

@@ -19,7 +19,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
-      return permissionGuard(vm, "Panel Usage Rate", "all Store");
+      return permissionGuard(vm, "Panel Usage Rate", "all Panel Usage Rate");
     });
 
     },

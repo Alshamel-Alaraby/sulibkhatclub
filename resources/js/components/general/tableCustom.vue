@@ -72,7 +72,7 @@
             <template v-for="item in tableSetting">
                 <td v-if="item.isSetting && (isVisible(item.isV) || item.forceVisible) && item.type == 'string' && !item.columnCustom">
                     <h5 class="m-0 font-weight-normal">
-                        {{ data[item.isV] }}
+                        {{ item.trans_value ? $t('general.'+data[item.isV]) : data[item.isV] }}
                     </h5>
                 </td>
 

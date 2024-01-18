@@ -7,6 +7,7 @@ import hmsDashboard from "../../../../components/statistic/h_m_s.vue";
 import tasksDashboard from "../../../../components/statistic/task_management.vue";
 import defaultDashboard from "../../../../components/statistic/defaultDashboard.vue";
 import permissionGuard from "../../../../helper/permission";
+import customTable from "../../../../helper/mixin/customTable";
 
 /**
  * Sales-Dashboard component
@@ -26,6 +27,7 @@ export default {
         }
 
     },
+    mixins:[customTable],
     beforeRouteEnter(to, from, next) {
         next((vm) => {
             return permissionGuard(vm, "Dashboard", "Dashboard");
@@ -37,7 +39,6 @@ export default {
     watch:{
     selectedParentsComputed: {
       handler(newV, old) {
-        console.log(selectedParents.value)
         this.selectedParents = selectedParents.value;
       },
     },
@@ -52,17 +53,18 @@ export default {
 
 <template>
         <Layout>
+            <div v-if="isPermission('Dashboard')">
+                <tasksDashboard v-if="selectedParents && selectedParents[2] == '5'" />
 
-            <tasksDashboard v-if="selectedParents && selectedParents[2] == '5'" />
+                <hmsDashboard v-if="selectedParents && selectedParents[2] == '4'" />
 
-            <hmsDashboard v-if="selectedParents && selectedParents[2] == '4'" />
+                <clubDashboard v-if="selectedParents && selectedParents[2] == '3'" />
 
-            <clubDashboard v-if="selectedParents && selectedParents[2] == '3'" />
+                <bookingDashboard v-if="selectedParents && selectedParents[2] == '2'" />
 
-            <bookingDashboard v-if="selectedParents && selectedParents[2] == '2'" />
+                <defaultDashboard v-if="selectedParents && selectedParents[2] == '1'" />
 
-            <defaultDashboard v-if="selectedParents && selectedParents[2] == '1'" />
-
+            </div>
 
         </Layout>
 </template>

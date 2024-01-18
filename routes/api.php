@@ -297,7 +297,6 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::delete('/{id}', 'delete')->name('messages.destroy');
             Route::post("bulk-delete", "bulkDelete");
             Route::post("send-message", "sendHRMessage");
-
         });
     });
     Route::group(['prefix' => 'messages-var'], function () {
@@ -619,6 +618,7 @@ Route::middleware(['authorize.user'])->group(function () {
 
 
     Route::apiResource('insurance_companies', \App\Http\Controllers\InsuranceCompany\InsuranceCompanyController::class);
+    Route::apiResource('work_natures', \App\Http\Controllers\WorkNature\WorkNatureController::class);
     Route::get('account-statement', [\App\Http\Controllers\AccountStatement\AccountStatementController::class,'index']);
 
     Route::group(['prefix' => 'banks'], function () {
@@ -737,6 +737,7 @@ Route::middleware(['authorize.user'])->group(function () {
             Route::get('/get-drop-down', 'getDropDown')->name('roles.getDropDown');
             Route::get('/', 'all')->name('roles.index');
             Route::get("/permissions", 'permissions');
+            Route::post('/get-hotkeys', 'getHotkeys');
             Route::get('/{id}', 'find');
             Route::post('/', 'create')->name('roles.create');
             Route::post("bulk-delete", "bulkDelete");

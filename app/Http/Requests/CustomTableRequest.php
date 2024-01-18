@@ -30,6 +30,7 @@ class CustomTableRequest extends FormRequest
             'columns.*.column_name' => 'required|string|max:255',
             'columns.*.is_required' => 'required|in:0,1|integer',
             'columns.*.is_visible'  => 'required|in:0,1|integer',
+            'columns.*.is_hotkey'  => 'required|in:0,1|integer',
         ];
     }
 }

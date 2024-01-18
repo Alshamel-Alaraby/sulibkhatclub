@@ -13873,6 +13873,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
         }, _callee2);
       }))();
+    },
+    isPermission: function isPermission(item) {
+      if (this.$store.state.auth.type == "admin") {
+        return this.$store.state.auth.is_web == 1;
+      }
+      if (this.$store.state.auth.type == "user") {
+        return this.$store.state.auth.permissions.includes(item);
+      }
+      return true;
     }
   }
 });
@@ -29157,7 +29166,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2 px-1"
   }, [_c("div", {
     staticClass: "col-md-3 d-flex align-items-center mb-1 mb-xl-0"
-  }, [parseInt(_vm.document_id) != 49 ? _c("b-button", {
+  }, [parseInt(_vm.document_id) != 49 && (_vm.isPermission("create Request Quotation BoardRent") || _vm.isPermission("create Quotation BoardRent Basic") || _vm.isPermission("create Publication Contract") || _vm.isPermission("create Job Order BoardRent") || _vm.isPermission("create Invoice BoardRent") || _vm.isPermission("create Yearly Publishing Contract") || _vm.isPermission("create Yearly Contract Invoice BoardRent")) ? _c("b-button", {
     directives: [{
       name: "b-modal",
       rawName: "v-b-modal.create",
@@ -29786,7 +29795,7 @@ var render = function render() {
       staticClass: "fas fa-angle-down"
     })]), _vm._v(" "), _c("div", {
       staticClass: "dropdown-menu dropdown-menu-custom"
-    }, [_vm.document_id != 34 ? _c("a", {
+    }, [_vm.document_id != 34 && (_vm.isPermission("update Request Quotation BoardRent") || _vm.isPermission("update Quotation BoardRent Basic") || _vm.isPermission("update Publication Contract") || _vm.isPermission("update Job Order BoardRent") || _vm.isPermission("update Invoice BoardRent") || _vm.isPermission("update Yearly Publishing Contract") || _vm.isPermission("update Yearly Contract Invoice BoardRent")) ? _c("a", {
       staticClass: "dropdown-item",
       attrs: {
         href: "#"
@@ -29828,7 +29837,7 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.print")))]), _vm._v(" "), _c("i", {
       staticClass: "fe-printer text-info"
-    })])]) : _vm._e(), _vm._v(" "), _c("a", {
+    })])]) : _vm._e(), _vm._v(" "), _vm.isPermission("delete Request Quotation BoardRent") || _vm.isPermission("delete Quotation BoardRent Basic") || _vm.isPermission("delete Publication Contract") || _vm.isPermission("delete Job Order BoardRent") || _vm.isPermission("delete Invoice BoardRent") || _vm.isPermission("delete Yearly Publishing Contract") || _vm.isPermission("delete Yearly Contract Invoice BoardRent") ? _c("a", {
       staticClass: "dropdown-item text-black",
       attrs: {
         href: "#"
@@ -29843,7 +29852,7 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-center text-black"
     }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.delete")))]), _vm._v(" "), _c("i", {
       staticClass: "fas fa-times text-danger"
-    })])])])]), _vm._v(" "), _c("div", {
+    })])]) : _vm._e()])]), _vm._v(" "), _c("div", {
       staticStyle: {
         display: "none"
       }
@@ -34006,6 +34015,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -34019,6 +34029,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

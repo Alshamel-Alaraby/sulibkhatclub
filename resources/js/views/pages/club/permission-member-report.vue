@@ -6,26 +6,14 @@ import Switches from "vue-switches";
 import Multiselect from "vue-multiselect";
 import permissionGuard from "../../../helper/permission";
 
-import {
-    required,
-    minLength,
-    maxLength,
-    integer,
-    requiredIf,
-} from "vuelidate/lib/validators";
+import {required,} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../components/widgets/errorMessage";
 import loader from "../../../components/general/loader";
-import alphaArabic from "../../../helper/alphaArabic";
-import alphaEnglish from "../../../helper/alphaEnglish";
-import {
-    dynamicSortString,
-    dynamicSortNumber,
-} from "../../../helper/tableSort";
+import {dynamicSortNumber, dynamicSortString,} from "../../../helper/tableSort";
 import translation from "../../../helper/mixin/translation-mixin";
 import {formatDateOnly} from "../../../helper/startDate";
 import DatePicker from "vue2-datepicker";
-import {arabicValue, englishValue} from "../../../helper/langTransform";
 
 /**
  * Advanced Table component
@@ -125,7 +113,10 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -169,7 +160,7 @@ export default {
                 let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                 adminApi
-                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${page}&per_page=50`, {
+                    .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${page}&per_page=${this.per_page}&order=full_name&sort=ASC`, {
                         params: {
                             members_permissions_id: this.create.cm_permission_id,
                             dateOfYear: this.create.date
@@ -208,7 +199,7 @@ export default {
                     let startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
 
                     adminApi
-                        .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${this.current_page}&per_page=50&search=${this.search}&${filter}`, {
+                        .get(`/club-members/members/report-cm-member?members_permissions_id=${this.create.cm_permission_id}&dateOfYear=${startDate}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`, {
                             params: {
                                 members_permissions_id: this.create.cm_permission_id,
                                 dateOfYear: this.create.date
@@ -326,7 +317,7 @@ export default {
                         </div>
                         <!-- end search -->
 
-                        <div class="row justify-content-between align-items-center mb-2 px-1" >
+                        <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mt-2 mb-xl-0">
                                 <b-button
                                     v-b-modal.create
@@ -370,22 +361,54 @@ export default {
                                             ref="dropdown"
                                             class="dropdown-custom-ali"
                                         >
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">{{ $t("general.name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.gender" class="mb-1">{{ getCompanyKey("member_type") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">{{ getCompanyKey("financial_status") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.member_status_id" class="mb-1">{{ $t("general.status") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">{{ $t("general.PaymentDate") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.ForAYear" class="mb-1">{{ $t("general.ForAYear") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">{{ getCompanyKey("member_home_address") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.job" class="mb-1">{{ getCompanyKey("member_job") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.degree" class="mb-1">{{ getCompanyKey("member_degree") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.full_name" class="mb-1">
+                                                {{ $t("general.name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">
+                                                {{ getCompanyKey("member_birth_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.gender" class="mb-1">
+                                                {{ getCompanyKey("member_type") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">
+                                                {{ getCompanyKey("member_membership_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.financial_status_id" class="mb-1">
+                                                {{ getCompanyKey("financial_status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.member_status_id" class="mb-1">
+                                                {{ $t("general.status") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.PaymentDate" class="mb-1">
+                                                {{ $t("general.PaymentDate") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.document_no" class="mb-1">
+                                                {{ $t("general.ReceiptNumber") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.ForAYear" class="mb-1">
+                                                {{ $t("general.ForAYear") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">
+                                                {{ getCompanyKey("member_national_id") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">
+                                                {{ getCompanyKey("member_home_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_address" class="mb-1">
+                                                {{ getCompanyKey("member_home_address") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">
+                                                {{ getCompanyKey("member_work_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.job" class="mb-1">
+                                                {{ getCompanyKey("member_job") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.degree" class="mb-1">
+                                                {{ getCompanyKey("member_degree") }}
+                                            </b-form-checkbox>
 
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">
@@ -394,9 +417,18 @@ export default {
                                             </div>
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
+
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size: 13px">
@@ -526,19 +558,23 @@ export default {
                             {{ $t('general.Theresultofsearchesfomembersrightsisbasedonhistory') + create.date }}
                         </h3>
                         <!-- start .table-responsive-->
-                        <div  class="table-responsive mb-3 custom-table-theme position-relative">
+                        <div class="table-responsive mb-3 custom-table-theme position-relative">
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
-                            <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table" id="printData">
+                            <table class="table table-borderless table-hover table-centered m-0" ref="exportable_table"
+                                   id="printData">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th v-if="setting.membership_number">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{getCompanyKey("member_membership_number")}}</span>
+                                            <span>{{ getCompanyKey("member_membership_number") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('membership_number'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_number'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('membership_number'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-membership_number'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -546,8 +582,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.name") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('full_name'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-full_name'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('full_name'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-full_name'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -555,8 +593,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_birth_date") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('birth_date'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-birth_date'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('birth_date'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-birth_date'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -564,17 +604,21 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_gender") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('gender'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-gender'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('gender'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-gender'))"></i>
                                             </div>
                                         </div>
                                     </th>
                                     <th v-if="setting.membership_date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_date")}}</span>
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
                                             <div class="arrow-sort">
-                                                <i  class="fas fa-arrow-up" @click="items.sort(sortString('membership_date'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-membership_date'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('membership_date'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-membership_date'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -582,8 +626,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("financial_status") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -591,8 +637,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.status") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? 'name' : 'name_e'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString($i18n.locale == 'ar' ? '-name' : '-name_e'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -615,8 +663,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_national_id") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('national_id'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-national_id'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('national_id'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-national_id'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -624,8 +674,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_home_phone") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('home_phone'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_phone'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('home_phone'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-home_phone'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -633,8 +685,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_home_address") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('home_address'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-home_address'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('home_address'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-home_address'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -642,8 +696,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_work_phone") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('work_phone'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-work_phone'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('work_phone'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-work_phone'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -652,7 +708,8 @@ export default {
                                             <span>{{ getCompanyKey("member_job") }}</span>
                                             <div class="arrow-sort">
                                                 <i class="fas fa-arrow-up" @click="items.sort(sortString('job'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-job'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-job'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -660,8 +717,10 @@ export default {
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_degree") }}</span>
                                             <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="items.sort(sortString('degree'))"></i>
-                                                <i class="fas fa-arrow-down" @click="items.sort(sortString('-degree'))"></i>
+                                                <i class="fas fa-arrow-up"
+                                                   @click="items.sort(sortString('degree'))"></i>
+                                                <i class="fas fa-arrow-down"
+                                                   @click="items.sort(sortString('-degree'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -673,6 +732,9 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
+                                    <td>
+                                        {{ index + 1 }}
+                                    </td>
                                     <td v-if="setting.membership_number">
                                         {{ data.membership_number }}
                                     </td>
@@ -680,22 +742,28 @@ export default {
                                         {{ data.full_name }}
                                     </td>
                                     <td v-if="setting.birth_date">
-                                        {{ data.birth_date?data.birth_date:'---' }}
+                                        {{ data.birth_date ? data.birth_date : '---' }}
                                     </td>
                                     <td v-if="setting.gender">
-                                        {{data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'}}
+                                        {{
+                                            data.gender ? parseInt(data.gender) == 1 ? $t("general.male") : $t("general.female") : '---'
+                                        }}
                                     </td>
                                     <td v-if="setting.membership_date">
-                                        {{data.membership_date ? formatDate(data.membership_date) : '---' }}
+                                        {{ data.membership_date ? formatDate(data.membership_date) : '---' }}
                                     </td>
                                     <td v-if="setting.financial_status_id">
-                                        {{data.financial_status ? $i18n.locale == "ar"? data.financial_status.name: data.financial_status.name_e: "---"}}
+                                        {{
+                                            data.financial_status ? $i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "---"
+                                        }}
                                     </td>
                                     <td v-if="setting.member_status_id">
-                                        {{data.status ? $i18n.locale == "ar"? data.status.name: data.status.name_e: "---"}}
+                                        {{
+                                            data.status ? $i18n.locale == "ar" ? data.status.name : data.status.name_e : "---"
+                                        }}
                                     </td>
                                     <td v-if="setting.PaymentDate">
-                                        {{data.transaction ? formatDate(data.transaction.date) : '---' }}
+                                        {{ data.transaction ? formatDate(data.transaction.date) : '---' }}
                                     </td>
                                     <td v-if="setting.document_no">
                                         {{ data.transaction ? data.transaction.document_no : '---' }}

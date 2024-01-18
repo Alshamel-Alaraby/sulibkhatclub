@@ -1689,6 +1689,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 /**
  * Advanced Table component
  */
@@ -1721,6 +1722,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       per_page: 50,
       search: "",
       debounce: {},
+      showDiv: false,
+      clickButton: false,
       enabled3: true,
       itemsPagination: {},
       progress: 0,
@@ -1811,6 +1814,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         this.checkAll = [];
       }
+    },
+    '$v.create.cm_permission_id.$model': function $vCreateCm_permission_id$model(newValue, oldValue) {
+      // Check if the value has changed
+      if (newValue !== oldValue) {
+        // Call the getData method
+        this.getData();
+      }
     }
   },
   mounted: function mounted() {
@@ -1830,7 +1840,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       if (this.$v.create.$invalid) {
         return;
       } else {
-        this.isLoader = true;
         var dateStartArray = this.create.date.split("-");
         var startDate = dateStartArray[2] + "-" + dateStartArray[1] + "-" + dateStartArray[0];
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/reports/members-Committee?members_permissions_id=".concat(this.create.cm_permission_id, "&dateOfYear=").concat(startDate, "&page=").concat(page), {
@@ -1841,6 +1850,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }).then(function (res) {
           var l = res.data.data;
           _this3.items = l.committees_with_members;
+
           // this.itemsPagination = l.pagination;
           // this.current_page = l.pagination.current_page;
         })["catch"](function (err) {
@@ -1850,7 +1860,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
           });
         })["finally"](function () {
-          _this3.isLoader = false;
+          _this3.showDiv = true;
         });
       }
     },
@@ -1966,6 +1976,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.books = this.items.find(function (el) {
         return el.id == _this8.item_id;
       }).members_data;
+      this.isLoader = true;
+      setTimeout(function () {
+        _this8.isLoader = false;
+      }, 500);
+      this.$bvModal.hide('create');
+      console.log("books", this.books.last_cm_transaction);
+    },
+    openButton: function openButton() {
+      this.clickButton = true;
+    },
+    showDivButton: function showDivButton() {
+      this.showDiv = true;
     }
   }
 });
@@ -5070,7 +5092,7 @@ var render = function render() {
     staticClass: "row justify-content-between align-items-center mb-2"
   }, [_c("h4", {
     staticClass: "header-title"
-  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.printCommitteeLists")) + "\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                            " + _vm._s(_vm.$t("general.printCommitteeLists")) + "\n                        ")]), _vm._v(" "), _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7",
     staticStyle: {
       "font-weight": "500"
@@ -5103,36 +5125,9 @@ var render = function render() {
     attrs: {
       variant: "primary"
     }
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Search")) + "\n                                    "), _c("i", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Search")) + "\n                                "), _c("i", {
     staticClass: "fe-search"
   })]), _vm._v(" "), _c("div", {
-    staticStyle: {
-      width: "100%"
-    }
-  }, [_c("multiselect", {
-    attrs: {
-      options: _vm.items.map(function (type) {
-        return type.id;
-      }),
-      "custom-label": function customLabel(opt) {
-        return _vm.$i18n.locale == "ar" ? _vm.items.find(function (x) {
-          return x.id == opt;
-        }).name : _vm.items.find(function (x) {
-          return x.id == opt;
-        }).name_e;
-      }
-    },
-    on: {
-      input: _vm.getCommitee
-    },
-    model: {
-      value: _vm.item_id,
-      callback: function callback($$v) {
-        _vm.item_id = $$v;
-      },
-      expression: "item_id"
-    }
-  })], 1), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
   }, [_c("button", {
     staticClass: "custom-btn-dowonload",
@@ -5164,11 +5159,11 @@ var render = function render() {
     staticClass: "d-inline-block"
   }, [_c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.filter")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.filter")) + "\n                                        "), _c("i", {
     staticClass: "fas fa-filter"
   })]), _vm._v(" "), _c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.group")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.group")) + "\n                                        "), _c("i", {
     staticClass: "fe-menu"
   })]), _vm._v(" "), _c("b-dropdown", {
     ref: "dropdown",
@@ -5186,7 +5181,7 @@ var render = function render() {
       },
       expression: "setting.membership_number"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.full_name,
@@ -5195,7 +5190,7 @@ var render = function render() {
       },
       expression: "setting.full_name"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.full_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.full_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.first_name,
@@ -5204,7 +5199,7 @@ var render = function render() {
       },
       expression: "setting.first_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                            ")]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.second_name,
@@ -5213,7 +5208,7 @@ var render = function render() {
       },
       expression: "setting.second_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                            ")]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.third_name,
@@ -5222,7 +5217,7 @@ var render = function render() {
       },
       expression: "setting.third_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                            ")]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.last_name,
@@ -5231,7 +5226,7 @@ var render = function render() {
       },
       expression: "setting.last_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                            ")]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.family_name,
@@ -5240,7 +5235,7 @@ var render = function render() {
       },
       expression: "setting.family_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                            ")]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.birth_date,
@@ -5249,7 +5244,7 @@ var render = function render() {
       },
       expression: "setting.birth_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_birth_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_birth_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.gender,
@@ -5258,7 +5253,7 @@ var render = function render() {
       },
       expression: "setting.gender"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_type")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_type")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.membership_date,
@@ -5267,7 +5262,7 @@ var render = function render() {
       },
       expression: "setting.membership_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.financial_status_id,
@@ -5276,7 +5271,7 @@ var render = function render() {
       },
       expression: "setting.financial_status_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("financial_status")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("financial_status")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.member_status_id,
@@ -5285,7 +5280,7 @@ var render = function render() {
       },
       expression: "setting.member_status_id"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.status")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.status")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.PaymentDate,
@@ -5294,7 +5289,7 @@ var render = function render() {
       },
       expression: "setting.PaymentDate"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.PaymentDate")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.PaymentDate")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.document_no,
@@ -5303,7 +5298,7 @@ var render = function render() {
       },
       expression: "setting.document_no"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.ReceiptNumber")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ReceiptNumber")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.ForAYear,
@@ -5312,7 +5307,7 @@ var render = function render() {
       },
       expression: "setting.ForAYear"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.ForAYear")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ForAYear")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.national_id,
@@ -5321,7 +5316,7 @@ var render = function render() {
       },
       expression: "setting.national_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_national_id")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_phone,
@@ -5330,7 +5325,7 @@ var render = function render() {
       },
       expression: "setting.home_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_address,
@@ -5339,7 +5334,7 @@ var render = function render() {
       },
       expression: "setting.home_address"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_address")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_address")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.work_phone,
@@ -5348,7 +5343,7 @@ var render = function render() {
       },
       expression: "setting.work_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_work_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_work_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.job,
@@ -5357,7 +5352,7 @@ var render = function render() {
       },
       expression: "setting.job"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_job")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_job")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.degree,
@@ -5366,14 +5361,14 @@ var render = function render() {
       },
       expression: "setting.degree"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_degree")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_degree")) + "\n                                        ")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
     attrs: {
       href: "javascript:void(0)"
     }
-  }, [_vm._v("\n                                                    Apply\n                                                ")])])], 1)], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                                Apply\n                                            ")])])], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   })])])]), _vm._v(" "), _c("b-modal", {
     attrs: {
@@ -5385,19 +5380,20 @@ var render = function render() {
     }
   }, [_c("form", [_c("div", {
     staticClass: "mb-3 d-flex justify-content-end"
-  }, [[!_vm.isLoader ? _c("b-button", {
+  }, [_vm.showDiv ? [!_vm.isLoader ? _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
-      type: "button"
+      type: "button",
+      disabled: !_vm.clickButton
     },
     on: {
       click: function click($event) {
         $event.preventDefault();
-        return _vm.getData(1);
+        return _vm.getCommitee.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.execution")) + "\n                                        ")]) : _c("b-button", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.execution")) + "\n                                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -5409,7 +5405,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("span", {
     staticClass: "sr-only"
-  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)], _vm._v(" "), _c("b-button", {
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)] : _vm._e(), _vm._v(" "), _c("b-button", {
     attrs: {
       variant: "danger",
       type: "button"
@@ -5420,7 +5416,7 @@ var render = function render() {
         return _vm.$bvModal.hide("create");
       }
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                                    ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row justify-content-center"
   }, [_c("div", {
     staticClass: "col-md-12"
@@ -5428,7 +5424,7 @@ var render = function render() {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.permissionsMember")) + "\n                                            ")]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.permissionsMember")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
     attrs: {
       multiple: true,
       options: _vm.permissions.map(function (type) {
@@ -5453,13 +5449,13 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.cm_permission_id.$error ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e()], 1)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.date")) + "\n                                                "), _c("span", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.date")) + "\n                                            "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]), _vm._v(" "), _c("date-picker", {
     attrs: {
@@ -5468,6 +5464,11 @@ var render = function render() {
       format: "DD-MM-YYYY",
       valueType: "format",
       confirm: false
+    },
+    on: {
+      input: function input($event) {
+        return _vm.getData(1);
+      }
     },
     model: {
       value: _vm.$v.create.date.$model,
@@ -5478,7 +5479,38 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.$v.create.date.$error ? _c("div", {
     staticClass: "text-danger"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                            ")]) : _vm._e()], 1)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)]), _vm._v(" "), _vm.showDiv ? _c("div", {
+    staticClass: "col-md-12"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ElectoralCommittees")) + "\n                                            "), _c("span", {
+    staticClass: "text-danger"
+  }, [_vm._v("*")])]), _vm._v(" "), _c("multiselect", {
+    attrs: {
+      options: _vm.items.map(function (type) {
+        return type.id;
+      }),
+      "custom-label": function customLabel(opt) {
+        return _vm.$i18n.locale == "ar" ? _vm.items.find(function (x) {
+          return x.id == opt;
+        }).name : _vm.items.find(function (x) {
+          return x.id == opt;
+        }).name_e;
+      }
+    },
+    on: {
+      input: _vm.openButton
+    },
+    model: {
+      value: _vm.item_id,
+      callback: function callback($$v) {
+        _vm.item_id = $$v;
+      },
+      expression: "item_id"
+    }
+  })], 1)]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     ref: "exportable_table",
     staticClass: "table-responsive mb-3 custom-table-theme position-relative",
     attrs: {
@@ -5503,32 +5535,36 @@ var render = function render() {
     }
   }, [_c("h1", {
     staticClass: "text-center"
-  }, [_vm.branch ? _c("span", [_vm._v("\n                                                " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.branch.name : _vm.branch.name_e) + "\n                                            ")]) : _vm._e()]), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
+  }, [_vm.branch ? _c("span", [_vm._v("\n                                            " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.branch.name : _vm.branch.name_e) + "\n                                        ")]) : _vm._e()]), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
     staticClass: "text-center"
   }, [_vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }) ? _c("span", [_vm._v("\n                                                " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.items.find(function (el) {
+  }) ? _c("span", [_vm._v("\n                                            " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.items.find(function (el) {
     return el.id == _vm.item_id;
   }).name : _vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }).name_e) + "\n                                            ")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
+  }).name_e) + "\n                                        ")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
     staticClass: "text-center"
   }, [_vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }) ? _c("span", [_vm._v("\n                                                " + _vm._s(_vm.$t("general.first_member")) + ": " + _vm._s(_vm.items.find(function (el) {
+  }) ? _c("span", [_vm._v("\n                                            " + _vm._s(_vm.$t("general.first_member")) + ": " + _vm._s(_vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }).first_member) + "\n                                            ")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
+  }).first_member) + "\n                                        ")]) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
     staticClass: "text-center"
   }, [_vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }) ? _c("span", [_vm._v("\n                                                " + _vm._s(_vm.$t("general.last_member")) + ": " + _vm._s(_vm.items.find(function (el) {
+  }) ? _c("span", [_vm._v("\n                                            " + _vm._s(_vm.$t("general.last_member")) + ": " + _vm._s(_vm.items.find(function (el) {
     return el.id == _vm.item_id;
-  }).last_member) + "\n                                            ")]) : _vm._e()]) : _vm._e()])])]), _vm._v(" "), _vm.isLoader ? _c("loader", {
+  }).last_member) + "\n                                        ")]) : _vm._e()]) : _vm._e()])])]), _vm._v(" "), _vm.isLoader ? _c("loader", {
     attrs: {
       size: "large"
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
-    staticClass: "table table-borderless table-hover table-centered m-0"
+    staticClass: "table table-borderless table-hover table-centered m-0",
+    style: {
+      direction: _vm.$i18n.locale == "ar" ? "rtl!important" : "",
+      "text-align": _vm.$i18n.locale == "ar" ? "start" : ""
+    }
   }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _vm.setting.membership_number ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("div", {
@@ -5695,17 +5731,21 @@ var render = function render() {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.PaymentDate")))])])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
-  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.ReceiptNumber")))])])]) : _vm._e(), _vm._v(" "), _c("th", [_vm._v(_vm._s(_vm.$t("general.ManagerSignature")))])])]), _vm._v(" "), _vm.books.length > 0 ? _c("tbody", _vm._l(_vm.books, function (data, index) {
+  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.ReceiptNumber")))])])]) : _vm._e(), _vm._v(" "), _c("th", {
+    attrs: {
+      colspan: "3"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.NewManagerSignature")))])])]), _vm._v(" "), _vm.books.length > 0 ? _c("tbody", _vm._l(_vm.books, function (data, index) {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_c("td", [_vm._v("\n                                            " + _vm._s(index + 1) + "\n                                        ")]), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                            " + _vm._s(data.membership_number) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                            " + _vm._s(data.first_name) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                            " + _vm._s(data.second_name) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                            " + _vm._s(data.third_name) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                            " + _vm._s(data.last_name) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                            " + _vm._s(data.family_name) + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                            " + _vm._s(data.birth_date ? data.birth_date : "---") + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                            " + _vm._s(data.national_id ? data.national_id : "---") + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                            " + _vm._s(data.membership_date ? _vm.formatDate(data.membership_date) : "---") + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.PaymentDate ? _c("td", [_vm._v("\n                                            " + _vm._s(data.transaction ? _vm.formatDate(data.transaction.date) : "---") + "\n                                        ")]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_vm._v("\n                                            " + _vm._s(data.transaction ? data.transaction.document_no : "---") + "\n                                        ")]) : _vm._e(), _vm._v(" "), _c("td")]);
+    }, [_c("td", [_vm._v("\n                                    " + _vm._s(index + 1) + "\n                                ")]), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.first_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.second_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.third_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.family_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date ? data.birth_date : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.national_id ? data.national_id : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_date ? _vm.formatDate(data.membership_date) : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.PaymentDate ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_cm_transaction.date ? _vm.formatDate(data.last_cm_transaction.date) : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_cm_transaction.document_no ? data.last_cm_transaction.document_no : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _c("td")]);
   }), 0) : _c("tbody", [_c("tr", [_c("th", {
     staticClass: "text-center",
     attrs: {
       colspan: "12"
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                    ")])])])])], 1)], 1)])])])], 1);
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                ")])])])])], 1)], 1)])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5747,6 +5787,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -5760,6 +5801,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -6173,7 +6215,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-31d961ee] {\r\n    display: none;\n}\n.head-branch[data-v-31d961ee] {\r\n    display: none;\n}\n.colPay[data-v-31d961ee]{\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n@media print {\n.colPay[data-v-31d961ee]{\r\n        color: #000;\n}\n.head-branch[data-v-31d961ee] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-31d961ee]{\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-31d961ee]{\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-31d961ee] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-31d961ee] {\r\n        display: none;\n}\n.arrow-sort[data-v-31d961ee] {\r\n        display: none;\n}\ntable thead tr th[data-v-31d961ee] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-31d961ee] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-31d961ee] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-31d961ee] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-31d961ee] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-31d961ee] {\r\n        display: block;\n}\n.signature h4[data-v-31d961ee] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n}\n.quill-editor[data-v-31d961ee] {\r\n    background-color: #fff;\n}\n.content[data-v-31d961ee] {\r\n    min-height: 1270px;\r\n    padding: 20px;\r\n    border: 2px solid;\r\n    margin-bottom: 200px;\r\n    position: relative;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-31d961ee] {\r\n    display: none;\n}\n.head-branch[data-v-31d961ee] {\r\n    display: none;\n}\n.colPay[data-v-31d961ee] {\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n@media print {\n.colPay[data-v-31d961ee] {\r\n        color: #000;\n}\n.head-branch[data-v-31d961ee] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-31d961ee] {\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-31d961ee] {\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-31d961ee] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-31d961ee] {\r\n        display: none;\n}\n.arrow-sort[data-v-31d961ee] {\r\n        display: none;\n}\ntable thead tr th[data-v-31d961ee] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-31d961ee] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-31d961ee] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-31d961ee] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-31d961ee] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-31d961ee] {\r\n        display: block;\n}\n.signature h4[data-v-31d961ee] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n}\n.quill-editor[data-v-31d961ee] {\r\n    background-color: #fff;\n}\n.content[data-v-31d961ee] {\r\n    min-height: 1270px;\r\n    padding: 20px;\r\n    border: 2px solid;\r\n    margin-bottom: 200px;\r\n    position: relative;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -17519,7 +17519,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     this.$store.dispatch('locationIp/getIp');
     this.getCustomTableFields();
-    this.getLocation();
+    if (this.create.type == "customer") this.getCustomers();
+    if (this.create.type == "equipment") this.getLocation();
     if (this.isVisible("department_id")) this.getDepartment();
     if (this.isVisible("status_id")) this.getStatus();
     if (this.isVisible("priority_id")) this.getPriority();
@@ -18468,7 +18469,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id;
       var locations = [];
       departments.forEach(function (department) {
-        department.locations.forEach(function (ele) {
+        if (department.locations && department.locations.length > 0) department.locations.forEach(function (ele) {
           _this19.all_locations.forEach(function (location) {
             if (ele.location_id == location.id && (_this19.$store.state.auth.type == 'admin' || ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))) locations.push(location);
           });
@@ -18506,7 +18507,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     setSupervisorsAndAttentions: function setSupervisorsAndAttentions(department) {
       var _this21 = this;
-      department.locations.forEach(function (ele) {
+      if (department.locations && department.locations.length > 0) department.locations.forEach(function (ele) {
         if (ele.location_id == _this21.create.location_id) {
           setTimeout(function () {
             _this21.create.supervisors = ele.supervisors;
@@ -18522,7 +18523,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
       var emp_id = this.$store.state.auth.type == 'admin' ? '' : this.$store.state.auth.user.employee_id;
       var locations = [];
-      department.locations.forEach(function (ele) {
+      if (department.locations && department.locations.length > 0) department.locations.forEach(function (ele) {
         _this22.all_locations.forEach(function (location) {
           if (ele.location_id == location.id && (_this22.$store.state.auth.type == 'admin' || ele.supervisors.includes(emp_id) || ele.attentions.includes(emp_id) || ele.engineers.includes(emp_id))) locations.push(location);
         });
@@ -18538,7 +18539,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this23 = this;
       var departments = [];
       this.all_departments.forEach(function (department) {
-        department.locations.forEach(function (ele) {
+        if (department.locations && department.locations.length > 0) department.locations.forEach(function (ele) {
           if (ele.location_id == _this23.create.location_id) departments.push(department);
         });
       });
@@ -23925,6 +23926,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -23938,6 +23940,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;

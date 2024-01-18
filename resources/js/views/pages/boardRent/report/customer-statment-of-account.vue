@@ -19,7 +19,7 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
             next((vm) => {
-      return permissionGuard(vm, "Customer Statement Of Account", "all Store");
+      return permissionGuard(vm, "Customer Statement Of Account", "all Customer Statement Of Account");
     });
 
 

@@ -433,6 +433,15 @@ export default {
             });
             this.errors = {};
         },
+        isPermission(item) {
+            if (this.$store.state.auth.type == "admin") {
+                return this.$store.state.auth.is_web == 1;
+            }
+            if (this.$store.state.auth.type == "user") {
+                return this.$store.state.auth.permissions.includes(item);
+            }
+            return true;
+        },
     }
 };
 </script>
@@ -494,7 +503,15 @@ export default {
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
                             <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
-                                <b-button v-if="parseInt(document_id) != 49" v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
+                                <b-button v-if="parseInt(document_id) != 49 &&
+                                 (isPermission('create Request Quotation BoardRent') ||
+                                 isPermission('create Quotation BoardRent Basic') ||
+                                 isPermission('create Publication Contract') ||
+                                 isPermission('create Job Order BoardRent') ||
+                                 isPermission('create Invoice BoardRent') ||
+                                 isPermission('create Yearly Publishing Contract') ||
+                                 isPermission('create Yearly Contract Invoice BoardRent')
+                                 )" v-b-modal.create variant="primary" class="btn-sm mx-1 font-weight-bold">
                                     {{ $t("general.Create") }}
                                     <i class="fas fa-plus"></i>
                                 </b-button>
@@ -832,7 +849,15 @@ export default {
                                                 <i class="fas fa-angle-down"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-custom">
-                                                <a class="dropdown-item" href="#" v-if="document_id != 34"
+                                                <a class="dropdown-item" href="#" v-if="document_id != 34 &&
+                                                (isPermission('update Request Quotation BoardRent') ||
+                                                 isPermission('update Quotation BoardRent Basic') ||
+                                                 isPermission('update Publication Contract') ||
+                                                 isPermission('update Job Order BoardRent') ||
+                                                 isPermission('update Invoice BoardRent') ||
+                                                 isPermission('update Yearly Publishing Contract') ||
+                                                 isPermission('update Yearly Contract Invoice BoardRent')
+                                                 )"
                                                    @click="$bvModal.show(`${data.id}`)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">
@@ -856,6 +881,14 @@ export default {
                                                     </div>
                                                 </a>
                                                 <a class="dropdown-item text-black" href="#"
+                                                   v-if="(isPermission('delete Request Quotation BoardRent') ||
+                                                        isPermission('delete Quotation BoardRent Basic') ||
+                                                        isPermission('delete Publication Contract') ||
+                                                        isPermission('delete Job Order BoardRent') ||
+                                                        isPermission('delete Invoice BoardRent') ||
+                                                        isPermission('delete Yearly Publishing Contract') ||
+                                                        isPermission('delete Yearly Contract Invoice BoardRent')
+                                                      )"
                                                    @click.prevent="deleteScreenButton(data.id)">
                                                     <div
                                                         class="d-flex justify-content-between align-items-center text-black">

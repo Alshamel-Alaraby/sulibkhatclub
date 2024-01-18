@@ -172,118 +172,125 @@ export default {
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-md-3">
-                    <div class="card py-0 mb-0">
-                        <div class="card-body">
-                            <router-link to="/dashboard/employee">
-                                <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
-                                    <div class="w-100">
-                                        <h4 :title="$t('general.Employees')"
-                                            class=" font-weight-normal mt-0 text-truncate">
-                                            {{ $t('general.Employees') }}</h4>
-                                        <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
-                                            <countTo :class="'pt-2'" :startVal='0' :endVal='parseInt(statices.total_employees?? 0) '
-                                                :duration='3000'>
-                                            </countTo>
-                                            <div class="avatar-md"><span class="avatar-title bg-soft-dark rounded"><i
-                                                        class="fas fa-users font-28 text-dark"></i></span></div>
-                                        </h3>
-                                    </div>
+                <template v-if="$store.state.auth.type == 'admin'">
 
-                                </div>
-                            </router-link>
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card py-0 mb-0">
+                            <div class="card-body">
+                                <router-link to="/dashboard/employee">
+                                    <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
+                                        <div class="w-100">
+                                            <h4 :title="$t('general.Employees')"
+                                                class=" font-weight-normal mt-0 text-truncate">
+                                                {{ $t('general.Employees') }}</h4>
+                                            <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
+                                                <countTo :class="'pt-2'" :startVal='0' :endVal='parseInt(statices.total_employees?? 0) '
+                                                    :duration='3000'>
+                                                </countTo>
+                                                <div class="avatar-md"><span class="avatar-title bg-soft-dark rounded"><i
+                                                            class="fas fa-users font-28 text-dark"></i></span></div>
+                                            </h3>
+                                        </div>
+
+                                    </div>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-md-3">
-                    <div class="card py-0 mb-0">
-                        <div class="card-body">
-                            <router-link to="/dashboard/department">
-                                <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
-                                    <div class="w-100">
-                                        <h4 :title="$t('general.Departments')" class=" font-weight-normal mt-0 text-truncate">
-                                            {{ $t('general.Departments') }}</h4>
-                                        <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
-                                            <countTo :class="'pt-2'" :startVal='0' :endVal='statices.total_departments ?? 0'
-                                                :duration='3000'>
-                                            </countTo>
-                                            <div class="avatar-md">
-                                                <span class="avatar-title bg-soft-success rounded"><i
-                                                        class="fas fa-sitemap font-28 text-success"></i>
-                                                </span>
-                                            </div>
-                                        </h3>
-                                    </div>
 
-                                </div>
-                            </router-link>
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card py-0 mb-0">
+                            <div class="card-body">
+                                <router-link to="/dashboard/department">
+                                    <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
+                                        <div class="w-100">
+                                            <h4 :title="$t('general.Departments')" class=" font-weight-normal mt-0 text-truncate">
+                                                {{ $t('general.Departments') }}</h4>
+                                            <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
+                                                <countTo :class="'pt-2'" :startVal='0' :endVal='statices.total_departments ?? 0'
+                                                    :duration='3000'>
+                                                </countTo>
+                                                <div class="avatar-md">
+                                                    <span class="avatar-title bg-soft-success rounded"><i
+                                                            class="fas fa-sitemap font-28 text-success"></i>
+                                                    </span>
+                                                </div>
+                                            </h3>
+                                        </div>
+
+                                    </div>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-md-3">
-                    <div class="card py-0 mb-0">
-                        <div class="card-body">
-                            <router-link to="/dashboard/location">
-                                <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
-                                    <div class="w-100">
-                                        <h4 :title="$t('general.Locations')"
-                                            class=" font-weight-normal mt-0 text-truncate">
-                                            {{ $t('general.Locations') }}</h4>
-                                        <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
-                                            <countTo :class="'pt-2'" :startVal='0'
-                                                :endVal='statices.total_locations ?? 0' :duration='3000'>
-                                            </countTo>
-                                            <div class="avatar-md"><span class="avatar-title bg-soft-info rounded"><i
-                                                        class="fas fa-map-marker-alt font-28 text-info"></i></span>
-                                            </div>
-                                        </h3>
-                                    </div>
 
-                                </div>
-                            </router-link>
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card py-0 mb-0">
+                            <div class="card-body">
+                                <router-link to="/dashboard/location">
+                                    <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
+                                        <div class="w-100">
+                                            <h4 :title="$t('general.Locations')"
+                                                class=" font-weight-normal mt-0 text-truncate">
+                                                {{ $t('general.Locations') }}</h4>
+                                            <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
+                                                <countTo :class="'pt-2'" :startVal='0'
+                                                    :endVal='statices.total_locations ?? 0' :duration='3000'>
+                                                </countTo>
+                                                <div class="avatar-md"><span class="avatar-title bg-soft-info rounded"><i
+                                                            class="fas fa-map-marker-alt font-28 text-info"></i></span>
+                                                </div>
+                                            </h3>
+                                        </div>
+
+                                    </div>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-xl-3 col-md-3">
-                    <div class="card py-0 mb-0">
-                        <div class="card-body">
-                            <router-link to="/dashboard/equipment">
-                                <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
-                                    <div class="w-100">
-                                        <h4 :title="$t('general.Equipments')"
-                                            class=" font-weight-normal mt-0 text-truncate">
-                                            {{ $t('general.Equipments') }}</h4>
-                                        <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
-                                            <countTo :class="'pt-2'" :startVal='0'
-                                                :endVal='parseInt(statices.total_equipments ?? 0)' :duration='3000'>
-                                            </countTo>
-                                            <div class="avatar-md"><span class="avatar-title bg-soft-warning rounded"><i
-                                                        class="fas fa-wrench font-28 text-warning"></i></span></div>
-                                        </h3>
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card py-0 mb-0">
+                            <div class="card-body">
+                                <router-link to="/dashboard/equipment">
+                                    <div class="d-flex justify-content-between p-3 bg-white" style="border-radius: 4px;">
+                                        <div class="w-100">
+                                            <h4 :title="$t('general.Equipments')"
+                                                class=" font-weight-normal mt-0 text-truncate">
+                                                {{ $t('general.Equipments') }}</h4>
+                                            <h3 class="my-2 py-1 d-flex flex-wrap justify-content-between">
+                                                <countTo :class="'pt-2'" :startVal='0'
+                                                    :endVal='parseInt(statices.total_equipments ?? 0)' :duration='3000'>
+                                                </countTo>
+                                                <div class="avatar-md"><span class="avatar-title bg-soft-warning rounded"><i
+                                                            class="fas fa-wrench font-28 text-warning"></i></span></div>
+                                            </h3>
+                                        </div>
+
                                     </div>
-
-                                </div>
-                            </router-link>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </template>
+
 
 
 
             </div>
 
 
-
             <div class="row mt-2">
 
-                <div class="col-xl-6">
-                    <department_tasksVue :departments_tasks="statices.departments_tasks" />
-                </div>
+                <template v-if="$store.state.auth.type == 'admin'">
+                    <div class="col-xl-6">
+                        <department_tasksVue :departments_tasks="statices.departments_tasks" />
+                    </div>
 
-                <div class="col-xl-6 ">
-                    <locations_tasksVue :locations_tasks="statices.locations_tasks" />
-                </div>
+                    <div class="col-xl-6 ">
+                        <locations_tasksVue :locations_tasks="statices.locations_tasks" />
+                    </div>
+                </template>
 
                 <div class="col-xl-6 ">
                     <tasks_for_current_and_last_monthVue

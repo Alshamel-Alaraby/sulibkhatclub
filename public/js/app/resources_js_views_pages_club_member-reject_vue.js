@@ -7154,20 +7154,20 @@ var render = function render() {
     attrs: {
       id: "printInv"
     }
-  }, [_c("div", {
+  }, [_c("img", {
+    staticClass: "watermark",
+    attrs: {
+      src: "/images/sulib.png",
+      alt: "Watermark Image"
+    }
+  }), _vm._v(" "), _c("div", {
     staticClass: "image-header"
   }, [_c("img", {
     attrs: {
       src: "/images/sulib.png",
       alt: "Sulibikhat Club Logo"
     }
-  }), _vm._v(" "), _c("h1", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))])]), _vm._v(" "), _c("div", {
-    staticClass: "content-section"
-  }, [_c("div", {
-    staticClass: "section"
-  }, [_vm.data_row.serial ? _c("h2", [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                " + _vm._s(_vm.data_row.serial ? _vm.$i18n.locale == "ar" ? _vm.data_row.serial.name : _vm.data_row.serial.name_e : ""))]) : _c("h2", [_vm._v(_vm._s(_vm.$t("general.ReceiptVoucher")))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
-    staticClass: "info"
-  }, [_c("p", [_vm._v(_vm._s(_vm.$t("general.Date")) + " : " + _vm._s(_vm.formatDate(_vm.data_row.date)))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.data_row.prefix) + " : " + _vm._s(_vm.$t("general.serial_number")))])]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("h1", [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))])]), _vm._v(" "), _c("div", [_c("div", [_vm.data_row.serial ? _c("h2", [_vm._v(_vm._s(_vm.$t("general.docu")) + "\n                " + _vm._s(_vm.data_row.serial ? _vm.$i18n.locale == "ar" ? _vm.data_row.serial.name : _vm.data_row.serial.name_e : ""))]) : _c("h2", [_vm._v(_vm._s(_vm.$t("general.ReceiptVoucher")))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", [_c("p", [_vm._v(_vm._s(_vm.$t("general.Date")) + " : " + _vm._s(_vm.formatDate(_vm.data_row.date)))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.data_row.prefix) + " : " + _vm._s(_vm.$t("general.serial_number")))])]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "info-right"
   }, [_c("h3", [_vm._v(_vm._s(_vm.$t("general.TheMember")))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.$t("general.memberName")) + " : " + _vm._s(_vm.data_row.member.full_name))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.$t("general.MembershipNo")) + " : " + _vm._s(_vm.data_row.member.membership_number))])]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "info-right"
@@ -7213,6 +7213,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -7226,6 +7227,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -7639,7 +7641,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nbody {\r\n    font-family: Arial, sans-serif;\r\n    margin: 0;\r\n    padding: 0;\r\n    box-sizing: border-box;\n}\n.invoice {\r\n    width: 100vw;\r\n    height: 100vh;\r\n    padding: 20px;\r\n    box-sizing: border-box;\r\n    font-family: Arial, sans-serif;\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\n}\n.image-header {\r\n    text-align: center;\r\n    margin-bottom: 20px;\n}\n.image-header img {\r\n    max-width: 200px;\r\n    height: auto;\n}\n.content-section {\r\n    width: 100%;\r\n    flex-grow: 1;\r\n    display: flex;\r\n    justify-content: center;\r\n    align-items: center;\n}\n.section {\r\n    width: 80%;\r\n    max-width: 800px;\r\n    text-align: center;\n}\nh1 {\r\n    font-size: 40px;\r\n    margin-bottom: 20px;\n}\nh2 {\r\n    font-size: 32px;\r\n    margin-bottom: 10px;\n}\nh3 {\r\n    font-size: 28px;\r\n    margin-bottom: 10px;\n}\np {\r\n    font-size: 24px;\r\n    margin-bottom: 5px;\n}\nhr {\r\n    border: 1px solid #ccc;\r\n    margin: 20px 0;\n}\n.content-section {\r\n    display: flex;\r\n    justify-content: space-around;\r\n    align-items: flex-start;\n}\n.info-right {\r\n    flex: 1;\r\n    padding-left: 20px;\r\n    text-align: left;\n}\nh3 {\r\n    font-size: 36px;\r\n    margin-bottom: 15px;\n}\np {\r\n    font-size: 28px;\r\n    margin-bottom: 10px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nbody {\r\n    font-family: Arial, sans-serif;\r\n    margin: 0;\r\n    padding: 0;\r\n    box-sizing: border-box;\n}\n.invoice {\r\n    width: 100vw;\r\n    height: 100vh;\r\n    padding: 20px;\r\n    box-sizing: border-box;\r\n    font-family: Arial, sans-serif;\r\n    display: compact;\r\n    justify-content: center;\r\n    align-items: center;\n}\n.image-header {\r\n    text-align: center;\r\n    margin-bottom: 20px;\n}\n.image-header img {\r\n    max-width: 200px;\r\n    height: auto;\n}\nh1 {\r\n    font-size: 53px;\r\n    margin-bottom: 20px;\r\n    font-weight: bold;\n}\nh2 {\r\n    font-size: 42px;\r\n    margin-bottom: 10px;\r\n    text-align: center;\r\n    font-weight: bold;\n}\nh3 {\r\n    font-size: 28px;\r\n    margin-bottom: 10px;\r\n    font-weight: bold;\n}\np {\r\n    font-size: 35px;\r\n    margin-bottom: 5px;\r\n    text-align: right;\n}\nhr {\r\n    border: 2px solid #ccc;\r\n    margin: 40px 0;\n}\n.info-right {\r\n    flex: 1;\r\n    padding-left: 20px;\r\n    text-align: center;\n}\nh3 {\r\n    font-size: 46px;\r\n    margin-bottom: 25px;\n}\np {\r\n    font-size: 46px;\r\n    margin-bottom: 25px;\r\n    text-align: right;\n}\n.watermark {\r\n    position: absolute;\r\n    opacity: 0.04;\r\n    pointer-events: none;\r\n    height: 100%;\r\n    width: 100%;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

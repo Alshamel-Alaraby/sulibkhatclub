@@ -74,108 +74,120 @@ export default {
             },
             tableSetting: [
                 {
-                    isFilter: true, isSet: true, trans: "task_number", isV: 'id', forceVisible: true,
-                    type: 'string', sort: true, setting: {"id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"task_number",isV: 'id',forceVisible:true,
+                    type: 'string',sort: true,setting: {"id":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "task_type", isV: 'type',
-                    type: 'string', sort: true, setting: {"type": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"general_task_signature",isV: 'signature',forceVisible:true,
+                    type: 'string',sort: true,setting: {"signature":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "employee", isV: 'employee_id',
-                    type: 'relation', name: 'employee', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"employee_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"task_type",isV: 'type',trans_value:true,
+                    type: 'string',sort: true,setting: {"type":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "boardRent_task_department", isV: 'department_id'
-                    , type: 'relation', name: 'department', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"department_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"employee", isV: 'employee_id',
+                    type: 'relation',name: 'employee',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"employee_id":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "customer", isV: 'customer_id',
-                    type: 'relation', name: 'customer', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"customer_id": true}, isSetting: true
+                    //boardRent_task_department
+                    isFilter: true,isSet: true,trans:"boardRent_work_type", isV: 'department_id'
+                    ,type: 'relation', name: 'department',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"department_id":true},isSetting: true
+                },
+                // {
+                //     isFilter: true,isSet: true,trans:"customer",isV: 'customer_id',
+                //     type: 'relation', name:'customer',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"customer_id":true},isSetting: true
+                // },
+                // {
+                //     isFilter: true,isSet: true,trans:"city",isV: 'department_task_id',
+                //     type: 'relation', name:'department_task',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"department_task_id":true},isSetting: true
+                // },
+                {
+                    isFilter: true,isSet: true,trans:"task_status",isV: 'status_id',
+                    type: 'relation', name:'status',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"status_id":true},isSetting: true
+                },
+                // {
+                //     isFilter: true,isSet: true,trans:"boardRent_task_equipment",isV: 'equipment_id',
+                //     type: 'relation', name:'equipment',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"equipment_id":true},isSetting: true
+                // },
+                {
+                    isFilter: true,isSet: true,trans:"boardRent_task_location",isV: 'location_id',
+                    type: 'relation', name:'location',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"location_id":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "city", isV: 'department_task_id',
-                    type: 'relation', name: 'department_task', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"department_task_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"boardRent_trust_task_sub_location",isV: 'sub_location_id',
+                    type: 'relation', name:'sub_location',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"sub_location_id":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "task_status", isV: 'status_id',
-                    type: 'relation', name: 'status', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"status_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"task_priority",isV: 'priority_id',
+                    type: 'relation', name:'priority',sort: false,col1: 'name',col2: 'name_e',
+                    setting: {"priority_id":true},isSetting: true
+                },
+                // {
+                //     isFilter: false,isSet: true,trans:"task_owners",isV: 'owners',
+                //     type: 'relation', name:'owners',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"owners":true},isSetting: true
+                // },
+                // {
+                //     isFilter: true,isSet: true,trans:"task_supervisors",isV: 'supervisors',
+                //     type: 'relation', name:'supervisors',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"supervisors":true},isSetting: true
+                // },
+                // {
+                //     isFilter: true,isSet: true,trans:"task_notifications",isV: 'notifications',
+                //     type: 'relation', name:'notifications',sort: false,col1: 'name',col2: 'name_e',
+                //     setting: {"notifications":true},isSetting: true
+                // },
+                {
+                    //general_customer_contact_person
+                    isFilter: true,isSet: true,trans:'general_task_informer_name',isV: 'contact_person',
+                    type: 'string',sort: true,setting: {"contact_person":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "boardRent_task_equipment", isV: 'equipment_id',
-                    type: 'relation', name: 'equipment', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"equipment_id": true}, isSetting: true
+                    //general_customer_contact_phones
+                    isFilter: true,isSet: true,trans:'company_phone',isV: 'contact_phone',
+                    type: 'string',sort: true,setting: {"contact_phone":true},isSetting: true
+                },
+                // {
+                //     //task_title
+                //     isFilter: true,isSet: true,trans:'trust_task_title',isV: 'task_title',
+                //     type: 'string',sort: true,setting: {"task_title":true},isSetting: true
+                // },
+                {
+                    isFilter: true,isSet: true,trans:"execution_date",isV: 'execution_date',
+                    type: 'string',sort: true,setting: {"execution_date":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "boardRent_task_location", isV: 'location_id',
-                    type: 'relation', name: 'location', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"location_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"task_start_time",isV: 'start_time',
+                    type: 'string',sort: true,setting: {"start_time":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "task_priority", isV: 'priority_id',
-                    type: 'relation', name: 'priority', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"priority_id": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"execution_end_date",isV: 'execution_end_date',
+                    type: 'string',sort: true,setting: {"execution_end_date":true},isSetting: true
                 },
                 {
-                    isFilter: false, isSet: true, trans: "task_owners", isV: 'owners',
-                    type: 'relation', name: 'owners', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"owners": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"task_end_time",isV: 'end_time',
+                    type: 'string',sort: true,setting: {"end_time":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "task_supervisors", isV: 'supervisors',
-                    type: 'relation', name: 'supervisors', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"supervisors": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"execution_duration",isV: 'execution_duration',
+                    type: 'string',sort: true,setting: {"execution_duration":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "task_notifications", isV: 'notifications',
-                    type: 'relation', name: 'notifications', sort: false, col1: 'name', col2: 'name_e',
-                    setting: {"notifications": true}, isSetting: true
+                    isFilter: true,isSet: true,trans:"notification_date",isV: 'notification_date',
+                    type: 'string',sort: true,setting: {"notification_date":true},isSetting: true
                 },
                 {
-                    isFilter: true, isSet: true, trans: "general_customer_contact_person", isV: 'contact_person',
-                    type: 'string', sort: true, setting: {"contact_person": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "general_customer_contact_phones", isV: 'contact_phone',
-                    type: 'string', sort: true, setting: {"contact_phone": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "task_title", isV: 'task_title',
-                    type: 'string', sort: true, setting: {"task_title": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "execution_date", isV: 'execution_date',
-                    type: 'string', sort: true, setting: {"execution_date": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "task_start_time", isV: 'start_time',
-                    type: 'string', sort: true, setting: {"start_time": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "execution_end_date", isV: 'execution_end_date',
-                    type: 'string', sort: true, setting: {"execution_end_date": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "task_end_time", isV: 'end_time',
-                    type: 'string', sort: true, setting: {"end_time": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "execution_duration", isV: 'execution_duration',
-                    type: 'string', sort: true, setting: {"execution_duration": true}, isSetting: true
-                },
-                {
-                    isFilter: true, isSet: true, trans: "notification_date", isV: 'notification_date',
-                    type: 'string', sort: true, setting: {"notification_date": true}, isSetting: true
-                },
-
-                {
-                    isFilter: false, isSet: true, trans: "boardRent_task_is_closed", isV: 'is_closed',
-                    type: 'boolean', setting: {"is_closed": true}, isSetting: true
+                    isFilter: false,isSet: true,trans:"boardRent_task_is_closed",isV: 'is_closed',
+                    type: 'boolean1',setting: {"is_closed":true},isSetting: true
                 }
             ],
             is_disabled: false,
@@ -308,7 +320,7 @@ export default {
             for (let i = 0; i < fields.length; ++i) {
                 filter += `columns[${i}]=${fields[i]}&`;
             }
-            return filter + 'status_id=' + this.create.status_id + '&location_id=' + this.create.location_id + '&department_id=' + this.create.department_id + '&start_date=' + this.create.start_date??'' + '&end_date=' + this.create.end_date ?? '';
+            return filter + 'status_id=' + this.create.status_id??'' + '&location_id=' + this.create.location_id??'' + '&department_id=' + this.create.department_id ??'' + '&start_date=' + this.create.start_date??'' + '&end_date=' + this.create.end_date ?? '';
         },
         settingFun(setting = null) {
             if (setting) this.tableSetting = setting;

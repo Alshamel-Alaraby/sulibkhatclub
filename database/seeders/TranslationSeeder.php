@@ -14,7 +14,6 @@ class TranslationSeeder extends Seeder
      */
     public function run()
     {
-
         //Admin report
         Translation::insert([
             [
@@ -1800,7 +1799,6 @@ class TranslationSeeder extends Seeder
                 "screen" => "bank accounts"
             ],
         ]);
-
         //Internal sale man
         Translation::insert([
             [
@@ -10827,6 +10825,24 @@ class TranslationSeeder extends Seeder
                 "screen" => "ticket manager"
             ],
             [
+                "key" => "boardRent_trust_task_sub_location",
+                "default_en" => "Building",
+                "default_ar" => "المبنى",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_trust_task_work_nature",
+                "default_en" => "Work Nature",
+                "default_ar" => "طبيعة العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
                 "key" => "boardRent_task_location",
                 "default_en" => "General",
                 "default_ar" => "اللواء",
@@ -10890,6 +10906,51 @@ class TranslationSeeder extends Seeder
                 "screen" => "ticket manager"
             ],
             [
+                "key" => "boardRent_task_request",
+                "default_en" => "Request for maintenance work",
+                "default_ar" => "طلب اعمال صيانة ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "general_task_informer_name",
+                "default_en" => "Informer name",
+                "default_ar" => "اسم المبلغ ",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "general_task_address",
+                "default_en" => "Sub Location",
+                "default_ar" => "الموقع الفرعي",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "general_task_signature",
+                "default_en" => "Signature",
+                "default_ar" => "الاشارة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
+                "key" => "boardRent_task_edit_request",
+                "default_en" => "Edit Request for maintenance work",
+                "default_ar" => " تعديل طلب اعمال صيانة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+            ],
+            [
                 "key" => "boardRent_task_edit_form",
                 "default_en" => "Edit Task form",
                 "default_ar" => "تعديل المهمة ",
@@ -10945,12 +11006,30 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "ticket manager"
-
+            ],
+            [
+                "key" => "boardRent_work_type",
+                "default_en" => "Work Type",
+                "default_ar" => "نوع العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
             ],
             [
                 "key" => "task_title",
                 "default_en" => "Task Title",
                 "default_ar" => "بيان عن المهمه",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "ticket manager"
+
+            ],
+            [
+                "key" => "trust_task_title",
+                "default_en" => "Required works",
+                "default_ar" => "الاعمال المطلوبة",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -13125,6 +13204,15 @@ class TranslationSeeder extends Seeder
                 "key" => "request_type_to_hour",
                 "default_en" => "To hour",
                 "default_ar" => "الى الساعة",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "hr"
+            ],
+            [
+                "key" => "request_type_managers",
+                "default_en" => "Managers",
+                "default_ar" => "المديرين",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -17338,8 +17426,8 @@ class TranslationSeeder extends Seeder
             ],
             [
                 "key" => "general_insurance_companies_edit_form",
-                "default_en" => "Edit Specialty form",
-                "default_ar" => "تعديل التخصص",
+                "default_en" => "Edit Insurance Company form",
+                "default_ar" => "تعديل شركة التأمين",
                 "new_ar" => "",
                 "new_en" => "",
                 "company_id" => 0,
@@ -17364,6 +17452,49 @@ class TranslationSeeder extends Seeder
                 "new_en" => "",
                 "company_id" => 0,
                 "screen" => "Insurance Companies"
+
+            ],
+
+
+        ]);
+        Translation::insert([
+            [
+                "key" => "general_work_nature_create_form",
+                "default_en" => "Add New Work Nature",
+                "default_ar" => "اضف طبيعة عمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Work Nature"
+            ],
+            [
+                "key" => "general_work_nature_edit_form",
+                "default_en" => "Edit Work Nature form",
+                "default_ar" => "تعديل طبيعة العمل",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Work Nature"
+
+            ],
+            [
+                "key" => "general_work_nature_name_ar",
+                "default_en" => " Name (arabic)",
+                "default_ar" => "الاسم (عربي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Work Nature"
+
+            ],
+            [
+                "key" => "general_work_nature_name_en",
+                "default_en" => " Name (english)",
+                "default_ar" => "الاسم (انجليزي)",
+                "new_ar" => "",
+                "new_en" => "",
+                "company_id" => 0,
+                "screen" => "Work Nature"
 
             ],
 

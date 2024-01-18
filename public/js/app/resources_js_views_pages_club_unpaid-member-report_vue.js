@@ -1766,27 +1766,30 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      * watch per_page
      */
     per_page: function per_page(after, befour) {
-      this.getData();
+      var _this = this;
+      setTimeout(function () {
+        _this.getData();
+      }, 1500);
     },
     /**
      * watch search
      */
     search: function search(after, befour) {
-      var _this = this;
+      var _this2 = this;
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this.getData();
+        _this2.getData();
       }, 400);
     },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this3 = this;
       if (after) {
         this.installmentStatus.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this3.checkAll.includes(el.id)) {
+            _this3.checkAll.push(el.id);
           }
         });
       } else {
@@ -1799,7 +1802,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  start get Data module && pagination
      */
     getData: function getData() {
-      var _this3 = this;
+      var _this4 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1821,22 +1824,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?year=".concat(this.create.year, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(_filter)).then(function (res) {
           var l = res.data;
-          _this3.installmentStatus = l.data;
-          _this3.installmentStatusPagination = l.pagination;
-          _this3.current_page = l.pagination.current_page;
+          _this4.installmentStatus = l.data;
+          _this4.installmentStatusPagination = l.pagination;
+          _this4.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: 'error',
-            title: "".concat(_this3.$t('general.Error')),
-            text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
+            title: "".concat(_this4.$t('general.Error')),
+            text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
           });
         })["finally"](function () {
-          _this3.isLoader = false;
+          _this4.isLoader = false;
         });
       }
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this4 = this;
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1858,17 +1861,17 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
           _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/unpaid-member-transaction?year=".concat(this.create.year, "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
             var l = res.data;
-            _this4.installmentStatus = l.data;
-            _this4.installmentStatusPagination = l.pagination;
-            _this4.current_page = l.pagination.current_page;
+            _this5.installmentStatus = l.data;
+            _this5.installmentStatusPagination = l.pagination;
+            _this5.current_page = l.pagination.current_page;
           })["catch"](function (err) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: 'error',
-              title: "".concat(_this4.$t('general.Error')),
-              text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
+              title: "".concat(_this5.$t('general.Error')),
+              text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
             });
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         }
       }
@@ -1880,10 +1883,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this5 = this;
+      var _this6 = this;
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this5.$v.$reset();
+        _this6.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("create");
@@ -1892,16 +1895,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this6 = this;
+      var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _this6.is_disabled = false;
-              _this6.$nextTick(function () {
-                _this6.$v.$reset();
+              _this7.is_disabled = false;
+              _this7.$nextTick(function () {
+                _this7.$v.$reset();
               });
-              _this6.errors = {};
+              _this7.errors = {};
             case 3:
             case "end":
               return _context.stop();
@@ -1919,10 +1922,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this7 = this;
+      var _this8 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this7.$refs.exportable_table;
+        var elt = _this8.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -1935,22 +1938,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         } else {
           XLSX.writeFile(wb, fn || ('Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this7.enabled3 = true;
+        _this8.enabled3 = true;
       }, 100);
     },
     changeStatus: function changeStatus() {
-      var _this8 = this;
+      var _this9 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/club-members/transactions/unpaid-member-transaction-update", {
         year: this.create.year
       }).then(function (res) {
-        _this8.installmentStatus = [];
-        _this8.installmentStatusPagination = {};
-        _this8.current_page = 1;
+        _this9.installmentStatus = [];
+        _this9.installmentStatusPagination = {};
+        _this9.current_page = 1;
         setTimeout(function () {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "success",
-            text: "".concat(_this8.$t("general.Addedsuccessfully")),
+            text: "".concat(_this9.$t("general.Addedsuccessfully")),
             showConfirmButton: false,
             timer: 1500
           });
@@ -1958,11 +1961,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: 'error',
-          title: "".concat(_this8.$t('general.Error')),
-          text: "".concat(_this8.$t('general.Thereisanerrorinthesystem'))
+          title: "".concat(_this9.$t('general.Error')),
+          text: "".concat(_this9.$t('general.Thereisanerrorinthesystem'))
         });
       })["finally"](function () {
-        _this8.isLoader = false;
+        _this9.isLoader = false;
       });
     },
     dateStatus: function dateStatus(date, status) {
@@ -5245,7 +5248,7 @@ var render = function render() {
       },
       expression: "setting.cm_member_id"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.member")) + " ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.member")) + "\n                                        ")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
@@ -5253,6 +5256,39 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v("Apply")])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.per_page,
+      expression: "per_page"
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "50px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.per_page
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.per_page = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
@@ -5405,7 +5441,7 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_c("th", [_c("div", {
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))])])]), _vm._v(" "), _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
@@ -5421,7 +5457,7 @@ var render = function render() {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(_vm.formatDate(data.membership_date)) + "\n                                ")]), _vm._v(" "), _c("td", [_c("h5", {
+    }, [_c("td", [_vm._v("\n                                    " + _vm._s(index + 1) + "\n                                ")]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(_vm.formatDate(data.membership_date)) + "\n                                ")]), _vm._v(" "), _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal td5"
     }, [_vm._v("\n                                        " + _vm._s(data.first_name + " " + data.second_name + " " + data.third_name + " " + data.last_name) + "\n                                    ")])]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(data.transaction_serial_number) + "\n                                ")]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(_vm.formatDate(data.transaction_date)) + "\n                                ")]), _vm._v(" "), _c("td", [_vm._v("\n                                    " + _vm._s(data.transaction_year_to) + "\n                                ")])]);
   }), 0) : _c("tbody", [_c("tr", [_c("th", {
@@ -5471,6 +5507,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -5484,6 +5521,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -5897,7 +5935,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -1688,7 +1688,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-
 /**
  * Advanced Table component
  */
@@ -1768,27 +1767,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      * watch per_page
      */
     per_page: function per_page(after, befour) {
-      this.getData();
+      var _this = this;
+      setTimeout(function () {
+        _this.getData();
+      }, 1500);
     },
     /**
      * watch search
      */
     search: function search(after, befour) {
-      var _this = this;
+      var _this2 = this;
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this.getData();
+        _this2.getData();
       }, 400);
     },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this3 = this;
       if (after) {
         this.installmentStatus.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this3.checkAll.includes(el.id)) {
+            _this3.checkAll.push(el.id);
           }
         });
       } else {
@@ -1802,51 +1804,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      */
     getData: function getData() {
       var _this$create$status_i,
-        _this3 = this;
+        _this4 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/cm-old-members/getOldMembers?&status_id=".concat((_this$create$status_i = this.create.status_id) !== null && _this$create$status_i !== void 0 ? _this$create$status_i : '', "&page=").concat(page, "&per_page=").concat(this.per_page)).then(function (res) {
         var l = res.data;
-        _this3.installmentStatus = l.data;
-        _this3.installmentStatusPagination.last_page = l.last_page;
-        _this3.installmentStatusPagination.current_page = l.current_page;
-        _this3.installmentStatusPagination.from = l.from;
-        _this3.installmentStatusPagination.to = l.to;
-        _this3.installmentStatusPagination.total = l.total;
-        _this3.current_page = l.current_page;
+        _this4.installmentStatus = l.data;
+        _this4.installmentStatusPagination.last_page = l.last_page;
+        _this4.installmentStatusPagination.current_page = l.current_page;
+        _this4.installmentStatusPagination.from = l.from;
+        _this4.installmentStatusPagination.to = l.to;
+        _this4.installmentStatusPagination.total = l.total;
+        _this4.current_page = l.current_page;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: 'error',
-          title: "".concat(_this3.$t('general.Error')),
-          text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
+          title: "".concat(_this4.$t('general.Error')),
+          text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
         });
       })["finally"](function () {
-        _this3.isLoader = false;
+        _this4.isLoader = false;
       });
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this4 = this;
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
         var _this$create$status_i2;
         this.isLoader = true;
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/cm-old-members/getOldMembers?status_id=".concat((_this$create$status_i2 = this.create.status_id) !== null && _this$create$status_i2 !== void 0 ? _this$create$status_i2 : '', "&page=").concat(this.current_page, "&per_page=").concat(this.per_page)).then(function (res) {
           var l = res.data;
-          _this4.installmentStatus = l.data;
-          _this4.installmentStatusPagination.last_page = l.last_page;
-          _this4.installmentStatusPagination.current_page = l.current_page;
-          _this4.installmentStatusPagination.from = l.from;
-          _this4.installmentStatusPagination.to = l.to;
-          _this4.installmentStatusPagination.total = l.total;
-          _this4.current_page = l.current_page;
+          _this5.installmentStatus = l.data;
+          _this5.installmentStatusPagination.last_page = l.last_page;
+          _this5.installmentStatusPagination.current_page = l.current_page;
+          _this5.installmentStatusPagination.from = l.from;
+          _this5.installmentStatusPagination.to = l.to;
+          _this5.installmentStatusPagination.total = l.total;
+          _this5.current_page = l.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: 'error',
-            title: "".concat(_this4.$t('general.Error')),
-            text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
+            title: "".concat(_this5.$t('general.Error')),
+            text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
           });
         })["finally"](function () {
-          _this4.isLoader = false;
+          _this5.isLoader = false;
         });
       }
     },
@@ -1857,24 +1859,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get status
      */
     getStatus: function getStatus() {
-      var _this5 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _this5.isLoader = true;
+              _this6.isLoader = true;
               _context.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/cm-old-members/getOldStatus").then(function (res) {
                 var l = res.data;
-                _this5.status = l;
+                _this6.status = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this5.$t("general.Error")),
-                  text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this6.$t("general.Error")),
+                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this5.isLoader = false;
+                _this6.isLoader = false;
               });
             case 3:
             case "end":
@@ -1887,10 +1889,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this6 = this;
+      var _this7 = this;
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this6.$v.$reset();
+        _this7.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("create");
@@ -1899,19 +1901,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this7 = this;
+      var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
               _context2.next = 2;
-              return _this7.getStatus();
+              return _this8.getStatus();
             case 2:
-              _this7.is_disabled = false;
-              _this7.$nextTick(function () {
-                _this7.$v.$reset();
+              _this8.is_disabled = false;
+              _this8.$nextTick(function () {
+                _this8.$v.$reset();
               });
-              _this7.errors = {};
+              _this8.errors = {};
             case 5:
             case "end":
               return _context2.stop();
@@ -1932,10 +1934,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this8 = this;
+      var _this9 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this8.$refs.exportable_table;
+        var elt = _this9.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -1948,7 +1950,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         } else {
           XLSX.writeFile(wb, fn || ('Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this8.enabled3 = true;
+        _this9.enabled3 = true;
       }, 100);
     }
   }
@@ -5128,7 +5130,7 @@ var render = function render() {
     attrs: {
       variant: "primary"
     }
-  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Search")) + "\n                                    "), _c("i", {
+  }, [_vm._v("\n                                " + _vm._s(_vm.$t("general.Search")) + "\n                                "), _c("i", {
     staticClass: "fe-search"
   })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex"
@@ -5159,11 +5161,11 @@ var render = function render() {
     staticClass: "d-inline-block"
   }, [_c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.filter")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.filter")) + "\n                                        "), _c("i", {
     staticClass: "fas fa-filter"
   })]), _vm._v(" "), _c("b-button", {
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.group")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.group")) + "\n                                        "), _c("i", {
     staticClass: "fe-menu"
   })]), _vm._v(" "), _c("b-dropdown", {
     ref: "dropdown",
@@ -5181,7 +5183,7 @@ var render = function render() {
       },
       expression: "setting.membership_number"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.first_name,
@@ -5190,7 +5192,7 @@ var render = function render() {
       },
       expression: "setting.first_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.second_name,
@@ -5199,7 +5201,7 @@ var render = function render() {
       },
       expression: "setting.second_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_second_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.third_name,
@@ -5208,7 +5210,7 @@ var render = function render() {
       },
       expression: "setting.third_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_third_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.last_name,
@@ -5217,7 +5219,7 @@ var render = function render() {
       },
       expression: "setting.last_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_last_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.family_name,
@@ -5226,7 +5228,7 @@ var render = function render() {
       },
       expression: "setting.family_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_family_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.birth_date,
@@ -5235,7 +5237,7 @@ var render = function render() {
       },
       expression: "setting.birth_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_birth_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_birth_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.membership_date,
@@ -5244,7 +5246,7 @@ var render = function render() {
       },
       expression: "setting.membership_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.national_id,
@@ -5253,7 +5255,7 @@ var render = function render() {
       },
       expression: "setting.national_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_national_id")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_phone,
@@ -5262,7 +5264,7 @@ var render = function render() {
       },
       expression: "setting.home_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.work_phone,
@@ -5271,7 +5273,7 @@ var render = function render() {
       },
       expression: "setting.work_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_work_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_work_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.LstPayDate,
@@ -5280,7 +5282,7 @@ var render = function render() {
       },
       expression: "setting.LstPayDate"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.LstPayDate")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.LstPayDate")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.DOC_NO,
@@ -5289,7 +5291,7 @@ var render = function render() {
       },
       expression: "setting.DOC_NO"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.ReceiptNumber")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.ReceiptNumber")) + "\n                                        ")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
@@ -5297,13 +5299,46 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v("Apply")])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.per_page,
+      expression: "per_page"
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "50px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.per_page
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.per_page = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
     staticStyle: {
       "font-size": "13px"
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.installmentStatusPagination.from) + "-" + _vm._s(_vm.installmentStatusPagination.to) + "\n                                            /\n                                            " + _vm._s(_vm.installmentStatusPagination.total) + "\n                                        ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.installmentStatusPagination.from) + "-" + _vm._s(_vm.installmentStatusPagination.to) + "\n                                        /\n                                        " + _vm._s(_vm.installmentStatusPagination.total) + "\n                                    ")]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-block"
   }, [_c("a", {
     style: {
@@ -5382,7 +5417,7 @@ var render = function render() {
         return _vm.getData.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.Search")) + "\n                                        ")]) : _c("b-button", {
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Search")) + "\n                                    ")]) : _c("b-button", {
     staticClass: "mx-1",
     attrs: {
       variant: "success",
@@ -5405,7 +5440,7 @@ var render = function render() {
         return _vm.resetModalHidden.apply(null, arguments);
       }
     }
-  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                                    ")])], 2), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Cancel")) + "\n                                ")])], 2), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6"
@@ -5413,7 +5448,7 @@ var render = function render() {
     staticClass: "form-group position-relative"
   }, [_c("label", {
     staticClass: "control-label"
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.status")) + "\n                                            ")]), _vm._v(" "), _c("multiselect", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.status")) + "\n                                        ")]), _vm._v(" "), _c("multiselect", {
     attrs: {
       options: _vm.status.map(function (type) {
         return type.ID;
@@ -5445,7 +5480,7 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_vm.setting.membership_number ? _c("th", [_c("div", {
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _vm.setting.membership_number ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -5683,7 +5718,7 @@ var render = function render() {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_vm.setting.membership_number ? _c("td", [_vm._v("\n                                        " + _vm._s(data.MemberNo ? data.MemberNo : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.FNAME ? data.FNAME : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.SNAME ? data.SNAME : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.TNAME ? data.TNAME : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.FORNAME ? data.FORNAME : "--") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                        " + _vm._s(data.ZFAM_NAME ? data.ZFAM_NAME : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                        " + _vm._s(data.BIRTH_DATE ? _vm.formatDate(data.BIRTH_DATE) : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                        " + _vm._s(data.ORDER_DATE ? _vm.formatDate(data.ORDER_DATE) : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                        " + _vm._s(data.NationalNo ? data.NationalNo : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                        " + _vm._s(data.HouseTel ? data.HouseTel : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                        " + _vm._s(data.JobTel ? data.JobTel : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.LstPayDate ? _c("td", [_vm._v("\n                                        " + _vm._s(data.LstPayDate ? _vm.formatDate(data.LstPayDate) : "---") + "\n                                    ")]) : _vm._e(), _vm._v(" "), _vm.setting.DOC_NO ? _c("td", [_vm._v("\n                                        " + _vm._s(data.DOC_NO ? data.DOC_NO : "---") + "\n                                    ")]) : _vm._e()]);
+    }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.MemberNo ? data.MemberNo : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.FNAME ? data.FNAME : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.SNAME ? data.SNAME : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.TNAME ? data.TNAME : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.FORNAME ? data.FORNAME : "--") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.ZFAM_NAME ? data.ZFAM_NAME : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.BIRTH_DATE ? _vm.formatDate(data.BIRTH_DATE) : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.ORDER_DATE ? _vm.formatDate(data.ORDER_DATE) : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.NationalNo ? data.NationalNo : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.HouseTel ? data.HouseTel : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.JobTel ? data.JobTel : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.LstPayDate ? _c("td", [_vm._v("\n                                    " + _vm._s(data.LstPayDate ? _vm.formatDate(data.LstPayDate) : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.DOC_NO ? _c("td", [_vm._v("\n                                    " + _vm._s(data.DOC_NO ? data.DOC_NO : "---") + "\n                                ")]) : _vm._e()]);
   }), 0) : _c("tbody", [_c("tr", [_c("th", {
     staticClass: "text-center",
     attrs: {
@@ -5731,6 +5766,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -5744,6 +5780,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -6157,7 +6194,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

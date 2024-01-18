@@ -28,19 +28,20 @@ export default {
 
 <template>
     <div id="printInv" class="invoice">
+        <img src="/images/sulib.png" alt="Watermark Image" class="watermark">
         <div class="image-header">
             <img src="/images/sulib.png" alt="Sulibikhat Club Logo"/>
             <h1>{{ $t('general.SulaibikhatClub') }}</h1>
         </div>
-        <div class="content-section">
-            <div class="section">
+        <div>
+            <div>
                 <h2 v-if="data_row.serial">{{ $t('general.docu') }}
                     {{
                         data_row.serial ? ($i18n.locale == 'ar' ? data_row.serial.name : data_row.serial.name_e) : ""
                     }}</h2>
                 <h2 v-else>{{ $t('general.ReceiptVoucher') }}</h2>
                 <hr>
-                <div class="info">
+                <div>
                     <p>{{ $t('general.Date') }} : {{ formatDate(data_row.date) }}</p>
                     <p>{{ data_row.prefix }} : {{ $t('general.serial_number') }}</p>
                 </div>
@@ -82,8 +83,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
+    display: compact;
     justify-content: center;
     align-items: center;
 }
@@ -98,65 +98,61 @@ body {
     height: auto;
 }
 
-.content-section {
-    width: 100%;
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.section {
-    width: 80%;
-    max-width: 800px;
-    text-align: center;
-}
 
 h1 {
-    font-size: 40px;
+    font-size: 53px;
     margin-bottom: 20px;
+    font-weight: bold;
 }
 
 h2 {
-    font-size: 32px;
+    font-size: 42px;
     margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 h3 {
     font-size: 28px;
     margin-bottom: 10px;
+    font-weight: bold;
 }
 
 p {
-    font-size: 24px;
+    font-size: 35px;
     margin-bottom: 5px;
+    text-align: right;
 }
 
 hr {
-    border: 1px solid #ccc;
-    margin: 20px 0;
+    border: 2px solid #ccc;
+    margin: 40px 0;
 }
 
-.content-section {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-}
 
 .info-right {
     flex: 1;
     padding-left: 20px;
-    text-align: left;
+    text-align: center;
 }
 
 h3 {
-    font-size: 36px;
-    margin-bottom: 15px;
+    font-size: 46px;
+    margin-bottom: 25px;
 }
 
 p {
-    font-size: 28px;
-    margin-bottom: 10px;
+    font-size: 46px;
+    margin-bottom: 25px;
+    text-align: right;
+}
+
+.watermark {
+    position: absolute;
+    opacity: 0.04;
+    pointer-events: none;
+    height: 100%;
+    width: 100%;
 }
 </style>
 

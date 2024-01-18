@@ -1787,27 +1787,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      * watch per_page
      */
     per_page: function per_page(after, befour) {
-      this.getData();
+      var _this = this;
+      setTimeout(function () {
+        _this.getData();
+      }, 1500);
     },
     /**
      * watch search
      */
     search: function search(after, befour) {
-      var _this = this;
+      var _this2 = this;
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this.getData();
+        _this2.getData();
       }, 400);
     },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this3 = this;
       if (after) {
         this.installmentStatus.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this3.checkAll.includes(el.id)) {
+            _this3.checkAll.push(el.id);
           }
         });
       } else {
@@ -1820,7 +1823,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  start get Data module && pagination
      */
     getData: function getData() {
-      var _this3 = this;
+      var _this4 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1832,24 +1835,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         for (var i = 0; i < this.filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
         }
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia = this.create.financial_status_id) !== null && _this$create$financia !== void 0 ? _this$create$financia : '', "&member_type_id=").concat((_this$create$member_t = this.create.member_type_id) !== null && _this$create$member_t !== void 0 ? _this$create$member_t : '', "&status_id=").concat((_this$create$status_i = this.create.status_id) !== null && _this$create$status_i !== void 0 ? _this$create$status_i : '', "&year_number=").concat((_this$create$year_num = this.create.year_number) !== null && _this$create$year_num !== void 0 ? _this$create$year_num : '', "&year=").concat((_this$create$year = this.create.year) !== null && _this$create$year !== void 0 ? _this$create$year : '', "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia = this.create.financial_status_id) !== null && _this$create$financia !== void 0 ? _this$create$financia : '', "&member_type_id=").concat((_this$create$member_t = this.create.member_type_id) !== null && _this$create$member_t !== void 0 ? _this$create$member_t : '', "&status_id=").concat((_this$create$status_i = this.create.status_id) !== null && _this$create$status_i !== void 0 ? _this$create$status_i : '', "&year_number=").concat((_this$create$year_num = this.create.year_number) !== null && _this$create$year_num !== void 0 ? _this$create$year_num : '', "&year=").concat((_this$create$year = this.create.year) !== null && _this$create$year !== void 0 ? _this$create$year : '', "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
           var l = res.data;
-          _this3.installmentStatus = l.data;
-          _this3.installmentStatusPagination = l.pagination;
-          _this3.current_page = l.pagination.current_page;
+          _this4.installmentStatus = l.data;
+          _this4.installmentStatusPagination = l.pagination;
+          _this4.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: 'error',
-            title: "".concat(_this3.$t('general.Error')),
-            text: "".concat(_this3.$t('general.Thereisanerrorinthesystem'))
+            title: "".concat(_this4.$t('general.Error')),
+            text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
           });
         })["finally"](function () {
-          _this3.isLoader = false;
+          _this4.isLoader = false;
         });
       }
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this4 = this;
+      var _this5 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.$v.create.$touch();
       if (this.$v.create.$invalid) {
@@ -1862,19 +1865,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           for (var i = 0; i < this.filterSetting.length; ++i) {
             filter += "columns[".concat(i, "]=").concat(this.filterSetting[i], "&");
           }
-          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia2 = this.create.financial_status_id) !== null && _this$create$financia2 !== void 0 ? _this$create$financia2 : '', "&member_type_id=").concat((_this$create$member_t2 = this.create.member_type_id) !== null && _this$create$member_t2 !== void 0 ? _this$create$member_t2 : '', "&status_id=").concat((_this$create$status_i2 = this.create.status_id) !== null && _this$create$status_i2 !== void 0 ? _this$create$status_i2 : '', "&year_number=").concat((_this$create$year_num2 = this.create.year_number) !== null && _this$create$year_num2 !== void 0 ? _this$create$year_num2 : '', "&year=").concat((_this$create$year2 = this.create.year) !== null && _this$create$year2 !== void 0 ? _this$create$year2 : '', "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+          _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members/report-to-members?financial_status_id=".concat((_this$create$financia2 = this.create.financial_status_id) !== null && _this$create$financia2 !== void 0 ? _this$create$financia2 : '', "&member_type_id=").concat((_this$create$member_t2 = this.create.member_type_id) !== null && _this$create$member_t2 !== void 0 ? _this$create$member_t2 : '', "&status_id=").concat((_this$create$status_i2 = this.create.status_id) !== null && _this$create$status_i2 !== void 0 ? _this$create$status_i2 : '', "&year_number=").concat((_this$create$year_num2 = this.create.year_number) !== null && _this$create$year_num2 !== void 0 ? _this$create$year_num2 : '', "&year=").concat((_this$create$year2 = this.create.year) !== null && _this$create$year2 !== void 0 ? _this$create$year2 : '', "&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
             var l = res.data;
-            _this4.installmentStatus = l.data;
-            _this4.installmentStatusPagination = l.pagination;
-            _this4.current_page = l.pagination.current_page;
+            _this5.installmentStatus = l.data;
+            _this5.installmentStatusPagination = l.pagination;
+            _this5.current_page = l.pagination.current_page;
           })["catch"](function (err) {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: 'error',
-              title: "".concat(_this4.$t('general.Error')),
-              text: "".concat(_this4.$t('general.Thereisanerrorinthesystem'))
+              title: "".concat(_this5.$t('general.Error')),
+              text: "".concat(_this5.$t('general.Thereisanerrorinthesystem'))
             });
           })["finally"](function () {
-            _this4.isLoader = false;
+            _this5.isLoader = false;
           });
         }
       }
@@ -1886,24 +1889,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get financial status
      */
     getFinancialStatus: function getFinancialStatus() {
-      var _this5 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              _this5.isLoader = true;
+              _this6.isLoader = true;
               _context.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/financial-status").then(function (res) {
                 var l = res.data.data;
-                _this5.financial_status = l;
+                _this6.financial_status = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this5.$t("general.Error")),
-                  text: "".concat(_this5.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this6.$t("general.Error")),
+                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this5.isLoader = false;
+                _this6.isLoader = false;
               });
             case 3:
             case "end":
@@ -1916,24 +1919,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get type
      */
     getType: function getType() {
-      var _this6 = this;
+      var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              _this6.isLoader = true;
+              _this7.isLoader = true;
               _context2.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members-types").then(function (res) {
                 var l = res.data.data;
-                _this6.typs = l;
+                _this7.typs = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this6.$t("general.Error")),
-                  text: "".concat(_this6.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this7.$t("general.Error")),
+                  text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this6.isLoader = false;
+                _this7.isLoader = false;
               });
             case 3:
             case "end":
@@ -1946,24 +1949,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  get status
      */
     getStatus: function getStatus() {
-      var _this7 = this;
+      var _this8 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this7.isLoader = true;
+              _this8.isLoader = true;
               _context3.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/member-status").then(function (res) {
                 var l = res.data.data;
-                _this7.status = l;
+                _this8.status = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this7.$t("general.Error")),
-                  text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this8.$t("general.Error")),
+                  text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this7.isLoader = false;
+                _this8.isLoader = false;
               });
             case 3:
             case "end":
@@ -1976,10 +1979,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this8 = this;
+      var _this9 = this;
       this.is_disabled = false;
       this.$nextTick(function () {
-        _this8.$v.$reset();
+        _this9.$v.$reset();
       });
       this.errors = {};
       this.$bvModal.hide("create");
@@ -1988,25 +1991,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this9 = this;
+      var _this10 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
               _context4.next = 2;
-              return _this9.getFinancialStatus();
+              return _this10.getFinancialStatus();
             case 2:
               _context4.next = 4;
-              return _this9.getType();
+              return _this10.getType();
             case 4:
               _context4.next = 6;
-              return _this9.getStatus();
+              return _this10.getStatus();
             case 6:
-              _this9.is_disabled = false;
-              _this9.$nextTick(function () {
-                _this9.$v.$reset();
+              _this10.is_disabled = false;
+              _this10.$nextTick(function () {
+                _this10.$v.$reset();
               });
-              _this9.errors = {};
+              _this10.errors = {};
             case 9:
             case "end":
               return _context4.stop();
@@ -2027,10 +2030,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_8__.formatDateOnly)(value);
     },
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this10 = this;
+      var _this11 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this10.$refs.exportable_table;
+        var elt = _this11.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -2043,7 +2046,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         } else {
           XLSX.writeFile(wb, fn || ('Payment Report' + '.' || 0) + (type || 'xlsx'));
         }
-        _this10.enabled3 = true;
+        _this11.enabled3 = true;
       }, 100);
     },
     choseAllFinancialStatus: function choseAllFinancialStatus() {
@@ -5459,7 +5462,7 @@ var render = function render() {
       },
       expression: "setting.membership_number"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.first_name,
@@ -5468,7 +5471,7 @@ var render = function render() {
       },
       expression: "setting.first_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_first_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.second_name,
@@ -5477,7 +5480,7 @@ var render = function render() {
       },
       expression: "setting.second_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_second_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_second_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.third_name,
@@ -5486,7 +5489,7 @@ var render = function render() {
       },
       expression: "setting.third_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_third_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_third_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.last_name,
@@ -5495,7 +5498,7 @@ var render = function render() {
       },
       expression: "setting.last_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_last_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_last_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.family_name,
@@ -5504,7 +5507,7 @@ var render = function render() {
       },
       expression: "setting.family_name"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_family_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_family_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.birth_date,
@@ -5513,7 +5516,7 @@ var render = function render() {
       },
       expression: "setting.birth_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_birth_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_birth_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.gender,
@@ -5522,7 +5525,7 @@ var render = function render() {
       },
       expression: "setting.gender"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_type")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_type")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.membership_date,
@@ -5531,7 +5534,7 @@ var render = function render() {
       },
       expression: "setting.membership_date"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_date")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_date")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.financial_status_id,
@@ -5540,7 +5543,7 @@ var render = function render() {
       },
       expression: "setting.financial_status_id"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.financial_status")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.financial_status")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.member_type_id,
@@ -5549,7 +5552,7 @@ var render = function render() {
       },
       expression: "setting.member_type_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_type")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_type")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.status_id,
@@ -5558,7 +5561,7 @@ var render = function render() {
       },
       expression: "setting.status_id"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.status")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.status")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.national_id,
@@ -5567,7 +5570,7 @@ var render = function render() {
       },
       expression: "setting.national_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_national_id")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_national_id")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_phone,
@@ -5576,7 +5579,7 @@ var render = function render() {
       },
       expression: "setting.home_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.work_phone,
@@ -5585,7 +5588,7 @@ var render = function render() {
       },
       expression: "setting.work_phone"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_work_phone")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_work_phone")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_address,
@@ -5594,7 +5597,7 @@ var render = function render() {
       },
       expression: "setting.home_address"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_address")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_address")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.work_address,
@@ -5603,7 +5606,7 @@ var render = function render() {
       },
       expression: "setting.work_address"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_work_address")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_work_address")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.job,
@@ -5612,7 +5615,7 @@ var render = function render() {
       },
       expression: "setting.job"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_job")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_job")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.degree,
@@ -5621,7 +5624,7 @@ var render = function render() {
       },
       expression: "setting.degree"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_degree")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_degree")) + "\n                                        ")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
@@ -5629,6 +5632,39 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v("Apply")])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                    ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.per_page,
+      expression: "per_page"
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "50px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.per_page
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.per_page = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",
@@ -5910,7 +5946,7 @@ var render = function render() {
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_vm.setting.membership_number ? _c("th", [_c("div", {
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _vm.setting.membership_number ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -6192,7 +6228,7 @@ var render = function render() {
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.first_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.second_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.third_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.family_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                                    " + _vm._s(data.gender ? parseInt(data.gender) == 1 ? _vm.$t("general.male") : _vm.$t("general.female") : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                    " + _vm._s(_vm.formatDate(data.membership_date)) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.financial_status_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.financial_status ? _vm.$i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_type_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membersType ? _vm.$i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.status_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.status ? _vm.$i18n.locale == "ar" ? data.status.name : data.status.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.national_id) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                                    " + _vm._s(data.job) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                                    " + _vm._s(data.degree) + "\n                                ")]) : _vm._e()]);
+    }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.first_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.second_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.third_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.family_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.gender ? _c("td", [_vm._v("\n                                    " + _vm._s(data.gender ? parseInt(data.gender) == 1 ? _vm.$t("general.male") : _vm.$t("general.female") : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_date ? _c("td", [_vm._v("\n                                    " + _vm._s(_vm.formatDate(data.membership_date)) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.financial_status_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.financial_status ? _vm.$i18n.locale == "ar" ? data.financial_status.name : data.financial_status.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.member_type_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membersType ? _vm.$i18n.locale == "ar" ? data.membersType.name : data.membersType.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.status_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.status ? _vm.$i18n.locale == "ar" ? data.status.name : data.status.name_e : "---") + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.national_id ? _c("td", [_vm._v("\n                                    " + _vm._s(data.national_id) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_phone ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_phone) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.work_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.work_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.job ? _c("td", [_vm._v("\n                                    " + _vm._s(data.job) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.degree ? _c("td", [_vm._v("\n                                    " + _vm._s(data.degree) + "\n                                ")]) : _vm._e()]);
   }), 0) : _c("tbody", [_c("tr", [_c("th", {
     staticClass: "text-center",
     attrs: {
@@ -6240,6 +6276,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -6253,6 +6290,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -6666,7 +6704,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single{\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5{\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

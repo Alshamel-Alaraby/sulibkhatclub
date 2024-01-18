@@ -3,7 +3,6 @@ import Layout from "../../../layouts/main";
 import PageHeader from "../../../../components/general/Page-header";
 import adminApi from "../../../../api/adminAxios";
 import Switches from "vue-switches";
-import {required, minLength, maxLength, integer, requiredIf} from "vuelidate/lib/validators";
 import Swal from "sweetalert2";
 import ErrorMessage from "../../../../components/widgets/errorMessage";
 import loader from "../../../../components/general/loader";
@@ -33,9 +32,9 @@ export default {
         Multiselect,
     },
     beforeRouteEnter(to, from, next) {
-            next((vm) => {
-      return permissionGuard(vm, "old members report", "all old members report");
-    });
+        next((vm) => {
+            return permissionGuard(vm, "old members report", "all old members report");
+        });
 
     },
     data() {
@@ -62,7 +61,7 @@ export default {
             printObj: {
                 id: "printCustom",
             },
-            openingBreak:'',
+            openingBreak: '',
             setting: {
                 Subscription_receipt_number: true,
                 membership_number: true,
@@ -81,19 +80,21 @@ export default {
                 membership_date: true,
 
             },
-            filterSetting: [ ],
+            filterSetting: [],
             Tooltip: '',
             mouseEnter: null,
         }
     },
-    validations: {
-    },
+    validations: {},
     watch: {
         /**
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
+
         },
         /**
          * watch search
@@ -125,7 +126,7 @@ export default {
          */
         getData(page = 1) {
             this.isLoader = true;
-            adminApi.get(`/club-members/cm-old-members/getOldMembers?&status_id=${this.create.status_id??''}&page=${page}&per_page=${this.per_page}`)
+            adminApi.get(`/club-members/cm-old-members/getOldMembers?&status_id=${this.create.status_id ?? ''}&page=${page}&per_page=${this.per_page}`)
                 .then((res) => {
                     let l = res.data;
                     this.installmentStatus = l.data;
@@ -152,7 +153,7 @@ export default {
 
             if (this.current_page <= this.installmentStatusPagination.last_page && this.current_page != this.installmentStatusPagination.current_page && this.current_page) {
                 this.isLoader = true;
-                adminApi.get(`/club-members/cm-old-members/getOldMembers?status_id=${this.create.status_id??''}&page=${this.current_page}&per_page=${this.per_page}`)
+                adminApi.get(`/club-members/cm-old-members/getOldMembers?status_id=${this.create.status_id ?? ''}&page=${this.current_page}&per_page=${this.per_page}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -184,7 +185,7 @@ export default {
          */
         async getStatus() {
             this.isLoader = true;
-           await adminApi.get(`/club-members/cm-old-members/getOldStatus`)
+            await adminApi.get(`/club-members/cm-old-members/getOldStatus`)
                 .then((res) => {
                     let l = res.data;
                     this.status = l;
@@ -269,48 +270,48 @@ export default {
                                     <!-- Basic dropdown -->
                                     <b-dropdown variant="primary" :text="$t('general.searchSetting')" ref="dropdown"
                                                 class="btn-block setting-search">
-<!--                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_membership_number") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_first_name") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">-->
-<!--                                            {{getCompanyKey("member_second_name")}}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_third_name") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1" >-->
-<!--                                            {{ getCompanyKey("member_last_name") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">-->
-<!--                                            {{getCompanyKey("member_family_name")}}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">-->
-<!--                                            {{ getCompanyKey("status") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_national_id") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_home_phone") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_work_phone") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_home_address") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_work_address") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="LstPayDate" class="mb-1">-->
-<!--                                            {{ $t("general.LstPayDate") }}-->
-<!--                                        </b-form-checkbox>-->
-<!--                                        <b-form-checkbox v-model="filterSetting" value="DOC_NO" class="mb-1">-->
-<!--                                            {{ getCompanyKey("member_degree") }}-->
-<!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="membership_number" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_membership_number") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="first_name" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_first_name") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="second_name" class="mb-1">-->
+                                        <!--                                            {{getCompanyKey("member_second_name")}}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="third_name" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_third_name") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="last_name" class="mb-1" >-->
+                                        <!--                                            {{ getCompanyKey("member_last_name") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="family_name" class="mb-1">-->
+                                        <!--                                            {{getCompanyKey("member_family_name")}}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="status_id" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("status") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="national_id" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_national_id") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="home_phone" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_home_phone") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="work_phone" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_work_phone") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="home_address" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_home_address") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="work_address" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_work_address") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="LstPayDate" class="mb-1">-->
+                                        <!--                                            {{ $t("general.LstPayDate") }}-->
+                                        <!--                                        </b-form-checkbox>-->
+                                        <!--                                        <b-form-checkbox v-model="filterSetting" value="DOC_NO" class="mb-1">-->
+                                        <!--                                            {{ getCompanyKey("member_degree") }}-->
+                                        <!--                                        </b-form-checkbox>-->
                                     </b-dropdown>
                                     <!-- Basic dropdown -->
                                 </div>
@@ -361,11 +362,11 @@ export default {
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.filter') }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
-                                        <b-button  class="mx-1 custom-btn-background">
+                                        <b-button class="mx-1 custom-btn-background">
                                             {{ $t('general.group') }}
                                             <i class="fe-menu"></i>
                                         </b-button>
@@ -373,19 +374,45 @@ export default {
                                         <b-dropdown variant="primary"
                                                     :html="`${$t('general.setting')} <i class='fe-settings'></i>`"
                                                     ref="dropdown" class="dropdown-custom-ali">
-                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">{{ getCompanyKey("member_membership_number") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">{{ getCompanyKey("member_first_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">{{ getCompanyKey("member_second_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">{{ getCompanyKey("member_third_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">{{ getCompanyKey("member_last_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">{{ getCompanyKey("member_family_name") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">{{ getCompanyKey("member_birth_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">{{ getCompanyKey("member_membership_date") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">{{ getCompanyKey("member_national_id") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">{{ getCompanyKey("member_home_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">{{ getCompanyKey("member_work_phone") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.LstPayDate" class="mb-1">{{ $t("general.LstPayDate") }}</b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.DOC_NO" class="mb-1">{{ $t("general.ReceiptNumber") }}</b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_number" class="mb-1">
+                                                {{ getCompanyKey("member_membership_number") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.first_name" class="mb-1">
+                                                {{ getCompanyKey("member_first_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.second_name" class="mb-1">
+                                                {{ getCompanyKey("member_second_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.third_name" class="mb-1">
+                                                {{ getCompanyKey("member_third_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.last_name" class="mb-1">
+                                                {{ getCompanyKey("member_last_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.family_name" class="mb-1">
+                                                {{ getCompanyKey("member_family_name") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.birth_date" class="mb-1">
+                                                {{ getCompanyKey("member_birth_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.membership_date" class="mb-1">
+                                                {{ getCompanyKey("member_membership_date") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.national_id" class="mb-1">
+                                                {{ getCompanyKey("member_national_id") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.home_phone" class="mb-1">
+                                                {{ getCompanyKey("member_home_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.work_phone" class="mb-1">
+                                                {{ getCompanyKey("member_work_phone") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.LstPayDate" class="mb-1">
+                                                {{ $t("general.LstPayDate") }}
+                                            </b-form-checkbox>
+                                            <b-form-checkbox v-model="setting.DOC_NO" class="mb-1">
+                                                {{ $t("general.ReceiptNumber") }}
+                                            </b-form-checkbox>
                                             <div class="d-flex justify-content-end">
                                                 <a href="javascript:void(0)" class="btn btn-primary btn-sm">Apply</a>
                                             </div>
@@ -393,7 +420,15 @@ export default {
                                         <!-- Basic dropdown -->
                                     </div>
                                     <!-- end filter and setting -->
-
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 50px;">
+                                    </div>
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size:13px;">
@@ -493,6 +528,7 @@ export default {
                             <table class="table table-borderless table-hover table-centered m-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th v-if="setting.membership_number">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member_membership_number") }}</span>
@@ -598,13 +634,13 @@ export default {
                                     </th>
                                     <th v-if="setting.membership_date">
                                         <div class="d-flex justify-content-center">
-                                            <span>{{ getCompanyKey("member_membership_date")}}</span>
+                                            <span>{{ getCompanyKey("member_membership_date") }}</span>
                                             <div class="arrow-sort">
-                                                <i  class="fas fa-arrow-up"
-                                                    @click="installmentStatus.sort(sortString('membership_date'))"
+                                                <i class="fas fa-arrow-up"
+                                                   @click="installmentStatus.sort(sortString('membership_date'))"
                                                 ></i>
                                                 <i class="fas fa-arrow-down"
-                                                    @click="installmentStatus.sort(sortString('-membership_date'))"
+                                                   @click="installmentStatus.sort(sortString('-membership_date'))"
                                                 ></i>
                                             </div>
                                         </div>
@@ -692,15 +728,16 @@ export default {
                                     :key="data.id"
                                     class="body-tr-custom"
                                 >
+                                    <td>{{ index + 1 }}</td>
 
                                     <td v-if="setting.membership_number">
-                                        {{ data.MemberNo?data.MemberNo:'---' }}
+                                        {{ data.MemberNo ? data.MemberNo : '---' }}
                                     </td>
                                     <td v-if="setting.first_name">
-                                        {{ data.FNAME?data.FNAME:'---' }}
+                                        {{ data.FNAME ? data.FNAME : '---' }}
                                     </td>
                                     <td v-if="setting.second_name">
-                                        {{ data.SNAME?data.SNAME:'---' }}
+                                        {{ data.SNAME ? data.SNAME : '---' }}
                                     </td>
                                     <td v-if="setting.third_name">
                                         {{ data.TNAME ? data.TNAME : '---' }}
@@ -709,22 +746,22 @@ export default {
                                         {{ data.FORNAME ? data.FORNAME : '--' }}
                                     </td>
                                     <td v-if="setting.family_name">
-                                        {{ data.ZFAM_NAME ? data.ZFAM_NAME :'---' }}
+                                        {{ data.ZFAM_NAME ? data.ZFAM_NAME : '---' }}
                                     </td>
                                     <td v-if="setting.birth_date">
-                                        {{ data.BIRTH_DATE ? formatDate(data.BIRTH_DATE) :'---' }}
+                                        {{ data.BIRTH_DATE ? formatDate(data.BIRTH_DATE) : '---' }}
                                     </td>
                                     <td v-if="setting.membership_date">
-                                        {{ data.ORDER_DATE ? formatDate(data.ORDER_DATE) :'---' }}
+                                        {{ data.ORDER_DATE ? formatDate(data.ORDER_DATE) : '---' }}
                                     </td>
                                     <td v-if="setting.national_id">
                                         {{ data.NationalNo ? data.NationalNo : '---' }}
                                     </td>
                                     <td v-if="setting.home_phone">
-                                        {{ data.HouseTel ? data.HouseTel :'---' }}
+                                        {{ data.HouseTel ? data.HouseTel : '---' }}
                                     </td>
                                     <td v-if="setting.work_phone">
-                                        {{ data.JobTel ? data.JobTel :'---' }}
+                                        {{ data.JobTel ? data.JobTel : '---' }}
                                     </td>
 
                                     <td v-if="setting.LstPayDate">
@@ -764,11 +801,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.multiselect__single{
+
+.multiselect__single {
     font-weight: 600 !important;
     color: black !important;
 }
-.td5{
+
+.td5 {
     font-size: 16px !important;
 }
 </style>

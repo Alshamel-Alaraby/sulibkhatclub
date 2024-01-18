@@ -1662,7 +1662,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
 /* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _helper_permission__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../helper/permission */ "./resources/js/helper/permission.js");
-/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _components_widgets_errorMessage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/widgets/errorMessage */ "./resources/js/components/widgets/errorMessage.vue");
@@ -1671,12 +1671,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helper_mixin_translation_mixin__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../helper/mixin/translation-mixin */ "./resources/js/helper/mixin/translation-mixin.js");
 /* harmony import */ var _helper_startDate__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../helper/startDate */ "./resources/js/helper/startDate.js");
 /* harmony import */ var vue2_datepicker__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vue2-datepicker */ "./node_modules/vue2-datepicker/index.esm.js");
-/* harmony import */ var _helper_langTransform__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../helper/langTransform */ "./resources/js/helper/langTransform.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 
 
 
@@ -1736,8 +1734,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       isCheckAll: false,
       checkAll: [],
       current_page: 1,
+      record_number: '',
+      digits: [],
+      lastDigit: null,
+      rest: "",
+      startingLastDigit: null,
       setting: {
-        membership_number: true,
+        record_number: true,
         full_name: true,
         home_address: true,
         fils: true,
@@ -1757,10 +1760,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   validations: {
     create: {
       cm_permission_id: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_14__.required
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_13__.required
       },
       date: {
-        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_14__.required
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_13__.required
       }
     }
   },
@@ -1947,6 +1950,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
         });
       });
+    },
+    getRecord: function getRecord() {
+      var recordNumber = this.record_number.toString();
+      this.digits = [];
+      if (recordNumber.length > 0) {
+        var lastDigit = recordNumber.slice(-1);
+        var rest = recordNumber.slice(0, -1);
+        this.startingLastDigit = (this.current_page - 1) * this.per_page;
+        this.lastDigit = lastDigit;
+        this.rest = rest;
+        console.log('lastDigit', this.lastDigit);
+        console.log('rest', this.rest);
+      }
+      console.log('digits', this.digits);
     }
   }
 });
@@ -5158,13 +5175,13 @@ var render = function render() {
   }, [_c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
-      value: _vm.setting.membership_number,
+      value: _vm.setting.record_number,
       callback: function callback($$v) {
-        _vm.$set(_vm.setting, "membership_number", $$v);
+        _vm.$set(_vm.setting, "record_number", $$v);
       },
-      expression: "setting.membership_number"
+      expression: "setting.record_number"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_membership_number")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.full_name,
@@ -5173,7 +5190,7 @@ var render = function render() {
       },
       expression: "setting.full_name"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.full_name")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.full_name")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.home_address,
@@ -5182,7 +5199,7 @@ var render = function render() {
       },
       expression: "setting.home_address"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member_home_address")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member_home_address")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.fils,
@@ -5191,7 +5208,7 @@ var render = function render() {
       },
       expression: "setting.fils"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.fils")))]), _vm._v(" "), _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.$t("general.fils")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.KD,
@@ -5200,7 +5217,7 @@ var render = function render() {
       },
       expression: "setting.KD"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.KD")))]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.$t("general.KD")) + "\n                                        ")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end"
   }, [_c("a", {
     staticClass: "btn btn-primary btn-sm",
@@ -5276,7 +5293,19 @@ var render = function render() {
     }
   }, [_c("form", [_c("div", {
     staticClass: "mb-3 d-flex justify-content-end"
-  }, [_c("b-button", {
+  }, [!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getRecord();
+      }
+    }
+  }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.execution")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _c("b-button", {
     attrs: {
       variant: "danger",
       type: "button"
@@ -5353,6 +5382,35 @@ var render = function render() {
       },
       blur: function blur($event) {
         return _vm.$forceUpdate();
+      }
+    }
+  })])])]), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group position-relative"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.StartBarcode")) + "\n                                        ")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.record_number,
+      expression: "record_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      step: "1"
+    },
+    domProps: {
+      value: _vm.record_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.record_number = $event.target.value;
       }
     }
   })])])])])]), _vm._v(" "), _c("b-modal", {
@@ -5460,18 +5518,43 @@ var render = function render() {
     staticClass: "text-danger"
   }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.fieldIsRequired")) + "\n                                        ")]) : _vm._e()], 1)])])])]), _vm._v(" "), _c("div", {
     staticClass: "head-branch",
+    style: {
+      direction: _vm.$i18n.locale == "ar" ? "rtl!important" : "",
+      "text-align": _vm.$i18n.locale == "ar" ? "start" : ""
+    },
     attrs: {
       id: "printEnvelope"
     }
-  }, _vm._l(_vm.items, function (item) {
+  }, _vm._l(_vm.items, function (item, index) {
     return _c("div", {
-      staticClass: "row justify-content-center align-items-center content text-center"
+      key: index,
+      staticClass: "row justify-content-center align-items-center content border-0 text-center"
     }, [_c("div", {
-      staticClass: "col-md-4 text-center"
-    }, [_c("p", [_vm._v(_vm._s(_vm.$t("general.memberName")) + ": " + _vm._s(item.full_name))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.$t("general.memberAddress")) + ": " + _vm._s(item.home_address))])])]);
+      staticClass: "col-md-12 d-flex justify-content-around mt-5"
+    }, [_c("div", {
+      staticClass: "col-8 text-center"
+    }, [_c("div", {
+      staticClass: "index-box float-right"
+    }, [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("div", {
+      staticClass: "current-page-box float-left"
+    }, [_vm._v(_vm._s(_vm.current_page))]), _vm._v(" "), _c("div", {
+      staticClass: "member-info"
+    }, [_c("p", {
+      staticStyle: {
+        "font-size": "40px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.memberName")) + ":\n                                            " + _vm._s(item.full_name))]), _vm._v(" "), _c("p", {
+      staticStyle: {
+        "font-size": "40px"
+      }
+    }, [_vm._v(_vm._s(_vm.$t("general.memberAddress")) + ":\n                                            " + _vm._s(item.home_address))])])])])]);
   }), 0), _vm._v(" "), _c("div", {
     ref: "exportable_table",
     staticClass: "table-responsive mb-3 custom-table-theme position-relative",
+    style: {
+      direction: _vm.$i18n.locale == "ar" ? "rtl!important" : "",
+      "text-align": _vm.$i18n.locale == "ar" ? "start" : ""
+    },
     attrs: {
       id: "printData"
     }
@@ -5480,7 +5563,23 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "row"
   }, [_c("div", {
-    staticClass: "col-2 mb-4"
+    staticClass: "image-header px-0"
+  }, [_c("img", {
+    staticClass: "mr-5",
+    attrs: {
+      src: "/images/minstryOfComm.png"
+    }
+  }), _vm._v(" "), _c("h4", {
+    staticClass: "d-inline-flex text-center",
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.current_page))]), _vm._v(" "), _c("img", {
+    attrs: {
+      src: "/images/mailPrint.png"
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "col-2 mb-4 d-flex justify-content-start"
   }, [_c("div", {
     staticClass: "border-custom"
   })]), _vm._v(" "), _c("div", {
@@ -5491,40 +5590,86 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "d-flex justify-content-between mb-4"
-  }, [_c("div", [_vm._v("قائمه بعاث المسجله المرسله:")]), _vm._v(" "), _c("div", [_vm._v("List of registered items posted:")])]), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("قائمه بعاث المسجله المرسله:")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v(":List of registered items posted")])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex"
   }, [_c("div", {
-    staticClass: "col-1 font-weight-bold"
-  }, [_vm._v("من:")]), _vm._v(" "), _c("h1", {
-    staticClass: "text-center col-10"
-  }, [_vm.branch ? _c("span", [_vm._v("\n                                                " + _vm._s(_vm.$i18n.locale == "ar" ? _vm.branch.name : _vm.branch.name_e) + "\n                                            ")]) : _vm._e()]), _vm._v(" "), _c("div", {
-    staticClass: "col-1 font-weight-bold"
-  }, [_vm._v("BY:")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-2 mb-4"
-  }, [_c("div", [_vm._v("قيمه اجور البريد")]), _vm._v(" "), _c("div", [_vm._v("بما فيها التسجيل")]), _vm._v(" "), _c("div", [_vm._v("Account of postage")]), _vm._v(" "), _c("div", [_vm._v("registrationFee")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-1 font-weight-bold",
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("من:")]), _vm._v(" "), _c("h3", {
+    staticClass: "text-center col-10 pt-4"
+  }, [_c("span", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.SulaibikhatClub")) + "\n                                            ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-1 font-weight-bold",
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v(":BY")])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-2 pt-4"
+  }, [_c("div", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("قيمه اجور البريد")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("بما فيها التسجيل")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("Account of postage")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("registrationFee")])]), _vm._v(" "), _c("div", {
     staticClass: "col-12 mt-4"
-  }, [_c("div", [_vm._v("تاريخ خاتم المكتب المستلم")]), _vm._v(" "), _c("div", [_vm._v("Date stamo of receiving office")])])])]), _vm._v(" "), _vm.isLoader ? _c("loader", {
+  }, [_c("div", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("تاريخ خاتم المكتب المستلم")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      "font-size": "20px"
+    }
+  }, [_vm._v("Date stamo of receiving office")])])])]), _vm._v(" "), _vm.isLoader ? _c("loader", {
     attrs: {
       size: "large"
     }
   }) : _vm._e(), _vm._v(" "), _c("table", {
-    staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_c("th", [_vm._v(_vm._s(_vm.$t("general.series")))]), _vm._v(" "), _vm.setting.membership_number ? _c("th", [_c("div", {
+    staticClass: "zizo-table table-borderless table-hover table-centered m-0 w-100"
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v(_vm._s(_vm.$t("general.series")))]), _vm._v(" "), _vm.setting.record_number ? _c("th", {
+    attrs: {
+      colspan: "2"
+    }
+  }, [_c("div", {
     staticClass: "d-flex justify-content-center"
-  }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_membership_number")))]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.RecordNumber")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
   }, [_c("i", {
     staticClass: "fas fa-arrow-up",
     on: {
       click: function click($event) {
-        _vm.items.sort(_vm.sortString("membership_number"));
+        _vm.items.sort(_vm.sortString("record_number"));
       }
     }
   }), _vm._v(" "), _c("i", {
     staticClass: "fas fa-arrow-down",
     on: {
       click: function click($event) {
-        _vm.items.sort(_vm.sortString("-membership_number"));
+        _vm.items.sort(_vm.sortString("-record_number"));
       }
     }
   })])])]) : _vm._e(), _vm._v(" "), _vm.setting.full_name ? _c("th", [_c("div", {
@@ -5545,27 +5690,13 @@ var render = function render() {
         _vm.items.sort(_vm.sortString("-full_name"));
       }
     }
-  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("th", [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Address")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.fils ? _c("th", [_vm._v(_vm._s(_vm.$t("general.fils")))]) : _vm._e(), _vm._v(" "), _vm.setting["KD"] ? _c("th", [_vm._v(_vm._s(_vm.$t("general.KD")))]) : _vm._e()])]), _vm._v(" "), _vm.items.length > 0 ? _c("tbody", [_vm._l(_vm.items, function (data, index) {
+  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("th", [_vm._v("\n                                    " + _vm._s(_vm.$t("general.Address")) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.fils ? _c("th", [_vm._v(_vm._s(_vm.$t("general.fils")))]) : _vm._e(), _vm._v(" "), _vm.setting["KD"] ? _c("th", [_vm._v(_vm._s(_vm.$t("general.KD")))]) : _vm._e()])]), _vm._v(" "), _vm.items.length > 0 ? _c("tbody", _vm._l(_vm.items, function (data, index) {
     var _vm$fils, _vm$kd;
     return _c("tr", {
       key: data.id,
       staticClass: "body-tr-custom"
-    }, [_c("td", [_vm._v("\n                                    " + _vm._s(index + 1) + "\n                                ")]), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.full_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.full_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.fils ? _c("td", [_vm._v(_vm._s((_vm$fils = _vm.fils) !== null && _vm$fils !== void 0 ? _vm$fils : "0.00"))]) : _vm._e(), _vm._v(" "), _vm.setting["KD"] ? _c("td", [_vm._v(_vm._s((_vm$kd = _vm.kd) !== null && _vm$kd !== void 0 ? _vm$kd : "0.00"))]) : _vm._e()]);
-  }), _vm._v(" "), _c("tr", [_c("th", {
-    staticClass: "text-center",
-    attrs: {
-      colspan: "2"
-    }
-  }, [_vm._v("استلمت")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
-  }, [_vm._v("بعثيه مسجله حسب البيان اعلاه")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
-  }, [_vm._v("Registered items as entered avove")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center",
-    attrs: {
-      colspan: "2"
-    }
-  }, [_vm._v("Received")])])], 2) : _c("tbody", [_c("tr", [_c("th", {
+    }, [_c("td", [_vm._v("\n                                    " + _vm._s((_vm.current_page - 1) * _vm.per_page + index + 1) + "\n                                ")]), _vm._v(" "), _vm.setting.record_number && parseInt(_vm.lastDigit) >= 0 ? _c("td", [_vm._v("\n                                    " + _vm._s((parseInt(_vm.lastDigit) + (_vm.current_page - 1) * _vm.per_page + index + _vm.startingLastDigit) % 10) + "\n                                ")]) : _c("td", [_vm._v("\n                                    " + _vm._s(_vm.lastDigit) + "\n                                ")]), _vm._v(" "), _vm.setting.record_number ? _c("td", [_vm._v("\n                                    " + _vm._s(_vm.rest) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.full_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.full_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.home_address ? _c("td", [_vm._v("\n                                    " + _vm._s(data.home_address) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.fils ? _c("td", [_vm._v(_vm._s((_vm$fils = _vm.fils) !== null && _vm$fils !== void 0 ? _vm$fils : "0.00"))]) : _vm._e(), _vm._v(" "), _vm.setting["KD"] ? _c("td", [_vm._v(_vm._s((_vm$kd = _vm.kd) !== null && _vm$kd !== void 0 ? _vm$kd : "0.00"))]) : _vm._e()]);
+  }), 0) : _c("tbody", [_c("tr", [_c("th", {
     staticClass: "text-center",
     attrs: {
       colspan: "12"
@@ -5573,23 +5704,21 @@ var render = function render() {
   }, [_vm._v("\n                                    " + _vm._s(_vm.$t("general.notDataFound")) + "\n                                ")])])])]), _vm._v(" "), _c("div", {
     staticClass: "head-branch overflow-hidden"
   }, [_c("div", {
-    staticClass: "row justify-content-between mt-3",
+    staticClass: "row justify-content-between mt-2"
+  }, [_c("div", {
+    staticClass: "col-6"
+  }, [_c("h3", {
     staticStyle: {
-      "border-bottom": "2px solid"
+      "font-size": "25px"
     }
-  }, [_c("div", {
-    staticClass: "col-3"
-  }, [_c("div", {
-    staticClass: "text-center"
-  }, [_vm._v("اسم الموظف المستلم بالكامل")]), _vm._v(" "), _c("div", {
-    staticClass: "text-center"
-  }, [_vm._v("Name of receiving office in full")])]), _vm._v(" "), _c("div", {
-    staticClass: "col-3"
-  }, [_c("div", {
-    staticClass: "text-center"
-  }, [_vm._v("تدرج التفاصيل المطلوبه من")]), _vm._v(" "), _c("div", {
-    staticClass: "text-center"
-  }, [_vm._v("قبل المرسل")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("استلمت ـــــــــــــ بعثيه مسجله حسب البيان\n                                        اعلاه ")])]), _vm._v(" "), _c("div", {
+    staticClass: "col-6"
+  }, [_c("h4", {
+    staticStyle: {
+      "font-size": "25px",
+      direction: "ltr !important"
+    }
+  }, [_vm._v("Received ـــــــــــــ\n                                        Registered items as entered\n                                        above ")])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "row justify-content-between",
     staticStyle: {
       "border-bottom": "2px solid"
@@ -5598,37 +5727,91 @@ var render = function render() {
     staticClass: "col-3"
   }, [_c("div", {
     staticClass: "text-center"
-  }, [_vm._v("التوقيعه:")]), _vm._v(" "), _c("div", {
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("\n                                            اسم الموظف المستلم بالكامل\n                                        ")])]), _vm._v(" "), _c("div", {
     staticClass: "text-center"
-  }, [_vm._v("signature")])]), _vm._v(" "), _c("div", {
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("Name of receiving office in full")])])]), _vm._v(" "), _c("div", {
     staticClass: "col-3"
   }, [_c("div", {
     staticClass: "text-center"
-  }, [_vm._v("To be completed")]), _vm._v(" "), _c("div", {
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("تدرج التفاصيل المطلوبه\n                                        من")])]), _vm._v(" "), _c("div", {
     staticClass: "text-center"
-  }, [_vm._v("By the poster")])])]), _vm._v(" "), _c("div", {
-    staticClass: "finial-border"
-  }, [_vm._v("\n                                تنص الطوابع الخاصه بالمواد اعلاء في خلف القائمه\n                            ")]), _vm._v(" "), _c("div", {
-    staticClass: "row"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("قبل المرسل")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "row justify-content-between",
+    staticStyle: {
+      "border-bottom": "2px solid"
+    }
   }, [_c("div", {
-    staticClass: "col-6"
-  }, _vm._l([1, 2, 3, 4, 5, 6, 7, 8], function (i) {
+    staticClass: "col-3"
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("التوقيعه:")])]), _vm._v(" "), _c("div", {
+    staticClass: "text-center"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("signature")])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-3"
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("To be completed")])]), _vm._v(" "), _c("div", {
+    staticClass: "text-center"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "25px"
+    }
+  }, [_vm._v("By the poster")])])])]), _vm._v(" "), _c("div", {
+    staticClass: "finial-border"
+  }, [_c("h3", {
+    staticStyle: {
+      "font-size": "30px"
+    }
+  }, [_vm._v("\n                                    ** تنص الطوابع الخاصه بالمواد اعلاء في خلف القائمه\n                                ")])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("br"), _vm._v(" "), _vm.items.length > 0 ? _c("div", {
+    staticClass: "main-container"
+  }, [_vm._l(Math.floor(_vm.items.length / 2), function (i) {
     return _c("div", {
-      staticClass: "d-flex align-items-center",
-      staticStyle: {
-        height: "150px"
-      }
-    }, [_c("span", [_vm._v(_vm._s(i))])]);
-  }), 0), _vm._v(" "), _c("div", {
-    staticClass: "col-6"
-  }, _vm._l([9, 10, 11, 12, 13, 14, 15, 16], function (i) {
-    return _c("div", {
-      staticClass: "d-flex align-items-center",
-      staticStyle: {
-        height: "150px"
-      }
-    }, [_c("span", [_vm._v(_vm._s(i))])]);
-  }), 0)])])], 1)], 1)])])])], 1);
+      key: i,
+      staticClass: "row col-12 border mx-0 px-0"
+    }, [_c("div", {
+      staticClass: "col-6 px-0"
+    }, [_c("div", {
+      staticClass: "rectangle"
+    }, [_vm._v("\n                                            " + _vm._s(i) + "\n                                        ")])]), _vm._v(" "), _c("div", {
+      staticClass: "col-6 px-0"
+    }, [_c("div", {
+      staticClass: "rectangle"
+    }, [_vm._v("\n                                            " + _vm._s(i + Math.floor(_vm.items.length / 2)) + "\n                                        ")])])]);
+  }), _vm._v(" "), _vm.items.length % 2 == 1 ? _c("div", {
+    staticClass: "row col-12 border"
+  }, [_c("div", {
+    staticClass: "col-6 px-0"
+  }, [_c("div", {
+    staticClass: "rectangle"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.items.length) + "\n                                        ")])])]) : _vm._e()], 2) : _vm._e()])], 1)], 1)])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -5656,172 +5839,6 @@ var page_title = vue__WEBPACK_IMPORTED_MODULE_0__["default"].observable({
 
 /***/ }),
 
-/***/ "./resources/js/helper/langTransform.js":
-/*!**********************************************!*\
-  !*** ./resources/js/helper/langTransform.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "arabicValue": () => (/* binding */ arabicValue),
-/* harmony export */   "englishValue": () => (/* binding */ englishValue)
-/* harmony export */ });
-function arabicValue(txt) {
-  var ar = txt;
-  ar = ar.replace(/`/g, "ذ");
-  ar = ar.replace(/0/g, "۰");
-  ar = ar.replace(/1/g, "۱");
-  ar = ar.replace(/2/g, "۲");
-  ar = ar.replace(/3/g, "۳");
-  ar = ar.replace(/4/g, "٤");
-  ar = ar.replace(/5/g, "۵");
-  ar = ar.replace(/6/g, "٦");
-  ar = ar.replace(/7/g, "۷");
-  ar = ar.replace(/8/g, "۸");
-  ar = ar.replace(/9/g, "۹");
-  ar = ar.replace(/0/g, "۰");
-  ar = ar.replace(/q/g, "ض");
-  ar = ar.replace(/w/g, "ص");
-  ar = ar.replace(/e/g, "ث");
-  ar = ar.replace(/r/g, "ق");
-  ar = ar.replace(/t/g, "ف");
-  ar = ar.replace(/y/g, "غ");
-  ar = ar.replace(/u/g, "ع");
-  ar = ar.replace(/i/g, "ه");
-  ar = ar.replace(/o/g, "خ");
-  ar = ar.replace(/p/g, "ح");
-  ar = ar.replace(/\[/g, "ج");
-  ar = ar.replace(/\]/g, "د");
-  ar = ar.replace(/a/g, "ش");
-  ar = ar.replace(/s/g, "س");
-  ar = ar.replace(/d/g, "ي");
-  ar = ar.replace(/f/g, "ب");
-  ar = ar.replace(/g/g, "ل");
-  ar = ar.replace(/h/g, "ا");
-  ar = ar.replace(/j/g, "ت");
-  ar = ar.replace(/k/g, "ن");
-  ar = ar.replace(/l/g, "م");
-  ar = ar.replace(/\;/g, "ك");
-  ar = ar.replace(/\'/g, "ط");
-  ar = ar.replace(/z/g, "ئ");
-  ar = ar.replace(/x/g, "ء");
-  ar = ar.replace(/c/g, "ؤ");
-  ar = ar.replace(/v/g, "ر");
-  ar = ar.replace(/b/g, "لا");
-  ar = ar.replace(/n/g, "ى");
-  ar = ar.replace(/m/g, "ة");
-  ar = ar.replace(/\,/g, "و");
-  ar = ar.replace(/\./g, "ز");
-  ar = ar.replace(/\//g, "ظ");
-  ar = ar.replace(/~/g, " ّ");
-  ar = ar.replace(/Q/g, "َ");
-  ar = ar.replace(/W/g, "ً");
-  ar = ar.replace(/E/g, "ُ");
-  ar = ar.replace(/R/g, "ٌ");
-  ar = ar.replace(/T/g, "لإ");
-  ar = ar.replace(/Y/g, "إ");
-  ar = ar.replace(/U/g, "‘");
-  ar = ar.replace(/I/g, "÷");
-  ar = ar.replace(/O/g, "×");
-  ar = ar.replace(/P/g, "؛");
-  ar = ar.replace(/A/g, "ِ");
-  ar = ar.replace(/S/g, "ٍ");
-  ar = ar.replace(/G/g, "لأ");
-  ar = ar.replace(/H/g, "أ");
-  ar = ar.replace(/J/g, "ـ");
-  ar = ar.replace(/K/g, "،");
-  ar = ar.replace(/L/g, "/");
-  ar = ar.replace(/Z/g, "~");
-  ar = ar.replace(/X/g, "ْ");
-  ar = ar.replace(/B/g, "لآ");
-  ar = ar.replace(/N/g, "آ");
-  ar = ar.replace(/M/g, "’");
-  ar = ar.replace(/\?/g, "؟");
-  return ar;
-}
-;
-function englishValue(txt) {
-  var en = txt;
-  en = en.replace(/ذ/g, "`");
-  en = en.replace(/۰/g, "0");
-  en = en.replace(/۱/g, "1");
-  en = en.replace(/۲/g, "2");
-  en = en.replace(/۳/g, "3");
-  en = en.replace(/٤/g, "4");
-  en = en.replace(/۵/g, "5");
-  en = en.replace(/٦/g, "6");
-  en = en.replace(/۷/g, "7");
-  en = en.replace(/۸/g, "8");
-  en = en.replace(/۹/g, "9");
-  en = en.replace(/۰/g, "0");
-  en = en.replace(/ض/g, "q");
-  en = en.replace(/ص/g, "w");
-  en = en.replace(/ث/g, "e");
-  en = en.replace(/ق/g, "r");
-  en = en.replace(/ف/g, "t");
-  en = en.replace(/غ/g, "y");
-  en = en.replace(/ع/g, "u");
-  en = en.replace(/ه/g, "i");
-  en = en.replace(/خ/g, "o");
-  en = en.replace(/ح/g, "p");
-  en = en.replace(/ج/g, "[");
-  en = en.replace(/د/g, "]");
-  en = en.replace(/ش/g, "a");
-  en = en.replace(/س/g, "s");
-  en = en.replace(/ي/g, "d");
-  en = en.replace(/ب/g, "f");
-  en = en.replace(/لا/g, "b");
-  en = en.replace(/لآ/g, "B");
-  en = en.replace(/ل/g, "g");
-  en = en.replace(/ا/g, "h");
-  en = en.replace(/ت/g, "j");
-  en = en.replace(/ن/g, "k");
-  en = en.replace(/م/g, "l");
-  en = en.replace(/ك/g, ";");
-  en = en.replace(/ط/g, "'");
-  en = en.replace(/ئ/g, "z");
-  en = en.replace(/ء/g, "x");
-  en = en.replace(/ؤ/g, "c");
-  en = en.replace(/ر/g, "v");
-  en = en.replace(/ى/g, "n");
-  en = en.replace(/ة/g, "m");
-  en = en.replace(/و/g, ",");
-  en = en.replace(/ز/g, ".");
-  en = en.replace(/ظ/g, "/");
-  en = en.replace(/ ّ/g, "~");
-  en = en.replace(/َ/g, "Q");
-  en = en.replace(/ً/g, "W");
-  en = en.replace(/ُ/g, "E");
-  en = en.replace(/ٌ/g, "R");
-  en = en.replace(/لإ/g, "T");
-  en = en.replace(/إ/g, "Y");
-  en = en.replace(/‘/g, "U");
-  en = en.replace(/÷/g, "I");
-  en = en.replace(/×/g, "O");
-  en = en.replace(/؛/g, "P");
-  en = en.replace(/ِ/g, "A");
-  en = en.replace(/\ٍ/g, "S");
-  en = en.replace(/لأ/g, "G");
-  en = en.replace(/أ/g, "H");
-  en = en.replace(/\ـ/g, "J");
-  en = en.replace(/\،/g, "K");
-  en = en.replace(/\//g, "L");
-  en = en.replace(/~/g, "Z");
-  en = en.replace(/ْ/g, "X");
-  en = en.replace(/آ/g, "N");
-  en = en.replace(/\’/g, "M");
-  en = en.replace(/\[/g, "F");
-  en = en.replace(/\]/g, "D");
-  en = en.replace(/لإ/g, "T");
-  en = en.replace(/\؟/g, "?");
-  return en;
-}
-;
-
-/***/ }),
-
 /***/ "./resources/js/helper/mixin/translation-comp-mixin.js":
 /*!*************************************************************!*\
   !*** ./resources/js/helper/mixin/translation-comp-mixin.js ***!
@@ -5836,6 +5853,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     getCompanyKey: function getCompanyKey(key) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       var returnedKey = null;
       for (var _key in this.companyKeysFun) {
         if (_key == key) {
@@ -5849,6 +5867,7 @@ __webpack_require__.r(__webpack_exports__);
           return returnedKey;
         }
       }
+      return defaultValue;
     },
     getKeyInfo: function getKeyInfo(key) {
       var keyInfo = null;
@@ -6262,7 +6281,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-50cc5168] {\r\n    display: none;\n}\n.head-branch[data-v-50cc5168] {\r\n    display: none;\n}\n.colPay[data-v-50cc5168]{\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n.border-custom[data-v-50cc5168] {\r\n    width: 100px;\r\n    height: 100px;\r\n    border: 1px solid;\r\n    border-radius: 50%;\n}\n.finial-border[data-v-50cc5168] {\r\n    margin-bottom: 50%;\n}\n@media print {\n.colPay[data-v-50cc5168]{\r\n        color: #000;\n}\n.head-branch[data-v-50cc5168] {\r\n        margin-top: 50px;\r\n        display: block;\n}\n.head-branch h2[data-v-50cc5168]{\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-50cc5168]{\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-50cc5168] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-50cc5168] {\r\n        display: none;\n}\n.arrow-sort[data-v-50cc5168] {\r\n        display: none;\n}\ntable thead tr th[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-50cc5168] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-50cc5168] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-50cc5168] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-50cc5168] {\r\n        display: block;\n}\n.signature h4[data-v-50cc5168] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n.content[data-v-50cc5168] {\r\n        min-height: 1270px;\r\n        padding: 20px;\r\n        border: 2px solid;\r\n        margin-bottom: 300px;\r\n        position: relative;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.signature[data-v-50cc5168] {\r\n    display: none;\n}\n.main-container[data-v-50cc5168] {\r\n    margin: 110px 20px 0;\r\n    border-radius: 20px;\r\n    border-style: double;\r\n    border-spacing: 10px;\n}\n.col-6[data-v-50cc5168] {\r\n    padding: 0 15px;\n}\n.rectangle[data-v-50cc5168] {\r\n    border: 1px solid #ccc;\r\n    height: 165px; /* Adjust the height as needed */\r\n    width: 90px; /* Adjust the width as needed */\r\n    display: flex;\r\n    flex-direction: column;\r\n    align-items: center;\r\n    justify-content: center;\n}\n.head-zizo[data-v-50cc5168] {\r\n    display: none;\n}\n.head-branch[data-v-50cc5168] {\r\n    display: none;\n}\n.colPay[data-v-50cc5168] {\r\n    background-color: #3bafda;\r\n    color: #fff;\r\n    font-weight: 500;\n}\n.border-custom[data-v-50cc5168] {\r\n    width: 100px;\r\n    height: 100px;\r\n    border: 1px solid;\r\n    border-radius: 50%;\n}\n.finial-border[data-v-50cc5168] {\r\n    margin-bottom: 5%;\n}\n@media print {\n.colPay[data-v-50cc5168] {\r\n        color: #000;\n}\n.head-branch[data-v-50cc5168] {\r\n        margin-top: 30px;\r\n        display: block;\n}\n.head-branch h2[data-v-50cc5168] {\r\n        text-decoration: underline;\n}\n.head-branch img[data-v-50cc5168] {\r\n        width: 100px;\r\n        height: 100px;\n}\n.head-branch span[data-v-50cc5168] {\r\n        display: inline-block;\r\n        position: relative;\r\n        top: -49px;\n}\n.do-not-print[data-v-50cc5168] {\r\n        display: none;\n}\n.arrow-sort[data-v-50cc5168] {\r\n        display: none;\n}\n.zizo-table[data-v-50cc5168] {\r\n        min-height: 460px !important;\n}\ntable thead tr th[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\ntable tbody tr td[data-v-50cc5168] {\r\n        color: #000;\r\n        border: 1px solid #000;\n}\nhr[data-v-50cc5168] {\r\n        transform: rotate(90deg);\r\n        background-color: #0000008a;\r\n        border: 1px solid #4444449c;\n}\n.custom-table-theme thead[data-v-50cc5168] {\r\n        border-top: 1px solid #000;\r\n        border-bottom: 1px solid #000;\n}\n.custom-table-theme tbody[data-v-50cc5168] {\r\n        border: 1px solid #000;\n}\n.signature[data-v-50cc5168] {\r\n        display: block;\n}\n.signature h4[data-v-50cc5168] {\r\n        text-decoration: underline;\r\n        margin: 3px;\n}\n.content[data-v-50cc5168] {\r\n        min-height: 1270px;\r\n        padding: 20px;\r\n        border: 2px solid;\r\n        margin-bottom: 300px;\r\n        position: relative;\n}\n.image-header[data-v-50cc5168] {\r\n        width: 100%;\r\n        margin-bottom: 30px;\r\n        padding-left: 0px;\r\n        display: flex;\r\n        justify-content: space-between;\n}\n.image-header img[data-v-50cc5168] {\r\n        display: inline-block;\r\n        margin-top: 7px;\r\n        height: 130px;\r\n        width: 230px;\n}\n.underline[data-v-50cc5168] {\r\n        position: absolute;\r\n        bottom: 0;\r\n        left: 0;\r\n        width: 100%;\r\n        height: 1px;\r\n        background-color: black; /* You can set the color of the line */\n}\n.position-relative[data-v-50cc5168] {\r\n        position: relative;\n}\n.index-box[data-v-50cc5168] {\r\n        background-color: black;\r\n        padding: 8px;\r\n        font-size: 25px;\r\n        border: 2px solid;\r\n        margin-bottom: 10px; /* Add margin to create space between boxes */\n}\n.current-page-box[data-v-50cc5168] {\r\n        background-color: black;\r\n        padding: 8px;\r\n        font-size: 25px;\r\n        border: 2px solid;\r\n        margin-bottom: 10px; /* Add margin to create space between boxes */\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
