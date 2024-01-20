@@ -20,31 +20,31 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function all($request)
     {
-        $models = $this->model
-            ->join('cm_members', 'cm_members.id', 'cm_transactions.cm_member_id')
-            ->select('cm_transactions.*', 'cm_members.full_name', 'cm_members.id')
-            ->filter($request)
-            ->orderBy($request->order ? $request->order : 'cm_transactions.updated_at', $request->sort ? $request->sort : 'DESC');
-
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
         if ($request->invoice_id) {
             $models->where('invoice_id', $request->invoice_id);
         }
-        if (isset($request->sponsor) && $request->sponsor == 0) {
-            $models->whereNull('cm_transactions.sponsor_id');
+        if (isset($request->sponsor) && $request->sponsor == 0)
+        {
+            $models->whereNull('sponsor_id');
         }
-        if ($request->sponsor == 1) {
-            $models->whereNotNull('cm_transactions.sponsor_id');
-        }
-
-        if ($request->document_id) {
-            $models->where('document_id', $request->document_id);
+        if ($request->sponsor == 1)
+        {
+            $models->whereNotNull('sponsor_id');
         }
 
-        if ($request->sponsor_id) {
-            $models->where('cm_transactions.sponsor_id', $request->sponsor_id);
+        if ($request->document_id)
+        {
+            $models->where('document_id',$request->document_id);
         }
 
-        if ($request->start_date && $request->end_date) {
+        if ($request->sponsor_id)
+        {
+            $models->where('sponsor_id',$request->sponsor_id);
+        }
+
+        if ($request->start_date && $request->end_date)
+        {
             $models->whereDate('date', ">=", $request->start_date)
                 ->whereDate('date', "<=", $request->end_date);
         }
