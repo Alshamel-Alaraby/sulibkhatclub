@@ -758,7 +758,7 @@ export default {
             this.edit.year_to = setting.year_to;
             this.edit.amount = setting.amount;
             this.edit.module_type = "club";
-            this.edit.date = new Date().toISOString().slice(0, 10);
+            this.edit.date = setting.date;
             if(this.isVisible('serial_id')) await this.getSerials();
             this.errors = {};
         },
@@ -946,7 +946,7 @@ export default {
                     member_name: member_name,
                     membership_number: member.membership_number,
                     module_type:"club",
-                    date:new Date().toISOString().slice(0, 10),
+                    date:data.date,
                 });
                 this.removeMembers.push(this.create.cm_member_id);
                 this.create.cm_member_id = null;

@@ -3469,7 +3469,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this17.edit.year_to = setting.year_to;
               _this17.edit.amount = setting.amount;
               _this17.edit.module_type = "club";
-              _this17.edit.date = new Date().toISOString().slice(0, 10);
+              _this17.edit.date = setting.date;
               if (!_this17.isVisible('serial_id')) {
                 _context7.next = 26;
                 break;
@@ -3703,7 +3703,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 member_name: member_name,
                 membership_number: member.membership_number,
                 module_type: "club",
-                date: new Date().toISOString().slice(0, 10)
+                date: data.date
               });
               _this23.removeMembers.push(_this23.create.cm_member_id);
               _this23.create.cm_member_id = null;
