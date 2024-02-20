@@ -2160,18 +2160,26 @@ export default {
               </b-modal>
               <!--  /check_national_id   -->
             <!-- start .table-responsive-->
-            <div
-              class="table-responsive mb-3 custom-table-theme position-relative"
-            >
+            <div class="table-responsive mb-3 custom-table-theme position-relative" ref="exportable_table"  id="printData">
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
+                <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                    <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
+                        <img style="width: 70%; " :src="'/images/sulib.png'">
+                    </div>
+                    <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
+                        <div style="width:100%; display: inline-block;">
+                            <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
+                            <h2 style="font-weight: bold"> {{ $t("general.SubscriptionRequests") }} </h2>
+                        </div>
+                    </div>
+                    <div class="text-center" style="width: 15%; display: inline-block;">
+                    </div>
 
-              <table
-                class="table table-borderless table-hover table-centered m-0"
-                ref="exportable_table"
-                id="printData"
-              >
+                </div>
+
+              <table  class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
                 <thead>
                   <tr>
                     <th
@@ -2189,6 +2197,11 @@ export default {
                         />
                       </div>
                     </th>
+                      <th>
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.M") }}</span>
+                          </div>
+                      </th>
                     <th v-if="setting.full_name && isVisible('full_name')">
                       <div class="d-flex justify-content-center">
                         <span>{{ $t("general.NameMembershipApplicant") }}</span>
@@ -2414,6 +2427,7 @@ export default {
                         />
                       </div>
                     </td>
+                      <td> {{index + 1}}</td>
                     <td v-if="setting.full_name && isVisible('full_name')">
                       {{ data.full_name }}
                     </td>
@@ -3234,6 +3248,9 @@ export default {
 </template>
 
 <style>
+.data-header-print {
+    display: none;
+}
 @media print {
   .do-not-print {
     display: none;
@@ -3254,5 +3271,36 @@ export default {
     color: #6c757d !important;
     border: unset;
   }
+    td{
+        border: 1px solid black !important;
+        font-size: 16px !important;
+        font-weight: bold !important
+    }
+    th{
+        border: 1px solid black !important;
+        color: black;
+        text-align: center;
+        font-size: 16px !important;
+        font-weight: bold !important
+    }
+    thead{
+        border: 1px solid black !important;
+    }
+    tbody{
+        border: 1px solid black !important;
+    }
+    table {
+        border: 1px solid black !important;
+    }
+    .data-header-print {
+        width: 100%;
+        display: inline-block;
+    }
+    .dir-print-rtl {
+        direction: rtl !important;
+    }
+    .dir-print-ltr {
+        direction: ltr !important;
+    }
 }
 </style>

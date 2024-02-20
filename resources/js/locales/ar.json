@@ -1914,6 +1914,14 @@
         "RecordNumber": "رقم التسجيل",
         "NewManagerSignature": "التوقيع",
         "ElectoralCommittees": "اللجان الانتخابيه",
-        "last_member": "العضو الاخير"
+        "last_member": "العضو الاخير",
+        "SubscriptionRequests": "طلبات الاشتراك",
+        "M": "م",
+        "StatementOfParticipantsAwaitingAcceptance": "بيان بالمشتركين المنتظرين القبول",
+        "StatementOfAcceptedMembers": "بيان بالاعضاء المقبولين",
+        "totalCount": "اجمالى العدد",
+        "SubscriptionPaymentStatement": "كشف سداد الاشتراكات",
+        "GroupPaymentStatement": "كشف سداد جماعى",
+        "MembershipCancellationStatement": "كشف شطب العضوية"
     }
 }

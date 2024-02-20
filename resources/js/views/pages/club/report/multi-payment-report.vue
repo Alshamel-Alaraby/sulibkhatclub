@@ -162,7 +162,7 @@ export default {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
+                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -308,7 +308,6 @@ export default {
             this.dataInv = data
         },
         changeDate() {
-            console.log(123)
             if (this.create.start_date) {
                 const parts = this.create.start_date.split('-');
                 const day = parts[0].padStart(2, '0');
@@ -319,6 +318,14 @@ export default {
             } else {
                 this.create.start_date = '';
             }
+        },
+        total_amount()
+        {
+            let total_amount = 0 ;
+            this.installmentStatus.forEach((e) => {
+                total_amount += parseFloat(e.amount)
+            });
+            return total_amount;
         }
     },
 };
@@ -351,10 +358,6 @@ export default {
                                         <b-form-checkbox v-model="filterSetting" value="document_no"
                                                          class="mb-1"
                                         >{{ $t("general.DocumentNumber") }}
-                                        </b-form-checkbox>
-                                        <b-form-checkbox v-model="filterSetting" value="serial_id"
-                                                         class="mb-1"
-                                        >{{ $t("general.serialName") }}
                                         </b-form-checkbox>
                                         <b-form-checkbox v-model="filterSetting"
                                                          value="amount" class="mb-1"
@@ -428,9 +431,6 @@ export default {
                                                     ref="dropdown" class="dropdown-custom-ali">
                                             <b-form-checkbox v-model="setting.cm_member_id" class="mb-1">
                                                 {{ getCompanyKey("member") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-model="setting.serial_number" class="mb-1">
-                                                {{ $t("general.serial_number") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-model="setting.document_no" class="mb-1">
                                                 {{ $t("general.DocumentNumber") }}
@@ -516,7 +516,7 @@ export default {
                                             variant="success"
                                             type="button" class="mx-1"
                                             v-if="!isLoader"
-                                            @click.prevent="getData"
+                                            @click.prevent="getData(1)"
                                         >
                                             {{ $t('general.Search') }}
                                         </b-button>
@@ -630,11 +630,30 @@ export default {
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
+                            <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                                <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
+                                    <img style="width: 70%; " :src="'/images/sulib.png'">
+                                </div>
+                                <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
+                                    <div style="width:100%; display: inline-block;">
+                                        <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
+                                        <h2 style="font-weight: bold"> {{ $t("general.GroupPaymentStatement") }} </h2>
+                                    </div>
+                                </div>
+                                <div class="text-center" style="width: 15%; display: inline-block;">
+                                    <h5>{{$t('general.totalCount')}} : {{ installmentStatus.length }}</h5>
+                                    <h5>{{$t('general.totalAmount')}} : {{ total_amount() }}</h5>
+                                </div>
 
-                            <table class="table table-borderless table-hover table-centered m-0">
+                            </div>
+                            <table class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
                                 <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>
+                                        <div class="d-flex justify-content-center">
+                                            <span>{{ $t("general.M") }}</span>
+                                        </div>
+                                    </th>
                                     <th v-if="setting.cm_member_id">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ getCompanyKey("member") }}</span>
@@ -647,17 +666,6 @@ export default {
                                                     class="fas fa-arrow-down"
                                                     @click="transactions.sort(sortString('-full_name'))"
                                                 ></i>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th v-if="setting.serial_number">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.serial_number") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up"
-                                                   @click="transactions.sort(sortString('prefix'))"></i>
-                                                <i class="fas fa-arrow-down"
-                                                   @click="transactions.sort(sortString('-prefix'))"></i>
                                             </div>
                                         </div>
                                     </th>
@@ -759,13 +767,8 @@ export default {
                                             }}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.serial_number">
-                                        <h5 class="m-0 font-weight-normal">
-                                            {{ data.prefix }}
-                                        </h5>
-                                    </td>
                                     <td v-if="setting.document_no">
-                                        <h5 class="m-0 font-weight-normal">{{ data.document_no }}</h5>
+                                        <h5 class="m-0 font-weight-normal">{{ data.serial.perfix }}-{{ data.document_no }}</h5>
                                     </td>
                                     <td v-if="setting.date">
                                         <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
@@ -846,6 +849,61 @@ input[type=number] {
 
 .td5 {
     font-size: 16px !important;
+}
+.data-header-print {
+    display: none;
+}
+@media print {
+    .do-not-print {
+        display: none;
+    }
+
+    .arrow-sort {
+        display: none;
+    }
+
+    .text-success {
+        background-color: unset;
+        color: #6c757d !important;
+        border: unset;
+    }
+
+    .text-danger {
+        background-color: unset;
+        color: #6c757d !important;
+        border: unset;
+    }
+    td{
+        border: 1px solid black !important;
+        font-size: 16px !important;
+        font-weight: bold !important
+    }
+    th{
+        border: 1px solid black !important;
+        color: black;
+        text-align: center;
+        font-size: 16px !important;
+        font-weight: bold !important
+    }
+    thead{
+        border: 1px solid black !important;
+    }
+    tbody{
+        border: 1px solid black !important;
+    }
+    table {
+        border: 1px solid black !important;
+    }
+    .data-header-print {
+        width: 100%;
+        display: inline-block;
+    }
+    .dir-print-rtl {
+        direction: rtl !important;
+    }
+    .dir-print-ltr {
+        direction: ltr !important;
+    }
 }
 </style>
 

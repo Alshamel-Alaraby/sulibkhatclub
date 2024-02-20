@@ -1926,6 +1926,14 @@
         "RecordNumber": "Record Number",
         "NewManagerSignature": "Signature",
         "ElectoralCommittees": "Electoral Committees",
-        "last_member": "Last Member"
+        "last_member": "Last Member",
+        "SubscriptionRequests": "Subscription Requests",
+        "M": "M",
+        "StatementOfParticipantsAwaitingAcceptance": "Statement of participants awaiting acceptance",
+        "StatementOfAcceptedMembers": "Statement Of Accepted Members",
+        "totalCount": "Total Count",
+        "SubscriptionPaymentStatement": "Subscription payment statement",
+        "GroupPaymentStatement": "Group Payment Statement",
+        "MembershipCancellationStatement": "Membership Cancellation Statement"
     }
 }

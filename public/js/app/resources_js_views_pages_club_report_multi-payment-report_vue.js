@@ -1889,7 +1889,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         for (var i = 0; i < _filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
         }
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_ = this.create.sponsor_id) !== null && _this$create$sponsor_ !== void 0 ? _this$create$sponsor_ : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter, "&order=full_name&sort=ASC")).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?sponsor_id=".concat((_this$create$sponsor_ = this.create.sponsor_id) !== null && _this$create$sponsor_ !== void 0 ? _this$create$sponsor_ : '', "&start_date=").concat(converted_start_date, "&end_date=").concat(converted_end_date, "&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
           _this4.installmentStatus = l.data;
           _this4.installmentStatusPagination = l.pagination;
@@ -2056,7 +2056,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.dataInv = data;
     },
     changeDate: function changeDate() {
-      console.log(123);
       if (this.create.start_date) {
         var parts = this.create.start_date.split('-');
         var day = parts[0].padStart(2, '0');
@@ -2066,6 +2065,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       } else {
         this.create.start_date = '';
       }
+    },
+    total_amount: function total_amount() {
+      var total_amount = 0;
+      this.installmentStatus.forEach(function (e) {
+        total_amount += parseFloat(e.amount);
+      });
+      return total_amount;
     }
   }
 });
@@ -5508,18 +5514,6 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")) + "\n                                    ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     attrs: {
-      value: "serial_id"
-    },
-    model: {
-      value: _vm.filterSetting,
-      callback: function callback($$v) {
-        _vm.filterSetting = $$v;
-      },
-      expression: "filterSetting"
-    }
-  }, [_vm._v(_vm._s(_vm.$t("general.serialName")) + "\n                                    ")]), _vm._v(" "), _c("b-form-checkbox", {
-    staticClass: "mb-1",
-    attrs: {
       value: "amount"
     },
     model: {
@@ -5652,15 +5646,6 @@ var render = function render() {
       expression: "setting.cm_member_id"
     }
   }, [_vm._v("\n                                            " + _vm._s(_vm.getCompanyKey("member")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
-    staticClass: "mb-1",
-    model: {
-      value: _vm.setting.serial_number,
-      callback: function callback($$v) {
-        _vm.$set(_vm.setting, "serial_number", $$v);
-      },
-      expression: "setting.serial_number"
-    }
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.serial_number")) + "\n                                        ")]), _vm._v(" "), _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.document_no,
@@ -5828,7 +5813,7 @@ var render = function render() {
     on: {
       click: function click($event) {
         $event.preventDefault();
-        return _vm.getData.apply(null, arguments);
+        return _vm.getData(1);
       }
     }
   }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Search")) + "\n                                    ")]) : _c("b-button", {
@@ -5964,9 +5949,55 @@ var render = function render() {
     attrs: {
       size: "large"
     }
-  }) : _vm._e(), _vm._v(" "), _c("table", {
-    staticClass: "table table-borderless table-hover table-centered m-0"
-  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("#")]), _vm._v(" "), _vm.setting.cm_member_id ? _c("th", [_c("div", {
+  }) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "row data-header-print",
+    "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
+  }, [_c("div", {
+    staticClass: "col-md-4",
+    staticStyle: {
+      width: "15%",
+      padding: "0 0 10px 20px",
+      display: "inline-block"
+    }
+  }, [_c("img", {
+    staticStyle: {
+      width: "70%"
+    },
+    attrs: {
+      src: "/images/sulib.png"
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "text-center",
+    staticStyle: {
+      width: "69%",
+      "padding-top": "5px",
+      display: "inline-block"
+    }
+  }, [_c("div", {
+    staticStyle: {
+      width: "100%",
+      display: "inline-block"
+    }
+  }, [_c("h2", {
+    staticStyle: {
+      "font-weight": "bold"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("h2", {
+    staticStyle: {
+      "font-weight": "bold"
+    }
+  }, [_vm._v(" " + _vm._s(_vm.$t("general.GroupPaymentStatement")) + " ")])])]), _vm._v(" "), _c("div", {
+    staticClass: "text-center",
+    staticStyle: {
+      width: "15%",
+      display: "inline-block"
+    }
+  }, [_c("h5", [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.installmentStatus.length))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
+    staticClass: "table table-borderless table-hover table-centered m-0",
+    "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
+  }, [_c("thead", [_c("tr", [_c("th", [_c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.M")))])])]), _vm._v(" "), _vm.setting.cm_member_id ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -5982,24 +6013,6 @@ var render = function render() {
     on: {
       click: function click($event) {
         _vm.transactions.sort(_vm.sortString("-full_name"));
-      }
-    }
-  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number ? _c("th", [_c("div", {
-    staticClass: "d-flex justify-content-center"
-  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.serial_number")))]), _vm._v(" "), _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.transactions.sort(_vm.sortString("prefix"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.transactions.sort(_vm.sortString("-prefix"));
       }
     }
   })])])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("th", [_c("div", {
@@ -6100,11 +6113,9 @@ var render = function render() {
       staticClass: "body-tr-custom"
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _vm.setting.cm_member_id ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                        " + _vm._s(data.member ? data.member.first_name + " " + data.member.second_name + " " + data.member.third_name + " " + data.member.last_name : "") + "\n                                    ")])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number ? _c("td", [_c("h5", {
+    }, [_vm._v("\n                                        " + _vm._s(data.member ? data.member.first_name + " " + data.member.second_name + " " + data.member.third_name + " " + data.member.last_name : "") + "\n                                    ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                        " + _vm._s(data.prefix) + "\n                                    ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.date ? _c("td", [_c("h5", {
+    }, [_vm._v(_vm._s(data.serial.perfix) + "-" + _vm._s(data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.date ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
     }, [_vm._v(_vm._s(_vm.formatDate(data.date)))])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id ? _c("td", [_c("h5", {
       staticClass: "m-0 font-weight-normal"
@@ -6754,7 +6765,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\r\ninput::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    margin: 0;\n}\r\n\r\n/* Firefox */\ninput[type=number] {\r\n    -moz-appearance: textfield;\n}\n.multiselect__single {\r\n    font-weight: 600 !important;\r\n    color: black !important;\n}\n.td5 {\r\n    font-size: 16px !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Chrome, Safari, Edge, Opera */\ninput::-webkit-outer-spin-button,\ninput::-webkit-inner-spin-button {\n    -webkit-appearance: none;\n    margin: 0;\n}\n\n/* Firefox */\ninput[type=number] {\n    -moz-appearance: textfield;\n}\n.multiselect__single {\n    font-weight: 600 !important;\n    color: black !important;\n}\n.td5 {\n    font-size: 16px !important;\n}\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

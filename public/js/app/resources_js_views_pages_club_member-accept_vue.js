@@ -7230,17 +7230,61 @@ var render = function render() {
       }
     }
   }, [_c("span", [_vm._v(">")])])])])])])]), _vm._v(" "), _c("div", {
-    staticClass: "table-responsive mb-3 custom-table-theme position-relative"
+    ref: "exportable_table",
+    staticClass: "table-responsive mb-3 custom-table-theme position-relative",
+    attrs: {
+      id: "printData"
+    }
   }, [_vm.isLoader ? _c("loader", {
     attrs: {
       size: "large"
     }
-  }) : _vm._e(), _vm._v(" "), _c("table", {
-    ref: "exportable_table",
-    staticClass: "table table-borderless table-hover table-centered m-0",
-    attrs: {
-      id: "printData"
+  }) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "row data-header-print",
+    "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
+  }, [_c("div", {
+    staticClass: "col-md-4",
+    staticStyle: {
+      width: "15%",
+      padding: "0 0 10px 20px",
+      display: "inline-block"
     }
+  }, [_c("img", {
+    staticStyle: {
+      width: "70%"
+    },
+    attrs: {
+      src: "/images/sulib.png"
+    }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "text-center",
+    staticStyle: {
+      width: "69%",
+      "padding-top": "5px",
+      display: "inline-block"
+    }
+  }, [_c("div", {
+    staticStyle: {
+      width: "100%",
+      display: "inline-block"
+    }
+  }, [_c("h2", {
+    staticStyle: {
+      "font-weight": "bold"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.SulaibikhatClub")))]), _vm._v(" "), _c("h2", {
+    staticStyle: {
+      "font-weight": "bold"
+    }
+  }, [_vm._v(" " + _vm._s(_vm.$t("general.StatementOfAcceptedMembers")) + " ")])])]), _vm._v(" "), _c("div", {
+    staticClass: "text-center",
+    staticStyle: {
+      width: "15%",
+      display: "inline-block"
+    }
+  })]), _vm._v(" "), _c("table", {
+    staticClass: "table table-borderless table-hover table-centered m-0",
+    "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("thead", [_c("tr", [_vm.enabled3 ? _c("th", {
     staticClass: "do-not-print",
     staticStyle: {
@@ -7287,7 +7331,9 @@ var render = function render() {
         }
       }
     }
-  })])]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("th", [_c("div", {
+  })])]) : _vm._e(), _vm._v(" "), _c("th", [_c("div", {
+    staticClass: "d-flex justify-content-center"
+  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.M")))])])]), _vm._v(" "), _vm.setting.first_name ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.getCompanyKey("member_first_name")))]), _vm._v(" "), _c("div", {
     staticClass: "arrow-sort"
@@ -7458,7 +7504,7 @@ var render = function render() {
           }
         }
       }
-    })])]) : _vm._e(), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.first_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.second_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.third_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.family_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
+    })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.first_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.first_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.second_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.second_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.third_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.third_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.last_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.last_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.family_name ? _c("td", [_vm._v("\n                                    " + _vm._s(data.family_name) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.birth_date ? _c("td", [_vm._v("\n                                    " + _vm._s(data.birth_date) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.setting.membership_number ? _c("td", [_vm._v("\n                                    " + _vm._s(data.membership_number) + "\n                                ")]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("button", {
       staticClass: "btn",
@@ -8445,7 +8491,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n@media print {\n.do-not-print {\r\n        display: none;\n}\n.arrow-sort {\r\n        display: none;\n}\n.text-success {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n.text-danger {\r\n        background-color: unset;\r\n        color: #6c757d !important;\r\n        border: unset;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
