@@ -1785,6 +1785,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       enabled3: true,
       is_disabled: false,
       isLoader: false,
+      order_data: 'updated_at',
+      sort_data: 'DESC',
       filterMember: {
         full_name: '',
         national_id: '',
@@ -1824,7 +1826,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       setting: {
         branch_id: true,
-        serial_number: true,
         cm_member_id: true,
         document_no: true,
         serial_id: true,
@@ -2075,7 +2076,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       for (var i = 0; i < _filterSetting.length; ++i) {
         filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
       }
-      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?document_id=8&module_type=club&sponsor=0&page=".concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+      _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?order=".concat(this.order_data, "&sort=").concat(this.sort_data, "&document_id=8&module_type=club&sponsor=0&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
         _this6.transactions = l.data;
         _this6.transactionsPagination = l.pagination;
@@ -2104,7 +2105,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         for (var i = 0; i < _filterSetting.length; ++i) {
           filter += "columns[".concat(i, "]=").concat(_filterSetting[i], "&");
         }
-        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?document_id=8&module_type=club&sponsor=0&page=".concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
+        _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?order=".concat(this.order_data, "&sort=").concat(this.sort_data, "&document_id=8&module_type=club&sponsor=0&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
           _this7.transactions = l.data;
           _this7.transactionsPagination = l.pagination;
@@ -6332,8 +6333,15 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "d-inline-block"
   }, [_c("b-button", {
+    directives: [{
+      name: "b-modal",
+      rawName: "v-b-modal.sort",
+      modifiers: {
+        sort: true
+      }
+    }],
     staticClass: "mx-1 custom-btn-background"
-  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.filter")) + "\n                                            "), _c("i", {
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.sort")) + "\n                                            "), _c("i", {
     staticClass: "fas fa-filter"
   })]), _vm._v(" "), _c("b-button", {
     staticClass: "mx-1 custom-btn-background"
@@ -6355,16 +6363,7 @@ var render = function render() {
       },
       expression: "setting.cm_member_id"
     }
-  }, [_vm._v(_vm._s(_vm.getCompanyKey("member")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("serial_number") ? _c("b-form-checkbox", {
-    staticClass: "mb-1",
-    model: {
-      value: _vm.setting.serial_number,
-      callback: function callback($$v) {
-        _vm.$set(_vm.setting, "serial_number", $$v);
-      },
-      expression: "setting.serial_number"
-    }
-  }, [_vm._v("\n                                                " + _vm._s(_vm.$t("general.serial_number")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("member")) + "\n                                            ")]) : _vm._e(), _vm._v(" "), _vm.isVisible("document_no") ? _c("b-form-checkbox", {
     staticClass: "mb-1",
     model: {
       value: _vm.setting.document_no,
@@ -6494,6 +6493,143 @@ var render = function render() {
       }
     }
   }, [_c("span", [_vm._v(">")])])])])])])]), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "sort",
+      title: _vm.$t("general.sort"),
+      "title-class": "font-18",
+      "body-class": "p-4 ",
+      "hide-footer": true
+    }
+  }, [_c("form", [_c("div", {
+    staticClass: "mb-3 d-flex justify-content-end"
+  }, [[!_vm.isLoader ? _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      type: "submit"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.getData.apply(null, arguments);
+      }
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.sort")) + "\n                                        ")]) : _c("b-button", {
+    staticClass: "mx-1",
+    attrs: {
+      variant: "success",
+      disabled: ""
+    }
+  }, [_c("b-spinner", {
+    attrs: {
+      small: ""
+    }
+  }), _vm._v(" "), _c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v(_vm._s(_vm.$t("login.Loading")) + "...")])], 1)], _vm._v(" "), _c("b-button", {
+    attrs: {
+      variant: "danger",
+      type: "button"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$bvModal.hide("sort");
+      }
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.Cancel")) + "\n                                    ")])], 2), _vm._v(" "), _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v(_vm._s(_vm.$t("general.field")))]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.order_data,
+      expression: "order_data"
+    }],
+    staticClass: "form-control",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.order_data = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "updated_at"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.updated_at")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "created_at"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.created_at")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "id"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.id")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "document_no"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "date"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.date")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "amount"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("subscription_amount")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "year"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.ForAYear")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "date_from"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("year_from")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "date_to"
+    }
+  }, [_vm._v(_vm._s(_vm.getCompanyKey("year_to")))])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v(_vm._s(_vm.$t("general.sort")))]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.sort_data,
+      expression: "sort_data"
+    }],
+    staticClass: "form-control",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.sort_data = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "DESC"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.descending")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "ASC"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.ascending")))])])])])])])]), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "create",
       title: _vm.getCompanyKey("subscription_create_form"),
@@ -7296,24 +7432,6 @@ var render = function render() {
         _vm.transactions.sort(_vm.sortString("-full_name"));
       }
     }
-  })])])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number && _vm.isVisible("serial_number") ? _c("th", [_c("div", {
-    staticClass: "d-flex justify-content-center"
-  }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.serial_number")))]), _vm._v(" "), _c("div", {
-    staticClass: "arrow-sort"
-  }, [_c("i", {
-    staticClass: "fas fa-arrow-up",
-    on: {
-      click: function click($event) {
-        _vm.transactions.sort(_vm.sortString("prefix"));
-      }
-    }
-  }), _vm._v(" "), _c("i", {
-    staticClass: "fas fa-arrow-down",
-    on: {
-      click: function click($event) {
-        _vm.transactions.sort(_vm.sortString("-prefix"));
-      }
-    }
   })])])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("th", [_c("div", {
     staticClass: "d-flex justify-content-center"
   }, [_c("span", [_vm._v(_vm._s(_vm.$t("general.DocumentNumber")))]), _vm._v(" "), _c("div", {
@@ -7500,23 +7618,21 @@ var render = function render() {
         }
       }
     })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.cm_member_id && _vm.isVisible("cm_member_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                            " + _vm._s(data.member ? data.member.full_name : "") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number && _vm.isVisible("serial_number") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                            " + _vm._s(data.prefix) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
-    }, [_vm._v(_vm._s(data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id && _vm.isVisible("serial_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
+    }, [_vm._v("\n                                            " + _vm._s(data.member ? data.member.full_name : "") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("td", [_c("h5", {
+      staticClass: "m-0"
+    }, [_vm._v(_vm._s(data.serial ? data.serial.perfix + "-" + data.document_no : data.prefix + "-" + data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id && _vm.isVisible("serial_id") ? _c("td", [_c("h5", {
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date && _vm.isVisible("date") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(_vm.formatDate(data.date)))])]) : _vm._e(), _vm._v(" "), _vm.setting.amount && _vm.isVisible("amount") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.amount))])]) : _vm._e(), _vm._v(" "), _vm.setting.year && _vm.isVisible("year") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.year ? data.year : data.year_to))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_from && _vm.isVisible("date_from") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.date_from ? data.date_from : data.year_from))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_to && _vm.isVisible("date_to") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.date_to ? data.date_to : data.year_to))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {

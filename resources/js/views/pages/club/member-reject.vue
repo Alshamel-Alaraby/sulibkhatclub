@@ -1630,40 +1630,40 @@ export default {
                                     </td>
                                     <td> {{index + 1}}</td>
                                     <td v-if="setting.branch_id && isVisible('branch_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{data.branch ? $i18n.locale == "ar" ? data.branch.name : data.branch.name_e : ' - '}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.prefix && isVisible('prefix')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{ data.prefix }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{
                                                 data.member ? data.member.first_name +' '+ data.member.second_name +' '+ data.member.third_name +' '+ data.member.last_name:''
                                             }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.date && isVisible('date')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date }}</h5>
+                                        <h5 class="m-0">{{ data.date }}</h5>
                                     </td>
                                     <td v-if="setting.session_number && isVisible('session_number')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.session_number }}</h5>
+                                        <h5 class="m-0">{{ data.session_number }}</h5>
                                     </td>
                                     <td v-if="setting.discharge_reson_id && isVisible('discharge_reson_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{data.discharge_reson ? $i18n.locale == "ar" ? data.discharge_reson.name : data.discharge_reson.name_e : ' - '}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.entity && isVisible('entity')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{data.entity ? $t('general.'+data.entity) : '---'}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.note && isVisible('note')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.note }}</h5>
+                                        <h5 class="m-0">{{ data.note }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">

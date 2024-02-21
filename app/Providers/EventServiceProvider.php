@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Observers\CmMemberObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -10,11 +11,21 @@ use Illuminate\Support\Facades\Event;
 use App\Models\MessageReceiverContact;
 use App\Observers\MessageReceiverContactObserver;
 
+use Modules\ClubMembers\Entities\CmMember;
 use Modules\HR\Entities\Fingerprint;
 use App\Observers\HrFingerprintsObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
+    /**
+     * The model observers for your application.
+     *
+     * @var array
+     */
+    protected $observers = [
+        CmMember::class => [CmMemberObserver::class],
+    ];
+
     /**
      * The event to listener mappings for the application.
      *
@@ -35,6 +46,7 @@ class EventServiceProvider extends ServiceProvider
     {
         MessageReceiverContact::observe(MessageReceiverContactObserver::class);
         Fingerprint::observe(HrFingerprintsObserver::class);
+        CmMember::observe(CmMemberObserver::class);
 
     }
 

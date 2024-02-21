@@ -1667,9 +1667,7 @@ export default {
                       {{ data.membership_number }}
                     </td>
                     <td v-if="setting.name">
-                      {{
-                        `${data.first_name} ${data.second_name} ${data.third_name} ${data.last_name} ${data.family_name}`
-                      }}
+                      {{data.full_name}}
                     </td>
                     <td v-if="setting.financial_status_id">
                       <template v-if="data.financial_status">

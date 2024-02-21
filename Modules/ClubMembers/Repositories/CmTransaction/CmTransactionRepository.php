@@ -20,7 +20,7 @@ class CmTransactionRepository implements CmTransactionInterface
 
     public function all($request)
     {
-        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'updated_at', $request->sort ? $request->sort : 'DESC');
+        $models = $this->model->filter($request)->orderBy($request->order ? $request->order : 'id', $request->sort ? $request->sort : 'ASC');
         if ($request->invoice_id) {
             $models->where('invoice_id', $request->invoice_id);
         }

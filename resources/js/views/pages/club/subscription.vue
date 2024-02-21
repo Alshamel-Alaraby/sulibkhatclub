@@ -55,6 +55,8 @@ export default {
             enabled3: true,
             is_disabled: false,
             isLoader: false,
+            order_data:'updated_at',
+            sort_data:'DESC',
             filterMember: {
                 full_name : '',
                 national_id : '',
@@ -94,7 +96,6 @@ export default {
             },
             setting: {
                 branch_id: true,
-                serial_number: true,
                 cm_member_id: true,
                 document_no: true,
                 serial_id: true,
@@ -306,7 +307,7 @@ export default {
             }
             adminApi
                 .get(
-                    `/club-members/transactions?document_id=8&module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                    `/club-members/transactions?order=${this.order_data}&sort=${this.sort_data}&document_id=8&module_type=club&sponsor=0&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                 )
                 .then((res) => {
                     let l = res.data;
@@ -344,7 +345,7 @@ export default {
                 }
                 adminApi
                     .get(
-                        `/club-members/transactions?document_id=8&module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
+                        `/club-members/transactions?order=${this.order_data}&sort=${this.sort_data}&document_id=8&module_type=club&sponsor=0&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}`
                     )
                     .then((res) => {
                         let l = res.data;
@@ -1011,8 +1012,8 @@ export default {
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button class="mx-1 custom-btn-background">
-                                            {{ $t("general.filter") }}
+                                        <b-button class="mx-1 custom-btn-background" v-b-modal.sort>
+                                            {{ $t("general.sort") }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
                                         <b-button class="mx-1 custom-btn-background">
@@ -1029,9 +1030,6 @@ export default {
                                             <b-form-checkbox v-if="isVisible('cm_member_id')" v-model="setting.cm_member_id"
                                                              class="mb-1"
                                             >{{ getCompanyKey("member") }}
-                                            </b-form-checkbox>
-                                            <b-form-checkbox v-if="isVisible('serial_number')" v-model="setting.serial_number" class="mb-1">
-                                                {{ $t("general.serial_number") }}
                                             </b-form-checkbox>
                                             <b-form-checkbox v-if="isVisible('document_no')" v-model="setting.document_no" class="mb-1">
                                                 {{ $t("general.DocumentNumber") }}
@@ -1105,6 +1103,71 @@ export default {
                                 </div>
                             </div>
                         </div>
+
+                        <!--  sort   -->
+                        <b-modal
+                            id="sort"
+                            :title="$t('general.sort')"
+                            title-class="font-18"
+                            body-class="p-4 "
+                            :hide-footer="true"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <template>
+                                        <b-button
+                                            variant="success"
+                                            type="submit"
+                                            class="mx-1"
+                                            v-if="!isLoader"
+                                            @click.prevent="getData"
+                                        >
+                                            {{ $t("general.sort") }}
+                                        </b-button>
+
+                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                        </b-button>
+                                    </template>
+                                    <b-button
+                                        variant="danger"
+                                        type="button"
+                                        @click.prevent="$bvModal.hide('sort')"
+                                    >
+                                        {{ $t("general.Cancel") }}
+                                    </b-button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.field") }}</label>
+                                            <select  class="form-control" v-model="order_data" >
+                                                <option value="updated_at">{{$t('general.updated_at')}}</option>
+                                                <option value="created_at">{{$t('general.created_at')}}</option>
+                                                <option value="id">{{$t('general.id')}}</option>
+                                                <option value="document_no">{{$t('general.DocumentNumber')}}</option>
+                                                <option value="date">{{$t('general.date')}}</option>
+                                                <option value="amount">{{getCompanyKey("subscription_amount")}}</option>
+                                                <option value="year">{{$t("general.ForAYear")}}</option>
+                                                <option value="date_from">{{getCompanyKey("year_from")}}</option>
+                                                <option value="date_to">{{getCompanyKey("year_to")}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.sort") }}</label>
+                                            <select  class="form-control" v-model="sort_data" >
+                                                <option value="DESC">{{$t('general.descending')}}</option>
+                                                <option value="ASC">{{$t('general.ascending')}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /sort   -->
 
                         <!--  create   -->
                         <b-modal
@@ -1622,15 +1685,15 @@ export default {
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-if="setting.serial_number && isVisible('serial_number')">
-                                        <div class="d-flex justify-content-center">
-                                            <span>{{ $t("general.serial_number") }}</span>
-                                            <div class="arrow-sort">
-                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString('prefix'))"></i>
-                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString('-prefix'))"></i>
-                                            </div>
-                                        </div>
-                                    </th>
+<!--                                    <th v-if="setting.serial_number && isVisible('serial_number')">-->
+<!--                                        <div class="d-flex justify-content-center">-->
+<!--                                            <span>{{ $t("general.serial_number") }}</span>-->
+<!--                                            <div class="arrow-sort">-->
+<!--                                                <i class="fas fa-arrow-up" @click="transactions.sort(sortString('prefix'))"></i>-->
+<!--                                                <i class="fas fa-arrow-down" @click="transactions.sort(sortString('-prefix'))"></i>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </th>-->
                                     <th v-if="setting.document_no && isVisible('document_no')">
                                         <div class="d-flex justify-content-center">
                                             <span>{{ $t("general.DocumentNumber") }}</span>
@@ -1768,37 +1831,37 @@ export default {
                                     </td>
                                     <td> {{index + 1}}</td>
                                     <td v-if="setting.cm_member_id && isVisible('cm_member_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{data.member ? data.member.full_name:''}}
                                         </h5>
                                     </td>
-                                    <td v-if="setting.serial_number && isVisible('serial_number')">
-                                        <h5 class="m-0 font-weight-normal">
-                                            {{ data.prefix }}
-                                        </h5>
-                                    </td>
+<!--                                    <td v-if="setting.serial_number && isVisible('serial_number')">-->
+<!--                                        <h5 class="m-0">-->
+<!--                                            {{ data.prefix }}-->
+<!--                                        </h5>-->
+<!--                                    </td>-->
                                     <td v-if="setting.document_no && isVisible('document_no')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.document_no }}</h5>
+                                        <h5 class="m-0">{{ data.serial ? data.serial.perfix+'-'+data.document_no : data.prefix+'-'+data.document_no }}</h5>
                                     </td>
                                     <td v-if="setting.serial_id && isVisible('serial_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{ data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---' }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.date && isVisible('date')">
-                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
+                                        <h5 class="m-0">{{ formatDate(data.date) }}</h5>
                                     </td>
                                     <td v-if="setting.amount && isVisible('amount')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                        <h5 class="m-0">{{ data.amount }}</h5>
                                     </td>
                                     <td v-if="setting.year && isVisible('year')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year ? data.year : data.year_to}}</h5>
+                                        <h5 class="m-0">{{ data.year ? data.year : data.year_to}}</h5>
                                     </td>
                                     <td v-if="setting.date_from && isVisible('date_from')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_from ? data.date_from: data.year_from }}</h5>
+                                        <h5 class="m-0">{{ data.date_from ? data.date_from: data.year_from }}</h5>
                                     </td>
                                     <td v-if="setting.date_to && isVisible('date_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_to ? data.date_to: data.year_to }}</h5>
+                                        <h5 class="m-0">{{ data.date_to ? data.date_to: data.year_to }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">

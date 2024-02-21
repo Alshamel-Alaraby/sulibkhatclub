@@ -1934,6 +1934,10 @@
         "totalCount": "Total Count",
         "SubscriptionPaymentStatement": "Subscription payment statement",
         "GroupPaymentStatement": "Group Payment Statement",
-        "MembershipCancellationStatement": "Membership Cancellation Statement"
+        "MembershipCancellationStatement": "Membership Cancellation Statement",
+        "sort": "Sort",
+        "descending": "Descending",
+        "ascending": "Ascending",
+        "updated_at": "Updated At"
     }
 }

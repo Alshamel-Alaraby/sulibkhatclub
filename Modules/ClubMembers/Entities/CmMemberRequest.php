@@ -26,6 +26,10 @@ class CmMemberRequest extends Model
     {
         return $this->hasOne(CmTransaction::class, 'member_request_id');
     }
+    public function sponsor()
+    {
+        return $this->belongsTo(\Modules\ClubMembers\Entities\CmSponser::class, 'sponsor_id');
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

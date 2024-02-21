@@ -57,6 +57,7 @@ export default {
       enabled3: true,
       membersPagination: {},
       members: [],
+        sponsors: [],
       isLoader: false,
       Tooltip: "",
       mouseEnter: "",
@@ -84,6 +85,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       },
       edit: {
         applying_date: this.formatDate(new Date()),
@@ -106,6 +108,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       },
       company_id: null,
       errors: {},
@@ -127,6 +130,7 @@ export default {
         work_address: true,
         job: true,
         degree: true,
+          sponsor_id: true,
       },
       is_disabled: false,
       filterSetting: [
@@ -140,6 +144,7 @@ export default {
         "work_address",
         "job",
         "degree",
+        "sponsor_id",
       ],
       codeCountry: "",
       printLoading: true,
@@ -173,6 +178,11 @@ export default {
         member_type_id: {
         required: requiredIf(function (model) {
           return this.isRequired("member_type_id");
+        }),
+      },
+        sponsor_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("sponsor_id");
         }),
       },
       third_name: {
@@ -265,6 +275,11 @@ export default {
         member_type_id: {
         required: requiredIf(function (model) {
           return this.isRequired("member_type_id");
+        }),
+      },
+        sponsor_id: {
+        required: requiredIf(function (model) {
+          return this.isRequired("sponsor_id");
         }),
       },
       third_name: {
@@ -465,6 +480,10 @@ export default {
         if (index > -1) {
             _filterSetting[index] = "cmTransaction.document_no";
         }
+        index = this.filterSetting.indexOf("sponsor_id");
+        if (index > -1) {
+            _filterSetting[index] =this.$i18n.locale == "ar" ? "sponsor.name" : "sponsor.name_e";
+        }
         let filter = "";
         for (let i = 0; i < _filterSetting.length; ++i) {
             filter += `columns[${i}]=${_filterSetting[i]}&`;
@@ -501,6 +520,10 @@ export default {
           let index = this.filterSetting.indexOf("document_no");
           if (index > -1) {
               _filterSetting[index] = "cmTransaction.document_no";
+          }
+          index = this.filterSetting.indexOf("sponsor_id");
+          if (index > -1) {
+              _filterSetting[index] =this.$i18n.locale == "ar" ? "sponsor.name" : "sponsor.name_e";
           }
           let filter = "";
           for (let i = 0; i < _filterSetting.length; ++i) {
@@ -664,6 +687,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -671,13 +695,33 @@ export default {
       this.errors = {};
       this.$bvModal.hide(`create`);
     },
+      async getSponsors() {
+           this.isLoader = true;
+          await adminApi
+              .get(`/club-members/sponsers`)
+              .then((res) => {
+                  let l = res.data.data;
+                  this.sponsors = l;
+              })
+              .catch((err) => {
+                  Swal.fire({
+                      icon: "error",
+                      title: `${this.$t("general.Error")}`,
+                      text: `${this.$t("general.Thereisanerrorinthesystem")}`,
+                  });
+              })
+              .finally(() => {
+                  this.isLoader = false;
+              });
+      },
     /**
      *  hidden Modal (create)
      */
-    resetModal() {
+    async resetModal() {
       this.birth_date = new Date();
       this.applying_date = new Date();
       this.codeCountry = this.$store.getters["locationIp/countryCode"];
+        if(this.isVisible('sponsor_id')) await this.getSponsors();
       this.create = {
         applying_date: this.formatDate(new Date()),
         // applying_number: "",
@@ -699,6 +743,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -733,6 +778,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -827,7 +873,8 @@ export default {
     /**
      *   show Modal (edit)
      */
-    resetModalEdit(id) {
+    async resetModalEdit(id) {
+        if(this.isVisible('sponsor_id')) await this.getSponsors();
       let member = this.members.find((e) => id == e.id);
       this.birth_date = new Date(member.birth_date);
       this.applying_date = new Date(member.applying_date);
@@ -850,6 +897,7 @@ export default {
       this.edit.degree = member.degree;
       this.edit.gender = member.gender;
       this.edit.member_type_id = member.member_type_id;
+      this.edit.sponsor_id = member.sponsor_id;
       this.transaction = member.transaction;
       this.member_request_id = member.id;
       this.errors = {};
@@ -883,6 +931,7 @@ export default {
         acceptance: "0",
         gender: 1,
           member_type_id: 1,
+          sponsor_id: null,
       };
     },
     /*
@@ -1021,6 +1070,10 @@ export default {
                       class="mb-1"
                       >{{ getCompanyKey("member_nationality_number") }}
                     </b-form-checkbox>
+                      <b-form-checkbox v-if="isVisible('sponsor_id')" v-model="filterSetting" value="sponsor_id"
+                                       class="mb-1"
+                      >{{ getCompanyKey("sponsor") }}
+                      </b-form-checkbox>
                     <b-form-checkbox
                       v-if="isVisible('home_phone')"
                       v-model="filterSetting"
@@ -1091,9 +1144,7 @@ export default {
             </div>
             <!-- end search -->
 
-            <div
-              class="row justify-content-between align-items-center mb-2 px-1"
-            >
+            <div class="row justify-content-between align-items-center mb-2 px-1" >
               <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
@@ -1152,9 +1203,7 @@ export default {
                 </div>
                 <!-- end create and printer -->
               </div>
-              <div
-                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
-              >
+              <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end" >
                 <div class="d-fex">
                   <!-- start filter and setting -->
                   <div class="d-inline-block">
@@ -1194,6 +1243,7 @@ export default {
                         class="mb-1"
                         >{{ $t("general.status") }}
                       </b-form-checkbox>
+
                         <b-form-checkbox
                         v-model="setting.Subscription_receipt_number"
                         class="mb-1"
@@ -1211,6 +1261,12 @@ export default {
                         class="mb-1"
                         >{{ getCompanyKey("member_nationality_number") }}
                       </b-form-checkbox>
+                        <b-form-checkbox
+                            v-if="isVisible('sponsor_id')"
+                            v-model="setting.sponsor_id"
+                            class="mb-1"
+                        >{{ getCompanyKey("sponsor") }}
+                        </b-form-checkbox>
                       <b-form-checkbox
                         v-if="isVisible('home_phone')"
                         v-model="setting.home_phone"
@@ -1393,6 +1449,30 @@ export default {
                       </template>
                     </div>
                   </div>
+                    <div class="col-md-3" v-if="isVisible('sponsor_id')">
+                        <div class="form-group position-relative">
+                            <label class="control-label">
+                                {{ getCompanyKey("sponsor") }}
+                                <span v-if="isRequired('sponsor_id')" class="text-danger">*</span>
+                            </label>
+                            <multiselect
+                                v-model="create.sponsor_id"
+                                :options="sponsors.map((type) => type.id)"
+                                :custom-label=" (opt) => sponsors.find((x) => x.id == opt)?
+                                  $i18n.locale == 'ar'
+                                    ? sponsors.find((x) => x.id == opt).name
+                                    : sponsors.find((x) => x.id == opt).name_e : null
+                                "
+                            >
+                            </multiselect>
+                            <div v-if=" $v.create.sponsor_id.$error || errors.sponsor_id" class="text-danger">
+                                {{ $t("general.fieldIsRequired") }}
+                            </div>
+                            <template v-if="errors.sponsor_id">
+                                <ErrorMessage v-for="( errorMessage, index ) in errors.sponsor_id" :key="index" >{{ errorMessage }} </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
 <!--                  <div class="col-md-3" v-if="isVisible('applying_number')">-->
 <!--                    <div class="form-group">-->
 <!--                      <label class="control-label">-->
@@ -2262,16 +2342,9 @@ export default {
                         </div>
                       </div>
                     </th>
-                    <th
-                      v-if="
-                        setting.nationality_number &&
-                        isVisible('nationality_number')
-                      "
-                    >
+                    <th v-if=" setting.nationality_number && isVisible('nationality_number')">
                       <div class="d-flex justify-content-center">
-                        <span>{{
-                          getCompanyKey("member_nationality_number")
-                        }}</span>
+                        <span>{{ getCompanyKey("member_nationality_number")}}</span>
                         <div class="arrow-sort">
                           <i
                             class="fas fa-arrow-up"
@@ -2288,6 +2361,15 @@ export default {
                         </div>
                       </div>
                     </th>
+                      <th v-if="setting.sponsor_id && isVisible('sponsor_id')">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ getCompanyKey("sponsor") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="members.sort(sortString('name'))"></i>
+                                  <i class="fas fa-arrow-down" @click="members.sort(sortString('-name'))"></i>
+                              </div>
+                          </div>
+                      </th>
                     <th v-if="setting.home_phone && isVisible('home_phone')">
                       <div class="d-flex justify-content-center">
                         <span>{{ getCompanyKey("member_home_phone") }}</span>
@@ -2452,6 +2534,9 @@ export default {
                     </td>
                     <td v-if="setting.nationality_number &&isVisible('nationality_number')">
                       {{ data.nationality_number }}
+                    </td>
+                    <td v-if="setting.sponsor_id &&isVisible('sponsor_id')">
+                        {{data.sponsor ? $i18n.locale == "ar" ? data.sponsor.name: data.sponsor.name_e : "-"}}
                     </td>
                     <td v-if="setting.home_phone && isVisible('home_phone')">
                       {{ data.home_phone }}
@@ -2636,6 +2721,30 @@ export default {
                                 </template>
                               </div>
                             </div>
+                              <div class="col-md-3" v-if="isVisible('sponsor_id')">
+                                  <div class="form-group position-relative">
+                                      <label class="control-label">
+                                          {{ getCompanyKey("sponsor") }}
+                                          <span v-if="isRequired('sponsor_id')" class="text-danger">*</span>
+                                      </label>
+                                      <multiselect
+                                          v-model="edit.sponsor_id"
+                                          :options="sponsors.map((type) => type.id)"
+                                          :custom-label=" (opt) => sponsors.find((x) => x.id == opt)?
+                                              $i18n.locale == 'ar'
+                                                ? sponsors.find((x) => x.id == opt).name
+                                                : sponsors.find((x) => x.id == opt).name_e : null
+                                            "
+                                      >
+                                      </multiselect>
+                                      <div v-if=" $v.edit.sponsor_id.$error || errors.sponsor_id" class="text-danger">
+                                          {{ $t("general.fieldIsRequired") }}
+                                      </div>
+                                      <template v-if="errors.sponsor_id">
+                                          <ErrorMessage v-for="( errorMessage, index ) in errors.sponsor_id" :key="index" >{{ errorMessage }} </ErrorMessage>
+                                      </template>
+                                  </div>
+                              </div>
                           </div>
                           <hr
                             style="

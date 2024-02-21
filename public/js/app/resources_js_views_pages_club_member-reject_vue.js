@@ -7093,21 +7093,21 @@ var render = function render() {
         }
       }
     })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.branch_id && _vm.isVisible("branch_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.branch ? _vm.$i18n.locale == "ar" ? data.branch.name : data.branch.name_e : " - ") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.prefix && _vm.isVisible("prefix") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.prefix) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.cm_member_id && _vm.isVisible("cm_member_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.member ? data.member.first_name + " " + data.member.second_name + " " + data.member.third_name + " " + data.member.last_name : "") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date && _vm.isVisible("date") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.date))])]) : _vm._e(), _vm._v(" "), _vm.setting.session_number && _vm.isVisible("session_number") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.session_number))])]) : _vm._e(), _vm._v(" "), _vm.setting.discharge_reson_id && _vm.isVisible("discharge_reson_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.discharge_reson ? _vm.$i18n.locale == "ar" ? data.discharge_reson.name : data.discharge_reson.name_e : " - ") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.entity && _vm.isVisible("entity") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.entity ? _vm.$t("general." + data.entity) : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.note && _vm.isVisible("note") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.note))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {

@@ -153,19 +153,19 @@ class CmMemberRepository implements CmMemberInterface
     {
         DB::transaction(function () use ($id, $request) {
             if ($request['first_name']) {
-                $full_name['first_name'] = $request['first_name'];
+                $full_name['first_name'] = $request['first_name'] && $request['first_name'] != null ?$request['first_name']:'';
             }
             if ($request['second_name']) {
-                $full_name['second_name'] = $request['second_name'];
+                $full_name['second_name'] = $request['second_name'] && $request['second_name'] != null?$request['second_name']:'';
             }
             if ($request['third_name']) {
-                $full_name['third_name'] = $request['third_name'];
+                $full_name['third_name'] = $request['third_name'] && $request['third_name'] != null?$request['third_name']:'';
             }
             if ($request['last_name']) {
-                $full_name['last_name'] = $request['last_name'];
+                $full_name['last_name'] = $request['last_name'] && $request['last_name'] != null?$request['last_name']:'';
             }
             if ($request['family_name']) {
-                $full_name['family_name'] = $request['family_name'];
+                $full_name['family_name'] = $request['family_name'] && $request['family_name'] != null?$request['family_name']:'';
             }
 
             $array = implode(' ', $full_name);

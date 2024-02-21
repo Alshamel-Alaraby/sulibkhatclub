@@ -1601,41 +1601,41 @@ export default {
                                     </td>
                                     <td> {{index + 1}}</td>
                                     <td v-if="setting.member_request_id && isVisible('member_request_id')">
-                                        <h5 v-if="data.member_request" class="m-0 font-weight-normal">
+                                        <h5 v-if="data.member_request" class="m-0">
                                             {{ data.member_request ? data.member_request.full_name:'---'}}
                                         </h5>
-                                        <h5 v-else class="m-0 font-weight-normal">
+                                        <h5 v-else class="m-0">
                                             {{data.member ? data.member.full_name:'---'}}
                                         </h5>
                                     </td>
                                     <td v-if="setting.serial_number && isVisible('serial_number')">
-                                        <h5 class="m-0 font-weight-normal">
-                                            {{ data.prefix }}
+                                        <h5 class="m-0">
+                                            {{ data.serial.perfix }}-{{ data.document_no }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.document_no && isVisible('document_no')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.document_no }}</h5>
+                                        <h5 class="m-0">{{ data.document_no }}</h5>
                                     </td>
                                     <td v-if="setting.serial_id && isVisible('serial_id')">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{ data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---' }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.date && isVisible('date')">
-                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
+                                        <h5 class="m-0">{{ formatDate(data.date) }}</h5>
                                     </td>
 
                                     <td v-if="setting.amount && isVisible('amount')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                        <h5 class="m-0">{{ data.amount }}</h5>
                                     </td>
                                     <td v-if="setting.year && isVisible('year')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.year }}</h5>
+                                        <h5 class="m-0">{{ data.year }}</h5>
                                     </td>
                                     <td v-if="setting.date_from && isVisible('date_from')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_from }}</h5>
+                                        <h5 class="m-0">{{ data.date_from }}</h5>
                                     </td>
                                     <td v-if="setting.date_to && isVisible('date_to')">
-                                        <h5 class="m-0 font-weight-normal">{{ data.date_to }}</h5>
+                                        <h5 class="m-0">{{ data.date_to }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">
                                         <div class="btn-group">

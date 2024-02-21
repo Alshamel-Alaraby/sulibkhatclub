@@ -45,6 +45,8 @@ export default {
             per_page: 50,
             search: '',
             dataInv: "",
+            order_data:'updated_at',
+            sort_data:'DESC',
             debounce: {},
             installmentStatusPagination: {},
             installmentStatus: [],
@@ -162,7 +164,7 @@ export default {
                     filter += `columns[${i}]=${_filterSetting[i]}&`;
                 }
 
-                adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
+                adminApi.get(`/club-members/transactions?order=${this.order_data}&sort=${this.sort_data}&sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${page}&per_page=${this.per_page}&search=${this.search}&${filter}`)
                     .then((res) => {
                         let l = res.data;
                         this.installmentStatus = l.data;
@@ -211,7 +213,7 @@ export default {
                     for (let i = 0; i < _filterSetting.length; ++i) {
                         filter += `columns[${i}]=${_filterSetting[i]}&`;
                     }
-                    adminApi.get(`/club-members/transactions?sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
+                    adminApi.get(`/club-members/transactions?order=${this.order_data}&sort=${this.sort_data}&sponsor_id=${this.create.sponsor_id ?? ''}&start_date=${converted_start_date}&end_date=${converted_end_date}&page=${this.current_page}&per_page=${this.per_page}&search=${this.search}&${filter}&order=full_name&sort=ASC`)
                         .then((res) => {
                             let l = res.data;
                             this.installmentStatus = l.data;
@@ -417,8 +419,8 @@ export default {
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
                                     <div class="d-inline-block">
-                                        <b-button class="mx-1 custom-btn-background">
-                                            {{ $t('general.filter') }}
+                                        <b-button class="mx-1 custom-btn-background" v-b-modal.sort>
+                                            {{ $t("general.sort") }}
                                             <i class="fas fa-filter"></i>
                                         </b-button>
                                         <b-button class="mx-1 custom-btn-background">
@@ -498,6 +500,68 @@ export default {
                             </div>
                         </div>
 
+                        <!--  sort   -->
+                        <b-modal
+                            id="sort"
+                            :title="$t('general.sort')"
+                            title-class="font-18"
+                            body-class="p-4 "
+                            :hide-footer="true"
+                        >
+                            <form>
+                                <div class="mb-3 d-flex justify-content-end">
+                                    <template>
+                                        <b-button
+                                            variant="success"
+                                            type="submit"
+                                            class="mx-1"
+                                            v-if="!isLoader"
+                                            @click.prevent="getData"
+                                        >
+                                            {{ $t("general.sort") }}
+                                        </b-button>
+
+                                        <b-button variant="success" class="mx-1" disabled v-else>
+                                            <b-spinner small></b-spinner>
+                                            <span class="sr-only">{{ $t("login.Loading") }}...</span>
+                                        </b-button>
+                                    </template>
+                                    <b-button
+                                        variant="danger"
+                                        type="button"
+                                        @click.prevent="$bvModal.hide('sort')"
+                                    >
+                                        {{ $t("general.Cancel") }}
+                                    </b-button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.field") }}</label>
+                                            <select  class="form-control" v-model="order_data" >
+                                                <option value="updated_at">{{$t('general.updated_at')}}</option>
+                                                <option value="created_at">{{$t('general.created_at')}}</option>
+                                                <option value="id">{{$t('general.id')}}</option>
+                                                <option value="document_no">{{$t('general.DocumentNumber')}}</option>
+                                                <option value="date">{{$t('general.date')}}</option>
+                                                <option value="amount">{{getCompanyKey("subscription_amount")}}</option>
+                                                <option value="year">{{$t("general.ForAYear")}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ $t("general.sort") }}</label>
+                                            <select  class="form-control" v-model="sort_data" >
+                                                <option value="DESC">{{$t('general.descending')}}</option>
+                                                <option value="ASC">{{$t('general.ascending')}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </b-modal>
+                        <!--  /sort   -->
                         <!--  create   -->
                         <b-modal
                             id="create"
@@ -761,30 +825,30 @@ export default {
                                 >
                                     <td>{{ index + 1 }}</td>
                                     <td v-if="setting.cm_member_id">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{
                                                 data.member ? data.member.first_name + ' ' + data.member.second_name + ' ' + data.member.third_name + ' ' + data.member.last_name : ''
                                             }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.document_no">
-                                        <h5 class="m-0 font-weight-normal">{{ data.serial.perfix }}-{{ data.document_no }}</h5>
+                                        <h5 class="m-0">{{ data.serial.perfix }}-{{ data.document_no }}</h5>
                                     </td>
                                     <td v-if="setting.date">
-                                        <h5 class="m-0 font-weight-normal">{{ formatDate(data.date) }}</h5>
+                                        <h5 class="m-0">{{ formatDate(data.date) }}</h5>
                                     </td>
                                     <td v-if="setting.serial_id">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{
                                                 data.serial ? $i18n.locale == 'ar' ? data.serial.name : data.serial.name : '---'
                                             }}
                                         </h5>
                                     </td>
                                     <td v-if="setting.amount">
-                                        <h5 class="m-0 font-weight-normal">{{ data.amount }}</h5>
+                                        <h5 class="m-0">{{ data.amount }}</h5>
                                     </td>
                                     <td v-if="setting.year">
-                                        <h5 class="m-0 font-weight-normal">
+                                        <h5 class="m-0">
                                             {{ data.year ? data.year : data.year_to }}</h5>
                                     </td>
                                     <td v-if="enabled3" class="do-not-print">

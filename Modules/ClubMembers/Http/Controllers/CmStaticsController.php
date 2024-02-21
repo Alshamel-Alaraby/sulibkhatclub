@@ -181,8 +181,9 @@ class CmStaticsController extends Controller
         $member_permissions = CmMemberPermission::get();
         $data['member_permissions_data'] = [];
 
+        $search_year = now()->year + 1 ;
         foreach ($member_permissions as $member_permission) {
-            $member_permissions_count = CmMember::where('member_status_id', 1)->where('members_permissions_id', $member_permission->id)->where('last_transaction_year', 2024)->count();
+            $member_permissions_count = CmMember::where('member_status_id', 1)->where('members_permissions_id', $member_permission->id)->where('last_transaction_year', $search_year)->count();
             $percentage = $data['validMembersCount'] != 0 ? round(($member_permissions_count / $data['validMembersCount']) * 100, 2) : 0;
 
             $data['member_permissions_data'][] = [

@@ -6953,25 +6953,25 @@ var render = function render() {
         }
       }
     })])]) : _vm._e(), _vm._v(" "), _c("td", [_vm._v(" " + _vm._s(index + 1))]), _vm._v(" "), _vm.setting.member_request_id && _vm.isVisible("member_request_id") ? _c("td", [data.member_request ? _c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.member_request ? data.member_request.full_name : "---") + "\n                                        ")]) : _c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.member ? data.member.full_name : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_number && _vm.isVisible("serial_number") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
-    }, [_vm._v("\n                                            " + _vm._s(data.prefix) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
+    }, [_vm._v("\n                                            " + _vm._s(data.serial.perfix) + "-" + _vm._s(data.document_no) + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.document_no && _vm.isVisible("document_no") ? _c("td", [_c("h5", {
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.document_no))])]) : _vm._e(), _vm._v(" "), _vm.setting.serial_id && _vm.isVisible("serial_id") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v("\n                                            " + _vm._s(data.serial ? _vm.$i18n.locale == "ar" ? data.serial.name : data.serial.name : "---") + "\n                                        ")])]) : _vm._e(), _vm._v(" "), _vm.setting.date && _vm.isVisible("date") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(_vm.formatDate(data.date)))])]) : _vm._e(), _vm._v(" "), _vm.setting.amount && _vm.isVisible("amount") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.amount))])]) : _vm._e(), _vm._v(" "), _vm.setting.year && _vm.isVisible("year") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.year))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_from && _vm.isVisible("date_from") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.date_from))])]) : _vm._e(), _vm._v(" "), _vm.setting.date_to && _vm.isVisible("date_to") ? _c("td", [_c("h5", {
-      staticClass: "m-0 font-weight-normal"
+      staticClass: "m-0"
     }, [_vm._v(_vm._s(data.date_to))])]) : _vm._e(), _vm._v(" "), _vm.enabled3 ? _c("td", {
       staticClass: "do-not-print"
     }, [_c("div", {

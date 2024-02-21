@@ -1922,6 +1922,10 @@
         "totalCount": "اجمالى العدد",
         "SubscriptionPaymentStatement": "كشف سداد الاشتراكات",
         "GroupPaymentStatement": "كشف سداد جماعى",
-        "MembershipCancellationStatement": "كشف شطب العضوية"
+        "MembershipCancellationStatement": "كشف شطب العضوية",
+        "sort": "فرز",
+        "descending": "تنازليا",
+        "ascending": "تصاعديا",
+        "updated_at": "تاريخ التعديل"
     }
 }
