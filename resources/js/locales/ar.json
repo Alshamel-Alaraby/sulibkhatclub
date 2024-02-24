@@ -1926,6 +1926,7 @@
         "sort": "فرز",
         "descending": "تنازليا",
         "ascending": "تصاعديا",
-        "updated_at": "تاريخ التعديل"
+        "updated_at": "تاريخ التعديل",
+        "printDocuments": "طباعة السندات"
     }
 }

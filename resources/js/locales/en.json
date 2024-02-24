@@ -1938,6 +1938,7 @@
         "sort": "Sort",
         "descending": "Descending",
         "ascending": "Ascending",
-        "updated_at": "Updated At"
+        "updated_at": "Updated At",
+        "printDocuments": "Print Documents"
     }
 }

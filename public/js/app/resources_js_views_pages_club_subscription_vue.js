@@ -7327,7 +7327,7 @@ var render = function render() {
     staticClass: "col-md-4",
     staticStyle: {
       width: "15%",
-      padding: "0 0 10px 20px",
+      padding: "0 0 20px 20px",
       display: "inline-block"
     }
   }, [_c("img", {
@@ -7363,7 +7363,17 @@ var render = function render() {
       width: "15%",
       display: "inline-block"
     }
-  }, [_c("h5", [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.transactions.length))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
+  }, [_c("h5", {
+    staticStyle: {
+      "font-size": "18px !important",
+      "font-weight": "bold !important"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.transactions.length))]), _vm._v(" "), _c("h5", {
+    staticStyle: {
+      "font-size": "18px !important",
+      "font-weight": "bold !important"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0",
     "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("thead", [_c("tr", [_vm.enabled3 ? _c("th", {
@@ -8367,7 +8377,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 19px !important;\n        font-weight: bold !important\n}\ntd h5{\n        font-size: 19px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 19px !important;\n        font-weight: bold !important;\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -2636,7 +2636,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       sponsors: [],
       serials: [],
       order_data: 'updated_at',
-      sort_data: 'DESC',
+      customer_data_create: '',
+      sort_data: 'ASC',
       enabled3: true,
       is_disabled: false,
       isLoader: false,
@@ -3565,6 +3566,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?hasTransaction=1&member_status_id=1&without=".concat(_this19.removeMembers, "&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=").concat((_this19$filterMember$ = _this19.filterMember.national_id) !== null && _this19$filterMember$ !== void 0 ? _this19$filterMember$ : '', "&membership_number=").concat((_this19$filterMember$2 = _this19.filterMember.membership_number) !== null && _this19$filterMember$2 !== void 0 ? _this19$filterMember$2 : '', "&full_name=").concat((_this19$filterMember$3 = _this19.filterMember.full_name) !== null && _this19$filterMember$3 !== void 0 ? _this19$filterMember$3 : '', "&home_phone=").concat((_this19$filterMember$4 = _this19.filterMember.home_phone) !== null && _this19$filterMember$4 !== void 0 ? _this19$filterMember$4 : '', "&first_name=").concat((_this19$filterMember$5 = _this19.filterMember.first_name) !== null && _this19$filterMember$5 !== void 0 ? _this19$filterMember$5 : '', "&second_name=").concat((_this19$filterMember$6 = _this19.filterMember.second_name) !== null && _this19$filterMember$6 !== void 0 ? _this19$filterMember$6 : '', "&third_name=").concat(_this19.filterMember.third_name, "&last_name=").concat((_this19$filterMember$7 = _this19.filterMember.last_name) !== null && _this19$filterMember$7 !== void 0 ? _this19$filterMember$7 : '', "&family_name=").concat(_this19.filterMember.family_name)).then(function (res) {
                 var l = res.data.data;
                 _this19.members = l;
+                if (_this19.customer_data_create) {
+                  _this19.members.push(_this19.customer_data_create);
+                }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
@@ -3685,7 +3689,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return el.cm_member_id == data.cm_member_id;
               });
               if (member_transactions) {
-                _context11.next = 12;
+                _context11.next = 13;
                 break;
               }
               _this23.create.transactions.push({
@@ -3710,9 +3714,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this23.removeMembers.push(_this23.create.cm_member_id);
               _this23.create.cm_member_id = null;
               _this23.total += parseFloat(_this23.create.amount);
-              _context11.next = 12;
+              _this23.customer_data_create = '';
+              _context11.next = 13;
               return _this23.getMember();
-            case 12:
+            case 13:
             case "end":
               return _context11.stop();
           }
@@ -3740,48 +3745,55 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee12);
       }))();
     },
-    getMemberTransaction: function getMemberTransaction() {
+    getMemberCreate: function getMemberCreate() {
       var _this25 = this;
+      this.customer_data_create = this.members.find(function (e) {
+        return e.id == _this25.create.cm_member_id;
+      });
+      this.getMemberTransaction();
+    },
+    getMemberTransaction: function getMemberTransaction() {
+      var _this26 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/member-last-transaction/".concat(this.create.cm_member_id)).then(function (res) {
         var l = res.data.data;
         if (l.year) {
-          _this25.create.year = "".concat(parseInt(l.year) + 1);
+          _this26.create.year = "".concat(parseInt(l.year) + 1);
         } else {
-          _this25.create.year = "".concat(parseInt(l.year_from) + 1);
+          _this26.create.year = "".concat(parseInt(l.year_from) + 1);
         }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this25.$t("general.Error")),
-          text: "".concat(_this25.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted"))
+          title: "".concat(_this26.$t("general.Error")),
+          text: "".concat(_this26.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted"))
         });
       })["finally"](function () {
-        _this25.isLoader = false;
+        _this26.isLoader = false;
       });
     },
     DataOfModelFinancialYear: function DataOfModelFinancialYear() {
-      var _this26 = this;
+      var _this27 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
         return _regeneratorRuntime().wrap(function _callee13$(_context13) {
           while (1) switch (_context13.prev = _context13.next) {
             case 0:
-              _this26.isLoader = true;
+              _this27.isLoader = true;
               _context13.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this26.create.date)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this27.create.date)).then(function (res) {
                 var l = res.data;
                 if (l) {
-                  _this26.create.date_from = l.data.start_date;
-                  _this26.create.date_to = l.data.end_date;
+                  _this27.create.date_from = l.data.start_date;
+                  _this27.create.date_to = l.data.end_date;
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this26.$t("general.Error")),
-                  text: "".concat(_this26.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this27.$t("general.Error")),
+                  text: "".concat(_this27.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this26.isLoader = false;
+                _this27.isLoader = false;
               });
             case 3:
             case "end":
@@ -3809,6 +3821,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.filterMember.family_name = '';
       this.filterMember.home_phone = '';
       this.is_disabled = false;
+    },
+    handelPrint: function handelPrint(ids) {
+      var _this28 = this;
+      var data = [];
+      ids.forEach(function (e) {
+        data.push(_this28.transactions.find(function (el) {
+          return el.id == e;
+        }));
+      });
+      this.printInv(data);
     },
     printInv: function printInv(data) {
       this.dataInv = data;
@@ -7951,7 +7973,22 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-trash-alt"
-  })]) : _vm._e()])], 1), _vm._v(" "), _c("div", {
+  })]) : _vm._e(), _vm._v(" "), _c("b-button", {
+    directives: [{
+      name: "print",
+      rawName: "v-print",
+      value: "#printInv",
+      expression: "'#printInv'"
+    }],
+    staticClass: "mx-1 custom-btn-background",
+    on: {
+      click: function click($event) {
+        return _vm.handelPrint(_vm.checkAll);
+      }
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.printDocuments")) + "\n                                        "), _c("i", {
+    staticClass: "fe-printer"
+  })])], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
   }, [_c("div", {
     staticClass: "d-fex"
@@ -8516,6 +8553,7 @@ var render = function render() {
     staticClass: "fas fa-filter"
   })])], 1), _vm._v(" "), _c("multiselect", {
     attrs: {
+      "show-labels": false,
       internalSearch: false,
       options: _vm.members.map(function (type) {
         return type.id;
@@ -8529,7 +8567,7 @@ var render = function render() {
       }
     },
     on: {
-      input: _vm.getMemberTransaction,
+      input: _vm.getMemberCreate,
       "search-change": _vm.searchMember
     },
     model: {
@@ -8992,7 +9030,7 @@ var render = function render() {
     staticClass: "col-md-4",
     staticStyle: {
       width: "15%",
-      padding: "0 0 10px 20px",
+      padding: "0 0 20px 20px",
       display: "inline-block"
     }
   }, [_c("img", {
@@ -9028,7 +9066,17 @@ var render = function render() {
       width: "15%",
       display: "inline-block"
     }
-  }, [_c("h5", [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.transactions.length))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
+  }, [_c("h5", {
+    staticStyle: {
+      "font-size": "18px !important",
+      "font-weight": "bold !important"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.totalCount")) + " : " + _vm._s(_vm.transactions.length))]), _vm._v(" "), _c("h5", {
+    staticStyle: {
+      "font-size": "18px !important",
+      "font-weight": "bold !important"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0",
     "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("thead", [_c("tr", [_vm.enabled3 ? _c("th", {
@@ -10492,7 +10540,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 16px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.data-header-print {\n    display: none;\n}\n@media print {\n.do-not-print {\n        display: none;\n}\n.arrow-sort {\n        display: none;\n}\n.text-success {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\n.text-danger {\n        background-color: unset;\n        color: #6c757d !important;\n        border: unset;\n}\ntd{\n        border: 1px solid black !important;\n        font-size: 19px !important;\n        font-weight: bold !important\n}\ntd h5{\n        font-size: 19px !important;\n        font-weight: bold !important\n}\nth{\n        border: 1px solid black !important;\n        color: black;\n        text-align: center;\n        font-size: 19px !important;\n        font-weight: bold !important\n}\nthead{\n        border: 1px solid black !important;\n}\ntbody{\n        border: 1px solid black !important;\n}\ntable {\n        border: 1px solid black !important;\n}\n.data-header-print {\n        width: 100%;\n        display: inline-block;\n}\n.dir-print-rtl {\n        direction: rtl !important;\n}\n.dir-print-ltr {\n        direction: ltr !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
