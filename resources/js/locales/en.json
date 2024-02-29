@@ -1939,6 +1939,8 @@
         "descending": "Descending",
         "ascending": "Ascending",
         "updated_at": "Updated At",
-        "printDocuments": "Print Documents"
+        "printDocuments": "Print Documents",
+        "showSponsorPrint": "Show Sponsor Print",
+        "application_number": "Application Number"
     }
 }

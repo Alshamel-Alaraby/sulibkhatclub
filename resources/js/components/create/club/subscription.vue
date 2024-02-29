@@ -86,10 +86,10 @@
                            <label>{{ getCompanyKey("branch") }}</label>
                            <multiselect @input="showBranchModal" v-model="create.branch_id"
                                         :options="branches.map((type) => type.id)" :custom-label="
-                                                    (opt) =>
+                                                    (opt) =>branches.find((x) => x.id == opt)?
                                                         $i18n.locale == 'ar'
                                                             ? branches.find((x) => x.id == opt).name
-                                                            : branches.find((x) => x.id == opt).name_e
+                                                            : branches.find((x) => x.id == opt).name_e:null
                                                 " :class="{
                                                         'is-invalid':
                                                             $v.create.branch_id.$error || errors.branch_id,
@@ -111,10 +111,10 @@
                            <label>{{ $t("general.serial_number") }}</label>
                            <multiselect @input="showBranchModal" v-model="create.serial_id"
                                         :options="serials.map((type) => type.id)" :custom-label="
-                                                    (opt) =>
+                                                    (opt) =>serials.find((x) => x.id == opt)?
                                                         $i18n.locale == 'ar'
                                                             ? serials.find((x) => x.id == opt).name
-                                                            : serials.find((x) => x.id == opt).name_e
+                                                            : serials.find((x) => x.id == opt).name_e:null
                                                 " :class="{
                                                         'is-invalid':
                                                             $v.create.serial_id.$error || errors.serial_id,
@@ -349,8 +349,8 @@ export default {
             Tooltip: "",
             debounce: {},
             create: {
-                branch_id: null,
-                serial_id: null,
+                branch_id: 2,
+                serial_id: 51,
                 member_request_id: null,
                 document_id: 38,
                 date_from: '',
@@ -425,8 +425,8 @@ export default {
         },
         defaultData(edit = null){
             this.create = {
-                branch_id: null,
-                serial_id: null,
+                branch_id: 2,
+                serial_id: 51,
                 member_request_id: null,
                 document_id: 38,
                 date_from: '',
@@ -453,6 +453,7 @@ export default {
                   await this.getCustomTableFields();
                  if(this.isVisible('member_request_id')) await this.getMember();
                  if(this.isVisible('branch_id')) await this.getBranches();
+                 if(this.isVisible('serial_id')) await this.getSerials();
                  this.financial_years_validate = true;
                  this.create.member_request_id = this.member_request_id;
                  this.handelDateCheck();

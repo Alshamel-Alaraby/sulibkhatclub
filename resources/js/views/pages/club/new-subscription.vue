@@ -1398,19 +1398,19 @@ export default {
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
-                            <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
-                                <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
-                                    <img style="width: 70%; " :src="'/images/sulib.png'">
+                            <div class="data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                                <div style="width: 15%; padding: 0 0 0 20px; display: inline-block;">
+                                    <img style="width: 100%; " :src="'/images/sulib.png'">
                                 </div>
-                                <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
+                                <div class="text-center" style="width: 65%; padding-top: 5px; display: inline-block;">
                                     <div style="width:100%; display: inline-block;">
                                         <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
                                         <h2 style="font-weight: bold"> {{ $t("general.SubscriptionPaymentStatement") }} </h2>
                                     </div>
                                 </div>
                                 <div class="text-center" style="width: 15%; display: inline-block;">
-                                    <h5>{{$t('general.totalCount')}} : {{ transactions.length }}</h5>
-                                    <h5>{{$t('general.totalAmount')}} : {{ total_amount() }}</h5>
+                                    <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalCount')}} : {{ transactions.length }}</h5>
+                                    <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalAmount')}} : {{ total_amount() }}</h5>
                                 </div>
 
                             </div>
@@ -1953,14 +1953,18 @@ export default {
     }
     td{
         border: 1px solid black !important;
-        font-size: 16px !important;
+        font-size: 19px !important;
+        font-weight: bold !important
+    }
+    td h5{
+        font-size: 19px !important;
         font-weight: bold !important
     }
     th{
         border: 1px solid black !important;
         color: black;
         text-align: center;
-        font-size: 16px !important;
+        font-size: 19px !important;
         font-weight: bold !important
     }
     thead{

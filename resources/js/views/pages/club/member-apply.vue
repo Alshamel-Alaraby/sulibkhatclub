@@ -86,6 +86,7 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       },
       edit: {
         applying_date: this.formatDate(new Date()),
@@ -109,28 +110,31 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       },
       company_id: null,
       errors: {},
       isCheckAll: false,
       checkAll: [],
       current_page: 1,
+        showSponsor:0,
       setting: {
         gender: true,
           member_type_id: true,
           Subscription_receipt_number: true,
           full_name: true,
-        status_id: true,
+        status_id: false,
         birth_date: true,
         national_id: true,
         nationality_number: true,
-        home_phone: true,
-        work_phone: true,
+        home_phone: false,
+        work_phone: false,
         home_address: true,
-        work_address: true,
-        job: true,
-        degree: true,
-          sponsor_id: true,
+        work_address: false,
+        job: false,
+        degree: false,
+          sponsor_id: false,
+          application_number: true,
       },
       is_disabled: false,
       filterSetting: [
@@ -145,6 +149,7 @@ export default {
         "job",
         "degree",
         "sponsor_id",
+        "application_number",
       ],
       codeCountry: "",
       printLoading: true,
@@ -183,6 +188,11 @@ export default {
         sponsor_id: {
         required: requiredIf(function (model) {
           return this.isRequired("sponsor_id");
+        }),
+      },
+        application_number: {
+        required: requiredIf(function (model) {
+          return this.isRequired("application_number");
         }),
       },
       third_name: {
@@ -280,6 +290,11 @@ export default {
         sponsor_id: {
         required: requiredIf(function (model) {
           return this.isRequired("sponsor_id");
+        }),
+      },
+        application_number: {
+        required: requiredIf(function (model) {
+          return this.isRequired("application_number");
         }),
       },
       third_name: {
@@ -688,6 +703,7 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -744,6 +760,7 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -779,6 +796,7 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       };
       this.$nextTick(() => {
         this.$v.$reset();
@@ -898,6 +916,7 @@ export default {
       this.edit.gender = member.gender;
       this.edit.member_type_id = member.member_type_id;
       this.edit.sponsor_id = member.sponsor_id;
+      this.edit.application_number = member.application_number;
       this.transaction = member.transaction;
       this.member_request_id = member.id;
       this.errors = {};
@@ -932,6 +951,7 @@ export default {
         gender: 1,
           member_type_id: 1,
           sponsor_id: null,
+          application_number: "",
       };
     },
     /*
@@ -1074,6 +1094,10 @@ export default {
                                        class="mb-1"
                       >{{ getCompanyKey("sponsor") }}
                       </b-form-checkbox>
+                      <b-form-checkbox v-if="isVisible('application_number')" v-model="filterSetting" value="application_number"
+                                       class="mb-1"
+                      >{{ $t("general.application_number") }}
+                      </b-form-checkbox>
                     <b-form-checkbox
                       v-if="isVisible('home_phone')"
                       v-model="filterSetting"
@@ -1145,7 +1169,7 @@ export default {
             <!-- end search -->
 
             <div class="row justify-content-between align-items-center mb-2 px-1" >
-              <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
+              <div class="col-md-5 d-flex align-items-center mb-1 mb-xl-0">
                 <!-- start create and printer -->
                 <b-button
                   v-b-modal.create
@@ -1200,10 +1224,19 @@ export default {
                     <i class="fas fa-trash-alt"></i>
                   </button>
                   <!--  end one delete  -->
+                    <div class="form-group">
+                        <label class="control-label">
+                            {{ $t("general.showSponsorPrint") }}
+                        </label>
+                        <select v-model="showSponsor" class="form-control">
+                            <option value="1">{{ $t("general.Yes") }}</option>
+                            <option value="0">{{ $t("general.No") }}</option>
+                        </select>
+                    </div>
                 </div>
                 <!-- end create and printer -->
               </div>
-              <div class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end" >
+              <div class="col-xs-10 col-md-7 col-lg-7 d-flex align-items-center justify-content-end" >
                 <div class="d-fex">
                   <!-- start filter and setting -->
                   <div class="d-inline-block">
@@ -1266,6 +1299,12 @@ export default {
                             v-model="setting.sponsor_id"
                             class="mb-1"
                         >{{ getCompanyKey("sponsor") }}
+                        </b-form-checkbox>
+                        <b-form-checkbox
+                            v-if="isVisible('application_number')"
+                            v-model="setting.application_number"
+                            class="mb-1"
+                        >{{ $t("general.application_number") }}
                         </b-form-checkbox>
                       <b-form-checkbox
                         v-if="isVisible('home_phone')"
@@ -1470,6 +1509,36 @@ export default {
                             </div>
                             <template v-if="errors.sponsor_id">
                                 <ErrorMessage v-for="( errorMessage, index ) in errors.sponsor_id" :key="index" >{{ errorMessage }} </ErrorMessage>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="isVisible('application_number')">
+                        <div class="form-group">
+                            <label class="control-label">
+                                {{$t("general.application_number")}}
+                                <span v-if="isRequired('application_number')" class="text-danger">*</span>
+                            </label>
+                            <input
+                                v-model="$v.create.application_number.$model"
+                                class="form-control"
+                                type="number"
+                                :class="{
+                          'is-invalid':
+                            $v.create.application_number.$error ||
+                            errors.application_number,
+                          'is-valid':
+                            !$v.create.application_number.$invalid &&
+                            !errors.application_number,
+                        }"
+                            />
+                            <template v-if="errors.application_number">
+                                <ErrorMessage
+                                    v-for="(
+                            errorMessage, index
+                          ) in errors.application_number"
+                                    :key="index"
+                                >{{ errorMessage }}
+                                </ErrorMessage>
                             </template>
                         </div>
                     </div>
@@ -2244,19 +2313,27 @@ export default {
               <!--       start loader       -->
               <loader size="large" v-if="isLoader" />
               <!--       end loader       -->
-                <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
-                    <div class="col-md-4" style="width: 15%; padding: 0 0 10px 20px; display: inline-block;">
-                        <img style="width: 70%; " :src="'/images/sulib.png'">
+                <div class="data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                    <div style="width: 15%; padding: 0 0 0 20px; display: inline-block;">
+                        <img style="width: 100%; " :src="'/images/sulib.png'">
                     </div>
-                    <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
+                    <div class="text-center" style="width: 65%; padding-top: 5px; display: inline-block;">
                         <div style="width:100%; display: inline-block;">
                             <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
                             <h2 style="font-weight: bold"> {{ $t("general.SubscriptionRequests") }} </h2>
                         </div>
                     </div>
                     <div class="text-center" style="width: 15%; display: inline-block;">
+                        <div style="width:100%; display: inline-block;">
+                            <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalCount')}} : {{ members.length }}</h5>
+                        </div>
                     </div>
 
+                    <div class="text-center p-0 m-0" v-if="members.length > 0 && parseInt(showSponsor) == 1">
+                        <h3 v-if="members.length > 0" style="font-weight: bold">
+                            {{ getCompanyKey("sponsor") }} : {{ members[0].sponsor ? ($i18n.locale == 'ar' ? members[0].sponsor.name : members[0].sponsor.name_e) : "-" }}
+                        </h3>
+                    </div>
                 </div>
 
               <table  class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
@@ -2367,6 +2444,15 @@ export default {
                               <div class="arrow-sort">
                                   <i class="fas fa-arrow-up" @click="members.sort(sortString('name'))"></i>
                                   <i class="fas fa-arrow-down" @click="members.sort(sortString('-name'))"></i>
+                              </div>
+                          </div>
+                      </th>
+                      <th v-if="setting.application_number && isVisible('application_number')">
+                          <div class="d-flex justify-content-center">
+                              <span>{{ $t("general.application_number") }}</span>
+                              <div class="arrow-sort">
+                                  <i class="fas fa-arrow-up" @click="members.sort(sortString('application_number'))"></i>
+                                  <i class="fas fa-arrow-down" @click="members.sort(sortString('-application_number'))"></i>
                               </div>
                           </div>
                       </th>
@@ -2537,6 +2623,9 @@ export default {
                     </td>
                     <td v-if="setting.sponsor_id &&isVisible('sponsor_id')">
                         {{data.sponsor ? $i18n.locale == "ar" ? data.sponsor.name: data.sponsor.name_e : "-"}}
+                    </td>
+                    <td v-if="setting.application_number &&isVisible('application_number')">
+                        {{data.application_number}}
                     </td>
                     <td v-if="setting.home_phone && isVisible('home_phone')">
                       {{ data.home_phone }}
@@ -2716,6 +2805,28 @@ export default {
                                 />
                                 <template v-if="errors.applying_number">
                                   <ErrorMessage v-for="( errorMessage, index ) in errors.applying_number" :key="index">
+                                      {{ errorMessage }}
+                                  </ErrorMessage>
+                                </template>
+                              </div>
+                            </div>
+                            <div class="col-md-3" v-if="isVisible('application_number')">
+                              <div class="form-group">
+                                  <label class="control-label">
+                                    {{$t("general.application_number")}}
+                                    <span v-if="isRequired('application_number')" class="text-danger">*</span>
+                                </label>
+                                <input
+                                  v-model="edit.application_number"
+                                  class="form-control"
+                                  type="number"
+                                  :class="{
+                                    'is-invalid':errors.application_number,
+                                    'is-valid':!errors.application_number,
+                                  }"
+                                />
+                                <template v-if="errors.application_number">
+                                  <ErrorMessage v-for="( errorMessage, index ) in errors.application_number" :key="index">
                                       {{ errorMessage }}
                                   </ErrorMessage>
                                 </template>

@@ -52,6 +52,7 @@ export default {
             renewal: [],
             sponsors: [],
             serials: [],
+            showSponsor:0,
             order_data:'updated_at',
             customer_data_create:'',
             sort_data:'ASC',
@@ -100,7 +101,7 @@ export default {
                 date:new Date().toISOString().slice(0, 10),
             },
             setting: {
-                sponsor_id: true,
+                sponsor_id: false,
                 serial_number: true,
                 cm_member_id: true,
                 document_no: true,
@@ -1138,7 +1139,7 @@ export default {
                         <!-- end search -->
 
                         <div class="row justify-content-between align-items-center mb-2 px-1">
-                            <div class="col-md-3 d-flex align-items-center mb-1 mb-xl-0">
+                            <div class="col-md-5 d-flex align-items-center mb-1 mb-xl-0">
                                 <!-- start create and printer -->
                                 <b-button
                                     v-b-modal.create
@@ -1181,15 +1182,24 @@ export default {
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                     <!--  end one delete  -->
-                                    <b-button class="mx-1 custom-btn-background" @click="handelPrint(checkAll)"  v-print="'#printInv'">
+                                    <b-button class="m-2 custom-btn-background" @click="handelPrint(checkAll)"  v-print="'#printInv'">
                                         {{ $t("general.printDocuments") }}
                                         <i class="fe-printer"></i>
                                     </b-button>
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            {{ $t("general.showSponsorPrint") }}
+                                        </label>
+                                        <select v-model="showSponsor" class="form-control">
+                                            <option value="1">{{ $t("general.Yes") }}</option>
+                                            <option value="0">{{ $t("general.No") }}</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <!-- end create and printer -->
                             </div>
                             <div
-                                class="col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+                                class="col-xs-10 col-md-7 col-lg-7 d-flex align-items-center justify-content-end"
                             >
                                 <div class="d-fex">
                                     <!-- start filter and setting -->
@@ -1943,21 +1953,28 @@ export default {
                             <!--       start loader       -->
                             <loader size="large" v-if="isLoader"/>
                             <!--       end loader       -->
-                            <div class="row data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
-                                <div class="col-md-4" style="width: 15%; padding: 0 0 20px 20px; display: inline-block;">
-                                    <img style="width: 70%; " :src="'/images/sulib.png'">
+                            <div class="data-header-print" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
+                                <div style="width: 15%; padding: 0 0 0 20px; display: inline-block;">
+                                    <img style="width: 100%; " :src="'/images/sulib.png'">
                                 </div>
-                                <div class="text-center" style="width: 69%; padding-top: 5px; display: inline-block;">
+                                <div class="text-center" style="width: 65%; padding-top: 5px; display: inline-block;">
                                     <div style="width:100%; display: inline-block;">
                                         <h2 style="font-weight: bold">{{ $t('general.SulaibikhatClub') }}</h2>
                                         <h2 style="font-weight: bold"> {{ $t("general.GroupPaymentStatement") }} </h2>
                                     </div>
                                 </div>
                                 <div class="text-center" style="width: 15%; display: inline-block;">
-                                    <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalCount')}} : {{ transactions.length }}</h5>
-                                    <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalAmount')}} : {{ total_amount() }}</h5>
+                                    <div style="width:100%; display: inline-block;">
+                                        <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalCount')}} : {{ transactions.length }}</h5>
+                                        <h5 style="font-size: 18px !important; font-weight: bold !important;">{{$t('general.totalAmount')}} : {{ total_amount() }}</h5>
+                                    </div>
                                 </div>
 
+                                <div class="text-center p-0 m-0" v-if="transactions.length > 0 && parseInt(showSponsor) == 1">
+                                    <h3 v-if="transactions.length > 0" style="font-weight: bold">
+                                        {{ getCompanyKey("sponsor") }} : {{ transactions[0].sponsor ? ($i18n.locale == 'ar' ? transactions[0].sponsor.name : transactions[0].sponsor.name_e) : "-" }}
+                                    </h3>
+                                </div>
                             </div>
                             <table class="table table-borderless table-hover table-centered m-0" :class="[$i18n.locale == 'ar' ? 'dir-print-rtl' :'dir-print-ltr']">
                                 <thead>

@@ -45,6 +45,7 @@ class CmMemberRequestRequest extends FormRequest
             'gender' => 'nullable|in:0,1',
             'financial_year_id' => 'nullable|exists:general_financial_years,id',
             "company_id"=>'nullable',
+            "application_number"=>'nullable',
         ];
     }
 

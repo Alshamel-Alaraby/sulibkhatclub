@@ -2635,6 +2635,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       renewal: [],
       sponsors: [],
       serials: [],
+      showSponsor: 0,
       order_data: 'updated_at',
       customer_data_create: '',
       sort_data: 'ASC',
@@ -2683,7 +2684,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         date: new Date().toISOString().slice(0, 10)
       },
       setting: {
-        sponsor_id: true,
+        sponsor_id: false,
         serial_number: true,
         cm_member_id: true,
         document_no: true,
@@ -7917,7 +7918,7 @@ var render = function render() {
   })])])]), _vm._v(" "), _c("div", {
     staticClass: "row justify-content-between align-items-center mb-2 px-1"
   }, [_c("div", {
-    staticClass: "col-md-3 d-flex align-items-center mb-1 mb-xl-0"
+    staticClass: "col-md-5 d-flex align-items-center mb-1 mb-xl-0"
   }, [_vm.isPermission("create multiSubscription club") ? _c("b-button", {
     directives: [{
       name: "b-modal",
@@ -7980,7 +7981,7 @@ var render = function render() {
       value: "#printInv",
       expression: "'#printInv'"
     }],
-    staticClass: "mx-1 custom-btn-background",
+    staticClass: "m-2 custom-btn-background",
     on: {
       click: function click($event) {
         return _vm.handelPrint(_vm.checkAll);
@@ -7988,8 +7989,39 @@ var render = function render() {
     }
   }, [_vm._v("\n                                        " + _vm._s(_vm.$t("general.printDocuments")) + "\n                                        "), _c("i", {
     staticClass: "fe-printer"
-  })])], 1)], 1), _vm._v(" "), _c("div", {
-    staticClass: "col-xs-10 col-md-9 col-lg-7 d-flex align-items-center justify-content-end"
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "control-label"
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.showSponsorPrint")) + "\n                                        ")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.showSponsor,
+      expression: "showSponsor"
+    }],
+    staticClass: "form-control",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.showSponsor = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "1"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.Yes")))]), _vm._v(" "), _c("option", {
+    attrs: {
+      value: "0"
+    }
+  }, [_vm._v(_vm._s(_vm.$t("general.No")))])])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-xs-10 col-md-7 col-lg-7 d-flex align-items-center justify-content-end"
   }, [_c("div", {
     staticClass: "d-fex"
   }, [_c("div", {
@@ -9024,18 +9056,17 @@ var render = function render() {
       size: "large"
     }
   }) : _vm._e(), _vm._v(" "), _c("div", {
-    staticClass: "row data-header-print",
+    staticClass: "data-header-print",
     "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("div", {
-    staticClass: "col-md-4",
     staticStyle: {
       width: "15%",
-      padding: "0 0 20px 20px",
+      padding: "0 0 0 20px",
       display: "inline-block"
     }
   }, [_c("img", {
     staticStyle: {
-      width: "70%"
+      width: "100%"
     },
     attrs: {
       src: "/images/sulib.png"
@@ -9043,7 +9074,7 @@ var render = function render() {
   })]), _vm._v(" "), _c("div", {
     staticClass: "text-center",
     staticStyle: {
-      width: "69%",
+      width: "65%",
       "padding-top": "5px",
       display: "inline-block"
     }
@@ -9066,6 +9097,11 @@ var render = function render() {
       width: "15%",
       display: "inline-block"
     }
+  }, [_c("div", {
+    staticStyle: {
+      width: "100%",
+      display: "inline-block"
+    }
   }, [_c("h5", {
     staticStyle: {
       "font-size": "18px !important",
@@ -9076,7 +9112,13 @@ var render = function render() {
       "font-size": "18px !important",
       "font-weight": "bold !important"
     }
-  }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _c("table", {
+  }, [_vm._v(_vm._s(_vm.$t("general.totalAmount")) + " : " + _vm._s(_vm.total_amount()))])])]), _vm._v(" "), _vm.transactions.length > 0 && parseInt(_vm.showSponsor) == 1 ? _c("div", {
+    staticClass: "text-center p-0 m-0"
+  }, [_vm.transactions.length > 0 ? _c("h3", {
+    staticStyle: {
+      "font-weight": "bold"
+    }
+  }, [_vm._v("\n                                        " + _vm._s(_vm.getCompanyKey("sponsor")) + " : " + _vm._s(_vm.transactions[0].sponsor ? _vm.$i18n.locale == "ar" ? _vm.transactions[0].sponsor.name : _vm.transactions[0].sponsor.name_e : "-") + "\n                                    ")]) : _vm._e()]) : _vm._e()]), _vm._v(" "), _c("table", {
     staticClass: "table table-borderless table-hover table-centered m-0",
     "class": [_vm.$i18n.locale == "ar" ? "dir-print-rtl" : "dir-print-ltr"]
   }, [_c("thead", [_c("tr", [_vm.enabled3 ? _c("th", {
