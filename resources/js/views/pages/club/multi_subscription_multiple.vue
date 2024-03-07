@@ -105,7 +105,7 @@ export default {
                 serial_number: false,
                 cm_member_id: true,
                 document_no: true,
-                serial_id: true,
+                serial_id: false,
                 date: true,
                 date_from: true,
                 date_to: true,
