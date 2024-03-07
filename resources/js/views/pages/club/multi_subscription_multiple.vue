@@ -102,7 +102,7 @@ export default {
             },
             setting: {
                 sponsor_id: false,
-                serial_number: true,
+                serial_number: false,
                 cm_member_id: true,
                 document_no: true,
                 serial_id: true,
@@ -234,7 +234,9 @@ export default {
          * watch per_page
          */
         per_page(after, befour) {
-            this.getData();
+            setTimeout(() => {
+                this.getData();
+            }, 1500)
         },
         /**
          * watch search
@@ -1254,6 +1256,17 @@ export default {
                                         </b-dropdown>
                                         <!-- Basic dropdown -->
                                     </div>
+                                    <!-- end filter and setting -->
+                                    <div class="d-inline-flex align-items-center">
+                                        <label for="rows" class="control-label mb-0">
+                                            {{ $t('general.chooseRows') }}
+                                        </label>
+                                        <span class="mx-1">:</span>
+                                        <input type="number" id="rows" v-model="per_page"
+                                               class="form-control-sm mb-0"
+                                               style="width: 70px;">
+                                    </div>
+                                    <!-- start Pagination -->
                                     <!-- start Pagination -->
                                     <div class="d-inline-flex align-items-center pagination-custom">
                                         <div class="d-inline-block" style="font-size: 13px">

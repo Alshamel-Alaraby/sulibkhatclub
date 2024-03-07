@@ -2685,7 +2685,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       setting: {
         sponsor_id: false,
-        serial_number: true,
+        serial_number: false,
         cm_member_id: true,
         document_no: true,
         serial_id: true,
@@ -2860,27 +2860,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      * watch per_page
      */
     per_page: function per_page(after, befour) {
-      this.getData();
+      var _this = this;
+      setTimeout(function () {
+        _this.getData();
+      }, 1500);
     },
     /**
      * watch search
      */
     search: function search(after, befour) {
-      var _this = this;
+      var _this2 = this;
       clearTimeout(this.debounce);
       this.debounce = setTimeout(function () {
-        _this.getData();
+        _this2.getData();
       }, 400);
     },
     /**
      * watch check All table
      */
     isCheckAll: function isCheckAll(after, befour) {
-      var _this2 = this;
+      var _this3 = this;
       if (after) {
         this.transactions.forEach(function (el) {
-          if (!_this2.checkAll.includes(el.id)) {
-            _this2.checkAll.push(el.id);
+          if (!_this3.checkAll.includes(el.id)) {
+            _this3.checkAll.push(el.id);
           }
         });
       } else {
@@ -2895,17 +2898,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   methods: {
     getCustomTableFields: function getCustomTableFields() {
-      var _this3 = this;
+      var _this4 = this;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/customTable/table-columns/cm_transactions").then(function (res) {
-        _this3.fields = res.data;
+        _this4.fields = res.data;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this3.$t("general.Error")),
-          text: "".concat(_this3.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this4.$t("general.Error")),
+          text: "".concat(_this4.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this3.isLoader = false;
+        _this4.isLoader = false;
       });
     },
     isVisible: function isVisible(fieldName) {
@@ -2927,22 +2930,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return true;
     },
     showBranchModal: function showBranchModal() {
-      var _this4 = this;
+      var _this5 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              if (!(_this4.create.branch_id == 0)) {
+              if (!(_this5.create.branch_id == 0)) {
                 _context.next = 5;
                 break;
               }
-              _this4.$bvModal.show("create_branch");
-              _this4.create.branch_id = null;
+              _this5.$bvModal.show("create_branch");
+              _this5.create.branch_id = null;
               _context.next = 7;
               break;
             case 5:
               _context.next = 7;
-              return _this4.getSerials();
+              return _this5.getSerials();
             case 7:
             case "end":
               return _context.stop();
@@ -2957,22 +2960,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     showSponsorModal: function showSponsorModal() {
-      var _this5 = this;
+      var _this6 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (!(_this5.create.sponsor_id == 0)) {
+              if (!(_this6.create.sponsor_id == 0)) {
                 _context2.next = 5;
                 break;
               }
-              _this5.$bvModal.show("create-sponsor");
-              _this5.create.sponsor_id = null;
+              _this6.$bvModal.show("create-sponsor");
+              _this6.create.sponsor_id = null;
               _context2.next = 7;
               break;
             case 5:
               _context2.next = 7;
-              return _this5.getMember();
+              return _this6.getMember();
             case 7:
             case "end":
               return _context2.stop();
@@ -2987,7 +2990,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     resetForm: function resetForm() {
-      var _this6 = this;
+      var _this7 = this;
       this.total = 0;
       this.removeMembers = [];
       this.create = {
@@ -3006,7 +3009,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         transactions: []
       };
       this.$nextTick(function () {
-        _this6.$v.$reset();
+        _this7.$v.$reset();
       });
       this.is_disabled = false;
     },
@@ -3014,7 +3017,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  start get Data && pagination
      */
     getData: function getData() {
-      var _this7 = this;
+      var _this8 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       this.isLoader = true;
       var _filterSetting = _toConsumableArray(this.filterSetting);
@@ -3036,21 +3039,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?order=".concat(this.order_data, "&sort=").concat(this.sort_data, "&module_type=club&sponsor=1&page=").concat(page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
         var l = res.data;
-        _this7.transactions = l.data;
-        _this7.transactionsPagination = l.pagination;
-        _this7.current_page = l.pagination.current_page;
+        _this8.transactions = l.data;
+        _this8.transactionsPagination = l.pagination;
+        _this8.current_page = l.pagination.current_page;
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this7.$t("general.Error")),
-          text: "".concat(_this7.$t("general.Thereisanerrorinthesystem"))
+          title: "".concat(_this8.$t("general.Error")),
+          text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
         });
       })["finally"](function () {
-        _this7.isLoader = false;
+        _this8.isLoader = false;
       });
     },
     getDataCurrentPage: function getDataCurrentPage() {
-      var _this8 = this;
+      var _this9 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       if (this.current_page <= this.transactionsPagination.last_page && this.current_page != this.transactionsPagination.current_page && this.current_page) {
         this.isLoader = true;
@@ -3073,37 +3076,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions?order=".concat(this.order_data, "&sort=").concat(this.sort_data, "&module_type=club&sponsor=1&page=").concat(this.current_page, "&per_page=").concat(this.per_page, "&search=").concat(this.search, "&").concat(filter)).then(function (res) {
           var l = res.data;
-          _this8.transactions = l.data;
-          _this8.transactionsPagination = l.pagination;
-          _this8.current_page = l.pagination.current_page;
+          _this9.transactions = l.data;
+          _this9.transactionsPagination = l.pagination;
+          _this9.current_page = l.pagination.current_page;
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this8.$t("general.Error")),
-            text: "".concat(_this8.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this9.$t("general.Error")),
+            text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
           });
         })["finally"](function () {
-          _this8.isLoader = false;
+          _this9.isLoader = false;
         });
       }
     },
     getBranches: function getBranches() {
-      var _this9 = this;
+      var _this10 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _this9.isLoader = true;
+              _this10.isLoader = true;
               _context3.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches?document_id=".concat(_this9.create.document_id)).then(function (res) {
-                _this9.isLoader = false;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/branches?document_id=".concat(_this10.create.document_id)).then(function (res) {
+                _this10.isLoader = false;
                 var l = res.data.data;
-                _this9.branches = l;
+                _this10.branches = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this9.$t("general.Error")),
-                  text: "".concat(_this9.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this10.$t("general.Error")),
+                  text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
                 });
               });
             case 3:
@@ -3114,24 +3117,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     getSponsors: function getSponsors() {
-      var _this10 = this;
+      var _this11 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              _this10.isLoader = true;
+              _this11.isLoader = true;
               _context4.next = 3;
               return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/sponsers").then(function (res) {
                 var l = res.data.data;
-                _this10.sponsors = l;
+                _this11.sponsors = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this10.$t("general.Error")),
-                  text: "".concat(_this10.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this11.$t("general.Error")),
+                  text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this10.isLoader = false;
+                _this11.isLoader = false;
               });
             case 3:
             case "end":
@@ -3141,22 +3144,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     getSerials: function getSerials() {
-      var _this11 = this;
+      var _this12 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              _this11.isLoader = true;
+              _this12.isLoader = true;
               _context5.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/serials?branch_id=".concat(_this11.create.branch_id, "&document_id=8")).then(function (res) {
-                _this11.isLoader = false;
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/serials?branch_id=".concat(_this12.create.branch_id, "&document_id=8")).then(function (res) {
+                _this12.isLoader = false;
                 var l = res.data.data;
-                _this11.serials = l;
+                _this12.serials = l;
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this11.$t("general.Error")),
-                  text: "".concat(_this11.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this12.$t("general.Error")),
+                  text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
                 });
               });
             case 3:
@@ -3173,7 +3176,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  start delete
      */
     deleteBranch: function deleteBranch(id, index) {
-      var _this12 = this;
+      var _this13 = this;
       if (Array.isArray(id)) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           title: "".concat(this.$t("general.Areyousure")),
@@ -3187,16 +3190,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           buttonsStyling: false
         }).then(function (result) {
           if (result.value) {
-            _this12.isLoader = true;
+            _this13.isLoader = true;
             _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].post("/club-members/transactions/bulk-delete", {
               ids: id
             }).then(function (res) {
-              _this12.checkAll = [];
-              _this12.getData();
+              _this13.checkAll = [];
+              _this13.getData();
               sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                 icon: "success",
-                title: "".concat(_this12.$t("general.Deleted")),
-                text: "".concat(_this12.$t("general.Yourrowhasbeendeleted")),
+                title: "".concat(_this13.$t("general.Deleted")),
+                text: "".concat(_this13.$t("general.Yourrowhasbeendeleted")),
                 showConfirmButton: false,
                 timer: 1500
               });
@@ -3204,19 +3207,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               if (err.response.status == 400) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this12.$t("general.Error")),
-                  text: "".concat(_this12.$t("general.CantDeleteRelation"))
+                  title: "".concat(_this13.$t("general.Error")),
+                  text: "".concat(_this13.$t("general.CantDeleteRelation"))
                 });
-                _this12.getData();
+                _this13.getData();
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this12.$t("general.Error")),
-                  text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this13.$t("general.Error")),
+                  text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
                 });
               }
             })["finally"](function () {
-              _this12.isLoader = false;
+              _this13.isLoader = false;
             });
           }
         });
@@ -3233,14 +3236,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           buttonsStyling: false
         }).then(function (result) {
           if (result.value) {
-            _this12.isLoader = true;
+            _this13.isLoader = true;
             _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"]["delete"]("/club-members/transactions/".concat(id)).then(function (res) {
-              _this12.checkAll = [];
-              _this12.getData();
+              _this13.checkAll = [];
+              _this13.getData();
               sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                 icon: "success",
-                title: "".concat(_this12.$t("general.Deleted")),
-                text: "".concat(_this12.$t("general.Yourrowhasbeendeleted")),
+                title: "".concat(_this13.$t("general.Deleted")),
+                text: "".concat(_this13.$t("general.Yourrowhasbeendeleted")),
                 showConfirmButton: false,
                 timer: 1500
               });
@@ -3248,18 +3251,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               if (err.response.status == 400) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this12.$t("general.Error")),
-                  text: "".concat(_this12.$t("general.CantDeleteRelation"))
+                  title: "".concat(_this13.$t("general.Error")),
+                  text: "".concat(_this13.$t("general.CantDeleteRelation"))
                 });
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this12.$t("general.Error")),
-                  text: "".concat(_this12.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this13.$t("general.Error")),
+                  text: "".concat(_this13.$t("general.Thereisanerrorinthesystem"))
                 });
               }
             })["finally"](function () {
-              _this12.isLoader = false;
+              _this13.isLoader = false;
             });
           }
         });
@@ -3272,7 +3275,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  reset Modal (create)
      */
     resetModalHidden: function resetModalHidden() {
-      var _this13 = this;
+      var _this14 = this;
       this.total = 0;
       this.removeMembers = [];
       this.create = {
@@ -3291,7 +3294,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         transactions: []
       };
       this.$nextTick(function () {
-        _this13.$v.$reset();
+        _this14.$v.$reset();
       });
       this.errors = {};
       this.is_disabled = false;
@@ -3301,28 +3304,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  hidden Modal (create)
      */
     resetModal: function resetModal() {
-      var _this14 = this;
+      var _this15 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              if (!_this14.isVisible('branch_id')) {
+              if (!_this15.isVisible('branch_id')) {
                 _context6.next = 3;
                 break;
               }
               _context6.next = 3;
-              return _this14.getBranches();
+              return _this15.getBranches();
             case 3:
-              if (!_this14.isVisible('sponsor_id')) {
+              if (!_this15.isVisible('sponsor_id')) {
                 _context6.next = 6;
                 break;
               }
               _context6.next = 6;
-              return _this14.getSponsors();
+              return _this15.getSponsors();
             case 6:
-              _this14.total = 0;
-              _this14.removeMembers = [];
-              _this14.create = {
+              _this15.total = 0;
+              _this15.removeMembers = [];
+              _this15.create = {
                 sponsor_id: null,
                 branch_id: null,
                 serial_id: null,
@@ -3338,13 +3341,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 transactions: []
               };
               _context6.next = 11;
-              return _this14.getRenewal();
+              return _this15.getRenewal();
             case 11:
-              _this14.$nextTick(function () {
-                _this14.$v.$reset();
+              _this15.$nextTick(function () {
+                _this15.$v.$reset();
               });
-              _this14.is_disabled = false;
-              _this14.errors = {};
+              _this15.is_disabled = false;
+              _this15.errors = {};
             case 14:
             case "end":
               return _context6.stop();
@@ -3356,7 +3359,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  create countrie
      */
     AddSubmit: function AddSubmit() {
-      var _this15 = this;
+      var _this16 = this;
       this.isLoader = true;
       this.errors = {};
       this.is_disabled = false;
@@ -3365,36 +3368,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         transactions: transactions,
         company_id: this.company_id
       }).then(function (res) {
-        _this15.getData();
-        _this15.is_disabled = true;
+        _this16.getData();
+        _this16.is_disabled = true;
         setTimeout(function () {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "success",
-            text: "".concat(_this15.$t("general.Addedsuccessfully")),
+            text: "".concat(_this16.$t("general.Addedsuccessfully")),
             showConfirmButton: false,
             timer: 1500
           });
         }, 500);
-        _this15.printInv(res.data.data);
+        _this16.printInv(res.data.data);
       })["catch"](function (err) {
         if (err.response.data) {
-          _this15.errors = err.response.data.errors;
+          _this16.errors = err.response.data.errors;
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this15.$t("general.Error")),
-            text: "".concat(_this15.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this16.$t("general.Error")),
+            text: "".concat(_this16.$t("general.Thereisanerrorinthesystem"))
           });
         }
       })["finally"](function () {
-        _this15.isLoader = false;
+        _this16.isLoader = false;
       });
     },
     /**
      *  edit countrie
      */
     editSubmit: function editSubmit(id) {
-      var _this16 = this;
+      var _this17 = this;
       this.$v.edit.$touch();
       if (this.$v.edit.$invalid) {
         return;
@@ -3402,28 +3405,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.isLoader = true;
         this.errors = {};
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].put("/club-members/transactions/".concat(id), this.edit).then(function (res) {
-          _this16.$bvModal.hide("modal-edit-".concat(id));
-          _this16.getData();
+          _this17.$bvModal.hide("modal-edit-".concat(id));
+          _this17.getData();
           setTimeout(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: "success",
-              text: "".concat(_this16.$t("general.Editsuccessfully")),
+              text: "".concat(_this17.$t("general.Editsuccessfully")),
               showConfirmButton: false,
               timer: 1500
             });
           }, 500);
         })["catch"](function (err) {
           if (err.response.data) {
-            _this16.errors = err.response.data.errors;
+            _this17.errors = err.response.data.errors;
           } else {
             sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
               icon: "error",
-              title: "".concat(_this16.$t("general.Error")),
-              text: "".concat(_this16.$t("general.Thereisanerrorinthesystem"))
+              title: "".concat(_this17.$t("general.Error")),
+              text: "".concat(_this17.$t("general.Thereisanerrorinthesystem"))
             });
           }
         })["finally"](function () {
-          _this16.isLoader = false;
+          _this17.isLoader = false;
         });
       }
     },
@@ -3431,57 +3434,57 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *   show Modal (edit)
      */
     resetModalEdit: function resetModalEdit(id) {
-      var _this17 = this;
+      var _this18 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
         var setting;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
-              if (!_this17.isVisible('cm_member_id')) {
+              if (!_this18.isVisible('cm_member_id')) {
                 _context7.next = 3;
                 break;
               }
               _context7.next = 3;
-              return _this17.getMember();
+              return _this18.getMember();
             case 3:
-              if (!_this17.isVisible('branch_id')) {
+              if (!_this18.isVisible('branch_id')) {
                 _context7.next = 6;
                 break;
               }
               _context7.next = 6;
-              return _this17.getBranches();
+              return _this18.getBranches();
             case 6:
-              if (!_this17.isVisible('sponsor_id')) {
+              if (!_this18.isVisible('sponsor_id')) {
                 _context7.next = 9;
                 break;
               }
               _context7.next = 9;
-              return _this17.getSponsors();
+              return _this18.getSponsors();
             case 9:
-              setting = _this17.transactions.find(function (e) {
+              setting = _this18.transactions.find(function (e) {
                 return id == e.id;
               });
-              _this17.edit.sponsor_id = setting.sponsor.id;
-              _this17.edit.cm_member_id = setting.member.id;
-              _this17.edit.branch_id = setting.branch.id;
-              _this17.edit.date_from = setting.date_from;
-              _this17.edit.date_to = setting.date_to;
-              _this17.edit.year = setting.year;
-              _this17.edit.year_from = setting.year_from;
-              _this17.edit.type = setting.type;
-              _this17.edit.document_id = setting.document_id;
-              _this17.edit.year_to = setting.year_to;
-              _this17.edit.amount = setting.amount;
-              _this17.edit.module_type = "club";
-              _this17.edit.date = setting.date;
-              if (!_this17.isVisible('serial_id')) {
+              _this18.edit.sponsor_id = setting.sponsor.id;
+              _this18.edit.cm_member_id = setting.member.id;
+              _this18.edit.branch_id = setting.branch.id;
+              _this18.edit.date_from = setting.date_from;
+              _this18.edit.date_to = setting.date_to;
+              _this18.edit.year = setting.year;
+              _this18.edit.year_from = setting.year_from;
+              _this18.edit.type = setting.type;
+              _this18.edit.document_id = setting.document_id;
+              _this18.edit.year_to = setting.year_to;
+              _this18.edit.amount = setting.amount;
+              _this18.edit.module_type = "club";
+              _this18.edit.date = setting.date;
+              if (!_this18.isVisible('serial_id')) {
                 _context7.next = 26;
                 break;
               }
               _context7.next = 26;
-              return _this17.getSerials();
+              return _this18.getSerials();
             case 26:
-              _this17.errors = {};
+              _this18.errors = {};
             case 27:
             case "end":
               return _context7.stop();
@@ -3534,16 +3537,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *  end  ckeckRow
      */
     searchMember: function searchMember(e) {
-      var _this18 = this;
+      var _this19 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
         var search;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
               search = e !== null && e !== void 0 ? e : '';
-              clearTimeout(_this18.debounce);
-              _this18.debounce = setTimeout(function () {
-                _this18.getMember(search);
+              clearTimeout(_this19.debounce);
+              _this19.debounce = setTimeout(function () {
+                _this19.getMember(search);
               }, 500);
             case 3:
             case "end":
@@ -3554,30 +3557,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getMember: function getMember() {
       var _arguments = arguments,
-        _this19 = this;
+        _this20 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-        var _this19$filterMember$, _this19$filterMember$2, _this19$filterMember$3, _this19$filterMember$4, _this19$filterMember$5, _this19$filterMember$6, _this19$filterMember$7;
+        var _this20$filterMember$, _this20$filterMember$2, _this20$filterMember$3, _this20$filterMember$4, _this20$filterMember$5, _this20$filterMember$6, _this20$filterMember$7;
         var search;
         return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) switch (_context9.prev = _context9.next) {
             case 0:
               search = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : '';
-              _this19.isLoader = true;
+              _this20.isLoader = true;
               _context9.next = 4;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?hasTransaction=1&member_status_id=1&without=".concat(_this19.removeMembers, "&limet=10&company_id=").concat(_this19.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=").concat((_this19$filterMember$ = _this19.filterMember.national_id) !== null && _this19$filterMember$ !== void 0 ? _this19$filterMember$ : '', "&membership_number=").concat((_this19$filterMember$2 = _this19.filterMember.membership_number) !== null && _this19$filterMember$2 !== void 0 ? _this19$filterMember$2 : '', "&full_name=").concat((_this19$filterMember$3 = _this19.filterMember.full_name) !== null && _this19$filterMember$3 !== void 0 ? _this19$filterMember$3 : '', "&home_phone=").concat((_this19$filterMember$4 = _this19.filterMember.home_phone) !== null && _this19$filterMember$4 !== void 0 ? _this19$filterMember$4 : '', "&first_name=").concat((_this19$filterMember$5 = _this19.filterMember.first_name) !== null && _this19$filterMember$5 !== void 0 ? _this19$filterMember$5 : '', "&second_name=").concat((_this19$filterMember$6 = _this19.filterMember.second_name) !== null && _this19$filterMember$6 !== void 0 ? _this19$filterMember$6 : '', "&third_name=").concat(_this19.filterMember.third_name, "&last_name=").concat((_this19$filterMember$7 = _this19.filterMember.last_name) !== null && _this19$filterMember$7 !== void 0 ? _this19$filterMember$7 : '', "&family_name=").concat(_this19.filterMember.family_name)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/members?hasTransaction=1&member_status_id=1&without=".concat(_this20.removeMembers, "&limet=10&company_id=").concat(_this20.company_id, "&search=").concat(search, "&columns[0]=national_id&columns[1]=membership_number&columns[2]=full_name&national_id=").concat((_this20$filterMember$ = _this20.filterMember.national_id) !== null && _this20$filterMember$ !== void 0 ? _this20$filterMember$ : '', "&membership_number=").concat((_this20$filterMember$2 = _this20.filterMember.membership_number) !== null && _this20$filterMember$2 !== void 0 ? _this20$filterMember$2 : '', "&full_name=").concat((_this20$filterMember$3 = _this20.filterMember.full_name) !== null && _this20$filterMember$3 !== void 0 ? _this20$filterMember$3 : '', "&home_phone=").concat((_this20$filterMember$4 = _this20.filterMember.home_phone) !== null && _this20$filterMember$4 !== void 0 ? _this20$filterMember$4 : '', "&first_name=").concat((_this20$filterMember$5 = _this20.filterMember.first_name) !== null && _this20$filterMember$5 !== void 0 ? _this20$filterMember$5 : '', "&second_name=").concat((_this20$filterMember$6 = _this20.filterMember.second_name) !== null && _this20$filterMember$6 !== void 0 ? _this20$filterMember$6 : '', "&third_name=").concat(_this20.filterMember.third_name, "&last_name=").concat((_this20$filterMember$7 = _this20.filterMember.last_name) !== null && _this20$filterMember$7 !== void 0 ? _this20$filterMember$7 : '', "&family_name=").concat(_this20.filterMember.family_name)).then(function (res) {
                 var l = res.data.data;
-                _this19.members = l;
-                if (_this19.customer_data_create) {
-                  _this19.members.push(_this19.customer_data_create);
+                _this20.members = l;
+                if (_this20.customer_data_create) {
+                  _this20.members.push(_this20.customer_data_create);
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this19.$t("general.Error")),
-                  text: "".concat(_this19.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this20.$t("general.Error")),
+                  text: "".concat(_this20.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this19.isLoader = false;
+                _this20.isLoader = false;
               });
             case 4:
             case "end":
@@ -3590,47 +3593,47 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return (0,_helper_startDate__WEBPACK_IMPORTED_MODULE_9__.formatDateOnly)(value);
     },
     log: function log(id) {
-      var _this20 = this;
+      var _this21 = this;
       if (this.mouseEnter != id) {
         this.Tooltip = "";
         this.mouseEnter = id;
         _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/logs/".concat(id)).then(function (res) {
           var l = res.data.data;
           l.forEach(function (e) {
-            _this20.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this20.formatDate(e.created_at), " \n");
+            _this21.Tooltip += "Created By: ".concat(e.causer_type, "; Event: ").concat(e.event, "; Description: ").concat(e.description, " ;Created At: ").concat(_this21.formatDate(e.created_at), " \n");
           });
           $("#tooltip-".concat(id)).tooltip();
         })["catch"](function (err) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
             icon: "error",
-            title: "".concat(_this20.$t("general.Error")),
-            text: "".concat(_this20.$t("general.Thereisanerrorinthesystem"))
+            title: "".concat(_this21.$t("general.Error")),
+            text: "".concat(_this21.$t("general.Thereisanerrorinthesystem"))
           });
         });
       }
     },
     getRenewal: function getRenewal() {
-      var _this21 = this;
+      var _this22 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
         return _regeneratorRuntime().wrap(function _callee10$(_context10) {
           while (1) switch (_context10.prev = _context10.next) {
             case 0:
               _context10.next = 2;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/memberships-renewals?date_search=".concat(_this21.create.date)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/memberships-renewals?date_search=".concat(_this22.create.date)).then(function (res) {
                 var l = res.data.data;
-                _this21.renewal = l;
-                if (_this21.create.type) {
-                  _this21.renewalAmount();
+                _this22.renewal = l;
+                if (_this22.create.type) {
+                  _this22.renewalAmount();
                 }
-                _this21.DataOfModelFinancialYear();
+                _this22.DataOfModelFinancialYear();
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this21.$t("general.Error")),
-                  text: "".concat(_this21.$t("general.PleaseSelectAMember"))
+                  title: "".concat(_this22.$t("general.Error")),
+                  text: "".concat(_this22.$t("general.PleaseSelectAMember"))
                 });
               })["finally"](function () {
-                _this21.isLoader = false;
+                _this22.isLoader = false;
               });
             case 2:
             case "end":
@@ -3652,10 +3655,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
      *   Export Excel
      */
     ExportExcel: function ExportExcel(type, fn, dl) {
-      var _this22 = this;
+      var _this23 = this;
       this.enabled3 = false;
       setTimeout(function () {
-        var elt = _this22.$refs.exportable_table;
+        var elt = _this23.$refs.exportable_table;
         var wb = XLSX.utils.table_to_book(elt, {
           sheet: "Sheet JS"
         });
@@ -3668,32 +3671,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         } else {
           XLSX.writeFile(wb, fn || ('Multi-Subscription' + '.' || 0) + (type || 'xlsx'));
         }
-        _this22.enabled3 = true;
+        _this23.enabled3 = true;
       }, 100);
     },
     addNewField: function addNewField() {
-      var _this23 = this;
+      var _this24 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
         var data, serial, member, member_name, member_transactions;
         return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) switch (_context11.prev = _context11.next) {
             case 0:
-              data = _this23.create;
-              serial = _this23.serials.find(function (el) {
+              data = _this24.create;
+              serial = _this24.serials.find(function (el) {
                 return el.id == data.serial_id;
               });
-              member = _this23.members.find(function (el) {
+              member = _this24.members.find(function (el) {
                 return el.id == data.cm_member_id;
               });
               member_name = member.full_name;
-              member_transactions = _this23.create.transactions.find(function (el) {
+              member_transactions = _this24.create.transactions.find(function (el) {
                 return el.cm_member_id == data.cm_member_id;
               });
               if (member_transactions) {
                 _context11.next = 13;
                 break;
               }
-              _this23.create.transactions.push({
+              _this24.create.transactions.push({
                 sponsor_id: data.sponsor_id,
                 branch_id: data.branch_id,
                 serial_name: serial.name,
@@ -3712,12 +3715,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 module_type: "club",
                 date: data.date
               });
-              _this23.removeMembers.push(_this23.create.cm_member_id);
-              _this23.create.cm_member_id = null;
-              _this23.total += parseFloat(_this23.create.amount);
-              _this23.customer_data_create = '';
+              _this24.removeMembers.push(_this24.create.cm_member_id);
+              _this24.create.cm_member_id = null;
+              _this24.total += parseFloat(_this24.create.amount);
+              _this24.customer_data_create = '';
               _context11.next = 13;
-              return _this23.getMember();
+              return _this24.getMember();
             case 13:
             case "end":
               return _context11.stop();
@@ -3726,19 +3729,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     removeNewField: function removeNewField(index) {
-      var _this24 = this;
+      var _this25 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
         return _regeneratorRuntime().wrap(function _callee12$(_context12) {
           while (1) switch (_context12.prev = _context12.next) {
             case 0:
-              _this24.create.transactions.splice(index, 1);
-              _this24.removeMembers.splice(index, 1);
-              _this24.total = 0;
-              _this24.create.transactions.forEach(function (el) {
-                _this24.total += parseFloat(el.amount);
+              _this25.create.transactions.splice(index, 1);
+              _this25.removeMembers.splice(index, 1);
+              _this25.total = 0;
+              _this25.create.transactions.forEach(function (el) {
+                _this25.total += parseFloat(el.amount);
               });
               _context12.next = 6;
-              return _this24.getMember();
+              return _this25.getMember();
             case 6:
             case "end":
               return _context12.stop();
@@ -3747,54 +3750,54 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     getMemberCreate: function getMemberCreate() {
-      var _this25 = this;
+      var _this26 = this;
       this.customer_data_create = this.members.find(function (e) {
-        return e.id == _this25.create.cm_member_id;
+        return e.id == _this26.create.cm_member_id;
       });
       this.getMemberTransaction();
     },
     getMemberTransaction: function getMemberTransaction() {
-      var _this26 = this;
+      var _this27 = this;
       this.isLoader = true;
       _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/club-members/transactions/member-last-transaction/".concat(this.create.cm_member_id)).then(function (res) {
         var l = res.data.data;
         if (l.year) {
-          _this26.create.year = "".concat(parseInt(l.year) + 1);
+          _this27.create.year = "".concat(parseInt(l.year) + 1);
         } else {
-          _this26.create.year = "".concat(parseInt(l.year_from) + 1);
+          _this27.create.year = "".concat(parseInt(l.year_from) + 1);
         }
       })["catch"](function (err) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
           icon: "error",
-          title: "".concat(_this26.$t("general.Error")),
-          text: "".concat(_this26.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted"))
+          title: "".concat(_this27.$t("general.Error")),
+          text: "".concat(_this27.$t("general.ThisMemberIsNotSubscribedOrHasBeenDeleted"))
         });
       })["finally"](function () {
-        _this26.isLoader = false;
+        _this27.isLoader = false;
       });
     },
     DataOfModelFinancialYear: function DataOfModelFinancialYear() {
-      var _this27 = this;
+      var _this28 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
         return _regeneratorRuntime().wrap(function _callee13$(_context13) {
           while (1) switch (_context13.prev = _context13.next) {
             case 0:
-              _this27.isLoader = true;
+              _this28.isLoader = true;
               _context13.next = 3;
-              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this27.create.date)).then(function (res) {
+              return _api_adminAxios__WEBPACK_IMPORTED_MODULE_2__["default"].get("/financial-years/DataOfModelFinancialYear?date=".concat(_this28.create.date)).then(function (res) {
                 var l = res.data;
                 if (l) {
-                  _this27.create.date_from = l.data.start_date;
-                  _this27.create.date_to = l.data.end_date;
+                  _this28.create.date_from = l.data.start_date;
+                  _this28.create.date_to = l.data.end_date;
                 }
               })["catch"](function (err) {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_4___default().fire({
                   icon: "error",
-                  title: "".concat(_this27.$t("general.Error")),
-                  text: "".concat(_this27.$t("general.Thereisanerrorinthesystem"))
+                  title: "".concat(_this28.$t("general.Error")),
+                  text: "".concat(_this28.$t("general.Thereisanerrorinthesystem"))
                 });
               })["finally"](function () {
-                _this27.isLoader = false;
+                _this28.isLoader = false;
               });
             case 3:
             case "end":
@@ -3824,10 +3827,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.is_disabled = false;
     },
     handelPrint: function handelPrint(ids) {
-      var _this28 = this;
+      var _this29 = this;
       var data = [];
       ids.forEach(function (e) {
-        data.push(_this28.transactions.find(function (el) {
+        data.push(_this29.transactions.find(function (el) {
           return el.id == e;
         }));
       });
@@ -8119,6 +8122,39 @@ var render = function render() {
       href: "javascript:void(0)"
     }
   }, [_vm._v(_vm._s(_vm.$t("general.Apply")))])])], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-inline-flex align-items-center"
+  }, [_c("label", {
+    staticClass: "control-label mb-0",
+    attrs: {
+      "for": "rows"
+    }
+  }, [_vm._v("\n                                            " + _vm._s(_vm.$t("general.chooseRows")) + "\n                                        ")]), _vm._v(" "), _c("span", {
+    staticClass: "mx-1"
+  }, [_vm._v(":")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.per_page,
+      expression: "per_page"
+    }],
+    staticClass: "form-control-sm mb-0",
+    staticStyle: {
+      width: "70px"
+    },
+    attrs: {
+      type: "number",
+      id: "rows"
+    },
+    domProps: {
+      value: _vm.per_page
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.per_page = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("div", {
     staticClass: "d-inline-flex align-items-center pagination-custom"
   }, [_c("div", {
     staticClass: "d-inline-block",

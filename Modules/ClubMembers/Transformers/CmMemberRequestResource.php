@@ -49,7 +49,7 @@ class CmMemberRequestResource extends JsonResource
             'gender' => $this->gender,
             'sponsors' => $this->sponsors,
             'financial_status' => $this->financialStatus,
-            'transaction' => $this->cmTransaction,
+            'transaction' => collect(new CmTransactionResource($this->cmTransaction))->only(['id','document_no','year','amount','serial'])  ,
             "status" => new StatusResource($this->status),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

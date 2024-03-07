@@ -2613,7 +2613,7 @@ export default {
                         {{parseInt(data.member_type_id) == 1 ? $t('general.pendingMember') : $t('general.unacceptable')}}
                     </td>
                     <td v-if="setting.Subscription_receipt_number">
-                      {{data.transaction ? data.transaction.document_no: "---"}}
+                      {{data.transaction ? data.transaction.serial.perfix+'-'+data.transaction.document_no: "---"}}
                     </td>
                     <td v-if="setting.national_id && isVisible('national_id')">
                       {{ data.national_id }}
@@ -3400,9 +3400,9 @@ export default {
                                         <label>{{ $t("general.serial_number") }}</label>
                                         <input
                                             disabled
-                                            v-model="transaction.prefix"
                                             class="form-control"
                                             type="text"
+                                            :value="transaction.serial.perfix+'-'+transaction.document_no"
                                         />
                                     </div>
                                 </div>
