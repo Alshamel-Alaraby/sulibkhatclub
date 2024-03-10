@@ -76,7 +76,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       isSuccess: false,
       isError: false,
       type: "password",
-      login_as: "employee",
+      login_as: "admin",
       user_programs_and_modules: []
     };
   },
@@ -746,7 +746,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.input-group-text {\r\n  cursor: pointer;\n}\n.input-group-text.show {\r\n  background-color: #3bafda;\n}\n.input-group-text .password-eye.show {\r\n  color: #fff;\n}\n.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {\r\n  background-color: #3bafda;\n}\n.logo-lg img {\r\n  width: 70px;\r\n  height: 45px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.input-group-text {\n  cursor: pointer;\n}\n.input-group-text.show {\n  background-color: #3bafda;\n}\n.input-group-text .password-eye.show {\n  color: #fff;\n}\n.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {\n  background-color: #3bafda;\n}\n.logo-lg img {\n  width: 70px;\n  height: 45px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

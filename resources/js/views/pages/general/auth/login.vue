@@ -24,7 +24,7 @@ export default {
       isSuccess: false,
       isError: false,
       type: "password",
-      login_as: "employee",
+      login_as: "admin",
       user_programs_and_modules:[],
     };
   },
